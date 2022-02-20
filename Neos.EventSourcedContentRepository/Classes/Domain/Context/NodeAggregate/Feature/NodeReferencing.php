@@ -94,6 +94,7 @@ trait NodeReferencing
                 );
             }
         );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

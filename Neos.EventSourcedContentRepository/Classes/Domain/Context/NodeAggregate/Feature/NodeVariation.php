@@ -31,6 +31,7 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCach
 trait NodeVariation
 {
     use NodeVariationInternals;
+    use ConstraintChecks;
 
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
@@ -62,8 +63,7 @@ trait NodeVariation
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getSourceOrigin());
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->getTargetOrigin());
-
-        $parentNodeAggregate = $this->getContentGraph()->findParentNodeAggregateByChildOriginDimensionSpacePoint(
+        $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
             $command->getSourceOrigin()

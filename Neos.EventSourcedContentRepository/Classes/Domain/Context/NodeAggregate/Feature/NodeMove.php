@@ -199,6 +199,7 @@ trait NodeMove
                 );
             }
         );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
@@ -246,21 +247,41 @@ trait NodeMove
             $visibilityConstraints
         );
         $originParent = $originSubgraph->findParentNode($nodeAggregate->getIdentifier());
+        if (is_null($originParent)) {
+            throw new \InvalidArgumentException(
+                'Could not find parent for origin '
+                . $nodeAggregate->getIdentifier()
+                . ' in subgraph ' . json_encode($originSubgraph),
+                1645367254
+            );
+        }
         foreach ($succeedingSiblingAssignments as $coveredDimensionSpacePointHash => $succeedingSiblingAssignment) {
+            /** @var DimensionSpace\DimensionSpacePoint $affectedDimensionSpacePoint */
+            $affectedDimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
             $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
                 $contentStreamIdentifier,
-                $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash],
+                $affectedDimensionSpacePoint,
                 $visibilityConstraints
             );
 
-            $parentNode = $contentSubgraph->findParentNode($succeedingSiblingAssignment->getNodeAggregateIdentifier());
+            $parentNode = $contentSubgraph->findParentNode($succeedingSiblingAssignment->nodeAggregateIdentifier);
+            if (is_null($parentNode)) {
+                throw new \InvalidArgumentException(
+                    'Could not find parent for succeeding sibling '
+                        . $succeedingSiblingAssignment->nodeAggregateIdentifier
+                        . ' in subgraph ' . json_encode($contentSubgraph),
+                    1645367254
+                );
+            }
             if (!$parentNode->getNodeAggregateIdentifier()->equals($originParent->getNodeAggregateIdentifier())) {
+                /** @var DimensionSpace\DimensionSpacePoint $dimensionSpacePoint */
+                $dimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
                 $parents = $parents->add(
                     new NodeVariantAssignment(
                         $parentNode->getNodeAggregateIdentifier(),
                         $parentNode->getOriginDimensionSpacePoint()
                     ),
-                    $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash]
+                    $dimensionSpacePoint
                 );
             }
         }
@@ -334,7 +355,7 @@ trait NodeMove
                 $precedingSibling = $precedingSiblingIdentifier
                     ? $this->findSibling($contentSubgraph, $parentIdentifier, $precedingSiblingIdentifier)
                     : null;
-                if ($precedingSibling) {
+                if ($precedingSiblingIdentifier && $precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblings(
                         $precedingSiblingIdentifier,
                         null,
@@ -378,6 +399,12 @@ trait NodeMove
         if ($parentIdentifier && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
             $parent = $contentSubgraph->findParentNode($siblingIdentifier);
+            if (is_null($parent)) {
+                throw new \InvalidArgumentException(
+                    'Parent ' . $parentIdentifier . ' not found in subgraph ' . json_encode($contentSubgraph),
+                    1645366837
+                );
+            }
             if ($parent->getNodeAggregateIdentifier()->equals($parentIdentifier)) {
                 return $siblingCandidate;
             }
@@ -420,6 +447,7 @@ trait NodeMove
                 }
             }
             if (isset($precedingSiblingCandidates[$i])) {
+                /** @var NodeAggregateIdentifier $precedingSiblingIdentifier can only be the case if not null */
                 if ($precedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
                     \array_splice($precedingSiblingCandidates, $i, 1);
                 }
@@ -459,8 +487,10 @@ trait NodeMove
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
     ): NodeMoveMappings {
         $nodeMoveMappings = [];
-        foreach ($nodeAggregate->getCoveredDimensionSpacePoints()
-                     ->getIntersection($affectedDimensionSpacePoints) as $coveredAffectedDimensionSpacePoint) {
+        $coveredAffectedDimensionSpacePoints = is_null($affectedDimensionSpacePoints)
+            ? $nodeAggregate->getCoveredDimensionSpacePoints()
+            : $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints);
+        foreach ($coveredAffectedDimensionSpacePoints as $coveredAffectedDimensionSpacePoint) {
             $occupiedAffectedDimensionSpacePoint = $nodeAggregate->getOccupationByCovered(
                 $coveredAffectedDimensionSpacePoint
             );

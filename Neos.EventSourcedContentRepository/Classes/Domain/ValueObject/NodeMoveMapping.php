@@ -17,24 +17,15 @@ use Neos\Flow\Annotations as Flow;
  *      depending on covered dimension space point
  * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings,
  *      depending on covered dimension space point
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeMoveMapping
 {
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $movedNodeOrigin;
+    private OriginDimensionSpacePoint $movedNodeOrigin;
 
-    /**
-     * @var NodeVariantAssignments
-     */
-    private $newParentAssignments;
+    private NodeVariantAssignments $newParentAssignments;
 
-    /**
-     * @var NodeVariantAssignments
-     */
-    private $newSucceedingSiblingAssignments;
+    private NodeVariantAssignments $newSucceedingSiblingAssignments;
 
     public function __construct(
         OriginDimensionSpacePoint $movedNodeOrigin,
@@ -46,6 +37,9 @@ final class NodeMoveMapping
         $this->newSucceedingSiblingAssignments = $newSucceedingSiblingAssignments;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(

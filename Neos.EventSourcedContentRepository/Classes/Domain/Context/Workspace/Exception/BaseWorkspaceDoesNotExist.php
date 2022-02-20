@@ -14,13 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
 
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * BaseWorkspaceDoesNotExist
- */
 #[Flow\Proxy(false)]
 final class BaseWorkspaceDoesNotExist extends Exception
 {
+    public static function butWasSupposedTo(WorkspaceName $name): self
+    {
+        return new self(sprintf(
+            'No base workspace exists for given workspace workspace %s',
+            $name
+        ), 1513924882);
+    }
 }

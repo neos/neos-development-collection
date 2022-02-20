@@ -25,6 +25,9 @@ class DimensionAdjustment
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {

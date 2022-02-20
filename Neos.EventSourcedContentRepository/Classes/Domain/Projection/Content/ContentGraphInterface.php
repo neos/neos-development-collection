@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Doctrine\DBAL\DBALException;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -28,24 +29,17 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
  */
 interface ContentGraphInterface
 {
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
-     * @return ContentSubgraphInterface|null
-     */
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
-    ): ?ContentSubgraphInterface;
+    ): ContentSubgraphInterface;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
-     * @throws DBALException
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,

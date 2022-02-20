@@ -9,6 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -51,6 +52,9 @@ class PropertyAdjustment
         $this->contentGraph = $contentGraph;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -64,7 +68,9 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                foreach ($node->getProperties()->serialized() as $propertyKey => $property) {
+                /** @var PropertyCollectionInterface $properties */
+                $properties = $node->getProperties();
+                foreach ($properties->serialized() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
                     // detect obsolete properties
@@ -106,7 +112,7 @@ class PropertyAdjustment
                 // detect missing default values
                 foreach ($nodeType->getDefaultValuesForProperties() as $propertyKey => $defaultValue) {
                     if ($defaultValue instanceof \DateTimeInterface) {
-                        $propertyValue = json_encode($propertyValue);
+                        $defaultValue = json_encode($defaultValue);
                     }
                     if (!array_key_exists($propertyKey, $propertyKeysInNode)) {
                         yield StructureAdjustment::createForNode(
@@ -130,7 +136,7 @@ class PropertyAdjustment
         return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
     }
 
-    protected function addProperty(NodeInterface $node, string $propertyKey, $defaultValue): CommandResult
+    protected function addProperty(NodeInterface $node, string $propertyKey, mixed $defaultValue): CommandResult
     {
         // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
         // so we need to trigger another method beforehand.

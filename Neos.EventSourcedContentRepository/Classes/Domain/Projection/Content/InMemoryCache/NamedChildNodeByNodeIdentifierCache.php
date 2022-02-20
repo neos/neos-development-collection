@@ -27,14 +27,11 @@ final class NamedChildNodeByNodeIdentifierCache
      * first level: Parent Node Identifier
      * Second Level: Node Name
      * Value: Node
-     * @var array
+     * @var array<string,array<string,NodeInterface>>
      */
-    protected $nodes = [];
+    protected array $nodes = [];
 
-    /**
-     * @var bool
-     */
-    protected $isEnabled;
+    protected bool $isEnabled;
 
     public function __construct(bool $isEnabled)
     {

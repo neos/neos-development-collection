@@ -67,8 +67,7 @@ final class ChangeNodeAggregateType implements
     }
 
     /**
-     * @param array $array
-     * @return ChangeNodeAggregateType
+     * @param array<string,mixed> $array
      */
     public static function fromArray(array $array): self
     {
@@ -132,6 +131,9 @@ final class ChangeNodeAggregateType implements
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

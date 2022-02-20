@@ -114,12 +114,11 @@ class Change
     }
 
     /**
-     * @param array $databaseRow
-     * @return static
+     * @param array<string,mixed> $databaseRow
      */
-    public static function fromDatabaseRow(array $databaseRow)
+    public static function fromDatabaseRow(array $databaseRow): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),

@@ -54,11 +54,9 @@ class ContentStreamCommandController extends CommandController
     }
 
     /**
-     * @param string $contentStreamIdentifier
-     * @param int $startSequenceNumber
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function exportCommand(string $contentStreamIdentifier, int $startSequenceNumber = 0)
+    public function exportCommand(string $contentStreamIdentifier, int $startSequenceNumber = 0): void
     {
         $events = $this->contentRepositoryEventStore->load(
             StreamName::fromString($contentStreamIdentifier),
@@ -82,13 +80,12 @@ class ContentStreamCommandController extends CommandController
      * Imports events to a content stream from the given file.
      * Note that the events in the file need to come from the same content stream you import to for now!
      *
-     * @param string $contentStreamIdentifier
-     * @param string $file
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists
      * @throws \Neos\EventSourcing\EventListener\Exception\EventCouldNotBeAppliedException
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function importCommand(string $contentStreamIdentifier, string $file = null)
+    public function importCommand(string $contentStreamIdentifier, string $file = null): void
     {
         if ($file !== null) {
             $fileStream = fopen($file, 'r');
@@ -96,6 +93,9 @@ class ContentStreamCommandController extends CommandController
         } else {
             $fileStream = fopen('php://stdin', 'r');
             $this->outputLine('Reading import data from standard in.');
+        }
+        if (!$fileStream) {
+            throw new \InvalidArgumentException('Failed to open file ' . $file);
         }
         $normalizer = new EventNormalizer(new EventTypeResolver());
 
@@ -167,33 +167,32 @@ class ContentStreamCommandController extends CommandController
      *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
      *       `./flow contentStream:prune`.
      */
-    public function pruneCommand()
+    public function pruneCommand(): void
     {
         $unusedContentStreams = $this->contentStreamPruner->prune();
-
-        if (!count($unusedContentStreams)) {
+        $unusedContentStreamsPresent = false;
+        foreach ($unusedContentStreams as $contentStream) {
+            $this->outputFormatted('Removed %s', [$contentStream]);
+            $unusedContentStreamsPresent = true;
+        }
+        if (!$unusedContentStreamsPresent) {
             $this->outputLine('There are no unused content streams.');
-        } else {
-            foreach ($unusedContentStreams as $contentStream) {
-                $this->outputFormatted('Removed %s', [$contentStream]);
-            }
         }
     }
-
 
     /**
      * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
      */
-    public function pruneRemovedFromEventStreamCommand()
+    public function pruneRemovedFromEventStreamCommand(): void
     {
         $unusedContentStreams = $this->contentStreamPruner->pruneRemovedFromEventStream();
-
-        if (!count($unusedContentStreams)) {
+        $unusedContentStreamsPresent = false;
+        foreach ($unusedContentStreams as $contentStream) {
+            $this->outputFormatted('Removed events for %s', [$contentStream]);
+            $unusedContentStreamsPresent = true;
+        }
+        if (!$unusedContentStreamsPresent) {
             $this->outputLine('There are no unused content streams.');
-        } else {
-            foreach ($unusedContentStreams as $contentStream) {
-                $this->outputFormatted('Removed events for %s', [$contentStream]);
-            }
         }
     }
 }

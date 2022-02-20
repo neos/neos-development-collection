@@ -16,10 +16,7 @@ use Neos\Utility\ObjectAccess;
  */
 class TransformationFactory
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     public function __construct(ObjectManagerInterface $objectManager)
     {
@@ -27,7 +24,7 @@ class TransformationFactory
     }
 
     /**
-     * @param array $transformationConfiguration
+     * @param array<int|string,array<string,mixed>> $transformationConfigurations
      * @throws MigrationException
      */
     public function buildTransformation(array $transformationConfigurations): Transformations
@@ -43,13 +40,23 @@ class TransformationFactory
     /**
      * Builds a transformation object from the given configuration.
      *
-     * @param array $transformationConfiguration
+     * @param array<string,mixed> $transformationConfiguration
      * @throws MigrationException if a given setting is not supported
      */
-    protected function buildTransformationObject(array $transformationConfiguration)
-    {
+    protected function buildTransformationObject(
+        array $transformationConfiguration
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $transformationClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
         $transformation = new $transformationClassName();
+        if (!$transformation instanceof GlobalTransformationInterface
+            && !$transformation instanceof NodeAggregateBasedTransformationInterface
+            && !$transformation instanceof NodeBasedTransformationInterface)
+        {
+            throw new \InvalidArgumentException(
+                'Transformations must implement one of the interfaces, ' . $transformationClassName . ' given.',
+                1645392135
+            );
+        }
 
         if (isset($transformationConfiguration['settings']) && is_array($transformationConfiguration['settings'])) {
             foreach ($transformationConfiguration['settings'] as $settingName => $settingValue) {

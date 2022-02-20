@@ -13,18 +13,17 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 
-/**
- */
+#[Flow\Proxy(false)]
 final class WorkspaceRebaseStatistics
 {
-    protected $totalNumberOfAppliedCommands = 0;
+    protected int $totalNumberOfAppliedCommands = 0;
 
     /**
-     * @var array
+     * @var array<int,array<string,mixed>>
      */
-    protected $errorCommands = [];
-
+    protected array $errorCommands = [];
 
     public function commandRebaseError(string $message, \Exception $cause): void
     {
@@ -49,6 +48,9 @@ final class WorkspaceRebaseStatistics
         return count($this->errorCommands) > 0;
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function getErrors(): array
     {
         return $this->errorCommands;

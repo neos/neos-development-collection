@@ -26,7 +26,11 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
      */
     protected $reflectionService;
 
-    public function normalize($object, string $format = null, array $context = [])
+    /**
+     * @param array<string,mixed> $context
+     * @return array<string,mixed>
+     */
+    public function normalize($object, string $format = null, array $context = []): array
     {
         return [
             '__flow_object_type' => TypeHandling::getTypeForValue($object),
@@ -46,6 +50,9 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
         );
     }
 
+    /**
+     * @param array<string,mixed> $context
+     */
     public function denormalize($data, $type, string $format = null, array $context = [])
     {
         return $this->persistenceManager->getObjectByIdentifier($data['__identifier'], $data['__flow_object_type']);

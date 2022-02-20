@@ -113,10 +113,7 @@ class MigrationCommandHandler
     /**
      * Execute a single "filters / transformation" pair, i.e. a single sub-migration
      *
-     * @param array $migrationDescription
-     * @param ContentStreamIdentifier $contentStreamForReading
-     * @param ContentStreamIdentifier $contentStreamForWriting
-     * @return void
+     * @param array<string,mixed> $migrationDescription
      * @throws MigrationException
      */
     protected function executeSubMigration(

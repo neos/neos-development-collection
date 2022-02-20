@@ -32,53 +32,32 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeAggregateEventPublisher
 {
-    /**
-     * @var EventStore
-     */
-    protected $eventStore;
+    private EventStore $eventStore;
 
     /**
      * safeguard that the "withCommand()" method is never called recursively.
-     * @var bool
      */
-    private $currentlyInCommandClosure = false;
+    private bool $currentlyInCommandClosure = false;
 
-    /**
-     * @var \JsonSerializable
-     */
-    private $command;
+    private ?\JsonSerializable $command = null;
 
     public function __construct(EventStore $eventStore)
     {
         $this->eventStore = $eventStore;
     }
 
-    /**
-     * @param $command
-     * @param $callback
-     * @return mixed
-     */
-    public function withCommand($command, $callback)
+    public function withCommand(\JsonSerializable $command, callable $callback): mixed
     {
         if ($this->currentlyInCommandClosure) {
             throw new \RuntimeException('TODO: withCommand() is not allowed to be called recursively!');
         }
-
-        if (!$command) {
-            throw new \RuntimeException('TODO: withCommand() has to have a command passed in');
-        }
-        if (!$command instanceof \JsonSerializable) {
-            throw new \RuntimeException(sprintf(
-                'withCommand() has to have a command implementing JsonSerializable passed in, given: %s',
-                get_class($command)
-            ), 1547133201);
-        }
         $this->command = $command;
-
         $this->currentlyInCommandClosure = true;
         try {
             $result = $callback();
-            if ($this->command !== null) {
+            /** @var ?\JsonSerializable $commandAfterCallback */
+            $commandAfterCallback = $this->command;
+            if (!is_null($commandAfterCallback)) {
                 // if command has not been reset, we know that publish() or publishMany() has never been called.
                 // Thus, we need to throw an exception; as we are not allowed to loose information.
 
@@ -134,7 +113,6 @@ final class NodeAggregateEventPublisher
                     get_class($event)
                 ));
             }
-
 
             if ($this->command) {
                 $commandPayload = $this->command->jsonSerialize();

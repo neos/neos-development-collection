@@ -9,7 +9,10 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class UriNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    public function normalize($data, string $format = null, array $context = [])
+    /**
+     * @param array<string,mixed> $context
+     */
+    public function normalize($data, string $format = null, array $context = []): string
     {
         return (string)$data;
     }
@@ -19,6 +22,9 @@ final class UriNormalizer implements NormalizerInterface, DenormalizerInterface
         return $data instanceof Uri;
     }
 
+    /**
+     * @param array<string,mixed> $context
+     */
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         return new Uri($data);

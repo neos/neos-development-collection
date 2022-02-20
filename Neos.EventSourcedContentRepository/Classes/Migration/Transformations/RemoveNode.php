@@ -31,14 +31,8 @@ class RemoveNode implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var NodeVariantSelectionStrategyIdentifier|null
-     */
     private ?NodeVariantSelectionStrategyIdentifier $strategy = null;
 
-    /**
-     * @var DimensionSpacePoint|null
-     */
     private ?DimensionSpacePoint $overriddenDimensionSpacePoint = null;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
@@ -46,16 +40,13 @@ class RemoveNode implements NodeBasedTransformationInterface
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
     }
 
-    /**
-     * @param string $strategy
-     */
     public function setStrategy(string $strategy): void
     {
         $this->strategy = NodeVariantSelectionStrategyIdentifier::from($strategy);
     }
 
     /**
-     * @param string $overriddenDimensionSpacePoint
+     * @param array<string,string> $overriddenDimensionSpacePoint
      */
     public function setOverriddenDimensionSpacePoint(array $overriddenDimensionSpacePoint): void
     {
@@ -64,10 +55,6 @@ class RemoveNode implements NodeBasedTransformationInterface
 
     /**
      * Remove the property from the given node.
-     *
-     * @param NodeInterface $node
-     * @param ContentStreamIdentifier $contentStreamForWriting
-     * @return CommandResult
      */
     public function execute(
         NodeInterface $node,
@@ -87,7 +74,8 @@ class RemoveNode implements NodeBasedTransformationInterface
             );
         }
 
-        $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint ?? $node->getOriginDimensionSpacePoint();
+        $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint
+            ?: $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint();
 
         if (!$coveredDimensionSpacePoints->contains($coveredDimensionSpacePoint)) {
             // we are currently in a Node which has other covered dimension space points than the target ones,

@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain;
 
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorCollection;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 
@@ -52,7 +53,7 @@ final class CommandResult
         return new self(DomainEvents::createEmpty(), null);
     }
 
-    public function merge(CommandResult $other): self
+    public function merge(self $other): self
     {
         if ($other->publishedEvents->isEmpty()) {
             // the other side has no published events, we do not need to do anything.
@@ -61,9 +62,11 @@ final class CommandResult
 
         // here, we know the other side is non-empty - so we can simply use the runtime blocker of the other side - as
         // it can be that our own side is empty and has thus no runtime blocker assigned.
+        /** @var RuntimeBlocker $runtimeBlocker */
+        $runtimeBlocker = $other->runtimeBlocker;
         return self::fromPublishedEvents(
             $this->publishedEvents->appendEvents($other->getPublishedEvents()),
-            $other->runtimeBlocker
+            $runtimeBlocker
         );
     }
 
@@ -79,6 +82,12 @@ final class CommandResult
             // if published events are empty, $this->runtimeBlocker is NULL as well. Luckily, we do not need to block
             // if there are no events :-)
             return;
+        }
+        if (is_null($this->runtimeBlocker)) {
+            throw new \RuntimeException(
+                'No runtime blocker specified for CommandResult, but is required for ::blockUntilProjectionsAreUpToDate',
+                1645362901
+            );
         }
         $this->runtimeBlocker->blockUntilProjectionsAreUpToDate($this, $projectorsToBeBlocked);
     }

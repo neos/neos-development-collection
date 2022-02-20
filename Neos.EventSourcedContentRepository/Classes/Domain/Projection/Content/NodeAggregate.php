@@ -46,7 +46,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     private OriginDimensionSpacePointSet $occupiedDimensionSpacePoints;
 
     /**
-     * @var array|NodeInterface[]
+     * @var array<string,NodeInterface>
      */
     private array $nodesByOccupiedDimensionSpacePoint;
 
@@ -56,7 +56,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     private array $coverageByOccupant;
 
     /**
-     * @var array|NodeInterface[]
+     * @var array<string,NodeInterface>
      */
     private array $nodesByCoveredDimensionSpacePoint;
 
@@ -65,7 +65,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     /**
      * This is not a dimension space point set since it is indexed by covered hash and not by member hash
      *
-     * @var array|DimensionSpacePoint[]
+     * @var array<string,OriginDimensionSpacePoint>
      */
     private array $occupationByCovered;
 

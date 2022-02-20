@@ -98,6 +98,7 @@ trait NodeDisabling
                 );
             }
         );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
@@ -160,6 +161,7 @@ trait NodeDisabling
                 );
             }
         );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

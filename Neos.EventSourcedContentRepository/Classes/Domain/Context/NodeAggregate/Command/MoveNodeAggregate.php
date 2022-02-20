@@ -110,6 +110,9 @@ final class MoveNodeAggregate implements
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -170,6 +173,9 @@ final class MoveNodeAggregate implements
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

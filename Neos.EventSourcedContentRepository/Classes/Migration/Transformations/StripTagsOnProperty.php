@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -51,7 +52,18 @@ class StripTagsOnProperty implements NodeBasedTransformationInterface
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult {
         if ($node->hasProperty($this->propertyName)) {
-            $newValue = strip_tags($node->getProperties()->serialized()->getProperty($this->propertyName)->getValue());
+            /** @var PropertyCollectionInterface $properties */
+            $properties = $node->getProperties();
+            /** @var SerializedPropertyValue $serializedPropertyValue safe since NodeInterface::hasProperty */
+            $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
+            $propertyValue = $serializedPropertyValue->getValue();
+            if (!is_string($propertyValue)) {
+                throw new \Exception(
+                    'StripTagsOnProperty can only be applied to properties of type string.',
+                    1645391885
+                );
+            }
+            $newValue = strip_tags($propertyValue);
             return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
                 new SetSerializedNodeProperties(
                     $contentStreamForWriting,
@@ -60,7 +72,7 @@ class StripTagsOnProperty implements NodeBasedTransformationInterface
                     SerializedPropertyValues::fromArray([
                         $this->propertyName => new SerializedPropertyValue(
                             $newValue,
-                            $node->getProperties()->serialized()->getProperty($this->propertyName)->getType()
+                            $serializedPropertyValue->getType()
                         )
                     ]),
                     UserIdentifier::forSystemUser()

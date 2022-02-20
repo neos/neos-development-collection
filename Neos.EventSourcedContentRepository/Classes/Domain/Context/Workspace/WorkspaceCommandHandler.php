@@ -57,13 +57,17 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -220,34 +224,21 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @param PublishWorkspace $command
-     * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceDoesNotExist
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws WorkspaceHasNoBaseWorkspaceName
      */
     public function handlePublishWorkspace(PublishWorkspace $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf(
-                'The workspace %s does not exist',
-                $command->getWorkspaceName()
-            ), 1513924741);
-        }
-        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
-        if ($baseWorkspace === null) {
-            throw new BaseWorkspaceDoesNotExist(sprintf(
-                'The workspace %s (base workspace of %s) does not exist',
-                $workspace->getBaseWorkspaceName(),
-                $command->getWorkspaceName()
-            ), 1513924882);
-        }
+        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
+
         $commandResult = $this->publishContentStream(
             $workspace->getCurrentContentStreamIdentifier(),
             $baseWorkspace->getCurrentContentStreamIdentifier()
@@ -271,7 +262,7 @@ final class WorkspaceCommandHandler
             DecoratedEvent::addIdentifier(
                 new WorkspaceWasPublished(
                     $command->getWorkspaceName(),
-                    $workspace->getBaseWorkspaceName(),
+                    $baseWorkspace->getWorkspaceName(),
                     $newContentStream,
                     $workspace->getCurrentContentStreamIdentifier(),
                     $command->getInitiatingUserIdentifier()
@@ -313,12 +304,14 @@ final class WorkspaceCommandHandler
         foreach ($workspaceContentStream as $eventEnvelope) {
             $event = $eventEnvelope->getDomainEvent();
             if ($event instanceof PublishableToOtherContentStreamsInterface) {
+                /** @var DomainEventInterface $copiedEvent */
+                $copiedEvent = $event->createCopyForContentStream($baseContentStreamIdentifier);
                 $events = $events->appendEvent(
                 // We need to add the event metadata here for rebasing in nested workspace situations
                 // (and for exporting)
                     DecoratedEvent::addIdentifier(
                         DecoratedEvent::addMetadata(
-                            $event->createCopyForContentStream($baseContentStreamIdentifier),
+                            $copiedEvent,
                             $eventEnvelope->getRawEvent()->getMetadata()
                         ),
                         Uuid::uuid4()->toString()
@@ -346,12 +339,12 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @param array $stream
-     * @return ContentStreamWasForked
+     * @param array<int,EventEnvelope> $stream
      * @throws \Exception
      */
     private static function extractSingleForkedContentStreamEvent(array $stream): ContentStreamWasForked
     {
+        /** @var array<int,EventEnvelope> $contentStreamWasForkedEvents */
         $contentStreamWasForkedEvents = array_filter($stream, function (EventEnvelope $eventEnvelope) {
             return $eventEnvelope->getDomainEvent() instanceof ContentStreamWasForked;
         });
@@ -363,19 +356,24 @@ final class WorkspaceCommandHandler
             ));
         }
 
-        if (reset($contentStreamWasForkedEvents)->getDomainEvent() !== reset($stream)->getDomainEvent()) {
+        /** @var EventEnvelope $primaryEventEnvelope cannot be false because there is exactly one event inside */
+        $primaryEventEnvelope = reset($contentStreamWasForkedEvents);
+        /** @var ContentStreamWasForked $primaryDomainEvent */
+        $primaryDomainEvent = $primaryEventEnvelope->getDomainEvent();
+
+        $firstEventEnvelope = reset($stream);
+
+        if (!$firstEventEnvelope || $primaryDomainEvent !== $firstEventEnvelope->getDomainEvent()) {
             throw new \Exception(sprintf(
                 'TODO: stream has to start with a single ContentStreamWasForked event, found %s',
-                get_class(reset($stream)->getDomainEvent())
+                $firstEventEnvelope ? get_class($firstEventEnvelope->getDomainEvent()) : 'nothing'
             ));
         }
 
-        return reset($contentStreamWasForkedEvents)->getDomainEvent();
+        return $primaryDomainEvent;
     }
 
     /**
-     * @param RebaseWorkspace $command
-     * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
@@ -387,22 +385,8 @@ final class WorkspaceCommandHandler
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf(
-                'The source workspace %s does not exist',
-                $command->getWorkspaceName()
-            ), 1513924741);
-        }
-        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
-
-        if ($baseWorkspace === null) {
-            throw new BaseWorkspaceDoesNotExist(sprintf(
-                'The workspace %s (base workspace of %s) does not exist',
-                $workspace->getBaseWorkspaceName(),
-                $command->getWorkspaceName()
-            ), 1513924882);
-        }
+        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
@@ -500,8 +484,7 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @param ContentStreamEventStreamName $workspaceContentStreamName
-     * @return array
+     * @return array<int,object>
      */
     private function extractCommandsFromContentStreamMetadata(
         ContentStreamEventStreamName $workspaceContentStreamName
@@ -530,8 +513,6 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @param $command
-     * @return CommandResult
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws ContentStreamDoesNotExistYet
@@ -541,7 +522,7 @@ final class WorkspaceCommandHandler
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    private function applyCommand($command): CommandResult
+    private function applyCommand(object $command): CommandResult
     {
         // TODO: try catch logic around applyCommand -> blockUntilProjectionsAreUpToDate.
         // TODO: then put it into special error stream; and be sure to ABORT the outer logic correctly!
@@ -582,8 +563,6 @@ final class WorkspaceCommandHandler
     /**
      * This method is like a combined Rebase and Publish!
      *
-     * @param Command\PublishIndividualNodesFromWorkspace $command
-     * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws ContentStreamAlreadyExists
@@ -591,25 +570,12 @@ final class WorkspaceCommandHandler
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
      */
-    public function handlePublishIndividualNodesFromWorkspace(Command\PublishIndividualNodesFromWorkspace $command)
+    public function handlePublishIndividualNodesFromWorkspace(Command\PublishIndividualNodesFromWorkspace $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf(
-                'The source workspace %s does not exist',
-                $command->getWorkspaceName()
-            ), 1513924741);
-        }
-        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
-
-        if ($baseWorkspace === null) {
-            throw new BaseWorkspaceDoesNotExist(sprintf(
-                'No base workspace exists for given workspace %s',
-                $command->getWorkspaceName()
-            ), 1513924882);
-        }
+        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 1) separate commands in two halves - the ones MATCHING the nodes from the command, and the REST
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
@@ -623,6 +589,13 @@ final class WorkspaceCommandHandler
         $remainingCommands = [];
 
         foreach ($originalCommands as $originalCommand) {
+            if (!$originalCommand instanceof MatchableWithNodeAddressInterface) {
+                throw new \Exception(
+                    'Command class ' . get_class($originalCommand) . ' does not implement '
+                        . MatchableWithNodeAddressInterface::class,
+                    1645393655
+                );
+            }
             if ($this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
                 $matchingCommands[] = $originalCommand;
             } else {
@@ -663,6 +636,13 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($remainingCommands as $remainingCommand) {
+            if (!$remainingCommand instanceof RebasableToOtherContentStreamsInterface) {
+                throw new \Exception(
+                    'Command class ' . get_class($remainingCommand) . ' does not implement '
+                        . RebasableToOtherContentStreamsInterface::class,
+                    1645393626
+                );
+            }
             $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))
                 ->blockUntilProjectionsAreUpToDate();
         }
@@ -682,7 +662,7 @@ final class WorkspaceCommandHandler
             DecoratedEvent::addIdentifier(
                 new WorkspaceWasPartiallyPublished(
                     $command->getWorkspaceName(),
-                    $workspace->getBaseWorkspaceName(),
+                    $baseWorkspace->getWorkspaceName(),
                     $remainingContentStream,
                     $workspace->getCurrentContentStreamIdentifier(),
                     $command->getInitiatingUserIdentifier()
@@ -701,42 +681,20 @@ final class WorkspaceCommandHandler
     /**
      * This method is like a Rebase while dropping some modifications!
      *
-     * @param Command\DiscardIndividualNodesFromWorkspace $command
-     * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
-     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
-     * @throws ContentStreamAlreadyExists
-     * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceDoesNotExist
-     * @throws \Exception
+     * @throws WorkspaceHasNoBaseWorkspaceName
+     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function handleDiscardIndividualNodesFromWorkspace(Command\DiscardIndividualNodesFromWorkspace $command)
+    public function handleDiscardIndividualNodesFromWorkspace(Command\DiscardIndividualNodesFromWorkspace $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf(
-                'The source workspace %s does not exist',
-                $command->getWorkspaceName()
-            ), 1513924741);
-        }
-        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
-
-        if ($baseWorkspace === null) {
-            throw new BaseWorkspaceDoesNotExist(sprintf(
-                'No base workspace exists for given workspace workspace %s',
-                $command->getWorkspaceName()
-            ), 1513924882);
-        }
-
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf(
-                'The source workspace %s does not exist',
-                $command->getWorkspaceName()
-            ), 1513924741);
-        }
+        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 1) filter commands, only keeping the ones NOT MATCHING the nodes from the command
         // (i.e. the modifications we want to keep)
@@ -745,10 +703,16 @@ final class WorkspaceCommandHandler
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        /** @var RebasableToOtherContentStreamsInterface[] $commandsToKeep */
         $commandsToKeep = [];
 
         foreach ($originalCommands as $originalCommand) {
+            if (!$originalCommand instanceof MatchableWithNodeAddressInterface) {
+                throw new \Exception(
+                    'Command class ' . get_class($originalCommand) . ' does not implement '
+                    . MatchableWithNodeAddressInterface::class,
+                    1645393476
+                );
+            }
             if (!$this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
                 $commandsToKeep[] = $originalCommand;
             }
@@ -765,6 +729,13 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($commandsToKeep as $commandToKeep) {
+            if (!$commandToKeep instanceof RebasableToOtherContentStreamsInterface) {
+                throw new \Exception(
+                    'Command class ' . get_class($commandToKeep) . ' does not implement '
+                        . RebasableToOtherContentStreamsInterface::class,
+                    1645393476
+                );
+            }
             $this->applyCommand($commandToKeep->createCopyForContentStream($newContentStream))
                 ->blockUntilProjectionsAreUpToDate();
         }
@@ -805,15 +776,16 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @throws ContentStreamAlreadyExists
-     * @throws ContentStreamDoesNotExistYet
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws WorkspaceDoesNotExist
+     * @throws WorkspaceHasNoBaseWorkspaceName
      */
     public function handleDiscardWorkspace(Command\DiscardWorkspace $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
-        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         $newContentStream = $command->getNewContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
@@ -843,5 +815,36 @@ final class WorkspaceCommandHandler
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
         return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
+    private function requireWorkspace(WorkspaceName $workspaceName): Workspace
+    {
+        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        if (is_null($workspace)) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
+
+        return $workspace;
+    }
+
+    /**
+     * @throws WorkspaceHasNoBaseWorkspaceName
+     * @throws BaseWorkspaceDoesNotExist
+     */
+    private function requireBaseWorkspace(Workspace $workspace): Workspace
+    {
+        if (is_null($workspace->getBaseWorkspaceName())) {
+            throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->getWorkspaceName());
+        }
+
+        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+        if ($baseWorkspace === null) {
+            throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->getWorkspaceName());
+        }
+
+        return $baseWorkspace;
     }
 }

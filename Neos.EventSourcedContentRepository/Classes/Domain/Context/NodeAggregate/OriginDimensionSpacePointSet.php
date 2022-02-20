@@ -21,22 +21,25 @@ use Neos\Flow\Annotations as Flow;
  * A set of points in the dimension space, occupied by nodes in a node aggregate
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
+ *
+ * @implements \IteratorAggregate<string,OriginDimensionSpacePoint>
+ * @implements \ArrayAccess<string,OriginDimensionSpacePoint>
  */
 #[Flow\Proxy(false)]
 final class OriginDimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
-     * @var array|OriginDimensionSpacePoint[]
+     * @var array<string,OriginDimensionSpacePoint>
      */
     private array $points;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator<string,OriginDimensionSpacePoint>
      */
     private \ArrayIterator $iterator;
 
     /**
-     * @param array|OriginDimensionSpacePoint[] $points Array of dimension space points
+     * @param array<int|string,OriginDimensionSpacePoint|array<string,string>> $points
      */
     public function __construct(array $points)
     {
@@ -61,14 +64,14 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     {
         $originDimensionSpacePoints = [];
         foreach ($dimensionSpacePointSet->points as $point) {
-            $originDimensionSpacePoints[] = OriginDimensionSpacePoint::fromDimensionSpacePoint($point);
+            $originDimensionSpacePoints[$point->hash] = OriginDimensionSpacePoint::fromDimensionSpacePoint($point);
         }
 
         return new self($originDimensionSpacePoints);
     }
 
     /**
-     * @var array<string,string> $array
+     * @param array<int,array<string,string>> $array
      */
     public static function fromArray(array $array): self
     {
@@ -102,6 +105,9 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         return $this->points;
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function getPointHashes(): array
     {
         return array_keys($this->points);
@@ -114,9 +120,12 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
 
     public function __toString(): string
     {
-        return json_encode($this);
+        return json_encode($this, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * @return array<int,OriginDimensionSpacePoint>
+     */
     public function jsonSerialize(): array
     {
         return array_values($this->points);
@@ -128,29 +137,35 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     }
 
     /**
-     * @return \ArrayIterator|OriginDimensionSpacePoint[]
+     * @return \ArrayIterator<string,OriginDimensionSpacePoint>
      */
     public function getIterator(): \ArrayIterator
     {
         return $this->iterator;
     }
 
-    public function offsetExists($dimensionSpacePointHash): bool
+    /**
+     * @param string $dimensionSpacePointHash
+     */
+    public function offsetExists(mixed $dimensionSpacePointHash): bool
     {
         return isset($this->points[$dimensionSpacePointHash]);
     }
 
-    public function offsetGet($dimensionSpacePointHash): ?OriginDimensionSpacePoint
+    /**
+     * @param string $dimensionSpacePointHash
+     */
+    public function offsetGet(mixed $dimensionSpacePointHash): ?OriginDimensionSpacePoint
     {
         return $this->points[$dimensionSpacePointHash] ?? null;
     }
 
-    public function offsetSet($offset, $value): never
+    public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new \BadMethodCallException('Cannot modify immutable OriginDimensionSpacePointSet', 1643467297);
     }
 
-    public function offsetUnset($offset): never
+    public function offsetUnset(mixed $offset): never
     {
         throw new \BadMethodCallException('Cannot modify immutable OriginDimensionSpacePointSet', 1643467297);
     }

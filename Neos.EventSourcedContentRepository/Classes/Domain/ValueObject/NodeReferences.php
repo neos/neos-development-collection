@@ -16,40 +16,46 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<string,NodeReference>
  */
+#[Flow\Proxy(false)]
 final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array|NodeReference[]
+     * @var array<string,NodeReference>
      */
-    private $values = [];
+    private array $references;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator<string,NodeReference>
      */
-    protected $iterator;
+    protected \ArrayIterator $iterator;
 
-    private function __construct(array $values)
+    /**
+     * @param array<string,NodeReference> $references
+     */
+    private function __construct(array $references)
     {
-        $this->values = $values;
-        $this->iterator = new \ArrayIterator($this->values);
+        $this->references = $references;
+        $this->iterator = new \ArrayIterator($references);
     }
 
-    public function merge(NodeReferences $other): NodeReferences
+    public function merge(self $other): self
     {
-        return new self(array_merge($this->values, $other->getValues()));
+        return new self(array_merge($this->references, $other->getReferences()));
     }
 
     /**
-     * @param SerializedPropertyValue[] values
-     *@return array|SerializedPropertyValue[]
+     * @return array<string,NodeReference>
      */
-    public function getValues(): array
+    public function getReferences(): array
     {
-        return $this->values;
+        return $this->references;
     }
 
+    /**
+     * @param array<string,array<string,mixed>|NodeReference> $nodeReferences
+     */
     public static function fromArray(array $nodeReferences): self
     {
         $values = [];
@@ -59,6 +65,7 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
             } elseif ($nodeReferenceValue instanceof NodeReference) {
                 $values[$nodeReferenceName] = $nodeReferenceValue;
             } else {
+                /** @var mixed $nodeReferenceValue */
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid nodeReferences value. Expected instance of %s, got: %s',
                     NodeReference::class,
@@ -70,53 +77,34 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
         return new self($values);
     }
 
+    /**
+     * @todo what is this supposed to do?
+     */
     public static function fromNodes(Nodes $nodeReferences): self
     {
         $values = [];
-        foreach ($nodeReferences as $nodeReferenceName => $nodeReferenceValue) {
-            if (is_array($nodeReferenceValue)) {
-                $values[$nodeReferenceName] = NodeReference::fromArray($nodeReferenceValue);
-            } elseif ($nodeReferenceValue instanceof NodeReference) {
-                $values[$nodeReferenceName] = $nodeReferenceValue;
-            } else {
-                throw new \InvalidArgumentException(sprintf(
-                    'Invalid nodeReferences value. Expected instance of %s, got: %s',
-                    NodeReference::class,
-                    is_object($nodeReferenceValue)
-                        ? get_class($nodeReferenceValue)
-                        : gettype($nodeReferenceValue)
-                ), 1546524480);
-            }
-        }
 
         return new self($values);
     }
 
     /**
-     * @return SerializedPropertyValue[]|\ArrayIterator<SerializedPropertyValue>
+     * @return \ArrayIterator<string,NodeReference>
      */
     public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->values);
+        return $this->iterator;
     }
 
     public function count(): int
     {
-        return count($this->values);
+        return count($this->references);
     }
 
-    /*public function getPlainValues(): array
-    {
-        $values = [];
-        foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue->getValue();
-        }
-
-        return $values;
-    }*/
-
+    /**
+     * @return array<string,NodeReference>
+     */
     public function jsonSerialize(): array
     {
-        return $this->values;
+        return $this->references;
     }
 }

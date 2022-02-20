@@ -54,7 +54,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         $this->getDatabaseConnection()->exec('TRUNCATE ' . self::TABLE_NAME);
     }
 
-    public function whenContentStreamWasCreated(ContentStreamWasCreated $event)
+    public function whenContentStreamWasCreated(ContentStreamWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
             'contentStreamIdentifier' => $event->getContentStreamIdentifier(),
@@ -62,7 +62,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event)
+    public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         // the content stream is in use now
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
@@ -72,7 +72,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
+    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
         // the content stream is in use now
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
@@ -82,7 +82,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    public function whenContentStreamWasForked(ContentStreamWasForked $event)
+    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
             'contentStreamIdentifier' => $event->getContentStreamIdentifier(),
@@ -91,7 +91,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event)
+    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -106,7 +106,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event)
+    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -121,7 +121,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
+    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -136,7 +136,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
+    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -151,7 +151,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
+    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -166,7 +166,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
+    public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
         $this->updateStateForContentStream(
             $event->getCandidateContentStreamIdentifier(),
@@ -174,7 +174,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event)
+    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
             'removed' => true
@@ -183,8 +183,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-
-    private function updateStateForContentStream(ContentStreamIdentifier $contentStreamIdentifier, string $state)
+    private function updateStateForContentStream(ContentStreamIdentifier $contentStreamIdentifier, string $state): void
     {
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
             'state' => $state,
@@ -196,7 +195,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
     /**
      * @throws \Throwable
      */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

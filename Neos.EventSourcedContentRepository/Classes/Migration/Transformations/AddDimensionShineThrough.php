@@ -58,6 +58,13 @@ class AddDimensionShineThrough implements GlobalTransformationInterface
         ContentStreamIdentifier $contentStreamForReading,
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult {
+        if (is_null($this->from)) {
+            throw new \RuntimeException('Cannot execute ' . self::class . ' without "from".', 1645387439);
+        }
+        if (is_null($this->to)) {
+            throw new \RuntimeException('Cannot execute ' . self::class . ' without "to".', 1645387450);
+        }
+
         return $this->dimensionSpacePointCommandHandler->handleAddDimensionShineThrough(
             new \Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Command\AddDimensionShineThrough(
                 $contentStreamForWriting,

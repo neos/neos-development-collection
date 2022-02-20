@@ -22,13 +22,17 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
  */
 final class ParentNodeIdentifierByChildNodeIdentifierCache
 {
-    protected $parentNodeAggregateIdentifiers = [];
-    protected $nodesWithoutParentNode = [];
+    /**
+     * @var array<string,NodeAggregateIdentifier>
+     */
+    protected array $parentNodeAggregateIdentifiers = [];
 
     /**
-     * @var bool
+     * @var array<string,bool>
      */
-    protected $isEnabled;
+    protected array $nodesWithoutParentNode = [];
+
+    protected bool $isEnabled;
 
     public function __construct(bool $isEnabled)
     {

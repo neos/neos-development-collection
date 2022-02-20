@@ -14,12 +14,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * An assignment of NodeAggregateIdentifiers to NodePaths
  *
  * Usable for predefining NodeAggregateIdentifiers if multiple nodes are to be created simultaneously
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
 {
     /**
@@ -31,6 +33,9 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
      */
     protected array $nodeAggregateIdentifiers = [];
 
+    /**
+     * @param array<string,NodeAggregateIdentifier> $nodeAggregateIdentifiers
+     */
     public function __construct(array $nodeAggregateIdentifiers)
     {
         foreach ($nodeAggregateIdentifiers as $nodePath => $nodeAggregateIdentifier) {
@@ -48,9 +53,12 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
 
     public static function createEmpty(): self
     {
-        return new NodeAggregateIdentifiersByNodePaths([]);
+        return new self([]);
     }
 
+    /**
+     * @param array<string,string> $array
+     */
     public static function fromArray(array $array): self
     {
         $nodeAggregateIdentifiers = [];
@@ -58,7 +66,7 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
             $nodeAggregateIdentifiers[$rawNodePath] = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
         }
 
-        return new NodeAggregateIdentifiersByNodePaths($nodeAggregateIdentifiers);
+        return new self($nodeAggregateIdentifiers);
     }
 
     /**
@@ -88,13 +96,16 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
     }
 
     /**
-     * @return array|NodeAggregateIdentifier[]
+     * @return array<string,NodeAggregateIdentifier>
      */
     public function getNodeAggregateIdentifiers(): array
     {
         return $this->nodeAggregateIdentifiers;
     }
 
+    /**
+     * @return array<string,NodeAggregateIdentifier>
+     */
     public function jsonSerialize(): array
     {
         return $this->nodeAggregateIdentifiers;

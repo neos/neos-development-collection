@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -29,14 +30,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFac
 class NewNodeConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface::class;
+    protected $targetType = NodeInterface::class;
 
     /**
      * @var integer
@@ -55,6 +56,12 @@ class NewNodeConverter extends AbstractTypeConverter
      */
     protected $nodeAddressFactory;
 
+    /**
+     * @param string $source
+     * @param string $targetType
+     * @param array<string,string> $subProperties
+     * @return ?NodeInterface
+     */
     public function convertFrom(
         $source,
         $targetType = null,

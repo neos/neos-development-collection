@@ -89,14 +89,8 @@ trait NodeVariationInternals
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param DimensionSpacePointSet $specializationVisibility
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param array $events
-     * @return array|NodeSpecializationVariantWasCreated[]
+     * @param array<int,DecoratedEvent> $events
+     * @return array<int,DecoratedEvent>
      */
     protected function collectNodeSpecializationVariantsThatWillHaveBeenCreated(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -159,14 +153,8 @@ trait NodeVariationInternals
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param DimensionSpacePointSet $generalizationVisibility
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param array $events
-     * @return array|NodeSpecializationVariantWasCreated[]
+     * @param array<int,DecoratedEvent> $events
+     * @return array<int,DecoratedEvent>
      */
     protected function collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -229,14 +217,8 @@ trait NodeVariationInternals
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param DimensionSpacePointSet $peerVisibility
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param array $events
-     * @return array|NodePeerVariantWasCreated[]
+     * @param array<int,DecoratedEvent> $events
+     * @return array<int,DecoratedEvent>
      */
     protected function collectNodePeerVariantsThatWillHaveBeenCreated(
         ContentStreamIdentifier $contentStreamIdentifier,

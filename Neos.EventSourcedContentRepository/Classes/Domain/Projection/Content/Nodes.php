@@ -35,6 +35,9 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
      */
     private \ArrayIterator $iterator;
 
+    /**
+     * @param iterable<int,NodeInterface> $collection
+     */
     private function __construct(iterable $collection)
     {
         $nodes = [];
@@ -52,6 +55,9 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         $this->iterator = new \ArrayIterator($nodes);
     }
 
+    /**
+     * @param array<int,NodeInterface> $nodes
+     */
     public static function fromArray(array $nodes): self
     {
         return new self($nodes);

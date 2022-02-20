@@ -37,9 +37,7 @@ final class ContentStreamFinder
     protected $client;
 
     /**
-     *
-     * @param WorkspaceName $name
-     * @return ContentStreamIdentifier[]
+     * @return array<int,ContentStreamIdentifier>
      */
     public function findUnusedContentStreams(): iterable
     {
@@ -59,7 +57,7 @@ final class ContentStreamFinder
             [
                 'state' => Connection::PARAM_STR_ARRAY
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $contentStreams = [];
         foreach ($databaseRows as $databaseRow) {
@@ -96,7 +94,7 @@ final class ContentStreamFinder
     }
 
     /**
-     * @return ContentStreamIdentifier[]
+     * @return array<int,ContentStreamIdentifier>
      */
     public function findUnusedAndRemovedContentStreams(): iterable
     {

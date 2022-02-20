@@ -32,10 +32,13 @@ final class RuntimeBlocker
 
     protected ProcessedEventsAwareProjectorCollection $defaultProjectorsToBeBlocked;
 
+    /**
+     * @param iterable<int,ProcessedEventsAwareProjectorInterface> $defaultProjectorsToBeBlocked
+     */
     public function __construct(
         DeferEventPublisher $eventPublisher,
         DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
-        Iterable $defaultProjectorsToBeBlocked
+        iterable $defaultProjectorsToBeBlocked
     ) {
         $this->eventPublisher = $eventPublisher;
         $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
@@ -91,7 +94,9 @@ final class RuntimeBlocker
             if (++$attempts > 300) { // 15 seconds
                 $ids = '';
                 foreach ($events as $event) {
-                    $ids .= '   ' . $event->getIdentifier();
+                    if ($event instanceof DecoratedEvent) {
+                        $ids .= '   ' . $event->getIdentifier();
+                    }
                 }
 
                 throw new \RuntimeException(sprintf(

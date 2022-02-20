@@ -27,7 +27,7 @@ use Neos\Utility\PositionalArraySorter;
 class NodeAccessorChainFactory
 {
     /**
-     * @var array
+     * @var array<string,array<string,int|string>>
      * @Flow\InjectConfiguration(path="nodeAccessorFactories")
      */
     protected $nodeAccessorFactoriesConfiguration;
@@ -62,6 +62,12 @@ class NodeAccessorChainFactory
                 $dimensionSpacePoint,
                 $visibilityConstraints,
                 $nextAccessor
+            );
+        }
+        if (is_null($nextAccessor)) {
+            throw new \Exception(
+                'No node accessor factories were configured, please check the configuration',
+                1645362731
             );
         }
 

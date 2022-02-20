@@ -23,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
@@ -101,11 +102,12 @@ trait NodeRemoval
                 );
             }
         );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
-    protected function requireNodeAggregateNotToBeTethered(NodeAggregate $nodeAggregate)
+    protected function requireNodeAggregateNotToBeTethered(ReadableNodeAggregateInterface $nodeAggregate): void
     {
         if ($nodeAggregate->isTethered()) {
             throw new TetheredNodeAggregateCannotBeRemoved(

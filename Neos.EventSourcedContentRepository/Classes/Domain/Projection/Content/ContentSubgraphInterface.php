@@ -50,11 +50,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
         PropertyName $name = null
     ): Nodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return NodeInterface[]
-     */
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
@@ -178,7 +173,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
-     * @param array $entryNodeAggregateIdentifiers
+     * @param array<int,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param SearchTerm|null $searchTerm
      * @return Nodes

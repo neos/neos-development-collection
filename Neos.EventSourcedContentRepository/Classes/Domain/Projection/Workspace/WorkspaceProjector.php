@@ -46,7 +46,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
     }
 
-    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
+    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
             'workspaceName' => $event->getWorkspaceName(),
@@ -59,7 +59,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event)
+    public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
             'workspaceName' => $event->getWorkspaceName(),
@@ -70,19 +70,19 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event)
+    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
         $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
     }
 
-    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event)
+    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
         $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
     }
 
-    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
+    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
     {
         // TODO: How do we test this method?
         // It's hard to design a BDD testcase failing if this method is commented out...
@@ -99,7 +99,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         $this->markDependentWorkspacesAsOutdated($event->getSourceWorkspaceName());
     }
 
-    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
+    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
         // TODO: How do we test this method?
         // It's hard to design a BDD testcase failing if this method is commented out...
@@ -116,7 +116,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         $this->markDependentWorkspacesAsOutdated($event->getSourceWorkspaceName());
     }
 
-    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
+    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
         $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
@@ -125,7 +125,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         $this->markWorkspaceAsUpToDate($event->getWorkspaceName());
     }
 
-    public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
+    public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
         $this->markWorkspaceAsOutdatedConflict($event->getWorkspaceName());
     }
@@ -185,13 +185,13 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
     public function reset(): void
     {
         parent::reset();
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . self::TABLE_NAME);
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE ' . self::TABLE_NAME);
     }
 
     /**
      * @throws \Throwable
      */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

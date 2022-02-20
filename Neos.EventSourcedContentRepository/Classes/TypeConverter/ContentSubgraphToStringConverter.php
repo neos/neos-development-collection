@@ -25,7 +25,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 class ContentSubgraphToStringConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = [ContentSubgraphInterface::class];
 
@@ -42,9 +42,7 @@ class ContentSubgraphToStringConverter extends AbstractTypeConverter
     /**
      * @param ContentSubgraphInterface $source
      * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return string
+     * @param array<string,mixed> $convertedChildProperties
      */
     public function convertFrom(
         $source,
@@ -52,6 +50,6 @@ class ContentSubgraphToStringConverter extends AbstractTypeConverter
         array $convertedChildProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ): string {
-        return json_encode($source);
+        return json_encode($source, JSON_THROW_ON_ERROR);
     }
 }

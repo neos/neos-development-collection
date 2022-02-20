@@ -184,11 +184,11 @@ final class NodeAggregateCommandHandler
      */
     protected function checkConstraintsImposedByAncestors(Command\ChangeNodeAggregateType $command): void
     {
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier()
         );
-        $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
+        $newNodeType = $this->requireNodeType($command->getNewNodeTypeName());
         foreach ($this->contentGraph->findParentNodeAggregates(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier()
@@ -202,8 +202,7 @@ final class NodeAggregateCommandHandler
             }
             if ($nodeAggregate->getNodeName()
                 && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
-                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName()
-                    !== (string)$command->getNewNodeTypeName()
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())?->getName() !== (string)$command->getNewNodeTypeName()
             ) {
                 throw new NodeConstraintException(
                     'Cannot change type of auto created child node' . $nodeAggregate->getNodeName()
@@ -271,7 +270,7 @@ final class NodeAggregateCommandHandler
                     $grandChildsNodeType = $this->nodeTypeManager->getNodeType(
                         (string)$grandChildAggregate->getNodeTypeName()
                     );
-                    if ($childAggregate->getNodeName() && !$newNodeType->allowsGrandchildNodeType(
+                    if (!$newNodeType->allowsGrandchildNodeType(
                         (string)$childAggregate->getNodeName(),
                         $grandChildsNodeType
                     )) {

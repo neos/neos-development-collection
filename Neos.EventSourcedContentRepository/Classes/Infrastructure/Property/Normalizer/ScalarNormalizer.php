@@ -9,7 +9,11 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    public function normalize($object, string $format = null, array $context = [])
+    /**
+     * @param array<string,mixed> $context
+     * @return int|float|bool|string
+     */
+    public function normalize($object, string $format = null, array $context = []): mixed
     {
         return $object;
     }
@@ -20,6 +24,9 @@ final class ScalarNormalizer implements NormalizerInterface, DenormalizerInterfa
         return TypeHandling::isSimpleType($type) && !TypeHandling::isCollectionType($type);
     }
 
+    /**
+     * @param array<string,mixed> $context
+     */
     public function denormalize($data, $type, string $format = null, array $context = [])
     {
         return $data;

@@ -460,12 +460,12 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 $parentAssignment = $moveMapping->getNewParentAssignments()
                         ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
                 $newParentNodeAggregateIdentifier = $parentAssignment !== null
-                    ? $parentAssignment->getNodeAggregateIdentifier()
+                    ? $parentAssignment->nodeAggregateIdentifier
                     : $node->getParentNodeAggregateIdentifier();
 
                 $succeedingSiblingAssignment = $moveMapping->getNewSucceedingSiblingAssignments()
                         ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
-                $newSucceedingNodeAggregateIdentifier = $succeedingSiblingAssignment?->getNodeAggregateIdentifier();
+                $newSucceedingNodeAggregateIdentifier = $succeedingSiblingAssignment?->nodeAggregateIdentifier;
 
                 $this->moveNode($node, $newParentNodeAggregateIdentifier, $newSucceedingNodeAggregateIdentifier);
             }

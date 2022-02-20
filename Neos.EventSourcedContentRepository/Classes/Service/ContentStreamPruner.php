@@ -44,9 +44,9 @@ class ContentStreamPruner
      *       To remove the deleted Content Streams,
      *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
-     * @return ContentStreamIdentifier[] the removed content streams
+     * @return iterable<int,ContentStreamIdentifier> the identifiers of the removed content streams
      */
-    public function prune(): array
+    public function prune(): iterable
     {
         $unusedContentStreams = $this->contentStreamFinder->findUnusedContentStreams();
 
@@ -71,9 +71,9 @@ class ContentStreamPruner
      *
      *   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
      *
-     * @return ContentStreamIdentifier[] the removed content streams
+     * @return iterable<int,ContentStreamIdentifier> the identifiers of the removed content streams
      */
-    public function pruneRemovedFromEventStream(): array
+    public function pruneRemovedFromEventStream(): iterable
     {
         $removedContentStreams = $this->contentStreamFinder->findUnusedAndRemovedContentStreams();
 
@@ -90,9 +90,6 @@ class ContentStreamPruner
         return $removedContentStreams;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLastCommandResult(): ?CommandResult
     {
         return $this->lastCommandResult;

@@ -23,21 +23,26 @@ use Neos\Flow\Annotations as Flow;
  * This object does not store the types of the values separately, while in {@see SerializedPropertyValues}, the types
  * are stored in the data structure.
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class PropertyValuesToWrite
 {
     /**
-     * @var array|mixed[]
+     * @var array<string,mixed>
      */
-    private array $values = [];
+    private array $values;
 
+    /**
+     * @param array<string,mixed> $values
+     */
     private function __construct(array $values)
     {
         $this->values = $values;
     }
 
+    /**
+     * @param array<string,mixed> $values
+     */
     public static function fromArray(array $values): self
     {
         return new self($values);
@@ -51,7 +56,7 @@ final class PropertyValuesToWrite
         return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
-    public function withValue(string $valueName, $value): self
+    public function withValue(string $valueName, mixed $value): self
     {
         $values = $this->values;
         $values[$valueName] = $value;
@@ -65,7 +70,7 @@ final class PropertyValuesToWrite
     }
 
     /**
-     * @return array|mixed[]
+     * @return array<string,mixed>
      */
     public function getValues(): array
     {

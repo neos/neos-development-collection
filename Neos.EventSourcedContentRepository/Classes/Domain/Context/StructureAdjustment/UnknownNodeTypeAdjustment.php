@@ -46,6 +46,9 @@ class UnknownNodeTypeAdjustment
         return $this->runtimeBlocker;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -60,6 +63,9 @@ class UnknownNodeTypeAdjustment
         return $this->eventStore;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     private function removeAllNodesOfType(NodeTypeName $nodeTypeName): \Generator
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {

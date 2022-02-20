@@ -45,6 +45,9 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
+    /**
+     * @param array<int,array<string,string>> $points
+     */
     public function setPoints(array $points): void
     {
         $this->points = OriginDimensionSpacePointSet::fromArray($points);
@@ -61,7 +64,7 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
             foreach ($this->points as $point) {
                 $variantType = $this->interDimensionalVariationGraph->getVariantType(
                     $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-                    $point
+                    $point->toDimensionSpacePoint()
                 );
                 if ($variantType === VariantType::TYPE_SAME || $variantType === VariantType::TYPE_SPECIALIZATION) {
                     // this is true if the node is a specialization of $point (or if they are equal)

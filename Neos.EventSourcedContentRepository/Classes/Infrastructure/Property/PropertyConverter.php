@@ -83,7 +83,7 @@ final class PropertyConverter
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
     }
 
-    public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue)
+    public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
         if (is_null($serializedPropertyValue->getValue())) {
             return null;

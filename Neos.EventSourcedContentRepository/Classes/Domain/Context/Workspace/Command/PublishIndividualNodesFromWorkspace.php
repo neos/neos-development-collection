@@ -28,7 +28,7 @@ final class PublishIndividualNodesFromWorkspace
     private WorkspaceName $workspaceName;
 
     /**
-     * @var array|NodeAddress[]
+     * @var array<int,NodeAddress>
      */
     private array $nodeAddresses;
 
@@ -55,7 +55,7 @@ final class PublishIndividualNodesFromWorkspace
     private ContentStreamIdentifier $contentStreamIdentifierForRemainingPart;
 
     /**
-     * @param array|NodeAddress[] $nodeAddresses
+     * @param array<int,NodeAddress> $nodeAddresses
      */
     private function __construct(
         WorkspaceName $workspaceName,
@@ -71,11 +71,13 @@ final class PublishIndividualNodesFromWorkspace
         $this->contentStreamIdentifierForRemainingPart = $contentStreamIdentifierForRemainingPart;
     }
 
+    /**
+     * @param array<int,NodeAddress> $nodeAddresses
+     */
     public static function create(
         WorkspaceName $workspaceName,
         array $nodeAddresses,
-        UserIdentifier
-        $initiatingUserIdentifier
+        UserIdentifier $initiatingUserIdentifier
     ): self {
         return new self(
             $workspaceName,
@@ -88,6 +90,7 @@ final class PublishIndividualNodesFromWorkspace
 
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
+     * @param array<int,NodeAddress> $nodeAddresses
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,

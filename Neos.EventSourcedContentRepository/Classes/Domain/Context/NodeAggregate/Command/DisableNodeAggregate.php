@@ -64,7 +64,7 @@ final class DisableNodeAggregate implements
     }
 
     /**
-     * @param array<string,string|array> $array
+     * @param array<string,mixed> $array
      */
     public static function fromArray(array $array): self
     {
@@ -102,6 +102,9 @@ final class DisableNodeAggregate implements
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [

@@ -47,6 +47,9 @@ final class AddDimensionShineThrough implements \JsonSerializable, RebasableToOt
         $this->target = $target;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -71,6 +74,9 @@ final class AddDimensionShineThrough implements \JsonSerializable, RebasableToOt
         return $this->target;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [

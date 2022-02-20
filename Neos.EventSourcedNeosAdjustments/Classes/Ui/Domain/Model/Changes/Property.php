@@ -256,7 +256,7 @@ class Property extends AbstractChange
                         $node->getContentStreamIdentifier(),
                         $node->getNodeAggregateIdentifier(),
                         $node->getOriginDimensionSpacePoint(),
-                        new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
+                        NodeAggregateIdentifierCollection::fromArray($destinationNodeAggregateIdentifiers),
                         PropertyName::fromString($propertyName),
                         $this->getInitiatingUserIdentifier()
                     )

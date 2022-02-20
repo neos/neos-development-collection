@@ -69,6 +69,7 @@ trait TetheredNodeInternals
         foreach ($childNodeAggregates as $childNodeAggregate) {
             $tmp[] = $childNodeAggregate;
         }
+        /** @var array<int,ReadableNodeAggregateInterface> $childNodeAggregates */
         $childNodeAggregates = $tmp;
 
         if (count($childNodeAggregates) === 0) {
@@ -95,6 +96,7 @@ trait TetheredNodeInternals
                 )
             );
         } elseif (count($childNodeAggregates) === 1) {
+            /** @var ReadableNodeAggregateInterface $childNodeAggregate */
             $childNodeAggregate = current($childNodeAggregates);
             if (!$childNodeAggregate->isTethered()) {
                 throw new \RuntimeException(
@@ -104,7 +106,12 @@ trait TetheredNodeInternals
                 );
             }
 
-            $childNodeSource = $childNodeAggregate->getNodes()[0];
+            $childNodeSource = null;
+            foreach ($childNodeAggregate->getNodes() as $node) {
+                $childNodeSource = $node;
+                break;
+            }
+            /** @var NodeInterface $childNodeSource Node aggregates are never empty */
             $events = $this->createEventsForVariations(
                 $parentNode->getContentStreamIdentifier(),
                 $childNodeSource->getOriginDimensionSpacePoint(),

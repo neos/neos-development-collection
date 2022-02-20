@@ -3,6 +3,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Comm
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -11,74 +12,28 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeReferences;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class NodeSubtreeSnapshot implements \JsonSerializable
 {
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
+
+    private NodeTypeName $nodeTypeName;
+
+    private ?NodeName $nodeName;
+
+    private NodeAggregateClassification $nodeAggregateClassification;
+
+    private SerializedPropertyValues $propertyValues;
+
+    private NodeReferences $nodeReferences;
+
     /**
-     * @var NodeAggregateIdentifier
+     * @var array<int,self>
      */
-    private $nodeAggregateIdentifier;
+    private array $childNodes;
 
     /**
-     * @var NodeTypeName
-     */
-    private $nodeTypeName;
-
-    /**
-     * @var NodeName
-     */
-    private $nodeName;
-
-    /**
-     * @var NodeAggregateClassification
-     */
-    private $nodeAggregateClassification;
-
-    /**
-     * @var SerializedPropertyValues
-     */
-    private $propertyValues;
-
-    /**
-     * @var NodeReferences
-     */
-    private $nodeReferences;
-
-    /**
-     * @var array|NodeSubtreeSnapshot[]
-     */
-    private $childNodes;
-
-    // TODO: use accessor here??
-    public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, NodeInterface $sourceNode): self
-    {
-        $childNodes = [];
-        foreach ($subgraph->findChildNodes($sourceNode->getNodeAggregateIdentifier()) as $sourceChildNode) {
-            $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
-        }
-
-        return new self(
-            $sourceNode->getNodeAggregateIdentifier(),
-            $sourceNode->getNodeTypeName(),
-            $sourceNode->getNodeName(),
-            $sourceNode->getClassification(),
-            $sourceNode->getProperties()->serialized(),
-            NodeReferences::fromNodes($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
-            $childNodes
-        );
-    }
-
-    /**
-     * NodeToInsert constructor.
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeName|null $nodeName
-     * @param NodeAggregateClassification $nodeAggregateClassification
-     * @param SerializedPropertyValues $propertyValues
-     * @param NodeReferences $nodeReferences
-     * @param array|NodeSubtreeSnapshot[] $childNodes
+     * @param array<int,self> $childNodes
      */
     private function __construct(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -96,7 +51,6 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
                 );
             }
         }
-
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
@@ -106,68 +60,67 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
         $this->childNodes = $childNodes;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
+    // TODO: use accessor here??
+    public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, NodeInterface $sourceNode): self
+    {
+        $childNodes = [];
+        foreach ($subgraph->findChildNodes($sourceNode->getNodeAggregateIdentifier()) as $sourceChildNode) {
+            $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
+        }
+        /** @var PropertyCollectionInterface $properties */
+        $properties = $sourceNode->getProperties();
+
+        return new self(
+            $sourceNode->getNodeAggregateIdentifier(),
+            $sourceNode->getNodeTypeName(),
+            $sourceNode->getNodeName(),
+            $sourceNode->getClassification(),
+            $properties->serialized(),
+            NodeReferences::fromNodes($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
+            $childNodes
+        );
+    }
+
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeTypeName
-     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return NodeName
-     */
     public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }
 
-    /**
-     * @return NodeAggregateClassification
-     */
     public function getNodeAggregateClassification(): NodeAggregateClassification
     {
         return $this->nodeAggregateClassification;
     }
 
-    /**
-     * @return SerializedPropertyValues
-     */
     public function getPropertyValues(): SerializedPropertyValues
     {
         return $this->propertyValues;
     }
 
-    /**
-     * @return NodeReferences
-     */
     public function getNodeReferences(): NodeReferences
     {
         return $this->nodeReferences;
     }
 
     /**
-     * @return array|NodeSubtreeSnapshot[]
+     * @return array<int,self>
      */
-    public function getChildNodesToInsert()
+    public function getChildNodesToInsert(): array
     {
         return $this->childNodes;
     }
 
     /**
-     * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @return array<string,mixed>
      */
     public function jsonSerialize(): array
     {
@@ -190,6 +143,9 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
         }
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         $childNodes = [];
@@ -200,7 +156,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
         return new self(
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
-            NodeName::fromString($array['nodeName']),
+            isset($array['nodeName']) ? NodeName::fromString($array['nodeName']) : null,
             NodeAggregateClassification::from($array['nodeAggregateClassification']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
             NodeReferences::fromArray($array['nodeReferences']),

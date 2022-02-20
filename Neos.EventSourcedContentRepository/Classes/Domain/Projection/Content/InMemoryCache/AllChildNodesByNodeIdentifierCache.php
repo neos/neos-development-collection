@@ -22,18 +22,21 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
  */
 final class AllChildNodesByNodeIdentifierCache
 {
-    protected $childNodes = [];
-
     /**
-     * @var bool
+     * @var array<string,array<string,array<int,NodeInterface>>>
      */
-    protected $isEnabled;
+    protected array $childNodes = [];
+
+    protected bool $isEnabled;
 
     public function __construct(bool $isEnabled)
     {
         $this->isEnabled = $isEnabled;
     }
 
+    /**
+     * @param array<int,NodeInterface> $allChildNodes
+     */
     public function add(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         ?NodeTypeConstraints $nodeTypeConstraints,
@@ -63,6 +66,9 @@ final class AllChildNodesByNodeIdentifierCache
         return isset($this->childNodes[$key][$nodeTypeConstraintsSerialized]) || isset($this->childNodes[$key]['*']);
     }
 
+    /**
+     * @return array<int,NodeInterface>
+     */
     public function findChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null,

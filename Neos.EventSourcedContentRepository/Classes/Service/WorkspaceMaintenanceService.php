@@ -6,6 +6,7 @@ namespace Neos\EventSourcedContentRepository\Service;
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -42,7 +43,9 @@ class WorkspaceMaintenanceService
      *       To remove the deleted Content Streams,
      *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
-     * @return array the removed content streams
+     * @return array<string,Workspace> the workspaces of the removed content streams
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist
      * @throws \Neos\EventSourcedContentRepository\Exception

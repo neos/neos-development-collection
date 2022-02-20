@@ -87,6 +87,9 @@ final class RemoveNodeAggregate implements
         );
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -152,6 +155,9 @@ final class RemoveNodeAggregate implements
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

@@ -61,9 +61,16 @@ class ChangeProjector implements ProjectorInterface
     }
 
 
-    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
+    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
+        // @todo properly handle this
+        if (is_null($event->getNodeMoveMappings())) {
+            throw new \Exception(
+                'Could not apply NodeAggregateWasMoved to change projection due to missing nodeMoveMappings.',
+                1645382694
+            );
+        }
         $mapping = iterator_to_array($event->getNodeMoveMappings());
 
         $this->markAsMoved(
@@ -73,7 +80,7 @@ class ChangeProjector implements ProjectorInterface
         );
     }
 
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
         $this->markAsChanged(
             $event->getContentStreamIdentifier(),
@@ -82,7 +89,7 @@ class ChangeProjector implements ProjectorInterface
         );
     }
 
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event)
+    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
         $this->markAsChanged(
             $event->getContentStreamIdentifier(),
@@ -91,7 +98,7 @@ class ChangeProjector implements ProjectorInterface
         );
     }
 
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
             $this->markAsChanged(
@@ -102,7 +109,7 @@ class ChangeProjector implements ProjectorInterface
         }
     }
 
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
             $this->markAsChanged(
@@ -115,7 +122,7 @@ class ChangeProjector implements ProjectorInterface
 
     // TODO: Node Creation
 
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
+    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
@@ -172,7 +179,7 @@ class ChangeProjector implements ProjectorInterface
         });
     }
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeStatement(
@@ -293,10 +300,7 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
     }
 
-    /**
-     * @param callable $operations
-     */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

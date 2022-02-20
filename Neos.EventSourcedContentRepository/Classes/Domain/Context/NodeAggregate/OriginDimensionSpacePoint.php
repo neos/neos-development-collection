@@ -47,6 +47,9 @@ final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
         return self::$instances[$hash];
     }
 
+    /**
+     * @param array<string,string> $data
+     */
     public static function fromArray(array $data): self
     {
         return self::instance($data);
@@ -75,7 +78,9 @@ final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
     {
         $coordinates = [];
         foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
-            $coordinates[$dimensionName] = reset($rawDimensionValues);
+            /** @var string $primaryDimensionValue */
+            $primaryDimensionValue = reset($rawDimensionValues);
+            $coordinates[$dimensionName] = $primaryDimensionValue;
         }
 
         return self::instance($coordinates);

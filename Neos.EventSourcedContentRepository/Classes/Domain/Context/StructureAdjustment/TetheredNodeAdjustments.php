@@ -72,6 +72,9 @@ class TetheredNodeAdjustments
         return $this->runtimeBlocker;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -143,7 +146,7 @@ class TetheredNodeAdjustments
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "'
-                            . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.',
+                            . $tetheredNodeAggregate->getNodeName() . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
@@ -194,6 +197,9 @@ class TetheredNodeAdjustments
         }
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     private function ensureNodeIsTethered(NodeInterface $node): \Generator
     {
         if (!$node->isTethered()) {
@@ -205,6 +211,9 @@ class TetheredNodeAdjustments
         }
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     private function ensureNodeIsOfType(NodeInterface $node, NodeType $expectedNodeType): \Generator
     {
         if ($node->getNodeTypeName()->getValue() !== $expectedNodeType->getName()) {

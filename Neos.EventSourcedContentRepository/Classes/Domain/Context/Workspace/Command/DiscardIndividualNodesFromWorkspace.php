@@ -54,6 +54,9 @@ final class DiscardIndividualNodesFromWorkspace
         $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
 
+    /**
+     * @param array<int,NodeAddress> $nodeAddresses
+     */
     public static function create(
         WorkspaceName $workspaceName,
         array $nodeAddresses,
@@ -69,6 +72,7 @@ final class DiscardIndividualNodesFromWorkspace
 
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
+     * @param array<int,NodeAddress> $nodeAddresses
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,

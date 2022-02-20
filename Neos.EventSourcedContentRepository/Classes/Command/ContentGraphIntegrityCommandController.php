@@ -42,13 +42,16 @@ final class ContentGraphIntegrityCommandController extends CommandController
                 break;
             case self::OUTPUT_MODE_LOG:
                 $now = new \DateTimeImmutable();
+                if (!defined('FLOW_PATH_DATA')) {
+                    throw new \Exception('Flow data path is undefined.', 1645393269);
+                }
                 $fileName = FLOW_PATH_DATA . 'Logs/ContentGraphIntegrityReport_' . $now->format('YmdHis') . '.log';
                 touch($fileName);
                 $fileContent = '';
                 if (empty($result->getErrors())) {
                     $fileContent = 'The content graph showed no integrity violations.';
                 } else {
-                    foreach ($result as $error) {
+                    foreach ($result->getErrors() as $error) {
                         $fileContent .= $error->getMessage() . "\n";
                     }
                 }

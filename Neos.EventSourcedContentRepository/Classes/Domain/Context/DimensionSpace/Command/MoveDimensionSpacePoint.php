@@ -43,6 +43,9 @@ final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOth
         $this->target = $target;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -67,6 +70,9 @@ final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOth
         return $this->target;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [

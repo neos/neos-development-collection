@@ -15,6 +15,8 @@ namespace Neos\EventSourcedContentRepository\Infrastructure\Property;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\PositionalArraySorter;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -24,8 +26,8 @@ use Symfony\Component\Serializer\Serializer;
 final class PropertyConversionSerializerFactory
 {
     /**
-     * @var array
      * @Flow\InjectConfiguration(path="propertyConverters")
+     * @var array<int,class-string>
      */
     protected array $propertyConvertersConfiguration;
 
@@ -36,7 +38,15 @@ final class PropertyConversionSerializerFactory
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
-            $normalizers[] = new $propertyConverterConfiguration['className'];
+            $normalizer = new $propertyConverterConfiguration['className'];
+            if (!$normalizer instanceof NormalizerInterface) {
+                throw new \InvalidArgumentException(
+                    'Serializers can only be created of ' . NormalizerInterface::class
+                        . ', ' . get_class($normalizer) . ' given.',
+                    1645386698
+                );
+            }
+            $normalizers[] = $normalizer;
         }
 
         return new Serializer($normalizers);

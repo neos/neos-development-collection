@@ -40,8 +40,7 @@ class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
 
     /**
      * TODO build
-     *
-     * @var array|NodeAddress[]
+     * @var array<int,NodeAddress>
      */
     private array $discardedNodeAddresses;
 
@@ -55,6 +54,7 @@ class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
         $this->newContentStreamIdentifier = $newContentStreamIdentifier;
         $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->discardedNodeAddresses = [];
     }
 
     public function getWorkspaceName(): WorkspaceName
@@ -75,5 +75,13 @@ class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    /**
+     * @return array<int,NodeAddress>
+     */
+    public function getDiscardedNodeAddresses(): array
+    {
+        return $this->discardedNodeAddresses;
     }
 }

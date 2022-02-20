@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
@@ -71,13 +72,15 @@ class RenameProperty implements NodeBasedTransformationInterface
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult {
         if ($node->hasProperty($this->oldPropertyName)) {
+            /** @var PropertyCollectionInterface $properties */
+            $properties = $node->getProperties();
             return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
                 new SetSerializedNodeProperties(
                     $contentStreamForWriting,
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
                     SerializedPropertyValues::fromArray([
-                        $this->newPropertyName => $node->getProperties()->serialized()
+                        $this->newPropertyName => $properties->serialized()
                             ->getProperty($this->oldPropertyName),
                         $this->oldPropertyName => null
                     ]),

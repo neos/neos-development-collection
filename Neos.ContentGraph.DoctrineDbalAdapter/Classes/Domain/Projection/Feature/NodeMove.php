@@ -68,7 +68,7 @@ trait NodeMove
                             $newParentNodes[$coveredDimensionSpacePoint->hash] = $this->projectionContentGraph
                                 ->findNodeInAggregate(
                                     $event->getContentStreamIdentifier(),
-                                    $newParentAssignment->getNodeAggregateIdentifier(),
+                                    $newParentAssignment->nodeAggregateIdentifier,
                                     $coveredDimensionSpacePoint
                                 );
                             $affectedHierarchyDimensionSpacePoints[] = $coveredDimensionSpacePoint;
@@ -92,8 +92,8 @@ trait NodeMove
                         $newSucceedingSiblingNodes[$coveredDimensionSpacePointHash]
                             = $this->projectionContentGraph->findNodeByIdentifiers(
                                 $event->getContentStreamIdentifier(),
-                                $newSucceedingSiblingAssignment->getNodeAggregateIdentifier(),
-                                $newSucceedingSiblingAssignment->getOriginDimensionSpacePoint()
+                                $newSucceedingSiblingAssignment->nodeAggregateIdentifier,
+                                $newSucceedingSiblingAssignment->originDimensionSpacePoint
                             );
                     }
 

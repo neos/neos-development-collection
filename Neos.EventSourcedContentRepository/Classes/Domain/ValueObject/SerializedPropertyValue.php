@@ -18,39 +18,29 @@ use Neos\Flow\Annotations as Flow;
  * "Raw" / Serialized property value as saved in the event log // in projections.
  *
  * This means: "value" must be a simple PHP data type (no objects allowed!)
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class SerializedPropertyValue implements \JsonSerializable
 {
     /**
-     * @var int|float|string|bool|array
+     * @var int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null
      */
-    private $value;
+    private int|float|string|bool|array|\ArrayObject|null $value;
+
+    private string $type;
 
     /**
-     * @var string
+     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
      */
-    private $type;
-
-    /**
-     * @param mixed $value
-     * @param string $type
-     */
-    public function __construct($value, string $type)
+    public function __construct(int|float|string|bool|array|\ArrayObject|null $value, string $type)
     {
-        if (!is_scalar($value) && !is_array($value) && !is_null($value)) {
-            // TODO: check that array does not contain nested objects...
-            $exceptionMessage = 'Property value must not contain any objects, contained ' . gettype($value);
-            if (is_object($value)) {
-                $exceptionMessage .= ' - object type: ' . get_class($value);
-            }
-            throw new \InvalidArgumentException($exceptionMessage, 1641555254);
-        }
         $this->value = $value;
         $this->type = $type;
     }
 
+    /**
+     * @param array<string,mixed> $valueAndType
+     */
     public static function fromArray(array $valueAndType): self
     {
         if (!array_key_exists('value', $valueAndType)) {
@@ -60,25 +50,25 @@ final class SerializedPropertyValue implements \JsonSerializable
             throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
         }
 
-        return new static($valueAndType['value'], $valueAndType['type']);
+        return new self($valueAndType['value'], $valueAndType['type']);
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
     /**
-     * @return mixed
+     * @return int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null
      */
-    public function getValue()
+    public function getValue(): int|float|string|bool|array|\ArrayObject|null
     {
         return $this->value;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -87,8 +77,8 @@ final class SerializedPropertyValue implements \JsonSerializable
         ];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->value . ' (' . $this->type . ')';
+        return json_encode($this->value, JSON_THROW_ON_ERROR) . ' (' . $this->type . ')';
     }
 }

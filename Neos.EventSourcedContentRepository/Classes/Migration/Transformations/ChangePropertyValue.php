@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -134,10 +135,20 @@ class ChangePropertyValue implements NodeBasedTransformationInterface
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult {
         if ($node->hasProperty($this->propertyName)) {
-            $currentProperty = $node->getProperties()->serialized()->getProperty($this->propertyName);
+            /** @var PropertyCollectionInterface $properties */
+            $properties = $node->getProperties();
+            $currentProperty = $properties->serialized()->getProperty($this->propertyName);
+            /** @var SerializedPropertyValue $currentProperty safe since NodeInterface::hasProperty */
+            $value = $currentProperty->getValue();
+            if (!is_string($value) && !is_array($value)) {
+                throw new \Exception(
+                    'ChangePropertyValue can only be executed on properties with serialized type string or array.',
+                    1645391685
+                );
+            }
             $newValueWithReplacedCurrentValue = str_replace(
                 $this->currentValuePlaceholder,
-                $currentProperty->getValue(),
+                $value,
                 $this->newSerializedValue
             );
             $newValueWithReplacedSearch = str_replace($this->search, $this->replace, $newValueWithReplacedCurrentValue);

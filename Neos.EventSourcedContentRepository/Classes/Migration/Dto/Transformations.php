@@ -14,7 +14,6 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 final class Transformations
 {
-
     /**
      * @var GlobalTransformationInterface[]
      */
@@ -30,6 +29,11 @@ final class Transformations
      */
     protected array $nodeBasedTransformations = [];
 
+    /**
+     * @codingStandardsIgnoreStart
+     * @param array<int|string,GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface> $transformationObjects
+     * @codingStandardsIgnoreEnd
+     */
     public function __construct(array $transformationObjects)
     {
         foreach ($transformationObjects as $transformationObject) {
@@ -40,6 +44,7 @@ final class Transformations
             } elseif ($transformationObject instanceof NodeBasedTransformationInterface) {
                 $this->nodeBasedTransformations[] = $transformationObject;
             } else {
+                /** @var mixed $transformationObject */
                 throw new \InvalidArgumentException(sprintf(
                     'Transformation object must implement either %s, %s or %s. Given: %s',
                     GlobalTransformationInterface::class,
@@ -67,7 +72,6 @@ final class Transformations
     {
         return count($this->nodeBasedTransformations) > 0;
     }
-
 
     public function containsMoreThanOneTransformationType(): bool
     {

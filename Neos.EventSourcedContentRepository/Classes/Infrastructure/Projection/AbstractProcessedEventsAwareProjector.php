@@ -14,7 +14,7 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
     private bool $assumeProjectorRunsSynchronously = false;
 
     /**
-     * @var array|string[]
+     * @var array<int,string>
      */
     private array $processedEventIdentifiers = [];
 
@@ -55,7 +55,7 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
                     get_class($event)
                 ), 1550314769);
             }
-            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
+            if (!is_null($event->getIdentifier()) && !$this->processedEventsCache->has(md5($event->getIdentifier()))) {
                 return false;
             }
         }

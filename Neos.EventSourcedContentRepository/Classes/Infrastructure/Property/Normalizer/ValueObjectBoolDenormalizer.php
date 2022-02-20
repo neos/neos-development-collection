@@ -7,6 +7,9 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 final class ValueObjectBoolDenormalizer implements DenormalizerInterface
 {
+    /**
+     * @param array<string,mixed> $context
+     */
     public function denormalize($data, $type, string $format = null, array $context = [])
     {
         return $type::fromBool($data);

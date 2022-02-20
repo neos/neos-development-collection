@@ -51,6 +51,9 @@ final class CreateNodeVariant implements \JsonSerializable
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -87,6 +90,9 @@ final class CreateNodeVariant implements \JsonSerializable
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [

@@ -29,12 +29,9 @@ class StructureAdjustment extends Message
     private string $type;
 
     /**
-     * Constructs this error
-     *
      * @param string $message An english error message which is used if no other error message can be resolved
      * @param integer|null $code A unique error code
-     * @param array $arguments Array of arguments to be replaced in message
-     * @param \Closure|null $adjustment
+     * @param array<string,mixed> $arguments Array of arguments to be replaced in message
      * @api
      */
     private function __construct(

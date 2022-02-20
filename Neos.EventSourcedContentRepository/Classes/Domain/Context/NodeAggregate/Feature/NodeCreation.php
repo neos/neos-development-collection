@@ -47,6 +47,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValu
 use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyType;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
 
@@ -106,9 +107,6 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateRootNodeAggregateWithNode $command
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @return DomainEvents
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -294,7 +292,8 @@ trait NodeCreation
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
 
-        foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
+        foreach ($descendantNodeAggregateIdentifiers
+                     ->getNodeAggregateIdentifiers() as $descendantNodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $command->getContentStreamIdentifier(),
                 $descendantNodeAggregateIdentifier
@@ -307,7 +306,6 @@ trait NodeCreation
             function () use (
                 $command,
                 $nodeType,
-                $parentNodeAggregate,
                 $coveredDimensionSpacePoints,
                 $descendantNodeAggregateIdentifiers,
                 &$events
@@ -336,10 +334,6 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @param SerializedPropertyValues $initialPropertyValues
-     * @return DomainEvents
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -379,14 +373,6 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
-     * @param NodeType $nodeType
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
-     * @param DomainEvents $events
-     * @param NodePath|null $nodePath
-     * @return DomainEvents
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
      * @throws \Neos\Flow\Property\Exception
@@ -436,15 +422,6 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $nodeName
-     * @param SerializedPropertyValues $initialPropertyValues
-     * @param NodeAggregateIdentifier|null $precedingNodeAggregateIdentifier
-     * @return DomainEvents
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

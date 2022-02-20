@@ -66,6 +66,9 @@ class DisallowedChildNodeAdjustment
         return $this->runtimeBlocker;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -109,7 +112,9 @@ class DisallowedChildNodeAdjustment
 
                 $allowedByGrandparent = false;
                 $grandparentNodeType = null;
-                if ($grandparentNode != null && $parentNode->isTethered()) {
+                if ($parentNode !== null && $grandparentNode != null
+                    && $parentNode->isTethered() && !is_null($parentNode->getNodeName()))
+                {
                     $grandparentNodeType = $this->loadNodeType($grandparentNode->getNodeTypeName());
                     if ($grandparentNodeType !== null) {
                         $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
@@ -121,6 +126,9 @@ class DisallowedChildNodeAdjustment
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
                     $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregate->getIdentifier());
+                    if (is_null($node)) {
+                        continue;
+                    }
 
                     $message = sprintf(
                         '

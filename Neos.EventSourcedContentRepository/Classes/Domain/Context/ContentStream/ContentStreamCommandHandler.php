@@ -141,7 +141,7 @@ final class ContentStreamCommandHandler
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamAlreadyExists
      */
-    protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier)
+    protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier): void
     {
         if ($this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
             throw new ContentStreamAlreadyExists(
@@ -155,7 +155,7 @@ final class ContentStreamCommandHandler
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier)
+    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier): void
     {
         if (!$this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
             throw new ContentStreamDoesNotExistYet(

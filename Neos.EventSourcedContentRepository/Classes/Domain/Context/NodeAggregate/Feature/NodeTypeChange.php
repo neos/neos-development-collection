@@ -108,13 +108,12 @@ trait NodeTypeChange
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
-     * @param ChangeNodeAggregateType $command
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function handleChangeNodeAggregateType(ChangeNodeAggregateType $command)
+    public function handleChangeNodeAggregateType(ChangeNodeAggregateType $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -151,7 +150,7 @@ trait NodeTypeChange
         match ($command->getStrategy()) {
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH
                 => $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE => null
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE, null => null
         };
 
         /**************
@@ -216,7 +215,8 @@ trait NodeTypeChange
                         );
                         if ($tetheredNode === null) {
                             $tetheredNodeAggregateIdentifier = $command->getTetheredDescendantNodeAggregateIdentifiers()
-                                ->getNodeAggregateIdentifier(NodePath::fromString((string)$tetheredNodeName));
+                                ?->getNodeAggregateIdentifier(NodePath::fromString((string)$tetheredNodeName))
+                                ?: NodeAggregateIdentifier::create();
                             $events = $events->appendEvents($this->createEventsForMissingTetheredNode(
                                 $nodeAggregate,
                                 $node,
@@ -237,7 +237,6 @@ trait NodeTypeChange
                 );
             }
         );
-
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
@@ -434,7 +433,8 @@ trait NodeTypeChange
                 $coveredDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
-            if ($subgraph->findParentNode($childNodeAggregate->getIdentifier())->getNodeAggregateIdentifier()
+            $parentNode = $subgraph->findParentNode($childNodeAggregate->getIdentifier());
+            if ($parentNode && $parentNode->getNodeAggregateIdentifier()
                     ->equals($parentNodeAggregate->getIdentifier())
             ) {
                 $points[] = $coveredDimensionSpacePoint;

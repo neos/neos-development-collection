@@ -52,7 +52,7 @@ class ChangeNodeType implements NodeAggregateBasedTransformationInterface
         $this->newType = $newType;
     }
 
-    public function setForceDeleteNonMatchingChildren(bool $forceDeleteNonMatchingChildren)
+    public function setForceDeleteNonMatchingChildren(bool $forceDeleteNonMatchingChildren): void
     {
         $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = $forceDeleteNonMatchingChildren
             ? NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE

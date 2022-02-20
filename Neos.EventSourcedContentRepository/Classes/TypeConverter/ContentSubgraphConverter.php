@@ -35,7 +35,7 @@ class ContentSubgraphConverter extends AbstractTypeConverter
     protected $contentGraph;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = ['string'];
 
@@ -50,8 +50,9 @@ class ContentSubgraphConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
+     * @param string $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      */
     public function convertFrom(
         mixed $source,

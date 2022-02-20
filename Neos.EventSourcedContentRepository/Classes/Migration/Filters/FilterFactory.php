@@ -17,10 +17,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  */
 class FilterFactory
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     public function __construct(ObjectManagerInterface $objectManager)
     {
@@ -28,7 +25,7 @@ class FilterFactory
     }
 
     /**
-     * @param array $filterConfigurations
+     * @param array<int,array<string,mixed>> $filterConfigurations
      * @throws MigrationException
      */
     public function buildFilterConjunction(array $filterConfigurations): Filters
@@ -42,14 +39,19 @@ class FilterFactory
     }
 
     /**
-     * @param array $filterConfiguration
-     * @return FilterInterface|DoctrineFilterInterface
+     * @param array<string,mixed> $filterConfiguration
      * @throws MigrationException
      */
-    protected function constructFilterObject($filterConfiguration)
+    protected function constructFilterObject(array $filterConfiguration): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $filterClassName = $this->resolveFilterClass($filterConfiguration['type']);
         $filter = new $filterClassName;
+        if (!$filter instanceof NodeAggregateBasedFilterInterface && !$filter instanceof NodeBasedFilterInterface) {
+            throw new \InvalidArgumentException(
+                'Given filter ' . $filter . ' does not implement NodeAggregateBasedFilterInterface or NodeBasedFilterInterface.',
+                1645391476
+            );
+        }
         foreach ($filterConfiguration['settings'] as $propertyName => $propertyValue) {
             $setterName = 'set' . ucfirst($propertyName);
             if (method_exists($filter, $setterName)) {
@@ -71,11 +73,9 @@ class FilterFactory
      * and otherwise searching in this package (so filters delivered in Neos.ContentRepository can be used
      * by simply giving the class name without namespace).
      *
-     * @param string $name
-     * @return string
      * @throws MigrationException
      */
-    protected function resolveFilterClass($name)
+    protected function resolveFilterClass(string $name): string
     {
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
         if ($resolvedObjectName !== null) {

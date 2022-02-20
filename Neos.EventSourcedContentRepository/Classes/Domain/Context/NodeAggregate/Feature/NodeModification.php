@@ -46,10 +46,11 @@ trait NodeModification
 
     public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
-        $nodeTypeName = $this->contentGraph->findNodeAggregateByIdentifier(
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier
-        )->getNodeTypeName();
+        );
+        $nodeTypeName = $nodeAggregate->getNodeTypeName();
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
@@ -99,6 +100,7 @@ trait NodeModification
                 $events
             );
         });
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

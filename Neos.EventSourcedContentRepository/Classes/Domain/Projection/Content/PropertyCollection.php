@@ -28,8 +28,14 @@ final class PropertyCollection implements PropertyCollectionInterface
      */
     private SerializedPropertyValues $serializedPropertyValues;
 
+    /**
+     * @var array<string,mixed>
+     */
     private array $deserializedPropertyValues;
 
+    /**
+     * @var \ArrayIterator<string,mixed>
+     */
     private \ArrayIterator $iterator;
 
     private PropertyConverter $propertyConverter;
@@ -57,9 +63,12 @@ final class PropertyCollection implements PropertyCollectionInterface
             return null;
         }
         if (!isset($this->deserializedPropertyValues[$offset])) {
-            $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
-                $this->serializedPropertyValues->getProperty($offset)
-            );
+            $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
+            if (!is_null($serializedProperty)) {
+                $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
+                    $serializedProperty
+                );
+            }
         }
 
         return $this->deserializedPropertyValues[$offset];
@@ -75,6 +84,9 @@ final class PropertyCollection implements PropertyCollectionInterface
         throw new \RuntimeException("Do not use!");
     }
 
+    /**
+     * @return \ArrayIterator<string,mixed>
+     */
     public function getIterator(): \ArrayIterator
     {
         return $this->iterator;

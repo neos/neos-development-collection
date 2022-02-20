@@ -103,12 +103,11 @@ final class NodeDuplicationCommandHandler
     }
 
     /**
-     * @param CopyNodesRecursively $command
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function handleCopyNodesRecursively(CopyNodesRecursively $command)
+    public function handleCopyNodesRecursively(CopyNodesRecursively $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -176,7 +175,7 @@ final class NodeDuplicationCommandHandler
         $events = DomainEvents::createEmpty();
         $this->nodeAggregateEventPublisher->withCommand(
             $command,
-            function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints, &$events) {
+            function () use ($command, $coveredDimensionSpacePoints, &$events) {
                 $this->createEventsForNodeToInsert(
                     $command->getContentStreamIdentifier(),
                     $command->getTargetDimensionSpacePoint(),
@@ -206,7 +205,7 @@ final class NodeDuplicationCommandHandler
     private function requireNewNodeAggregateIdentifiersToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
-    ) {
+    ): void {
         foreach ($nodeAggregateIdentifierMapping->getAllNewNodeAggregateIdentifiers() as $nodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregateToNotExist($contentStreamIdentifier, $nodeAggregateIdentifier);
         }
@@ -218,19 +217,19 @@ final class NodeDuplicationCommandHandler
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
-        NodeName $targetNodeName,
+        ?NodeName $targetNodeName,
         Command\Dto\NodeSubtreeSnapshot $nodeToInsert,
         NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
         UserIdentifier $initiatingUserIdentifier,
         DomainEvents &$events
-    ) {
+    ): void {
         $events = $events->appendEvent(
             DecoratedEvent::addIdentifier(
                 new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
                     $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
                         $nodeToInsert->getNodeAggregateIdentifier()
-                    ),
+                    ) ?: NodeAggregateIdentifier::create(),
                     $nodeToInsert->getNodeTypeName(),
                     $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
@@ -253,7 +252,7 @@ final class NodeDuplicationCommandHandler
                 // the just-inserted node becomes the new parent node Identifier
                 $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
                     $nodeToInsert->getNodeAggregateIdentifier()
-                ),
+                ) ?: NodeAggregateIdentifier::create(),
                 // $childNodesToInsert is already in the correct order; so appending only is fine.
                 null,
                 $childNodeToInsert->getNodeName(),

@@ -175,19 +175,18 @@ class Workspace
         return $this->workspaceOwner;
     }
 
-
-
     /**
      * Checks if this workspace is a user's personal workspace
-     *
-     * @return boolean
      * @api
      */
-    public function isPersonalWorkspace()
+    public function isPersonalWorkspace(): bool
     {
         return $this->workspaceOwner !== null;
     }
 
+    /**
+     * @param array<string,string> $row
+     */
     public static function fromDatabaseRow(array $row): self
     {
         $workspace = new Workspace();
@@ -198,6 +197,7 @@ class Workspace
         $workspace->workspaceOwner = $row['workspaceowner'];
         $workspace->currentContentStreamIdentifier = $row['currentcontentstreamidentifier'];
         $workspace->status = $row['status'];
+
         return $workspace;
     }
 }

@@ -31,9 +31,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class CopyNodesRecursively implements
     \JsonSerializable,
     MatchableWithNodeAddressInterface,
@@ -140,7 +139,9 @@ final class CopyNodesRecursively implements
         );
     }
 
-
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -197,6 +198,9 @@ final class CopyNodesRecursively implements
         return $this->nodeAggregateIdentifierMapping;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -219,6 +223,7 @@ final class CopyNodesRecursively implements
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->targetDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
+                && !is_null($targetNodeAggregateIdentifier)
                 && $targetNodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }

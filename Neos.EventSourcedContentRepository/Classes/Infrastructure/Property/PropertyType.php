@@ -148,7 +148,7 @@ final class PropertyType
 
     public function isArrayOf(): bool
     {
-        return preg_match(self::PATTERN_ARRAY_OF, $this->value);
+        return (bool)preg_match(self::PATTERN_ARRAY_OF, $this->value);
     }
 
     public function isDate(): bool
@@ -171,7 +171,7 @@ final class PropertyType
         return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
     }
 
-    public function isMatchedBy($propertyValue): bool
+    public function isMatchedBy(mixed $propertyValue): bool
     {
         if (is_null($propertyValue)) {
             return true;
