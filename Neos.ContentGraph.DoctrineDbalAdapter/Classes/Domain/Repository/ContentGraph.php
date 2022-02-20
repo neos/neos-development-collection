@@ -56,15 +56,10 @@ final class ContentGraph implements ContentGraphInterface
     protected $nodeFactory;
 
     /**
-     * @var array|ContentSubgraphInterface[]
+     * @var array<string,ContentSubgraphInterface>
      */
-    protected $subgraphs;
+    private array $subgraphs = [];
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return ContentSubgraphInterface|null
-     */
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
@@ -150,10 +145,13 @@ final class ContentGraph implements ContentGraphInterface
             throw new \RuntimeException('Root Node Aggregate not found');
         }
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+        /** @var NodeAggregate $nodeAggregate The factory will return a NodeAggregate since the array is not empty */
+        $nodeAggregate = $this->nodeFactory->mapNodeRowsToNodeAggregate(
             [$nodeRow],
             Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions()
         );
+
+        return $nodeAggregate;
     }
 
     public function findNodeAggregatesByType(

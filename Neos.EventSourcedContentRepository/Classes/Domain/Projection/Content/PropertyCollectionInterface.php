@@ -17,6 +17,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
 
 /**
  * In the mid-term, this interface should be merged to the parent interface
+ *
+ * @extends \ArrayAccess<string,mixed>
+ * @extends \IteratorAggregate<string,mixed>
  */
 interface PropertyCollectionInterface extends
     \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface

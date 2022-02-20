@@ -14,7 +14,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ForwardCompatibility\Result;
+use Doctrine\DBAL\ForwardCompatibility\DriverResultStatement;
+use Doctrine\DBAL\ForwardCompatibility\DriverStatement;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -25,26 +26,30 @@ use Doctrine\DBAL\ForwardCompatibility\Result;
  */
 final class SqlQueryBuilder
 {
+    protected string $query = '';
 
     /**
-     * @var string
+     * @var array<string,mixed>
      */
-    protected $query = '';
+    protected array $parameters = [];
 
-    protected $parameters = [];
-    protected $types = [];
+    /**
+     * @var array<string,int|string>
+     */
+    protected array $types = [];
 
-    public function addToQuery($queryPart, string $markerToReplaceInQuery = null)
+    public function addToQuery(string $queryPart, string $markerToReplaceInQuery = null): self
     {
         if ($markerToReplaceInQuery !== null) {
             $this->query = str_replace($markerToReplaceInQuery, $queryPart, $this->query);
         } else {
             $this->query .= ' ' . $queryPart;
         }
+
         return $this;
     }
 
-    public function parameter($parameterName, $parameterValue, $parameterType = null)
+    public function parameter(string $parameterName, mixed $parameterValue, string|int $parameterType = null): self
     {
         $this->parameters[$parameterName] = $parameterValue;
 
@@ -56,11 +61,10 @@ final class SqlQueryBuilder
     }
 
     /**
-     * @param Connection $connection
-     * @return Result
      * @throws \Doctrine\DBAL\Exception
+     * @return DriverStatement<int,array<string,mixed>>|DriverResultStatement<int,array<string,mixed>>
      */
-    public function execute(Connection $connection): Result
+    public function execute(Connection $connection): DriverStatement|DriverResultStatement
     {
         return $connection->executeQuery($this->query, $this->parameters, $this->types);
     }

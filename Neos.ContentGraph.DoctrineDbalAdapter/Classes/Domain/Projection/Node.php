@@ -22,7 +22,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
@@ -30,48 +29,19 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollect
  */
 final class Node implements NodeInterface
 {
-    protected ContentStreamIdentifier $contentStreamIdentifier;
-
-    protected NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    protected OriginDimensionSpacePoint $originDimensionSpacePoint;
-
-    protected NodeTypeName $nodeTypeName;
-
-    protected NodeType $nodeType;
-
-    protected ?NodeName $nodeName;
-
-    protected NodeAggregateClassification $classification;
-
-    protected PropertyCollection $properties;
-
-    protected DimensionSpacePoint $dimensionSpacePoint;
-
-    protected VisibilityConstraints $visibilityConstraints;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        NodeTypeName $nodeTypeName,
-        NodeType $nodeType,
-        ?NodeName $nodeName,
-        PropertyCollectionInterface $propertyCollection,
-        NodeAggregateClassification $classification,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints
+        private ContentStreamIdentifier $contentStreamIdentifier,
+        private NodeAggregateIdentifier $nodeAggregateIdentifier,
+        private OriginDimensionSpacePoint $originDimensionSpacePoint,
+        private NodeTypeName $nodeTypeName,
+        private NodeType $nodeType,
+        private ?NodeName $nodeName,
+        /** @var PropertyCollectionInterface<string,mixed> $properties */
+        private PropertyCollectionInterface $properties,
+        private NodeAggregateClassification $classification,
+        private DimensionSpacePoint $dimensionSpacePoint,
+        private VisibilityConstraints $visibilityConstraints
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->nodeType = $nodeType;
-        $this->nodeName = $nodeName;
-        $this->properties = $propertyCollection;
-        $this->classification = $classification;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->visibilityConstraints = $visibilityConstraints;
     }
 
     public function getClassification(): NodeAggregateClassification
@@ -125,6 +95,9 @@ final class Node implements NodeInterface
         return $this->nodeName;
     }
 
+    /**
+     * @return PropertyCollectionInterface<string,mixed>
+     */
     public function getProperties(): PropertyCollectionInterface
     {
         return $this->properties;
@@ -133,11 +106,10 @@ final class Node implements NodeInterface
     /**
      * Returns the specified property.
      *
-     * @param string $propertyName Name of the property
-     * @return mixed value of the property
+     * @param string $propertyName
      * @api
      */
-    public function getProperty($propertyName)
+    public function getProperty($propertyName): mixed
     {
         return $this->properties[$propertyName];
     }
@@ -171,8 +143,8 @@ final class Node implements NodeInterface
 
     public function equals(NodeInterface $other): bool
     {
-        return $this->getContentStreamIdentifier()->equals($other->getContentStreamIdentifier())
-            && $this->getDimensionSpacePoint()->equals($other->getDimensionSpacePoint())
+        return $this->getContentStreamIdentifier() === $other->getContentStreamIdentifier()
+            && $this->getDimensionSpacePoint() === $other->getDimensionSpacePoint()
             && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
     }
 }

@@ -34,14 +34,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 {
     private DbalClient $client;
 
-    private ContentGraphInterface $contentGraph;
-
     public function __construct(
-        DbalClient $client,
-        ContentGraphInterface $contentGraph
+        DbalClient $client
     ) {
         $this->client = $client;
-        $this->contentGraph = $contentGraph;
     }
 
     /**
@@ -655,13 +651,16 @@ WHERE
         return new DimensionSpacePointSet($records);
     }
 
-
+    /**
+     * @return array<int,NodeAggregateIdentifier>
+     * @throws \Doctrine\DBAL\Exception | \Doctrine\DBAL\Driver\Exception
+     */
     protected function findProjectedNodeAggregateIdentifiersInContentStream(
         ContentStreamIdentifier $contentStreamIdentifier
     ): array {
         $records = $this->client->getConnection()->executeQuery(
             'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         return array_map(function (array $record) {
             return NodeAggregateIdentifier::fromString($record['nodeaggregateidentifier']);

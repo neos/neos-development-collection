@@ -177,7 +177,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
             $likeParameter = '%' . trim(json_encode(
                 UnicodeFunctions::strtolower($searchTerm->getTerm()),
-                JSON_UNESCAPED_UNICODE
+                JSON_UNESCAPED_UNICODE + JSON_THROW_ON_ERROR
             ), '"') . '%';
 
             $query
@@ -281,13 +281,13 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             );
         }
 
-        if ($limit === null && $offset === null) {
+        //if ($limit === null && $offset === null) { @todo reenable once this is supported
             $cache->add(
                 $parentNodeAggregateIdentifier,
                 $nodeTypeConstraints,
                 $result
             );
-        }
+        //}
 
         return Nodes::fromArray($result);
     }
@@ -349,7 +349,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         VisibilityConstraints $visibilityConstraints,
         string $aliasOfNodeInQuery = 'n',
         string $aliasOfHierarchyEdgeInQuery = 'h',
-        $markerToReplaceInQuery = null
+        string $markerToReplaceInQuery = null
     ): SqlQueryBuilder {
         // TODO: make QueryBuilder immutable
         if (!$visibilityConstraints->isDisabledContentShown()) {
@@ -701,19 +701,16 @@ WHERE
                     $this->getDimensionSpacePoint(),
                     $this->visibilityConstraints
                 );
-                if ($node) {
-                    $cache->add(
-                        $parentNodeAggregateIdentifier,
-                        $edgeName,
-                        $node
-                    );
-                    $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
-                        $node->getNodeAggregateIdentifier(),
-                        $node
-                    );
-
-                    return $node;
-                }
+                $cache->add(
+                    $parentNodeAggregateIdentifier,
+                    $edgeName,
+                    $node
+                );
+                $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
+                    $node->getNodeAggregateIdentifier(),
+                    $node
+                );
+                return $node;
             }
         }
 
@@ -901,7 +898,9 @@ WHERE
         $cache = $this->inMemoryCache->getNodePathCache();
 
         if ($cache->contains($nodeAggregateIdentifier)) {
-            return $cache->get($nodeAggregateIdentifier);
+            /** @var NodePath $nodePath */
+            $nodePath = $cache->get($nodeAggregateIdentifier);
+            return $nodePath;
         }
 
         $result = $this->getDatabaseConnection()->executeQuery(
@@ -944,6 +943,9 @@ WHERE
         return $nodePath;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -953,10 +955,7 @@ WHERE
     }
 
     /**
-     * @param array $entryNodeAggregateIdentifiers
-     * @param int $maximumLevels
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @return mixed|void
+     * @param array<int|string,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
@@ -1099,12 +1098,8 @@ order by level asc, position asc;')
     }
 
     /**
-     * @param array $entryNodeAggregateIdentifiers
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param ContentRepository\Projection\Content\SearchTerm|null $searchTerm
-     * @return Nodes
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @param array<int|string,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findDescendants(

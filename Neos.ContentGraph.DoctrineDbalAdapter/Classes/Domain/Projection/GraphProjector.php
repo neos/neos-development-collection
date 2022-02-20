@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;
@@ -44,6 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectionManager;
@@ -128,10 +130,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param RootNodeAggregateWithNodeWasCreated $event
      * @throws \Throwable
      */
-    final public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event)
+    final public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $dimensionSpacePoint = DimensionSpacePoint::fromArray([]);
@@ -158,10 +159,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param Event\NodeAggregateWithNodeWasCreated $event
      * @throws \Throwable
      */
-    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
+    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $this->createNodeWithHierarchy(
@@ -187,10 +187,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param Event\NodeAggregateNameWasChanged $event
      * @throws \Throwable
      */
-    final public function whenNodeAggregateNameWasChanged(Event\NodeAggregateNameWasChanged $event)
+    final public function whenNodeAggregateNameWasChanged(Event\NodeAggregateNameWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('
@@ -213,10 +212,6 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     /**
      * Copy the restriction edges from the parent Node to the newly created child node;
      * so that newly created nodes inherit the visibility constraints of the parent.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
      * @throws \Doctrine\DBAL\DBALException
      */
     private function connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
@@ -224,7 +219,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
-    ) {
+    ): void {
         // TODO: still unsure why we need an "INSERT IGNORE" here;
         // normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
@@ -256,16 +251,6 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param SerializedPropertyValues $propertyDefaultValuesAndTypes
-     * @param NodeAggregateClassification $nodeAggregateClassification
-     * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
-     * @param NodeName|null $nodeName
      * @throws \Doctrine\DBAL\DBALException
      */
     private function createNodeWithHierarchy(
@@ -457,10 +442,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param ContentStreamWasForked $event
      * @throws \Throwable
      */
-    public function whenContentStreamWasForked(ContentStreamWasForked $event)
+    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -519,7 +503,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
         });
     }
 
-    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event)
+    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -566,10 +550,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param NodePropertiesWereSet $event
      * @throws \Throwable
      */
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
@@ -579,13 +562,12 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param NodeReferencesWereSet $event
      * @throws \Throwable
      */
-    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event)
+    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
+            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) {
             });
 
             $nodeAnchorPoint = $this->projectionContentGraph
@@ -614,10 +596,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param NodeAggregateWasDisabled $event
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here;
@@ -665,9 +646,9 @@ insert ignore into neos_contentgraph_restrictionrelation
     )
 
     select
-        "' . (string)$event->getContentStreamIdentifier() . '" as contentstreamidentifier,
+        "' . $event->getContentStreamIdentifier() . '" as contentstreamidentifier,
         dimensionspacepointhash,
-        "' . (string)$event->getNodeAggregateIdentifier() . '" as originnodeidentifier,
+        "' . $event->getNodeAggregateIdentifier() . '" as originnodeidentifier,
         nodeaggregateidentifier as affectednodeaggregateidentifier
     from tree
 )
@@ -766,10 +747,9 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param NodeAggregateWasEnabled $event
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
@@ -794,6 +774,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin()->toDimensionSpacePoint()
             );
+            if (is_null($sourceNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
 
             $specializedNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
@@ -844,11 +827,17 @@ insert ignore into neos_contentgraph_restrictionrelation
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin()->toDimensionSpacePoint()
             );
+            if (is_null($sourceNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin()
             );
+            if (is_null($sourceParentNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
+            }
             $generalizedNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
                 $event->getGeneralizationOrigin()
@@ -887,8 +876,13 @@ insert ignore into neos_contentgraph_restrictionrelation
                 $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
                     $sourceNode->relationAnchorPoint,
                     $event->getContentStreamIdentifier(),
-                    new DimensionSpacePointSet([$event->getSourceOrigin()])
+                    new DimensionSpacePointSet([$event->getSourceOrigin()->toDimensionSpacePoint()])
                 )[$event->getSourceOrigin()->hash] ?? null;
+                if (is_null($ingoingSourceHierarchyRelation)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
+                        get_class($event)
+                    );
+                }
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well,
@@ -898,6 +892,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                         $sourceParentNode->nodeAggregateIdentifier,
                         $unassignedDimensionSpacePoint
                     );
+                    if (is_null($generalizationParentNode)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+                    }
 
                     $this->copyHierarchyRelationToDimensionSpacePoint(
                         $ingoingSourceHierarchyRelation,
@@ -918,10 +915,9 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param Event\NodePeerVariantWasCreated $event
      * @throws \Throwable
      */
-    public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event)
+    public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             // Do the peer variant creation itself
@@ -930,11 +926,17 @@ insert ignore into neos_contentgraph_restrictionrelation
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin()->toDimensionSpacePoint()
             );
+            if (is_null($sourceNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin()
             );
+            if (is_null($sourceParentNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
+            }
             $peerNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
                 $event->getPeerOrigin()
@@ -977,6 +979,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                     $sourceParentNode->nodeAggregateIdentifier,
                     $coveredDimensionSpacePoint
                 );
+                if (is_null($peerParentNode)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+                }
 
                 $this->connectHierarchy(
                     $event->getContentStreamIdentifier(),
@@ -1055,7 +1060,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         return $copy;
     }
 
-    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event)
+    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
@@ -1076,13 +1081,10 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param $event
-     * @param callable $operations
-     * @return mixed
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    protected function updateNodeWithCopyOnWrite($event, callable $operations)
+    protected function updateNodeWithCopyOnWrite(DomainEventInterface $event, callable $operations): mixed
     {
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:
@@ -1095,14 +1097,31 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
                 break;
             default:
-                if (method_exists($event, 'getNodeAggregateIdentifier')) {
+                if (method_exists($event, 'getNodeAggregateIdentifier')
+                    && method_exists($event, 'getOriginDimensionSpacePoint')
+                    && method_exists($event, 'getContentStreamIdentifier')) {
                     $anchorPoint = $this->projectionContentGraph
                         ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                             $event->getNodeAggregateIdentifier(),
                             $event->getOriginDimensionSpacePoint(),
                             $event->getContentStreamIdentifier()
                         );
+                } else {
+                    throw new \InvalidArgumentException(
+                        'Cannot update node with copy on write for events of type '
+                            . get_class($event) . ' since they provide no NodeAggregateIdentifier, '
+                            . 'OriginDimensionSpacePoint or ContentStreamIdentifier',
+                        1645303167
+                    );
                 }
+        }
+        if (is_null($anchorPoint)) {
+            throw new \InvalidArgumentException(
+                'Cannot update node with copy on write since no anchor point could be resolved for node '
+                    . $event->getNodeAggregateIdentifier() . ' in content stream '
+                    . $event->getContentStreamIdentifier(),
+                1645303332
+            );
         }
 
         return $this->updateNodeRecordWithCopyOnWrite(
@@ -1116,7 +1135,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         ContentStreamIdentifier $contentStreamIdentifierWhereWriteOccurs,
         NodeRelationAnchorPoint $anchorPoint,
         callable $operations
-    ) {
+    ): mixed {
         $contentStreamIdentifiers = $this->projectionContentGraph
             ->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPoint);
         if (count($contentStreamIdentifiers) > 1) {
@@ -1125,6 +1144,7 @@ insert ignore into neos_contentgraph_restrictionrelation
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
 
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
+            /** @var NodeRecord $copiedNode The anchor point appears in a content stream, so there must be a node */
             $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
             $copiedNode->relationAnchorPoint = NodeRelationAnchorPoint::create();
             $result = $operations($copiedNode);
@@ -1198,7 +1218,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         ]);
     }
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
             // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
@@ -1270,7 +1290,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         });
     }
 
-    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event)
+    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
             // 1) hierarchy relations
@@ -1334,7 +1354,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     /**
      * @throws \Throwable
      */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

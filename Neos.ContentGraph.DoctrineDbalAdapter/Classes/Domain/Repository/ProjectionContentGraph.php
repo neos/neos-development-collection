@@ -539,9 +539,8 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
-     * @return array
-     * @throws DBALException
+     * @return array<int,ContentStreamIdentifier>
+     * @throws \Doctrine\DBAL\Driver\Exception|\Doctrine\DBAL\Exception
      */
     public function getAllContentStreamIdentifiersAnchorPointIsContainedIn(
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
@@ -554,7 +553,7 @@ class ProjectionContentGraph
             [
                 'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
             ]
-        )->fetchAll() as $row) {
+        )->fetchAllAssociative() as $row) {
             $contentStreamIdentifiers[] = ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
         }
 
@@ -635,8 +634,7 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param array $rawData
-     * @return HierarchyRelation
+     * @param array<string,string> $rawData
      */
     protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {

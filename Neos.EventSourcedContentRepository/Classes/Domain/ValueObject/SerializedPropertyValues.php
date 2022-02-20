@@ -23,23 +23,33 @@ use Neos\Flow\Annotations as Flow;
  * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
  * because we treat NULL and "not set" the same from an API perspective.
  *
- * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<string,SerializedPropertyValue>
  */
+#[Flow\Proxy(false)]
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array|SerializedPropertyValue[]
+     * @var array<string,SerializedPropertyValue>
      */
-    private array $values = [];
+    private array $values;
 
+    /**
+     * @var \ArrayIterator<string,SerializedPropertyValue>
+     */
     protected \ArrayIterator $iterator;
 
+    /**
+     * @param array<string,SerializedPropertyValue>
+     */
     private function __construct(array $values)
     {
         $this->values = $values;
         $this->iterator = new \ArrayIterator($this->values);
     }
 
+    /**
+     * @param array<string,mixed> $propertyValues
+     */
     public static function fromArray(array $propertyValues): self
     {
         $values = [];
@@ -94,10 +104,10 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         }
     }
 
-    public function merge(SerializedPropertyValues $other): SerializedPropertyValues
+    public function merge(self $other): self
     {
         // here, we skip null values
-        return new SerializedPropertyValues(array_filter(
+        return new self(array_filter(
             array_merge($this->values, $other->getValues()),
             fn ($value) => $value !== null
         ));
@@ -118,8 +128,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @param SerializedPropertyValue[] values
-     * @return array|SerializedPropertyValue[]
+     * @return array<string,SerializedPropertyValue>
      */
     public function getValues(): array
     {
@@ -127,11 +136,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return SerializedPropertyValue[]|\ArrayIterator<SerializedPropertyValue>
+     * @return \ArrayIterator<string,SerializedPropertyValue>|SerializedPropertyValue[]
      */
     public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->values);
+        return $this->iterator;
     }
 
     public function count(): int
@@ -139,6 +148,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return count($this->values);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getPlainValues(): array
     {
         $values = [];
@@ -149,6 +161,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return $values;
     }
 
+    /**
+     * @return array<string,SerializedPropertyValue>
+     */
     public function jsonSerialize(): array
     {
         return $this->values;

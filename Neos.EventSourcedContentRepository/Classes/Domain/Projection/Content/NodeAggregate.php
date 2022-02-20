@@ -51,7 +51,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     private array $nodesByOccupiedDimensionSpacePoint;
 
     /**
-     * @var array|DimensionSpacePointSet[]
+     * @var array<string,DimensionSpacePointSet>
      */
     private array $coverageByOccupant;
 
@@ -83,10 +83,10 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      * @param NodeName|null $nodeName
      * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints
      * @param array|NodeInterface[] $nodesByOccupiedDimensionSpacePoint
-     * @param array|DimensionSpacePointSet[] $coverageByOccupant
+     * @param array<string,DimensionSpacePointSet> $coverageByOccupant
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param array|NodeInterface[] $nodesByCoveredDimensionSpacePoint
-     * @param array|DimensionSpacePoint[] $occupationByCovered
+     * @param array<string,OriginDimensionSpacePoint> $occupationByCovered
      * @param DimensionSpacePointSet $disabledDimensionSpacePoints
      */
     public function __construct(
