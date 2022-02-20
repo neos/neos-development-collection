@@ -3,9 +3,10 @@
 namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
 
 #[Flow\Proxy(false)]
-class DslExpressionValueAst extends PathValueAst
+class DslExpressionValue extends AbstractPathValue
 {
     public function __construct(
         /** @psalm-readonly */
@@ -13,4 +14,9 @@ class DslExpressionValueAst extends PathValueAst
         /** @psalm-readonly */
         public string $code
     ) {}
+
+    public function visit(AstNodeVisitor $visitor, ...$args)
+    {
+        return $visitor->visitDslExpressionValue($this, ...$args);
+    }
 }

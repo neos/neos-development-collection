@@ -5,9 +5,6 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class StringValueAst extends PathValueAst
+abstract class AbstractPathSegment extends AbstractNode
 {
-    public function __construct(
-        public string $value
-    ) {}
 }

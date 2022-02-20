@@ -5,9 +5,6 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class SimpleValueAst extends PathValueAst
+abstract class AbstractOperation extends AbstractNode
 {
-    public function __construct(
-        public mixed $value
-    ) {}
 }

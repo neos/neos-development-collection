@@ -2,25 +2,25 @@
 
 namespace Neos\Fusion\Core\ObjectTreeParser;
 
-use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\BlockAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFileAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionObjectValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\IncludeAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\MetaPathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectDefinitionAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathPartAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementListAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignmentAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopyAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnsetAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\Block;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionObjectValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\IncludeStatement;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\MetaPathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectStatement;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPath;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementList;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnset;
 use Neos\Fusion;
 
 class ObjectTreeAstVisitor extends AstNodeVisitor
@@ -58,130 +58,127 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         $this->handleDslTranspile = $handleDslTranspile;
     }
 
-    public function visitFusionFileAst(FusionFileAst $fusionFileAst): ObjectTree
+    public function visitFusionFile(FusionFile $fusionFile): ObjectTree
     {
-        $this->contextPathAndFilename = $fusionFileAst->getContextPathAndFileName();
-        $fusionFileAst->getStatementList()->visit($this);
+        $this->contextPathAndFilename = $fusionFile->contextPathAndFileName;
+        $fusionFile->statementList->visit($this);
         return $this->objectTree;
     }
 
-    public function visitStatementListAst(StatementListAst $statementListAst)
+    public function visitStatementList(StatementList $statementList)
     {
-        foreach ($statementListAst->getStatements() as $statement) {
+        foreach ($statementList->statements as $statement) {
             $statement->visit($this);
         }
     }
 
-    public function visitIncludeAst(IncludeAst $includeAst)
+    public function visitIncludeStatement(IncludeStatement $includeStatement)
     {
-        ($this->handleFileInclude)($this->objectTree, $includeAst->getFilePattern(), $this->contextPathAndFilename);
+        ($this->handleFileInclude)($this->objectTree, $includeStatement->filePattern, $this->contextPathAndFilename);
     }
 
-    public function visitObjectDefinitionAst(ObjectDefinitionAst $objectDefinitionAst)
+    public function visitObjectStatement(ObjectStatement $objectStatement)
     {
-        $currentPath = $objectDefinitionAst->getPath()->visit($this, $this->getCurrentObjectPathPrefix());
+        $currentPath = $objectStatement->path->visit($this, $this->getCurrentObjectPathPrefix());
 
-        $operation = $objectDefinitionAst->getOperation();
+        $operation = $objectStatement->operation;
 
         if ($operation !== null) {
             $operation->visit($this, $currentPath);
         }
 
-        $block = $objectDefinitionAst->getBlock();
+        $block = $objectStatement->block;
 
         if ($block !== null) {
             $block->visit($this, $currentPath);
         }
     }
 
-    public function visitBlockAst(BlockAst $blockAst, array $currentPath = null)
+    public function visitBlock(Block $block, array $currentPath = null)
     {
-        if ($currentPath === null) {
-            throw new \Exception();
-        }
+        $currentPath ?? throw new \Exception();
+
         array_push($this->currentObjectPathStack, $currentPath);
 
-        $blockAst->getStatementList()->visit($this);
+        $block->statementList->visit($this);
 
         array_pop($this->currentObjectPathStack);
     }
 
-    public function visitObjectPathAst(ObjectPathAst $objectPathAst, array $objectPathPrefix = []): array
+    public function visitObjectPath(ObjectPath $objectPath, array $objectPathPrefix = []): array
     {
         $path = $objectPathPrefix;
-        foreach ($objectPathAst->getSegments() as $segment) {
-            array_push($path, ...$segment->visit($this));
+        foreach ($objectPath->segments as $segment) {
+            $path = [...$path, ...$segment->visit($this)];
         }
         return $path;
     }
 
-    public function visitMetaPathAst(MetaPathAst $metaPathAst): array
+    public function visitMetaPathSegment(MetaPathSegment $metaPathSegment): array
     {
-        return ['__meta', $metaPathAst->getIdentifier()];
+        return ['__meta', $metaPathSegment->identifier];
     }
 
-    public function visitPrototypePathAst(PrototypePathAst $prototypePathAst): array
+    public function visitPrototypePathSegment(PrototypePathSegment $prototypePathSegment): array
     {
-        return ['__prototypes', $prototypePathAst->getIdentifier()];
+        return ['__prototypes', $prototypePathSegment->identifier];
     }
 
-    public function visitObjectPathPartAst(ObjectPathPartAst $objectPathPartAst): array
+    public function visitPathSegment(PathSegment $pathSegment): array
     {
-        $key = stripslashes($objectPathPartAst->getIdentifier());
+        $key = stripslashes($pathSegment->identifier);
         self::validateParseTreeKey($key);
         return [$key];
     }
 
-    public function visitValueAssignmentAst(ValueAssignmentAst $valueAssignmentAst, array $currentPath = null)
+    public function visitValueAssignment(ValueAssignment $valueAssignment, array $currentPath = null)
     {
-        if ($currentPath === null) {
-            throw new \Exception();
-        }
-        $value = $valueAssignmentAst->getPathValue()->visit($this);
+        $currentPath ?? throw new \Exception();
+
+        $value = $valueAssignment->pathValue->visit($this);
         $this->objectTree->setValueInObjectTree($currentPath, $value);
     }
 
-    public function visitFusionObjectValueAst(FusionObjectValueAst $fusionObjectValueAst)
+    public function visitFusionObjectValue(FusionObjectValue $fusionObjectValue)
     {
         return [
-            '__objectType' => $fusionObjectValueAst->getValue(), '__value' => null, '__eelExpression' => null
+            '__objectType' => $fusionObjectValue->value, '__value' => null, '__eelExpression' => null
         ];
     }
 
-    public function visitDslExpressionValueAst(DslExpressionValueAst $dslExpressionValueAst)
+    public function visitDslExpressionValue(DslExpressionValue $dslExpressionValue)
     {
-        return ($this->handleDslTranspile)($dslExpressionValueAst->getIdentifier(), $dslExpressionValueAst->getCode());
+        return ($this->handleDslTranspile)($dslExpressionValue->identifier, $dslExpressionValue->code);
     }
 
-    public function visitEelExpressionValueAst(EelExpressionValueAst $eelExpressionValueAst)
+    public function visitEelExpressionValue(EelExpressionValue $eelExpressionValue)
     {
-        $eelWithoutNewLines = str_replace("\n", '', $eelExpressionValueAst->getValue());
+        $eelWithoutNewLines = str_replace("\n", '', $eelExpressionValue->value);
         return [
             '__eelExpression' => $eelWithoutNewLines, '__value' => null, '__objectType' => null
         ];
     }
 
-    public function visitSimpleValueAst(SimpleValueAst $simpleValueAst)
+    public function visitSimpleValue(SimpleValue $simpleValue)
     {
-        return $simpleValueAst->getValue();
+        return $simpleValue->value;
     }
 
-    public function visitCharValueAst(CharValueAst $charValueAst)
+    public function visitCharValue(CharValue $charValue)
     {
-        return stripslashes($charValueAst->getValue());
+        return stripslashes($charValue->value);
     }
 
-    public function visitStringValueAst(StringValueAst $stringValueAst)
+    public function visitStringValue(StringValue $stringValue)
     {
-        return stripcslashes($stringValueAst->getValue());
+        return stripcslashes($stringValue->value);
     }
 
-    public function visitValueCopyAst(ValueCopyAst $valueCopyAst, array $currentPath = null)
+    public function visitValueCopy(ValueCopy $valueCopy, array $currentPath = null)
     {
-        if ($currentPath === null) {
-            throw new \Exception();
-        }
-        $sourcePath = $valueCopyAst->getAssignedObjectPath()->visit($this, $this->objectTree->getParentPath($currentPath));
+        $currentPath ?? throw new \Exception();
+
+        $sourcePath = $valueCopy->assignedObjectPath->visit($this, $this->objectTree->getParentPath($currentPath));
 
         $currentPathsPrototype = $this->objectTree->objectPathIsPrototype($currentPath);
         $sourcePathIsPrototype = $this->objectTree->objectPathIsPrototype($sourcePath);
@@ -208,20 +205,19 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         $this->objectTree->copyValueInObjectTree($currentPath, $sourcePath);
     }
 
-    public function visitAssignedObjectPathAst(AssignedObjectPathAst $assignedObjectPathAst, $relativePath = [])
+    public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath, $relativePath = [])
     {
         $path = [];
-        if ($assignedObjectPathAst->isRelative()) {
+        if ($assignedObjectPath->isRelative) {
             $path = $relativePath;
         }
-        return $assignedObjectPathAst->getObjectPath()->visit($this, $path);
+        return $assignedObjectPath->objectPath->visit($this, $path);
     }
 
-    public function visitValueUnsetAst(ValueUnsetAst $valueUnsetAst, array $currentPath = null)
+    public function visitValueUnset(ValueUnset $valueUnset, array $currentPath = null)
     {
-        if ($currentPath === null) {
-            throw new \Exception();
-        }
+        $currentPath ?? throw new \Exception();
+
         $this->objectTree->removeValueInObjectTree($currentPath);
     }
 

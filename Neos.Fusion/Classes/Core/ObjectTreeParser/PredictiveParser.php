@@ -15,28 +15,28 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 
 use Neos\Fusion;
 
-use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFileAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementListAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\IncludeAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectDefinitionAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\BlockAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\PathSegmentAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\MetaPathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathPartAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignmentAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\PathValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionObjectValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopyAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPathAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnsetAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementList;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractStatement;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\IncludeStatement;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectStatement;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\Block;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPath;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractPathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\MetaPathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PathSegment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignment;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractPathValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionObjectValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnset;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageCreator;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
@@ -57,12 +57,11 @@ class PredictiveParser
      */
     protected $contextPathAndFilename;
 
-    public function parse(Lexer $lexer, ?string $contextPathAndFilename = null): FusionFileAst
+    public function parse(Lexer $lexer, ?string $contextPathAndFilename = null): FusionFile
     {
         $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;
-        $statementList = $this->parseFusion();
-        return new FusionFileAst($statementList, $this->contextPathAndFilename);
+        return $this->parseFusionFile();
     }
 
     /**
@@ -171,13 +170,13 @@ class PredictiveParser
     }
 
     /**
-     * Fusion
+     * FusionFile
      *  = StatementList
      */
-    protected function parseFusion(): StatementListAst
+    protected function parseFusionFile(): FusionFile
     {
         try {
-            return $this->parseStatementList();
+            return new FusionFile($this->parseStatementList(), $this->contextPathAndFilename);
         } catch (ParserException $e) {
             throw $e;
         } catch (ParserUnexpectedCharException $e) {
@@ -206,7 +205,7 @@ class PredictiveParser
      *
      * @param ?int $stopLookahead When this tokenType is encountered the loop will be stopped
      */
-    protected function parseStatementList(?int $stopLookahead = null): StatementListAst
+    protected function parseStatementList(?int $stopLookahead = null): StatementList
     {
         $statements = [];
         $this->lazyBigGap();
@@ -215,26 +214,26 @@ class PredictiveParser
             $statements[] = $this->parseStatement();
             $this->lazyBigGap();
         }
-        return new StatementListAst(...$statements);
+        return new StatementList(...$statements);
     }
 
     /**
      * Statement
-     *  = Include / ObjectDefinition
+     *  = IncludeStatement / ObjectStatement
      */
-    protected function parseStatement(): StatementAst
+    protected function parseStatement(): AbstractStatement
     {
         // watch out for the order, its regex matching and first one wins.
         switch (true) {
             case $this->accept(Token::INCLUDE):
-                return $this->parseInclude();
+                return $this->parseIncludeStatement();
 
             case $this->accept(Token::PROTOTYPE_START):
             case $this->accept(Token::OBJECT_PATH_PART):
             case $this->accept(Token::META_PATH_START):
             case $this->accept(Token::CHAR):
             case $this->accept(Token::STRING):
-                return $this->parseObjectDefinition();
+                return $this->parseObjectStatement();
         }
 
         throw (new ParserException())
@@ -245,10 +244,10 @@ class PredictiveParser
     }
 
     /**
-     * Include
+     * IncludeStatement
      *  = INCLUDE ( STRING / CHAR / FILE_PATTERN ) EndOfStatement
      */
-    protected function parseInclude(): IncludeAst
+    protected function parseIncludeStatement(): IncludeStatement
     {
         $this->expect(Token::INCLUDE);
         $this->lazyExpect(Token::SPACE);
@@ -268,14 +267,14 @@ class PredictiveParser
 
         $this->parseEndOfStatement();
 
-        return new IncludeAst($filePattern);
+        return new IncludeStatement($filePattern);
     }
 
     /**
-     * ObjectDefinition
+     * ObjectStatement
      *  = ObjectPath ( ValueAssignment / ValueUnset / ValueCopy )? ( Block / EndOfStatement )
      */
-    protected function parseObjectDefinition(): ObjectDefinitionAst
+    protected function parseObjectStatement(): ObjectStatement
     {
         $currentPath = $this->parseObjectPath();
         $this->lazyExpect(Token::SPACE);
@@ -299,7 +298,7 @@ class PredictiveParser
 
         if ($this->accept(Token::LBRACE)) {
             $block = $this->parseBlock();
-            return new ObjectDefinitionAst($currentPath, $operation, $block);
+            return new ObjectStatement($currentPath, $operation, $block);
         }
 
         if ($operation === null) {
@@ -312,7 +311,7 @@ class PredictiveParser
         }
 
         $this->parseEndOfStatement();
-        return new ObjectDefinitionAst($currentPath, $operation);
+        return new ObjectStatement($currentPath, $operation);
     }
 
     /**
@@ -320,36 +319,36 @@ class PredictiveParser
      *  = PathSegment ( '.' PathSegment )*
      *
      */
-    protected function parseObjectPath(): ObjectPathAst
+    protected function parseObjectPath(): ObjectPath
     {
         $segments = [];
         do {
             $segments[] = $this->parsePathSegment();
         } while ($this->lazyExpect(Token::DOT));
-        return new ObjectPathAst(...$segments);
+        return new ObjectPath(...$segments);
     }
 
     /**
      * PathSegment
      *  = ( PROTOTYPE_START FUSION_OBJECT_NAME ')' / OBJECT_PATH_PART / '@' OBJECT_PATH_PART / STRING / CHAR )
      */
-    protected function parsePathSegment(): PathSegmentAst
+    protected function parsePathSegment(): AbstractPathSegment
     {
         switch (true) {
             case $this->accept(Token::PROTOTYPE_START):
                 $this->consume();
                 $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
                 $this->expect(Token::RPAREN);
-                return new PrototypePathAst($prototypeName);
+                return new PrototypePathSegment($prototypeName);
 
             case $this->accept(Token::OBJECT_PATH_PART):
                 $pathKey = $this->consume()->getValue();
-                return new ObjectPathPartAst($pathKey);
+                return new PathSegment($pathKey);
 
             case $this->accept(Token::META_PATH_START):
                 $this->consume();
-                $metaPathKey = $this->expect(Token::OBJECT_PATH_PART)->getValue();
-                return new MetaPathAst($metaPathKey);
+                $metaPathSegmentKey = $this->expect(Token::OBJECT_PATH_PART)->getValue();
+                return new MetaPathSegment($metaPathSegmentKey);
 
             case $this->accept(Token::STRING):
             case $this->accept(Token::CHAR):
@@ -362,7 +361,7 @@ class PredictiveParser
                         ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
                         ->build();
                 }
-                return new ObjectPathPartAst($quotedPathKey);
+                return new PathSegment($quotedPathKey);
         }
 
         throw (new ParserException())
@@ -376,19 +375,19 @@ class PredictiveParser
      * ValueAssignment
      *  = ASSIGNMENT PathValue
      */
-    protected function parseValueAssignment(): ValueAssignmentAst
+    protected function parseValueAssignment(): ValueAssignment
     {
         $this->expect(Token::ASSIGNMENT);
         $this->lazyExpect(Token::SPACE);
         $value = $this->parsePathValue();
-        return new ValueAssignmentAst($value);
+        return new ValueAssignment($value);
     }
 
     /**
      * PathValue
      *  = ( CHAR / STRING / DSL_EXPRESSION / FusionObject / EelExpression )
      */
-    protected function parsePathValue(): PathValueAst
+    protected function parsePathValue(): AbstractPathValue
     {
         // watch out for the order, its regex matching and first one wins.
         // sorted by likelihood
@@ -396,15 +395,15 @@ class PredictiveParser
             case $this->accept(Token::CHAR):
                 $charWrapped = $this->consume()->getValue();
                 $charContent = substr($charWrapped, 1, -1);
-                return new CharValueAst($charContent);
+                return new CharValue($charContent);
 
             case $this->accept(Token::STRING):
                 $stringWrapped = $this->consume()->getValue();
                 $stringContent = substr($stringWrapped, 1, -1);
-                return new StringValueAst($stringContent);
+                return new StringValue($stringContent);
 
             case $this->accept(Token::FUSION_OBJECT_NAME):
-                return new FusionObjectValueAst($this->consume()->getValue());
+                return new FusionObjectValue($this->consume()->getValue());
 
             case $this->accept(Token::DSL_EXPRESSION_START):
                 return $this->parseDslExpression();
@@ -412,25 +411,25 @@ class PredictiveParser
             case $this->accept(Token::EEL_EXPRESSION):
                 $eelWrapped = $this->consume()->getValue();
                 $eelContent = substr($eelWrapped, 2, -1);
-                return new EelExpressionValueAst($eelContent);
+                return new EelExpressionValue($eelContent);
 
             case $this->accept(Token::FLOAT):
-                return new SimpleValueAst((float)$this->consume()->getValue());
+                return new SimpleValue((float)$this->consume()->getValue());
 
             case $this->accept(Token::INTEGER):
-                return new SimpleValueAst((int)$this->consume()->getValue());
+                return new SimpleValue((int)$this->consume()->getValue());
 
             case $this->accept(Token::TRUE_VALUE):
                 $this->consume();
-                return new SimpleValueAst(true);
+                return new SimpleValue(true);
 
             case $this->accept(Token::FALSE_VALUE):
                 $this->consume();
-                return new SimpleValueAst(false);
+                return new SimpleValue(false);
 
             case $this->accept(Token::NULL_VALUE):
                 $this->consume();
-                return new SimpleValueAst(null);
+                return new SimpleValue(null);
         }
 
         throw (new ParserException())
@@ -444,7 +443,7 @@ class PredictiveParser
      * DslExpression
      *  = DSL_EXPRESSION_START DSL_EXPRESSION_CONTENT
      */
-    protected function parseDslExpression(): DslExpressionValueAst
+    protected function parseDslExpression(): DslExpressionValue
     {
         $dslIdentifier = $this->expect(Token::DSL_EXPRESSION_START)->getValue();
         try {
@@ -457,46 +456,46 @@ class PredictiveParser
                 ->build();
         }
         $dslCode = substr($dslCode, 1, -1);
-        return new DslExpressionValueAst($dslIdentifier, $dslCode);
+        return new DslExpressionValue($dslIdentifier, $dslCode);
     }
 
     /**
      * ValueUnset
      *  = UNSET
      */
-    protected function parseValueUnset(): ValueUnsetAst
+    protected function parseValueUnset(): ValueUnset
     {
         $this->expect(Token::UNSET);
-        return new ValueUnsetAst();
+        return new ValueUnset();
     }
 
     /**
      * ValueCopy
      *  = COPY ObjectPathAssignment
      */
-    protected function parseValueCopy(): ValueCopyAst
+    protected function parseValueCopy(): ValueCopy
     {
         $this->expect(Token::COPY);
         $this->lazyExpect(Token::SPACE);
         $sourcePath = $this->parseAssignedObjectPath();
-        return new ValueCopyAst($sourcePath);
+        return new ValueCopy($sourcePath);
     }
 
     /**
      * AssignedObjectPath
      *  = '.'? ObjectPath
      */
-    protected function parseAssignedObjectPath(): AssignedObjectPathAst
+    protected function parseAssignedObjectPath(): AssignedObjectPath
     {
         $isRelative = $this->lazyExpect(Token::DOT);
-        return new AssignedObjectPathAst($this->parseObjectPath(), $isRelative);
+        return new AssignedObjectPath($this->parseObjectPath(), $isRelative);
     }
 
     /**
      * Block:
      *  = '{' StatementList? '}'
      */
-    protected function parseBlock(): BlockAst
+    protected function parseBlock(): Block
     {
         $this->expect(Token::LBRACE);
         $cursorPositionStartOfBlock = $this->lexer->getCursor() - 1;
@@ -515,7 +514,7 @@ class PredictiveParser
                 ->build();
         }
 
-        return new BlockAst($statementList);
+        return new Block($statementList);
     }
 
     /**
