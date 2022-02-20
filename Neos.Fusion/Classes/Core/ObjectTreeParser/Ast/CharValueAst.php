@@ -4,23 +4,11 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class CharValueAst extends PathValueAst
 {
-    /**
-     * @var string
-     */
-    protected $value;
-
-    public function __construct(string $value)
-    {
-        $this->value = $value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
+    public function __construct(
+        /** @psalm-readonly */
+        public string $value
+    ) {}
 }

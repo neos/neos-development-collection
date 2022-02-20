@@ -4,26 +4,17 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class ObjectPathAst extends NodeAst
 {
     /**
+     * @psalm-readonly
      * @var PathSegmentAst[]
      */
-    protected $segments;
+    public $segments;
 
     public function __construct(PathSegmentAst ...$segments)
     {
         $this->segments = $segments;
-    }
-
-    /**
-     * @return PathSegmentAst[]
-     */
-    public function getSegments(): array
-    {
-        return $this->segments;
     }
 }

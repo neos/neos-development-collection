@@ -6,9 +6,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 abstract class NodeAst
 {
     public function visit(AstNodeVisitor $visitor, ...$args)
@@ -19,5 +17,11 @@ abstract class NodeAst
             $visitorMethod = 'visit' . $classWithoutNamespace;
         }
         return $visitor->$visitorMethod($this, ...$args);
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        $prop = lcfirst(preg_replace('{^get}', '', $name));
+        return $this->$prop;
     }
 }
