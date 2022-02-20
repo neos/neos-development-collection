@@ -42,7 +42,7 @@ final class DimensionSpacePointSet implements
     public readonly \ArrayIterator $iterator;
 
     /**
-     * @param array<string,DimensionSpacePoint|array<string,string>> $pointCandidates
+     * @param array<string|int,DimensionSpacePoint|array<string,string>> $pointCandidates
      *        An array of DimensionSpacePoints or coordinates
      */
     public function __construct(array $pointCandidates)
