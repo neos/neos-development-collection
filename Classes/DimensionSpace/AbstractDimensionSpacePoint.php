@@ -43,7 +43,6 @@ abstract class AbstractDimensionSpacePoint implements
 
     /**
      * @param array<string,string> $coordinates
-     * @throws \JsonException
      */
     final protected static function hashCoordinates(array $coordinates): string
     {
