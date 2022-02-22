@@ -56,23 +56,6 @@ class ObjectTree
         $this->setValueInObjectTree($targetObjectPath, $originalValue);
     }
 
-    public function inheritPrototypeInObjectTree(array $targetPrototypeObjectPath, array $sourcePrototypeObjectPath): void
-    {
-        if (count($targetPrototypeObjectPath) !== 2 || count($sourcePrototypeObjectPath) !== 2) {
-            // one of the path has not a length of 2: this means
-            // at least one path is nested (f.e. foo.prototype(Bar))
-            // Currently, it is not supported to override the prototypical inheritance in
-            // parts of the Fusion rendering tree.
-            // Although this might work conceptually, it makes reasoning about the prototypical
-            // inheritance tree a lot more complex; that's why we forbid it right away.
-            throw new Fusion\Exception('Cannot inherit, when one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)', 1358418019);
-        }
-
-        // it must be of the form "prototype(Foo) < prototype(Bar)"
-        $targetPrototypeObjectPath[] = '__prototypeObjectName';
-        $this->setValueInObjectTree($targetPrototypeObjectPath, end($sourcePrototypeObjectPath));
-    }
-
     /**
      * Assigns a value to a node or a property in the object tree, specified by the object path array.
      *

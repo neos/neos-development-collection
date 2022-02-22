@@ -285,7 +285,7 @@ class PredictiveParser
 
         if ($this->accept(Token::LBRACE)) {
             $block = $this->parseBlock();
-            return new ObjectStatement($currentPath, $operation, $block);
+            return new ObjectStatement($currentPath, $operation, $block, $cursorAfterObjectPath);
         }
 
         if ($operation === null) {
@@ -298,7 +298,7 @@ class PredictiveParser
         }
 
         $this->parseEndOfStatement();
-        return new ObjectStatement($currentPath, $operation);
+        return new ObjectStatement($currentPath, $operation, null, $cursorAfterObjectPath);
     }
 
     /**

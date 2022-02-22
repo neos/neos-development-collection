@@ -14,7 +14,9 @@ class ObjectStatement extends AbstractStatement
         /** @psalm-readonly */
         public ValueAssignment|ValueCopy|ValueUnset|null $operation,
         /** @psalm-readonly */
-        public ?Block $block = null
+        public ?Block $block,
+        /** @psalm-readonly */
+        public int $cursor
     ) {
     }
 

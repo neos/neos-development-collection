@@ -22,6 +22,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignment;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnset;
 use Neos\Fusion;
+use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
 class ObjectTreeAstVisitor extends AstNodeVisitor
 {
@@ -31,6 +32,8 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
     protected array $currentObjectPathStack = [];
 
     protected ?string $contextPathAndFilename;
+
+    protected int $currentObjectStatementCursor;
 
     public function __construct(
         protected ObjectTree $objectTree,
@@ -60,15 +63,12 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitObjectStatement(ObjectStatement $objectStatement)
     {
+        $this->currentObjectStatementCursor = $objectStatement->cursor;
+
         $currentPath = $objectStatement->path->visit($this, $this->getCurrentObjectPathPrefix());
 
-        $operation = $objectStatement->operation;
-
-        $operation?->visit($this, $currentPath);
-
-        $block = $objectStatement->block;
-
-        $block?->visit($this, $currentPath);
+        $objectStatement->operation?->visit($this, $currentPath);
+        $objectStatement->block?->visit($this, $currentPath);
     }
 
     public function visitBlock(Block $block, array $currentPath = null)
@@ -125,7 +125,17 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitDslExpressionValue(DslExpressionValue $dslExpressionValue)
     {
-        return ($this->handleDslTranspile)($dslExpressionValue->identifier, $dslExpressionValue->code);
+        try {
+            return ($this->handleDslTranspile)($dslExpressionValue->identifier, $dslExpressionValue->code);
+        } catch (ParserException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            // convert all exceptions from dsl transpilation to fusion exception and add file and line info
+            throw $this->getParserException()
+                ->withCode(1180600696)
+                ->withMessage($e->getMessage())
+                ->build();
+        }
     }
 
     public function visitEelExpressionValue(EelExpressionValue $eelExpressionValue)
@@ -161,22 +171,31 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         $sourcePathIsPrototype = $this->objectTree->objectPathIsPrototype($sourcePath);
         if ($currentPathsPrototype && $sourcePathIsPrototype) {
             // both are a prototype definition
-            try {
-                $this->objectTree->inheritPrototypeInObjectTree($currentPath, $sourcePath);
-            } catch (Fusion\Exception $e) {
-                // TODO show also line snipped, but for that to work we need to know the cursor position.
-                throw $e;
+            if (count($currentPath) !== 2 || count($sourcePath) !== 2) {
+                // one of the path has not a length of 2: this means
+                // at least one path is nested (f.e. foo.prototype(Bar))
+                // Currently, it is not supported to override the prototypical inheritance in
+                // parts of the Fusion rendering tree.
+                // Although this might work conceptually, it makes reasoning about the prototypical
+                // inheritance tree a lot more complex; that's why we forbid it right away.
+                throw $this->getParserException()
+                    ->withCode(1358418019)
+                    ->withMessage('Cannot inherit, when one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)')
+                    ->build();
             }
+            // it must be of the form "prototype(Foo) < prototype(Bar)"
+            $currentPath[] = '__prototypeObjectName';
+            $this->objectTree->setValueInObjectTree($currentPath, end($sourcePath));
             return;
         }
 
         if ($currentPathsPrototype xor $sourcePathIsPrototype) {
             // Only one of "source" or "target" is a prototype. We do not support copying a
             // non-prototype value to a prototype value or vice-versa.
-            // delay throw since there might be syntax errors causing this.
-
-            // TODO show also line snipped, but for that to work we need to know the cursor position.
-            throw new Fusion\Exception("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.", 1358418015);
+            throw $this->getParserException()
+                ->withCode(1358418015)
+                ->withMessage("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.")
+                ->build();
         }
 
         $this->objectTree->copyValueInObjectTree($currentPath, $sourcePath);
@@ -204,15 +223,35 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         return ($lastElementOfStack === false) ? [] : $lastElementOfStack;
     }
 
-    protected static function validateParseTreeKey(string $pathKey)
+    protected function validateParseTreeKey(string $pathKey)
     {
-        // TODO show also line snipped (in exceptions), but for that to work we need to know the cursor position.
         if (str_starts_with($pathKey, '__')
             && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
-            throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
+            throw $this->getParserException()
+                ->withCode(1437065270)
+                ->withMessage("Reversed key '$pathKey' used.")
+                ->build();
         }
         if (str_contains($pathKey, "\n")) {
-            throw new Fusion\Exception("Key '$pathKey' cannot contain spaces.", 1644068086);
+            $cleaned = str_replace("\n", '', $pathKey);
+            throw $this->getParserException()
+                ->withCode(1644068086)
+                ->withMessage("Key '$cleaned' cannot contain newlines.")
+                ->build();
         }
+    }
+
+    protected function getParserException(): ParserException
+    {
+        if ($this->contextPathAndFilename === null) {
+            $fusionCode = '';
+        } else {
+            $fusionCode = file_get_contents($this->contextPathAndFilename);
+        }
+        return (new ParserException())
+            ->withoutColumnShown()
+            ->withFile($this->contextPathAndFilename)
+            ->withFusion($fusionCode)
+            ->withCursor($this->currentObjectStatementCursor);
     }
 }

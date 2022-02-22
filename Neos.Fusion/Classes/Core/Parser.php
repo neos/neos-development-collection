@@ -94,13 +94,7 @@ class Parser implements ParserInterface
     {
         $dslObject = $this->dslFactory->create($identifier);
 
-        try {
-            $transpiledFusion = $dslObject->transpile($code);
-        } catch (\Exception $e) {
-            // TODO
-            // convert all exceptions from dsl transpilation to fusion exception and add file and line info
-            throw $e;
-        }
+        $transpiledFusion = $dslObject->transpile($code);
 
         $lexer = new Lexer('value = ' . $transpiledFusion);
         $fusionFile = $this->predictiveParser->parse($lexer);
