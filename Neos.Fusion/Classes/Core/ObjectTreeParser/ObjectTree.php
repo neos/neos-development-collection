@@ -18,11 +18,7 @@ use Neos\Utility\Arrays;
 
 class ObjectTree
 {
-    /**
-     * The Fusion object tree
-     * @var array
-     */
-    protected $objectTree = [];
+    protected array $objectTree = [];
 
     public static function objectPathIsPrototype(array $path): bool
     {
@@ -37,7 +33,7 @@ class ObjectTree
         return array_slice($path, 0, -1);
     }
 
-    public function setObjectTree(array $objectTree)
+    public function setObjectTree(array $objectTree): void
     {
         $this->objectTree = $objectTree;
     }

@@ -61,20 +61,10 @@ class Token
     public const LBRACE = 30;
     public const RBRACE = 31;
 
-    /** @var int */
-    protected $type;
-
-    /** @var string */
-    protected $value;
-
-    /**
-     * @param int $type The type of the token
-     * @param string $value The token value
-     */
-    public function __construct(int $type, string $value)
-    {
-        $this->type = $type;
-        $this->value = $value;
+    public function __construct(
+        protected int $type,
+        protected string $value,
+    ) {
     }
 
     public function getType(): int

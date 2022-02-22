@@ -68,7 +68,7 @@ class FilePatternResolver
         if (self::isPatternStreamWrapper($filePattern) === false) {
             $filePattern = self::resolveRelativePath($filePattern, $filePathForRelativeResolves);
         }
-        if (self::patternHasGlobbing($filePattern) === false) {
+        if (str_contains($filePattern, '*') === false) {
             return [$filePattern];
         }
         return self::parseGlobPatternAndResolveFiles($filePattern, $defaultFileEndForUnspecificGlobbing);
@@ -94,32 +94,22 @@ class FilePatternResolver
         return dirname($filePathForRelativeResolves) . '/' . $filePattern;
     }
 
-    protected static function patternHasGlobbing(string $filePattern): bool
-    {
-        return strpos($filePattern, '*') !== false;
-    }
-
     protected static function parseGlobPatternAndResolveFiles(string $filePattern, string $defaultFileNameEnd): array
     {
-        switch (1) {
+        $fileIteratorCreator = match (1) {
             // Match recursive wildcard globbing '<base>/**/*<end>?'
-            case preg_match(self::RECURSIVE_GLOB_PATTERN, $filePattern, $matches):
-                $fileIteratorCreator = static function (string $dir): \Iterator {
-                    $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir);
-                    return new \RecursiveIteratorIterator($recursiveDirectoryIterator);
-                };
-                break;
+            preg_match(self::RECURSIVE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
+                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir);
+                return new \RecursiveIteratorIterator($recursiveDirectoryIterator);
+            },
 
             // Match simple wildcard globbing '<base>/*<end>?'
-            case preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches):
-                $fileIteratorCreator = static function (string $dir): \Iterator {
-                    return new \DirectoryIterator($dir);
-                };
-                break;
+            preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
+                return new \DirectoryIterator($dir);
+            },
 
-            default:
-                throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713);
-        }
+            default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.",1636144713),
+        };
 
         $basePath = $matches['base'];
         $fileNameEnd = $matches['end'] === '' ? $defaultFileNameEnd : $matches['end'];
@@ -145,18 +135,11 @@ class FilePatternResolver
                 continue;
             }
             $pathAndFilename = $fileInfo->getPathname();
-            if (self::pathEndsWith($pathAndFilename, $fileNameEnd)) {
+
+            if (str_ends_with($pathAndFilename, $fileNameEnd)) {
                 $files[] = $pathAndFilename;
             }
         }
         return $files;
-    }
-
-    protected static function pathEndsWith(string $filePath, string $fileNameEnd): bool
-    {
-        if ($filePath === '' || $fileNameEnd === '') {
-            throw new \InvalidArgumentException('$filePath or $fileNameEnd must not be empty.');
-        }
-        return substr_compare($filePath, $fileNameEnd, -\strlen($fileNameEnd)) === 0;
     }
 }

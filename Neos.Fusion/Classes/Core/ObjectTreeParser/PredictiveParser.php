@@ -47,15 +47,9 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
  */
 class PredictiveParser
 {
-    /**
-     * @var Lexer
-     */
-    protected $lexer;
+    protected Lexer $lexer;
 
-    /**
-     * @var string
-     */
-    protected $contextPathAndFilename;
+    protected ?string $contextPathAndFilename;
 
     public function parse(Lexer $lexer, ?string $contextPathAndFilename = null): FusionFile
     {
@@ -280,20 +274,13 @@ class PredictiveParser
         $this->lazyExpect(Token::SPACE);
         $cursorAfterObjectPath = $this->lexer->getCursor();
 
-        $operation = null;
-        switch (true) {
-            case $this->accept(Token::ASSIGNMENT):
-                $operation = $this->parseValueAssignment();
-                break;
+        $operation = match (true) {
+            $this->accept(Token::ASSIGNMENT) => $this->parseValueAssignment(),
+            $this->accept(Token::UNSET) => $this->parseValueUnset(),
+            $this->accept(Token::COPY) => $this->parseValueCopy(),
+            default => null
+        };
 
-            case $this->accept(Token::UNSET):
-                $operation = $this->parseValueUnset();
-                break;
-
-            case $this->accept(Token::COPY):
-                $operation = $this->parseValueCopy();
-                break;
-        }
         $this->lazyExpect(Token::SPACE);
 
         if ($this->accept(Token::LBRACE)) {
@@ -448,7 +435,7 @@ class PredictiveParser
         $dslIdentifier = $this->expect(Token::DSL_EXPRESSION_START)->getValue();
         try {
             $dslCode = $this->expect(Token::DSL_EXPRESSION_CONTENT)->getValue();
-        } catch (Fusion\Exception $e) {
+        } catch (Fusion\Exception) {
             throw (new ParserException())
                 ->withCode(1490714685)
                 ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
@@ -505,7 +492,7 @@ class PredictiveParser
 
         try {
             $this->expect(Token::RBRACE);
-        } catch (Fusion\Exception $e) {
+        } catch (Fusion\Exception) {
             throw (new ParserException())
                 ->withCode(1635708717)
                 ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')

@@ -15,20 +15,10 @@ namespace Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage;
 
 class MessageLinePart
 {
-    /**
-     * @var string
-     */
-    protected $linePart;
-
-    /**
-     * @var bool
-     */
-    protected $isEof;
-
-    public function __construct(string $linePart, bool $isEof = false)
-    {
-        $this->linePart = $linePart;
-        $this->isEof = $isEof;
+    public function __construct(
+        protected string $linePart,
+        protected bool $isEof = false
+    ) {
     }
 
     public function line(int $offset = 0): string
@@ -68,47 +58,27 @@ class MessageLinePart
         }
 
         // https://github.com/parsica-php/parsica/blob/main/src/Internal/Ascii.php
-        switch (mb_ord($char)) {
-            case   0:
-                return "<null>";
-            case   9:
-                return "<horizontal tab>";
-            case  10:
-                return "<line feed>";
-            case  11:
-                return "<vertical tab>";
-            case  13:
-                return "<carriage return>";
-            case  25:
-                return "<end of medium>";
-            case  27:
-                return "<escape>";
-            case  32:
-                return "<space>";
-            case  34:
-                return "<double quote>";
-            case  39:
-                return "<single quote>";
-            case  47:
-                return "<slash>";
-            case  92:
-                return "<backslash>";
-            case 130:
-                return "<single low-9 quotation mark>";
-            case 132:
-                return "<double low-9 quotation mark>";
-            case 145:
-                return "<left single quotation mark>";
-            case 146:
-                return "<right single quotation mark>";
-            case 147:
-                return "<left double quotation mark>";
-            case 148:
-                return "<right double quotation mark>";
-            case 160:
-                return "<non-breaking space>";
-            default:
-                return "'$char'";
-        }
+        return match (mb_ord($char)) {
+            0 => "<null>",
+            9 => "<horizontal tab>",
+            10 => "<line feed>",
+            11 => "<vertical tab>",
+            13 => "<carriage return>",
+            25 => "<end of medium>",
+            27 => "<escape>",
+            32 => "<space>",
+            34 => "<double quote>",
+            39 => "<single quote>",
+            47 => "<slash>",
+            92 => "<backslash>",
+            130 => "<single low-9 quotation mark>",
+            132 => "<double low-9 quotation mark>",
+            145 => "<left single quotation mark>",
+            146 => "<right single quotation mark>",
+            147 => "<left double quotation mark>",
+            148 => "<right double quotation mark>",
+            160 => "<non-breaking space>",
+            default => "'$char'",
+        };
     }
 }

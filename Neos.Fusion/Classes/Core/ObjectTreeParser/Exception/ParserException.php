@@ -31,45 +31,33 @@ class ParserException extends Exception
     `x
     REGEX;
 
-    protected $fluentFile;
-    protected $fluentFusionCode;
-    protected $fluentCursor;
-    protected $fluentShowColumn = true;
+    protected int $fluentCode;
+    protected \Closure $fluentMessageCreator;
+    protected ?\Throwable $fluentPrevious = null;
 
-    protected $fluentCode;
-    /**
-     * @var ?callable
-     */
-    protected $fluentMessageCreator;
-    protected $fluentPrevious = null;
+    protected ?string $fluentFile;
+    protected string $fluentFusionCode;
+    protected int $fluentCursor;
+    protected bool $fluentShowColumn = true;
 
-    protected $headingMessagePart;
-    protected $asciiPreviewMessagePart;
-    protected $helperMessagePart;
+    protected string $headingMessagePart;
+    protected string $asciiPreviewMessagePart;
+    protected string $helperMessagePart;
 
     public function __construct()
     {
     }
 
-    /**
-     * @api
-     */
     public function getHeadingMessagePart(): string
     {
         return $this->headingMessagePart;
     }
 
-    /**
-     * @api
-     */
     public function getAsciiPreviewMessagePart(): string
     {
         return $this->asciiPreviewMessagePart;
     }
 
-    /**
-     * @api
-     */
     public function getHelperMessagePart(): string
     {
         return $this->helperMessagePart;
@@ -116,6 +104,9 @@ class ParserException extends Exception
      */
     public function withMessageCreator(callable $messageCreator): self
     {
+        if ($messageCreator instanceof \Closure === false) {
+            $messageCreator = \Closure::fromCallable($messageCreator);
+        }
         $this->fluentMessageCreator = $messageCreator;
         return $this;
     }
@@ -136,18 +127,6 @@ class ParserException extends Exception
 
     protected function renderAndInitializeFullMessage(): string
     {
-        if (is_callable($this->fluentMessageCreator) === false) {
-            throw new \LogicException('A callable message creator must be specified.', 1637307774);
-        }
-
-        if (isset($this->fluentFusionCode) === false) {
-            throw new \LogicException('The fusion code must be specified.', 1637510580);
-        }
-
-        if (isset($this->fluentCursor) === false) {
-            throw new \LogicException('The cursor position must be specified.', 1637510583);
-        }
-
         list(
             $lineNumberCursor,
             $linePartAfterCursor,

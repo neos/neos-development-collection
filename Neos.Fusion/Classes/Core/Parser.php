@@ -14,7 +14,7 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFileAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
@@ -33,9 +33,8 @@ class Parser implements ParserInterface
      * Reserved parse tree keys for internal usage.
      *
      * @deprecated use ParserInterface::RESERVED_PARSE_TREE_KEYS
-     * @var array
      */
-    public static $reservedParseTreeKeys = ParserInterface::RESERVED_PARSE_TREE_KEYS;
+    public static array $reservedParseTreeKeys = ParserInterface::RESERVED_PARSE_TREE_KEYS;
 
     /**
      * @Flow\Inject
@@ -43,9 +42,6 @@ class Parser implements ParserInterface
      */
     protected $dslFactory;
 
-    /**
-     * @var PredictiveParser
-     */
     protected PredictiveParser $predictiveParser;
 
     /**
@@ -61,12 +57,12 @@ class Parser implements ParserInterface
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array
     {
-        $fusionFileAst = $this->getFusionFileAst($sourceCode, $contextPathAndFilename);
+        $fusionFile = $this->getFusionFile($sourceCode, $contextPathAndFilename);
 
         $objectTree = new ObjectTree();
         $objectTree->setObjectTree($objectTreeUntilNow);
 
-        $objectTree = $this->getObjectTreeAstVisitor($objectTree)->visitFusionFileAst($fusionFileAst);
+        $objectTree = $this->getObjectTreeAstVisitor($objectTree)->visitFusionFile($fusionFile);
 
         $objectTree->buildPrototypeHierarchy();
         return $objectTree->getObjectTree();
@@ -88,8 +84,8 @@ class Parser implements ParserInterface
             if ($contextPathAndFilename === null
                 || stat($contextPathAndFilename) !== stat($file)) {
 
-                $fusionFileAst = $this->getFusionFileAst(file_get_contents($file), $file);
-                $this->getObjectTreeAstVisitor($objectTree)->visitFusionFileAst($fusionFileAst);
+                $fusionFile = $this->getFusionFile(file_get_contents($file), $file);
+                $this->getObjectTreeAstVisitor($objectTree)->visitFusionFile($fusionFile);
             }
         }
     }
@@ -107,9 +103,9 @@ class Parser implements ParserInterface
         }
 
         $lexer = new Lexer('value = ' . $transpiledFusion);
-        $fusionFileAst = $this->predictiveParser->parse($lexer);
+        $fusionFile = $this->predictiveParser->parse($lexer);
 
-        $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFileAst($fusionFileAst);
+        $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFile($fusionFile);
 
         $temporaryAst = $objectTree->getObjectTree();
 
@@ -121,15 +117,15 @@ class Parser implements ParserInterface
     {
         return new ObjectTreeAstVisitor(
             $objectTree,
-            \Closure::fromCallable('static::handleFileInclude'),
-            \Closure::fromCallable('static::handleDslTranspile')
+            fn(...$args) => $this->handleFileInclude(...$args),
+            fn(...$args) => $this->handleDslTranspile(...$args),
         );
     }
 
-    protected function getFusionFileAst(string $sourceCode, ?string $contextPathAndFilename): FusionFileAst
+    protected function getFusionFile(string $sourceCode, ?string $contextPathAndFilename): FusionFile
     {
         $lexer = new Lexer($sourceCode);
-        $fusionFileAst = $this->predictiveParser->parse($lexer, $contextPathAndFilename);
-        return $fusionFileAst;
+        $fusionFile = $this->predictiveParser->parse($lexer, $contextPathAndFilename);
+        return $fusionFile;
     }
 }

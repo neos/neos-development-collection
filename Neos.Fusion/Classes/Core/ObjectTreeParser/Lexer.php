@@ -115,29 +115,14 @@ class Lexer
         Token::FILE_PATTERN => '`^[a-zA-Z0-9.*:/_-]+`',
     ];
 
-    /**
-     * @var string
-     */
-    protected $code = '';
+    protected string $code = '';
 
-    /**
-     * @var int
-     */
-    protected $codeLen = 0;
+    protected int $codeLen = 0;
 
-    /**
-     * @var int
-     */
-    protected $cursor = 0;
+    protected int $cursor = 0;
 
-    /**
-     * @var Token|null
-     */
-    protected $lookahead = null;
+    protected ?Token $lookahead = null;
 
-    /**
-     * Initializes the code
-     */
     public function __construct(string $code)
     {
         $code = str_replace(["\r\n", "\r"], "\n", $code);
@@ -178,11 +163,11 @@ class Lexer
 
         $remainingCode = substr($this->code, $this->cursor);
 
-        if (\preg_match($regexForToken, $remainingCode, $matches) !== 1) {
+        if (preg_match($regexForToken, $remainingCode, $matches) !== 1) {
             return null;
         }
 
-        $this->cursor += strlen($matches[0]);
+        $this->cursor += \strlen($matches[0]);
 
         return $this->lookahead = new Token($tokenType, $matches[0]);
     }

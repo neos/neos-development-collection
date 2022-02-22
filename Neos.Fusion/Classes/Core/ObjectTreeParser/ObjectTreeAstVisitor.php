@@ -26,36 +26,17 @@ use Neos\Fusion;
 class ObjectTreeAstVisitor extends AstNodeVisitor
 {
     /**
-     * @var ObjectTree
-     */
-    protected $objectTree;
-
-    /**
      * For nested blocks to determine the prefix
-     * @var array
      */
-    protected $currentObjectPathStack = [];
+    protected array $currentObjectPathStack = [];
 
-    /**
-     * @var ?string
-     */
-    protected $contextPathAndFilename;
+    protected ?string $contextPathAndFilename;
 
-    /**
-     * @var callable
-     */
-    protected $handleFileInclude;
-
-    /**
-     * @var callable
-     */
-    protected $handleDslTranspile;
-
-    public function __construct(ObjectTree $objectTree, callable $handleFileInclude, callable $handleDslTranspile)
-    {
-        $this->objectTree = $objectTree;
-        $this->handleFileInclude = $handleFileInclude;
-        $this->handleDslTranspile = $handleDslTranspile;
+    public function __construct(
+        protected ObjectTree $objectTree,
+        protected \Closure $handleFileInclude,
+        protected \Closure $handleDslTranspile
+    ) {
     }
 
     public function visitFusionFile(FusionFile $fusionFile): ObjectTree
@@ -83,15 +64,11 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
         $operation = $objectStatement->operation;
 
-        if ($operation !== null) {
-            $operation->visit($this, $currentPath);
-        }
+        $operation?->visit($this, $currentPath);
 
         $block = $objectStatement->block;
 
-        if ($block !== null) {
-            $block->visit($this, $currentPath);
-        }
+        $block?->visit($this, $currentPath);
     }
 
     public function visitBlock(Block $block, array $currentPath = null)
@@ -164,12 +141,12 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         return $simpleValue->value;
     }
 
-    public function visitCharValue(CharValue $charValue)
+    public function visitCharValue(CharValue $charValue): string
     {
         return stripslashes($charValue->value);
     }
 
-    public function visitStringValue(StringValue $stringValue)
+    public function visitStringValue(StringValue $stringValue): string
     {
         return stripcslashes($stringValue->value);
     }
@@ -230,11 +207,11 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
     protected static function validateParseTreeKey(string $pathKey)
     {
         // TODO show also line snipped (in exceptions), but for that to work we need to know the cursor position.
-        if (substr($pathKey, 0, 2) === '__'
+        if (str_starts_with($pathKey, '__')
             && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
             throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
         }
-        if (strpos($pathKey, "\n") !== false) {
+        if (str_contains($pathKey, "\n")) {
             throw new Fusion\Exception("Key '$pathKey' cannot contain spaces.", 1644068086);
         }
     }
