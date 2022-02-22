@@ -10,7 +10,8 @@ class PrototypePathSegment extends AbstractPathSegment
 {
     public function __construct(
         public string $identifier
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

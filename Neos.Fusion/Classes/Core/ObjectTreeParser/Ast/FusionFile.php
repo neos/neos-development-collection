@@ -13,7 +13,8 @@ class FusionFile extends AbstractNode
         public StatementList $statementList,
         /** @psalm-readonly */
         public ?string $contextPathAndFileName
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

@@ -15,7 +15,8 @@ class ObjectStatement extends AbstractStatement
         public ValueAssignment|ValueCopy|ValueUnset|null $operation,
         /** @psalm-readonly */
         public ?Block $block = null
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

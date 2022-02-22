@@ -10,7 +10,8 @@ class SimpleValue extends AbstractPathValue
 {
     public function __construct(
         public mixed $value
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

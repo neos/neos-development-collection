@@ -11,7 +11,8 @@ class IncludeStatement extends AbstractStatement
     public function __construct(
         /** @psalm-readonly */
         public string $filePattern
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

@@ -10,7 +10,8 @@ class StringValue extends AbstractPathValue
 {
     public function __construct(
         public string $value
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

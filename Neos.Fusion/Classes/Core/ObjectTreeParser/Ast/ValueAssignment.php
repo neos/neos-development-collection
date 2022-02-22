@@ -10,7 +10,8 @@ class ValueAssignment extends AbstractOperation
 {
     public function __construct(
         public AbstractPathValue $pathValue
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

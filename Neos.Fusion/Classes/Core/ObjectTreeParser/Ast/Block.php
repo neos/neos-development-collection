@@ -11,7 +11,8 @@ class Block extends AbstractNode
     public function __construct(
         /** @psalm-readonly */
         public StatementList $statementList
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

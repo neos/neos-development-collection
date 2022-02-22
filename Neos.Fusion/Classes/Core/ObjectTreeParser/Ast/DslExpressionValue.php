@@ -13,7 +13,8 @@ class DslExpressionValue extends AbstractPathValue
         public string $identifier,
         /** @psalm-readonly */
         public string $code
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

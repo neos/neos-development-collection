@@ -13,7 +13,8 @@ class AssignedObjectPath extends AbstractNode
         public ObjectPath $objectPath,
         /** @psalm-readonly */
         public bool $isRelative
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

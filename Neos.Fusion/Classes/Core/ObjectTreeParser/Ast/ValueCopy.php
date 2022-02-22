@@ -10,7 +10,8 @@ class ValueCopy extends AbstractOperation
 {
     public function __construct(
         public AssignedObjectPath $assignedObjectPath
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

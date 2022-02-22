@@ -11,7 +11,8 @@ class CharValue extends AbstractPathValue
     public function __construct(
         /** @psalm-readonly */
         public string $value
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {

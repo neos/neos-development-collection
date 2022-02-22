@@ -11,7 +11,8 @@ class PathSegment extends AbstractPathSegment
     public function __construct(
         /** @psalm-readonly */
         public string $identifier
-    ) {}
+    ) {
+    }
 
     public function visit(AstNodeVisitor $visitor, ...$args)
     {
