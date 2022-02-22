@@ -756,7 +756,7 @@ class ParserTest extends UnitTestCase
             ['_ = ""', ['_' => '']],
             ['class = ""', ['class' => '']], // nope, me thinking about class as a keyword...
             ['something: = ""', ['something:' => '']],
-            ['namespace: = ""', ['namespace:' => '']], // Todo should this work?
+            ['namespace: = ""', ['namespace:' => '']],
             ['a.include: = ""', ['a' => ['include:' => '']]],
             ['-_-:so-:m33_24et---hing00: = ""', ['-_-:so-:m33_24et---hing00:' => '']],
             ['"a.b" = ""', ['a.b' => '']],
@@ -1027,7 +1027,7 @@ class ParserTest extends UnitTestCase
     {
         self::expectException(Fusion\Exception::class);
 
-        $parser = new Parser;
+        $parser = new Parser();
         $parser->parse($fusion);
     }
 

@@ -174,21 +174,19 @@ class PredictiveParser
         } catch (ParserException $e) {
             throw $e;
         } catch (ParserUnexpectedCharException $e) {
-            throw (new ParserException())
+            throw $this->getParserException()
                 ->withCode($e->getCode())
                 ->withMessageCreator(function (MessageLinePart $nextLine) use ($e) {
                     return "Unexpected char {$nextLine->charPrint()}. {$e->getMessage()}";
                 })
                 ->withPrevious($e)
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
                 ->build();
         } catch (Fusion\Exception $e) {
-            throw (new ParserException())
+            throw $this->getParserException()
                 ->withCode($e->getCode())
                 ->withMessage('Exception while parsing: ' . $e->getMessage())
                 ->withoutColumnShown()
                 ->withPrevious($e)
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
                 ->build();
         }
     }
@@ -230,9 +228,8 @@ class PredictiveParser
                 return $this->parseObjectStatement();
         }
 
-        throw (new ParserException())
+        throw $this->getParserException()
             ->withCode(1635708717)
-            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
             ->withMessageCreator([MessageCreator::class, 'forParseStatement'])
             ->build();
     }
@@ -289,11 +286,10 @@ class PredictiveParser
         }
 
         if ($operation === null) {
-            throw (new ParserException())
+            throw $this->getParserException()
                 ->withCode(1635708717)
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
-                ->withCursor($cursorAfterObjectPath)
                 ->withMessageCreator([MessageCreator::class, 'forParsePathOrOperator'])
+                ->withCursor($cursorAfterObjectPath)
                 ->build();
         }
 
@@ -342,18 +338,16 @@ class PredictiveParser
                 $stringWrapped = $this->consume()->getValue();
                 $quotedPathKey = substr($stringWrapped, 1, -1);
                 if ($quotedPathKey === '') {
-                    throw (new ParserException())
+                    throw $this->getParserException()
                         ->withCode(1635708717)
                         ->withMessage("A quoted path must not be empty")
-                        ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
                         ->build();
                 }
                 return new PathSegment($quotedPathKey);
         }
 
-        throw (new ParserException())
+        throw $this->getParserException()
             ->withCode(1635708755)
-            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
             ->withMessageCreator([MessageCreator::class, 'forParsePathSegment'])
             ->build();
     }
@@ -419,9 +413,8 @@ class PredictiveParser
                 return new SimpleValue(null);
         }
 
-        throw (new ParserException())
+        throw $this->getParserException()
             ->withCode(1635708717)
-            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
             ->withMessageCreator([MessageCreator::class, 'forParsePathValue'])
             ->build();
     }
@@ -436,9 +429,8 @@ class PredictiveParser
         try {
             $dslCode = $this->expect(Token::DSL_EXPRESSION_CONTENT)->getValue();
         } catch (Fusion\Exception) {
-            throw (new ParserException())
+            throw $this->getParserException()
                 ->withCode(1490714685)
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
                 ->withMessageCreator([MessageCreator::class, 'forParseDslExpression'])
                 ->build();
         }
@@ -493,10 +485,9 @@ class PredictiveParser
         try {
             $this->expect(Token::RBRACE);
         } catch (Fusion\Exception) {
-            throw (new ParserException())
+            throw $this->getParserException()
                 ->withCode(1635708717)
                 ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
                 ->withCursor($cursorPositionStartOfBlock)
                 ->build();
         }
@@ -519,10 +510,17 @@ class PredictiveParser
             $this->consume();
             return;
         }
-        throw (new ParserException())
+        throw $this->getParserException()
             ->withCode(1635878683)
-            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
             ->withMessageCreator([MessageCreator::class, 'forParseEndOfStatement'])
             ->build();
+    }
+
+    protected function getParserException(): ParserException
+    {
+        return (new ParserException())
+            ->withFile($this->contextPathAndFilename)
+            ->withFusion($this->lexer->getCode())
+            ->withCursor($this->lexer->getCursor());
     }
 }
