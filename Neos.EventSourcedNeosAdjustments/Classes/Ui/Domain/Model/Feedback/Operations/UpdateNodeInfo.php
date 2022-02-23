@@ -24,10 +24,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 
 class UpdateNodeInfo extends AbstractFeedback
 {
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected ?NodeInterface $node;
 
     /**
      * @Flow\Inject
@@ -47,119 +44,83 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     protected $nodeAccessorManager;
 
-    protected $isRecursive = false;
+    protected bool $isRecursive = false;
 
-    protected $baseNodeType = null;
+    protected ?string $baseNodeType = null;
 
-    /**
-     * Set the baseNodeType
-     *
-     * @param string|null $baseNodeType
-     */
     public function setBaseNodeType(?string $baseNodeType): void
     {
         $this->baseNodeType = $baseNodeType;
     }
 
-    /**
-     * Get the baseNodeType
-     *
-     * @return string|null
-     */
     public function getBaseNodeType(): ?string
     {
         return $this->baseNodeType;
     }
 
-    /**
-     * Set the node
-     *
-     * @param NodeInterface $node
-     * @return void
-     */
-    public function setNode(NodeInterface $node)
+    public function setNode(NodeInterface $node): void
     {
         $this->node = $node;
     }
 
     /**
      * Update node infos recursively
-     *
-     * @return void
      */
-    public function recursive()
+    public function recursive(): void
     {
         $this->isRecursive = true;
     }
 
-    /**
-     * Get the node
-     *
-     * @return NodeInterface
-     */
-    public function getNode()
+    public function getNode(): ?NodeInterface
     {
         return $this->node;
     }
 
-    /**
-     * Get the type identifier
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'Neos.Neos.Ui:UpdateNodeInfo';
     }
 
-    /**
-     * Get the description
-     *
-     * @return string
-     */
     public function getDescription(): string
     {
-        return sprintf('Updated info for node "%s" is available.', $this->getNode()->getNodeAggregateIdentifier());
+        return sprintf('Updated info for node "%s" is available.', $this->node?->getNodeAggregateIdentifier());
     }
 
     /**
      * Checks whether this feedback is similar to another
-     *
-     * @param FeedbackInterface $feedback
-     * @return boolean
      */
-    public function isSimilarTo(FeedbackInterface $feedback)
+    public function isSimilarTo(FeedbackInterface $feedback): bool
     {
         if (!$feedback instanceof UpdateNodeInfo) {
             return false;
         }
+        $feedbackNode = $feedback->getNode();
 
-        return $this->getNode()->getNodeAggregateIdentifier()->equals(
-            $feedback->getNode()->getNodeAggregateIdentifier()
+        return $this->node && $feedbackNode && $this->node->getNodeAggregateIdentifier()->equals(
+                $feedbackNode->getNodeAggregateIdentifier()
         );
     }
 
     /**
      * Serialize the payload for this feedback
      *
-     * @param ControllerContext $controllerContext
-     * @return mixed
+     * @return array<string,mixed>
      */
-    public function serializePayload(ControllerContext $controllerContext)
+    public function serializePayload(ControllerContext $controllerContext): array
     {
-        return [
-            'byContextPath' => $this->serializeNodeRecursively($this->getNode(), $controllerContext)
-        ];
+        return $this->node
+            ? [
+                'byContextPath' => $this->serializeNodeRecursively($this->node, $controllerContext)
+            ]
+            : [];
     }
 
     /**
      * Serialize node and all child nodes
      *
-     * @param NodeInterface $node
-     * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<string,?array<string,mixed>>
      */
-    public function serializeNodeRecursively(NodeInterface $node, ControllerContext $controllerContext)
+    public function serializeNodeRecursively(NodeInterface $node, ControllerContext $controllerContext): array
     {
         $result = [
             $this->nodeAddressFactory->createFromNode($node)->serializeForUri()

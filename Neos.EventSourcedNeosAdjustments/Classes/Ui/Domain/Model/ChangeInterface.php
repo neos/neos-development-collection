@@ -27,7 +27,7 @@ interface ChangeInterface
     /**
      * Get the subject
      */
-    public function getSubject(): NodeInterface;
+    public function getSubject(): ?NodeInterface;
 
     /**
      * Checks whether this change can be applied to the subject

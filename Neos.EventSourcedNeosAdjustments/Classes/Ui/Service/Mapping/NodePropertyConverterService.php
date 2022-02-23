@@ -26,6 +26,7 @@ use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -43,7 +44,7 @@ class NodePropertyConverterService
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
-     * @var array
+     * @var array<string,array<string,mixed>>
      */
     protected $typesConfiguration;
 
@@ -67,7 +68,7 @@ class NodePropertyConverterService
 
     /**
      * @Flow\Transient
-     * @var array
+     * @var array<string,PropertyMappingConfiguration>
      */
     protected $generatedPropertyMappingConfigurations = [];
 
@@ -90,7 +91,7 @@ class NodePropertyConverterService
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -98,7 +99,7 @@ class NodePropertyConverterService
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
     }
@@ -180,11 +181,15 @@ class NodePropertyConverterService
         return $convertedValue;
     }
 
-    private function toNodeIdentifierStrings(iterable $nodes)
+    /**
+     * @param iterable<int,NodeInterface> $nodes
+     * @return array<int,string>
+     */
+    private function toNodeIdentifierStrings(iterable $nodes): array
     {
         $identifiers = [];
         foreach ($nodes as $node) {
-            $identifiers[] = $node->getNodeAggregateIdentifier()->jsonSerialize();
+            $identifiers[] = (string)$node->getNodeAggregateIdentifier();
         }
         return $identifiers;
     }
@@ -193,7 +198,7 @@ class NodePropertyConverterService
      * Get all properties reduced to simple type (no objects) representations in an array
      *
      * @param NodeInterface $node
-     * @return array
+     * @return array<string,mixed>
      */
     public function getPropertiesArray(NodeInterface $node)
     {
@@ -309,12 +314,7 @@ class NodePropertyConverterService
         return $this->generatedPropertyMappingConfigurations[$dataType];
     }
 
-    /**
-     * @param PropertyMappingConfiguration $propertyMappingConfiguration
-     * @param string $dataType
-     * @return boolean
-     */
-    protected function setTypeConverterForType(PropertyMappingConfiguration $propertyMappingConfiguration, $dataType)
+    protected function setTypeConverterForType(PropertyMappingConfiguration $propertyMappingConfiguration, string $dataType): bool
     {
         if (!isset($this->typesConfiguration[$dataType])
             || !isset($this->typesConfiguration[$dataType]['typeConverter'])) {
@@ -322,6 +322,13 @@ class NodePropertyConverterService
         }
 
         $typeConverter = $this->objectManager->get($this->typesConfiguration[$dataType]['typeConverter']);
+        if (!$typeConverter instanceof TypeConverterInterface) {
+            throw new \RuntimeException(
+                'Configured class ' . $this->typesConfiguration[$dataType]['typeConverter']
+                    . ' does not implement the required TypeConverterInterface',
+                1645557392
+            );
+        }
         $propertyMappingConfiguration->setTypeConverter($typeConverter);
         $this->setTypeConverterOptionsForType(
             $propertyMappingConfiguration,

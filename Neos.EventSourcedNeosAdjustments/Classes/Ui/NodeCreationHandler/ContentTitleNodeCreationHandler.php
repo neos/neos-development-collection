@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Service\TransliterationService;
 
@@ -42,9 +43,7 @@ class ContentTitleNodeCreationHandler implements NodeCreationHandlerInterface
     /**
      * Set the node title for the newly created Content node
      *
-     * @param CreateNodeAggregateWithNode $command
-     * @param array $data incoming data from the creationDialog
-     * @return CreateNodeAggregateWithNode
+     * @param array<string|int,mixed> $data incoming data from the creationDialog
      * @throws NodeTypeNotFoundException
      */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
@@ -54,7 +53,7 @@ class ContentTitleNodeCreationHandler implements NodeCreationHandlerInterface
             return $command;
         }
 
-        $propertyValues = $command->getInitialPropertyValues();
+        $propertyValues = $command->getInitialPropertyValues() ?: PropertyValuesToWrite::fromArray([]);
         if (isset($data['title'])) {
             $propertyValues = $propertyValues->withValue('title', $data['title']);
         }

@@ -34,7 +34,7 @@ use Neos\Utility\ObjectAccess;
 class ChangeCollectionConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = ['array'];
 
@@ -54,16 +54,19 @@ class ChangeCollectionConverter extends AbstractTypeConverter
      */
     protected $persistenceManager;
 
-    protected $disallowedPayloadProperties = [
+    /**
+     * @var array<int,string>
+     */
+    protected array $disallowedPayloadProperties = [
         'subject',
         'reference'
     ];
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos.Ui", path="changes.types")
-     * @var array
+     * @var array<string,string>
      */
-    protected $typeMap;
+    protected array $typeMap;
 
     /**
      * @Flow\Inject
@@ -92,11 +95,11 @@ class ChangeCollectionConverter extends AbstractTypeConverter
     /**
      * Converts a accordingly formatted, associative array to a change collection
      *
-     * @param array $source
+     * @param array<int,array<string,mixed>> $source
      * @param string $targetType not used
-     * @param array $subProperties not used
-     * @param \Neos\Flow\Property\PropertyMappingConfigurationInterface $configuration not used
-     * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported
+     * @param array<string,mixed> $subProperties not used
+     * @param PropertyMappingConfigurationInterface $configuration not used
+     * @return ChangeCollection|Error An object or \Neos\Error\Messages\Error if the input format is not supported
      *               or could not be converted for other reasons
      * @throws \Exception
      */
@@ -105,7 +108,7 @@ class ChangeCollectionConverter extends AbstractTypeConverter
         $targetType,
         array $subProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
-    ) {
+    ): ChangeCollection|Error {
         if (!is_array($source)) {
             return new Error(sprintf('Cannot convert %s to ChangeCollection.', gettype($source)));
         }
@@ -127,10 +130,9 @@ class ChangeCollectionConverter extends AbstractTypeConverter
     /**
      * Convert array to change interface
      *
-     * @param array $changeData
-     * @return ChangeInterface|Error
+     * @param array<string,mixed> $changeData
      */
-    protected function convertChangeData($changeData)
+    protected function convertChangeData(array $changeData): ChangeInterface|Error
     {
         $type = $changeData['type'];
 
@@ -139,6 +141,7 @@ class ChangeCollectionConverter extends AbstractTypeConverter
         }
 
         $changeClass = $this->typeMap[$type];
+        /** @var ChangeInterface $changeClassInstance */
         $changeClassInstance = $this->objectManager->get($changeClass);
 
         $subjectContextPath = $changeData['subject'];

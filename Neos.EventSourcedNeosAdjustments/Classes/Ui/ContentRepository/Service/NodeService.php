@@ -40,15 +40,26 @@ class NodeService
     /**
      * Helper method to retrieve the closest document for a node
      */
-    public function getClosestDocument(NodeInterface $node): NodeInterface
+    public function getClosestDocument(NodeInterface $node): ?NodeInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return $node;
         }
 
-        $flowQuery = new FlowQuery([$node]);
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
 
-        return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+        while ($node instanceof NodeInterface) {
+            $node = $nodeAccessor->findParentNode($node);
+            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+        }
+
+        return null;
     }
 
     /**

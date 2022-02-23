@@ -82,11 +82,8 @@ class WorkspaceUserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanManageWorkspace(Workspace $workspace)
+    public function currentUserCanManageWorkspace(Workspace $workspace): bool
     {
         if ($workspace->isPersonalWorkspace()) {
             return false;
@@ -98,17 +95,19 @@ class WorkspaceUserService
             );
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
+        /** @todo implement me
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->userService->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
                 'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
             );
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->userService->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
                 'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
             );
         }
+        */
 
         return false;
     }
@@ -118,11 +117,8 @@ class WorkspaceUserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param \Neos\ContentRepository\Domain\Model\Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace)
+    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace): bool
     {
         if ($workspace->isPersonalWorkspace()) {
             return false;

@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
@@ -45,13 +46,16 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
      */
     protected $transliterationService;
 
+    /**
+     * @param array<string|int,mixed> $data
+     */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
         if (!$this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue())
             ->isOfType('Neos.Neos:Document')) {
             return $command;
         }
-        $propertyValues = $command->getInitialPropertyValues();
+        $propertyValues = $command->getInitialPropertyValues() ?: PropertyValuesToWrite::fromArray([]);
         if (isset($data['title'])) {
             $propertyValues = $propertyValues->withValue('title', $data['title']);
         }
@@ -66,7 +70,10 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 
         // if not empty, we transliterate the uriPathSegment according to the language of the new node
         if ($uriPathSegment !== null && $uriPathSegment !== '') {
-            $uriPathSegment = $this->transliterateText($command->getOriginDimensionSpacePoint(), $uriPathSegment);
+            $uriPathSegment = $this->transliterateText(
+                $command->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                $uriPathSegment
+            );
         } else {
             // alternatively we set it to a random string
             $uriPathSegment = uniqid('', true);

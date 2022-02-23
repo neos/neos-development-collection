@@ -83,7 +83,7 @@ final class EditorContentStreamZookeeper
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist
      * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
-    public function relayEditorAuthentication(Authentication\TokenInterface $token)
+    public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
         $isEditor = false;
         foreach ($token->getAccount()->getRoles() as $role) {
@@ -100,12 +100,12 @@ final class EditorContentStreamZookeeper
                 $workspaceName = AdjustmentsWorkspaceName::fromAccountIdentifier(
                     $token->getAccount()->getAccountIdentifier()
                 );
-                /** @var Workspace $workspace */
                 $workspace = $this->workspaceFinder->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
 
                 $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {
                     // @todo: find base workspace for user
+                    /** @var Workspace $baseWorkspace */
                     $baseWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
                     $editorsNewContentStreamIdentifier = ContentStreamIdentifier::create();
                     $similarlyNamedWorkspaces = $this->workspaceFinder->findByPrefix(

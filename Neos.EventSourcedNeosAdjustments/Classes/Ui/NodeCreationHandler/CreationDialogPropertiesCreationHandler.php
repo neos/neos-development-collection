@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\TypeHandling;
 
@@ -30,10 +31,13 @@ class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInte
      */
     protected $nodeTypeManager;
 
+    /**
+     * @param array<string|int,mixed> $data
+     */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
         $nodeType = $this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue());
-        $propertyValues = $command->getInitialPropertyValues();
+        $propertyValues = $command->getInitialPropertyValues() ?: PropertyValuesToWrite::fromArray([]);
         foreach ($nodeType->getConfiguration('properties') as $propertyName => $propertyConfiguration) {
             if (!isset($propertyConfiguration['ui']['showInCreationDialog'])
                 || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {

@@ -23,40 +23,27 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 class CopyInto extends AbstractStructuralChange
 {
-
     /**
      * @Flow\Inject
      * @var NodeDuplicationCommandHandler
      */
     protected $nodeDuplicationCommandHandler;
 
-    /**
-     * @var string
-     */
-    protected $parentContextPath;
+    protected ?string $parentContextPath;
 
-    /**
-     * @var NodeInterface
-     */
-    protected $cachedParentNode;
+    protected ?NodeInterface $cachedParentNode;
 
-    /**
-     * @param string $parentContextPath
-     */
-    public function setParentContextPath($parentContextPath)
+    public function setParentContextPath(string $parentContextPath): void
     {
         $this->parentContextPath = $parentContextPath;
     }
 
-    /**
-     * @return NodeInterface
-     */
-    public function getParentNode()
+    public function getParentNode(): ?NodeInterface
     {
         if ($this->cachedParentNode === null) {
-            $this->cachedParentNode = $this->nodeService->getNodeFromContextPath(
-                $this->parentContextPath
-            );
+            $this->cachedParentNode = $this->parentContextPath
+                ? $this->nodeService->getNodeFromContextPath($this->parentContextPath)
+                : null;
         }
 
         return $this->cachedParentNode;
@@ -64,30 +51,30 @@ class CopyInto extends AbstractStructuralChange
 
     /**
      * "Subject" is the to-be-copied node; the "parent" node is the new parent
-     *
-     * @return boolean
      */
     public function canApply(): bool
     {
-        $nodeType = $this->getSubject()->getNodeType();
+        $parentNode = $this->getParentNode();
 
-        return $this->isNodeTypeAllowedAsChildNode($this->getParentNode(), $nodeType);
+        return $this->subject
+            && $parentNode
+            && $this->isNodeTypeAllowedAsChildNode($parentNode, $this->subject->getNodeType());
     }
 
-    public function getMode()
+    public function getMode(): string
     {
         return 'into';
     }
 
     /**
      * Applies this change
-     *
-     * @return void
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            $subject = $this->getSubject();
+        $subject = $this->getSubject();
+        $parentNode = $this->getParentNode();
+        if ($parentNode && $subject && $this->canApply()) {
+            $targetNodeName = NodeName::fromString(uniqid('node-'));
             $command = CopyNodesRecursively::create(
                 $this->contentGraph->getSubgraphByIdentifier(
                     $subject->getContentStreamIdentifier(),
@@ -97,19 +84,18 @@ class CopyInto extends AbstractStructuralChange
                 $subject,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($subject->getDimensionSpacePoint()),
                 UserIdentifier::forSystemUser(), // TODO
-                $this->getParentNode()->getNodeAggregateIdentifier(),
+                $parentNode->getNodeAggregateIdentifier(),
                 null,
-                NodeName::fromString(uniqid('node-'))
+                $targetNodeName
             );
-
 
             $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
                 ->blockUntilProjectionsAreUpToDate();
 
-            $parentNode = $this->getParentNode();
+            /** @var NodeInterface $newlyCreatedNode */
             $newlyCreatedNode = $this->nodeAccessorFor($parentNode)->findChildNodeConnectedThroughEdgeName(
                 $parentNode,
-                $command->getTargetNodeName()
+                $targetNodeName
             );
             // we render content directly as response of this operation,
             // so we need to flush the caches at the copy target

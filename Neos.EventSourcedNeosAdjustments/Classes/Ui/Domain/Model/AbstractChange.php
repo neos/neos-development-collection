@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -27,10 +27,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 
 abstract class AbstractChange implements ChangeInterface
 {
-    /**
-     * @var NodeInterface
-     */
-    protected $subject;
+    protected ?NodeInterface $subject;
 
     /**
      * @Flow\Inject
@@ -57,37 +54,59 @@ abstract class AbstractChange implements ChangeInterface
     protected $persistenceManager;
 
     /**
-     * Set the subject
+     * @Flow\Inject
+     * @var NodeAccessorManager
      */
+    protected $nodeAccessorManager;
+
     public function setSubject(NodeInterface $subject): void
     {
         $this->subject = $subject;
     }
 
-    /**
-     * Get the subject
-     */
-    public function getSubject(): NodeInterface
+    public function getSubject(): ?NodeInterface
     {
         return $this->subject;
     }
 
     /**
      * Helper method to inform the client, that new workspace information is available
-     *
-     * @return void
      */
-    protected function updateWorkspaceInfo()
+    protected function updateWorkspaceInfo(): void
     {
-        $flowQuery = new FlowQuery([$this->getSubject()]);
-        $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+        if (!is_null($this->subject)) {
+            $documentNode = $this->findClosestDocumentNode($this->subject);
+            if (!is_null($documentNode)) {
+                $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                    $documentNode->getContentStreamIdentifier()
+                );
+                if (!is_null($workspace)) {
+                    $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspace->getWorkspaceName());
+                    $this->feedbackCollection->add($updateWorkspaceInfo);
+                }
+            }
+        }
+    }
 
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-            $documentNode->getContentStreamIdentifier()
-        );
-        $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspace->getWorkspaceName());
+    final protected function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    {
+        while ($node instanceof NodeInterface) {
+            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+            $node = $this->findParentNode($node);
+        }
 
-        $this->feedbackCollection->add($updateWorkspaceInfo);
+        return null;
+    }
+
+    protected function findParentNode(NodeInterface $node): ?NodeInterface
+    {
+        return $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        )->findParentNode($node);
     }
 
     /**
@@ -111,9 +130,11 @@ abstract class AbstractChange implements ChangeInterface
     protected function addNodeCreatedFeedback(NodeInterface $subject = null): void
     {
         $node = $subject ?: $this->getSubject();
-        $nodeCreated = new NodeCreated();
-        $nodeCreated->setNode($node);
-        $this->feedbackCollection->add($nodeCreated);
+        if ($node) {
+            $nodeCreated = new NodeCreated();
+            $nodeCreated->setNode($node);
+            $this->feedbackCollection->add($nodeCreated);
+        }
     }
 
     final protected function getInitiatingUserIdentifier(): UserIdentifier

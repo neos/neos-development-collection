@@ -24,7 +24,7 @@ interface NodeCreationHandlerInterface
      * Do something with the newly created node
      *
      * @param CreateNodeAggregateWithNode $command The original node creation command
-     * @param array $data incoming data from the creationDialog
+     * @param array<string|int,mixed> $data incoming data from the creationDialog
      * @return CreateNodeAggregateWithNode the original command or a new creation command with altered properties
      */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode;

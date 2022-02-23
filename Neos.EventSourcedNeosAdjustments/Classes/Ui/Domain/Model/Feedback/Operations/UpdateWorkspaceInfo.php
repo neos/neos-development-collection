@@ -23,10 +23,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 
 class UpdateWorkspaceInfo extends AbstractFeedback
 {
-    /**
-     * @var WorkspaceName
-     */
-    protected $workspaceName;
+    protected ?WorkspaceName $workspaceName;
 
     /**
      * @Flow\Inject
@@ -64,10 +61,8 @@ class UpdateWorkspaceInfo extends AbstractFeedback
 
     /**
      * Getter for WorkspaceName
-     *
-     * @return WorkspaceName
      */
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): ?WorkspaceName
     {
         return $this->workspaceName;
     }
@@ -115,13 +110,16 @@ class UpdateWorkspaceInfo extends AbstractFeedback
      */
     public function serializePayload(ControllerContext $controllerContext)
     {
-        $workspace = $this->workspaceFinder->findOneByName($this->workspaceName);
-        return [
+        $workspace = $this->workspaceName
+            ? $this->workspaceFinder->findOneByName($this->workspaceName)
+            : null;
+
+        return $workspace && $this->workspaceName ? [
             'name' => (string)$this->workspaceName,
             'publishableNodes' => $this->workspaceService->getPublishableNodeInfo(
                 $this->workspaceName
             ),
             'baseWorkspace' => (string)$workspace->getBaseWorkspaceName()
-        ];
+        ] : [];
     }
 }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
@@ -44,18 +45,20 @@ class NodePolicyService
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array the key is a Privilege class name;
-     *               the value is "true" if privileges are configured for this class name.
+     * @return array<string,bool> the key is a Privilege class name;
+     *         the value is "true" if privileges are configured for this class name.
      * @Flow\CompileStatic
      */
     public static function getUsedPrivilegeClassNames(ObjectManagerInterface $objectManager): array
     {
+        /** @var PolicyService $policyService */
         $policyService = $objectManager->get(PolicyService::class);
         $usedPrivilegeClassNames = [];
         foreach ($policyService->getPrivilegeTargets() as $privilegeTarget) {
             $usedPrivilegeClassNames[$privilegeTarget->getPrivilegeClassName()] = true;
-            foreach (class_parents($privilegeTarget->getPrivilegeClassName()) as $parentPrivilege) {
+            foreach (class_parents($privilegeTarget->getPrivilegeClassName()) ?: [] as $parentPrivilege) {
                 if (is_a($parentPrivilege, PrivilegeInterface::class)) {
+                    /** @var string $parentPrivilege */
                     $usedPrivilegeClassNames[$parentPrivilege] = true;
                 }
             }
@@ -65,8 +68,7 @@ class NodePolicyService
     }
 
     /**
-     * @param NodeInterface $node
-     * @return array
+     * @return array<string,mixed>
      */
     public function getNodePolicyInformation(NodeInterface $node): array
     {
@@ -96,7 +98,7 @@ class NodePolicyService
 
     /**
      * @param NodeInterface $node
-     * @return array
+     * @return array<int,NodeType>
      */
     public function getDisallowedNodeTypes(NodeInterface $node): array
     {
@@ -155,7 +157,7 @@ class NodePolicyService
 
     /**
      * @param NodeInterface $node
-     * @return array
+     * @return array<int,string>
      */
     public function getDisallowedProperties(NodeInterface $node): array
     {

@@ -13,7 +13,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -45,10 +44,8 @@ abstract class AbstractCreate extends AbstractStructuralChange
 
     /**
      * The type of the node that will be created
-     *
-     * @var NodeType
      */
-    protected $nodeType;
+    protected ?NodeType $nodeType;
 
     /**
      * @var NodeTypeManager
@@ -59,87 +56,51 @@ abstract class AbstractCreate extends AbstractStructuralChange
     /**
      * Incoming data from creationDialog
      *
-     * @var array
+     * @var array<int|string,mixed>
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * An (optional) name that will be used for the new node path
-     *
-     * @var string|null
      */
-    protected $name = null;
+    protected ?string $name = null;
 
-    /**
-     * @Flow\Inject
-     * @var NodeServiceInterface
-     */
-    protected $nodeService;
-
-    /**
-     * Set the node type
-     *
-     * @param string $nodeType
-     */
-    public function setNodeType($nodeType)
+    public function setNodeType(string|NodeType $nodeType): void
     {
         if (is_string($nodeType)) {
             $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
         }
 
-        if (!$nodeType instanceof NodeType) {
-            throw new \InvalidArgumentException('nodeType needs to be of type string or NodeType', 1452100970);
-        }
-
         $this->nodeType = $nodeType;
     }
 
-    /**
-     * Get the node type
-     *
-     * @return NodeType
-     */
-    public function getNodeType()
+    public function getNodeType(): ?NodeType
     {
         return $this->nodeType;
     }
 
     /**
-     * Set the data
-     *
-     * @param array $data
+     * @param array<int|string,mixed> $data
      */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
     /**
-     * Get the data
-     *
-     * @return array
+     * @return array<int|string,mixed>
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * Set the name
-     *
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * Get the name
-     *
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -154,12 +115,16 @@ abstract class AbstractCreate extends AbstractStructuralChange
         NodeInterface $parentNode,
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null
     ): NodeInterface {
+        $nodeType = $this->getNodeType();
+        if (is_null($nodeType)) {
+            throw new \RuntimeException('Cannot run createNode without a set node type.', 1645577794);
+        }
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
         $nodeName = NodeName::fromString($this->getName() ?: uniqid('node-', false));
 
         $nodeAggregateIdentifier = NodeAggregateIdentifier::create(); // generate a new NodeAggregateIdentifier
-        $nodeTypeName = NodeTypeName::fromString($this->getNodeType()->getName());
+        $nodeTypeName = NodeTypeName::fromString($nodeType->getName());
 
         $command = new CreateNodeAggregateWithNode(
             $parentNode->getContentStreamIdentifier(),
@@ -180,6 +145,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
             $parentNode->getNodeAggregateIdentifier()
         );
 
+        /** @var NodeInterface $newlyCreatedNode */
         $newlyCreatedNode = $this->nodeAccessorFor($parentNode)
             ->findChildNodeConnectedThroughEdgeName($parentNode, $nodeName);
 
@@ -191,9 +157,6 @@ abstract class AbstractCreate extends AbstractStructuralChange
     }
 
     /**
-     * @param CreateNodeAggregateWithNode $command
-     * @param NodeTypeName $nodeTypeName
-     * @return CreateNodeAggregateWithNode
      * @throws InvalidNodeCreationHandlerException
      */
     protected function applyNodeCreationHandlers(

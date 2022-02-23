@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
@@ -34,27 +35,35 @@ class CopyAfter extends AbstractStructuralChange
      */
     public function canApply(): bool
     {
-        $nodeType = $this->getSubject()->getNodeType();
-        return $this->isNodeTypeAllowedAsChildNode($this->findParentNode($this->getSiblingNode()), $nodeType);
+        if (is_null($this->subject)) {
+            return false;
+        }
+        $siblingNode = $this->getSiblingNode();
+        if (is_null($siblingNode)) {
+            return false;
+        }
+        $nodeType = $this->subject->getNodeType();
+        $parentNode = $this->findParentNode($siblingNode);
+        return !is_null($parentNode)
+            && $this->isNodeTypeAllowedAsChildNode($parentNode, $nodeType);
     }
 
-    public function getMode()
+    public function getMode(): string
     {
         return 'after';
     }
 
     /**
      * Applies this change
-     *
-     * @return void
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            $subject = $this->getSubject();
-
-            $previousSibling = $this->getSiblingNode();
-            $parentNodeOfPreviousSibling = $this->findParentNode($previousSibling);
+        $previousSibling = $this->getSiblingNode();
+        $parentNodeOfPreviousSibling = !is_null($previousSibling)
+            ? $this->findParentNode($previousSibling)
+            : null;
+        $subject = $this->subject;
+        if ($this->canApply() && $subject && !is_null($previousSibling) && !is_null($parentNodeOfPreviousSibling)) {
             $succeedingSibling = null;
             try {
                 $succeedingSibling = $this->findChildNodes($parentNodeOfPreviousSibling)->next($previousSibling);
@@ -62,6 +71,7 @@ class CopyAfter extends AbstractStructuralChange
                 // do nothing; $succeedingSibling is null.
             }
 
+            $targetNodeName = NodeName::fromString(uniqid('node-'));
             $command = CopyNodesRecursively::create(
                 $this->contentGraph->getSubgraphByIdentifier(
                     $subject->getContentStreamIdentifier(),
@@ -73,16 +83,17 @@ class CopyAfter extends AbstractStructuralChange
                 $this->getInitiatingUserIdentifier(),
                 $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
                 $succeedingSibling?->getNodeAggregateIdentifier(),
-                NodeName::fromString(uniqid('node-'))
+                $targetNodeName
             );
 
             $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
                 ->blockUntilProjectionsAreUpToDate();
 
+            /** @var NodeInterface $newlyCreatedNode */
             $newlyCreatedNode = $this->nodeAccessorFor($parentNodeOfPreviousSibling)
                 ->findChildNodeConnectedThroughEdgeName(
                     $parentNodeOfPreviousSibling,
-                    $command->getTargetNodeName()
+                    $targetNodeName
                 );
             // we render content directly as response of this operation,
             // so we need to flush the caches at the copy target

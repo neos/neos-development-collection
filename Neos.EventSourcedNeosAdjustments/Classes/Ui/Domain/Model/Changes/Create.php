@@ -12,50 +12,39 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-
 class Create extends AbstractCreate
 {
-
-    /**
-     * @param string $parentContextPath
-     */
-    public function setParentContextPath($parentContextPath)
+    public function setParentContextPath(string $parentContextPath): void
     {
         // this method needs to exist; otherwise the TypeConverter breaks.
     }
 
     /**
      * Get the insertion mode (before|after|into) that is represented by this change
-     *
-     * @return string
      */
-    public function getMode()
+    public function getMode(): string
     {
         return 'into';
     }
 
     /**
      * Check if the new node's node type is allowed in the requested position
-     *
-     * @return boolean
      */
     public function canApply(): bool
     {
         $subject = $this->getSubject();
         $nodeType = $this->getNodeType();
 
-        return $this->isNodeTypeAllowedAsChildNode($subject, $nodeType);
+        return $subject && $nodeType && $this->isNodeTypeAllowedAsChildNode($subject, $nodeType);
     }
 
     /**
      * Create a new node beneath the subject
-     *
-     * @return void
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            $parentNode = $this->getSubject();
+        $parentNode = $this->getSubject();
+        if ($parentNode && $this->canApply()) {
             $this->createNode($parentNode, null);
             $this->updateWorkspaceInfo();
         }
