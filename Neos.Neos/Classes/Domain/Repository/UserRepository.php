@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Repository;
 
 /*
@@ -24,6 +25,9 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class UserRepository extends Repository
 {
+    const SORT_BY_LASTLOGGEDIN = 'LastLoggedIn';
+    const SORT_DIRECTION_DESC = 'DESC';
+
     /**
      * @return QueryResultInterface
      */
@@ -35,20 +39,33 @@ class UserRepository extends Repository
     }
 
     /**
-     * @param string $searchTerm
+     * @param bool $sortDescending
      * @return QueryResultInterface
      */
-    public function findBySearchTerm(string $searchTerm): QueryResultInterface
+    public function findAllOrderedByLastLoggedInDate(bool $sortDescending): QueryResultInterface
+    {
+        return $this->createQuery()
+            ->setOrderings(['accounts.lastSuccessfulAuthenticationDate' => $sortDescending ? QueryInterface::ORDER_DESCENDING : QueryInterface::ORDER_ASCENDING])
+            ->execute();
+    }
+
+    /**
+     * @param string $searchTerm
+     * @param string $sortBy Can be SORT_BY_LASTLOGGEDIN or empty
+     * @param string $sortDirection Can be SORT_DIRECTION_DESC or empty
+     * @return QueryResultInterface
+     */
+    public function findBySearchTerm(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
         try {
             $query = $this->createQuery();
             $query->matching(
                 $query->logicalOr(
-                    $query->like('accounts.accountIdentifier', '%'.$searchTerm.'%'),
-                    $query->like('name.fullName', '%'.$searchTerm.'%')
+                    $query->like('accounts.accountIdentifier', '%' . $searchTerm . '%'),
+                    $query->like('name.fullName', '%' . $searchTerm . '%')
                 )
             );
-            return $query->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])->execute();
+            return $query->setOrderings([$sortBy === self::SORT_BY_LASTLOGGEDIN ? 'accounts.lastSuccessfulAuthenticationDate' : 'accounts.accountIdentifier' => $sortDirection === self::SORT_DIRECTION_DESC ? QueryInterface::ORDER_DESCENDING : QueryInterface::ORDER_ASCENDING])->execute();
         } catch (\Neos\Flow\Persistence\Exception\InvalidQueryException $e) {
             throw new \RuntimeException($e->getMessage(), 1557767046, $e);
         }

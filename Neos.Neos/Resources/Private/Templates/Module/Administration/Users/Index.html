@@ -26,7 +26,31 @@
 						<tr>
 							<th><neos:backend.translate id="users.name" source="Modules" package="Neos.Neos"/></th>
 							<th><neos:backend.translate id="users.accountsAndRoles" source="Modules" package="Neos.Neos"/></th>
-							<th><neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/></th>
+							<th>
+								<f:if condition="{sortBy} === 'LastLoggedIn'">
+									<f:then>
+										<f:if condition="{sortDirection} === 'ASC'">
+											<f:then>
+												<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+													<neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/>
+												</f:link.action>
+												<i class="fas fa-caret-up"></i>
+											</f:then>
+											<f:else>
+												<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+													<neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/>
+												</f:link.action>
+												<i class="fas fa-caret-down"></i>
+											</f:else>
+										</f:if>
+									</f:then>
+									<f:else>
+										<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'LastLoggedIn'}" addQueryString="TRUE">
+											<neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/>
+										</f:link.action>
+									</f:else>
+								</f:if>
+							</th>
 							<th>&nbsp;</th>
 						</tr>
 					</thead>

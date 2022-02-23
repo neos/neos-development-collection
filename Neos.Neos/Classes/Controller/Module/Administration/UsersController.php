@@ -31,6 +31,7 @@ use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Repository\UserRepository;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\ElectronicAddress;
 
@@ -107,20 +108,24 @@ class UsersController extends AbstractModuleController
      * Shows a list of all users
      *
      * @param string $searchTerm
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return void
      */
-    public function indexAction(string $searchTerm = ''): void
+    public function indexAction(string $searchTerm = '', string $sortBy = '', string $sortDirection = UserRepository::SORT_DIRECTION_DESC): void
     {
         if (empty($searchTerm)) {
-            $users = $this->userService->getUsers();
+            $users = $this->userService->getUsers($sortBy, $sortDirection);
         } else {
-            $users = $this->userService->searchUsers($searchTerm);
+            $users = $this->userService->searchUsers($searchTerm, $sortBy, $sortDirection);
         }
 
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'users' => $users,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+            'sortBy' => $sortBy,
+            'sortDirection' => $sortDirection,
         ]);
     }
 

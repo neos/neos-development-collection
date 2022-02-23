@@ -156,21 +156,28 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers(): QueryResultInterface
+    public function getUsers(string $sortBy, string $sortDirection): QueryResultInterface
     {
+        if ($sortBy === UserRepository::SORT_BY_LASTLOGGEDIN) {
+            return $this->userRepository->findAllOrderedByLastLoggedInDate($sortDirection === UserRepository::SORT_DIRECTION_DESC);
+        }
         return $this->userRepository->findAllOrderedByUsername();
     }
 
     /**
      * @param string $searchTerm
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return QueryResultInterface
      */
-    public function searchUsers(string $searchTerm): QueryResultInterface
+    public function searchUsers(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
-        return $this->userRepository->findBySearchTerm($searchTerm);
+        return $this->userRepository->findBySearchTerm($searchTerm, $sortBy, $sortDirection);
     }
 
     /**
