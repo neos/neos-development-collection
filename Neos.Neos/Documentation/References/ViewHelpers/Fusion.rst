@@ -3,7 +3,7 @@
 Fusion ViewHelper Reference
 ===========================
 
-This reference was automatically generated from code on 2022-02-19
+This reference was automatically generated from code on 2022-02-23
 
 
 .. _`Fusion ViewHelper Reference: fusion:render`:
