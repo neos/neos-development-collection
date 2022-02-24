@@ -60,7 +60,7 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
      */
     public function canEvaluate($context)
@@ -71,15 +71,17 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
+        /** @var array<int,mixed> $context */
+        $context = $flowQuery->getContext();
         /** @var NodeInterface $siteNode */
         /** @var NodeInterface $documentNode */
-        list($siteNode, $documentNode) = $flowQuery->getContext();
+        list($siteNode, $documentNode) = $context;
         /** @var string[] $toggledNodes Node Addresses */
         list($baseNodeType, $loadingDepth, $toggledNodes, $clipboardNodesContextPaths) = $arguments;
 
@@ -98,8 +100,10 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
             $currentNodePath = $nodeAccessor->findNodePath($currentNode);
             $siteNodePath = $nodeAccessor->findNodePath($siteNode);
             $parentNodeIsUnderneathSiteNode = str_starts_with((string)$currentNodePath, (string)$siteNodePath);
-            while (!$currentNode->getNodeAggregateIdentifier()->equals($siteNode->getNodeAggregateIdentifier())
-                && $parentNodeIsUnderneathSiteNode) {
+            while ($currentNode instanceof NodeInterface
+                && !$currentNode->getNodeAggregateIdentifier()->equals($siteNode->getNodeAggregateIdentifier())
+                && $parentNodeIsUnderneathSiteNode
+            ) {
                 $parents[] = $currentNode->getNodeAggregateIdentifier()->jsonSerialize();
                 $currentNode = $nodeAccessor->findParentNode($currentNode);
             }
@@ -167,17 +171,24 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
         $flowQuery->setContext($nodes);
     }
 
+    /**
+     * @param array<string,NodeInterface> &$nodes
+     */
+    /*
     private function flattenSubtreeToNodeList(
         NodeAccessorInterface $nodeAccessor,
         SubtreeInterface $subtree,
         array &$nodes
-    ) {
+    ): void {
         $currentNode = $subtree->getNode();
+        if (is_null($currentNode)) {
+            return;
+        }
 
         $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = $currentNode;
 
         foreach ($subtree->getChildren() as $childSubtree) {
             $this->flattenSubtreeToNodeList($nodeAccessor, $childSubtree, $nodes);
         }
-    }
+    }*/
 }

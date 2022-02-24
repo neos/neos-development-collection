@@ -203,7 +203,7 @@ class NodeViewHelper extends AbstractViewHelper
     /**
      * Renders the URI.
      */
-    public function render()
+    public function render(): string
     {
         $node = $this->arguments['node'];
         if (!$node instanceof NodeInterface) {

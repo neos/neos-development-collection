@@ -109,7 +109,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!$parameters->has('dimensionSpacePoint') || !$parameters->has('requestUriHost')) {
             return false;
         }
+        /** @var string $requestUriHost */
+        $requestUriHost = $parameters->getValue('requestUriHost');
 
+        /** @var int $uriPathSegmentOffset */
         $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSegmentOffset);
         /** @var DimensionSpacePoint $dimensionSpacePoint */
@@ -119,7 +122,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $matchResult = $this->matchUriPath(
                 $requestPath,
                 $dimensionSpacePoint,
-                $parameters->getValue('requestUriHost')
+                $requestUriHost
             );
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
@@ -131,12 +134,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
     /**
-     * @param array $routeValues
-     * @param RouteParameters $parameters
-     * @return ResolveResult|bool
+     * @param array<string,mixed> &$routeValues
      * @throws InvalidContentDimensionValueUriProcessorException
      */
-    public function resolveWithParameters(array &$routeValues, RouteParameters $parameters)
+    public function resolveWithParameters(array &$routeValues, RouteParameters $parameters): ResolveResult|false
     {
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
@@ -144,6 +145,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!$parameters->has('requestUriHost')) {
             return false;
         }
+        /** @var string $requestUriHost */
+        $requestUriHost = $parameters->getValue('requestUriHost');
 
         $nodeAddress = $routeValues[$this->name];
         if (!$nodeAddress instanceof NodeAddress) {
@@ -151,7 +154,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $parameters->getValue('requestUriHost'));
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $requestUriHost);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -318,19 +321,26 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $this->splitString = $splitString;
     }
 
-    public function match(&$routePath)
+    public function match(&$routePath): bool
     {
+        return false;
+        /*
         throw new \BadMethodCallException(
             'match() is not supported by this Route Part Handler, use "matchWithParameters" instead',
             1568287772
-        );
+        );*/
     }
 
-    public function resolve(array &$routeValues)
+    /**
+     * @param array<int|string,mixed> $routeValues
+     */
+    public function resolve(array &$routeValues): bool
     {
+        return false;
+        /*
         throw new \BadMethodCallException(
             'resolve() is not supported by this Route Part Handler, use "resolveWithParameters" instead',
             1611600169
-        );
+        );*/
     }
 }

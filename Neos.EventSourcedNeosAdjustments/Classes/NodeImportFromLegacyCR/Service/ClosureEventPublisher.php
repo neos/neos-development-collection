@@ -23,7 +23,7 @@ final class ClosureEventPublisher implements EventPublisherInterface
      */
     private $callback;
 
-    public function setClosure(\Closure $callback)
+    public function setClosure(\Closure $callback): void
     {
         $this->callback = $callback;
     }

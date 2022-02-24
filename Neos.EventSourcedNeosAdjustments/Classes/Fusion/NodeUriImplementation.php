@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -40,10 +39,8 @@ class NodeUriImplementation extends AbstractFusionObject
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
-     *
-     * @return mixed
      */
-    public function getNode(): ?NodeInterface
+    public function getNode(): NodeInterface|string|null
     {
         return $this->fusionValue('node');
     }
@@ -71,9 +68,9 @@ class NodeUriImplementation extends AbstractFusionObject
     /**
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getAdditionalParams()
+    public function getAdditionalParams(): array
     {
         return array_merge($this->fusionValue('additionalParams'), $this->fusionValue('arguments'));
     }
@@ -81,9 +78,9 @@ class NodeUriImplementation extends AbstractFusionObject
     /**
      * Arguments to be removed from the URI. Only active if addQueryString = TRUE
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getArgumentsToBeExcludedFromQueryString()
+    public function getArgumentsToBeExcludedFromQueryString(): array
     {
         return $this->fusionValue('argumentsToBeExcludedFromQueryString');
     }
@@ -137,20 +134,19 @@ class NodeUriImplementation extends AbstractFusionObject
         $node = $this->getNode();
         if ($node instanceof NodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-        } elseif ($node === '~') {
-            // @todo fix me
+        } /* @todo implement us
+        elseif ($node === '~') {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
                 $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)
                     ->getNodeAggregateIdentifier()
             );
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            // @todo fix me
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
                 NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
             );
-        } else {
+        } */ else {
             return '';
         }
         if ($this->getSubgraph()) {

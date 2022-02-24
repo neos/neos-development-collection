@@ -48,9 +48,9 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     /**
      * Additional attributes to be rendered in the ContentElementWrapping
      *
-     * @return array
+     * @return array<string,string>
      */
-    public function getAdditionalAttributes()
+    public function getAdditionalAttributes(): array
     {
         return $this->fusionValue('additionalAttributes') ?? [];
     }

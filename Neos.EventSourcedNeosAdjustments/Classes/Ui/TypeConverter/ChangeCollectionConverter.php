@@ -146,9 +146,8 @@ class ChangeCollectionConverter extends AbstractTypeConverter
 
         $subjectContextPath = $changeData['subject'];
         $subject = $this->nodeService->getNodeFromContextPath($subjectContextPath);
-
-        if ($subject instanceof Error) {
-            return $subject;
+        if (is_null($subject)) {
+            return new Error('Could not find node for subject "' . $subjectContextPath . '"', 1645657340);
         }
 
         $changeClassInstance->setSubject($subject);

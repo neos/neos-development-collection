@@ -56,7 +56,7 @@ class ChildrenOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -67,8 +67,8 @@ class ChildrenOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return void
      * @throws \Neos\Eel\FlowQuery\FizzleException
      * @throws \Neos\Eel\Exception
@@ -110,8 +110,8 @@ class ChildrenOperation extends AbstractOperation
      * by NodeType (instanceof). These cases are now optimized and will
      * only load the nodes that match the filters.
      *
-     * @param FlowQuery $flowQuery
-     * @param array $parsedFilter
+     * @param FlowQuery<int,mixed> $flowQuery
+     * @param array<string,mixed> $parsedFilter
      * @return boolean
      * @throws \Neos\Eel\Exception
      */
@@ -119,7 +119,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        //$outputNodeAggregateIdentifiers = [];
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = [];
             $attributeFilters = [];
@@ -206,16 +206,16 @@ class ChildrenOperation extends AbstractOperation
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
-                    $filteredOutput = $filteredFlowQuery->get();
+                    #$filteredOutput = $filteredFlowQuery->getContext();
                 }
 
                 // Add filtered nodes to output
+                /* $outputNodeAggregateIdentifiers is never used, what is this for?
                 foreach ($filteredOutput as $filteredNode) {
-                    /** @var NodeInterface $filteredNode */
                     if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->getNodeAggregateIdentifier()])) {
                         $output[] = $filteredNode;
                     }
-                }
+                }*/
             }
         }
 

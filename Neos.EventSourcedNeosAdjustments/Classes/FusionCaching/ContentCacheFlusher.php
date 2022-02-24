@@ -122,10 +122,13 @@ class ContentCacheFlusher
             $tagsToFlush
         );
 
-        $parentNodeAggregates = iterator_to_array($this->contentGraph->findParentNodeAggregates(
+        $parentNodeAggregates = [];
+        foreach ($this->contentGraph->findParentNodeAggregates(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
-        ));
+        ) as $parentNodeAggregate) {
+            $parentNodeAggregates[] = $parentNodeAggregate;
+        }
         // we do not need these variables anymore here
         unset($contentStreamIdentifier, $nodeAggregateIdentifier);
 
@@ -147,13 +150,12 @@ class ContentCacheFlusher
                 $nodeAggregate->getIdentifier()
             );
 
-            array_push(
-                $parentNodeAggregates,
-                ...iterator_to_array($this->contentGraph->findParentNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
-                ))
-            );
+            foreach ($this->contentGraph->findParentNodeAggregates(
+                $nodeAggregate->getContentStreamIdentifier(),
+                $nodeAggregate->getIdentifier()
+            ) as $parentNodeAggregate) {
+                $parentNodeAggregates[] = $parentNodeAggregate;
+            }
         }
         return function () use ($tagsToFlush) {
             $this->flushTags($tagsToFlush);
@@ -167,14 +169,13 @@ class ContentCacheFlusher
      * $workspaceHash .'_'. $nodeIdentifier
      * The workspacehash can be received via $this->getCachingHelper()->renderWorkspaceTagForContextNode($workpsacename)
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param array<string,string> &$tagsToFlush
      */
     private function registerChangeOnNodeIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         array &$tagsToFlush
-    ) {
+    ): void {
         $cacheIdentifier = '%' . $contentStreamIdentifier . '%_' . $nodeAggregateIdentifier;
         $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
             'which were tagged with "Node_%s" because that identifier has changed.',
@@ -206,17 +207,14 @@ class ContentCacheFlusher
      * is set up correctly and contains the workspacehash wich can be received via
      * $this->getCachingHelper()->renderWorkspaceTagForContextNode($workpsacename)
      *
-     * @param NodeTypeName $nodeTypeName
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier|null $referenceNodeIdentifier
-     * @param array $tagsToFlush
+     * @param array<string,string> &$tagsToFlush
      */
     private function registerChangeOnNodeType(
         NodeTypeName $nodeTypeName,
         ContentStreamIdentifier $contentStreamIdentifier,
         ?NodeAggregateIdentifier $referenceNodeIdentifier,
         array &$tagsToFlush
-    ) {
+    ): void {
         try {
             $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
                 $this->nodeTypeManager->getNodeType((string)$nodeTypeName)
@@ -248,9 +246,9 @@ class ContentCacheFlusher
     /**
      * Flush caches according to the previously registered node changes.
      *
-     * @return void
+     * @param array<string,string> $tagsToFlush
      */
-    protected function flushTags(array $tagsToFlush)
+    protected function flushTags(array $tagsToFlush): void
     {
         foreach ($tagsToFlush as $tag => $logMessage) {
             $affectedEntries = $this->contentCache->flushByTag($tag);

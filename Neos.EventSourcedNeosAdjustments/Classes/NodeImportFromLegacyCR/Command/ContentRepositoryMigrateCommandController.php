@@ -24,9 +24,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ClosureEventPublisher;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositoryExportService;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -39,10 +41,9 @@ use Neos\Flow\Cli\CommandController;
  */
 class ContentRepositoryMigrateCommandController extends CommandController
 {
-
     /**
      * @Flow\InjectConfiguration(path="EventStore.stores.ContentRepository", package="Neos.EventSourcing")
-     * @var array
+     * @var array<string,mixed>
      */
     protected $eventStoreConfiguration;
 
@@ -107,6 +108,18 @@ class ContentRepositoryMigrateCommandController extends CommandController
     protected $readSideMemoryCacheManager;
 
     /**
+     * @Flow\Inject
+     * @var RuntimeBlocker
+     */
+    protected $runtimeBlocker;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyConverter
+     */
+    protected $propertyConverter;
+
+    /**
      * @var Connection
      */
     private $dbal;
@@ -119,9 +132,8 @@ class ContentRepositoryMigrateCommandController extends CommandController
     /**
      * Run a CR export
      */
-    public function runCommand()
+    public function runCommand(): void
     {
-        /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @var EventStorageInterface $eventStoreStorage */
         $eventStoreStorage = $this->objectManager->get(
             $this->eventStoreConfiguration['storage'],
@@ -147,7 +159,9 @@ class ContentRepositoryMigrateCommandController extends CommandController
             $this->interDimensionalVariationGraph,
             // the nodeAggregateEventPublisher contains the custom EventStore from above
             $nodeAggregateEventPublisher,
-            $this->readSideMemoryCacheManager
+            $this->readSideMemoryCacheManager,
+            $this->runtimeBlocker,
+            $this->propertyConverter
         );
         $contentRepositoryExportService = new ContentRepositoryExportService($eventStore, $nodeAggregateCommandHandler);
 

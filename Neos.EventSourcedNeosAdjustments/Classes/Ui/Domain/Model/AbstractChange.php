@@ -22,6 +22,7 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadD
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 
@@ -139,6 +140,7 @@ abstract class AbstractChange implements ChangeInterface
 
     final protected function getInitiatingUserIdentifier(): UserIdentifier
     {
+        /** @var User $user */
         $user = $this->userService->getBackendUser();
 
         return UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));

@@ -42,12 +42,6 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     protected $contentDimensionValueUriProcessorResolver;
 
     /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressService;
-
-    /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="routing.supportEmptySegmentForDimensions")
      * @var boolean
      */
@@ -81,28 +75,30 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                     ->getValue($nodeAddress->dimensionSpacePoint->coordinates[$rawContentDimensionIdentifier]);
                 $linkProcessor = $this->contentDimensionValueUriProcessorResolver
                     ->resolveContentDimensionValueUriProcessor($contentDimension);
-                if ($resolutionMode !== null && $resolutionMode->getMode()
-                    === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
-                    if (!isset($resolutionOptions['offset'])) {
-                        $resolutionOptions['offset'] = $uriPathSegmentOffset;
+                if (!is_null($contentDimensionValue)) {
+                    if ($resolutionMode !== null && $resolutionMode->getMode()
+                        === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                        if (!isset($resolutionOptions['offset'])) {
+                            $resolutionOptions['offset'] = $uriPathSegmentOffset;
+                        }
+                        if ($contentDimensionValue->value !== $contentDimension->defaultValue->value) {
+                            $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
+                        }
+                        $uriPathSegmentOffset++;
+                        $uriPathSegmentConstraints = $linkProcessor->processUriConstraints(
+                            $uriPathSegmentConstraints,
+                            $contentDimension,
+                            $contentDimensionValue,
+                            $resolutionOptions
+                        );
+                    } else {
+                        $uriConstraints = $linkProcessor->processUriConstraints(
+                            $uriConstraints,
+                            $contentDimension,
+                            $contentDimensionValue,
+                            $resolutionOptions
+                        );
                     }
-                    if ($contentDimensionValue->value !== $contentDimension->defaultValue->value) {
-                        $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
-                    }
-                    $uriPathSegmentOffset++;
-                    $uriPathSegmentConstraints = $linkProcessor->processUriConstraints(
-                        $uriPathSegmentConstraints,
-                        $contentDimension,
-                        $contentDimensionValue,
-                        $resolutionOptions
-                    );
-                } else {
-                    $uriConstraints = $linkProcessor->processUriConstraints(
-                        $uriConstraints,
-                        $contentDimension,
-                        $contentDimensionValue,
-                        $resolutionOptions
-                    );
                 }
             }
 

@@ -22,6 +22,9 @@ use Neos\Flow\Annotations as Flow;
  */
 class CacheFlushJob implements JobInterface
 {
+    /**
+     * @var array<int,array<string,mixed>>
+     */
     protected array $cacheFlushes;
 
     /**
@@ -31,6 +34,7 @@ class CacheFlushJob implements JobInterface
     protected $contentCacheFlusher;
 
     /**
+     * @param array<int,array<string,mixed>> $cacheFlushes
      */
     public function __construct(array $cacheFlushes)
     {

@@ -48,19 +48,21 @@ class Package extends BasePackage
                 $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
                 $routerCachingService->flushCachesForUriPath($oldUriPath);
 
-                if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
-                    return;
+                if (class_exists(RedirectStorageInterface::class)) {
+                    if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
+                        return;
+                    }
+                    /** @var RedirectStorageInterface $redirectStorage */
+                    $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
+                    $redirectStorage->addRedirect(
+                        $oldUriPath,
+                        $newUriPath,
+                        301,
+                        [],
+                        (string)$event->getInitiatingUserIdentifier(),
+                        'via DocumentUriPathProjector'
+                    );
                 }
-                /** @var RedirectStorageInterface $redirectStorage */
-                $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
-                $redirectStorage->addRedirect(
-                    $oldUriPath,
-                    $newUriPath,
-                    301,
-                    [],
-                    (string)$event->getInitiatingUserIdentifier(),
-                    'via DocumentUriPathProjector'
-                );
             }
         );
     }

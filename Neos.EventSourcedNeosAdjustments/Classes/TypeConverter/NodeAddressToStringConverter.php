@@ -26,7 +26,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 class NodeAddressToStringConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = [NodeAddress::class];
 
@@ -40,13 +40,10 @@ class NodeAddressToStringConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-
     /**
      * @param NodeAddress $source
      * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return string
+     * @param array<string,mixed> $convertedChildProperties
      */
     public function convertFrom(
         $source,

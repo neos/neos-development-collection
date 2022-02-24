@@ -20,6 +20,7 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriP
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Psr\Http\Message\UriInterface;
@@ -167,14 +168,14 @@ class NodeShortcutResolver
                     }
                     if ($targetUri->getScheme() === 'asset') {
                         $asset = $this->assetRepository->findByIdentifier($targetUri->getHost());
-                        if ($asset === null) {
+                        if (!$asset instanceof AssetInterface) {
                             throw new InvalidShortcutException(sprintf(
                                 'Failed to load selectedTarget asset in Node "%s", probably it was deleted',
                                 $documentNodeInfo
                             ), 1599314109);
                         }
                         $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
-                        if (!$assetUri) {
+                        if (!is_string($assetUri)) {
                             throw new InvalidShortcutException(sprintf(
                                 'Failed to resolve asset URI in Node "%s", probably it was deleted',
                                 $documentNodeInfo

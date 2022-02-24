@@ -59,24 +59,15 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected $interDimensionalVariationGraph;
 
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
-     * @var NodeInterface
-     */
-    protected $currentNode;
-
-    /**
      * Builds the array of Menu items for this variant menu
+     * @return array<int,array<string,mixed>>
      */
-    protected function buildItems()
+    protected function buildItems(): array
     {
         $menuItems = [];
 
         $currentDimensionSpacePoint = $this->currentNode->getDimensionSpacePoint();
+        $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
         foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
@@ -91,10 +82,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                     $variant = $nodeAccessor->findByIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
 
-                if (!$variant && $this->includeGeneralizations()) {
+                if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
-                        $this->getContentDimensionIdentifierToLimitTo(),
+                        $contentDimensionIdentifierToLimitTo,
                         $this->currentNode->getNodeAggregateIdentifier()
                     );
                 }
@@ -112,14 +103,17 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             }
         }
 
-
-        if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
-            $order = array_flip($this->getValuesToRestrictTo());
-            usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
-                return $order[$menuItemA['node']->getDimensionSpacePoint()->getCoordinate(
-                    $this->getContentDimensionIdentifierToLimitTo()
-                )] <=> $order[$menuItemB['node']->getDimensionSpacePoint()->getCoordinate(
-                    $this->getContentDimensionIdentifierToLimitTo()
+        $valuesToRestrictTo = $this->getValuesToRestrictTo();
+        if ($contentDimensionIdentifierToLimitTo && $valuesToRestrictTo) {
+            $order = array_flip($valuesToRestrictTo);
+            usort($menuItems, function (array $menuItemA, array $menuItemB) use (
+                $order,
+                $contentDimensionIdentifierToLimitTo
+            ) {
+                return (int)$order[$menuItemA['node']?->getDimensionSpacePoint()?->getCoordinate(
+                    $contentDimensionIdentifierToLimitTo
+                )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
+                    $contentDimensionIdentifierToLimitTo
                 )];
             });
         }
@@ -151,12 +145,6 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             );
     }
 
-    /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param ContentDimensionIdentifier $contentDimensionIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeInterface|null
-     */
     protected function findClosestGeneralizationMatchingDimensionValue(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentDimensionIdentifier $contentDimensionIdentifier,
@@ -183,8 +171,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return array
+     * @return array<string,mixed>
      */
     protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint): array
     {
@@ -194,7 +181,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             $dimensionValue = [
                 'value' => $dimensionValue,
                 'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)
-                    ->getValue($dimensionValue)->getConfigurationValue('label'),
+                    ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
                 'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo()
                     || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo())
                 )
@@ -205,11 +192,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @param NodeInterface|null $variant
-     * @param array $metadata
-     * @return string
+     * @param array<string,mixed> $metadata
      */
-    protected function determineLabel(NodeInterface $variant = null, array $metadata): string
+    protected function determineLabel(?NodeInterface $variant = null, array $metadata = []): string
     {
         if ($this->getContentDimensionIdentifierToLimitTo()) {
             return $metadata[(string)$this->getContentDimensionIdentifierToLimitTo()]['label'] ?: '';
@@ -224,11 +209,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         }
     }
 
-    /**
-     * @param NodeInterface|null $variant
-     * @return string
-     */
-    protected function calculateItemState(NodeInterface $variant = null): string
+    protected function calculateItemState(?NodeInterface $variant = null): string
     {
         if (is_null($variant)) {
             return self::STATE_ABSENT;
@@ -260,7 +241,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     protected function getValuesToRestrictTo(): array
     {

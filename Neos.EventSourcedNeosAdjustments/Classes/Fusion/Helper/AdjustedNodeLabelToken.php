@@ -14,19 +14,15 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Neos\Fusion\Helper\NodeLabelToken;
 
 class AdjustedNodeLabelToken extends NodeLabelToken
 {
-
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ?NodeInterface
      */
-    protected $nodeAccessorManager;
+    protected $node;
 
     public function __construct(NodeInterface $node = null)
     {
@@ -38,18 +34,17 @@ class AdjustedNodeLabelToken extends NodeLabelToken
      */
     protected function resolveLabelFromNodeType(): void
     {
-        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel());
+        if (is_null($this->node)) {
+            $this->label = '';
+            return;
+        }
+        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel()) ?: '';
         if (empty($this->label)) {
             $this->label = $this->node->getNodeType()->getName();
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $this->node->getContentStreamIdentifier(),
-            $this->node->getDimensionSpacePoint(),
-            $this->node->getVisibilityConstraints()
-        );
-        if (empty($this->postfix) && NodeInfoHelper::isAutoCreated($this->node, $nodeAccessor)) {
-            $this->postfix =  ' (' . $this->node->getNodeName()->jsonSerialize() . ')';
+        if (empty($this->postfix) && $this->node->isTethered()) {
+            $this->postfix =  ' (' . $this->node->getNodeName() . ')';
         }
     }
 }

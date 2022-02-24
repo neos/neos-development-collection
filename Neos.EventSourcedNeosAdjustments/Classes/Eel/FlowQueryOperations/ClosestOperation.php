@@ -40,7 +40,7 @@ class ClosestOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -51,15 +51,15 @@ class ClosestOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return void
      * @throws FlowQueryException
      * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        if (!isset($arguments[0]) || empty($arguments[0])) {
+        if (empty($arguments[0])) {
             throw new FlowQueryException('closest() requires a filter argument', 1332492263);
         }
 

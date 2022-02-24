@@ -83,13 +83,20 @@ class WrapViewHelper extends AbstractViewHelper
             );
         }
         $fusionObject = $view->getFusionObject();
+        if (!method_exists($fusionObject, 'getPath')) {
+            throw new ViewHelperException(
+                'This ViewHelper can only be used in a Fusion view with a path aware Fusion object.',
+                1645650713
+            );
+        }
         $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
         $node = $this->arguments['node'] ?? $currentContext['node'];
+
         return $this->contentElementWrappingService->wrapContentObject(
             $node,
             $this->renderChildren(),
             $fusionObject->getPath()
-        );
+        ) ?: '';
     }
 }

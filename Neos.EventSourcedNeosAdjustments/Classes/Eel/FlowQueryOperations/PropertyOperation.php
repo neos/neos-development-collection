@@ -70,16 +70,17 @@ class PropertyOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return mixed
      * @throws FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        if (!isset($arguments[0]) || empty($arguments[0])) {
+        if (empty($arguments[0])) {
             throw new FlowQueryException('property() does not support returning all attributes yet', 1332492263);
         } else {
+            /** @var array<int,mixed> $context */
             $context = $flowQuery->getContext();
             $propertyPath = $arguments[0];
 

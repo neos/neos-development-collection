@@ -76,11 +76,7 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
         );
     }
 
-
-    /**
-     * @return boolean
-     */
-    public function render(NodeInterface $node = null, $mode = null)
+    public function render(NodeInterface $node = null, string $mode = null): bool
     {
         // TODO: implement
         return false;

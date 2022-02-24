@@ -22,7 +22,10 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class ViewHelperReplacementAspect
 {
-    protected $viewHelperClassMapping = [
+    /**
+     * @var array<string,string>
+     */
+    protected array $viewHelperClassMapping = [
         \Neos\Neos\ViewHelpers\Link\NodeViewHelper::class
         => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link\NodeViewHelper::class,
         \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::class

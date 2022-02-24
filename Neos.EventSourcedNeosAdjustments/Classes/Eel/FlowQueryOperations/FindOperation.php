@@ -90,7 +90,7 @@ class FindOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -108,15 +108,15 @@ class FindOperation extends AbstractOperation
      * and thus may work with the legacy node interface until subgraphs are available
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
-     * @return void
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @throws FlowQueryException
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Eel\FlowQuery\FizzleException
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
+        /** @var array<int,NodeInterface> $contextNodes */
         $contextNodes = $flowQuery->getContext();
         if (count($contextNodes) === 0 || empty($arguments[0])) {
             return;
@@ -165,7 +165,8 @@ class FindOperation extends AbstractOperation
                 foreach ($filter['AttributeFilters'] as $attributeFilter) {
                     $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
                 }
-                $filterResults = $filterQuery->get();
+                /** @var array<int,mixed> $filterResults */
+                $filterResults = $filterQuery->getContext();
             }
             $result = array_merge($result, $filterResults);
         }
@@ -188,6 +189,10 @@ class FindOperation extends AbstractOperation
         $flowQuery->setContext($uniqueResult);
     }
 
+    /**
+     * @param array<int,NodeInterface> $contextNodes
+     * @return array<string,mixed>
+     */
     protected function getEntryPoints(array $contextNodes, VisibilityConstraints $visibilityConstraints): array
     {
         $entryPoints = [];
@@ -211,6 +216,11 @@ class FindOperation extends AbstractOperation
         return $entryPoints;
     }
 
+    /**
+     * @param array<string,mixed> $entryPoints
+     * @param array<int,NodeInterface> $result
+     * @return array<int,NodeInterface>
+     */
     protected function addNodesByIdentifier(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         array $entryPoints,
@@ -228,6 +238,11 @@ class FindOperation extends AbstractOperation
         return $result;
     }
 
+    /**
+     * @param array<string,mixed> $entryPoints
+     * @param array<int,NodeInterface> $result
+     * @return array<int,NodeInterface>
+     */
     protected function addNodesByPath(NodePath $nodePath, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
@@ -237,14 +252,16 @@ class FindOperation extends AbstractOperation
                 /** @var NodeInterface $node */
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
-                    while (!$rootNode->isRoot()) {
+                    while ($rootNode instanceof NodeInterface && !$rootNode->isRoot()) {
                         $rootNode = $nodeAccessor->findParentNode($rootNode);
                     }
-                    $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
+                    if ($rootNode instanceof NodeInterface) {
+                        $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
+                    }
                 } else {
                     $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $node);
                 }
-                if ($nodeByPath) {
+                if (isset($nodeByPath)) {
                     $result[] = $nodeByPath;
                 }
             }
@@ -253,6 +270,11 @@ class FindOperation extends AbstractOperation
         return $result;
     }
 
+    /**
+     * @param array<string,mixed> $entryPoints
+     * @param array<int,NodeInterface> $result
+     * @return array<int,NodeInterface>
+     */
     protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {

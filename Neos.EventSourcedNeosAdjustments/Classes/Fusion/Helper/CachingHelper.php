@@ -27,12 +27,10 @@ class CachingHelper implements ProtectedContextAwareInterface
     /**
      * Render a caching configuration for array of Nodes
      *
-     * @param mixed $nodes
-     * @param string $prefix
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    protected function convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, $prefix)
+    protected function convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix(mixed $nodes, string $prefix): array
     {
         if ($nodes === null) {
             $nodes = [];
@@ -71,10 +69,10 @@ class CachingHelper implements ProtectedContextAwareInterface
      * given nodes (for any variant) is updated.
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    public function nodeTag($nodes)
+    public function nodeTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'Node');
     }
@@ -160,10 +158,10 @@ class CachingHelper implements ProtectedContextAwareInterface
      * the given nodes is updated.
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    public function descendantOfTag($nodes)
+    public function descendantOfTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'DescendantOf');
     }

@@ -27,7 +27,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 class NodeAddressConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = ['string'];
 
@@ -47,17 +47,15 @@ class NodeAddressConverter extends AbstractTypeConverter
      */
     protected $nodeAddressFactory;
 
-    public function canConvertFrom($source, $targetType)
+    public function canConvertFrom($source, $targetType): bool
     {
         return \mb_substr_count($source, '__') === 2 || \mb_strpos($source, '@') !== false;
     }
 
     /**
-     * @param mixed $source
+     * @param string $source
      * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return NodeAddress
+     * @param array<int,string> $convertedChildProperties
      */
     public function convertFrom(
         $source,

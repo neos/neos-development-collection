@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
@@ -40,9 +41,15 @@ class HasOperation extends AbstractOperation
     protected static $priority = 500;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -53,8 +60,8 @@ class HasOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery
-     * @param array $arguments
+     * @param FlowQuery<int,mixed> $flowQuery
+     * @param array<int,mixed> $arguments
      * @return void
      * @throws FizzleException
      * @throws \Neos\Eel\Exception
@@ -79,7 +86,7 @@ class HasOperation extends AbstractOperation
             }
         } else {
             if ($subject instanceof FlowQuery) {
-                $elements = $subject->get();
+                $elements = $subject->getContext();
             } elseif ($subject instanceof \Traversable) {
                 $elements = iterator_to_array($subject);
             } elseif (is_object($subject)) {
@@ -91,9 +98,13 @@ class HasOperation extends AbstractOperation
             }
             foreach ($elements as $element) {
                 if ($element instanceof NodeInterface) {
-                    $parentsQuery = new FlowQuery([$element]);
-                    foreach ($parentsQuery->parents([])->get() as $parent) {
-                        /** @var NodeInterface $parent */
+                    $accessor = $this->nodeAccessorManager->accessorFor(
+                        $element->getContentStreamIdentifier(),
+                        $element->getDimensionSpacePoint(),
+                        $element->getVisibilityConstraints()
+                    );
+                    $parent = $accessor->findParentNode($element);
+                    if (!is_null($parent)) {
                         foreach ($context as $contextElement) {
                             /** @var NodeInterface $contextElement */
                             if ($contextElement === $parent) {

@@ -27,20 +27,26 @@ use Psr\Http\Message\UriInterface;
 final class DocumentNodeInfo
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    private $source;
+    private array $source;
 
     /**
-     * @var array|null
+     * @var array<string,mixed>|null
      */
-    private $shortcutTarget;
+    private ?array $shortcutTarget;
 
+    /**
+     * @param array<string,mixed> $source
+     */
     public function __construct(array $source)
     {
         $this->source = $source;
     }
 
+    /**
+     * @param array<string,string> $row
+     */
     public static function fromDatabaseRow(array $row): self
     {
         return new self($row);
@@ -175,6 +181,9 @@ final class DocumentNodeInfo
         return NodeName::fromString($this->source['sitenodename']);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getShortcutTarget(): array
     {
         if ($this->shortcutTarget === null) {
@@ -194,6 +203,9 @@ final class DocumentNodeInfo
         return $this->shortcutTarget;
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function toArray(): array
     {
         return $this->source;

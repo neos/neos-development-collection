@@ -96,13 +96,7 @@ class LinkHelper implements ProtectedContextAwareInterface
         return '';
     }
 
-    /**
-     * @param string|Uri $uri
-     * @param NodeInterface $contextNode
-     * @param ControllerContext $controllerContext
-     * @return string
-     */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext): ?string
+    public function resolveNodeUri(string|Uri $uri, NodeInterface $contextNode, ControllerContext $controllerContext): ?string
     {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
         if (!$targetNode instanceof NodeInterface) {
@@ -116,13 +110,6 @@ class LinkHelper implements ProtectedContextAwareInterface
             return null;
         }
         $targetNodeAddress = $this->nodeAddressFactory->createFromNode($targetNode);
-        if ($targetNodeAddress === null) {
-            $this->systemLogger->info(sprintf(
-                'Could not create node address from node "%s".',
-                $targetNode->getNodeAggregateIdentifier()
-            ), LogEnvironment::fromMethodName(__METHOD__));
-            return null;
-        }
         try {
             $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
                 ->uriFor($targetNodeAddress);
@@ -135,38 +122,32 @@ class LinkHelper implements ProtectedContextAwareInterface
             ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
-        if ($targetUri === null) {
-            return null;
-        }
+
         return (string)$targetUri;
     }
 
-    /**
-     * @param string|Uri $uri
-     * @return string
-     */
-    public function resolveAssetUri($uri): string
+    public function resolveAssetUri(string|Uri $uri): string
     {
         if (!$uri instanceof UriInterface) {
             $uri = new Uri($uri);
         }
         $asset = $this->assetRepository->findByIdentifier($uri->getHost());
-        if ($asset === null) {
+        if (!$asset instanceof AssetInterface) {
             throw new \InvalidArgumentException(sprintf(
                 'Failed to resolve asset from URI "%s", probably the corresponding asset was deleted',
                 $uri
             ), 1601373937);
         }
-        return $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+
+        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+
+        return is_string($assetUri) ? $assetUri : '';
     }
 
-    /**
-     * @param string|Uri $uri
-     * @param NodeInterface|null $contextNode
-     * @return NodeInterface|AssetInterface|NULL
-     */
-    public function convertUriToObject($uri, NodeInterface $contextNode = null)
-    {
+    public function convertUriToObject(
+        string|Uri $uri,
+        NodeInterface $contextNode = null
+    ): NodeInterface|AssetInterface|null {
         if (empty($uri)) {
             return null;
         }
@@ -184,7 +165,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                         );
                     }
                     $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
-                    if ($contextNodeAddress === null) {
+                    if ($contextNodeAddress->workspaceName === null) {
                         throw new \RuntimeException(sprintf(
                             'Failed to create node address for context node "%s"',
                             $contextNode->getNodeAggregateIdentifier()
@@ -198,20 +179,10 @@ class LinkHelper implements ProtectedContextAwareInterface
                         $contextNode->getDimensionSpacePoint(),
                         $visibilityConstraints
                     );
-                    if ($nodeAccessor === null) {
-                        throw new \RuntimeException(sprintf(
-                            'Failed to get SubContentGraph for context node "%s"',
-                            $contextNode->getNodeAggregateIdentifier()
-                        ));
-                    }
 
-                    $node = $nodeAccessor->findByIdentifier(
+                    return $nodeAccessor->findByIdentifier(
                         NodeAggregateIdentifier::fromString($matches[2])
                     );
-                    if ($node === null) {
-                        return null;
-                    }
-                    return $node;
                 case 'asset':
                     /** @var AssetInterface|null $asset */
                     /** @noinspection OneTimeUseVariablesInspection */

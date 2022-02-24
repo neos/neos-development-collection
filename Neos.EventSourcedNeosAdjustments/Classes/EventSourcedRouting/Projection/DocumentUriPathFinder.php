@@ -214,9 +214,7 @@ final class DocumentUriPathFinder
     }
 
     /**
-     * @param string $where
-     * @param array $parameters
-     * @return DocumentNodeInfo
+     * @param array<string,mixed> $parameters
      * @throws NodeNotFoundException
      */
     private function fetchSingle(string $where, array $parameters): DocumentNodeInfo

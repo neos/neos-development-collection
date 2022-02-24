@@ -24,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeService
 {
-
     /**
      * @Flow\Inject
      * @var NodeAddressFactory
@@ -53,10 +52,10 @@ class NodeService
         );
 
         while ($node instanceof NodeInterface) {
-            $node = $nodeAccessor->findParentNode($node);
             if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
                 return $node;
             }
+            $node = $nodeAccessor->findParentNode($node);
         }
 
         return null;
@@ -76,7 +75,7 @@ class NodeService
     /**
      * Converts a given context path to a node object
      */
-    public function getNodeFromContextPath(string $contextPath): NodeInterface
+    public function getNodeFromContextPath(string $contextPath): ?NodeInterface
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
 

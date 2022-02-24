@@ -39,6 +39,9 @@ class SiteNodeUtility
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
+                if (is_null($previousNode)) {
+                    break;
+                }
                 return $previousNode;
             }
             $previousNode = $node;

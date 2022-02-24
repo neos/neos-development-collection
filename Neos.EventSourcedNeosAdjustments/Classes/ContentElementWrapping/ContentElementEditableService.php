@@ -60,7 +60,10 @@ class ContentElementEditableService
      */
     protected $nodeAddressFactory;
 
-    public function wrapContentProperty(NodeInterface $node, $property, $content)
+    /**
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     */
+    public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
@@ -80,9 +83,9 @@ class ContentElementEditableService
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier)
+    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
     {
         return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
-            ->getWorkspaceName()->isLive();
+            ?->getWorkspaceName()->isLive() ?: false;
     }
 }

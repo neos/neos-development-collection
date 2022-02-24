@@ -37,6 +37,7 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -64,7 +65,7 @@ class BackendServiceController extends ActionController
     protected $contextFactory;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = ['application/json'];
 
@@ -154,12 +155,8 @@ class BackendServiceController extends ActionController
     /**
      * Set the controller context on the feedback collection after the controller
      * has been initialized
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    protected function initializeController(ActionRequest $request, ActionResponse $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response): void
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());
@@ -167,11 +164,8 @@ class BackendServiceController extends ActionController
 
     /**
      * Apply a set of changes to the system
-     *
-     * @param ChangeCollection $changes
-     * @return void
      */
-    public function changeAction(ChangeCollection $changes)
+    public function changeAction(ChangeCollection $changes): void
     {
         try {
             $count = $changes->count();
@@ -193,11 +187,8 @@ class BackendServiceController extends ActionController
 
     /**
      * Publish all nodes
-     *
-     * @param WorkspaceName $workspaceName
-     * @return void
      */
-    public function publishAllAction()
+    public function publishAllAction(): void
     {
         $currentAccount = $this->securityContext->getAccount();
         $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
@@ -216,11 +207,9 @@ class BackendServiceController extends ActionController
     /**
      * Publish nodes
      *
-     * @param array $nodeContextPaths
-     * @param string $targetWorkspaceName
-     * @return void
+     * @param array<int,string> $nodeContextPaths
      */
-    public function publishAction(array $nodeContextPaths, string $targetWorkspaceName)
+    public function publishAction(array $nodeContextPaths, string $targetWorkspaceName): void
     {
         try {
             $currentAccount = $this->securityContext->getAccount();
@@ -261,10 +250,9 @@ class BackendServiceController extends ActionController
     /**
      * Discard nodes
      *
-     * @param array $nodeContextPaths
-     * @return void
+     * @param array<int,string> $nodeContextPaths
      */
-    public function discardAction(array $nodeContextPaths)
+    public function discardAction(array $nodeContextPaths): void
     {
         try {
             $currentAccount = $this->securityContext->getAccount();
@@ -310,6 +298,8 @@ class BackendServiceController extends ActionController
     public function changeBaseWorkspaceAction(string $targetWorkspaceName, NodeInterface $documentNode)
     {
         try {
+            throw new \BadMethodCallException('changeBaseWorkspaceAction is not yet implemented', 1645607154);
+            /*
             $targetWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($targetWorkspaceName));
             $currentAccount = $this->securityContext->getAccount();
             $workspaceName = NeosWorkspaceName::fromAccountIdentifier(
@@ -317,24 +307,24 @@ class BackendServiceController extends ActionController
             )->toContentRepositoryWorkspaceName();
             $userWorkspace = $this->workspaceFinder->findOneByName($workspaceName);
 
-            if (count($this->workspaceService->getPublishableNodeInfo($userWorkspace)) > 0) {
-                // TODO: proper error dialog
-                throw new \Exception(
-                    'Your personal workspace currently contains unpublished changes.'
-                        . ' In order to switch to a different target workspace you need to either publish'
-                        . ' or discard pending changes first.'
-                );
-            }
+            #if (count($this->workspaceService->getPublishableNodeInfo($userWorkspace)) > 0) {
+            #    // TODO: proper error dialog
+            #    throw new \Exception(
+            #        'Your personal workspace currently contains unpublished changes.'
+            #            . ' In order to switch to a different target workspace you need to either publish'
+            #            . ' or discard pending changes first.'
+            #    );
+            #
 
-            $userWorkspace->setBaseWorkspace($targetWorkspace);
-            $this->workspaceFinder->update($userWorkspace);
+            #$userWorkspace->setBaseWorkspace($targetWorkspace);
+            #$this->workspaceFinder->update($userWorkspace);
 
             $success = new Success();
             $success->setMessage(sprintf('Switched base workspace to %s.', $targetWorkspaceName));
             $this->feedbackCollection->add($success);
 
             $updateWorkspaceInfo = new UpdateWorkspaceInfo();
-            $updateWorkspaceInfo->setWorkspace($userWorkspace);
+            #$updateWorkspaceInfo->setWorkspace($userWorkspace);
             $this->feedbackCollection->add($updateWorkspaceInfo);
 
             // Construct base workspace context
@@ -352,6 +342,7 @@ class BackendServiceController extends ActionController
                     break;
                 } else {
                     $redirectNode = $redirectNode->getParent();
+                    // get parent always returns NodeInterface
                     if (!$redirectNode) {
                         throw new \Exception(sprintf(
                             'Wasn\'t able to locate any valid node in rootline of node %s in the workspace %s.',
@@ -374,6 +365,7 @@ class BackendServiceController extends ActionController
             }
 
             $this->persistenceManager->persistAll();
+            */
         } catch (\Exception $e) {
             $error = new Error();
             $error->setMessage($e->getMessage());
@@ -388,15 +380,20 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on copy
      *
-     * @param array $nodes
+     * @param array<int|string,mixed> $nodes
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function copyNodesAction($nodes)
+    public function copyNodesAction(array $nodes): void
     {
         // TODO @christianm want's to have a property mapper for this
-        $nodeAddresses = array_map(function ($serializedNodeAddress) {
-            return $this->propertyMapper->convert($serializedNodeAddress, NodeAddress::class);
+        /** @var array<int,NodeAddress> $nodeAddresses */
+        $nodeAddresses = array_map(function (string $serializedNodeAddress): NodeAddress {
+            /** @var NodeAddress $nodeAddress */
+            $nodeAddress = $this->propertyMapper->convert($serializedNodeAddress, NodeAddress::class);
+            return $nodeAddress;
         }, $nodes);
         $this->clipboard->copyNodes($nodeAddresses);
     }
@@ -414,39 +411,36 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on cut
      *
-     * @param array $nodes
-     * @return void
+     * @param array<int,string> $nodes
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function cutNodesAction($nodes)
+    public function cutNodesAction(array $nodes): void
     {
-        // TODO @christianm want's to have a property mapper for this
-        $nodeAddresses = array_map(function ($serializedNodeAddress) {
+        // TODO @christianm wants to have a property mapper for this
+        $nodeAddresses = array_map(function (string $serializedNodeAddress): NodeAddress {
             return $this->propertyMapper->convert($serializedNodeAddress, NodeAddress::class);
         }, $nodes);
         $this->clipboard->cutNodes($nodeAddresses);
     }
 
-    public function getWorkspaceInfoAction()
+    public function getWorkspaceInfoAction(): void
     {
         $workspaceHelper = new WorkspaceHelper();
         $personalWorkspaceInfo = $workspaceHelper->getPersonalWorkspace();
         $this->view->assign('value', $personalWorkspaceInfo);
     }
 
-    public function initializeLoadTreeAction()
+    public function initializeLoadTreeAction(): void
     {
         $this->arguments['nodeTreeArguments']->getPropertyMappingConfiguration()->allowAllProperties();
     }
 
     /**
      * Load the nodetree
-     *
-     * @param NodeTreeBuilder $nodeTreeArguments
-     * @param boolean $includeRoot
-     * @return void
      */
-    public function loadTreeAction(NodeTreeBuilder $nodeTreeArguments, $includeRoot = false)
+    public function loadTreeAction(NodeTreeBuilder $nodeTreeArguments, bool $includeRoot = false): void
     {
         $nodeTreeArguments->setControllerContext($this->controllerContext);
         $this->view->assign('value', $nodeTreeArguments->build($includeRoot));
@@ -455,20 +449,20 @@ class BackendServiceController extends ActionController
     /**
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
-    public function initializeGetAdditionalNodeMetadataAction()
+    public function initializeGetAdditionalNodeMetadataAction(): void
     {
-        $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->allowAllProperties();
+        $this->arguments->getArgument('nodes')
+            ->getPropertyMappingConfiguration()->allowAllProperties();
     }
 
     /**
      * Fetches all the node information that can be lazy-loaded
      *
-     * @param array<NodeAddress> $nodes
+     * @param array<int,NodeAddress> $nodes
      */
-    public function getAdditionalNodeMetadataAction(array $nodes)
+    public function getAdditionalNodeMetadataAction(array $nodes): void
     {
         $result = [];
-        /** @var NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $nodeAddress->contentStreamIdentifier,
@@ -481,11 +475,13 @@ class BackendServiceController extends ActionController
             /*$otherNodeVariants = array_values(array_filter(array_map(function ($node) {
                 return $this->getCurrentDimensionPresetIdentifiersForNode($node);
             }, $node->getOtherNodeVariants())));*/
-            $result[$nodeAddress->serializeForUri()] = [
-                'policy' => $this->nodePolicyService->getNodePolicyInformation($node),
-                //'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
-                //'otherNodeVariants' => $otherNodeVariants
-            ];
+            if (!is_null($node)) {
+                $result[$nodeAddress->serializeForUri()] = [
+                    'policy' => $this->nodePolicyService->getNodePolicyInformation($node),
+                    //'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
+                    //'otherNodeVariants' => $otherNodeVariants
+                ];
+            }
         }
 
         $this->view->assign('value', $result);
@@ -500,7 +496,7 @@ class BackendServiceController extends ActionController
     /**
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
-    public function initializeGetPolicyInformationAction()
+    public function initializeGetPolicyInformationAction(): void
     {
         $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->allowAllProperties();
     }
@@ -508,7 +504,7 @@ class BackendServiceController extends ActionController
     /**
      * @param array<NodeAddress> $nodes
      */
-    public function getPolicyInformationAction(array $nodes)
+    public function getPolicyInformationAction(array $nodes): void
     {
         $result = [];
         foreach ($nodes as $nodeAddress) {
@@ -519,10 +515,11 @@ class BackendServiceController extends ActionController
                     VisibilityConstraints::withoutRestrictions()
                 );
             $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
-
-            $result[$nodeAddress->serializeForUri()] = [
-                'policy' => $this->nodePolicyService->getNodePolicyInformation($node)
-            ];
+            if (!is_null($node)) {
+                $result[$nodeAddress->serializeForUri()] = [
+                    'policy' => $this->nodePolicyService->getNodePolicyInformation($node)
+                ];
+            }
         }
 
         $this->view->assign('value', $result);
@@ -531,19 +528,20 @@ class BackendServiceController extends ActionController
     /**
      * Build and execute a flow query chain
      *
-     * @param array $chain
-     * @return string
+     * @param array<int,array<string,mixed>> $chain
      */
-    public function flowQueryAction(array $chain)
+    public function flowQueryAction(array $chain): string
     {
         $createContext = array_shift($chain);
         $finisher = array_pop($chain);
 
+        /** @var array<int,mixed> $payload */
+        $payload = $createContext['payload'] ?? [];
         $flowQuery = new FlowQuery(array_map(
             function ($envelope) {
                 return $this->nodeService->getNodeFromContextPath($envelope['$node']);
             },
-            $createContext['payload']
+            $payload
         ));
 
         foreach ($chain as $operation) {
@@ -551,26 +549,30 @@ class BackendServiceController extends ActionController
         }
 
         $nodeInfoHelper = new NodeInfoHelper();
-        $result = [];
-        switch ($finisher['type']) {
-            case 'get':
-                $result = $nodeInfoHelper->renderNodes($flowQuery->get(), $this->getControllerContext());
-                break;
-            case 'getForTree':
-                $result = $nodeInfoHelper->renderNodes($flowQuery->get(), $this->getControllerContext(), true);
-                break;
-            case 'getForTreeWithParents':
-                $result = $nodeInfoHelper->renderNodesWithParents($flowQuery->get(), $this->getControllerContext());
-                break;
-        }
+        $type = $finisher['type'] ?? null;
+        $result = match ($type) {
+            'get' => $nodeInfoHelper->renderNodes($flowQuery->getContext(), $this->getControllerContext()),
+            'getForTree' => $nodeInfoHelper->renderNodes(
+                $flowQuery->getContext(),
+                $this->getControllerContext(),
+                true
+            ),
+            'getForTreeWithParents' => $nodeInfoHelper->renderNodesWithParents(
+                $flowQuery->get(),
+                $this->getControllerContext()
+            ),
+            default => []
+        };
 
-        return json_encode($result);
+        return json_encode($result, JSON_THROW_ON_ERROR);
     }
 
     protected function getCurrentUserIdentifier(): UserIdentifier
     {
+        /** @var User $backendUser */
+        $backendUser = $this->userService->getBackendUser();
         return UserIdentifier::fromString(
-            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
+            $this->persistenceManager->getIdentifierByObject($backendUser)
         );
     }
 }

@@ -57,13 +57,29 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
     }
 
     /**
-     * @param array<string,string> $array
+     * @param array<string,string|NodeAggregateIdentifier> $array
      */
     public static function fromArray(array $array): self
     {
         $nodeAggregateIdentifiers = [];
         foreach ($array as $rawNodePath => $rawNodeAggregateIdentifier) {
-            $nodeAggregateIdentifiers[$rawNodePath] = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
+            if (!is_string($rawNodePath)) {
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifiersByNodePaths must be indexed by node path.',
+                    1645632667
+                );
+            }
+            if (is_string($rawNodeAggregateIdentifier)) {
+                $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
+            } elseif ($rawNodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
+                $nodeAggregateIdentifier = $rawNodeAggregateIdentifier;
+            } else {
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifiersByNodePaths must only contain NodeAggregateIdentifiers.',
+                    1645632633
+                );
+            }
+            $nodeAggregateIdentifiers[$rawNodePath] = $nodeAggregateIdentifier;
         }
 
         return new self($nodeAggregateIdentifiers);

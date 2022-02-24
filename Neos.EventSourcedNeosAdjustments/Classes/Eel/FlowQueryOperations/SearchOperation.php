@@ -68,14 +68,15 @@ class SearchOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
-     * @return void
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
+        /** @var array<int,mixed> $context */
+        $context = $flowQuery->getContext();
         /** @var NodeInterface $contextNode */
-        $contextNode = $flowQuery->getContext()[0];
+        $contextNode = $context[0];
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $contextNode->getContentStreamIdentifier(),
             $contextNode->getDimensionSpacePoint(),

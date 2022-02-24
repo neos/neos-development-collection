@@ -120,6 +120,9 @@ class CacheAwareGraphProjectorFactory
         return $graphProjector;
     }
 
+    /**
+     * @var array<int,array<string,mixed>>
+     */
     protected array $cacheFlushes = [];
 
     protected function scheduleCacheFlushJobForNodeAggregate(
@@ -135,13 +138,13 @@ class CacheAwareGraphProjectorFactory
         }
     }
 
-    protected function flushCache()
+    protected function flushCache(): void
     {
         $this->jobManager->queue($this->queueName, new CacheFlushJob($this->cacheFlushes));
         $this->cacheFlushes = [];
     }
 
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
         $this->flushCache();
     }

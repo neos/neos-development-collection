@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 
@@ -137,7 +138,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         break;
                     case 'asset':
                         $asset = $this->assetRepository->findByIdentifier($matches[2]);
-                        if ($asset !== null) {
+                        if ($asset instanceof AssetInterface) {
                             $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
                                 $asset->getResource()
                             );
@@ -154,15 +155,15 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 return $resolvedUri;
             },
             $text
-        );
+        ) ?: '';
 
         if ($unresolvedUris !== []) {
             $processedContent = preg_replace(
                 '/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/',
                 '$2',
                 $processedContent
-            );
-            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent);
+            ) ?: '';
+            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent) ?: '';
         }
 
         $processedContent = $this->replaceLinkTargets($processedContent);
@@ -174,11 +175,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
      * Additionally set rel="noopener" for links with target="_blank".
-     *
-     * @param string $processedContent
-     * @return string
      */
-    protected function replaceLinkTargets($processedContent)
+    protected function replaceLinkTargets(string $processedContent): string
     {
         $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
         $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
@@ -217,7 +215,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 );
             },
             $processedContent
-        );
+        ) ?: '';
         return $processedContent;
     }
 }

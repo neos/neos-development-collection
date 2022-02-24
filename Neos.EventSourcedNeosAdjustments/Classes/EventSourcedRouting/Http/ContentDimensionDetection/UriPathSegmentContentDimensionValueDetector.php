@@ -22,23 +22,20 @@ use Psr\Http\Message\ServerRequestInterface;
 final class UriPathSegmentContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $defaultOptions = [
+    protected array $defaultOptions = [
         'delimiter' => '_',
         'offset' => 0
     ];
 
     /**
-     * @param Dimension\ContentDimension $contentDimension
-     * @param ServerRequestInterface $request
-     * @param array|null $overrideOptions
-     * @return Dimension\ContentDimensionValue|null
+     * @param array<string,mixed>|null $overrideOptions
      */
     public function detectValue(
         Dimension\ContentDimension $contentDimension,
         ServerRequestInterface $request,
-        array $overrideOptions = null
+        ?array $overrideOptions = null
     ): ?Dimension\ContentDimensionValue {
         $options = $overrideOptions
             ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions)

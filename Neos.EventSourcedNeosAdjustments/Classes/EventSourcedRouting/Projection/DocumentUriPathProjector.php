@@ -455,20 +455,24 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
-        foreach ($event->getNodeMoveMappings() as $moveMapping) {
-            foreach ($this->documentUriPathFinder->getNodeVariantsById($event->getNodeAggregateIdentifier()) as $node) {
-                $parentAssignment = $moveMapping->getNewParentAssignments()
-                        ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
-                $newParentNodeAggregateIdentifier = $parentAssignment !== null
-                    ? $parentAssignment->nodeAggregateIdentifier
-                    : $node->getParentNodeAggregateIdentifier();
+        if (!is_null($event->getNodeMoveMappings())) {
+            foreach ($event->getNodeMoveMappings() as $moveMapping) {
+                foreach ($this->documentUriPathFinder->getNodeVariantsById($event->getNodeAggregateIdentifier()) as $node) {
+                    $parentAssignment = $moveMapping->getNewParentAssignments()
+                            ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
+                    $newParentNodeAggregateIdentifier = $parentAssignment !== null
+                        ? $parentAssignment->nodeAggregateIdentifier
+                        : $node->getParentNodeAggregateIdentifier();
 
-                $succeedingSiblingAssignment = $moveMapping->getNewSucceedingSiblingAssignments()
-                        ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
-                $newSucceedingNodeAggregateIdentifier = $succeedingSiblingAssignment?->nodeAggregateIdentifier;
+                    $succeedingSiblingAssignment = $moveMapping->getNewSucceedingSiblingAssignments()
+                            ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
+                    $newSucceedingNodeAggregateIdentifier = $succeedingSiblingAssignment?->nodeAggregateIdentifier;
 
-                $this->moveNode($node, $newParentNodeAggregateIdentifier, $newSucceedingNodeAggregateIdentifier);
+                    $this->moveNode($node, $newParentNodeAggregateIdentifier, $newSucceedingNodeAggregateIdentifier);
+                }
             }
+        } else {
+            // @todo do something else
         }
     }
 
@@ -576,6 +580,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
     }
 
+    /**
+     * @param array<string,mixed> $data
+     */
     private function insertNode(array $data): void
     {
         try {
@@ -585,6 +592,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
     }
 
+    /**
+     * @param array<string,mixed> $data
+     */
     private function updateNode(DocumentNodeInfo $node, array $data): void
     {
         $this->updateNodeByIdAndDimensionSpacePointHash(
@@ -594,6 +604,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         );
     }
 
+    /**
+     * @param array<string,mixed> $data
+     */
     private function updateNodeByIdAndDimensionSpacePointHash(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         string $dimensionSpacePointHash,
@@ -615,6 +628,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
     }
 
+    /**
+     * @param array<string,mixed> $parameters
+     */
     private function updateNodeQuery(string $query, array $parameters): void
     {
         try {
@@ -650,6 +666,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
     }
 
+    /**
+     * @param array<string,mixed> $parameters
+     */
     private function deleteNodeQuery(string $query, array $parameters): void
     {
         try {
@@ -728,7 +747,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     }
 
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
             $this->updateNodeQuery(
@@ -752,7 +771,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     }
 
 
-    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event)
+    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
             try {

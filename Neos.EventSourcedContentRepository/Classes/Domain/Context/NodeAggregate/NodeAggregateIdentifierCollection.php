@@ -47,14 +47,19 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
     }
 
     /**
-     * @param array<string|int,string> $array
+     * @param array<string|int,string|NodeAggregateIdentifier> $array
      */
     public static function fromArray(array $array): self
     {
         $nodeAggregateIdentifiers = [];
         foreach ($array as $serializedNodeAggregateIdentifier) {
-            $nodeAggregateIdentifiers[$serializedNodeAggregateIdentifier]
-                = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
+            if ($serializedNodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
+                $nodeAggregateIdentifiers[(string)$serializedNodeAggregateIdentifier]
+                    = $serializedNodeAggregateIdentifier;
+            } else {
+                $nodeAggregateIdentifiers[$serializedNodeAggregateIdentifier]
+                    = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
+            }
         }
 
         return new self($nodeAggregateIdentifiers);

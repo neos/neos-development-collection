@@ -85,6 +85,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
         $this->sortDimensionsByOffset($dimensions);
         $uriPathSegmentOffset = 0;
         foreach ($dimensions as $rawDimensionIdentifier => $contentDimension) {
+            /** @var string $rawDimensionIdentifier should be clear, though... */
             $detector = $this->contentDimensionPresetDetectorResolver
                 ->resolveContentDimensionValueDetector($contentDimension);
 

@@ -42,18 +42,15 @@ class NodeHelper implements ProtectedContextAwareInterface
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
      *
-     * @param NodeInterface $node
-     * @param string $nodePath
-     * @return NodeInterface
      * @throws Exception
      */
-    public function nearestContentCollection(NodeInterface $node, $nodePath): NodeInterface
+    public function nearestContentCollection(NodeInterface $node, string $nodePath): NodeInterface
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
             return $node;
         } else {
-            if ((string)$nodePath === '') {
+            if ($nodePath === '') {
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node and no node path was provided.'
                         . ' You might want to configure the nodePath property'
@@ -74,9 +71,9 @@ class NodeHelper implements ProtectedContextAwareInterface
                         . ' You might want to adjust your node type configuration and create the missing child node'
                         . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $node->findNodePath(),
+                    $this->findNodePath($node),
                     $nodePath,
-                    (string)$node->getNodeType()
+                    $node->getNodeType()
                 ), 1389352984);
             }
         }
@@ -84,9 +81,6 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     /**
      * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
-     *
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface|null $node
-     * @return NodeLabelToken
      */
     public function labelForNode(NodeInterface $node = null): NodeLabelToken
     {
@@ -127,6 +121,17 @@ class NodeHelper implements ProtectedContextAwareInterface
                 $node = $parentNode;
             }
         }
+    }
+
+    private function findNodePath(NodeInterface $node): NodePath
+    {
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+
+        return $nodeAccessor->findNodePath($node);
     }
 
     private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface

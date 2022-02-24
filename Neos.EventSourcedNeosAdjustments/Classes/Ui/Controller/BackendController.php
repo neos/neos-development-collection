@@ -41,7 +41,6 @@ use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
     /**
      * @var FusionView
      */
@@ -151,6 +150,7 @@ class BackendController extends ActionController
 
     public function initializeView(ViewInterface $view)
     {
+        /** @var FusionView $view */
         $view->setFusionPath('backend');
     }
 
@@ -177,6 +177,9 @@ class BackendController extends ActionController
             NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
                 ->toContentRepositoryWorkspaceName()
         );
+        if (is_null($workspace)) {
+            $this->redirectToUri($this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos'));
+        }
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $workspace->getCurrentContentStreamIdentifier(),
@@ -222,10 +225,9 @@ class BackendController extends ActionController
     }
 
     /**
-     * @param NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    public function redirectToAction(NodeAddress $node)
+    public function redirectToAction(NodeAddress $node): void
     {
         $this->response->setHttpHeader('Cache-Control', [
             'no-cache',

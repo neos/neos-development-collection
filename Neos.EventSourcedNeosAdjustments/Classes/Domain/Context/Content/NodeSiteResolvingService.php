@@ -48,6 +48,9 @@ class NodeSiteResolvingService
                 : VisibilityConstraints::withoutRestrictions()
         );
         $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        if (is_null($node)) {
+            return null;
+        }
         $previousNode = null;
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {

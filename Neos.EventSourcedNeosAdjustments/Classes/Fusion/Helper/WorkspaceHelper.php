@@ -80,15 +80,17 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param WorkspaceName $workspaceName
-     * @return array
+     * @return array<int,array<string,string>>
      */
-    public function getPublishableNodeInfo(WorkspaceName $workspaceName)
+    public function getPublishableNodeInfo(WorkspaceName $workspaceName): array
     {
         return $this->workspaceService->getPublishableNodeInfo($workspaceName);
     }
 
-    public function getPersonalWorkspace()
+    /**
+     * @return array<string,mixed>
+     */
+    public function getPersonalWorkspace(): array
     {
         $currentAccount = $this->securityContext->getAccount();
         $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier(
@@ -96,14 +98,16 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
         )->toContentRepositoryWorkspaceName();
         $personalWorkspace = $this->workspaceFinder->findOneByName($personalWorkspaceName);
 
-        return [
-            'name' => $personalWorkspace->getWorkspaceName(),
-            'publishableNodes' => $this->getPublishableNodeInfo($personalWorkspaceName),
-            'baseWorkspace' => $personalWorkspace->getBaseWorkspaceName(),
-            // TODO: FIX readonly flag!
-            //'readOnly' => !$this->domainUserService->currentUserCanPublishToWorkspace($baseWorkspace)
-            'readOnly' => false
-        ];
+        return !is_null($personalWorkspace)
+            ? [
+                'name' => $personalWorkspace->getWorkspaceName(),
+                'publishableNodes' => $this->getPublishableNodeInfo($personalWorkspaceName),
+                'baseWorkspace' => $personalWorkspace->getBaseWorkspaceName(),
+                // TODO: FIX readonly flag!
+                //'readOnly' => !$this->domainUserService->currentUserCanPublishToWorkspace($baseWorkspace)
+                'readOnly' => false
+            ]
+            : [];
     }
 
     /**
