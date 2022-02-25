@@ -70,16 +70,9 @@ final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable, \
         return self::fromArray(json_decode($jsonString, true));
     }
 
-    public function getCoverage(OriginDimensionSpacePoint $originDimensionSpacePoint): DimensionSpacePointSet
+    public function getCoverage(OriginDimensionSpacePoint $originDimensionSpacePoint): ?DimensionSpacePointSet
     {
-        if (!isset($this->coverage[$originDimensionSpacePoint->hash])) {
-            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
-                'Node aggregate does currently not occupy dimension space point '
-                    . $originDimensionSpacePoint,
-                1554902613
-            );
-        }
-        return $this->coverage[$originDimensionSpacePoint->hash];
+        return $this->coverage[$originDimensionSpacePoint->hash] ?? null;
     }
 
     /**

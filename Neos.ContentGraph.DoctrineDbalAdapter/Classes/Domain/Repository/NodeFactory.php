@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginByCoverage;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -170,7 +171,7 @@ final class NodeFactory
             CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
-            $occupationByCovering,
+            OriginByCoverage::fromArray($occupationByCovering),
             new DimensionSpacePointSet($disabledDimensionSpacePoints)
         );
     }
@@ -265,7 +266,9 @@ final class NodeFactory
                 ),
                 $nodesByCoveredDimensionSpacePointsByNodeAggregate
                     [$rawNodeAggregateIdentifier],
-                $occupationByCoveringByNodeAggregate[$rawNodeAggregateIdentifier],
+                OriginByCoverage::fromArray(
+                    $occupationByCoveringByNodeAggregate[$rawNodeAggregateIdentifier]
+                ),
                 new DimensionSpacePointSet(
                     $disabledDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier] ?? []
                 )

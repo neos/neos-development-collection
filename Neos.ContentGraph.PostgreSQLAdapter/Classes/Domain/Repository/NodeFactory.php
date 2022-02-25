@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginByCoverage;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -210,7 +211,7 @@ final class NodeFactory
             CoverageByOrigin::fromArray($coverageByOccupant),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
-            $occupationByCovered,
+            OriginByCoverage::fromArray($occupationByCovered),
             new DimensionSpacePointSet($disabledDimensionSpacePoints)
         );
     }
@@ -306,7 +307,7 @@ final class NodeFactory
                 CoverageByOrigin::fromArray($coverageByOccupant[$key]),
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 $nodesByCoveredDimensionSpacePoint[$key],
-                $occupationByCovered[$key],
+                OriginByCoverage::fromArray($occupationByCovered[$key]),
                 new DimensionSpacePointSet($disabledDimensionSpacePoints[$key])
             );
         }

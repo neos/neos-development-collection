@@ -22,6 +22,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
 /** @codingStandardsIgnoreEnd */
+
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginByCoverage;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
@@ -34,76 +36,30 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
  */
 final class NodeAggregate implements ReadableNodeAggregateInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private NodeAggregateClassification $classification;
-
-    private NodeTypeName $nodeTypeName;
-
-    private ?NodeName $nodeName;
-
-    private OriginDimensionSpacePointSet $occupiedDimensionSpacePoints;
-
-    /**
-     * @var array<string,NodeInterface>
-     */
-    private array $nodesByOccupiedDimensionSpacePoint;
-
-    private CoverageByOrigin $coverageByOccupant;
-
-    /**
-     * @var array<string,NodeInterface>
-     */
-    private array $nodesByCoveredDimensionSpacePoint;
-
-    private DimensionSpacePointSet $coveredDimensionSpacePoints;
-
-    /**
-     * This is not a dimension space point set since it is indexed by covered hash and not by member hash
-     *
-     * @var array<string,OriginDimensionSpacePoint>
-     */
-    private array $occupationByCovered;
-
-    /**
-     * The dimension space point set this node aggregate disables.
-     * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
-     */
-    private DimensionSpacePointSet $disabledDimensionSpacePoints;
-
     /**
      * @param array|NodeInterface[] $nodesByOccupiedDimensionSpacePoint
      * @param array|NodeInterface[] $nodesByCoveredDimensionSpacePoint
-     * @param array<string,OriginDimensionSpacePoint> $occupationByCovered
      */
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeAggregateClassification $classification,
-        NodeTypeName $nodeTypeName,
-        ?NodeName $nodeName,
-        OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
-        array $nodesByOccupiedDimensionSpacePoint,
-        CoverageByOrigin $coverageByOccupant,
-        DimensionSpacePointSet $coveredDimensionSpacePoints,
-        array $nodesByCoveredDimensionSpacePoint,
-        array $occupationByCovered,
-        DimensionSpacePointSet $disabledDimensionSpacePoints
+        private ContentStreamIdentifier $contentStreamIdentifier,
+        private NodeAggregateIdentifier $nodeAggregateIdentifier,
+        private NodeAggregateClassification $classification,
+        private NodeTypeName $nodeTypeName,
+        private ?NodeName $nodeName,
+        private OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
+        /** @var array<string,NodeInterface> */
+        private array $nodesByOccupiedDimensionSpacePoint,
+        private CoverageByOrigin $coverageByOccupant,
+        private DimensionSpacePointSet $coveredDimensionSpacePoints,
+        /** @var array<string,NodeInterface> */
+        private array $nodesByCoveredDimensionSpacePoint,
+        private OriginByCoverage $occupationByCovered,
+        /**
+         * The dimension space point set this node aggregate disables.
+         * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
+         */
+        private DimensionSpacePointSet $disabledDimensionSpacePoints
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->classification = $classification;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->nodeName = $nodeName;
-        $this->occupiedDimensionSpacePoints = $occupiedDimensionSpacePoints;
-        $this->nodesByOccupiedDimensionSpacePoint = $nodesByOccupiedDimensionSpacePoint;
-        $this->coverageByOccupant = $coverageByOccupant;
-        $this->coveredDimensionSpacePoints = $coveredDimensionSpacePoints;
-        $this->nodesByCoveredDimensionSpacePoint = $nodesByCoveredDimensionSpacePoint;
-        $this->occupationByCovered = $occupationByCovered;
-        $this->disabledDimensionSpacePoints = $disabledDimensionSpacePoints;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -173,7 +129,16 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function getCoverageByOccupant(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): DimensionSpacePointSet {
-        return $this->coverageByOccupant->getCoverage($occupiedDimensionSpacePoint);
+        $coverage = $this->coverageByOccupant->getCoverage($occupiedDimensionSpacePoint);
+        if (is_null($coverage)) {
+            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
+            'Node aggregate "' . $this->nodeAggregateIdentifier
+                . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
+                1554902613
+            );
+        }
+
+        return $coverage;
     }
 
     /**
@@ -200,7 +165,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
 
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint
     {
-        if (!isset($this->occupationByCovered[$coveredDimensionSpacePoint->hash])) {
+        $occupation = $this->occupationByCovered->getOrigin($coveredDimensionSpacePoint);
+        if (is_null($occupation)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
                 'Node aggregate "' . $this->nodeAggregateIdentifier
                     . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint,
@@ -208,7 +174,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
             );
         }
 
-        return $this->occupationByCovered[$coveredDimensionSpacePoint->hash];
+        return $occupation;
     }
 
     public function getDisabledDimensionSpacePoints(): DimensionSpacePointSet
