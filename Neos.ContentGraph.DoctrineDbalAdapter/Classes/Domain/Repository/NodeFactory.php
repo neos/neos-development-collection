@@ -66,8 +66,8 @@ final class NodeFactory
         if (!class_exists($nodeClassName)) {
             throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
         }
-        if (!in_array(NodeInterface::class, class_implements($nodeClassName) ?: [])) {
-            if (in_array(LegacyNodeInterface::class, class_implements($nodeClassName) ?: [])) {
+        if (!is_a($nodeClassName, NodeInterface::class)) {
+            if (is_a($nodeClassName, LegacyNodeInterface::class)) {
                 throw NodeImplementationClassNameIsInvalid::becauseTheClassImplementsTheDeprecatedLegacyInterface(
                     $nodeClassName
                 );
