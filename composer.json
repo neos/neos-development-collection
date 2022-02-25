@@ -14,6 +14,16 @@
         "neos/content-repository": "*",
         "neos/content-repository-dimensionspace": "*"
     },
+    "require-dev": {
+        "dg/bypass-finals": "^1.2",
+        "neos/buildessentials": "^7.0",
+        "mikey179/vfsstream": "^1.6",
+        "phpunit/phpunit": "^9.0",
+        "symfony/css-selector": "^2.0",
+        "neos/behat": "dev-master",
+        "phpstan/phpstan": "^1.4",
+        "squizlabs/php_codesniffer": "^3.6"
+    },
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
@@ -24,6 +34,14 @@
         "neos/event-sourced-neos-adjustments": "self.version"
     },
     "suggest": {},
+    "scripts": {
+        "lint:phpcs": "phpcs --colors --standard=PSR2 ./Packages/CR/*/Classes",
+        "lint:phpstan": "phpstan analyse",
+        "lint:php": [
+            "@lint:phpcs",
+            "@lint:phpstan"
+        ]
+    },
     "conflict": {
         "flowpack/nodetemplates": "*"
     },
