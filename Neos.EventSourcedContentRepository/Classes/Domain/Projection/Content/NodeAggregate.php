@@ -36,10 +36,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
  */
 final class NodeAggregate implements ReadableNodeAggregateInterface
 {
-    /**
-     * @param array|NodeInterface[] $nodesByOccupiedDimensionSpacePoint
-     * @param array|NodeInterface[] $nodesByCoveredDimensionSpacePoint
-     */
     public function __construct(
         private ContentStreamIdentifier $contentStreamIdentifier,
         private NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -95,7 +91,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     /**
      * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
      *
-     * @return NodeInterface[]
+     * @return iterable<string,NodeInterface>
      */
     public function getNodes(): iterable
     {
@@ -106,10 +102,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): NodeInterface {
         if (!$this->occupiedDimensionSpacePoints->contains($occupiedDimensionSpacePoint)) {
-            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier
-                    . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
-                1554902613
+            throw NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint::butWasSupposedTo(
+                $this->nodeAggregateIdentifier,
+                $occupiedDimensionSpacePoint
             );
         }
 
@@ -131,10 +126,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     ): DimensionSpacePointSet {
         $coverage = $this->coverageByOccupant->getCoverage($occupiedDimensionSpacePoint);
         if (is_null($coverage)) {
-            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
-            'Node aggregate "' . $this->nodeAggregateIdentifier
-                . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
-                1554902613
+            throw NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint::butWasSupposedTo(
+                $this->nodeAggregateIdentifier,
+                $occupiedDimensionSpacePoint
             );
         }
 
@@ -142,7 +136,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     }
 
     /**
-     * @return array|NodeInterface[]
+     * @return array<string,NodeInterface>
      */
     public function getNodesByCoveredDimensionSpacePoint(): array
     {
@@ -152,11 +146,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface
     {
         if (!isset($this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash])) {
-            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier
-                    . '" does currently not cover dimension space point '
-                    . $coveredDimensionSpacePoint,
-                1554902892
+            throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
+                $this->nodeAggregateIdentifier,
+                $coveredDimensionSpacePoint
             );
         }
 
@@ -167,10 +159,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     {
         $occupation = $this->occupationByCovered->getOrigin($coveredDimensionSpacePoint);
         if (is_null($occupation)) {
-            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier
-                    . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint,
-                1554902892
+            throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
+                $this->nodeAggregateIdentifier,
+                $coveredDimensionSpacePoint
             );
         }
 

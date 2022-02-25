@@ -13,6 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -22,4 +24,14 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \DomainException
 {
+    public static function butWasSupposedTo(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        OriginDimensionSpacePoint $occupiedDimensionSpacePoint
+    ): self {
+        return new self(
+            'Node aggregate "' . $nodeAggregateIdentifier
+                . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
+            1554902613
+        );
+    }
 }
