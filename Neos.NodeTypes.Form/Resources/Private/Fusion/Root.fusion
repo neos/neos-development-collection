@@ -1,4 +1,4 @@
-# Form TS Object
+# Form Fusion Object
 prototype(Neos.NodeTypes.Form:Form) < prototype(Neos.Neos:Content) {
   templatePath = 'resource://Neos.NodeTypes.Form/Private/Templates/NodeTypes/Form.html'
   presetName = 'default'

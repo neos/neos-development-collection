@@ -163,7 +163,7 @@ class Runtime
     /**
      * Add a tag to the current cache segment
      *
-     * During TS rendering the method can be used to add tag dynamicaly for the current cache segment.
+     * During Fusion rendering the method can be used to add tag dynamicaly for the current cache segment.
      *
      * @param string $key
      * @param string $value
@@ -260,7 +260,7 @@ class Runtime
             $output = $this->evaluate($fusionPath, null, self::BEHAVIOR_EXCEPTION);
             if ($this->debugMode) {
                 $output = sprintf(
-                    '%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
+                    '%1$s<!-- Beginning to render Fusion path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render Fusion path "%2$s" (Context: %3$s) -->',
                     chr(10),
                     $fusionPath,
                     implode(', ', array_keys($this->currentContext)),
