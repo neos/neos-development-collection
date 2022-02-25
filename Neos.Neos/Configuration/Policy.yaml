@@ -295,12 +295,12 @@ roles:
 
   'Neos.Neos:Editor':
     label: Editor
-    description: Grants access to the content, media, workspace and history module. The user is allowed publish to the live workspace.
+    description: Grants access to the content, media, workspace and history module. The user is allowed to publish to the live workspace.
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
 
   'Neos.Neos:UserManager':
     label: Neos User Manager
-    description: A user with this role is able to create, edit and delete users having the same or a subset of their own roles.
+    description: The user is allowed to create, edit and delete users having the same or a subset of their own roles.
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
