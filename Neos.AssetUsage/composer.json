@@ -1,0 +1,23 @@
+{
+    "description": "Custom projection to effectively track the usage of assets within the Event Sourced Content Repository",
+    "type": "neos-package",
+    "name": "neos/asset-usage",
+    "require": {
+        "php": ">=8.1",
+        "neos/event-sourced-content-repository": "*",
+        "neos/media": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\AssetUsage\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.AssetUsage"
+        }
+    }
+}
