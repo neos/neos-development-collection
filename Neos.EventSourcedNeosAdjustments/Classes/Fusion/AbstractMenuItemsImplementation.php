@@ -16,6 +16,7 @@ use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Base class for Menu and DimensionsMenu

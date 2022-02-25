@@ -12,9 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
