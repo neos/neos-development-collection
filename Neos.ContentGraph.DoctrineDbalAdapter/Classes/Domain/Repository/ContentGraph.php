@@ -78,11 +78,8 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @return NodeInterface|null
      * @throws DBALException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -114,11 +111,7 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @throws DBALException
      * @throws \Exception
-     * @return NodeAggregate
      */
     public function findRootNodeAggregateByType(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -180,9 +173,6 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate|null
      * @throws DBALException
      * @throws \Exception
      */
@@ -218,8 +208,6 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @return iterable<NodeAggregate>
      * @throws DBALException
      * @throws \Exception
@@ -259,10 +247,6 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $childOriginDimensionSpacePoint
-     * @return NodeAggregate|null
      * @throws DBALException
      * @throws \Exception
      */
@@ -310,11 +294,8 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @return iterable<NodeAggregate>
-     * @throws DBALException
-     * @throws \Exception
+     * @throws DBALException|\Exception
      */
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -338,11 +319,8 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $name
      * @return iterable<NodeAggregate>
-     * @throws DBALException
+     * @throws DBALException|\Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -369,10 +347,8 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @return iterable<NodeAggregate>
-     * @throws DBALException
+     * @throws DBALException|\Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -483,19 +459,15 @@ final class ContentGraph implements ContentGraphInterface
 
     public function enableCache(): void
     {
-        if (is_array($this->subgraphs)) {
-            foreach ($this->subgraphs as $subgraph) {
-                $subgraph->getInMemoryCache()->enable();
-            }
+        foreach ($this->subgraphs as $subgraph) {
+            $subgraph->getInMemoryCache()->enable();
         }
     }
 
     public function disableCache(): void
     {
-        if (is_array($this->subgraphs)) {
-            foreach ($this->subgraphs as $subgraph) {
-                $subgraph->getInMemoryCache()->disable();
-            }
+        foreach ($this->subgraphs as $subgraph) {
+            $subgraph->getInMemoryCache()->disable();
         }
     }
 }
