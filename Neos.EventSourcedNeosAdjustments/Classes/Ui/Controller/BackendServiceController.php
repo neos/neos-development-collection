@@ -545,6 +545,7 @@ class BackendServiceController extends ActionController
         ));
 
         foreach ($chain as $operation) {
+            // @phpstan-ignore-next-line
             $flowQuery = call_user_func_array([$flowQuery, $operation['type']], $operation['payload']);
         }
 

@@ -53,6 +53,7 @@ class Package extends BasePackage
                         return;
                     }
                     /** @var RedirectStorageInterface $redirectStorage */
+                    // @phpstan-ignore-next-line
                     $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
                     $redirectStorage->addRedirect(
                         $oldUriPath,

@@ -20,6 +20,7 @@ use Neos\Neos\Fusion\Helper\NodeLabelToken;
 class AdjustedNodeLabelToken extends NodeLabelToken
 {
     /**
+     * @phpstan-ignore-next-line
      * @var ?NodeInterface
      */
     protected $node;

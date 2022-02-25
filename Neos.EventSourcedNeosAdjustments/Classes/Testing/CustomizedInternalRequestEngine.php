@@ -27,10 +27,11 @@ class CustomizedInternalRequestEngine extends InternalRequestEngine
     public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
+        /** @phpstan-ignore-next-line */
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
         }
-
+        /** @phpstan-ignore-next-line */
         $requestHandler->setHttpRequest($httpRequest);
         // TODO: THE FOLLOWING LINE THIS IS THE ONLY CHANGE NEEDED!!!
         //$this->securityContext->clearContext();
