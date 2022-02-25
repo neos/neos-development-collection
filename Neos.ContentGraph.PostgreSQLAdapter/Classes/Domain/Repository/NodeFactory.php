@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
@@ -206,9 +207,7 @@ final class NodeFactory
             $nodeName,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
             $nodesByOccupiedDimensionSpacePoint,
-            array_map(function (array $dimensionSpacePoints) {
-                return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
-            }, $coverageByOccupant),
+            CoverageByOrigin::fromArray($coverageByOccupant),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
             $occupationByCovered,
@@ -296,10 +295,6 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIdentifiers as $key => $nodeAggregateIdentifier) {
-            $currentCoverageByOccupant = [];
-            foreach ($coverageByOccupant[$key] as $originHash => $coverage) {
-                $currentCoverageByOccupant[$originHash] = new DimensionSpacePointSet($coverage);
-            }
             $nodeAggregates[$key] = new NodeAggregate(
                 $contentStreamIdentifier,
                 $nodeAggregateIdentifier,
@@ -308,7 +303,7 @@ final class NodeFactory
                 $nodeNames[$key],
                 new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints[$key]),
                 $nodesByOccupiedDimensionSpacePoint[$key],
-                $currentCoverageByOccupant,
+                CoverageByOrigin::fromArray($coverageByOccupant[$key]),
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 $nodesByCoveredDimensionSpacePoint[$key],
                 $occupationByCovered[$key],

@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
@@ -155,13 +156,9 @@ final class NodeFactory
             }
         }
 
-        foreach ($coverageByOccupants as &$coverage) {
-            $coverage = new DimensionSpacePointSet($coverage);
-        }
-        /** @var array<string,DimensionSpacePointSet> $coverageByOccupants */
-
         /** @var NodeInterface $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
+
         return new ContentProjection\NodeAggregate(
             $primaryNode->getContentStreamIdentifier(),
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
@@ -170,7 +167,7 @@ final class NodeFactory
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
             $nodesByOccupiedDimensionSpacePoints,
-            $coverageByOccupants,
+            CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
             $occupationByCovering,
@@ -247,16 +244,8 @@ final class NodeFactory
             }
         }
 
-        foreach ($coverageByOccupantsByNodeAggregate as &$coverageByOccupants) {
-            foreach ($coverageByOccupants as &$coverage) {
-                $coverage = new DimensionSpacePointSet($coverage);
-            }
-        }
-
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
             /** @var string $rawNodeAggregateIdentifier */
-            $coverageByOccupant = $coverageByOccupantsByNodeAggregate[$rawNodeAggregateIdentifier];
-            /** @var array<string,DimensionSpacePointSet> $coverageByOccupant */
             yield new ContentProjection\NodeAggregate(
                 // this line is safe because a nodeAggregate only exists if it at least contains one node.
                 current($nodes)->getContentStreamIdentifier(),
@@ -268,7 +257,9 @@ final class NodeFactory
                     $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]
                 ),
                 $nodes,
-                $coverageByOccupant,
+                CoverageByOrigin::fromArray(
+                    $coverageByOccupantsByNodeAggregate[$rawNodeAggregateIdentifier]
+                ),
                 new DimensionSpacePointSet(
                     $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]
                 ),

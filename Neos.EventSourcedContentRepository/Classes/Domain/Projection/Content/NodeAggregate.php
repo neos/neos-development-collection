@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 /** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -50,10 +51,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      */
     private array $nodesByOccupiedDimensionSpacePoint;
 
-    /**
-     * @var array<string,DimensionSpacePointSet>
-     */
-    private array $coverageByOccupant;
+    private CoverageByOrigin $coverageByOccupant;
 
     /**
      * @var array<string,NodeInterface>
@@ -76,18 +74,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     private DimensionSpacePointSet $disabledDimensionSpacePoints;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeAggregateClassification $classification
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeName|null $nodeName
-     * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints
      * @param array|NodeInterface[] $nodesByOccupiedDimensionSpacePoint
-     * @param array<string,DimensionSpacePointSet> $coverageByOccupant
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param array|NodeInterface[] $nodesByCoveredDimensionSpacePoint
      * @param array<string,OriginDimensionSpacePoint> $occupationByCovered
-     * @param DimensionSpacePointSet $disabledDimensionSpacePoints
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -97,7 +86,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         ?NodeName $nodeName,
         OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
         array $nodesByOccupiedDimensionSpacePoint,
-        array $coverageByOccupant,
+        CoverageByOrigin $coverageByOccupant,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         array $nodesByCoveredDimensionSpacePoint,
         array $occupationByCovered,
@@ -184,16 +173,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function getCoverageByOccupant(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): DimensionSpacePointSet {
-        if (!isset($this->occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
-            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier
-                    . '" does currently not occupy dimension space point '
-                    . $occupiedDimensionSpacePoint,
-                1554902613
-            );
-        }
-
-        return $this->coverageByOccupant[$occupiedDimensionSpacePoint->hash];
+        return $this->coverageByOccupant->getCoverage($occupiedDimensionSpacePoint);
     }
 
     /**
