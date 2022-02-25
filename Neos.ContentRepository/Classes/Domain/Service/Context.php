@@ -262,7 +262,7 @@ class Context
      * Get a node by identifier and this context
      *
      * @param string $identifier The identifier of a node
-     * @return NodeInterface The node with the given identifier or NULL if no such node exists
+     * @return ?NodeInterface The node with the given identifier or NULL if no such node exists
      */
     public function getNodeByIdentifier($identifier)
     {
