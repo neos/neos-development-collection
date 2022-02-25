@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\AssetUsage;
+namespace Neos\ESCR\AssetUsage;
 
-use Neos\AssetUsage\Projector\AssetUsageRepository;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
-use Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\AssetUsage\Dto\AssetUsages;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Dto\AssetUsages;
 
 /**
  * Central authority to look up asset usages

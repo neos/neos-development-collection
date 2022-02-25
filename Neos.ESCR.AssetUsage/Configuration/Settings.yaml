@@ -4,4 +4,4 @@ Neos:
       stores:
         'ContentRepository':
           listeners:
-            'Neos\AssetUsage\.*': true
+            'Neos\ESCR\AssetUsage\.*': true

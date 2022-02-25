@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\AssetUsage\Projector;
+namespace Neos\ESCR\AssetUsage\Projector;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -11,10 +11,10 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
-use Neos\AssetUsage\Dto\AssetIdsByProperty;
-use Neos\AssetUsage\Dto\AssetUsage;
-use Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\AssetUsage\Dto\AssetUsages;
+use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\ESCR\AssetUsage\Dto\AssetUsage;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Dto\AssetUsages;
 
 /**
  * @Flow\Scope("singleton")

@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\AssetUsage;
+namespace Neos\ESCR\AssetUsage;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\AssetUsage\Dto\AssetUsage;
-use Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\AssetUsage\Dto\AssetUsages;
+use Neos\ESCR\AssetUsage\Dto\AssetUsage;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Dto\AssetUsages;
 
 /**
  * Implementation of the Neos AssetUsageStrategyInterface in order to protect assets in use

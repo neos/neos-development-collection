@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\AssetUsage\Dto;
+namespace Neos\ESCR\AssetUsage\Dto;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;

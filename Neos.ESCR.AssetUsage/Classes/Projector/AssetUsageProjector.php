@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\AssetUsage\Projector;
+namespace Neos\ESCR\AssetUsage\Projector;
 
-use Neos\AssetUsage\Projector\AssetUsageRepository;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -21,7 +21,7 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\TypeHandling;
-use Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
 
 /**
  * @Flow\Scope("singleton")
