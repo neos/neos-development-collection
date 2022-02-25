@@ -40,6 +40,11 @@ class EmulatedLegacyBaseWorkspace
         return (string)$this->childWorkspace->getBaseWorkspaceName();
     }
 
+    /**
+     * @param string $methodName
+     * @param array<int|string,mixed> $args
+     * @return null
+     */
     public function __call($methodName, $args)
     {
         $this->legacyLogger->warning(

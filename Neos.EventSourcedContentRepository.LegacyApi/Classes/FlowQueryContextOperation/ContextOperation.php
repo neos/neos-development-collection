@@ -55,12 +55,20 @@ class ContextOperation extends AbstractOperation
 
     private const SUPPORTED_ADJUSTMENTS = ['invisibleContentShown', 'workspaceName'];
 
-    public function canEvaluate($context)
+    /**
+     * @param array<int,mixed> $context
+     */
+    public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    /**
+     * @param FlowQuery<int,mixed> $flowQuery
+     * @param array<int,mixed> $arguments
+     * @throws FlowQueryException
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         if (!isset($arguments[0]) || !is_array($arguments[0])) {
             throw new FlowQueryException('context() requires an array argument of context properties', 1398030427);
@@ -107,12 +115,13 @@ class ContextOperation extends AbstractOperation
             if (array_key_exists('workspaceName', $targetContext)) {
                 $workspaceName = WorkspaceName::fromString($targetContext['workspaceName']);
                 $workspace = $this->workspaceFinder->findOneByName($workspaceName);
-
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $nodeAccessor->getDimensionSpacePoint(),
-                    $visibilityConstraints
-                );
+                if (!is_null($workspace)) {
+                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                        $workspace->getCurrentContentStreamIdentifier(),
+                        $nodeAccessor->getDimensionSpacePoint(),
+                        $visibilityConstraints
+                    );
+                }
             }
 
             $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->getNodeAggregateIdentifier());

@@ -8,11 +8,11 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\SiteNodeUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 class EmulatedLegacySite
 {
-
     /**
      * @Flow\Inject
      * @var LegacyLoggerInterface
@@ -31,13 +31,14 @@ class EmulatedLegacySite
      */
     protected $siteNodeUtility;
 
+    private NodeInterface $contextNode;
 
     public function __construct(NodeInterface $traversableNode)
     {
         $this->contextNode = $traversableNode;
     }
 
-    public function getSiteResourcesPackageKey()
+    public function getSiteResourcesPackageKey(): ?string
     {
         $this->legacyLogger->info(
             'context.currentSite.siteResourcesPackageKey called',
@@ -45,12 +46,19 @@ class EmulatedLegacySite
         );
 
         $siteNode = $this->siteNodeUtility->findSiteNode($this->contextNode);
+        $siteNodeName = $siteNode->getNodeName();
 
-        /* @var $site \Neos\Neos\Domain\Model\Site */
-        $site = $this->siteRepository->findOneByNodeName($siteNode->getNodeName()->jsonSerialize());
-        return ($site ? $site->getSiteResourcesPackageKey() : null);
+        /* @var ?Site $site */
+        $site = $siteNodeName ? $this->siteRepository->findOneByNodeName((string)$siteNodeName) : null;
+
+        return $site?->getSiteResourcesPackageKey();
     }
 
+    /**
+     * @param string $methodName
+     * @param array<int|string,mixed> $args
+     * @return null
+     */
     public function __call($methodName, $args)
     {
         $this->legacyLogger->warning(
