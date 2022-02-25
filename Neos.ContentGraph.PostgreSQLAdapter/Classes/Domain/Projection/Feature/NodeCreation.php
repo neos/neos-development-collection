@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -114,6 +115,9 @@ trait NodeCreation
                         $dimensionSpacePoint,
                         $event->getParentNodeAggregateIdentifier()
                     );
+                    if (is_null($parentNode)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+                    }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
                         $event->getContentStreamIdentifier(),
                         $parentNode->relationAnchorPoint,
@@ -194,7 +198,7 @@ trait NodeCreation
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

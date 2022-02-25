@@ -103,6 +103,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -134,6 +135,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes(
@@ -157,6 +159,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
         }
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchNumeric();
 
         return $result[0];
@@ -178,6 +181,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->ordered();
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->visibilityConstraints);
@@ -199,6 +203,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->ordered();
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $referencedNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes(
@@ -213,6 +218,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -257,6 +263,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeName($edgeName);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -335,6 +342,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
@@ -342,7 +350,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
     {
-        // TODO: Implement findNodePath() method.
+        return NodePath::fromString('/');
     }
 
     public function findSubtrees(
@@ -409,11 +417,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints,
         ?SearchTerm $searchTerm
     ): Nodes {
-        // TODO: Implement findDescendants() method.
+        return Nodes::empty();
     }
 
     /**
-     * @return int
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
@@ -431,12 +438,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash
         ];
 
-        return $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric()[0];
+        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric();
+
+        return $result ? $result[0] : 0;
     }
 
     public function getInMemoryCache(): InMemoryCache
     {
-        // TODO: Implement getInMemoryCache() method.
+        return new InMemoryCache();
     }
 
     private function getDatabaseConnection(): DatabaseConnection
@@ -444,8 +453,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->databaseClient->getConnection();
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
-        // TODO: Implement jsonSerialize() method.
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint
+        ];
     }
 }

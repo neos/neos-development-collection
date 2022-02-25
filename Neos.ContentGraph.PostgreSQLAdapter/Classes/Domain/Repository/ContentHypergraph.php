@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection as DatabaseConnection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
@@ -87,6 +88,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -100,14 +102,17 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
-        // TODO: Implement findRootNodeAggregateByType() method.
+        throw new \BadMethodCallException('method findRootNodeAggregateByType is not implemented yet.', 1645782874);
     }
 
+    /**
+     * @return \Iterator<int,NodeAggregate>
+     */
     public function findNodeAggregatesByType(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeTypeName $nodeTypeName
     ): \Iterator {
-        // TODO: Implement findNodeAggregatesByType() method.
+        return new \Generator();
     }
 
     public function findNodeAggregateByIdentifier(
@@ -117,6 +122,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphQuery::create($contentStreamIdentifier, true);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -164,6 +170,9 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    /**
+     * @return array<string,NodeAggregate>
+     */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier
@@ -171,6 +180,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphParentQuery::create($contentStreamIdentifier);
         $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
@@ -179,6 +189,9 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    /**
+     * @return array<string,NodeAggregate>
+     */
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -188,6 +201,7 @@ final class ContentHypergraph implements ContentGraphInterface
             $parentNodeAggregateIdentifier
         );
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
@@ -196,6 +210,9 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    /**
+     * @return array<string,NodeAggregate>
+     */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -207,6 +224,7 @@ final class ContentHypergraph implements ContentGraphInterface
         );
         $query = $query->withChildNodeName($name);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
@@ -215,6 +233,11 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @return array<string,NodeAggregate>
+     */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -222,6 +245,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
         $query = $query->withOnlyTethered();
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
@@ -244,6 +268,7 @@ final class ContentHypergraph implements ContentGraphInterface
             ->withDimensionSpacePoints($dimensionSpacePointsToCheck);
 
         $occupiedDimensionSpacePoints = [];
+        /** @phpstan-ignore-next-line @todo check actual return type */
         foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $row) {
             $occupiedDimensionSpacePoints[$row['dimensionspacepointhash']]
                 = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
@@ -263,25 +288,12 @@ final class ContentHypergraph implements ContentGraphInterface
         return $this->getDatabaseConnection()->executeQuery($query)->fetchOne();
     }
 
-    public function findProjectedContentStreamIdentifiers(): array
-    {
-        // TODO: Implement findProjectedContentStreamIdentifiers() method.
-    }
-
-    public function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        // TODO: Implement findProjectedDimensionSpacePoints() method.
-    }
-
-    public function findProjectedNodeAggregateIdentifiersInContentStream(
-        ContentStreamIdentifier $contentStreamIdentifier
-    ): array {
-        // TODO: Implement findProjectedNodeAggregateIdentifiersInContentStream() method.
-    }
-
+    /**
+     * @return iterable<int,NodeTypeName>
+     */
     public function findUsedNodeTypeNames(): iterable
     {
-        // TODO: Implement findUsedNodeTypeNames() method.
+        return [];
     }
 
     public function enableCache(): void

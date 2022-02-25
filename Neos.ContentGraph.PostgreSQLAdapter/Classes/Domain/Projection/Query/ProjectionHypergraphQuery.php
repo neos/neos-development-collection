@@ -32,10 +32,20 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
 {
     private string $query;
 
+    /**
+     * @var array<string,mixed>
+     */
     private array $parameters;
 
+    /**
+     * @var array<string,string>
+     */
     private array $types;
 
+    /**
+     * @param array<string,mixed> $parameters
+     * @param array<string,string> $types
+     */
     private function __construct(string $query, array $parameters, array $types)
     {
         $this->query = $query;
@@ -104,6 +114,9 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         return new self($query, $parameters, $this->types);
     }
 
+    /**
+     * @return ResultStatement<int,mixed>
+     */
     public function execute(Connection $databaseConnection): ResultStatement
     {
         return $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);

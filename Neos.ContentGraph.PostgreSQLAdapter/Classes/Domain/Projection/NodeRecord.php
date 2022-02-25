@@ -69,6 +69,7 @@ final class NodeRecord
     }
 
     /**
+     * @param array<string,string> $databaseRow
      * @throws \Exception
      */
     public static function fromDatabaseRow(array $databaseRow): self

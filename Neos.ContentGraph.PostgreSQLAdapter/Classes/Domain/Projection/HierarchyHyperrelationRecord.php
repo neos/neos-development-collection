@@ -51,6 +51,9 @@ final class HierarchyHyperrelationRecord
         $this->childNodeAnchors = $childNodeAnchorPoints;
     }
 
+    /**
+     * @param array<string,string> $databaseRow
+     */
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
@@ -66,7 +69,7 @@ final class HierarchyHyperrelationRecord
     public function replaceParentNodeAnchor(
         NodeRelationAnchorPoint $newParentNodeAnchor,
         Connection $databaseConnection
-    ) {
+    ): void {
         /** @todo do this directly in the database */
         $databaseConnection->update(
             self::TABLE_NAME,
@@ -82,7 +85,7 @@ final class HierarchyHyperrelationRecord
         NodeRelationAnchorPoint $oldChildNodeAnchor,
         NodeRelationAnchorPoint $newChildNodeAnchor,
         Connection $databaseConnection
-    ) {
+    ): void {
         /** @todo do this directly in the database */
         $childNodeAnchors = $this->childNodeAnchors->replace(
             $oldChildNodeAnchor,
@@ -156,6 +159,9 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function getDatabaseIdentifier(): array
     {
         return [

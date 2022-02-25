@@ -25,15 +25,21 @@ use Neos\Flow\Annotations as Flow;
 final class NodeAggregateIdentifiers
 {
     /**
-     * @var array|NodeAggregateIdentifier[]
+     * @var array<string,NodeAggregateIdentifier>
      */
     private array $identifiers;
 
+    /**
+     * @param array<string,NodeAggregateIdentifier> $identifiers
+     */
     private function __construct(array $identifiers)
     {
         $this->identifiers = $identifiers;
     }
 
+    /**
+     * @param array<int|string,string|NodeAggregateIdentifier> $array
+     */
     public static function fromArray(array $array): self
     {
         $values = [];
@@ -78,10 +84,10 @@ final class NodeAggregateIdentifiers
     ): self {
         $nodeAggregateIdentifiers = $this->identifiers;
         if ($succeedingSibling) {
-            $pivot = array_search($succeedingSibling, $nodeAggregateIdentifiers);
+            $pivot = (int)array_search($succeedingSibling, $nodeAggregateIdentifiers);
             array_splice($nodeAggregateIdentifiers, $pivot, 0, $nodeAggregateIdentifier);
         } else {
-            $nodeAggregateIdentifiers[] = $nodeAggregateIdentifier;
+            $nodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $nodeAggregateIdentifier;
         }
 
         return new self($nodeAggregateIdentifiers);
@@ -95,5 +101,10 @@ final class NodeAggregateIdentifiers
         }
 
         return new self($identifiers);
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->identifiers) === 0;
     }
 }

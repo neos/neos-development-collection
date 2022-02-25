@@ -81,7 +81,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     /**
      * @throws \Throwable
      */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

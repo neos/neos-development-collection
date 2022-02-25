@@ -73,6 +73,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -89,6 +90,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -180,10 +182,7 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @return array|NodeRecord[]
+     * @return array<int,NodeRecord>
      * @throws \Exception
      */
     public function findNodeRecordsForNodeAggregate(
@@ -193,6 +192,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return array_map(function ($row) {
@@ -258,8 +258,8 @@ final class ProjectionHypergraph
         if ($affectedDimensionSpacePoints) {
             $query .= '
             AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)';
+            $parameters['affectedDimensionSpacePointHashes'] = $affectedDimensionSpacePoints->getPointHashes();
         }
-        $parameters['affectedDimensionSpacePointHashes'] = $affectedDimensionSpacePoints->getPointHashes();
         $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
         $hierarchyHyperrelations = [];
@@ -429,7 +429,7 @@ final class ProjectionHypergraph
             $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
-        return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
+        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -459,7 +459,7 @@ final class ProjectionHypergraph
             $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
-        return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
+        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**

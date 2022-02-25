@@ -21,11 +21,21 @@ trait CommonGraphQueryOperations
 {
     private string $query;
 
+    /**
+     * @var array<string,mixed>
+     */
     private array $parameters;
 
+    /**
+     * @var array<string,int|string>
+     */
     private array $types;
 
-    final protected function __construct($query, $parameters, $types = [])
+    /**
+     * @param array<string,mixed> $parameters
+     * @param array<string,int|string> $types
+     */
+    final protected function __construct(string $query, array $parameters, array $types = [])
     {
         $this->query = $query;
         $this->parameters = $parameters;
@@ -87,11 +97,17 @@ trait CommonGraphQueryOperations
         return $this->query;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
+    /**
+     * @return array<string,int|string>
+     */
     public function getTypes(): array
     {
         return $this->types;

@@ -14,6 +14,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -39,7 +42,11 @@ trait NodeRemoval
                     $dimensionSpacePoint,
                     $event->getNodeAggregateIdentifier()
                 );
+                if (is_null($nodeRecord)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+                }
 
+                /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordByChildNodeAnchor(
                         $event->getContentStreamIdentifier(),
@@ -92,6 +99,7 @@ trait NodeRemoval
             $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
 
             foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
+                /** @var NodeRecord $nodeRecord */
                 $nodeRecord = $this->getProjectionHypergraph()
                     ->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
                 $ingoingHierarchyRelations = $this->getProjectionHypergraph()
@@ -142,7 +150,7 @@ trait NodeRemoval
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

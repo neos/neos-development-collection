@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
@@ -28,7 +29,7 @@ trait NodeModification
     /**
      * @throws \Throwable
      */
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
@@ -36,6 +37,9 @@ trait NodeModification
                 $event->getOriginDimensionSpacePoint(),
                 $event->getNodeAggregateIdentifier()
             );
+            if (is_null($nodeRecord)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
             $this->copyOnWrite(
                 $event->getContentStreamIdentifier(),
                 $nodeRecord,
@@ -51,7 +55,7 @@ trait NodeModification
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

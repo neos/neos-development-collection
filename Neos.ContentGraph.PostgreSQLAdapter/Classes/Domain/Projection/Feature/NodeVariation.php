@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -34,7 +35,7 @@ trait NodeVariation
 {
     abstract protected function getProjectionHyperGraph(): ProjectionHypergraph;
 
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 
@@ -49,6 +50,9 @@ trait NodeVariation
                 $event->getSourceOrigin(),
                 $event->getNodeAggregateIdentifier()
             );
+            if (is_null($sourceNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+            }
             $specializedNode = $this->copyNodeToOriginDimensionSpacePoint(
                 $sourceNode,
                 $event->getSpecializationOrigin()
@@ -77,6 +81,9 @@ trait NodeVariation
                 $event->getSourceOrigin(),
                 $event->getNodeAggregateIdentifier()
             );
+            if (!$sourceNode) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
             $generalizedNode = $this->copyNodeToOriginDimensionSpacePoint(
                 $sourceNode,
                 $event->getGeneralizationOrigin()
@@ -94,7 +101,8 @@ trait NodeVariation
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin(),
                 $generalizedNode->relationAnchorPoint,
-                $event->getGeneralizationCoverage()
+                $event->getGeneralizationCoverage(),
+                get_class($event)
             );
         });
     }
@@ -107,6 +115,9 @@ trait NodeVariation
                 $event->getSourceOrigin(),
                 $event->getNodeAggregateIdentifier()
             );
+            if (!$sourceNode) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
             $peerNode = $this->copyNodeToOriginDimensionSpacePoint(
                 $sourceNode,
                 $event->getPeerOrigin()
@@ -124,7 +135,8 @@ trait NodeVariation
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceOrigin(),
                 $peerNode->relationAnchorPoint,
-                $event->getPeerCoverage()
+                $event->getPeerCoverage(),
+                get_class($event)
             );
         });
     }
@@ -206,7 +218,8 @@ trait NodeVariation
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         NodeRelationAnchorPoint $targetRelationAnchor,
-        DimensionSpacePointSet $coverage
+        DimensionSpacePointSet $coverage,
+        string $eventClassName
     ): void {
         $missingCoverage = $coverage->getDifference(
             $this->getProjectionHyperGraph()->findCoverageByNodeAggregateIdentifier(
@@ -220,6 +233,9 @@ trait NodeVariation
                 $sourceOrigin,
                 $nodeAggregateIdentifier
             );
+            if (!$sourceParentNode) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing($eventClassName);
+            }
             $parentNodeAggregateIdentifier = $sourceParentNode->nodeAggregateIdentifier;
             $sourceSucceedingSiblingNode = $this->getProjectionHyperGraph()->findParentNodeRecordByOrigin(
                 $contentStreamIdentifier,
@@ -237,7 +253,7 @@ trait NodeVariation
                     $parentNodeAggregateIdentifier
                 );
 
-                if ($hierarchyRelation) {
+                if ($hierarchyRelation && $sourceSucceedingSiblingNode) {
                     // If it exists, we need to look for a succeeding sibling to keep some order of nodes
                     $targetSucceedingSibling = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
                         $contentStreamIdentifier,
@@ -256,7 +272,9 @@ trait NodeVariation
                         $uncoveredDimensionSpacePoint,
                         $parentNodeAggregateIdentifier
                     );
-
+                    if (!$targetParentNode) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing($eventClassName);
+                    }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
                         $contentStreamIdentifier,
                         $targetParentNode->relationAnchorPoint,
