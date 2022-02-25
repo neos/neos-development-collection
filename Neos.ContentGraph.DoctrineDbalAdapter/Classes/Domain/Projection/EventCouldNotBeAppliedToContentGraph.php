@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Exception;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Neos\Flow\Annotations as Flow;
 

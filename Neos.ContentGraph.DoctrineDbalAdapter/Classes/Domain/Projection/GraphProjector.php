@@ -15,7 +15,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;

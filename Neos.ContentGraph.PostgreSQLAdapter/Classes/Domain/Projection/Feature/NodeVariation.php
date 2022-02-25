@@ -14,7 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Exception\EventCouldNotBeAppliedToContentGraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
