@@ -6,7 +6,7 @@
     ],
     "description": "ClI setup for Neos CMS",
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^8.0",
         "neos/neos": "*"
     },
     "autoload": {
