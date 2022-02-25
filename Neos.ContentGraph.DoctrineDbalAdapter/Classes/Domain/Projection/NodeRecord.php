@@ -35,7 +35,6 @@ final class NodeRecord
         /** @var array<string,string> */
         public array $originDimensionSpacePoint,
         public string $originDimensionSpacePointHash,
-        /** @var SerializedPropertyValues<string,SerializedPropertyValue> $properties */
         public SerializedPropertyValues $properties,
         public NodeTypeName $nodeTypeName,
         public NodeAggregateClassification $classification,

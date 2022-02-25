@@ -70,6 +70,7 @@ class ClosestOperation extends AbstractOperation
             $contextNodeQuery->pushOperation('filter', $arguments);
 
             $parentsQuery = new FlowQuery([$contextNode]);
+            /** @phpstan-ignore-next-line */
             $contextNodeQuery->pushOperation('add', [$parentsQuery->parents($arguments[0])->get()]);
 
             foreach ($contextNodeQuery as $result) {
