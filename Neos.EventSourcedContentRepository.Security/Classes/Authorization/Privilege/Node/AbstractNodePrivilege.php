@@ -18,6 +18,7 @@ use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
+use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -33,10 +34,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     protected $eelCompilingEvaluator;
 
-    /**
-     * @var string
-     */
-    protected $nodeContextClassName = NodePrivilegeContext::class;
+    protected string $nodeContextClassName = NodePrivilegeContext::class;
 
     /**
      * @var NodePrivilegeContext
@@ -48,23 +46,15 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     protected $methodPrivilege;
 
-    /**
-     * @var boolean
-     */
-    protected $initialized = false;
+    protected bool $initialized = false;
 
     /**
-     * Constructor
-     *
-     * @param PrivilegeTarget $privilegeTarget
-     * @param string $matcher
-     * @param string $permission
-     * @param $parameters
+     * @param array<int,PrivilegeParameterInterface> $parameters
      */
-    public function __construct(PrivilegeTarget $privilegeTarget, string $matcher, string $permission, $parameters)
+    public function __construct(PrivilegeTarget $privilegeTarget, string $matcher, string $permission, array $parameters)
     {
         parent::__construct($privilegeTarget, $matcher, $permission, $parameters);
-        $this->cacheEntryIdentifier = null;
+        $this->cacheEntryIdentifier = '';
     }
 
     /**
@@ -76,8 +66,12 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             return;
         }
         $this->initialized = true;
-        $this->eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
-        $this->nodeContext = new $this->nodeContextClassName();
+        /** @var CompilingEvaluator $eelCompilingEvaluator */
+        $eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
+        $this->eelCompilingEvaluator = $eelCompilingEvaluator;
+        /** @var NodePrivilegeContext $nodeContext */
+        $nodeContext = new $this->nodeContextClassName();
+        $this->nodeContext = $nodeContext;
         $this->initializeMethodPrivilege();
     }
 
@@ -97,7 +91,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     public function getCacheEntryIdentifier(): string
     {
-        if ($this->cacheEntryIdentifier === null) {
+        if ($this->cacheEntryIdentifier === '') {
             $this->buildCacheEntryIdentifier();
         }
 
@@ -158,7 +152,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     /**
      * @throws \Neos\Flow\Security\Exception
      */
-    protected function initializeMethodPrivilege()
+    protected function initializeMethodPrivilege(): void
     {
         if ($this->methodPrivilege !== null) {
             return;
@@ -170,10 +164,12 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             $methodPrivilegeMatcher
         );
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
-        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege(
+        /** @var MethodPrivilegeInterface $methodPrivilege */
+        $methodPrivilege = $methodPrivilegeTarget->createPrivilege(
             $this->getPermission(),
             $this->getParameters()
         );
+        $this->methodPrivilege = $methodPrivilege;
     }
 
     /**

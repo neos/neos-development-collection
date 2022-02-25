@@ -44,6 +44,7 @@ class ReadNodePrivilege extends AbstractPrivilege
         }
         $nodeContext = new NodePrivilegeContext($subject->getNode());
         $eelContext = new Context($nodeContext);
+        /** @var CompilingEvaluator $eelCompilingEvaluator */
         $eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
         return $eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }

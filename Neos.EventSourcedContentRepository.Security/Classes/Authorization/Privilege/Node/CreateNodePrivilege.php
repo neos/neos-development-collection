@@ -30,17 +30,13 @@ class CreateNodePrivilege extends AbstractNodePrivilege
      */
     protected $nodeContext;
 
-    /**
-     * @var string
-     */
-    protected $nodeContextClassName = CreateNodePrivilegeContext::class;
+    protected string $nodeContextClassName = CreateNodePrivilegeContext::class;
 
     /**
      * @param PrivilegeSubjectInterface|CreateNodePrivilegeSubject|MethodPrivilegeSubject $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException
      */
-    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
         if ($subject instanceof CreateNodePrivilegeSubject === false
             && $subject instanceof MethodPrivilegeSubject === false) {
@@ -74,14 +70,14 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             /** @var NodeInterface $node */
             $node = $joinPoint->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
-            $result = parent::matchesSubject($nodePrivilegeSubject);
-            return $result;
+            return parent::matchesSubject($nodePrivilegeSubject);
         }
 
+        $creationNodeType = $subject->getCreationNodeType();
         if ($this->nodeContext->getCreationNodeTypes() === []
             || ($subject->hasCreationNodeType() === false)
-            || in_array(
-                $subject->getCreationNodeType()->getName(),
+            || !is_null($creationNodeType) && in_array(
+                $creationNodeType->getName(),
                 $this->nodeContext->getCreationNodeTypes()
             ) === true) {
             return parent::matchesSubject($subject);
@@ -90,17 +86,14 @@ class CreateNodePrivilege extends AbstractNodePrivilege
     }
 
     /**
-     * @return array $creationNodeTypes
+     * @return array<int,string> $creationNodeTypes
      */
-    public function getCreationNodeTypes()
+    public function getCreationNodeTypes(): array
     {
         return $this->nodeContext->getCreationNodeTypes();
     }
 
-    /**
-     * @return string
-     */
-    protected function buildMethodPrivilegeMatcher()
+    protected function buildMethodPrivilegeMatcher(): string
     {
         return 'method(' . CreateNodeVariant::class . '->__construct()) && method('
             . CreateNodeAggregateWithNodeAndSerializedProperties::class . '->__construct())';
