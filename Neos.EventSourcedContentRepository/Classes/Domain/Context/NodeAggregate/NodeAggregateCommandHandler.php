@@ -202,7 +202,8 @@ final class NodeAggregateCommandHandler
             }
             if ($nodeAggregate->getNodeName()
                 && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
-                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())?->getName() !== (string)$command->getNewNodeTypeName()
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())?->getName()
+                    !== (string)$command->getNewNodeTypeName()
             ) {
                 throw new NodeConstraintException(
                     'Cannot change type of auto created child node' . $nodeAggregate->getNodeName()

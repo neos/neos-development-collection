@@ -63,7 +63,9 @@ class CopyBefore extends AbstractStructuralChange
             ? $this->findParentNode($succeedingSibling)
             : null;
         $subject = $this->subject;
-        if ($this->canApply() && !is_null($subject) && !is_null($succeedingSibling) && !is_null($parentNodeOfSucceedingSibling)) {
+        if ($this->canApply() && !is_null($subject) && !is_null($succeedingSibling)
+            && !is_null($parentNodeOfSucceedingSibling)
+        ) {
             $targetNodeName = NodeName::fromString(uniqid('node-'));
             $command = CopyNodesRecursively::create(
                 $this->contentGraph->getSubgraphByIdentifier(

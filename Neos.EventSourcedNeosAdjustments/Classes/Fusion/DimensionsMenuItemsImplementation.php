@@ -106,7 +106,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $valuesToRestrictTo = $this->getValuesToRestrictTo();
         if ($contentDimensionIdentifierToLimitTo && $valuesToRestrictTo) {
             $order = array_flip($valuesToRestrictTo);
-            usort($menuItems, function (array $menuItemA, array $menuItemB) use (
+            usort($menuItems, function (
+                array $menuItemA,
+                array $menuItemB
+            ) use (
                 $order,
                 $contentDimensionIdentifierToLimitTo
             ) {

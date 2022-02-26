@@ -91,7 +91,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     /**
      * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
      *
-     * @return iterable<string,NodeInterface>
+     * @return iterable<int,NodeInterface>
      */
     public function getNodes(): iterable
     {

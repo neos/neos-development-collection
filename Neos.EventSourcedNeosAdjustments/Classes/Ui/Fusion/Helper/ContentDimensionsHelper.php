@@ -65,7 +65,8 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
 
     /**
      * @param DimensionSpacePoint $dimensions Dimension values indexed by dimension name
-     * @return array<string,array<int,string>> Allowed preset names for the given dimension combination indexed by dimension name
+     * @return array<string,array<int,string>> Allowed preset names for the given dimension combination
+     *                                         indexed by dimension name
      */
     public function allowedPresetsByName(DimensionSpacePoint $dimensions): array
     {

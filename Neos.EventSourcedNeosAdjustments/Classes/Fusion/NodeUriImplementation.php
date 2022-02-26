@@ -134,21 +134,20 @@ class NodeUriImplementation extends AbstractFusionObject
         $node = $this->getNode();
         if ($node instanceof NodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-        } /* @todo implement us
+        } else {
+            return '';
+        }
+        /** @todo implement us
         elseif ($node === '~') {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
-                $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)
-                    ->getNodeAggregateIdentifier()
+                $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier()
             );
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
-                NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
-            );
-        } */ else {
-            return '';
-        }
+            NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
+        );*/
         if ($this->getSubgraph()) {
             $nodeAddress = $nodeAddress->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
         }

@@ -273,7 +273,9 @@ trait NodeVariation
                         $parentNodeAggregateIdentifier
                     );
                     if (!$targetParentNode) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing($eventClassName);
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            $eventClassName
+                        );
                     }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
                         $contentStreamIdentifier,

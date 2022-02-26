@@ -116,7 +116,9 @@ trait NodeCreation
                         $event->getParentNodeAggregateIdentifier()
                     );
                     if (is_null($parentNode)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            get_class($event)
+                        );
                     }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
                         $event->getContentStreamIdentifier(),

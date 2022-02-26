@@ -75,7 +75,8 @@ trait NodeMove
                         }
                     }
 
-                    // because we will reassign the parent relations, we have to clear the restiction relations for these.
+                    // because we will reassign the parent relations,
+                    // we have to clear the restiction relations for these.
                     $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
                         $event->getContentStreamIdentifier(),
                         $event->getNodeAggregateIdentifier(),
@@ -102,7 +103,8 @@ trait NodeMove
                         if (isset($newParentNodes[$coveredDimensionSpacePoint->hash])) {
                             // CASE: we want to connect this hierarchy relation to a new parent.
                             $newParentNode = $newParentNodes[$coveredDimensionSpacePoint->hash];
-                            $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash] ?? null;
+                            $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash]
+                                ?? null;
                             $newPosition = $this->getRelationPosition(
                                 $newParentNode->relationAnchorPoint,
                                 null,

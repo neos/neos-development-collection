@@ -101,7 +101,8 @@ class ServiceNodesController extends ActionController
      * @param string $searchTerm An optional search term used for filtering the list of nodes
      * @param array<int,string> $nodeIdentifiers An optional list of node identifiers
      * @param string $workspaceName Name of the workspace to search in, "live" by default
-     * @param array<string,mixed> $dimensions Optional list of dimensions and their values which should be used for querying
+     * @param array<string,mixed> $dimensions Optional list of dimensions
+     *                                        and their values which should be used for querying
      * @param array<int,string> $nodeTypes A list of node types the list should be filtered by
      * @param NodeAddress $contextNode a node to use as context for the search
      */

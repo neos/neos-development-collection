@@ -400,8 +400,10 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @param ControllerContext $controllerContext
      * @return array<string,mixed>>
      */
-    public function renderDocumentNodeAndChildContent(NodeInterface $documentNode, ControllerContext $controllerContext): array
-    {
+    public function renderDocumentNodeAndChildContent(
+        NodeInterface $documentNode,
+        ControllerContext $controllerContext
+    ): array {
         return $this->renderNodeAndChildContent($documentNode, $controllerContext);
     }
 

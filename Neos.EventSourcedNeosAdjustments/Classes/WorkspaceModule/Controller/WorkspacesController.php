@@ -744,7 +744,9 @@ class WorkspacesController extends AbstractModuleController
                             $document = $closestDocumentNode;
                             break;
                         }
-                        $closestDocumentNode = $subgraph->findParentNode($closestDocumentNode->getNodeAggregateIdentifier());
+                        $closestDocumentNode = $subgraph->findParentNode(
+                            $closestDocumentNode->getNodeAggregateIdentifier()
+                        );
                     }
 
                     // $document will be null if we have a broken root line for this node.

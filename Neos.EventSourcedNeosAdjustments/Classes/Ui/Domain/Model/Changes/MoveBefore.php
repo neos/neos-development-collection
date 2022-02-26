@@ -60,8 +60,8 @@ class MoveBefore extends AbstractStructuralChange
         $parentNode = $subject ? $this->findParentNode($subject) : null;
         $succeedingSiblingParent = $succeedingSibling ? $this->findParentNode($succeedingSibling) : null;
         if ($this->canApply() && !is_null($subject) && !is_null($succeedingSibling)
-            && !is_null($parentNode) && !is_null($succeedingSiblingParent))
-        {
+            && !is_null($parentNode) && !is_null($succeedingSiblingParent)
+        ) {
             $precedingSibling = null;
             try {
                 $precedingSibling = $this->findChildNodes($parentNode)

@@ -173,7 +173,6 @@ class Property extends AbstractChange
         $subject = $this->subject;
         $propertyName = $this->getPropertyName();
         if ($this->canApply() && !is_null($subject) && !is_null($propertyName)) {
-
             // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
             // so we need to trigger another method beforehand.
             $subject->getNodeType()->getFullConfiguration();

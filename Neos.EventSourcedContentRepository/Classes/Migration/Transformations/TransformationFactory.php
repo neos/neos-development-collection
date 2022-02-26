@@ -50,8 +50,8 @@ class TransformationFactory
         $transformation = new $transformationClassName();
         if (!$transformation instanceof GlobalTransformationInterface
             && !$transformation instanceof NodeAggregateBasedTransformationInterface
-            && !$transformation instanceof NodeBasedTransformationInterface)
-        {
+            && !$transformation instanceof NodeBasedTransformationInterface
+        ) {
             throw new \InvalidArgumentException(
                 'Transformations must implement one of the interfaces, ' . $transformationClassName . ' given.',
                 1645392135

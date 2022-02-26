@@ -96,8 +96,11 @@ class LinkHelper implements ProtectedContextAwareInterface
         return '';
     }
 
-    public function resolveNodeUri(string|Uri $uri, NodeInterface $contextNode, ControllerContext $controllerContext): ?string
-    {
+    public function resolveNodeUri(
+        string|Uri $uri,
+        NodeInterface $contextNode,
+        ControllerContext $controllerContext
+    ): ?string {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
         if (!$targetNode instanceof NodeInterface) {
             $this->systemLogger->info(

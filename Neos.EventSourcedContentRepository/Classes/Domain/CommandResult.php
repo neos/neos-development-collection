@@ -85,7 +85,8 @@ final class CommandResult
         }
         if (is_null($this->runtimeBlocker)) {
             throw new \RuntimeException(
-                'No runtime blocker specified for CommandResult, but is required for ::blockUntilProjectionsAreUpToDate',
+                'No runtime blocker specified for CommandResult,'
+                    . ' but is required for ::blockUntilProjectionsAreUpToDate',
                 1645362901
             );
         }

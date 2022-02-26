@@ -70,7 +70,9 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
         if (isset($currentContext['node'])) {
             /** @var NodeInterface $node */
             $node = $currentContext['node'];
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                $node->getContentStreamIdentifier()
+            );
             $applicationContext = $this->environment->getContext();
 
             if ($applicationContext->isProduction()

@@ -21,8 +21,11 @@ class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject
 {
     protected ?string $propertyName = null;
 
-    public function __construct(NodeInterface $node, ?JoinPointInterface $joinPoint = null, ?string $propertyName = null)
-    {
+    public function __construct(
+        NodeInterface $node,
+        ?JoinPointInterface $joinPoint = null,
+        ?string $propertyName = null
+    ) {
         $this->propertyName = $propertyName;
         parent::__construct($node, $joinPoint);
     }

@@ -570,8 +570,9 @@ final class WorkspaceCommandHandler
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
      */
-    public function handlePublishIndividualNodesFromWorkspace(Command\PublishIndividualNodesFromWorkspace $command): CommandResult
-    {
+    public function handlePublishIndividualNodesFromWorkspace(
+        Command\PublishIndividualNodesFromWorkspace $command
+    ): CommandResult {
         $this->readSideMemoryCacheManager->disableCache();
 
         $workspace = $this->requireWorkspace($command->getWorkspaceName());
@@ -689,8 +690,9 @@ final class WorkspaceCommandHandler
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleDiscardIndividualNodesFromWorkspace(Command\DiscardIndividualNodesFromWorkspace $command): CommandResult
-    {
+    public function handleDiscardIndividualNodesFromWorkspace(
+        Command\DiscardIndividualNodesFromWorkspace $command
+    ): CommandResult {
         $this->readSideMemoryCacheManager->disableCache();
 
         $workspace = $this->requireWorkspace($command->getWorkspaceName());

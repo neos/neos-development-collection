@@ -893,7 +893,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                         $unassignedDimensionSpacePoint
                     );
                     if (is_null($generalizationParentNode)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            get_class($event)
+                        );
                     }
 
                     $this->copyHierarchyRelationToDimensionSpacePoint(

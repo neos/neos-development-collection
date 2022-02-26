@@ -113,8 +113,8 @@ class DisallowedChildNodeAdjustment
                 $allowedByGrandparent = false;
                 $grandparentNodeType = null;
                 if ($parentNode !== null && $grandparentNode != null
-                    && $parentNode->isTethered() && !is_null($parentNode->getNodeName()))
-                {
+                    && $parentNode->isTethered() && !is_null($parentNode->getNodeName())
+                ) {
                     $grandparentNodeType = $this->loadNodeType($grandparentNode->getNodeTypeName());
                     if ($grandparentNodeType !== null) {
                         $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(

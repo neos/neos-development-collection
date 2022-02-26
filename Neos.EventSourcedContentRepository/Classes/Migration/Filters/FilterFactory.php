@@ -42,13 +42,15 @@ class FilterFactory
      * @param array<string,mixed> $filterConfiguration
      * @throws MigrationException
      */
-    protected function constructFilterObject(array $filterConfiguration): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
-    {
+    protected function constructFilterObject(
+        array $filterConfiguration
+    ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface {
         $filterClassName = $this->resolveFilterClass($filterConfiguration['type']);
         $filter = new $filterClassName;
         if (!$filter instanceof NodeAggregateBasedFilterInterface && !$filter instanceof NodeBasedFilterInterface) {
             throw new \InvalidArgumentException(
-                'Given filter ' . $filter . ' does not implement NodeAggregateBasedFilterInterface or NodeBasedFilterInterface.',
+                'Given filter ' . $filter
+                    . ' does not implement NodeAggregateBasedFilterInterface or NodeBasedFilterInterface.',
                 1645391476
             );
         }
