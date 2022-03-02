@@ -1,0 +1,82 @@
+<?php
+declare(strict_types=1);
+
+namespace Neos\ESCR\AssetUsage\Command;
+
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ESCR\AssetUsage\Dto\AssetUsage;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\Flow\Cli\CommandController;
+
+final class AssetUsageCommandController extends CommandController
+{
+    private ?array $dimensionSpacePointsByHash = null;
+
+    public function __construct(
+        private readonly AssetUsageRepository $assetUsageRepository,
+        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly ContentGraphInterface $contentGraph
+    )
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Remove asset usages that are no longer valid
+     *
+     * This is the case for usages that refer to
+     * * deleted nodes (i.e. nodes that were implicitly removed because an ancestor node was deleted)
+     * * invalid dimension space points (e.g. because dimension configuration has been changed)
+     * * removed content streams
+     *
+     * @param bool $quiet if Set, only errors will be outputted
+     */
+    public function syncCommand(bool $quiet = false): void
+    {
+        $usages = $this->assetUsageRepository->findUsages(AssetUsageFilter::create());
+        $quiet || $this->output->progressStart($usages->count());
+        $numberOfRemovedUsages = 0;
+        foreach ($usages as $usage) {
+            if (!$this->isAssetUsageStillValid($usage)) {
+                $this->assetUsageRepository->remove($usage);
+                $numberOfRemovedUsages ++;
+            }
+            $quiet || $this->output->progressAdvance();
+        }
+        $quiet || $this->output->progressFinish();
+        $quiet || $this->outputLine();
+        $quiet || $this->outputLine('Removed %d asset usage%s', [$numberOfRemovedUsages, $numberOfRemovedUsages === 1 ? '' : 's']);
+    }
+
+    private function isAssetUsageStillValid(AssetUsage $usage): bool
+    {
+        $dimensionSpacePoint = $this->getDimensionSpacePointByHash($usage->originDimensionSpacePoint);
+        if ($dimensionSpacePoint === null) {
+            return false;
+        }
+        $subGraph = $this->contentGraph->getSubgraphByIdentifier(
+            $usage->contentStreamIdentifier,
+            $dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+        if ($subGraph === null) {
+            return false;
+        }
+        $node = $subGraph->findNodeByNodeAggregateIdentifier($usage->nodeAggregateIdentifier);
+        return $node !== null;
+    }
+
+    private function getDimensionSpacePointByHash(string $dimensionSpacePointHash): ?DimensionSpacePoint
+    {
+        if ($this->dimensionSpacePointsByHash === null) {
+            foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
+                $this->dimensionSpacePointsByHash[$dimensionSpacePoint->getHash()] = $dimensionSpacePoint;
+            }
+        }
+        return $this->dimensionSpacePointsByHash[$dimensionSpacePointHash] ?? null;
+    }
+}

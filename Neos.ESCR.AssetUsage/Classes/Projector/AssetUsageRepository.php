@@ -94,6 +94,17 @@ final class AssetUsageRepository
         $this->dbal->delete(self::TABLE_NAME, ['contentStreamIdentifier' => $contentStreamIdentifier]);
     }
 
+    public function remove(AssetUsage $usage): void
+    {
+        $this->dbal->delete(self::TABLE_NAME, [
+            'assetIdentifier' => $usage->assetIdentifier,
+            'contentStreamIdentifier' => $usage->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $usage->nodeAggregateIdentifier,
+            'originDimensionSpacePointHash' => $usage->originDimensionSpacePoint,
+            'propertyName' => $usage->propertyName,
+        ]);
+    }
+
     public function copyContentStream(ContentStreamIdentifier $sourceContentStreamIdentifier, ContentStreamIdentifier $targetContentStreamIdentifier): void
     {
         $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME . ' SELECT assetidentifier, :targetContentStreamIdentifier contentstreamidentifier, nodeaggregateidentifier, origindimensionspacepointhash, propertyname FROM ' . self::TABLE_NAME . ' WHERE contentStreamIdentifier = :sourceContentStreamIdentifier', [

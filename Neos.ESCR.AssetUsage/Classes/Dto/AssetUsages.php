@@ -19,7 +19,8 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     ) {}
 
     /**
-     * @return \Traversable<AssetUsage>
+     * @return \Traversable<AssetUsage>|iterable<AssetUsage>
+     * @noinspection PhpDocSignatureInspection
      */
     public function getIterator(): \Traversable
     {
