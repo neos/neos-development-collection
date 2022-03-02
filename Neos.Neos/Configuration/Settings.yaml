@@ -21,6 +21,11 @@ Neos:
       # - in Production context
       enableObjectTreeCache: false
 
+      # If set to true, content cache flushes will be done on a per-tag basis and generate additional log output
+      # which allows understanding why flushed entries were flushed. This is useful for debugging but will
+      # hurt performance and should not be used in production.
+      contentCacheDebugMode: false
+
       # Packages can now register with this setting to get their Fusion in the path:
       # resources://MyVendor.MyPackageKey/Private/Fusion/Root.fusion
       # included automatically.
