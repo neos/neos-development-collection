@@ -305,12 +305,8 @@ class ContentCacheFlusher
     public function shutdownObject()
     {
         if ($this->tagsToFlush !== []) {
-            foreach ($this->tagsToFlush as $tag => $logMessage) {
-                $affectedEntries = $this->contentCache->flushByTag($tag);
-                if ($affectedEntries > 0) {
-                    $this->systemLogger->debug(sprintf('Content cache: Removed %s entries %s', $affectedEntries, $logMessage));
-                }
-            }
+            $affectedEntries = $this->contentCache->flushByTags(array_keys($this->tagsToFlush));
+            $this->systemLogger->debug(sprintf('Content cache: Removed %s entries', $affectedEntries));
         }
     }
 
