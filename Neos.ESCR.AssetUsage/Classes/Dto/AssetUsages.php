@@ -7,6 +7,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<AssetUsage>
  */
 final class AssetUsages implements \IteratorAggregate, \Countable
 {
@@ -19,14 +20,17 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     ) {}
 
     /**
-     * @return \Traversable<AssetUsage>|iterable<AssetUsage>
-     * @noinspection PhpDocSignatureInspection
+     * @return \Traversable<AssetUsage>
      */
     public function getIterator(): \Traversable
     {
         return ($this->generator)();
     }
 
+    /**
+     * @param \Closure $callback
+     * @return \Traversable<mixed>
+     */
     public function map(\Closure $callback): \Traversable
     {
         foreach ($this as $usage) {

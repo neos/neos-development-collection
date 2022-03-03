@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Projector;
 
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
+use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -16,12 +16,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceW
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyPublished;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPublished;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
+use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
 
 /**
  * @Flow\Scope("singleton")
@@ -38,16 +40,24 @@ final class AssetUsageProjector implements ProjectorInterface
         $this->repository->reset();
     }
 
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
+    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, RawEvent $rawEvent): void
     {
-        $assetIdsByProperty = $this->getAssetIdsByProperty($event->getInitialPropertyValues());
+        try {
+            $assetIdsByProperty = $this->getAssetIdsByProperty($event->getInitialPropertyValues());
+        } catch (InvalidTypeException $e) {
+            throw new \RuntimeException(sprintf('Failed to extract asset ids from event "%s": %s', $rawEvent->getIdentifier(), $e->getMessage()), 1646321894, $e);
+        }
         $nodeAddress = new NodeAddress($event->getContentStreamIdentifier(), $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(), $event->getNodeAggregateIdentifier(), null);
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
 
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, RawEvent $rawEvent): void
     {
-        $assetIdsByProperty = $this->getAssetIdsByProperty($event->getPropertyValues());
+        try {
+            $assetIdsByProperty = $this->getAssetIdsByProperty($event->getPropertyValues());
+        } catch (InvalidTypeException $e) {
+            throw new \RuntimeException(sprintf('Failed to extract asset ids from event "%s": %s', $rawEvent->getIdentifier(), $e->getMessage()), 1646321894, $e);
+        }
         $nodeAddress = new NodeAddress($event->getContentStreamIdentifier(), $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(), $event->getNodeAggregateIdentifier(), null);
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
@@ -101,31 +111,47 @@ final class AssetUsageProjector implements ProjectorInterface
 
     // ----------------
 
+    /**
+     * @throws InvalidTypeException
+     */
     private function getAssetIdsByProperty(SerializedPropertyValues $propertyValues): AssetIdsByProperty
     {
+        /** @var array<string, array<string>> $assetIdentifiers */
         $assetIdentifiers = [];
+        /** @var SerializedPropertyValue $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
             $assetIdentifiers[$propertyName] = $this->extractAssetIdentifiers($propertyValue->getType(), $propertyValue->getValue());
         }
         return new AssetIdsByProperty($assetIdentifiers);
     }
 
-    private function extractAssetIdentifiers(string $type, $value): array
+    /**
+     * @param string $type
+     * @param mixed $value
+     * @return array<string>
+     * @throws InvalidTypeException
+     */
+    private function extractAssetIdentifiers(string $type, mixed $value): array
     {
         if ($type === 'string' || is_subclass_of($type, \Stringable::class, true)) {
+            // @phpstan-ignore-next-line
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
+            // @phpstan-ignore-next-line
             return isset($value['__identifier']) ? [$value['__identifier']] : [];
         }
 
         // Collection type?
+        /** @var array{type: string, elementType: string|null, nullable: bool} $parsedType */
         $parsedType = TypeHandling::parseType($type);
         if ($parsedType['elementType'] === null || (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true) && !is_subclass_of($parsedType['elementType'], \Stringable::class, true))) {
             return [];
         }
+        /** @var array<array<string>> $assetIdentifiers */
         $assetIdentifiers = [];
+        /** @var iterable<mixed> $value */
         foreach ($value as $elementValue) {
             $assetIdentifiers[] = $this->extractAssetIdentifiers($parsedType['elementType'], $elementValue);
         }

@@ -8,13 +8,23 @@ use Traversable;
 
 /**
  * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<string, array<string>>
  */
 final class AssetIdsByProperty implements \IteratorAggregate
 {
 
+    /**
+     * @var array<string>
+     */
     private array $propertyNamesWithoutAssets = [];
+    /**
+     * @var array<string, array<string>>
+     */
     private array $assetIdentifiers = [];
 
+    /**
+     * @param array<string, array<string>> $assetIdentifiers
+     */
     public function __construct(array $assetIdentifiers)
     {
         foreach ($assetIdentifiers as $propertyName => $assetIdentifiersForThisProperty) {
@@ -22,6 +32,9 @@ final class AssetIdsByProperty implements \IteratorAggregate
         }
     }
 
+    /**
+     * @return array<string>
+     */
     public function propertyNamesWithoutAsset(): array
     {
         return $this->propertyNamesWithoutAssets;

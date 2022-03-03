@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace Neos\ESCR\AssetUsage\Projector;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\ForwardCompatibility\Result;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -52,11 +55,18 @@ final class AssetUsageRepository
             $queryBuilder->addGroupBy('origindimensionspacepointhash');
         }
         return new AssetUsages(function() use ($queryBuilder) {
-            foreach ($queryBuilder->execute()->iterateAssociative() as $row) {
+            $result = $queryBuilder->execute();
+            if (!$result instanceof Result) {
+                throw new \RuntimeException(sprintf('Expected instance of "%s", got: "%s"', Result::class, get_debug_type($result)), 1646320966);
+            }
+            /** @var array{assetidentifier: string, contentstreamidentifier: string, origindimensionspacepointhash: string, nodeaggregateidentifier: string, propertyname: string} $row */
+            foreach ($result->iterateAssociative() as $row) {
                 yield new AssetUsage($row['assetidentifier'], ContentStreamIdentifier::fromString($row['contentstreamidentifier']), $row['origindimensionspacepointhash'], NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']), $row['propertyname']);
             }
         }, function() use ($queryBuilder) {
-            return (int)$this->dbal->fetchOne('SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s', $queryBuilder->getParameters());
+            /** @var string $count */
+            $count = $this->dbal->fetchOne('SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s', $queryBuilder->getParameters());
+            return (int)$count;
         });
     }
 
@@ -94,17 +104,6 @@ final class AssetUsageRepository
         $this->dbal->delete(self::TABLE_NAME, ['contentStreamIdentifier' => $contentStreamIdentifier]);
     }
 
-    public function remove(AssetUsage $usage): void
-    {
-        $this->dbal->delete(self::TABLE_NAME, [
-            'assetIdentifier' => $usage->assetIdentifier,
-            'contentStreamIdentifier' => $usage->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $usage->nodeAggregateIdentifier,
-            'originDimensionSpacePointHash' => $usage->originDimensionSpacePoint,
-            'propertyName' => $usage->propertyName,
-        ]);
-    }
-
     public function copyContentStream(ContentStreamIdentifier $sourceContentStreamIdentifier, ContentStreamIdentifier $targetContentStreamIdentifier): void
     {
         $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME . ' SELECT assetidentifier, :targetContentStreamIdentifier contentstreamidentifier, nodeaggregateidentifier, origindimensionspacepointhash, propertyname FROM ' . self::TABLE_NAME . ' WHERE contentStreamIdentifier = :sourceContentStreamIdentifier', [
@@ -125,6 +124,17 @@ final class AssetUsageRepository
         }
     }
 
+    public function remove(AssetUsage $usage): void
+    {
+        $this->dbal->delete(self::TABLE_NAME, [
+            'assetIdentifier' => $usage->assetIdentifier,
+            'contentStreamIdentifier' => $usage->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $usage->nodeAggregateIdentifier,
+            'originDimensionSpacePointHash' => $usage->originDimensionSpacePoint,
+            'propertyName' => $usage->propertyName,
+        ]);
+    }
+
     public function removeNode(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePoints): void
     {
         $this->dbal->executeStatement('DELETE FROM ' . self::TABLE_NAME . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)', [
@@ -135,8 +145,12 @@ final class AssetUsageRepository
         ]);
     }
 
+    /**
+     * @throws DbalException
+     */
     public function reset(): void
     {
+        /** @var AbstractPlatform|null $platform */
         $platform = $this->dbal->getDatabasePlatform();
         if ($platform === null) {
             throw new \RuntimeException(sprintf('Failed to determine database platform for database "%s"', $this->dbal->getDatabase()), 1645781464);

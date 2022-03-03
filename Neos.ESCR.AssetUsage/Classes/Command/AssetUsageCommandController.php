@@ -14,12 +14,15 @@ use Neos\Flow\Cli\CommandController;
 
 final class AssetUsageCommandController extends CommandController
 {
+    /**
+     * @var array<string, DimensionSpacePoint>|null
+     */
     private ?array $dimensionSpacePointsByHash = null;
 
     public function __construct(
         private readonly AssetUsageRepository $assetUsageRepository,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
-        private readonly ContentGraphInterface $contentGraph
+        private readonly ContentGraphInterface $contentGraph,
     )
     {
         parent::__construct();
