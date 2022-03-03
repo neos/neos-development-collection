@@ -135,6 +135,13 @@ final class AssetUsageRepository
         ]);
     }
 
+    public function removeAsset(string $assetIdentifier): void
+    {
+        $this->dbal->delete(self::TABLE_NAME, [
+            'assetIdentifier' => $assetIdentifier,
+        ]);
+    }
+
     public function removeNode(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePoints): void
     {
         $this->dbal->executeStatement('DELETE FROM ' . self::TABLE_NAME . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)', [

@@ -11,6 +11,8 @@ use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Cli\CommandController;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Repository\AssetRepository;
 
 final class AssetUsageCommandController extends CommandController
 {
@@ -18,11 +20,16 @@ final class AssetUsageCommandController extends CommandController
      * @var array<string, DimensionSpacePoint>|null
      */
     private ?array $dimensionSpacePointsByHash = null;
+    /**
+     * @var array<string, bool>
+     */
+    private array $existingAssetsById = [];
 
     public function __construct(
         private readonly AssetUsageRepository $assetUsageRepository,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly ContentGraphInterface $contentGraph,
+        private readonly AssetRepository $assetRepository,
     )
     {
         parent::__construct();
@@ -57,6 +64,14 @@ final class AssetUsageCommandController extends CommandController
 
     private function isAssetUsageStillValid(AssetUsage $usage): bool
     {
+        if (!isset($this->existingAssetsById[$usage->assetIdentifier])) {
+            /** @var AssetInterface|null $asset */
+            $asset = $this->assetRepository->findByIdentifier($usage->assetIdentifier);
+            $this->existingAssetsById[$usage->assetIdentifier] = $asset !== null;
+        }
+        if ($this->existingAssetsById[$usage->assetIdentifier] === false) {
+            return false;
+        }
         $dimensionSpacePoint = $this->getDimensionSpacePointByHash($usage->originDimensionSpacePoint);
         if ($dimensionSpacePoint === null) {
             return false;
