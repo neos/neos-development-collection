@@ -40,11 +40,11 @@ final class AssetUsageRepository
             ->select('*')
             ->from(self::TABLE_NAME);
         if ($filter->hasAssetIdentifier()) {
-            $queryBuilder->where('assetIdentifier = :assetIdentifier');
+            $queryBuilder->andWhere('assetIdentifier = :assetIdentifier');
             $queryBuilder->setParameter('assetIdentifier', $filter->assetIdentifier);
         }
         if ($filter->hasContentStreamIdentifier()) {
-            $queryBuilder->where('contentStreamIdentifier = :contentStreamIdentifier');
+            $queryBuilder->andWhere('contentStreamIdentifier = :contentStreamIdentifier');
             $queryBuilder->setParameter('contentStreamIdentifier', $filter->contentStreamIdentifier);
         }
         if ($filter->groupByAsset) {
