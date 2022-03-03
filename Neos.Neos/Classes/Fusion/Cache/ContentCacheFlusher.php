@@ -286,10 +286,15 @@ class ContentCacheFlusher
         }
     }
 
+    public function shutdownObject(): void
+    {
+        $this->commit();
+    }
+
     /**
      * Flush caches according to the previously registered node changes.
      */
-    public function shutdownObject(): void
+    protected function commit(): void
     {
         if ($this->tagsToFlush !== []) {
             if ($this->debugMode) {
