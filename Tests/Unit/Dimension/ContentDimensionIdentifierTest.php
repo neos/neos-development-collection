@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -11,6 +9,11 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -19,10 +22,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ContentDimensionIdentifierTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
-    public function initializationThrowsExceptionForEmptyValue()
+    public function testInitializationThrowsExceptionForEmptyValue()
     {
         $this->expectException(Dimension\Exception\ContentDimensionIdentifierIsInvalid::class);
         new Dimension\ContentDimensionIdentifier('');

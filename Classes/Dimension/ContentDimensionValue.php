@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,116 +10,62 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueIsInvalid;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**
  * A content dimension value in a single ContentDimension; e.g. the value "de" in the dimension "language".
  */
-final class ContentDimensionValue
+#[Flow\Proxy(false)]
+final class ContentDimensionValue implements \Stringable
 {
     /**
-     * @var string
-     */
-    protected $value;
-
-    /**
-     * @var ContentDimensionValueSpecializationDepth
-     */
-    protected $specializationDepth;
-
-    /**
-     * @var array|ContentDimensionConstraints[]
-     */
-    protected $constraints;
-
-    /**
-     * General configuration like UI, detection etc.
-     *
-     * @var array
-     */
-    protected $configuration;
-
-    /**
-     * @param string $value
-     * @param ContentDimensionValueSpecializationDepth $specializationDepth
-     * @param array|ContentDimensionConstraints[] $constraints
-     * @param array $configuration
-     * @throws Exception\ContentDimensionValueIsInvalid
+     * @throws ContentDimensionValueIsInvalid
      */
     public function __construct(
-        string $value,
-        ContentDimensionValueSpecializationDepth $specializationDepth = null,
-        array $constraints = [],
-        array $configuration = []
+        public readonly string $value,
+        /** @codingStandardsIgnoreStart */
+        public readonly ContentDimensionValueSpecializationDepth $specializationDepth = new ContentDimensionValueSpecializationDepth(0),
+        /** @codingStandardsIgnoreEnd */
+        public readonly ContentDimensionConstraintSet $constraints = new ContentDimensionConstraintSet([]),
+        /**
+         * General configuration like UI, detection etc.
+         * @var array<string,mixed>
+         */
+        public readonly array $configuration = []
     ) {
         if (empty($value)) {
-            throw new Exception\ContentDimensionValueIsInvalid('Content dimension values must not be empty.', 1516573481);
+            throw ContentDimensionValueIsInvalid::becauseItMustNotBeEmpty();
         }
-        $this->value = $value;
-        $this->specializationDepth = $specializationDepth ?: new ContentDimensionValueSpecializationDepth(0);
-        $this->constraints = $constraints;
-        $this->configuration = $configuration;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue(): string
+    public function getConstraints(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimensionConstraints
     {
-        return $this->value;
+        return $this->constraints->getConstraints($dimensionIdentifier);
     }
 
-    /**
-     * @return ContentDimensionValueSpecializationDepth
-     */
-    public function getSpecializationDepth(): ContentDimensionValueSpecializationDepth
-    {
-        return $this->specializationDepth;
-    }
-
-    /**
-     * @return array|ContentDimensionConstraints[]
-     */
-    public function getAllConstraints(): array
-    {
-        return $this->constraints;
-    }
-
-    /**
-     * @param ContentDimensionIdentifier $dimensionIdentifier
-     * @return mixed|ContentDimensionConstraints|null
-     */
-    public function getConstraints(ContentDimensionIdentifier $dimensionIdentifier)
-    {
-        return $this->constraints[(string)$dimensionIdentifier] ?? null;
-    }
-
-    /**
-     * @param ContentDimensionIdentifier $dimensionIdentifier
-     * @param ContentDimensionValue $otherDimensionValue
-     * @return bool
-     */
     public function canBeCombinedWith(
         ContentDimensionIdentifier $dimensionIdentifier,
         ContentDimensionValue $otherDimensionValue
     ): bool {
-        return isset($this->constraints[(string)$dimensionIdentifier])
-            ? $this->constraints[(string)$dimensionIdentifier]->allowsCombinationWith($otherDimensionValue)
-            : true;
+        return $this->constraints->allowsCombinationWith(
+            $dimensionIdentifier,
+            $otherDimensionValue
+        );
     }
 
-    /**
-     * @param string $path
-     * @return mixed
-     */
-    public function getConfigurationValue(string $path)
+    public function getConfigurationValue(string $path): mixed
     {
-        return Arrays::getValueByPath($this->configuration, $path);
+        $configuration = $this->configuration;
+
+        return Arrays::getValueByPath($configuration, $path);
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->value;

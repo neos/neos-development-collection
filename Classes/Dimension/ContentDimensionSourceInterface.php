@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,6 +10,10 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
 /**
  * The content dimension source interface
  */
@@ -21,16 +21,13 @@ interface ContentDimensionSourceInterface
 {
     /**
      * Returns a content dimension by its identifier, if available
-     *
-     * @param ContentDimensionIdentifier $dimensionIdentifier
-     * @return ContentDimension|null
      */
     public function getDimension(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimension;
 
     /**
-     * Returns all available content dimensions in correct order of priority
+     * Returns all available content dimensions in correct order of priority, indexed by identifier
      *
-     * @return array|ContentDimension[]
+     * @return array<string,ContentDimension>
      */
     public function getContentDimensionsOrderedByPriority(): array;
 }

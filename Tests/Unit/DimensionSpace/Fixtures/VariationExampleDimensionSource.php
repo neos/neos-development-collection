@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -11,6 +9,9 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtur
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
@@ -19,9 +20,9 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 class VariationExampleDimensionSource implements Dimension\ContentDimensionSourceInterface
 {
     /**
-     * @var array|Dimension\ContentDimension[]
+     * @var array<string,Dimension\ContentDimension>
      */
-    protected $dimensions;
+    protected array $dimensions = [];
 
     protected function initializeDimensions()
     {
@@ -38,41 +39,37 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
         $this->dimensions = [
             'dimensionA' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('dimensionA'),
-                [
-                    $dimensionAValue1->getValue() => $dimensionAValue1,
-                    $dimensionAValue11->getValue() => $dimensionAValue11,
-                    $dimensionAValue12->getValue() => $dimensionAValue12,
-                    $dimensionAValue111->getValue() => $dimensionAValue111
-                ],
+                new Dimension\ContentDimensionValues([
+                    $dimensionAValue1->value => $dimensionAValue1,
+                    $dimensionAValue11->value => $dimensionAValue11,
+                    $dimensionAValue12->value => $dimensionAValue12,
+                    $dimensionAValue111->value => $dimensionAValue111
+                ]),
                 $dimensionAValue1,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($dimensionAValue11, $dimensionAValue1),
                     new Dimension\ContentDimensionValueVariationEdge($dimensionAValue12, $dimensionAValue1),
                     new Dimension\ContentDimensionValueVariationEdge($dimensionAValue111, $dimensionAValue11)
-                ]
+                ])
             ),
             'dimensionB' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('dimensionB'),
-                [
-                    $dimensionBValue1->getValue() => $dimensionBValue1,
-                    $dimensionBValue11->getValue() => $dimensionBValue11,
-                    $dimensionBValue12->getValue() => $dimensionBValue12,
-                    $dimensionBValue111->getValue() => $dimensionBValue111
-                ],
+                new Dimension\ContentDimensionValues([
+                    $dimensionBValue1->value => $dimensionBValue1,
+                    $dimensionBValue11->value => $dimensionBValue11,
+                    $dimensionBValue12->value => $dimensionBValue12,
+                    $dimensionBValue111->value => $dimensionBValue111
+                ]),
                 $dimensionBValue1,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($dimensionBValue11, $dimensionBValue1),
                     new Dimension\ContentDimensionValueVariationEdge($dimensionBValue12, $dimensionBValue1),
                     new Dimension\ContentDimensionValueVariationEdge($dimensionBValue111, $dimensionBValue11)
-                ]
+                ])
             )
         ];
     }
 
-    /**
-     * @param Dimension\ContentDimensionIdentifier $dimensionIdentifier
-     * @return Dimension\ContentDimension|null
-     */
     public function getDimension(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimension
     {
         if (!$this->dimensions) {
@@ -83,7 +80,7 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
     }
 
     /**
-     * @return array|Dimension\ContentDimension[]
+     * @return array<string,Dimension\ContentDimension>
      */
     public function getContentDimensionsOrderedByPriority(): array
     {

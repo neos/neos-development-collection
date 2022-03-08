@@ -15,12 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
 
 /**
- * The exception to be thrown if an invalid content dimension value was attempted to be initialized
+ * The exception to be thrown if content dimension values are tried to be initialized empty
  */
-class ContentDimensionValueIsInvalid extends \DomainException
+class ContentDimensionValuesAreInvalid extends \DomainException
 {
-    public static function becauseItMustNotBeEmpty(): self
+    public static function becauseTheyMustNotBeEmpty(): self
     {
-        return new self('Content dimension values must not be empty.', 1516573481);
+        return new self(
+            'Content dimension values must not be empty.',
+            1643367405
+        );
     }
 }

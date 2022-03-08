@@ -19,73 +19,99 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterface
 {
     /**
-     * @var array|Dimension\ContentDimension[]
+     * @var array<string,Dimension\ContentDimension>
      */
-    protected $dimensions;
+    protected ?array $dimensions = null;
 
-    protected function initializeDimensions()
+    protected function initializeDimensions(): void
     {
-        $letzebuergesch = new Dimension\ContentDimensionValue('lb', new Dimension\ContentDimensionValueSpecializationDepth(0), [
-            'market' => new Dimension\ContentDimensionConstraints()
-        ]);
-        $languageValues = [
-            'de' => new Dimension\ContentDimensionValue('de', new Dimension\ContentDimensionValueSpecializationDepth(0), [
+        $letzebuergesch = new Dimension\ContentDimensionValue(
+            'lb',
+            new Dimension\ContentDimensionValueSpecializationDepth(0),
+            new Dimension\ContentDimensionConstraintSet([
                 'market' => new Dimension\ContentDimensionConstraints()
-            ]),
-            'fr' => new Dimension\ContentDimensionValue('fr', new Dimension\ContentDimensionValueSpecializationDepth(0), [
-                'market' => new Dimension\ContentDimensionConstraints()
-            ]),
-            'it' => new Dimension\ContentDimensionValue('it', new Dimension\ContentDimensionValueSpecializationDepth(0), [
-                'market' => new Dimension\ContentDimensionConstraints()
-            ]),
-            'lb' => $letzebuergesch,
-            'en' => new Dimension\ContentDimensionValue('en', new Dimension\ContentDimensionValueSpecializationDepth(0), [
-                'market' => new Dimension\ContentDimensionConstraints(true, [
-                    'LU' => false,
-                    'CH' => false
+            ])
+        );
+        $languageValues = new Dimension\ContentDimensionValues([
+            'de' => new Dimension\ContentDimensionValue(
+                'de',
+                new Dimension\ContentDimensionValueSpecializationDepth(0),
+                new Dimension\ContentDimensionConstraintSet([
+                    'market' => new Dimension\ContentDimensionConstraints()
                 ])
-            ])
-        ];
-
-        $luxembourg = new Dimension\ContentDimensionValue('LU', new Dimension\ContentDimensionValueSpecializationDepth(0), [
-            'language' => new Dimension\ContentDimensionConstraints(false, [
-                'de' => true,
-                'fr' => true,
-                'lb' => true
-            ])
+            ),
+            'fr' => new Dimension\ContentDimensionValue(
+                'fr',
+                new Dimension\ContentDimensionValueSpecializationDepth(0),
+                new Dimension\ContentDimensionConstraintSet([
+                    'market' => new Dimension\ContentDimensionConstraints()
+                ])
+            ),
+            'it' => new Dimension\ContentDimensionValue(
+                'it',
+                new Dimension\ContentDimensionValueSpecializationDepth(0),
+                new Dimension\ContentDimensionConstraintSet([
+                    'market' => new Dimension\ContentDimensionConstraints()
+                ])
+            ),
+            'lb' => $letzebuergesch,
+            'en' => new Dimension\ContentDimensionValue(
+                'en',
+                new Dimension\ContentDimensionValueSpecializationDepth(0),
+                new Dimension\ContentDimensionConstraintSet([
+                    'market' => new Dimension\ContentDimensionConstraints(true, [
+                        'LU' => false,
+                        'CH' => false
+                    ])
+                ])
+            )
         ]);
-        $marketValues = [
-            'CH' => new Dimension\ContentDimensionValue('CH', new Dimension\ContentDimensionValueSpecializationDepth(0), [
+
+        $luxembourg = new Dimension\ContentDimensionValue(
+            'LU',
+            new Dimension\ContentDimensionValueSpecializationDepth(0),
+            new Dimension\ContentDimensionConstraintSet([
                 'language' => new Dimension\ContentDimensionConstraints(false, [
                     'de' => true,
                     'fr' => true,
-                    'it' => true
+                    'lb' => true
                 ])
-            ]),
+            ])
+        );
+        $marketValues = new Dimension\ContentDimensionValues([
+            'CH' => new Dimension\ContentDimensionValue(
+                'CH',
+                new Dimension\ContentDimensionValueSpecializationDepth(0),
+                new Dimension\ContentDimensionConstraintSet([
+                    'language' => new Dimension\ContentDimensionConstraints(false, [
+                        'de' => true,
+                        'fr' => true,
+                        'it' => true
+                    ])
+                ])
+            ),
             'LU' => $luxembourg
-        ];
+        ]);
 
         $this->dimensions = [
             'market' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('market'),
                 $marketValues,
-                $luxembourg
+                $luxembourg,
+                Dimension\ContentDimensionValueVariationEdges::createEmpty()
             ),
             'language' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('language'),
                 $languageValues,
-                $letzebuergesch
+                $letzebuergesch,
+                Dimension\ContentDimensionValueVariationEdges::createEmpty()
             )
         ];
     }
 
-    /**
-     * @param Dimension\ContentDimensionIdentifier $dimensionIdentifier
-     * @return Dimension\ContentDimension|null
-     */
     public function getDimension(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimension
     {
-        if (!$this->dimensions) {
+        if (is_null($this->dimensions)) {
             $this->initializeDimensions();
         }
 
@@ -93,11 +119,11 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
     }
 
     /**
-     * @return array|Dimension\ContentDimension[]
+     * @return array<string,Dimension\ContentDimension>
      */
     public function getContentDimensionsOrderedByPriority(): array
     {
-        if (!$this->dimensions) {
+        if (is_null($this->dimensions)) {
             $this->initializeDimensions();
         }
 

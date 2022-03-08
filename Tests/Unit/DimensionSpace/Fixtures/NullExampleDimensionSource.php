@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -11,6 +9,9 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtur
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
@@ -18,25 +19,16 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
  */
 class NullExampleDimensionSource implements Dimension\ContentDimensionSourceInterface
 {
-    /**
-     * @var array|Dimension\ContentDimension[]
-     */
-    protected $dimensions = [];
-
-    /**
-     * @param Dimension\ContentDimensionIdentifier $dimensionIdentifier
-     * @return Dimension\ContentDimension|null
-     */
     public function getDimension(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimension
     {
         return null;
     }
 
     /**
-     * @return array|Dimension\ContentDimension[]
+     * @return array<string,Dimension\ContentDimension>
      */
     public function getContentDimensionsOrderedByPriority(): array
     {
-        return $this->dimensions;
+        return [];
     }
 }

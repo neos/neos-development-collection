@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,62 +10,39 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
+use Neos\Flow\Annotations as Flow;
+
 /**
- * content dimension constraints across multiple dimensions
+ * Content dimension constraints across multiple dimensions
  */
+#[Flow\Proxy(false)]
 final class ContentDimensionConstraints
 {
-    /**
-     * if TRUE, the logic is "all allowed, except..." (blacklist approach).
-     * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
-     *
-     * @var bool
-     */
-    protected $wildcardAllowed;
-
-    /**
-     * An array of identifier restrictions, defined via value => bool, e.g.
-     * [
-     *      'foo' => true,
-     *      'bar' => false
-     * ]
-     *
-     * @var array|bool[]
-     */
-    protected $identifierRestrictions;
-
-    /**
-     * @param bool $wildcardAllowed
-     * @param array $identifierRestrictions
-     */
-    public function __construct(bool $wildcardAllowed = true, array $identifierRestrictions = [])
-    {
-        $this->wildcardAllowed = $wildcardAllowed;
-        $this->identifierRestrictions = $identifierRestrictions;
+    public function __construct(
+        /**
+         * if TRUE, the logic is "all allowed, except..." (blacklist approach).
+         * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
+         */
+        public readonly bool $isWildcardAllowed = true,
+        /**
+         * An array of identifier restrictions, defined via value => bool, e.g.
+         * [
+         *      'foo' => true,
+         *      'bar' => false
+         * ]
+         *
+         * @var array<string,bool>
+         */
+        public readonly array $identifierRestrictions = []
+    ) {
     }
 
-    /**
-     * @return bool
-     */
-    public function isWildcardAllowed(): bool
-    {
-        return $this->wildcardAllowed;
-    }
-
-    /**
-     * @return array|bool[]
-     */
-    public function getIdentifierRestrictions(): array
-    {
-        return $this->identifierRestrictions;
-    }
-
-    /**
-     * @param ContentDimensionValue $dimensionValue
-     * @return bool
-     */
     public function allowsCombinationWith(ContentDimensionValue $dimensionValue): bool
     {
-        return $this->identifierRestrictions[(string)$dimensionValue] ?? $this->wildcardAllowed;
+        return $this->identifierRestrictions[(string)$dimensionValue] ?? $this->isWildcardAllowed;
     }
 }

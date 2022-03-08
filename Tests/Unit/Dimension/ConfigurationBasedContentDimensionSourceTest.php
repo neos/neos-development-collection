@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -11,7 +9,13 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -19,10 +23,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
 {
-    /**
-     * @var Dimension\ConfigurationBasedContentDimensionSource
-     */
-    protected $subject;
+    protected ?Dimension\ConfigurationBasedContentDimensionSource $subject;
 
     protected function setUp(): void
     {
@@ -79,7 +80,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     /**
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function emptyDimensionConfigurationIsCorrectlyInitialized()
+    public function testEmptyDimensionConfigurationIsCorrectlyInitialized()
     {
         $subject = new Dimension\ConfigurationBasedContentDimensionSource([]);
 
@@ -87,10 +88,9 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function dimensionsAreInitializedInCorrectOrder()
+    public function testDimensionsAreInitializedInCorrectOrder()
     {
         $dimensions = $this->subject->getContentDimensionsOrderedByPriority();
         $dimensionKeys = array_keys($dimensions);
@@ -100,10 +100,9 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function dimensionValuesAreCorrectlyInitialized()
+    public function testDimensionValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
         $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
@@ -112,7 +111,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
             new Dimension\ContentDimensionValue(
                 'valueA1',
                 new Dimension\ContentDimensionValueSpecializationDepth(0),
-                [
+                new ContentDimensionConstraintSet([
                     'dimensionB' => new Dimension\ContentDimensionConstraints(
                         false,
                         [
@@ -120,7 +119,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
                             'valueB2' => false
                         ]
                     )
-                ],
+                ]),
                 [
                     'dimensionValueConfiguration' => [
                         'key' => 'value'
@@ -133,7 +132,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
             new Dimension\ContentDimensionValue(
                 'valueA1.1',
                 new Dimension\ContentDimensionValueSpecializationDepth(1),
-                []
+                ContentDimensionConstraintSet::createEmpty()
             ),
             $dimensionA->getValue('valueA1.1')
         );
@@ -141,7 +140,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
             new Dimension\ContentDimensionValue(
                 'valueA2',
                 new Dimension\ContentDimensionValueSpecializationDepth(0),
-                [
+                new ContentDimensionConstraintSet([
                     'dimensionB' => new Dimension\ContentDimensionConstraints(
                         true,
                         [
@@ -149,7 +148,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
                             'valueB2' => true
                         ]
                     )
-                ]
+                ])
             ),
             $dimensionA->getValue('valueA2')
         );
@@ -178,10 +177,9 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function specializationsAreCorrectlyInitialized()
+    public function testSpecializationsAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
         $this->assertSame(
@@ -243,30 +241,28 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function defaultValuesAreCorrectlyInitialized()
+    public function testDefaultValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
         $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
 
         $this->assertSame(
             $dimensionA->getValue('valueA1'),
-            $dimensionA->getDefaultValue()
+            $dimensionA->defaultValue
         );
 
         $this->assertSame(
             $dimensionB->getValue('valueB1'),
-            $dimensionB->getDefaultValue()
+            $dimensionB->defaultValue
         );
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function maximumDepthIsCorrectlyInitialized()
+    public function testMaximumDepthIsCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
         $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
@@ -282,10 +278,9 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function restrictionsAreCorrectlyInitialized()
+    public function testRestrictionsAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
         $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
@@ -293,59 +288,58 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         $valueA1 = $dimensionA->getValue('valueA1');
         $this->assertSame(
             false,
-            $valueA1->getConstraints($dimensionB->getIdentifier())->isWildcardAllowed()
+            $valueA1->getConstraints($dimensionB->identifier)->isWildcardAllowed
         );
         $this->assertEquals(
             [
                 'valueB1' => true,
                 'valueB2' => false
             ],
-            $valueA1->getConstraints($dimensionB->getIdentifier())->getIdentifierRestrictions()
+            $valueA1->getConstraints($dimensionB->identifier)->identifierRestrictions
         );
 
         $valueA11 = $dimensionA->getValue('valueA1.1');
-        $this->assertSame(
-            [],
-            $valueA11->getAllConstraints()
+        $this->assertEquals(
+            ContentDimensionConstraintSet::createEmpty(),
+            $valueA11->constraints
         );
 
         $valueA2 = $dimensionA->getValue('valueA2');
         $this->assertSame(
             true,
-            $valueA2->getConstraints($dimensionB->getIdentifier())->isWildcardAllowed()
+            $valueA2->getConstraints($dimensionB->identifier)->isWildcardAllowed
         );
         $this->assertEquals(
             [
                 'valueB1' => false,
                 'valueB2' => true
             ],
-            $valueA2->getConstraints($dimensionB->getIdentifier())->getIdentifierRestrictions()
+            $valueA2->getConstraints($dimensionB->identifier)->identifierRestrictions
         );
 
         $valueB1 = $dimensionB->getValue('valueB1');
-        $this->assertSame(
-            [],
-            $valueB1->getAllConstraints()
+        $this->assertEquals(
+            ContentDimensionConstraintSet::createEmpty(),
+            $valueB1->constraints
         );
 
         $valueB2 = $dimensionB->getValue('valueB2');
-        $this->assertSame(
-            [],
-            $valueB2->getAllConstraints()
+        $this->assertEquals(
+            ContentDimensionConstraintSet::createEmpty(),
+            $valueB2->constraints
         );
 
         $valueB3 = $dimensionB->getValue('valueB3');
-        $this->assertSame(
-            [],
-            $valueB3->getAllConstraints()
+        $this->assertEquals(
+            ContentDimensionConstraintSet::createEmpty(),
+            $valueB3->constraints
         );
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function dimensionConfigurationValuesAreCorrectlyInitialized()
+    public function testDimensionConfigurationValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
 
@@ -353,10 +347,9 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function dimensionValueConfigurationValuesAreCorrectlyInitialized()
+    public function testDimensionValueConfigurationValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
         $dimensionValueA1 = $dimensionA->getValue('valueA1');
