@@ -37,6 +37,7 @@ use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 
@@ -357,9 +358,7 @@ class ContentController extends ActionController
                 }
                 $q = new FlowQuery([$pluginViewNode]);
                 $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-                $uri = $this->uriBuilder
-                    ->reset()
-                    ->uriFor('show', ['node' => $page], 'Frontend\Node', 'Neos.Neos');
+                $uri = (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder)->uriFor($page);
                 $views[$pluginViewDefinition->getName()] = [
                     'label' => $label,
                     'pageNode' => [

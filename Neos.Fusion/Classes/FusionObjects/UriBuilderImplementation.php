@@ -149,36 +149,36 @@ class UriBuilderImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $controllerContext = $this->runtime->getControllerContext();
-        $uriBuilder = $controllerContext->getUriBuilder()->reset();
+        $uriBuilder = $controllerContext->getUriBuilder();
 
         $format = $this->getFormat();
         if ($format !== null) {
-            $uriBuilder->setFormat($format);
+            $uriBuilder = $uriBuilder->withFormat($format);
         }
 
         $additionalParams = $this->getAdditionalParams();
         if ($additionalParams !== null) {
-            $uriBuilder->setArguments($additionalParams);
+            $uriBuilder = $uriBuilder->withArguments($additionalParams);
         }
 
         $argumentsToBeExcludedFromQueryString = $this->getArgumentsToBeExcludedFromQueryString();
         if ($argumentsToBeExcludedFromQueryString !== null) {
-            $uriBuilder->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
+            $uriBuilder = $uriBuilder->withArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
         }
 
         $absolute = $this->isAbsolute();
         if ($absolute === true) {
-            $uriBuilder->setCreateAbsoluteUri(true);
+            $uriBuilder = $uriBuilder->withCreateAbsoluteUri(true);
         }
 
         $section = $this->getSection();
         if ($section !== null) {
-            $uriBuilder->setSection($section);
+            $uriBuilder = $uriBuilder->withSection($section);
         }
 
         $addQueryString = $this->isAddQueryString();
         if ($addQueryString === true) {
-            $uriBuilder->setAddQueryString(true);
+            $uriBuilder = $uriBuilder->withAddQueryString(true);
         }
 
         try {

@@ -16,6 +16,7 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
@@ -156,47 +157,40 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * Renders the link. Renders the linked node's label if there's no child content.
      *
      * @return string The rendered link
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws NeosException
      */
     public function render(): string
     {
         $node = $this->arguments['node'];
-        $baseNode = null;
         if (!$node instanceof NodeInterface) {
             $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
-            if (is_string($node) && strpos($node, 'node://') === 0) {
-                $node = $this->linkingService->convertUriToObject($node, $baseNode);
-            }
+            $node = $node === null ? $baseNode : $this->linkingService->getNodeFromString($node, $baseNode);
         }
-
+        $uriBuilder = $this->controllerContext->getUriBuilder()
+            ->withCreateAbsoluteUri($this->arguments['absolute'])
+            ->withArguments($this->arguments['arguments'])
+            ->withSection($this->arguments['section'])
+            ->withAddQueryString($this->arguments['addQueryString'])
+            ->withArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+        if ($this->arguments['format'] !== null) {
+            $uriBuilder = $uriBuilder->withFormat($this->arguments['format']);
+        }
         try {
-            $uri = $this->linkingService->createNodeUri(
-                $this->controllerContext,
-                $node,
-                $baseNode,
-                $this->arguments['format'],
-                $this->arguments['absolute'],
-                $this->arguments['arguments'],
-                $this->arguments['section'],
-                $this->arguments['addQueryString'],
-                $this->arguments['argumentsToBeExcludedFromQueryString']
-            );
+            if (!$node instanceof NodeInterface) {
+                throw new NeosException(sprintf('Node must be an instance of NodeInterface or string, given "%s".', gettype($node)), 1414772029);
+            }
+            $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($node);
             $this->tag->addAttribute('href', $uri);
-        } catch (NeosException $exception) {
-            $this->throwableStorage->logThrowable($exception);
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NeosException | NoMatchingRouteException $exception) {
             $this->throwableStorage->logThrowable($exception);
         }
 
-        $linkedNode = $this->linkingService->getLastLinkedNode();
-        $this->templateVariableContainer->add($this->arguments['nodeVariableName'], $linkedNode);
+        $this->templateVariableContainer->add($this->arguments['nodeVariableName'], $node);
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove($this->arguments['nodeVariableName']);
 
-        if ($content === null && $linkedNode !== null) {
-            $content = $linkedNode->getLabel();
+        if ($content === null && $node !== null) {
+            $content = $node->getLabel();
         }
 
         $this->tag->setContent($content);

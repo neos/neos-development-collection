@@ -110,7 +110,7 @@ class BackendController extends ActionController
         $siteUri = $this->linkingService->createSiteUri($this->controllerContext, $site);
 
         $loginUri = $this->controllerContext->getUriBuilder()
-            ->reset()
+            ->withCreateAbsoluteUri(false)
             ->uriFor('tokenLogin', ['token' => $token], 'Login', 'Neos.Neos');
         $this->redirectToUri($siteUri . $loginUri);
     }

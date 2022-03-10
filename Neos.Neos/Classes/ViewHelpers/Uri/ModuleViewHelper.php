@@ -12,7 +12,6 @@ namespace Neos\Neos\ViewHelpers\Uri;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -77,13 +76,12 @@ class ModuleViewHelper extends AbstractViewHelper
 
         try {
             return $this->uriBuilder
-                ->reset()
-                ->setSection($this->arguments['section'])
-                ->setCreateAbsoluteUri(true)
-                ->setArguments($this->arguments['additionalParams'])
-                ->setAddQueryString($this->arguments['addQueryString'])
-                ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
-                ->setFormat($this->arguments['format'])
+                ->withSection($this->arguments['section'])
+                ->withCreateAbsoluteUri(true)
+                ->withArguments($this->arguments['additionalParams'])
+                ->withAddQueryString($this->arguments['addQueryString'])
+                ->withArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
+                ->withFormat($this->arguments['format'])
                 ->uriFor('index', $modifiedArguments, 'Backend\Module', 'Neos.Neos');
         } catch (\Neos\Flow\Exception $exception) {
             throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
@@ -97,8 +95,7 @@ class ModuleViewHelper extends AbstractViewHelper
      */
     protected function setMainRequestToUriBuilder(): void
     {
-        /** @var ActionRequest $mainRequest */
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-        $this->uriBuilder->setRequest($mainRequest);
+        $this->uriBuilder = new UriBuilder($mainRequest);
     }
 }

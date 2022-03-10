@@ -87,12 +87,12 @@ abstract class AbstractNodeRoutePartHandler extends AbstractRoutePart implements
     /**
      * @var Site[]
      */
-    private array $cachedSites = [];
+    private $cachedSites = [];
 
     /**
      * @var string
      */
-    protected string $splitString = '';
+    protected $splitString = '';
 
     public function setSplitString($splitString): void
     {
@@ -279,6 +279,47 @@ abstract class AbstractNodeRoutePartHandler extends AbstractRoutePart implements
         }
 
         return $dimensionsAndDimensionValues;
+    }
+
+    /**
+     * Find a URI segment in the content dimension presets for the given "language" dimension values
+     *
+     * This will do a reverse lookup from actual dimension values to a preset and fall back to the default preset if none
+     * can be found.
+     *
+     * @param array $dimensionsValues An array of dimensions and their values, indexed by dimension name
+     * @param boolean $currentNodeIsSiteNode If the current node is actually the site node
+     * @return string
+     * @throws \Exception
+     */
+    protected function getUriSegmentForDimensions(array $dimensionsValues, bool $currentNodeIsSiteNode): string
+    {
+        $uriSegment = '';
+        $allDimensionPresetsAreDefault = true;
+
+        foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionPresets) {
+            $preset = null;
+            if (isset($dimensionsValues[$dimensionName])) {
+                $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionsValues[$dimensionName]);
+            }
+            $defaultPreset = $this->contentDimensionPresetSource->getDefaultPreset($dimensionName);
+            if ($preset === null) {
+                $preset = $defaultPreset;
+            }
+            if ($preset !== $defaultPreset) {
+                $allDimensionPresetsAreDefault = false;
+            }
+            if (!isset($preset['uriSegment'])) {
+                throw new \Exception(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "%s". Please check the content dimension configuration in Settings.yaml', $preset['identifier'], $dimensionName), 1395824520);
+            }
+            $uriSegment .= $preset['uriSegment'] . '_';
+        }
+
+        if ($this->supportEmptySegmentForDimensions && $allDimensionPresetsAreDefault && $currentNodeIsSiteNode) {
+            return '/';
+        } else {
+            return ltrim(trim($uriSegment, '_') . '/', '/');
+        }
     }
 
     protected function getContext(RouteParameters $parameters, array $dimensionsAndDimensionValues): Context

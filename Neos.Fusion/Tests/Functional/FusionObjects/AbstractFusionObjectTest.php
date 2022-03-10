@@ -45,8 +45,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         $httpRequest = $httpRequestFactory->createServerRequest('GET', 'http://localhost/');
         $request = ActionRequest::fromHttpRequest($httpRequest);
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
+        $uriBuilder = new UriBuilder($request);
 
         $this->controllerContext = new ControllerContext(
             $request,

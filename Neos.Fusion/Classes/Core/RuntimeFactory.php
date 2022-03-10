@@ -58,8 +58,7 @@ class RuntimeFactory
         /** @var ActionRequest $request */
         $request = ActionRequest::fromHttpRequest($httpRequest);
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
+        $uriBuilder = new UriBuilder($request);
 
         return new ControllerContext(
             $request,

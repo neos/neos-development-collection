@@ -11,13 +11,19 @@ namespace Neos\Neos\Controller\Module\Management;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Exception\WorkspaceException;
+use Neos\ContentRepository\TypeConverter\NodeConverter;
+use Neos\ContentRepository\Utility;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Translator;
-use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -29,15 +35,10 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\Service\PublishingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\ContentRepository\TypeConverter\NodeConverter;
-use Neos\ContentRepository\Utility;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**
@@ -346,14 +347,13 @@ class WorkspacesController extends AbstractModuleController
         $context = $this->contextFactory->create($contextProperties);
 
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-        /** @var ActionRequest $mainRequest */
-        $this->uriBuilder->setRequest($mainRequest);
+        $this->uriBuilder = new UriBuilder($mainRequest);
 
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
             $this->redirect('index', 'Backend', 'Neos.Neos.Ui', ['node' => $context->getNode($targetNode->getPath())]);
         }
 
-        $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', ['node' => $context->getNode($targetNode->getPath())]);
+        $this->redirectToUri(NodeUriBuilder::fromUriBuilder($this->uriBuilder->withCreateAbsoluteUri(true))->uriFor($context->getNode($targetNode->getPath())));
     }
 
     /**

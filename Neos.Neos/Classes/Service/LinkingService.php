@@ -17,6 +17,7 @@ use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -26,6 +27,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -221,6 +223,27 @@ class LinkingService
         return null;
     }
 
+    public function getNodeFromString(string $value, ?NodeInterface $baseNode = null): ?NodeInterface
+    {
+        if ($value === '') {
+            throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
+        }
+        if (strpos($value, 'node://') === 0) {
+            return $this->convertUriToObject($value, $baseNode);
+        }
+        preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
+        if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
+            return $this->propertyMapper->convert($value, NodeInterface::class);
+        }
+        if ($baseNode === null) {
+            throw new NeosException('The baseNode argument is required for linking to nodes with a relative path.', 1407879905);
+        }
+        /** @var ContentContext $contentContext */
+        $contentContext = $baseNode->getContext();
+        $normalizedPath = $this->nodeService->normalizePath($value, $baseNode->getPath(), $contentContext->getCurrentSiteNode()->getPath());
+        return $contentContext->getNode($normalizedPath);
+    }
+
     /**
      * Renders the URI to a given node instance or -path.
      *
@@ -241,6 +264,7 @@ class LinkingService
      * @throws \Neos\Flow\Security\Exception
      * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @deprecated With Neos 8.0. Use \Neos\Neos\Routing\NodeUriBuilder::uriFor() instead
      */
     public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
     {
@@ -254,21 +278,7 @@ class LinkingService
 
         if (is_string($node)) {
             $nodeString = $node;
-            if ($nodeString === '') {
-                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
-            }
-            preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
-            if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
-                $node = $this->propertyMapper->convert($nodeString, NodeInterface::class);
-            } else {
-                if ($baseNode === null) {
-                    throw new NeosException('The baseNode argument is required for linking to nodes with a relative path.', 1407879905);
-                }
-                /** @var ContentContext $contentContext */
-                $contentContext = $baseNode->getContext();
-                $normalizedPath = $this->nodeService->normalizePath($nodeString, $baseNode->getPath(), $contentContext->getCurrentSiteNode()->getPath());
-                $node = $contentContext->getNode($normalizedPath);
-            }
+            $node = $this->getNodeFromString($nodeString, $baseNode);
             if (!$node instanceof NodeInterface) {
                 throw new NeosException(sprintf('The string "%s" could not be resolved to an existing node.', $nodeString), 1415709674);
             }
@@ -282,18 +292,14 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $request = $controllerContext->getRequest()->getMainRequest();
-        $uriBuilder = clone $controllerContext->getUriBuilder();
-        $uriBuilder->setRequest($request);
-        $action = $node->getContext()->getWorkspace()->isPublicWorkspace() && !$node->isHidden() ? 'show' : 'preview';
-        return $uriBuilder
-            ->reset()
-            ->setSection($section)
-            ->setArguments($arguments)
-            ->setAddQueryString($addQueryString)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($format ?: $request->getFormat())
-            ->setCreateAbsoluteUri($absolute)
-            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+        $uriBuilder = (new UriBuilder($request))
+            ->withSection($section)
+            ->withArguments($arguments)
+            ->withAddQueryString($addQueryString)
+            ->withArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
+            ->withFormat($format ?: $request->getFormat())
+            ->withCreateAbsoluteUri($absolute);
+        return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($node);
     }
 
     /**
