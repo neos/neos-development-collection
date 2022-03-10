@@ -277,9 +277,9 @@ class AssetService
 
         if (isset($options['keepOriginalFilename']) && (boolean)$options['keepOriginalFilename'] === true) {
             $originalFilename = $originalAssetResource->getFilename();
-            $originalFileExtension = $originalAssetResource->getFileExtension();
-            $fileExtensionForMediaType = MediaTypes::getFilenameExtensionFromMediaType($resourceMediaType);
-            if ($originalFileExtension !== $fileExtensionForMediaType) {
+            if (MediaTypes::getMediaTypeFromFilename($originalFilename) !== $resourceMediaType) {
+                $originalFileExtension = $originalAssetResource->getFileExtension();
+                $fileExtensionForMediaType = MediaTypes::getFilenameExtensionFromMediaType($resourceMediaType);
                 // filename needs to get new matching extension
                 $originalFilename = preg_replace(sprintf('/(.*)\.%s$/', $originalFileExtension), '$1.' . $fileExtensionForMediaType, $originalFilename);
             }
