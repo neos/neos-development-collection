@@ -188,7 +188,7 @@ class ThumbnailRepository extends Repository
 
         // set resource if available and missing on the thumbnail
         if ($thumbnailResource !== null && $thumbnail->getResource() === null) {
-            $this->logger->error('Set resource on re-fetched thumbnail', LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->debug('Set resource on re-fetched thumbnail', LogEnvironment::fromMethodName(__METHOD__));
             $thumbnail->setResource($thumbnailResource);
             $this->update($thumbnail);
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
