@@ -11,6 +11,10 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Core\Runtime;
+
 /**
  * Testcase for Eel expressions in Fusion
  */
@@ -38,5 +42,24 @@ class ExpressionsTest extends AbstractFusionObjectTest
         $view->setFusionPath($path);
         $view->assign('foo', 'Bar');
         self::assertSame($expected, $view->render());
+    }
+
+    /**
+     * The view and runtime of the AbstractFusionObjectTest
+     * is not used to make sure the runtime context is empty.
+     *
+     * @test
+     */
+    public function usingEelWorksWithoutSetCurrentContextInRuntime()
+    {
+        $fusion = 'root = ${"foo"}';
+        $fusionAst = (new Parser())->parse($fusion);
+
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $runtime = new Runtime($fusionAst, $controllerContext);
+
+        $renderedFusion = $runtime->render('root');
+
+        self::assertSame('foo', $renderedFusion);
     }
 }

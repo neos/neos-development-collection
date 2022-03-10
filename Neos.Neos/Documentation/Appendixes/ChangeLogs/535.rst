@@ -1,0 +1,353 @@
+`5.3.5 (2021-11-22) <https://github.com/neos/neos-development-collection/releases/tag/5.3.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Render labels of authentication providers <https://github.com/neos/neos-development-collection/pull/3490>`_
+--------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Extended the array that is used in the view. So that we have the provider identifier and the label.
+So we use a structure like
+
+`
+[
+    {
+        identifier: 'Neos.Neos:Backend'
+        label: 'Neos Backend label'
+    },
+    {
+        identifier: 'Neos.Neos:FooName'
+        label: 'Neos Backend Foo'
+    }
+]
+`
+
+**How to verify it**
+
+    1. Configure a second authentication provider
+    2. go to the user management in the backend
+    3. create a new user
+    4. check the drop down
+
+
+!`Screenshot 2021-11-03 at 10 27 50 <https://user-images.githubusercontent.com/1014126/140036446-fedcdc33-d80d-4ea4-95b0-41fa385d9d53.png>`_
+
+
+* Fixes: `#3488 <https://github.com/neos/neos-development-collection/issues/3488>`_ 
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Improve message for node property conversion errors <https://github.com/neos/neos-development-collection/pull/3421>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This wraps the property mapper exceptions within `Node::getProperty()`
+in order to throw a more useful exception.
+
+* Fixes: `#3420 <https://github.com/neos/neos-development-collection/issues/3420>`_
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Prevent exception when deleting an electronic address <https://github.com/neos/neos-development-collection/pull/3436>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+When you delete an electronic address we throw a flash message that the address has been delete for the given user. We had the issue that the PersonName object could not be transformed to a string that is needed for the flash message.
+
+**What I did**
+
+Use the full name of the PersonName object instead of the direct PersonName object for the flash message.
+
+**How to verify it**
+
+1. Open the user module
+2. Edit a user
+3. Optionally create a electronic address
+4. Delete a electronic address
+5. check the flash message 
+
+* Fixes: `#3435 <https://github.com/neos/neos-development-collection/issues/3435>`_
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Fix two errors in Modules.xlf <https://github.com/neos/neos-development-collection/pull/3501>`_
+--------------------------------------------------------------------------------------------------------
+
+Fixes a duplicate id and the use of literal HTML tags in XLIFF.
+
+* Packages: ``Media`` ``Neos``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3495>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/kad7JR>`_.
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Media`` ``Neos``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3499>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/nNEyR1>`_.
+
+* Packages: ``ContentRepository`` ``Fusion``
+
+`BUGFIX: Only use accounts that have Neos users attached <https://github.com/neos/neos-development-collection/pull/2981>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Since Neos 5.2.0 the use of frontend logins is broken. When logging in, an exception is thrown. The exact exception varies, but can be traced to `Unexpected user type "". An account with the identifier "…" exists, but the corresponding party is not a Neos User.` eventually.
+
+This change fixes that by not using `getUser()` directly, but doing more checks and eventually just returning `null` if no Neos user can be found for the authenticated tokens.
+
+* Related: `#2577 <https://github.com/neos/neos-development-collection/issues/2577>`_
+* Fixes: `#3088 <https://github.com/neos/neos-development-collection/issues/3088>`_
+
+* Packages: ``Media`` ``Neos``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3492>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/D29Wyl>`_.
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Media`` ``Neos``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3493>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/BMJ3og>`_.
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Media`` ``Neos``
+
+`TASK: Simplify rules, handle markdown files in .editorconfig <https://github.com/neos/neos-development-collection/pull/3487>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Aligns the file with the one in the Flow development collection.
+
+`BUGFIX: Flush content cache of pages with internal links when target changes <https://github.com/neos/neos-development-collection/pull/3483>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+This extends `\\Neos\\Neos\\Fusion\\Cache\\ContentCacheFlusher::registerChangeOnNodeIdentifier()`
+such that it flushes *dynamic* node tags, too.
+
+Background:
+
+The `Neos.Neos:ConvertUris` processor invokes `\\Neos\\Fusion\\Core\\Runtime::addCacheTag()` for
+every converted node and asset link leading to a cache tag of `<type>DynamicTag_<id>` (e.g.
+`NodeDynamicTag_12345`) to be added to the current `RuntimeContentCache`.
+
+This fix makes sure that those dynamic node tags are also flushed whenever a node is changed.
+
+* Fixes: `#3482 <https://github.com/neos/neos-development-collection/issues/3482>`_
+* Packages: ``Neos``
+
+`BUGFIX: Media Browser - Make font visible on tag hover <https://github.com/neos/neos-development-collection/pull/3460>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+To make the tag name visible when hovering an active tag /collection/asset source I changed the background color to blue.  
+
+**How I did it**
+On hover the background color of a button changes to blue while the font color changes to white
+
+**How to verify it**
+In the media browser, if you have a lot of tags(more than 25 Tags), the collections and tags are displayed as 'buttons'. On hovering an active button, the text is white on blue. 
+
+* Resolves: `#3461 <https://github.com/neos/neos-development-collection/issues/3461>`_ 
+
+* Packages: ``Browser``
+
+`TASK: Use 4 spaces for composer.json in editorconfig <https://github.com/neos/neos-development-collection/pull/3457>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+4 spaces is what Composer uses itself…
+
+`BUGFIX: Enable translations for overridden selectbox options <https://github.com/neos/neos-development-collection/pull/3395>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+**What I did / How I did it**
+
+I altered the `NodeTypeConfigurationEnrichmentAspect` so that it takes the node type inheritance chain into account when translating select box option labels in the respective inspector editor configuration.
+
+This addresses an issue originally reported in the UI repo: https://github.com/neos/neos-ui/issues/2005
+
+**How to verify it**
+
+You'll need a mixin NodeType that provides a select box property with internationalized option labels like this:
+
+```yaml
+    brandColor:
+      type: string
+      defaultValue: 'primary'
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: style
+          position: 10
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              'primary':
+                label: i18n
+              'turquoise':
+                label: i18n
+              'gray-dark':
+                label: i18n
+              'gray-light':
+                label: i18n
+              'toyota-red':
+                label: i18n
+              'yellow':
+                label: i18n
+```
+(let's call this one `Vendor.Site:Mixin.BrandColor`)
+
+Then you'll need a second node type that inherits from `Vendor.Site:Mixin.BrandColor` and adds an new internationalized option to the property `brandColor`:
+
+```yaml
+    brandColor:
+      defaultValue: 'none'
+      ui:
+        inspector:
+          editorOptions:
+            values:
+              'none':
+                label: 'i18n'
+```
+
+**Before the fix** the new option will show up as a plain string `"i18n"`.
+**After the fix** the new option will show up as an XLIFF-translation address (bound to the node type that added the option).
+
+**Additional remarks**
+
+Imho, the entire `NodeTypeConfigurationEnrichmentAspect` should actually be moved out of the `Neos.Neos` package and into the UI package (All of these translations are an exclusive UI concern). Doing that would be out-of-scope for a bugfix though.
+
+  - To be precise: There are no tests for this aspect to begin with and would be extremely difficult to add them. I'd suggest to move this concern over to the UI and handle it in a more testable manner.
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent error when setting collection prop in ContentCollectionRenderer <https://github.com/neos/neos-development-collection/pull/3424>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+When using the `ContentCollectionRenderer` directly 
+and setting the backwards compatible `collection` prop (to still support Neos 4.3) to a valid array of nodes
+the following error appears due to the missing object definition:
+
+```
+No Fusion object found in path ".../collectionA<Neos.Neos:ContentCollectionRenderer>/items/__meta/process/collectionLegacy
+```
+
+**What I did**
+
+Define the backwards compatible process as simple expression instead of an object without implementation
+
+**How to verify it**
+
+Try the following code somewhere in the demo site:
+
+```
+myCollection = Neos.Neos:ContentCollectionRenderer {
+  collection = ${q(site).find('[instanceof Neos.Demo:Content.Text]').get()}
+}
+```
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow searching by tag after searching by searchterm in the MediaBrowser <https://github.com/neos/neos-development-collection/pull/3453>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+1. Go to the Neos Media Browser and enter a search term 
+2. Remove the search term so that there is an empty string as search 
+3. Search again 
+4. Use any tag on the left side to search by tag 
+
+After clicking on the Tag I would expect to see results by tag since the search field is empty. The search still tries search by the empty string and does not call the method findByTag. 
+
+**How I did it**
+In the controller where the search happens do not only check if the searchterm is null but also check if the searchterm is empty 
+
+**How to verify it**
+After searching by searchterm, then searching by an empty string you can then search by Tag. 
+
+* Fixes: `#3455 <https://github.com/neos/neos-development-collection/issues/3455>`_
+* Packages: ``Browser``
+
+`BUGFIX: Use Testing/Behat for DB setup in Behat steps <https://github.com/neos/neos-development-collection/pull/3446>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The command `FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all` is broken, because the context is only active for the `behat:setup` call, not the `doctrine:…` calls later.
+
+* Packages: ``github``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3443>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/M1j5K2>`_.
+
+* Packages: ``ContentRepository`` ``Fusion``
+
+`BUGFIX: Make test actually test what is says it tests <https://github.com/neos/neos-development-collection/pull/3431>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The BackendControllerSecurityTest did not assert the login actually
+works in the test indexActionIsGrantedForAdministrator().
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust assetsource icon color on hover and active <https://github.com/neos/neos-development-collection/pull/3439>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The icons are always white and when the asset source is active and on a small viewport we switch the background also to white. So the icons are not visible anymore.
+
+This patch will adjust the color of the icon via filter functions.
+As we are not able to use the fill rule.
+
+* Fixes: `#3417 <https://github.com/neos/neos-development-collection/issues/3417>`_
+
+**What I did**
+We now use the css filter to modify the color of the icons.
+```
+filter: invert(.5) sepia(1) saturate(5) hue-rotate(175deg);
+```
+
+**How to verify it**
+
+1. Install a second asset source and go to the media module.
+2. Shrink the viewport to less than 767 pixels width
+3. Check if the icon of the active asset source is visible
+
+
+https://user-images.githubusercontent.com/1014126/134674449-e293e16b-0a03-434b-9914-9434701fa56b.mp4
+
+
+
+* Packages: ``Browser``
+
+`BUGFIX: Use correct hotel icon mapping <https://github.com/neos/neos-development-collection/pull/3401>`_
+---------------------------------------------------------------------------------------------------------
+
+Show hotel icon instead of bed
+
+* Relates: `#2697 <https://github.com/neos/neos-development-collection/issues/2697>`_
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.3.4...5.3.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

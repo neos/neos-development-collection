@@ -205,9 +205,12 @@ class NodeTypeConfigurationEnrichmentAspect
             }
 
             $editorName = $propertyConfiguration['ui']['inspector']['editor']
-                ?? array_reduce($declaredSuperTypes, function ($editorName, NodeType $superType) use ($propertyName) {
+                ?? array_reduce($declaredSuperTypes, function ($editorName, ?NodeType $superType) use ($propertyName) {
+                    if ($editorName !== null || $superType === null) {
+                        return $editorName;
+                    }
                     $superTypeConfiguration = $superType->getLocalConfiguration();
-                    return $editorName ?? $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
+                    return $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
                 }, null);
             $hasEditor = !is_null($editorName);
             $hasEditorOptions = isset($propertyConfiguration['ui']['inspector']['editorOptions']);

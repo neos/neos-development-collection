@@ -1,0 +1,71 @@
+`5.3.7 (2022-01-21) <https://github.com/neos/neos-development-collection/releases/tag/5.3.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fusion Runtime when no context is set, preparing it for Eel will fail <https://github.com/neos/neos-development-collection/pull/3549>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: #3548
+fixes: #3556
+
+added tests, that verify that the runtime context stack is working correctly.
+
+* Packages: ``Fusion`` ``Neos``
+
+`BUGFIX: Update Noto Sans to latest version <https://github.com/neos/neos-development-collection/pull/3545>`_
+-------------------------------------------------------------------------------------------------------------
+
+We cannot use some accent signs with the font NotoSans. This has been fixed in the latest version of NotoSans. This change just updates the Font assets to the latest version of Noto fonts v20201206-phase3 as of 2020.12.06.
+
+
+**What I did**
+Replaced the Font assets to the latest version.
+
+**How to verify it**
+Go to a textfield in the backend module (e.g. the user management) and enter an accent like `
+
+Related to https://github.com/neos/neos-ui/issues/3006
+
+* Packages: ``Neos``
+
+`TASK: Create trace for absorbed exception <https://github.com/neos/neos-development-collection/pull/3477>`_
+------------------------------------------------------------------------------------------------------------
+
+Without this, it's a lot harder to debug absorbed exceptions.
+
+* Packages: ``Fusion``
+
+`BUGFIX: Add possibility to trigger build manually <https://github.com/neos/neos-development-collection/pull/3526>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Sometimes the build process doesn't start on a new pull request. With this change, we could trigger it manually and don't have to close and reopen the pull request
+
+* Packages: ``github``
+
+`BUGFIX: Make NodeSearchService use new variable to search for identifier patterns <https://github.com/neos/neos-development-collection/pull/3429>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+I just stumbled upon an issue, which was partly solved by `this PR <https://github.com/neos/neos-development-collection/pull/3165>`_.
+
+In short, the parameter `$term` is modified by the `foreach` loop and thus another value than the original parameter is forwarded to `$this->nodeDataRepository->findByProperties($term`. Thus the `findByProperties` from `NodeSearchService` doesn't work anymore as it was long time ago.
+
+I've also considered the notes from @kdambekalns, except from
+
+>     * pass `$searchTerm` (not `$term`) to the `NodeDataRepository` to fix the actual bug
+
+Instead of using `$searchTerm` I introduced a separate variable.The idea was to revert the overwritten `$term` and keep the original intention of the method as it was before and the search for an identifier is just an additional feature without changing the old code in any way including variable names and argument types for `NodeDataRepository::findByProperties`.
+
+* Packages: ``Neos``
+
+`TASK: Add missing inversedBy Doctrine mapping <https://github.com/neos/neos-development-collection/pull/3524>`_
+----------------------------------------------------------------------------------------------------------------
+
+Update the Doctrine Mapping of the Tag model, for `./flow doctrine:validate` to not fail
+
+* Fixes: `#3264 <https://github.com/neos/neos-development-collection/issues/3264>`_
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.3.6...5.3.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
