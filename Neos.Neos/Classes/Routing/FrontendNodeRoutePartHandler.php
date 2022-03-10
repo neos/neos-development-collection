@@ -41,14 +41,13 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
 
     public function matchWithParameters(&$routePath, RouteParameters $parameters)
     {
-        if ($routePath === '' || !is_string($routePath)) {
+        if (!is_string($routePath)) {
             return false;
         }
         $dimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($routePath);
         $this->truncateUriPathSuffix($routePath);
         $siteNodePath = $this->getCurrentSiteNodePath($parameters);
 
-        $siteNode = null;
         $node = null;
         $affectedNodeIdentifiers = [];
         $this->securityContext->withoutAuthorizationChecks(function () use ($parameters, $dimensionValues, $siteNodePath, &$routePath, &$siteNode, &$node, &$affectedNodeIdentifiers) {
@@ -56,7 +55,7 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
             $siteNode = $this->getContext($parameters, $dimensionValues)->getNode($siteNodePath);
             $node = $this->getNodeByRequestUriPath($siteNode, $routePath, $affectedNodeIdentifiers);
         });
-        if ($node === $siteNode || !$this->nodeTypeIsAllowed($node)) {
+        if (!$this->nodeTypeIsAllowed($node)) {
             return false;
         }
         return new MatchResult($node->getContextPath(), $this->routeTagsFromIdentifiers($affectedNodeIdentifiers));
@@ -91,12 +90,16 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
         }
         $affectedNodeIdentifiers = [];
         try {
-            $requestPath = $this->getRequestPathByNode($nodeOrUri, $affectedNodeIdentifiers);
+            $resolvedUriPath = $this->getRequestPathByNode($nodeOrUri, $affectedNodeIdentifiers);
         } catch (Exception\MissingNodePropertyException $exception) {
             $this->systemLogger->debug('FrontendNodeRoutePartHandler resolveValue(): ' . $exception->getMessage());
             return false;
         }
-        return new ResolveResult($requestPath, $uriConstraints, $this->routeTagsFromIdentifiers($affectedNodeIdentifiers));
+        if ($resolvedUriPath !== '' && !empty($this->options['uriPathSuffix'])) {
+            $resolvedUriPath .= $this->options['uriPathSuffix'];
+        }
+        $resolvedUriPath = $this->getUriSegmentForDimensions($node->getContext()->getDimensions(), false) . $resolvedUriPath;
+        return new ResolveResult($resolvedUriPath, $uriConstraints, $this->routeTagsFromIdentifiers($affectedNodeIdentifiers));
     }
 
     // ---------------------
@@ -106,7 +109,7 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
      */
     protected function truncateUriPathSuffix(string &$requestPath): void
     {
-        if (empty($this->options['uriPathSuffix'])) {
+        if (empty($this->options['uriPathSuffix']) || $requestPath === '') {
             return;
         }
         $suffixLength = strlen($this->options['uriPathSuffix']);
@@ -143,6 +146,9 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
     private function getNodeByRequestUriPath(TraversableNodeInterface $siteNode, string &$requestPath, array &$affectedNodeIdentifiers): TraversableNodeInterface
     {
         $affectedNodeIdentifiers = [(string)$siteNode->getNodeAggregateIdentifier()];
+        if ($requestPath === '') {
+            return $siteNode;
+        }
         $node = $siteNode;
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString('Neos.Neos:Document');
 
@@ -221,9 +227,6 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
                 throw new Exception\NoSiteException(sprintf('No online site found for node "%s" and resolved site node name of "%s"', $node->getIdentifier(), $resolvedSiteNodeName), 1604505599);
             }
             $uriConstraints = $this->applyDomainToUriConstraints($uriConstraints, $resolvedSite->getPrimaryDomain());
-        }
-        if (!empty($this->options['uriPathSuffix'])) {
-            $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriPathSuffix']);
         }
         return $uriConstraints;
     }

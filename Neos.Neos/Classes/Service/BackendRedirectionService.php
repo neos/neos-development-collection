@@ -33,6 +33,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Utility\Arrays;
 
 /**
@@ -174,11 +175,10 @@ class BackendRedirectionService
         if ($lastVisitedNode === null) {
             return null;
         }
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($actionRequest);
-        $uriBuilder->setFormat('html');
-        $uriBuilder->setCreateAbsoluteUri(true);
-        return $uriBuilder->uriFor('show', ['node' => $lastVisitedNode], 'Frontend\\Node', 'Neos.Neos');
+        $uriBuilder = (new UriBuilder($actionRequest))
+            ->withFormat('html')
+            ->withCreateAbsoluteUri(true);
+        return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($lastVisitedNode);
     }
 
     /**

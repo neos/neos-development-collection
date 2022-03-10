@@ -97,7 +97,7 @@ class MenuHelper
                 if ($active) {
                     $uri = $contentModule['uri'];
                 } else {
-                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    $uri = $controllerContext->getUriBuilder()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
                 }
 
                 $domainsFound = true;
@@ -208,8 +208,7 @@ class MenuHelper
     protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
     {
         $moduleUri = $controllerContext->getUriBuilder()
-            ->reset()
-            ->setCreateAbsoluteUri(true)
+            ->withCreateAbsoluteUri(true)
             ->uriFor('index', ['module' => $modulePath], 'Backend\Module', 'Neos.Neos');
 
         $icon = isset($moduleConfiguration['icon']) ? $this->iconMapper->convert($moduleConfiguration['icon']) : '';

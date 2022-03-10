@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\Service\LinkingService;
 
 /**
@@ -129,38 +130,33 @@ class NodeViewHelper extends AbstractViewHelper
      * Renders the URI.
      *
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws NeosException
      */
     public function render(): string
     {
-        $baseNode = null;
         $node = $this->arguments['node'];
         if (!$node instanceof NodeInterface) {
             $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
-            if (is_string($node) && strpos($node, 'node://') === 0) {
-                $node = $this->linkingService->convertUriToObject($node, $baseNode);
-            }
+            $node = $node === null ? $baseNode : $this->linkingService->getNodeFromString($node, $baseNode);
         }
-
+        if (!$node instanceof NodeInterface) {
+            $this->throwableStorage->logThrowable(new NeosException(sprintf('Node must be an instance of NodeInterface or string, given "%s".', gettype($node)), 1414772029));
+            return '';
+        }
+        $uriBuilder = $this->controllerContext->getUriBuilder()
+            ->withCreateAbsoluteUri($this->arguments['absolute'])
+            ->withArguments($this->arguments['arguments'])
+            ->withSection($this->arguments['section'])
+            ->withAddQueryString($this->arguments['addQueryString'])
+            ->withArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+        if ($this->arguments['format'] !== null) {
+            $uriBuilder = $uriBuilder->withFormat($this->arguments['format']);
+        }
         try {
-            return $this->linkingService->createNodeUri(
-                $this->controllerContext,
-                $node,
-                $baseNode,
-                $this->arguments['format'],
-                $this->arguments['absolute'],
-                $this->arguments['arguments'],
-                $this->arguments['section'],
-                $this->arguments['addQueryString'],
-                $this->arguments['argumentsToBeExcludedFromQueryString']
-            );
-        } catch (NeosException $exception) {
-            $this->throwableStorage->logThrowable($exception);
+            return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($node);
         } catch (NoMatchingRouteException $exception) {
             $this->throwableStorage->logThrowable($exception);
+            return '';
         }
-        return '';
     }
 }

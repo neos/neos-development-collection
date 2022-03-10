@@ -16,6 +16,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Utility\Arrays;
@@ -312,7 +313,7 @@ class NodeView extends JsonView
         $nodeType = $node->getNodeType();
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            $uriForNode = (string)NodeUriBuilder::fromUriBuilder($uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($node);
         } else {
             $uriForNode = '#';
         }

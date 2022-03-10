@@ -10,14 +10,6 @@
   appendExceedingArguments: true
 
 -
-  name: 'Homepage'
-  uriPattern: '{node}'
-  routeParts:
-    'node':
-      handler: 'Neos\Neos\Routing\HomepageRoutePartHandler'
-  appendExceedingArguments: true
-
--
   name: 'Default Frontend'
   uriPattern: '{node}'
   routeParts:

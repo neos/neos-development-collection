@@ -125,9 +125,10 @@ class LinkingServiceTest extends FunctionalTestCase
         $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
         $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, RouteParameters::createEmpty()->withParameter('requestUriHost', 'neos.test'));
         $requestHandler->setHttpRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
 
-        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
+        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder($actionRequest));
     }
 
     /**

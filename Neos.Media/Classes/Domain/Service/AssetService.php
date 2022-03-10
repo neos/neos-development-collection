@@ -152,10 +152,8 @@ class AssetService
                 if ($request === null) {
                     throw new AssetServiceException('Request argument must be provided for async thumbnails.', 1447660835);
                 }
-                $this->uriBuilder->setRequest($request->getMainRequest());
-                $uri = $this->uriBuilder
-                    ->reset()
-                    ->setCreateAbsoluteUri(true)
+                $uri = (new UriBuilder($request->getMainRequest()))
+                    ->withCreateAbsoluteUri(true)
                     ->uriFor('thumbnail', ['thumbnail' => $thumbnailImage], 'Thumbnail', 'Neos.Media');
             } else {
                 $uri = $this->thumbnailService->getUriForThumbnail($thumbnailImage);

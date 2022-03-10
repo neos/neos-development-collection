@@ -105,8 +105,7 @@ class FusionExceptionView extends AbstractView
         $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Neos');
         $request->setFormat('html');
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
+        $uriBuilder = new UriBuilder($request);
         $controllerContext = new ControllerContext(
             $request,
             new ActionResponse(),

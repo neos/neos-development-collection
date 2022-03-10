@@ -11,22 +11,25 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Http\Helper\SecurityHelper;
-use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
-use Neos\Neos\Service\NodeOperations;
-use Neos\Neos\Service\View\NodeView;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\TypeConverter\NodeConverter;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\SecurityHelper;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
+use Neos\Neos\Routing\NodeUriBuilder;
+use Neos\Neos\Service\LinkingService;
+use Neos\Neos\Service\NodeOperations;
+use Neos\Neos\Service\View\NodeView;
 
 /**
  * Service Controller for managing Nodes
@@ -101,6 +104,12 @@ class NodeController extends AbstractServiceController
     protected $domainRepository;
 
     /**
+     * @Flow\Inject
+     * @var LinkingService
+     */
+    protected $linkingService;
+
+    /**
      * Select special error action
      *
      * @return void
@@ -110,7 +119,7 @@ class NodeController extends AbstractServiceController
         if ($this->arguments->hasArgument('referenceNode')) {
             $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
-        $this->uriBuilder->setRequest($this->request->getMainRequest());
+        $this->uriBuilder = new UriBuilder($this->request->getMainRequest());
         if (in_array($this->request->getControllerActionName(), ['update', 'updateAndRender'], true)) {
             // Set PropertyMappingConfiguration for updating the node (and attached objects)
             $propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
@@ -188,8 +197,7 @@ class NodeController extends AbstractServiceController
         if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
-
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $newNode], 'Frontend\Node', 'Neos.Neos');
+        $nextUri = (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($newNode);
         $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
 
@@ -244,7 +252,7 @@ class NodeController extends AbstractServiceController
 
         $data = ['newNodePath' => $node->getContextPath()];
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            $data['nextUri'] = (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($node);
         }
         $this->view->assign('value', ['data' => $data, 'success' => true]);
     }
@@ -289,12 +297,12 @@ class NodeController extends AbstractServiceController
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
         $requestData = [
-            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos'),
+            'nextUri' => (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($closestDocumentNode),
             'newNodePath' => $copiedNode->getContextPath()
         ];
 
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $copiedNode], 'Frontend\Node', 'Neos.Neos');
+            $requestData['nodeUri'] = (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($copiedNode);
         }
 
         $this->view->assign('value', ['data' => $requestData, 'success' => true]);
@@ -340,7 +348,7 @@ class NodeController extends AbstractServiceController
 
         $q = new FlowQuery([$node]);
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos');
+        $nextUri = (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($closestDocumentNode);
         $this->view->assign('value', [
             'data' => [
                 'workspaceNameOfNode' => $node->getWorkspace()->getName(),
@@ -381,7 +389,7 @@ class NodeController extends AbstractServiceController
         $q = new FlowQuery([$node]);
         $node->remove();
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos');
+        $nextUri = (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder->withFormat('html')->withCreateAbsoluteUri(true))->uriFor($closestDocumentNode);
 
         $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
@@ -419,7 +427,7 @@ class NodeController extends AbstractServiceController
         return [
             'id' => $node->getPath(),
             'name' => $node->getLabel(),
-            'url' => $this->uriBuilder->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos'),
+            'url' => (string)NodeUriBuilder::fromUriBuilder($this->uriBuilder)->uriFor($node),
             'type' => 'neos/internal-link'
         ];
     }

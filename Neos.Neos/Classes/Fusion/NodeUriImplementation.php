@@ -14,6 +14,7 @@ namespace Neos\Neos\Fusion;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Neos\Routing\NodeUriBuilder;
 use Neos\Neos\Service\LinkingService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Exception as NeosException;
@@ -90,10 +91,21 @@ class NodeUriImplementation extends AbstractFusionObject
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
      * @return array
+     * @deprecated with Neos 8.0 - use getAdditionalArguments() instead
      */
     public function getAdditionalParams()
     {
         return array_merge($this->fusionValue('additionalParams'), $this->fusionValue('arguments'));
+    }
+
+    /**
+     * Additional route arguments
+     *
+     * @return array
+     */
+    public function getAdditionalArguments()
+    {
+        return $this->fusionValue('arguments');
     }
 
     /**
@@ -144,7 +156,6 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $baseNode = null;
         $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
         $currentContext = $this->runtime->getCurrentContext();
         if (isset($currentContext[$baseNodeName])) {
@@ -152,19 +163,21 @@ class NodeUriImplementation extends AbstractFusionObject
         } else {
             throw new NeosException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
         }
-
+        $node = $this->getNode();
+        if (is_string($node)) {
+            $node = $this->linkingService->getNodeFromString($node, $baseNode);
+        }
+        $uriBuilder = $this->runtime->getControllerContext()->getUriBuilder()
+            ->withCreateAbsoluteUri($this->isAbsolute())
+            ->withArguments($this->getAdditionalArguments())
+            ->withSection($this->getSection())
+            ->withAddQueryString($this->getAddQueryString())
+            ->withArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString());
+        if ($this->getFormat() !== null) {
+            $uriBuilder = $uriBuilder->withFormat($this->getFormat());
+        }
         try {
-            return $this->linkingService->createNodeUri(
-                $this->runtime->getControllerContext(),
-                $this->getNode(),
-                $baseNode,
-                $this->getFormat(),
-                $this->isAbsolute(),
-                $this->getAdditionalParams(),
-                $this->getSection(),
-                $this->getAddQueryString(),
-                $this->getArgumentsToBeExcludedFromQueryString()
-            );
+            return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($node);
         } catch (NeosException $exception) {
             // TODO: Revisit if we actually need to store a stack trace.
             $logMessage = $this->throwableStorage->logThrowable($exception);
