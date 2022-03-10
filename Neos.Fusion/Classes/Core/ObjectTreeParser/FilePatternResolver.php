@@ -108,7 +108,7 @@ class FilePatternResolver
                 return new \DirectoryIterator($dir);
             },
 
-            default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.",1636144713),
+            default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),
         };
 
         $basePath = $matches['base'];

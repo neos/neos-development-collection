@@ -111,8 +111,8 @@ class Parser implements ParserInterface
     {
         return new ObjectTreeAstVisitor(
             $objectTree,
-            fn(...$args) => $this->handleFileInclude(...$args),
-            fn(...$args) => $this->handleDslTranspile(...$args),
+            fn (...$args) => $this->handleFileInclude(...$args),
+            fn (...$args) => $this->handleDslTranspile(...$args),
         );
     }
 
