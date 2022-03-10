@@ -14,7 +14,6 @@ namespace Neos\Neos\Routing;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
@@ -22,14 +21,12 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Psr\Http\Message\UriInterface;
 
-
 /**
  * Builds URIs to nodes, taking workspace (live / shared / user) into account.
  * This class can also be used in order to render "preview" URLs to nodes that are not in the live workspace (in the Neos Backend and shared workspaces)
  */
 final class NodeUriBuilder
 {
-
     private UriBuilder $uriBuilder;
 
     protected function __construct(UriBuilder $uriBuilder)
