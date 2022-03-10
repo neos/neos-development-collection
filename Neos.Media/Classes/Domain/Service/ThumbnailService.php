@@ -138,7 +138,6 @@ class ThumbnailService
         $async = $configuration->isAsync();
         if ($thumbnail === null) {
             $thumbnail = new Thumbnail($asset, $configuration);
-            $this->emitThumbnailCreated($thumbnail);
 
             // If the thumbnail strategy failed to generate a valid thumbnail
             if ($async === false && $thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
@@ -153,6 +152,8 @@ class ThumbnailService
             }
             $asset->addThumbnail($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+
+            $this->emitThumbnailCreated($thumbnail);
         } elseif ($async === false && $thumbnail->getResource() === null) {
             $this->refreshThumbnail($thumbnail);
         }
