@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
-        <target state="needs-translation">Save</target>
+        <target state="translated">Gravar</target>
       </trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
@@ -281,7 +281,7 @@
       </trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
-        <target state="needs-translation">This operation cannot be undone.</target>
+        <target state="translated">Esta operação não pode ser desfeita.</target>
       </trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
@@ -301,11 +301,11 @@
       </trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-        <target state="needs-translation">Identifier</target>
+        <target state="translated">Identificador</target>
       </trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-        <target state="needs-translation">Name</target>
+        <target state="translated">Nome</target>
       </trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
@@ -409,7 +409,7 @@
       </trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-        <target state="needs-translation">Click to delete</target>
+        <target state="translated">Clique para apagar</target>
       </trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
@@ -802,7 +802,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-        <target state="needs-translation">Media</target>
+        <target state="translated">Mídia</target>
       </trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
