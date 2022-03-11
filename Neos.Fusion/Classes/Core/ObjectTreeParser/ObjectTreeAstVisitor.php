@@ -225,6 +225,12 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     protected function validateParseTreeKey(string $pathKey)
     {
+        if ($pathKey === '') {
+            throw $this->prepareParserException(new ParserException())
+                ->withCode(1646988838)
+                ->withMessage("A path must not be empty.")
+                ->build();
+        }
         if (str_starts_with($pathKey, '__')
             && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
             throw $this->prepareParserException(new ParserException())

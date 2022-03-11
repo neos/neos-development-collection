@@ -344,12 +344,6 @@ class PredictiveParser
             case $this->accept(Token::CHAR):
                 $stringWrapped = $this->consume()->getValue();
                 $quotedPathKey = substr($stringWrapped, 1, -1);
-                if ($quotedPathKey === '') {
-                    throw $this->prepareParserException(new ParserException())
-                        ->withCode(1646988838)
-                        ->withMessage("A quoted path must not be empty")
-                        ->build();
-                }
                 return new PathSegment($quotedPathKey);
         }
 
