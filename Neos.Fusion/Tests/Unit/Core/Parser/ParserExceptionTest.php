@@ -84,7 +84,7 @@ class ParserExceptionTest extends UnitTestCase
               |
             1 | somepath.äöü = 123
               |          ^— column 10
-            Unexpected object path starting with: 'ä'. A valid object path is either alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@' delimited by a '.'.
+            Unexpected object path starting with: 'ä'. A valid object path is by '.' delimited path segments: alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@'.
             MESSAGE
 
         ];
@@ -114,12 +114,12 @@ class ParserExceptionTest extends UnitTestCase
 
         yield 'prototype declaration without namespace' => [
             'prototype(Foo) < prototype(Neos.Fuison:Tag)',
-            "Prototype name without namespace starting with 'F' - Default namespaces were removed. You might want to add 'Neos.Fusion:' infront."
+            "Prototype name without namespace starting with 'F' - Default namespaces were removed. You might want to add 'Neos.Fusion:' in front."
         ];
 
         yield 'a path without operator or block' => [
             'path.something',
-            "Object path without operator or block start. Found: <EOF>"
+            "Object path without operator or block start. Found: <EOF>."
         ];
 
         yield 'no value' => [
@@ -129,22 +129,22 @@ class ParserExceptionTest extends UnitTestCase
 
         yield 'invalid path segment (or operator)' => [
             'path&%324 = "value"',
-            "Unknown operator or path segment at '&'. Unquoted paths can contain only alphanumerics and [:_-]. Otherwise put them in quotes."
+            "Unknown operator or path segment at '&'. Unquoted paths can contain only alphanumerics and [:_-]. Otherwise, put them in quotes."
         ];
 
         yield 'invalid operator or (path segment)' => [
             'path := "value"',
-            'Unknown operator starting with \':\'. (Or you have unwanted spaces in you object path)'
+            "Unknown operator starting with ':'. (Or you have unwanted spaces in your object path)."
         ];
 
         yield 'invalid char at start of path, when a path is expected' => [
             'path < äöü',
-            "Unexpected object path starting with: 'ä'. A valid object path is either alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@' delimited by a '.'."
+            "Unexpected object path starting with: 'ä'. A valid object path is by '.' delimited path segments: alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@'."
         ];
 
         yield 'invalid start of path in statement' => [
             'äöü = 0',
-            "Unexpected statement starting with: 'ä'. A valid object path is either alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@' delimited by a '.'."
+            "Unexpected statement starting with: 'ä'. A valid object path is by '.' delimited path segments: alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@'."
         ];
     }
 
@@ -171,12 +171,12 @@ class ParserExceptionTest extends UnitTestCase
     {
         yield 'misspelled prototype declaration' => [
             'prooototype(a:b)',
-            "An unquoted path segment cannot contain '('. Did you want to declare a prototype? 'prototype(Foo:Bar)'"
+            "An unquoted path segment cannot contain '('. Did you want to declare a prototype? 'prototype(Foo:Bar)'."
         ];
 
         yield 'include without colon' => [
             'include "pattern"',
-            "Did you want to include a Fusion file? 'include: FileName.fusion'"
+            "Did you want to include a Fusion file? 'include: FileName.fusion'."
         ];
     }
 
@@ -227,7 +227,7 @@ class ParserExceptionTest extends UnitTestCase
     {
         yield 'unqualified object type' => [
             'a = Value',
-            "Unexpected 'Value' in value assignment - It looks like an object without namespace. Default namespaces were removed. You might want to add 'Neos.Fusion:' infront."
+            "Unexpected 'Value' in value assignment - It looks like an object without namespace. Default namespaces were removed. You might want to add 'Neos.Fusion:' in front."
         ];
 
         yield 'namespace alias declaration' => [

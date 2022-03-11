@@ -18,7 +18,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage;
  */
 class MessageCreator
 {
-    protected const VALID_OBJECT_PATH = "A valid object path is either alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@' delimited by a '.'.";
+    protected const VALID_OBJECT_PATH = "A valid object path is by '.' delimited path segments: alphanumeric and [:_-], prototype(Foo:Bar), in quotes, or a meta path starting with '@'.";
 
     public static function forParseStatement(MessageLinePart $next, MessageLinePart $prev): string
     {
@@ -27,7 +27,7 @@ class MessageCreator
                 if ($next->char(1) === '*') {
                     return "Unclosed comment.";
                 }
-                return "Unexpected single {$next->charPrint()}. You can start a comment with // or /* or #";
+                return "Unexpected single {$next->charPrint()}. You can start a comment with '//' or '/*' or '#'.";
             case '"':
             case '\'':
                 return "Unclosed quoted path.";
@@ -69,7 +69,7 @@ class MessageCreator
     public static function forPathSegmentPrototypeName(MessageLinePart $next, MessageLinePart $prev): string
     {
         if (preg_match('/^[a-zA-Z0-9.]++(?!:)/', $next->line()) === 1) {
-            return "Prototype name without namespace starting with {$next->charPrint()} - Default namespaces were removed. You might want to add 'Neos.Fusion:' infront.";
+            return "Prototype name without namespace starting with {$next->charPrint()} - Default namespaces were removed. You might want to add 'Neos.Fusion:' in front.";
         }
         if (str_starts_with(trim($next->line()), ')')) {
             return "A prototype name must be set. Unexpected char {$next->charPrint()}.";
@@ -83,22 +83,22 @@ class MessageCreator
             return "It looks like you want to declare a namespace alias. The feature to alias namespaces was removed.";
         }
         if (preg_match('/.*include\s*$/', $prev->line()) === 1) {
-            return "Did you want to include a Fusion file? 'include: FileName.fusion'";
+            return "Did you want to include a Fusion file? 'include: FileName.fusion'.";
         }
         if ($prev->char(-1) === ' ' && $next->char() === '.') {
             return "Nested paths, separated by {$next->charPrint()} cannot contain spaces.";
         }
         if ($prev->char(-1) === ' ') {
             // it might be an operator since there was space
-            return "Unknown operator starting with {$next->charPrint()}. (Or you have unwanted spaces in you object path)";
+            return "Unknown operator starting with {$next->charPrint()}. (Or you have unwanted spaces in your object path).";
         }
         if ($next->char() === '(') {
-            return "An unquoted path segment cannot contain {$next->charPrint()}. Did you want to declare a prototype? 'prototype(Foo:Bar)'";
+            return "An unquoted path segment cannot contain {$next->charPrint()}. Did you want to declare a prototype? 'prototype(Foo:Bar)'.";
         }
         if ($next->char() === '') {
-            return "Object path without operator or block start. Found: {$next->charPrint()}";
+            return "Object path without operator or block start. Found: {$next->charPrint()}.";
         }
-        return "Unknown operator or path segment at {$next->charPrint()}. Unquoted paths can contain only alphanumerics and [:_-]. Otherwise put them in quotes.";
+        return "Unknown operator or path segment at {$next->charPrint()}. Unquoted paths can contain only alphanumerics and [:_-]. Otherwise, put them in quotes.";
     }
 
     public static function forParseDslExpression(MessageLinePart $next, MessageLinePart $prev): string
@@ -109,7 +109,7 @@ class MessageCreator
     public static function forParsePathValue(MessageLinePart $next, MessageLinePart $prev): string
     {
         if (preg_match('/^[a-zA-Z0-9.]++(?!:)/', $next->line()) === 1) {
-            return "Unexpected {$next->linePrint()} in value assignment - It looks like an object without namespace. Default namespaces were removed. You might want to add 'Neos.Fusion:' infront.";
+            return "Unexpected {$next->linePrint()} in value assignment - It looks like an object without namespace. Default namespaces were removed. You might want to add 'Neos.Fusion:' in front.";
         }
         switch ($next->char()) {
             case '':
@@ -126,6 +126,6 @@ class MessageCreator
                 }
                 return "Did you want to start an eel expression: '\${...}'?";
         }
-        return "Unexpected character in assignment starting with {$next->charPrint()}";
+        return "Unexpected character in assignment starting with {$next->charPrint()}.";
     }
 }
