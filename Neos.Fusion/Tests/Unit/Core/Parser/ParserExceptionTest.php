@@ -12,11 +12,20 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  */
 
 use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Flow\Tests\UnitTestCase;
 
 class ParserExceptionTest extends UnitTestCase
 {
+    protected Parser $parser;
+
+    public function setUp(): void
+    {
+        $this->parser = new Parser();
+        $this->parser->injectPredictiveParser(new PredictiveParser());
+    }
+
     public function fullParserExceptionMessage(): \Generator
     {
         yield 'no closing brace' => [
@@ -243,9 +252,7 @@ class ParserExceptionTest extends UnitTestCase
     {
         self::expectException(ParserException::class);
         self::expectExceptionMessage($expectedMessage);
-
-        $parser = new Parser;
-        $parser->parse($fusion);
+        $this->parser->parse($fusion);
     }
 
     /**
@@ -259,9 +266,8 @@ class ParserExceptionTest extends UnitTestCase
      */
     public function itMatchesThePartialExceptionMessage($fusion, $expectedMessage): void
     {
-        $parser = new Parser;
         try {
-            $parser->parse($fusion);
+            $this->parser->parse($fusion);
             self::fail('No exception was thrown. Expected message: ' . $expectedMessage);
         } catch (ParserException $e) {
             self::assertSame($expectedMessage, $e->getHelperMessagePart());

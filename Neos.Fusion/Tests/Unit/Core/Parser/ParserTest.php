@@ -18,6 +18,14 @@ use Neos\Flow\Tests\UnitTestCase;
 
 class ParserTest extends UnitTestCase
 {
+    protected Parser $parser;
+
+    public function setUp(): void
+    {
+        $this->parser = new Parser();
+        $this->parser->injectPredictiveParser(new PredictiveParser());
+    }
+
     public function pathBlockTest(): array
     {
         return [
@@ -1011,8 +1019,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesToExpectedAst($fusion, $expectedAst): void
     {
-        $parser = new Parser();
-        $parsedFusionAst = $parser->parse($fusion);
+        $parsedFusionAst = $this->parser->parse($fusion);
         self::assertSame($expectedAst, $parsedFusionAst);
     }
 
@@ -1026,9 +1033,7 @@ class ParserTest extends UnitTestCase
     public function itThrowsWhileParsing($fusion): void
     {
         self::expectException(Fusion\Exception::class);
-
-        $parser = new Parser();
-        $parser->parse($fusion);
+        $this->parser->parse($fusion);
     }
 
     /**
@@ -1038,8 +1043,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesWithoutError($fusion): void
     {
-        $parser = new Parser;
-        $parser->parse($fusion);
+        $this->parser->parse($fusion);
         self::assertTrue(true);
     }
 

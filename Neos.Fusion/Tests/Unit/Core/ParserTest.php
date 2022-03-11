@@ -22,23 +22,12 @@ use Neos\Fusion\Exception;
  */
 class ParserTest extends UnitTestCase
 {
-    /**
-     * @var Parser
-     */
-    protected $parser;
+    protected Parser $parser;
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $mockObjectManager;
-
-    /**
-     * Sets up this test case
-     *
-     */
     public function setUp(): void
     {
         $this->parser = new Parser();
+        $this->parser->injectPredictiveParser(new PredictiveParser());
     }
 
     /**

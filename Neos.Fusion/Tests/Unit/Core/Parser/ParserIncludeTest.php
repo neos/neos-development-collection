@@ -24,6 +24,14 @@ use org\bovigo\vfs\vfsStreamDirectory;
  */
 class ParserIncludeTest extends UnitTestCase
 {
+    protected Parser $parser;
+
+    public function setUp(): void
+    {
+        $this->parser = new Parser();
+        $this->parser->injectPredictiveParser(new PredictiveParser());
+    }
+
     public static function setUpBeforeClass(): void
     {
         $directory = [
@@ -183,8 +191,7 @@ class ParserIncludeTest extends UnitTestCase
      */
     public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst): void
     {
-        $parser = new Parser();
-        $actualFusionAst = $parser->parse($fusionCode, $contextPathAndFilename);
+        $actualFusionAst = $this->parser->parse($fusionCode, $contextPathAndFilename);
 
         self::assertSame($expectedFusionAst, $actualFusionAst);
     }
@@ -201,8 +208,7 @@ class ParserIncludeTest extends UnitTestCase
         include: /**/*
         Fusion;
 
-        $parser = new Parser();
-        $parser->parse($fusionCode);
+        $this->parser->parse($fusionCode);
     }
 
     public function weirdFusionIncludeValuesAreHandedOver(): \Generator
@@ -309,8 +315,7 @@ class ParserIncludeTest extends UnitTestCase
         include: vfs://fusion/$pattern
         Fusion;
 
-        $parser = new Parser();
-        $parser->parse($fusionCode);
+        $this->parser->parse($fusionCode);
     }
 
     /**
