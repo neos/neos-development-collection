@@ -73,7 +73,7 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitBlock(Block $block, array $currentPath = null)
     {
-        $currentPath ?? throw new \Exception();
+        $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
         array_push($this->currentObjectPathStack, $currentPath);
 
@@ -110,7 +110,7 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitValueAssignment(ValueAssignment $valueAssignment, array $currentPath = null)
     {
-        $currentPath ?? throw new \Exception();
+        $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
         $value = $valueAssignment->pathValue->visit($this);
         $this->objectTree->setValueInObjectTree($currentPath, $value);
@@ -163,7 +163,7 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitValueCopy(ValueCopy $valueCopy, array $currentPath = null)
     {
-        $currentPath ?? throw new \Exception();
+        $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
         $sourcePath = $valueCopy->assignedObjectPath->visit($this, $this->objectTree->getParentPath($currentPath));
 
@@ -212,7 +212,7 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitValueUnset(ValueUnset $valueUnset, array $currentPath = null)
     {
-        $currentPath ?? throw new \Exception();
+        $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
         $this->objectTree->removeValueInObjectTree($currentPath);
     }
