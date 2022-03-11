@@ -320,7 +320,14 @@ class PredictiveParser
         switch (true) {
             case $this->accept(Token::PROTOTYPE_START):
                 $this->consume();
-                $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
+                try {
+                    $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
+                } catch (Fusion\Exception) {
+                    throw $this->prepareParserException(new ParserException())
+                        ->withCode(1646991578)
+                        ->withMessageCreator([MessageCreator::class, 'forPathSegmentPrototypeName'])
+                        ->build();
+                }
                 $this->expect(Token::RPAREN);
                 return new PrototypePathSegment($prototypeName);
 

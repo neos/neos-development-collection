@@ -66,6 +66,14 @@ class MessageCreator
         return "Unexpected object path starting with: {$next->charPrint()}. "  . self::VALID_OBJECT_PATH;
     }
 
+    public static function forPathSegmentPrototypeName(MessageLinePart $next, MessageLinePart $prev): string
+    {
+        if (preg_match('/^[a-zA-Z0-9.]++(?!:)/', $next->line()) === 1) {
+            return "Prototype name without namespace starting with {$next->charPrint()} - Default namespaces were removed. You might want to add 'Neos.Fusion:' infront.";
+        }
+        return "Unexpected prototype name starting with: {$next->linePrint()}.";
+    }
+
     public static function forParsePathOrOperator(MessageLinePart $next, MessageLinePart $prev): string
     {
         if (preg_match('/.*namespace\s*:\s*$/', $prev->line()) === 1) {
@@ -97,8 +105,8 @@ class MessageCreator
 
     public static function forParsePathValue(MessageLinePart $next, MessageLinePart $prev): string
     {
-        if (preg_match('/^[a-zA-Z0-9.]+/', $next->line()) === 1) {
-            return "Unexpected {$next->linePrint()} in value assignment - It looks like an object without namespace. But namespace alias were removed. You might want to add 'Neos.Fusion:' infront.";
+        if (preg_match('/^[a-zA-Z0-9.]++(?!:)/', $next->line()) === 1) {
+            return "Unexpected {$next->linePrint()} in value assignment - It looks like an object without namespace. Default namespaces were removed. You might want to add 'Neos.Fusion:' infront.";
         }
         switch ($next->char()) {
             case '':
