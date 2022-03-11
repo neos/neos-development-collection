@@ -9,6 +9,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
 class PrototypePathSegment extends AbstractPathSegment
 {
     public function __construct(
+        /** @psalm-readonly */
         public string $identifier
     ) {
     }

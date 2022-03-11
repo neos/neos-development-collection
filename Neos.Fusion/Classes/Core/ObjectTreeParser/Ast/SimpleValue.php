@@ -9,6 +9,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
 class SimpleValue extends AbstractPathValue
 {
     public function __construct(
+        /** @psalm-readonly */
         public mixed $value
     ) {
     }

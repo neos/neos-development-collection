@@ -9,6 +9,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
 class ValueAssignment extends AbstractOperation
 {
     public function __construct(
+        /** @psalm-readonly */
         public AbstractPathValue $pathValue
     ) {
     }

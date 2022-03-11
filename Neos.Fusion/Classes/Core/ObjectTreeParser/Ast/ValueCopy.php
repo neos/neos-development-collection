@@ -9,6 +9,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
 class ValueCopy extends AbstractOperation
 {
     public function __construct(
+        /** @psalm-readonly */
         public AssignedObjectPath $assignedObjectPath
     ) {
     }
