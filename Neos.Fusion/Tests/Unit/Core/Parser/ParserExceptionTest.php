@@ -109,7 +109,12 @@ class ParserExceptionTest extends UnitTestCase
 
         yield 'prototype declaration without name' => [
             'prototype().moin = 123',
-            "Unexpected char ')'. Expected token: 'FUSION_OBJECT_NAME'."
+            "A prototype name must be set. Unexpected char ')'."
+        ];
+
+        yield 'prototype declaration without namespace' => [
+            'prototype(Foo) < prototype(Neos.Fuison:Tag)',
+            "Prototype name without namespace starting with 'F' - Default namespaces were removed. You might want to add 'Neos.Fusion:' infront."
         ];
 
         yield 'a path without operator or block' => [
@@ -222,7 +227,7 @@ class ParserExceptionTest extends UnitTestCase
     {
         yield 'unqualified object type' => [
             'a = Value',
-            "Unexpected 'Value' in value assignment - It looks like an object without namespace. But namespace alias were removed. You might want to add 'Neos.Fusion:' infront."
+            "Unexpected 'Value' in value assignment - It looks like an object without namespace. Default namespaces were removed. You might want to add 'Neos.Fusion:' infront."
         ];
 
         yield 'namespace alias declaration' => [

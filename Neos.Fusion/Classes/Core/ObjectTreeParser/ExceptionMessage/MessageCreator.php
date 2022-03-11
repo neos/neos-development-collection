@@ -71,6 +71,9 @@ class MessageCreator
         if (preg_match('/^[a-zA-Z0-9.]++(?!:)/', $next->line()) === 1) {
             return "Prototype name without namespace starting with {$next->charPrint()} - Default namespaces were removed. You might want to add 'Neos.Fusion:' infront.";
         }
+        if (str_starts_with(trim($next->line()), ')')) {
+            return "A prototype name must be set. Unexpected char {$next->charPrint()}.";
+        }
         return "Unexpected prototype name starting with: {$next->linePrint()}.";
     }
 
