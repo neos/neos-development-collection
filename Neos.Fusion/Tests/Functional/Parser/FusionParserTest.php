@@ -126,7 +126,7 @@ class FusionParserTest extends FunctionalTestCase
     {
         $parser = new Parser();
         $this->expectException(Fusion\Exception::class);
-        $this->expectExceptionCode(1490776550);
+        $this->expectExceptionCode(1180600696);
         $parser->parse('value = TestUnknownDsl`foobar`');
     }
 

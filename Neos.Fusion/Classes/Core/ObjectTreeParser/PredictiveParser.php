@@ -100,7 +100,7 @@ class PredictiveParser
         $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
         if ($token === null || $token->getType() !== $tokenType) {
             $tokenReadable = Token::typeToString($tokenType);
-            throw new ParserUnexpectedCharException("Expected token: '$tokenReadable'.", 1635708717);
+            throw new ParserUnexpectedCharException("Expected token: '$tokenReadable'.", 1646988824);
         }
         return $this->lexer->consumeLookahead();
     }
@@ -229,7 +229,7 @@ class PredictiveParser
         }
 
         throw $this->getParserException()
-            ->withCode(1635708717)
+            ->withCode(1646988828)
             ->withMessageCreator([MessageCreator::class, 'forParseStatement'])
             ->build();
     }
@@ -253,7 +253,7 @@ class PredictiveParser
                 $filePattern = $this->consume()->getValue();
                 break;
             default:
-                throw new ParserUnexpectedCharException('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]', 1635708717);
+                throw new ParserUnexpectedCharException('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]', 1646988832);
         }
 
         $this->parseEndOfStatement();
@@ -287,7 +287,7 @@ class PredictiveParser
 
         if ($operation === null) {
             throw $this->getParserException()
-                ->withCode(1635708717)
+                ->withCode(1646988835)
                 ->withMessageCreator([MessageCreator::class, 'forParsePathOrOperator'])
                 ->withCursor($cursorAfterObjectPath)
                 ->build();
@@ -339,7 +339,7 @@ class PredictiveParser
                 $quotedPathKey = substr($stringWrapped, 1, -1);
                 if ($quotedPathKey === '') {
                     throw $this->getParserException()
-                        ->withCode(1635708717)
+                        ->withCode(1646988838)
                         ->withMessage("A quoted path must not be empty")
                         ->build();
                 }
@@ -414,7 +414,7 @@ class PredictiveParser
         }
 
         throw $this->getParserException()
-            ->withCode(1635708717)
+            ->withCode(1646988841)
             ->withMessageCreator([MessageCreator::class, 'forParsePathValue'])
             ->build();
     }
@@ -486,7 +486,7 @@ class PredictiveParser
             $this->expect(Token::RBRACE);
         } catch (Fusion\Exception) {
             throw $this->getParserException()
-                ->withCode(1635708717)
+                ->withCode(1646988844)
                 ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
                 ->withCursor($cursorPositionStartOfBlock)
                 ->build();
