@@ -4,7 +4,7 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi;
 
 interface LegacyNodeInterfaceApi
 {
-    public function getIdentifier(): int;
+    public function getIdentifier(): string;
 
     public function getContextPath(): string;
 
