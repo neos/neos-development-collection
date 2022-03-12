@@ -96,6 +96,6 @@ class ModuleViewHelper extends AbstractViewHelper
     protected function setMainRequestToUriBuilder(): void
     {
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-        $this->uriBuilder = new UriBuilder($mainRequest);
+        $this->uriBuilder = UriBuilder::fromRequest($mainRequest);
     }
 }

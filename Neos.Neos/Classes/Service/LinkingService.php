@@ -292,7 +292,7 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $request = $controllerContext->getRequest()->getMainRequest();
-        $uriBuilder = (new UriBuilder($request))
+        $uriBuilder = UriBuilder::fromRequest($request)
             ->withSection($section)
             ->withArguments($arguments)
             ->withAddQueryString($addQueryString)

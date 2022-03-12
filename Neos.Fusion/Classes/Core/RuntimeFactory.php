@@ -58,13 +58,11 @@ class RuntimeFactory
         /** @var ActionRequest $request */
         $request = ActionRequest::fromHttpRequest($httpRequest);
 
-        $uriBuilder = new UriBuilder($request);
-
         return new ControllerContext(
             $request,
             new ActionResponse(),
             new Arguments([]),
-            $uriBuilder
+            UriBuilder::fromRequest($request)
         );
     }
 }

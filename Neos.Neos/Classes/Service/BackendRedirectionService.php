@@ -175,7 +175,7 @@ class BackendRedirectionService
         if ($lastVisitedNode === null) {
             return null;
         }
-        $uriBuilder = (new UriBuilder($actionRequest))
+        $uriBuilder = UriBuilder::fromRequest($actionRequest)
             ->withFormat('html')
             ->withCreateAbsoluteUri(true);
         return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($lastVisitedNode);

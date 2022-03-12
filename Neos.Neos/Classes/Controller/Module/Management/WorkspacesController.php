@@ -347,7 +347,7 @@ class WorkspacesController extends AbstractModuleController
         $context = $this->contextFactory->create($contextProperties);
 
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-        $this->uriBuilder = new UriBuilder($mainRequest);
+        $this->uriBuilder = UriBuilder::fromRequest($mainRequest);
 
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
             $this->redirect('index', 'Backend', 'Neos.Neos.Ui', ['node' => $context->getNode($targetNode->getPath())]);

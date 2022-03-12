@@ -114,7 +114,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, RouteParameters::createEmpty()->withParameter('requestUriHost', 'neos.test'));
         $requestHandler->setHttpRequest($httpRequest);
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
-        $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder($actionRequest));
+        $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), UriBuilder::fromRequest($actionRequest));
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
         $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, ['dummy'], [], '', false);

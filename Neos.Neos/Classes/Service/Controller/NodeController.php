@@ -119,7 +119,7 @@ class NodeController extends AbstractServiceController
         if ($this->arguments->hasArgument('referenceNode')) {
             $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
-        $this->uriBuilder = new UriBuilder($this->request->getMainRequest());
+        $this->uriBuilder = UriBuilder::fromRequest($this->request->getMainRequest());
         if (in_array($this->request->getControllerActionName(), ['update', 'updateAndRender'], true)) {
             // Set PropertyMappingConfiguration for updating the node (and attached objects)
             $propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();

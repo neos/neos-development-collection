@@ -379,13 +379,12 @@ class RenderingTest extends AbstractNodeTest
         $response = new ActionResponse();
         /** @var Arguments $mockArguments */
         $mockArguments = $this->getMockBuilder(Arguments::class)->disableOriginalConstructor()->getMock();
-        $uriBuilder = new UriBuilder($request);
 
         $controllerContext = new ControllerContext(
             $request,
             $response,
             $mockArguments,
-            $uriBuilder
+            UriBuilder::fromRequest($request)
         );
         return $controllerContext;
     }

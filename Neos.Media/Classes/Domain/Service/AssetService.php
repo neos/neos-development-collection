@@ -152,7 +152,7 @@ class AssetService
                 if ($request === null) {
                     throw new AssetServiceException('Request argument must be provided for async thumbnails.', 1447660835);
                 }
-                $uri = (new UriBuilder($request->getMainRequest()))
+                $uri = UriBuilder::fromRequest($request->getMainRequest())
                     ->withCreateAbsoluteUri(true)
                     ->uriFor('thumbnail', ['thumbnail' => $thumbnailImage], 'Thumbnail', 'Neos.Media');
             } else {

@@ -128,7 +128,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
 
-        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder($actionRequest));
+        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), UriBuilder::fromRequest($actionRequest));
     }
 
     /**
