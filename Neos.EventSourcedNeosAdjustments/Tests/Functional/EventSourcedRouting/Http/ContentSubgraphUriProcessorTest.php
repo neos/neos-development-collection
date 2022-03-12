@@ -41,18 +41,63 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
         parent::setUp();
 
         $emptyConstraints = new ContentDimensionConstraintSet([]);
-        $world = new ContentDimensionValue('WORLD', null, $emptyConstraints, ['resolution' => ['value' => '.com']]);
-        $greatBritain = new ContentDimensionValue('GB', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => '.co.uk']]);
-        $germany = new ContentDimensionValue('DE', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => '.de']]);
+        $world = new ContentDimensionValue(
+            'WORLD',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => '.com']]
+        );
+        $greatBritain = new ContentDimensionValue(
+            'GB',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => '.co.uk']]
+        );
+        $germany = new ContentDimensionValue(
+            'DE',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => '.de']]
+        );
 
-        $defaultSeller = new ContentDimensionValue('default', null, $emptyConstraints, ['resolution' => ['value' => 'default']]);
-        $sellerA = new ContentDimensionValue('sellerA', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'sellerA']]);
+        $defaultSeller = new ContentDimensionValue(
+            'default',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'default']]
+        );
+        $sellerA = new ContentDimensionValue(
+            'sellerA',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'sellerA']]
+        );
 
-        $defaultChannel = new ContentDimensionValue('default', null, $emptyConstraints, ['resolution' => ['value' => 'default']]);
-        $channelA = new ContentDimensionValue('channelA', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'channelA']]);
+        $defaultChannel = new ContentDimensionValue(
+            'default',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'default']]
+        );
+        $channelA = new ContentDimensionValue(
+            'channelA',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'channelA']]
+        );
 
-        $english = new ContentDimensionValue('en', null, $emptyConstraints, ['resolution' => ['value' => '']]);
-        $german = new ContentDimensionValue('de', null, $emptyConstraints, ['resolution' => ['value' => 'de.']]);
+        $english = new ContentDimensionValue(
+            'en',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => '']]
+        );
+        $german = new ContentDimensionValue(
+            'de',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'de.']]
+        );
 
         $contentDimensions = [
             'market' => new ContentDimension(
