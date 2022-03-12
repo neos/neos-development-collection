@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       mariadb:
-        image: mariadb:10.2
+        image: mariadb:10.4
         env:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
@@ -122,24 +122,11 @@ jobs:
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
 
-      - name: Run functional tests
-        run: |
-          bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
-          bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
+      - name: Run Linter
+        run: composer lint
 
-      - name: Run behat tests
-        #if: env.BEHAT == true
-        run: |
-          ./flow behat:setup
-          ./flow doctrine:migrate
-          # for whatever reason, the eventstore setup sometimes needs to be run twice.
-          ./flow eventstore:setup ContentRepository; ./flow eventstore:setup ContentRepository
-          bin/behat -f progress -c Packages/CR/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
-          bin/behat -f progress -c Packages/CR/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist
-          # TODO: fix routing tests in CI
-          # cd Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior
-          # ../../../../../bin/behat -f progress -c behat.yml.dist Features/Routing
-          # TODO add the non-routing tests as well
+      - name: Run Tests
+        run: composer test
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
