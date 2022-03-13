@@ -66,7 +66,7 @@ class CacheAwareGraphProjectorFactory
             $processedEventsCache,
             $projectionContentGraph,
             $throwableStorageInterface
-        );
+        );/*
         $graphProjector->onBeforeInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
                 // performance optimization: on full replay, we assume all caches to be flushed anyways
@@ -118,7 +118,7 @@ class CacheAwareGraphProjectorFactory
                     );
                 }
             }
-        });
+        });*/
 
         return $graphProjector;
     }
