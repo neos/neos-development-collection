@@ -35,7 +35,7 @@
     },
     "suggest": {},
     "scripts": {
-        "lint:phpcs": "phpcs --colors --standard=PSR2 ./Packages/CR/*/Classes",
+        "lint:phpcs": "phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategyIdentifier.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php ./*/Classes",
         "lint:phpstan": "phpstan analyse",
         "lint": [
             "@lint:phpcs",
