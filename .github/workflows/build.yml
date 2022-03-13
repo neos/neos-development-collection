@@ -122,6 +122,10 @@ jobs:
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
 
+      - name: Prepare composer script execution
+        run: |
+          cd Packages/CR
+
       - name: Run Linter
         run: composer lint
 
