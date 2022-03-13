@@ -35,8 +35,8 @@
     },
     "suggest": {},
     "scripts": {
-        "lint:phpcs": "phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategyIdentifier.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php ./*/Classes",
-        "lint:phpstan": "phpstan analyse",
+        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategyIdentifier.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php ./*/Classes",
+        "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpcs",
             "@lint:phpstan"
