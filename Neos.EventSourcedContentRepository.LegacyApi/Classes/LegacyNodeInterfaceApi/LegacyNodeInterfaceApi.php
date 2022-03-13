@@ -4,13 +4,28 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi;
 
 interface LegacyNodeInterfaceApi
 {
-    public function getIdentifier(): string;
+    /**
+     * @return string
+     */
+    public function getIdentifier();
 
-    public function getContextPath(): string;
+    /**
+     * @return string
+     */
+    public function getContextPath();
 
-    public function getDepth(): int;
+    /**
+     * @return int
+     */
+    public function getDepth();
 
-    public function getHiddenBeforeDateTime(): ?\DateTimeInterface;
+    /**
+     * @return ?\DateTimeInterface
+     */
+    public function getHiddenBeforeDateTime();
 
-    public function getHiddenAfterDateTime(): ?\DateTimeInterface;
+    /**
+     * @return ?\DateTimeInterface
+     */
+    public function getHiddenAfterDateTime();
 }
