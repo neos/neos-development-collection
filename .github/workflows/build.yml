@@ -125,7 +125,6 @@ jobs:
       - name: Run Linter
         run: |
           cd Packages/CR
-          ls -la ../../bin
           composer lint
 
       - name: Run Tests
