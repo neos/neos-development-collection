@@ -636,7 +636,7 @@ final class ProjectionHypergraph
             'anchorPoint' => (string)$anchorPoint
         ];
 
-        return $this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
+        return (int)$this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
     }
 
     protected function getDatabaseConnection(): Connection
