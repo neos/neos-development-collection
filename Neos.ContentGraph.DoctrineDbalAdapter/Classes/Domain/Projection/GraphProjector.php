@@ -50,6 +50,7 @@ use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 
 /**
  * The alternate reality-aware graph projector for the general Doctrine DBAL backend
@@ -67,6 +68,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
     protected ProjectionContentGraph $projectionContentGraph;
 
+    private ThrowableStorageInterface $throwableStorage;
+
     private DbalClient $databaseClient;
 
     private bool $doingFullReplayOfProjection = false;
@@ -74,10 +77,12 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     public function __construct(
         DbalClient $eventStorageDatabaseClient,
         VariableFrontend $processedEventsCache,
-        ProjectionContentGraph $projectionContentGraph
+        ProjectionContentGraph $projectionContentGraph,
+        ThrowableStorageInterface $throwableStorage
     ) {
         $this->databaseClient = $eventStorageDatabaseClient;
         $this->projectionContentGraph = $projectionContentGraph;
+        $this->throwableStorage = $throwableStorage;
         parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
     }
 
@@ -91,10 +96,15 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
     public function afterInvoke(EventEnvelope $eventEnvelope): void
     {
-        $this->triggerAfterInvokeHandlers(
-            $eventEnvelope,
-            $this->doingFullReplayOfProjection
-        );
+        try {
+            $this->triggerAfterInvokeHandlers(
+                $eventEnvelope,
+                $this->doingFullReplayOfProjection
+            );
+        } catch (\Throwable $e) {
+            $this->systemLogger->critical($this->throwableStorage->logThrowable($e));
+        }
+
         parent::afterInvoke($eventEnvelope);
     }
 

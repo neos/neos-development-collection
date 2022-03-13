@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 
 /**
  * This class is used as factory for {@see GraphProjector}, wired in Objects.yaml.
@@ -57,12 +58,14 @@ class CacheAwareGraphProjectorFactory
     public function build(
         DbalClient             $eventStorageDatabaseClient,
         VariableFrontend       $processedEventsCache,
-        ProjectionContentGraph $projectionContentGraph
+        ProjectionContentGraph $projectionContentGraph,
+        ThrowableStorageInterface $throwableStorageInterface
     ): GraphProjector {
         $graphProjector = new GraphProjector(
             $eventStorageDatabaseClient,
             $processedEventsCache,
-            $projectionContentGraph
+            $projectionContentGraph,
+            $throwableStorageInterface
         );
         $graphProjector->onBeforeInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
@@ -92,7 +95,6 @@ class CacheAwareGraphProjectorFactory
                 }
             }
         });
-
         $graphProjector->onAfterInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
                 // performance optimization: on full replay, we assume all caches to be flushed anyways
@@ -108,6 +110,7 @@ class CacheAwareGraphProjectorFactory
                     $domainEvent->getContentStreamIdentifier(),
                     $domainEvent->getNodeAggregateIdentifier()
                 );
+
                 if ($nodeAggregate) {
                     $this->scheduleCacheFlushJobForNodeAggregate(
                         $nodeAggregate->getContentStreamIdentifier(),
