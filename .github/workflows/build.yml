@@ -122,15 +122,15 @@ jobs:
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
 
-      - name: Prepare composer script execution
+      - name: Run Linter
         run: |
           cd Packages/CR
-
-      - name: Run Linter
-        run: composer lint
+          composer lint
 
       - name: Run Tests
-        run: composer test
+        run: |
+          cd Packages/CR
+          composer test
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
