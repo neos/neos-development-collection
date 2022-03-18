@@ -95,7 +95,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Security\Exception
      */
-    protected function evaluateNestedProperties(?string $defaultFusionPrototypeName = null):array
+    protected function evaluateNestedProperties(?string $defaultFusionPrototypeName = null): array
     {
         $sortedChildFusionKeys = $this->sortNestedProperties();
 
