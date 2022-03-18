@@ -52,57 +52,57 @@ class DataStructureImplementationTest extends UnitTestCase
         return [
             [
                 'Position end should put element to end',
-                ['second' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
+                ['second' => ['__meta' => ['position' => 'end'], '__value' => 1], 'first' => ['__value' => 2]],
                 ['/first', '/second']
             ],
             [
                 'Position start should put element to start',
-                ['second' => ['__meta' => []], 'first' => ['__meta' => ['position' => 'start']]],
+                ['second' => ['__value' => 1], 'first' => ['__meta' => ['position' => 'start'], '__value' => 2]],
                 ['/first', '/second']
             ],
             [
                 'Position start should respect priority',
-                ['second' => ['__meta' => ['position' => 'start 50']], 'first' => ['__meta' => ['position' => 'start 52']]],
+                ['second' => ['__meta' => ['position' => 'start 50'], '__value' => 1], 'first' => ['__meta' => ['position' => 'start 52'], '__value' => 2]],
                 ['/first', '/second']
             ],
             [
                 'Position end should respect priority',
-                ['second' => ['__meta' => ['position' => 'end 17']], 'first' => ['__meta' => ['position' => 'end']]],
+                ['second' => ['__meta' => ['position' => 'end 17'], '__value' => 1], 'first' => ['__meta' => ['position' => 'end'], '__value' => 2]],
                 ['/first', '/second']
             ],
             [
                 'Positional numbers are in the middle',
-                ['last' => ['__meta' => ['position' => 'end']], 'second' => ['__meta' => ['position' => '17']], 'first' => ['__meta' => ['position' => '5']], 'third' => ['__meta' => ['position' => '18']]],
+                ['last' => ['__meta' => ['position' => 'end'], '__value' => 1], 'second' => ['__meta' => ['position' => '17'], '__value' => 2], 'first' => ['__meta' => ['position' => '5'], '__value' => 3], 'third' => ['__meta' => ['position' => '18'], '__value' => 4]],
                 ['/first', '/second', '/third', '/last']
             ],
             [
                 'Position before adds before named element if present',
-                ['second' => ['__meta' => []], 'first' => ['__meta' => ['position' => 'before second']]],
+                ['second' => ['__value' => 1], 'first' => ['__meta' => ['position' => 'before second'], '__value' => 2]],
                 ['/first', '/second']
             ],
             [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
-                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
+                ['third' => ['__value' => 1], 'second' => ['__meta' => ['position' => 'before third 12'], '__value' => 2], 'first' => ['__meta' => ['position' => 'before third'], '__value' => 3]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position before works recursively',
-                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before second']]],
+                ['third' => ['__value' => 1], 'second' => ['__meta' => ['position' => 'before third'], '__value' => 2], 'first' => ['__meta' => ['position' => 'before second'], '__value' => 3]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position after adds after named element if present',
-                ['second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
+                ['second' => ['__meta' => ['position' => 'after first'], '__value' => 1], 'first' => ['__value' => 2]],
                 ['/first', '/second']
             ],
             [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
-                ['third' => ['__meta' => ['position' => 'after first']], 'second' => ['__meta' => ['position' => 'after first 12']], 'first' => ['__meta' => []]],
+                ['third' => ['__meta' => ['position' => 'after first'], '__value' => 1], 'second' => ['__meta' => ['position' => 'after first 12'], '__value' => 2], 'first' => ['__value' => 3]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position after works recursively',
-                ['third' => ['__meta' => ['position' => 'after second']], 'second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
+                ['third' => ['__meta' => ['position' => 'after second'], '__value' => 1], 'second' => ['__meta' => ['position' => 'after first'], '__value' => 2], 'first' => ['__value' => 3]],
                 ['/first', '/second', '/third']
             ]
         ];
@@ -135,10 +135,10 @@ class DataStructureImplementationTest extends UnitTestCase
     {
         return [
             [
-                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
+                ['second' => ['__meta' => ['position' => 'after unknown'], '__value' => 1], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__value' => 2]],
             ],
             [
-                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
+                ['third' => ['__value' => 1], 'second' => ['__meta' => ['position' => 'before third'], '__value' => 2], 'first' => ['__meta' => ['position' => 'before unknown'], '__value' => 3]],
             ],
         ];
     }
