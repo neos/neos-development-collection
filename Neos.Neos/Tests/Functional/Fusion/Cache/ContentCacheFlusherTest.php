@@ -193,10 +193,6 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
-        // Check for legacy tags wich are still supported
-        self::assertArrayHasKey('Node_'.$nodeIdentifier, $tagsToFlush);
-        self::assertArrayHasKey('DescendantOf_'.$nodeIdentifier, $tagsToFlush);
-
         foreach ($workspacesToTest as $name => $workspaceHash) {
             self::assertArrayHasKey('Node_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
             self::assertArrayHasKey('DescendantOf_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
@@ -229,11 +225,6 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest = [];
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
-
-        // Check for legacy tags wich are still supported
-        self::assertArrayHasKey('NodeType_Neos.Neos:Content', $tagsToFlush);
-        self::assertArrayHasKey('NodeType_Neos.Neos:Node', $tagsToFlush);
-        self::assertArrayHasKey('NodeType_Acme.Demo:Text', $tagsToFlush);
 
         // Check for tags that respect the workspace hash
         foreach ($workspacesToTest as $name => $workspaceHash) {
@@ -269,11 +260,6 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest = [];
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
-
-        // Check for legacy tags wich are still supported
-        self::assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush);
-        self::assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush);
-        self::assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush);
 
         foreach ($workspacesToTest as $name => $workspaceHash) {
             self::assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush, 'on workspace ' . $name);
