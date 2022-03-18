@@ -1,0 +1,109 @@
+`7.1.5 (2022-03-18) <https://github.com/neos/neos-development-collection/releases/tag/7.1.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Only emit thumbnailCreated when successful <https://github.com/neos/neos-development-collection/pull/3574>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3573 <https://github.com/neos/neos-development-collection/issues/3573>`_
+
+`BUGFIX: Persist Thumbnail using DBAL to avoid unique constraint errors <https://github.com/neos/neos-development-collection/pull/3583>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This uses a direct SQL INSERT via DBAL to store Thumbnails. Doing this
+avoid unique constraint exceptions that otherwise occur when multiple
+concurrent requests trigger Thumbnail creation.
+
+* Fixes: `#3479 <https://github.com/neos/neos-development-collection/issues/3479>`_
+* Packages: ``Media`` ``Neos``
+
+`TASK: Address PHP 8 deprecation warnings <https://github.com/neos/neos-development-collection/pull/3620>`_
+-----------------------------------------------------------------------------------------------------------
+
+This fixes the following deprecation warnings by removing optional arguments that were placed before non optional ones.
+While this changes the api it should not break any code as the optional arguments could not be used that way anyways.
+
+```
+PHP Deprecated:  Optional parameter $junkCallback declared before required parameter $options is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Diff/Classes/SequenceMatcher.php on line 83
+PHP Deprecated:  Optional parameter $arguments declared before required parameter $renderingContext is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Neos/Classes/ViewHelpers/Backend/IfModuleAccessibleViewHelper.php on line 66
+PHP Deprecated:  Optional parameter $tidy declared before required parameter $packageKey is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Neos/Classes/Domain/Service/SiteExportService.php on line 91
+PHP Deprecated:  Optional parameter $tidy declared before required parameter $pathAndFilename is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Neos/Classes/Domain/Service/SiteExportService.php on line 119
+```
+
+This change targets Neos 7.0 as this is the lowest version that allows php 8. No class or method that is @api is changed. When used the changes are non breaking and the modified classes are unlikely to be extended.
+
+* Resolves: `#3619 <https://github.com/neos/neos-development-collection/issues/3619>`_ 
+* Packages: ``BaseMixins`` ``Diff`` ``Neos``
+
+`BUGFIX: Check for the native PHP extension instead of the ImagineService, since ImageService is not used further in this generator. <https://github.com/neos/neos-development-collection/pull/3617>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Since there is no use of the ImagineService within the DocumentThumbnailGenerator, the availability of the native PHP extension for Imagick should be checked instead. This allows the use of the DocumentThumbnailGenerator with Imagick and the use of other Imagine based thumbnail generators using GDlib, for example.
+
+* Packages: ``Media`` ``NodeTypes``
+
+`BUGFIX: Remove unused formatting options <https://github.com/neos/neos-development-collection/pull/3613>`_
+-----------------------------------------------------------------------------------------------------------
+
+fixes: #3612
+
+Thanks to MonTea from Slack reporting that, we appreciate it!
+
+* Packages: ``Neos``
+
+`BUGFIX: backend message partials not found <https://github.com/neos/neos-development-collection/pull/3584>`_
+-------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Fix error the circumstances leading to:
+
+```
+The partial files "resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData.html", "resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData" could not be loaded.
+```
+
+This error message is hiding the actual error message I need to see.
+
+**How I did it**
+
+Remove usage of partials that had been deleted already in 2019 in 86088dc 
+
+**How to verify it**
+
+Go to various page in backend with a certain content Node Type on it. Go to this Node Type's yaml and change its Name from, e.g. `Vendor.Site:Box` to `Vendor.Site:Boxers`. Reload the backend and find the partial error above occur. After applying this bugfix, you'll find the real error message, `An exception was thrown while Neos tried to render your page`
+
+fixes: #2757
+
+* Packages: ``Neos``
+
+`TASK: Allow Neos.Fusion:Match to return a default value with a type other than string <https://github.com/neos/neos-development-collection/pull/3581>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+I removed the return type declaration of the `Neos\\Fusion\\FusionObjects\\MatchImplementation::getDefault()` method. This allows developers to return other types then string when using `Neos.Fusion:Match`. 
+
+**How to verify it**
+
+Create a new fusion value and use a value that is not a string, for example:
+
+```
+prototype(Vendor.Prefix:Component) {
+  value = Neos.Fusion:Match {
+    @subject = ${q(node).property('someProp')}
+    valueA = Neos.Fusion:DataStructure {
+      key = 'valueA'
+    }
+    @default = Neos.Fusion:DataStructure {
+      key = 'valueB'
+    }
+  }
+}
+```
+
+* Packages: ``Fusion`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.1.4...7.1.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
