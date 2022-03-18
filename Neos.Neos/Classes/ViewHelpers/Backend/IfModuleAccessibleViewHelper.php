@@ -59,7 +59,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array|null $arguments
+     * @param array $arguments
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
