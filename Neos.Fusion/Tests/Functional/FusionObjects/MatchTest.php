@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 /*
@@ -59,5 +60,16 @@ class MatchTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('match/errorWithoutMatch');
         $view->render();
+    }
+
+    /**
+     * @test
+     */
+    public function matchDefaultDataStructure()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('match/defaultDataStructure');
+        $result = $view->render();
+        self::assertEquals(['key' => 'value'], $result);
     }
 }
