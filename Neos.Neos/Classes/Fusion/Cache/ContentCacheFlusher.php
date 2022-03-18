@@ -190,7 +190,7 @@ class ContentCacheFlusher
         $this->resolveTagsForChildWorkspaces($workspace, $workspace->getName());
     }
 
-    protected function resolveTagsForChildWorkspaces(Workspace $workspace, string $startingPoint):void
+    protected function resolveTagsForChildWorkspaces(Workspace $workspace, string $startingPoint): void
     {
         $cachingHelper = $this->getCachingHelper();
         $this->workspacesToFlush[$startingPoint][$workspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspace->getName());
