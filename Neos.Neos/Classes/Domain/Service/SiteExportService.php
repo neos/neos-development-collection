@@ -88,7 +88,7 @@ class SiteExportService
      * @return void
      * @throws NeosException
      */
-    public function exportToPackage(array $sites, $tidy = false, $packageKey, $nodeTypeFilter = null)
+    public function exportToPackage(array $sites, $tidy, $packageKey, $nodeTypeFilter = null)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1404375719);
@@ -116,7 +116,7 @@ class SiteExportService
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
-    public function exportToFile(array $sites, $tidy = false, $pathAndFilename, $nodeTypeFilter = null)
+    public function exportToFile(array $sites, $tidy, $pathAndFilename, $nodeTypeFilter = null)
     {
         $this->resourcesPath = Files::concatenatePaths([dirname($pathAndFilename), 'Resources']);
         Files::createDirectoryRecursively($this->resourcesPath);

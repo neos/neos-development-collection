@@ -37,7 +37,7 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
         return (
             $thumbnail->getOriginalAsset() instanceof Document &&
             $this->isExtensionSupported($thumbnail) &&
-            $this->imagineService instanceof \Imagine\Imagick\Imagine
+            extension_loaded('imagick')
         );
     }
 
@@ -64,7 +64,7 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);
-            
+
             if (method_exists($im, 'mergeImageLayers')) {
                 // Replace flattenImages in imagick 3.3.0
                 // @see https://pecl.php.net/package/imagick/3.3.0RC2
