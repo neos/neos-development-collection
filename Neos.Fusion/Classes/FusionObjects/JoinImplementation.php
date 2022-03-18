@@ -11,9 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\FusionObjects\Traits\EvaluatePropertyListTrait;
-
 /**
  * Fusion object to render a list of items as single concatenated string
  */
@@ -33,9 +30,9 @@ class JoinImplementation extends AbstractArrayFusionObject
     /**
      * {@inheritdoc}
      *
-     * @return string
+     * @return string|null
      */
-    public function evaluate(): string
+    public function evaluate()
     {
         $glue = $this->getGlue();
 
@@ -44,6 +41,6 @@ class JoinImplementation extends AbstractArrayFusionObject
             return implode($glue, $resultParts);
         }
 
-        return '';
+        return null;
     }
 }
