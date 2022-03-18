@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -23,7 +24,7 @@ class MatchImplementation extends AbstractFusionObject
         return (string)($this->fusionValue('__meta/subject') ?? '');
     }
 
-    public function getDefault(): ?string
+    public function getDefault()
     {
         return $this->fusionValue('__meta/default');
     }
