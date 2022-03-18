@@ -12,7 +12,7 @@ debug.null = Debug {
 
 debug.nullWithTitle = Debug {
   title = 'Title'
-  value = NULL
+  value = null
 }
 
 debug.eelExpression = Debug {

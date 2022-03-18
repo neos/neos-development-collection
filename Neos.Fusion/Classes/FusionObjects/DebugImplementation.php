@@ -61,7 +61,13 @@ class DebugImplementation extends AbstractArrayFusionObject
         $title = trim($this->getTitle());
         $plaintext = $this->getPlaintext();
 
-        $debugData = $this->evaluateNestedProperties();
+        $debugData = [];
+        foreach (array_keys($this->properties) as $key) {
+            if (in_array($key, $this->ignoreProperties)) {
+                continue;
+            }
+            $debugData[$key] = $this->fusionValue($key);
+        }
 
         $title .= ' @ ' . $this->path;
 
