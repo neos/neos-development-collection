@@ -19,7 +19,7 @@ prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
   # }
   # in your site's Fusion if you don't need that behavior.
   attributes.class.@process.nodeType = Neos.Fusion:Case {
-    @context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
+    @context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(node.nodeType.name, '/[[:^alnum:]]/', '-'))}
 
     classIsString {
       condition = ${Type.isString(value)}

@@ -58,9 +58,9 @@ root {
   documentType {
     @position = 'end 9998'
     condition = Neos.Fusion:CanRender {
-      type = ${q(documentNode).property('_nodeType.name')}
+      type = ${documentNode.nodeType.name}
     }
-    type = ${q(documentNode).property('_nodeType.name')}
+    type = ${documentNode.nodeType.name}
   }
 
   default {
