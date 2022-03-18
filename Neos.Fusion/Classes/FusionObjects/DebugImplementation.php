@@ -25,7 +25,7 @@ use Neos\Fusion\Service\DebugStack;
  * //fusionPath plaintext If true, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
  * @api
  */
-class DebugImplementation extends JoinImplementation
+class DebugImplementation extends AbstractArrayFusionObject
 {
     /**
      * If you iterate over "properties" these in here should usually be ignored.
@@ -61,13 +61,7 @@ class DebugImplementation extends JoinImplementation
         $title = trim($this->getTitle());
         $plaintext = $this->getPlaintext();
 
-        $debugData = [];
-        foreach (array_keys($this->properties) as $key) {
-            if (in_array($key, $this->ignoreProperties)) {
-                continue;
-            }
-            $debugData[$key] = $this->fusionValue($key);
-        }
+        $debugData = $this->evaluateNestedProperties();
 
         $title .= ' @ ' . $this->path;
 

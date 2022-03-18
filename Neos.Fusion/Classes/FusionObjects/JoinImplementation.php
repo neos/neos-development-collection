@@ -11,11 +11,13 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\FusionObjects\Traits\EvaluatePropertyListTrait;
 
 /**
  * Fusion object to render a list of items as single concatenated string
  */
-class JoinImplementation extends DataStructureImplementation
+class JoinImplementation extends AbstractArrayFusionObject
 {
 
     /**
@@ -33,13 +35,15 @@ class JoinImplementation extends DataStructureImplementation
      *
      * @return string
      */
-    public function evaluate()
+    public function evaluate(): string
     {
         $glue = $this->getGlue();
-        $parentResult = parent::evaluate();
-        if ($parentResult !== []) {
-            return implode($glue, $parentResult);
+
+        $resultParts = $this->evaluateNestedProperties();
+        if ($resultParts !== []) {
+            return implode($glue, $resultParts);
         }
-        return null;
+
+        return '';
     }
 }

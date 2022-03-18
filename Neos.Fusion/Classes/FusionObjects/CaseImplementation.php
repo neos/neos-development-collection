@@ -23,7 +23,7 @@ use Neos\Fusion\Exception\UnsupportedObjectTypeAtPathException;
  * object; and all its children are by-default interpreted as "Matcher" Fusion
  * objects if no others are specified.
  */
-class CaseImplementation extends JoinImplementation
+class CaseImplementation extends AbstractArrayFusionObject
 {
     /**
      * This constant should be returned by individual matchers if the matcher
@@ -40,7 +40,7 @@ class CaseImplementation extends JoinImplementation
      */
     public function evaluate()
     {
-        $matcherKeys = $this->sortNestedFusionKeys();
+        $matcherKeys = $this->sortNestedProperties();
 
         foreach ($matcherKeys as $matcherName) {
             $renderedMatcher = $this->renderMatcher($matcherName);
