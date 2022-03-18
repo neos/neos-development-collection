@@ -32,7 +32,8 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  *
  * @ORM\Table(
  *    indexes={
- *      @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"})
+ *      @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"}),
+ *      @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"})
  *    }
  * )
  */
