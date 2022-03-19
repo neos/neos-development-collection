@@ -4,7 +4,6 @@ prototype(Neos.Neos:Error.View.Page) < prototype(Neos.Fusion:Component) {
 
   renderer = Neos.Fusion:Join {
     doctype = '<!DOCTYPE html>'
-    htmlStart = ''
     html = afx`
       <html lang="en">
         <head>
