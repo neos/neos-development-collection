@@ -95,4 +95,54 @@ class DataStructureTest extends AbstractFusionObjectTest
 
         $view->render();
     }
+
+    /**
+     * @test
+     */
+    public function untypedChildKeysWorkWithFusionIf(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/untypedChildKeysWithIf');
+        self::assertEquals(['keyWithoutType' => ['foo' => 123]], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function untypedChildKeysWorkWithFusionProcess(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/untypedChildKeysWithProcess');
+        self::assertEquals(['keyWithoutType' => ['foo' => 123, 0 => 'baz']], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function untypedChildKeysWorkWithFusionEelThisContext(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/untypedChildKeysWithThisContext');
+        self::assertEquals(['keyWithoutType' => ['foo' => 123, 'thisFoo' => 123]], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function untypedChildKeysWorkWithFusionPositionSorting(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/untypedChildKeysWithPositionOrdering');
+        self::assertEquals(['keyWithoutTypeLast' => ['baz' => 456], 'keyWithoutTypeFirst' => ['foo' => 123]], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function unsetUntypedChildKeysWontRenderAsDataStructure(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/unsetUntypedChildKeysWontRenderAsDataStructure');
+        self::assertEquals(['buz' => 456, 'keyWithUnsetType' => ['bat' => 123]], $view->render());
+    }
 }

@@ -107,3 +107,49 @@ dataStructure.nestingWithNonExistingChildObject = Neos.Fusion:DataStructure {
   }
   errorProperty = Some.NonExisting:Prototype
 }
+
+dataStructure.untypedChildKeysWithIf = Neos.Fusion:DataStructure {
+  keyWithoutType {
+    @if.display = true
+    foo = 123
+  }
+  keyWithoutType2 {
+    @if.display = false
+    baz = 456
+  }
+}
+
+dataStructure.untypedChildKeysWithProcess = Neos.Fusion:DataStructure {
+  keyWithoutType {
+    foo = 123
+    @process.addKey = ${Array.push(value, 'baz')}
+  }
+}
+
+dataStructure.untypedChildKeysWithThisContext = Neos.Fusion:DataStructure {
+  keyWithoutType {
+    foo = 123
+    thisFoo = ${this.foo}
+  }
+}
+
+dataStructure.untypedChildKeysWithPositionOrdering = Neos.Fusion:DataStructure {
+  keyWithoutTypeFirst {
+    foo = 123
+  }
+  keyWithoutTypeLast {
+    @postion = 'before keyWithoutTypeFirst'
+    baz = 456
+  }
+}
+
+dataStructure.unsetUntypedChildKeysWontRenderAsDataStructure = Neos.Fusion:DataStructure {
+  keyWithUnsetType = Neos.Fusion:Value {
+    value = 123
+  }
+  keyWithUnsetType >
+  keyWithUnsetType {
+    bat = 123
+  }
+  buz = 456
+}
