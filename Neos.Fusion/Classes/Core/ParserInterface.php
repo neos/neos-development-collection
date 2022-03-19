@@ -23,13 +23,6 @@ use Neos\Fusion;
 interface ParserInterface
 {
     /**
-     * Reserved parse tree keys for internal usage.
-     *
-     * @var array
-     */
-    public const RESERVED_PARSE_TREE_KEYS = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
-
-    /**
      * Parses the given Fusion source code and returns an object tree
      * as the result.
      *

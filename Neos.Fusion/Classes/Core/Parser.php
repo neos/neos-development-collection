@@ -31,10 +31,8 @@ class Parser implements ParserInterface
 {
     /**
      * Reserved parse tree keys for internal usage.
-     *
-     * @deprecated use ParserInterface::RESERVED_PARSE_TREE_KEYS
      */
-    public static array $reservedParseTreeKeys = ParserInterface::RESERVED_PARSE_TREE_KEYS;
+    public static array $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
      * @Flow\Inject

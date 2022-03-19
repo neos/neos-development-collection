@@ -243,7 +243,7 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
                 ->build();
         }
         if (str_starts_with($pathKey, '__')
-            && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
+            && in_array($pathKey, Fusion\Core\Parser::$reservedParseTreeKeys, true)) {
             throw $this->prepareParserException(new ParserException())
                 ->withCode(1437065270)
                 ->withMessage("Reversed key '$pathKey' used.")
