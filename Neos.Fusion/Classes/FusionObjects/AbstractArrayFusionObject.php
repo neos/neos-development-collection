@@ -157,10 +157,10 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * Returns TRUE if the given fusion key has no type, meaning neither
      * having a fusion objectType, eelExpression or value
      *
-     * @param string $key fusion child key path to check
+     * @param string|int $key fusion child key path to check
      * @return bool
      */
-    protected function isUntyped(string $key): bool
+    protected function isUntyped(string|int $key): bool
     {
         $property = $this->properties[$key];
         if (!is_array($property)) {
