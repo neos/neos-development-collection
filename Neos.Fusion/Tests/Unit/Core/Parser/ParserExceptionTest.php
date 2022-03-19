@@ -23,7 +23,6 @@ class ParserExceptionTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
-        $this->parser->injectPredictiveParser(new PredictiveParser());
     }
 
     public function fullParserExceptionMessage(): \Generator

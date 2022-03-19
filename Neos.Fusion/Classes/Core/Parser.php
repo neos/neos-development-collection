@@ -42,8 +42,6 @@ class Parser implements ParserInterface
      */
     protected $dslFactory;
 
-    protected PredictiveParser $predictiveParser;
-
     /**
      * Parses the given Fusion source code and returns an object tree
      * as the result.
@@ -68,11 +66,6 @@ class Parser implements ParserInterface
         return $objectTree->getObjectTree();
     }
 
-    public function injectPredictiveParser(PredictiveParser $predictiveParser)
-    {
-        $this->predictiveParser = $predictiveParser;
-    }
-
     protected function handleFileInclude(ObjectTree $objectTree, string $filePattern, ?string $contextPathAndFilename): void
     {
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $contextPathAndFilename, '.fusion');
@@ -95,8 +88,7 @@ class Parser implements ParserInterface
 
         $transpiledFusion = $dslObject->transpile($code);
 
-        $lexer = new Lexer('value = ' . $transpiledFusion);
-        $fusionFile = $this->predictiveParser->parse($lexer);
+        $fusionFile = PredictiveParser::parse('value = ' . $transpiledFusion);
 
         $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFile($fusionFile);
 
@@ -117,8 +109,6 @@ class Parser implements ParserInterface
 
     protected function getFusionFile(string $sourceCode, ?string $contextPathAndFilename): FusionFile
     {
-        $lexer = new Lexer($sourceCode);
-        $fusionFile = $this->predictiveParser->parse($lexer, $contextPathAndFilename);
-        return $fusionFile;
+        return PredictiveParser::parse($sourceCode, $contextPathAndFilename);
     }
 }

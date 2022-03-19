@@ -23,7 +23,6 @@ class ParserTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
-        $this->parser->injectPredictiveParser(new PredictiveParser());
     }
 
     public function pathBlockTest(): array
@@ -1055,7 +1054,6 @@ class ParserTest extends UnitTestCase
     public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
-        $parser->injectPredictiveParser(new PredictiveParser());
 
         $parser
             ->expects($this->exactly(1))

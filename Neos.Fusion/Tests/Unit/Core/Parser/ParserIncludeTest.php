@@ -29,7 +29,6 @@ class ParserIncludeTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
-        $this->parser->injectPredictiveParser(new PredictiveParser());
     }
 
     public static function setUpBeforeClass(): void
@@ -234,7 +233,6 @@ class ParserIncludeTest extends UnitTestCase
     public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern): void
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
-        $parser->injectPredictiveParser(new PredictiveParser());
         $parser
             ->expects(self::once())
             ->method('handleFileInclude')
@@ -272,7 +270,6 @@ class ParserIncludeTest extends UnitTestCase
         self::expectExceptionCode(1635878683);
 
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
-        $parser->injectPredictiveParser(new PredictiveParser());
         $parser
             ->expects(self::never())
             ->method('handleFileInclude');

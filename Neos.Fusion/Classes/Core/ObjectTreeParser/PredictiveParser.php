@@ -43,7 +43,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
 
 /**
- * The Fusion Parser Engine
+ * Parses a Fusion File to object ast-nodes
  */
 class PredictiveParser
 {
@@ -51,11 +51,17 @@ class PredictiveParser
 
     protected ?string $contextPathAndFilename;
 
-    public function parse(Lexer $lexer, ?string $contextPathAndFilename = null): FusionFile
+    protected function __construct(Lexer $lexer, ?string $contextPathAndFilename)
     {
         $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;
-        return $this->parseFusionFile();
+    }
+
+    public static function parse(string $sourceCode, ?string $contextPathAndFilename = null): FusionFile
+    {
+        $lexer = new Lexer($sourceCode);
+        $parser = new self($lexer, $contextPathAndFilename);
+        return $parser->parseFusionFile();
     }
 
     /**

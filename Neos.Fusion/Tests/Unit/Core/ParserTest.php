@@ -26,7 +26,6 @@ class ParserTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
-        $this->parser->injectPredictiveParser(new PredictiveParser());
     }
 
     /**
@@ -863,7 +862,6 @@ class ParserTest extends UnitTestCase
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
-        $parser->injectPredictiveParser(new PredictiveParser());
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
 
