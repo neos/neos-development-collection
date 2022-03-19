@@ -106,7 +106,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
             $propertyPath = $key;
-            if ($this->isUntyped($key) && $defaultFusionPrototypeName) {
+            if ($defaultFusionPrototypeName !== null && $this->isUntyped($key)) {
                 $propertyPath .= '<' . $defaultFusionPrototypeName . '>';
             }
             try {

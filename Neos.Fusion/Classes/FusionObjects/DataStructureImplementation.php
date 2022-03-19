@@ -35,6 +35,6 @@ class DataStructureImplementation extends AbstractArrayFusionObject
      */
     protected function sortNestedFusionKeys()
     {
-        return parent::sortNestedProperties();
+        return $this->sortNestedProperties();
     }
 }
