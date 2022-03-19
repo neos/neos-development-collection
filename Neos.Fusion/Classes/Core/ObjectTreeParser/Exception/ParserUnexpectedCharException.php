@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core\ObjectTreeParser\Exception;
 
 /*
@@ -10,6 +12,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Fusion\Exception;
 
 /**
