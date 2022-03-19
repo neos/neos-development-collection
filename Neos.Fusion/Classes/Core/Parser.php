@@ -16,7 +16,6 @@ namespace Neos\Fusion\Core;
 use Neos\Fusion;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
-use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeAstVisitor;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
