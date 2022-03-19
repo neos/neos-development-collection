@@ -19,7 +19,7 @@ use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeAstVisitor;
-use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
+use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -86,7 +86,7 @@ class Parser implements ParserInterface
 
         $transpiledFusion = $dslObject->transpile($code);
 
-        $fusionFile = PredictiveParser::parse('value = ' . $transpiledFusion);
+        $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
 
         $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFile($fusionFile);
 
@@ -107,6 +107,6 @@ class Parser implements ParserInterface
 
     protected function getFusionFile(string $sourceCode, ?string $contextPathAndFilename): FusionFile
     {
-        return PredictiveParser::parse($sourceCode, $contextPathAndFilename);
+        return ObjectTreeParser::parse($sourceCode, $contextPathAndFilename);
     }
 }

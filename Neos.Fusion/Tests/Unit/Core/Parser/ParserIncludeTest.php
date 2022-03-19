@@ -13,7 +13,6 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion;
-use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 use org\bovigo\vfs\vfsStream;
 use Neos\Fusion\Core\Parser;
 use org\bovigo\vfs\vfsStreamContent;

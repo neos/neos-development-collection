@@ -12,7 +12,6 @@ namespace Neos\Fusion\Tests\Unit\Core;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
 

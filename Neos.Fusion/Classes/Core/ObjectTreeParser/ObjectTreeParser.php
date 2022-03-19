@@ -45,7 +45,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
 /**
  * Parses a Fusion File to object ast-nodes
  */
-class PredictiveParser
+class ObjectTreeParser
 {
     protected Lexer $lexer;
 
