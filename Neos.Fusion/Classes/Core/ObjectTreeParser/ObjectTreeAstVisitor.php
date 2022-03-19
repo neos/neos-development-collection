@@ -143,8 +143,8 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         } catch (\Exception $e) {
             // convert all exceptions from dsl transpilation to fusion exception and add file and line info
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1180600696)
-                ->withMessage($e->getMessage())
+                ->setCode(1180600696)
+                ->setMessage($e->getMessage())
                 ->build();
         }
     }
@@ -190,8 +190,8 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
                 // Although this might work conceptually, it makes reasoning about the prototypical
                 // inheritance tree a lot more complex; that's why we forbid it right away.
                 throw $this->prepareParserException(new ParserException())
-                    ->withCode(1358418019)
-                    ->withMessage('Cannot inherit, when one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)')
+                    ->setCode(1358418019)
+                    ->setMessage('Cannot inherit, when one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)')
                     ->build();
             }
             // it must be of the form "prototype(Foo) < prototype(Bar)"
@@ -204,8 +204,8 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
             // Only one of "source" or "target" is a prototype. We do not support copying a
             // non-prototype value to a prototype value or vice-versa.
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1358418015)
-                ->withMessage("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.")
+                ->setCode(1358418015)
+                ->setMessage("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.")
                 ->build();
         }
 
@@ -238,22 +238,22 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
     {
         if ($pathKey === '') {
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1646988838)
-                ->withMessage("A path must not be empty.")
+                ->setCode(1646988838)
+                ->setMessage("A path must not be empty.")
                 ->build();
         }
         if (str_starts_with($pathKey, '__')
             && in_array($pathKey, Fusion\Core\Parser::$reservedParseTreeKeys, true)) {
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1437065270)
-                ->withMessage("Reversed key '$pathKey' used.")
+                ->setCode(1437065270)
+                ->setMessage("Reversed key '$pathKey' used.")
                 ->build();
         }
         if (str_contains($pathKey, "\n")) {
             $cleaned = str_replace("\n", '', $pathKey);
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1644068086)
-                ->withMessage("Key '$cleaned' cannot contain newlines.")
+                ->setCode(1644068086)
+                ->setMessage("Key '$cleaned' cannot contain newlines.")
                 ->build();
         }
     }
@@ -266,9 +266,9 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
             $fusionCode = file_get_contents($this->contextPathAndFilename);
         }
         return $parserException
-            ->withoutColumnShown()
-            ->withFile($this->contextPathAndFilename)
-            ->withFusion($fusionCode)
-            ->withCursor($this->currentObjectStatementCursor);
+            ->setHideColumnInformation()
+            ->setFile($this->contextPathAndFilename)
+            ->setFusion($fusionCode)
+            ->setCursor($this->currentObjectStatementCursor);
     }
 }

@@ -36,7 +36,7 @@ class ParserException extends Exception
     protected ?\Throwable $fluentPrevious = null;
 
     protected ?string $fluentFile;
-    protected string $fluentFusionCode;
+    protected string $fluentFusion;
     protected int $fluentCursor;
     protected bool $fluentShowColumn = true;
 
@@ -63,37 +63,37 @@ class ParserException extends Exception
         return $this->helperMessagePart;
     }
 
-    public function withCode(int $code): self
+    public function setCode(int $code): self
     {
         $this->fluentCode = $code;
         return $this;
     }
 
-    public function withFile(?string $file): self
+    public function setFile(?string $file): self
     {
         $this->fluentFile = $file;
         return $this;
     }
 
-    public function withFusion(string $fusion): self
+    public function setFusion(string $fusion): self
     {
-        $this->fluentFusionCode = $fusion;
+        $this->fluentFusion = $fusion;
         return $this;
     }
 
-    public function withCursor(int $cursor): self
+    public function setCursor(int $cursor): self
     {
         $this->fluentCursor = $cursor;
         return $this;
     }
 
-    public function withPrevious(?\Exception $previous): self
+    public function setPrevious(?\Exception $previous): self
     {
         $this->fluentPrevious = $previous;
         return $this;
     }
 
-    public function withoutColumnShown(): self
+    public function setHideColumnInformation(): self
     {
         $this->fluentShowColumn = false;
         return $this;
@@ -102,7 +102,7 @@ class ParserException extends Exception
     /**
      * @param callable(MessageLinePart $next, MessageLinePart $prev): string $messageMaker
      */
-    public function withMessageCreator(callable $messageCreator): self
+    public function setMessageCreator(callable $messageCreator): self
     {
         if ($messageCreator instanceof \Closure === false) {
             $messageCreator = \Closure::fromCallable($messageCreator);
@@ -111,9 +111,9 @@ class ParserException extends Exception
         return $this;
     }
 
-    public function withMessage(string $message): self
+    public function setMessage(string $message): self
     {
-        return $this->withMessageCreator(static function () use ($message) {
+        return $this->setMessageCreator(static function () use ($message) {
             return $message;
         });
     }
@@ -131,9 +131,9 @@ class ParserException extends Exception
             $lineNumberCursor,
             $linePartAfterCursor,
             $linePartBeforeCursor
-            ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusionCode, $this->fluentCursor);
+            ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
 
-        $isEof = strlen($this->fluentFusionCode) === $this->fluentCursor;
+        $isEof = strlen($this->fluentFusion) === $this->fluentCursor;
         $nextLine = new MessageLinePart($linePartAfterCursor, $isEof);
         $prevLine = new MessageLinePart($linePartBeforeCursor);
 

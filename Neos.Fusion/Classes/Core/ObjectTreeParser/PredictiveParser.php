@@ -181,18 +181,18 @@ class PredictiveParser
             throw $e;
         } catch (ParserUnexpectedCharException $e) {
             throw $this->prepareParserException(new ParserException())
-                ->withCode($e->getCode())
-                ->withMessageCreator(function (MessageLinePart $nextLine) use ($e) {
+                ->setCode($e->getCode())
+                ->setMessageCreator(function (MessageLinePart $nextLine) use ($e) {
                     return "Unexpected char {$nextLine->charPrint()}. {$e->getMessage()}";
                 })
-                ->withPrevious($e)
+                ->setPrevious($e)
                 ->build();
         } catch (Fusion\Exception $e) {
             throw $this->prepareParserException(new ParserException())
-                ->withCode($e->getCode())
-                ->withMessage('Exception while parsing: ' . $e->getMessage())
-                ->withoutColumnShown()
-                ->withPrevious($e)
+                ->setCode($e->getCode())
+                ->setMessage('Exception while parsing: ' . $e->getMessage())
+                ->setHideColumnInformation()
+                ->setPrevious($e)
                 ->build();
         }
     }
@@ -235,8 +235,8 @@ class PredictiveParser
         }
 
         throw $this->prepareParserException(new ParserException())
-            ->withCode(1646988828)
-            ->withMessageCreator([MessageCreator::class, 'forParseStatement'])
+            ->setCode(1646988828)
+            ->setMessageCreator([MessageCreator::class, 'forParseStatement'])
             ->build();
     }
 
@@ -293,9 +293,9 @@ class PredictiveParser
 
         if ($operation === null) {
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1646988835)
-                ->withMessageCreator([MessageCreator::class, 'forParsePathOrOperator'])
-                ->withCursor($cursorAfterObjectPath)
+                ->setCode(1646988835)
+                ->setMessageCreator([MessageCreator::class, 'forParsePathOrOperator'])
+                ->setCursor($cursorAfterObjectPath)
                 ->build();
         }
 
@@ -330,8 +330,8 @@ class PredictiveParser
                     $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
                 } catch (Fusion\Exception) {
                     throw $this->prepareParserException(new ParserException())
-                        ->withCode(1646991578)
-                        ->withMessageCreator([MessageCreator::class, 'forPathSegmentPrototypeName'])
+                        ->setCode(1646991578)
+                        ->setMessageCreator([MessageCreator::class, 'forPathSegmentPrototypeName'])
                         ->build();
                 }
                 $this->expect(Token::RPAREN);
@@ -354,8 +354,8 @@ class PredictiveParser
         }
 
         throw $this->prepareParserException(new ParserException())
-            ->withCode(1635708755)
-            ->withMessageCreator([MessageCreator::class, 'forParsePathSegment'])
+            ->setCode(1635708755)
+            ->setMessageCreator([MessageCreator::class, 'forParsePathSegment'])
             ->build();
     }
 
@@ -421,8 +421,8 @@ class PredictiveParser
         }
 
         throw $this->prepareParserException(new ParserException())
-            ->withCode(1646988841)
-            ->withMessageCreator([MessageCreator::class, 'forParsePathValue'])
+            ->setCode(1646988841)
+            ->setMessageCreator([MessageCreator::class, 'forParsePathValue'])
             ->build();
     }
 
@@ -437,8 +437,8 @@ class PredictiveParser
             $dslCode = $this->expect(Token::DSL_EXPRESSION_CONTENT)->getValue();
         } catch (Fusion\Exception) {
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1490714685)
-                ->withMessageCreator([MessageCreator::class, 'forParseDslExpression'])
+                ->setCode(1490714685)
+                ->setMessageCreator([MessageCreator::class, 'forParseDslExpression'])
                 ->build();
         }
         $dslCode = substr($dslCode, 1, -1);
@@ -493,9 +493,9 @@ class PredictiveParser
             $this->expect(Token::RBRACE);
         } catch (Fusion\Exception) {
             throw $this->prepareParserException(new ParserException())
-                ->withCode(1646988844)
-                ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
-                ->withCursor($cursorPositionStartOfBlock)
+                ->setCode(1646988844)
+                ->setMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
+                ->setCursor($cursorPositionStartOfBlock)
                 ->build();
         }
 
@@ -518,16 +518,16 @@ class PredictiveParser
             return;
         }
         throw $this->prepareParserException(new ParserException())
-            ->withCode(1635878683)
-            ->withMessageCreator([MessageCreator::class, 'forParseEndOfStatement'])
+            ->setCode(1635878683)
+            ->setMessageCreator([MessageCreator::class, 'forParseEndOfStatement'])
             ->build();
     }
 
     protected function prepareParserException(ParserException $parserException): ParserException
     {
         return $parserException
-            ->withFile($this->contextPathAndFilename)
-            ->withFusion($this->lexer->getCode())
-            ->withCursor($this->lexer->getCursor());
+            ->setFile($this->contextPathAndFilename)
+            ->setFusion($this->lexer->getCode())
+            ->setCursor($this->lexer->getCursor());
     }
 }
