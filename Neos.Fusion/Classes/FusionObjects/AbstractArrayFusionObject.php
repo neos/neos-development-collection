@@ -154,7 +154,8 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
-     * Returns TRUE if the given property has no object type assigned
+     * Returns TRUE if the given fusion key has no type, meaning neither
+     * having a fusion objectType, eelExpression or value
      *
      * @param string $key fusion child key path to check
      * @return bool
