@@ -139,10 +139,10 @@ class DataStructureTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function unsetUntypedChildKeysWontRenderAsDataStructure(): void
+    public function unsetUntypedChildKeysWillRenderAsDataStructure(): void
     {
         $view = $this->buildView();
-        $view->setFusionPath('dataStructure/unsetUntypedChildKeysWontRenderAsDataStructure');
+        $view->setFusionPath('dataStructure/unsetUntypedChildKeyWillRenderAsDataStructure');
         self::assertEquals(['buz' => 456, 'keyWithUnsetType' => ['bat' => 123]], $view->render());
     }
 }
