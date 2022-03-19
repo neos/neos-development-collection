@@ -10,9 +10,6 @@ Neos:
           fusionParserExceptions:
             matchingExceptionClassNames: ['Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException']
             options:
-              # TODO Bug - unused templatePathAndFilename has to be set to pass isset() check ...
-              # https://github.com/neos/flow-development-collection/issues/1108
-              templatePathAndFilename: true
               logException: true
               viewClassName: Neos\Fusion\View\FusionView
               viewOptions:
