@@ -33,25 +33,25 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnset;
 
-abstract class AstNodeVisitor
+interface AstNodeVisitor
 {
-    abstract public function visitFusionFile(FusionFile $fusionFile);
-    abstract public function visitStatementList(StatementList $statementList);
-    abstract public function visitIncludeStatement(IncludeStatement $includeStatement);
-    abstract public function visitObjectStatement(ObjectStatement $objectStatement);
-    abstract public function visitBlock(Block $block);
-    abstract public function visitObjectPath(ObjectPath $objectPath);
-    abstract public function visitMetaPathSegment(MetaPathSegment $metaPathSegment);
-    abstract public function visitPrototypePathSegment(PrototypePathSegment $prototypePathSegment);
-    abstract public function visitPathSegment(PathSegment $pathSegment);
-    abstract public function visitValueAssignment(ValueAssignment $valueAssignment);
-    abstract public function visitFusionObjectValue(FusionObjectValue $fusionObjectValue);
-    abstract public function visitDslExpressionValue(DslExpressionValue $dslExpressionValue);
-    abstract public function visitEelExpressionValue(EelExpressionValue $eelExpressionValue);
-    abstract public function visitSimpleValue(SimpleValue $simpleValue);
-    abstract public function visitCharValue(CharValue $charValue);
-    abstract public function visitStringValue(StringValue $stringValue);
-    abstract public function visitValueCopy(ValueCopy $valueCopy);
-    abstract public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath);
-    abstract public function visitValueUnset(ValueUnset $valueUnset);
+    public function visitFusionFile(FusionFile $fusionFile);
+    public function visitStatementList(StatementList $statementList);
+    public function visitIncludeStatement(IncludeStatement $includeStatement);
+    public function visitObjectStatement(ObjectStatement $objectStatement);
+    public function visitBlock(Block $block);
+    public function visitObjectPath(ObjectPath $objectPath);
+    public function visitMetaPathSegment(MetaPathSegment $metaPathSegment);
+    public function visitPrototypePathSegment(PrototypePathSegment $prototypePathSegment);
+    public function visitPathSegment(PathSegment $pathSegment);
+    public function visitValueAssignment(ValueAssignment $valueAssignment);
+    public function visitFusionObjectValue(FusionObjectValue $fusionObjectValue);
+    public function visitDslExpressionValue(DslExpressionValue $dslExpressionValue);
+    public function visitEelExpressionValue(EelExpressionValue $eelExpressionValue);
+    public function visitSimpleValue(SimpleValue $simpleValue);
+    public function visitCharValue(CharValue $charValue);
+    public function visitStringValue(StringValue $stringValue);
+    public function visitValueCopy(ValueCopy $valueCopy);
+    public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath);
+    public function visitValueUnset(ValueUnset $valueUnset);
 }

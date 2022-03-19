@@ -35,7 +35,10 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnset;
 use Neos\Fusion;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
-class ObjectTreeAstVisitor extends AstNodeVisitor
+/**
+ * Builds the array merged object tree for the Fusion runtime
+ */
+class ObjectTreeAstVisitor implements AstNodeVisitor
 {
     /**
      * For nested blocks to determine the prefix
