@@ -168,15 +168,15 @@
                 </div>
                 <div class="neos-modal-backdrop neos-in"></div>
             </div>
-            <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
+          </f:if>
+        </f:if>
+        <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
             <f:form action="createAssetCollection" addQueryString="true" id="neos-assetcollections-create-form">
                 <f:form.textfield name="title" placeholder="{neos:backend.translate(id: 'newCollection.placeholder', package: 'Neos.Media.Browser')}" /><br /><br />
                 <button type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'createCollection', package: 'Neos.Media.Browser')}</button>
                 <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
             </f:form>
-            </f:security.ifAccess>
-            </f:if>
-        </f:if>
+        </f:security.ifAccess>
     </div>
 
     <div class="neos-media-aside-group">

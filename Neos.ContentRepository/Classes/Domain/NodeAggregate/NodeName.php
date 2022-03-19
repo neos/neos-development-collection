@@ -21,44 +21,35 @@ use Neos\Flow\Annotations as Flow;
  * the node name is "foo".
  *
  * Semantically it describes the hierarchical relation of a node to its parent, e.g. "main" denotes the main child node.
- *
- * @Flow\Proxy(false)
  * @api
  */
-final class NodeName implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class NodeName implements \JsonSerializable, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    private function __construct(string $value)
-    {
-        if (!is_string($value) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $value) !== 1) {
-            throw new \InvalidArgumentException('Invalid node name "' . $value . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
+    private function __construct(
+        private string $value
+    ) {
+        if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $value) !== 1) {
+            throw new \InvalidArgumentException(
+                'Invalid node name "' . $value
+                    . '" (a node name must only contain lowercase characters, numbers and the "-" sign).',
+                1364290748
+            );
         }
-
-        $this->value = $value;
     }
 
     public static function fromString(string $value): self
     {
-        return new static(strtolower($value));
+        return new self(strtolower($value));
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
-        return $this->value ?? '';
+        return $this->value;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
-        return $this->value ?? '';
+        return $this->value;
     }
 }

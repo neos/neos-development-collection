@@ -307,10 +307,8 @@ The following options are allowed for defining a NodeType:
             formatting:
               strong: true
               em: true
-              u: true
               sub: true
               sup: true
-              del: true
               p: true
               h1: true
               h2: true

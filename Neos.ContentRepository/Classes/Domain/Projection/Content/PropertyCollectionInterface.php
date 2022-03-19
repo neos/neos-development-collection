@@ -13,6 +13,10 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+/**
+ * @extends \ArrayAccess<string,mixed>
+ * @extends \IteratorAggregate<string,mixed>
+ */
 interface PropertyCollectionInterface extends \ArrayAccess, \IteratorAggregate
 {
 }

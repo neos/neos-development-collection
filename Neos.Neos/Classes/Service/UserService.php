@@ -58,7 +58,7 @@ class UserService
     /**
      * Returns the current backend user
      *
-     * @return User
+     * @return ?User
      * @api
      */
     public function getBackendUser()

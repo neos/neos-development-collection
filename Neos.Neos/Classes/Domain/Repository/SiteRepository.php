@@ -64,7 +64,7 @@ class SiteRepository extends Repository
     /**
      * Find first site with status "online"
      *
-     * @return Site
+     * @return ?Site
      */
     public function findFirstOnline()
     {
