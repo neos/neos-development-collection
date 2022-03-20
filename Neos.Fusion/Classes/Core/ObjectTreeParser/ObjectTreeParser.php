@@ -31,7 +31,10 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractPathValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionObjectValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FloatValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\IntValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\BoolValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\NullValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
@@ -402,22 +405,22 @@ class ObjectTreeParser
                 return new EelExpressionValue($eelContent);
 
             case $this->accept(Token::FLOAT):
-                return new SimpleValue((float)$this->consume()->getValue());
+                return new FloatValue((float)$this->consume()->getValue());
 
             case $this->accept(Token::INTEGER):
-                return new SimpleValue((int)$this->consume()->getValue());
+                return new IntValue((int)$this->consume()->getValue());
 
             case $this->accept(Token::TRUE_VALUE):
                 $this->consume();
-                return new SimpleValue(true);
+                return new BoolValue(true);
 
             case $this->accept(Token::FALSE_VALUE):
                 $this->consume();
-                return new SimpleValue(false);
+                return new BoolValue(false);
 
             case $this->accept(Token::NULL_VALUE):
                 $this->consume();
-                return new SimpleValue(null);
+                return new NullValue();
         }
 
         throw $this->prepareParserException(new ParserException())

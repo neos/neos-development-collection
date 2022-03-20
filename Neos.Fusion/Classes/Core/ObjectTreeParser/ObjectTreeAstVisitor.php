@@ -26,7 +26,10 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectStatement;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPath;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\PathSegment;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathSegment;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FloatValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\IntValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\BoolValue;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\NullValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementList;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignment;
@@ -160,9 +163,24 @@ class ObjectTreeAstVisitor implements AstNodeVisitor
         ];
     }
 
-    public function visitSimpleValue(SimpleValue $simpleValue)
+    public function visitFloatValue(FloatValue $floatValue)
     {
-        return $simpleValue->value;
+        return $floatValue->value;
+    }
+
+    public function visitIntValue(IntValue $intValue)
+    {
+        return $intValue->value;
+    }
+
+    public function visitBoolValue(BoolValue $boolValue)
+    {
+        return $boolValue->value;
+    }
+
+    public function visitNullValue(NullValue $nullValue)
+    {
+        return null;
     }
 
     public function visitCharValue(CharValue $charValue): string
