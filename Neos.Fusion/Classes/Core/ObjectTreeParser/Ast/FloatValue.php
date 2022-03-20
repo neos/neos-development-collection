@@ -14,7 +14,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitor;
+use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 #[Flow\Proxy(false)]
 class FloatValue extends AbstractPathValue
@@ -25,7 +25,7 @@ class FloatValue extends AbstractPathValue
     ) {
     }
 
-    public function visit(AstNodeVisitor $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, ...$args)
     {
         return $visitor->visitFloatValue($this, ...$args);
     }

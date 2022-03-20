@@ -41,7 +41,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 /**
  * Builds the array merged object tree for the Fusion runtime
  */
-class ObjectTreeAstVisitor implements AstNodeVisitor
+class ObjectTreeAstVisitorInterface implements AstNodeVisitorInterface
 {
     /**
      * For nested blocks to determine the prefix
