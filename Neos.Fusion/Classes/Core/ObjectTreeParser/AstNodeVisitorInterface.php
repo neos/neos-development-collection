@@ -30,7 +30,6 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\FloatValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\IntValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\BoolValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\NullValue;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
@@ -55,7 +54,6 @@ interface AstNodeVisitorInterface
     public function visitIntValue(IntValue $intValue);
     public function visitBoolValue(BoolValue $boolValue);
     public function visitNullValue(NullValue $nullValue);
-    public function visitCharValue(CharValue $charValue);
     public function visitStringValue(StringValue $stringValue);
     public function visitValueCopy(ValueCopy $valueCopy);
     public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath);

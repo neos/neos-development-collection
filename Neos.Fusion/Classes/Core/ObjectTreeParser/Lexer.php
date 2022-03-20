@@ -91,7 +91,7 @@ class Lexer
         Token::RBRACE => '/^}/',
 
         // Strings
-        Token::STRING => <<<'REGEX'
+        Token::STRING_DOUBLE_QUOTED => <<<'REGEX'
         /^
           "[^"\\]*              # double quoted strings with possibly escaped double quotes
             (?:
@@ -101,7 +101,7 @@ class Lexer
           "
         /x
         REGEX,
-        Token::CHAR => <<<'REGEX'
+        Token::STRING_SINGLE_QUOTED => <<<'REGEX'
         /^
           '[^'\\]*              # single quoted strings with possibly escaped single quotes
             (?:

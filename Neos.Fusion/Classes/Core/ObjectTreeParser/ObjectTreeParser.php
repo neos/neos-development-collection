@@ -35,7 +35,6 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\FloatValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\IntValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\BoolValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\NullValue;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
@@ -232,8 +231,8 @@ class ObjectTreeParser
             case $this->accept(Token::PROTOTYPE_START):
             case $this->accept(Token::OBJECT_PATH_PART):
             case $this->accept(Token::META_PATH_START):
-            case $this->accept(Token::CHAR):
-            case $this->accept(Token::STRING):
+            case $this->accept(Token::STRING_SINGLE_QUOTED):
+            case $this->accept(Token::STRING_DOUBLE_QUOTED):
                 return $this->parseObjectStatement();
         }
 
@@ -253,8 +252,8 @@ class ObjectTreeParser
         $this->lazyExpect(Token::SPACE);
 
         switch (true) {
-            case $this->accept(Token::STRING):
-            case $this->accept(Token::CHAR):
+            case $this->accept(Token::STRING_DOUBLE_QUOTED):
+            case $this->accept(Token::STRING_SINGLE_QUOTED):
                 $stringWrapped = $this->consume()->getValue();
                 $filePattern = substr($stringWrapped, 1, -1);
                 break;
@@ -349,8 +348,8 @@ class ObjectTreeParser
                 $metaPathSegmentKey = $this->expect(Token::OBJECT_PATH_PART)->getValue();
                 return new MetaPathSegment($metaPathSegmentKey);
 
-            case $this->accept(Token::STRING):
-            case $this->accept(Token::CHAR):
+            case $this->accept(Token::STRING_DOUBLE_QUOTED):
+            case $this->accept(Token::STRING_SINGLE_QUOTED):
                 $stringWrapped = $this->consume()->getValue();
                 $quotedPathKey = substr($stringWrapped, 1, -1);
                 return new PathSegment($quotedPathKey);
@@ -383,15 +382,15 @@ class ObjectTreeParser
         // watch out for the order, its regex matching and first one wins.
         // sorted by likelihood
         switch (true) {
-            case $this->accept(Token::CHAR):
+            case $this->accept(Token::STRING_SINGLE_QUOTED):
                 $charWrapped = $this->consume()->getValue();
-                $charContent = substr($charWrapped, 1, -1);
-                return new CharValue($charContent);
+                $stringContent = substr($charWrapped, 1, -1);
+                return new StringValue(stripslashes($stringContent));
 
-            case $this->accept(Token::STRING):
+            case $this->accept(Token::STRING_DOUBLE_QUOTED):
                 $stringWrapped = $this->consume()->getValue();
                 $stringContent = substr($stringWrapped, 1, -1);
-                return new StringValue($stringContent);
+                return new StringValue(stripcslashes($stringContent));
 
             case $this->accept(Token::FUSION_OBJECT_NAME):
                 return new FusionObjectValue($this->consume()->getValue());

@@ -46,8 +46,8 @@ class Token
     public const INTEGER = 19;
     public const FLOAT = 20;
 
-    public const STRING = 21;
-    public const CHAR = 22;
+    public const STRING_DOUBLE_QUOTED = 21;
+    public const STRING_SINGLE_QUOTED = 22;
 
     public const EEL_EXPRESSION = 23;
     public const DSL_EXPRESSION_START = 24;

@@ -15,7 +15,6 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\Block;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
@@ -183,14 +182,9 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         return null;
     }
 
-    public function visitCharValue(CharValue $charValue): string
-    {
-        return stripslashes($charValue->value);
-    }
-
     public function visitStringValue(StringValue $stringValue): string
     {
-        return stripcslashes($stringValue->value);
+        return $stringValue->value;
     }
 
     public function visitValueCopy(ValueCopy $valueCopy, array $currentPath = null)
