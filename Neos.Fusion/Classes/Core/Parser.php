@@ -17,7 +17,7 @@ use Neos\Fusion;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
-use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeAstVisitorInterface;
+use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeAstVisitor;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
 use Neos\Flow\Annotations as Flow;
 
@@ -95,9 +95,9 @@ class Parser implements ParserInterface
         return $dslValue;
     }
 
-    protected function getObjectTreeAstVisitor(ObjectTree $objectTree): ObjectTreeAstVisitorInterface
+    protected function getObjectTreeAstVisitor(ObjectTree $objectTree): ObjectTreeAstVisitor
     {
-        return new ObjectTreeAstVisitorInterface(
+        return new ObjectTreeAstVisitor(
             $objectTree,
             fn (...$args) => $this->handleFileInclude(...$args),
             fn (...$args) => $this->handleDslTranspile(...$args),
