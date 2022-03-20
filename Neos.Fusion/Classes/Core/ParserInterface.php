@@ -23,15 +23,15 @@ use Neos\Fusion;
 interface ParserInterface
 {
     /**
-     * Parses the given Fusion source code and returns an object tree
+     * Parses the given Fusion source code, resolves includes and returns a merged array tree
      * as the result.
      *
      * @param string $sourceCode The Fusion source code to parse
-     * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
-     * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
-     * @return array A Fusion object tree, generated from the source code
+     * @param string|null $contextPathAndFilename An optional path and filename used for relative Fusion file includes
+     * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
+     * @return array The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
      * @api
      */
-    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array;
+    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array;
 }

@@ -39,9 +39,9 @@ use Neos\Fusion;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
 /**
- * Builds the array merged object tree for the Fusion runtime
+ * Builds the merged array tree for the Fusion runtime
  */
-class ObjectTreeAstVisitor implements AstNodeVisitorInterface
+class MergedArrayTreeVisitor implements AstNodeVisitorInterface
 {
     /**
      * For nested blocks to determine the prefix
@@ -53,17 +53,17 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
     protected int $currentObjectStatementCursor;
 
     public function __construct(
-        protected ObjectTree $objectTree,
+        protected MergedArrayTree $mergedArrayTree,
         protected \Closure $handleFileInclude,
         protected \Closure $handleDslTranspile
     ) {
     }
 
-    public function visitFusionFile(FusionFile $fusionFile): ObjectTree
+    public function visitFusionFile(FusionFile $fusionFile): MergedArrayTree
     {
         $this->contextPathAndFilename = $fusionFile->contextPathAndFileName;
         $fusionFile->statementList->visit($this);
-        return $this->objectTree;
+        return $this->mergedArrayTree;
     }
 
     public function visitStatementList(StatementList $statementList)
@@ -75,7 +75,7 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
 
     public function visitIncludeStatement(IncludeStatement $includeStatement)
     {
-        ($this->handleFileInclude)($this->objectTree, $includeStatement->filePattern, $this->contextPathAndFilename);
+        ($this->handleFileInclude)($this->mergedArrayTree, $includeStatement->filePattern, $this->contextPathAndFilename);
     }
 
     public function visitObjectStatement(ObjectStatement $objectStatement)
@@ -130,7 +130,7 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
         $value = $valueAssignment->pathValue->visit($this);
-        $this->objectTree->setValueInObjectTree($currentPath, $value);
+        $this->mergedArrayTree->setValueInTree($currentPath, $value);
     }
 
     public function visitFusionObjectValue(FusionObjectValue $fusionObjectValue)
@@ -197,10 +197,10 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
     {
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
-        $sourcePath = $valueCopy->assignedObjectPath->visit($this, $this->objectTree->getParentPath($currentPath));
+        $sourcePath = $valueCopy->assignedObjectPath->visit($this, $this->mergedArrayTree->getParentPath($currentPath));
 
-        $currentPathsPrototype = $this->objectTree->objectPathIsPrototype($currentPath);
-        $sourcePathIsPrototype = $this->objectTree->objectPathIsPrototype($sourcePath);
+        $currentPathsPrototype = $this->mergedArrayTree->pathIsPrototype($currentPath);
+        $sourcePathIsPrototype = $this->mergedArrayTree->pathIsPrototype($sourcePath);
         if ($currentPathsPrototype && $sourcePathIsPrototype) {
             // both are a prototype definition
             if (count($currentPath) !== 2 || count($sourcePath) !== 2) {
@@ -217,7 +217,7 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
             }
             // it must be of the form "prototype(Foo) < prototype(Bar)"
             $currentPath[] = '__prototypeObjectName';
-            $this->objectTree->setValueInObjectTree($currentPath, end($sourcePath));
+            $this->mergedArrayTree->setValueInTree($currentPath, end($sourcePath));
             return;
         }
 
@@ -230,7 +230,7 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
                 ->build();
         }
 
-        $this->objectTree->copyValueInObjectTree($currentPath, $sourcePath);
+        $this->mergedArrayTree->copyValueInTree($currentPath, $sourcePath);
     }
 
     public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath, $relativePath = [])
@@ -246,7 +246,7 @@ class ObjectTreeAstVisitor implements AstNodeVisitorInterface
     {
         $currentPath ?? throw new \BadMethodCallException('$currentPath is required.');
 
-        $this->objectTree->removeValueInObjectTree($currentPath);
+        $this->mergedArrayTree->removeValueInTree($currentPath);
     }
 
     protected function getCurrentObjectPathPrefix(): array

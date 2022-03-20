@@ -16,8 +16,8 @@ namespace Neos\Fusion\Core;
 use Neos\Fusion;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
-use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
-use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeAstVisitor;
+use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTree;
+use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTreeVisitor;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
 use Neos\Flow\Annotations as Flow;
 
@@ -40,30 +40,29 @@ class Parser implements ParserInterface
     protected $dslFactory;
 
     /**
-     * Parses the given Fusion source code and returns an object tree
+     * Parses the given Fusion source code, resolves includes and returns a merged array tree
      * as the result.
      *
      * @param string $sourceCode The Fusion source code to parse
-     * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
-     * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
-     * @return array A Fusion object tree, generated from the source code
+     * @param string|null $contextPathAndFilename An optional path and filename used for relative Fusion file includes
+     * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
+     * @return array The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
      * @api
      */
-    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array
+    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
     {
         $fusionFile = $this->getFusionFile($sourceCode, $contextPathAndFilename);
 
-        $objectTree = new ObjectTree();
-        $objectTree->setObjectTree($objectTreeUntilNow);
+        $mergedArrayTree = new MergedArrayTree($mergedArrayTreeUntilNow);
 
-        $objectTree = $this->getObjectTreeAstVisitor($objectTree)->visitFusionFile($fusionFile);
+        $mergedArrayTree = $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile($fusionFile);
 
-        $objectTree->buildPrototypeHierarchy();
-        return $objectTree->getObjectTree();
+        $mergedArrayTree->buildPrototypeHierarchy();
+        return $mergedArrayTree->getTree();
     }
 
-    protected function handleFileInclude(ObjectTree $objectTree, string $filePattern, ?string $contextPathAndFilename): void
+    protected function handleFileInclude(MergedArrayTree $mergedArrayTree, string $filePattern, ?string $contextPathAndFilename): void
     {
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $contextPathAndFilename, '.fusion');
         foreach ($filesToInclude as $file) {
@@ -74,7 +73,7 @@ class Parser implements ParserInterface
             if ($contextPathAndFilename === null
                 || stat($contextPathAndFilename) !== stat($file)) {
                 $fusionFile = $this->getFusionFile(file_get_contents($file), $file);
-                $this->getObjectTreeAstVisitor($objectTree)->visitFusionFile($fusionFile);
+                $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile($fusionFile);
             }
         }
     }
@@ -87,18 +86,18 @@ class Parser implements ParserInterface
 
         $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
 
-        $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFile($fusionFile);
+        $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
 
-        $temporaryAst = $objectTree->getObjectTree();
+        $temporaryAst = $mergedArrayTree->getTree();
 
         $dslValue = $temporaryAst['value'];
         return $dslValue;
     }
 
-    protected function getObjectTreeAstVisitor(ObjectTree $objectTree): ObjectTreeAstVisitor
+    protected function getMergedArrayTreeVisitor(MergedArrayTree $mergedArrayTree): MergedArrayTreeVisitor
     {
-        return new ObjectTreeAstVisitor(
-            $objectTree,
+        return new MergedArrayTreeVisitor(
+            $mergedArrayTree,
             fn (...$args) => $this->handleFileInclude(...$args),
             fn (...$args) => $this->handleDslTranspile(...$args),
         );

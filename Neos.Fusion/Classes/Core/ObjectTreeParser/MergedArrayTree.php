@@ -16,55 +16,49 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 use Neos\Fusion;
 use Neos\Utility\Arrays;
 
-class ObjectTree
+class MergedArrayTree
 {
-    protected array $objectTree = [];
+    public function __construct(
+        protected array $tree = []
+    ) {
+    }
 
-    public static function objectPathIsPrototype(array $path): bool
+    public static function pathIsPrototype(array $path): bool
     {
         return ($path[count($path) - 2] ?? null) === '__prototypes';
     }
 
     public static function getParentPath(array $path): array
     {
-        if (self::objectPathIsPrototype($path)) {
+        if (self::pathIsPrototype($path)) {
             return array_slice($path, 0, -2);
         }
         return array_slice($path, 0, -1);
     }
 
-    public function setObjectTree(array $objectTree): void
+    public function getTree(): array
     {
-        $this->objectTree = $objectTree;
+        return $this->tree;
     }
 
-    public function getObjectTree(): array
+    public function removeValueInTree(array $path): void
     {
-        return $this->objectTree;
+        $this->tree = Arrays::unsetValueByPath($this->tree, $path);
+        $this->setValueInTree($path, ['__stopInheritanceChain' => true]);
     }
 
-    public function removeValueInObjectTree(array $targetObjectPath): void
+    public function copyValueInTree(array $targetPath, array $sourcePath): void
     {
-        $this->objectTree = Arrays::unsetValueByPath($this->objectTree, $targetObjectPath);
-        $this->setValueInObjectTree($targetObjectPath, ['__stopInheritanceChain' => true]);
-    }
-
-    public function copyValueInObjectTree(array $targetObjectPath, array $sourceObjectPath): void
-    {
-        // retrieve a value in the object tree, specified by the object path array ($sourceObjectPath).
-        $originalValue = Arrays::getValueByPath($this->objectTree, $sourceObjectPath);
-        $this->setValueInObjectTree($targetObjectPath, $originalValue);
+        $originalValue = Arrays::getValueByPath($this->tree, $sourcePath);
+        $this->setValueInTree($targetPath, $originalValue);
     }
 
     /**
-     * Assigns a value to a node or a property in the object tree, specified by the object path array.
-     *
-     * @param array $objectPathArray The object path, specifying the node / property to set
-     * @param scalar|null|array $value The value to assign, is a non-array type or an array with __eelExpression etc.
+     * @param scalar|null|array $value The value to assign, either a scalar type or an array with __eelExpression etc.
      */
-    public function setValueInObjectTree(array $objectPathArray, $value): void
+    public function setValueInTree(array $path, $value): void
     {
-        self::arraySetOrMergeValueByPathWithCallback($this->objectTree, $objectPathArray, $value, static function ($simpleType) {
+        self::arraySetOrMergeValueByPathWithCallback($this->tree, $path, $value, static function ($simpleType) {
             return [
                 '__value' => $simpleType,
                 '__eelExpression' => null,
@@ -100,20 +94,19 @@ class ObjectTree
     /**
      * Precalculate merged configuration for inherited prototypes.
      *
-     * @return void
      * @throws Fusion\Exception
      */
     public function buildPrototypeHierarchy(): void
     {
-        if (isset($this->objectTree['__prototypes']) === false) {
+        if (isset($this->tree['__prototypes']) === false) {
             return;
         }
 
-        foreach (array_keys($this->objectTree['__prototypes']) as $prototypeName) {
+        foreach (array_keys($this->tree['__prototypes']) as $prototypeName) {
             $prototypeInheritanceHierarchy = [];
             $currentPrototypeName = $prototypeName;
-            while (isset($this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'])) {
-                $currentPrototypeName = $this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'];
+            while (isset($this->tree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'])) {
+                $currentPrototypeName = $this->tree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'];
                 array_unshift($prototypeInheritanceHierarchy, $currentPrototypeName);
                 if ($prototypeName === $currentPrototypeName) {
                     throw new Fusion\Exception(sprintf('Recursive inheritance found for prototype "%s". Prototype chain: %s', $prototypeName, implode(' < ', array_reverse($prototypeInheritanceHierarchy))), 1492801503);
@@ -122,7 +115,7 @@ class ObjectTree
 
             if (count($prototypeInheritanceHierarchy)) {
                 // prototype chain from most *general* to most *specific* WITHOUT the current node type!
-                $this->objectTree['__prototypes'][$prototypeName]['__prototypeChain'] = $prototypeInheritanceHierarchy;
+                $this->tree['__prototypes'][$prototypeName]['__prototypeChain'] = $prototypeInheritanceHierarchy;
             }
         }
     }
