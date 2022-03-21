@@ -75,6 +75,11 @@ class ContentCacheFlusher
     protected $workspacesToFlush = [];
 
     /**
+     * @var array<string, string[]>
+     */
+    protected $implementedNodeTypeNamesByNodeType = [];
+
+    /**
      * @Flow\Inject
      * @var AssetService
      */
@@ -339,12 +344,16 @@ class ContentCacheFlusher
      */
     protected function getAllImplementedNodeTypeNames(NodeType $nodeType)
     {
-        $self = $this;
-        $types = array_reduce($nodeType->getDeclaredSuperTypes(), function (array $types, NodeType $superType) use ($self) {
-            return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
-        }, [$nodeType->getName()]);
+        if (array_key_exists($nodeType->getName(), $this->implementedNodeTypeNamesByNodeType)) {
+            return $this->implementedNodeTypeNamesByNodeType[$nodeType->getName()];
+        }
 
-        $types = array_unique($types);
+        $self = $this;
+        $types = array_unique(array_reduce($nodeType->getDeclaredSuperTypes(), static function (array $types, NodeType $superType) use ($self) {
+            return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
+        }, [$nodeType->getName()]));
+
+        $this->implementedNodeTypeNamesByNodeType[$nodeType->getName()] = $types;
         return $types;
     }
 
