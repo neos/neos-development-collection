@@ -124,6 +124,14 @@ privilegeTargets:
       label: General access to data-sources
       matcher: 'method(Neos\Neos\Service\Controller\DataSourceController->(index|error)Action())'
 
+    'Neos.Neos:Impersonate':
+      label: Impersonate user
+      matcher: 'method(Neos\Neos\Controller\Backend\ImpersonateController->(?!initialize).*Action())'
+
+    'Neos.Neos:RestoreOriginUser':
+      label: Restore from impersonated user to origin
+      matcher: 'method(Neos\Neos\Controller\Backend\ImpersonateController->(restore|restoreWithResponse|status)Action())'
+
   #
   # General access to Neos Backend modules
   #
@@ -190,6 +198,8 @@ roles:
         privilegeTarget: 'Neos.Neos:WidgetControllers'
         permission: GRANT
 
+      - privilegeTarget: 'Neos.Neos:RestoreOriginUser'
+        permission: GRANT
 
   'Neos.Neos:LivePublisher':
     label: Live publisher
@@ -348,4 +358,7 @@ roles:
 
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Dimensions'
+        permission: GRANT
+
+      - privilegeTarget: 'Neos.Neos:Impersonate'
         permission: GRANT
