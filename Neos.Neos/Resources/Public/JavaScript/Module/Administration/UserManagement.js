@@ -62,7 +62,7 @@ export default class UserManagement {
             .then((data) => {
                 const {user, status} = data
                 const username = isNil(user) ? '' : user.accountIdentifier
-                const message = window.NeosCMS.I18n.translate('success.impersonateUser', 'Switched to the new user {0}.', 'Unikka.LoginAs', 'Main', {0: username})
+                const message = window.NeosCMS.I18n.translate('success.impersonateUser', 'Switched to the new user {0}.', 'Neos.Neos', 'Main', {0: username})
                 window.NeosCMS.Notification.ok(message)
 
                 // load default backend, so we don't need to care for the module permissions.
@@ -71,7 +71,7 @@ export default class UserManagement {
             })
             .catch(function (error) {
                 if (window.NeosCMS) {
-                    const message = window.NeosCMS.I18n.translate('error.impersonateUser', 'Could not switch to the requested user.', 'Unikka.LoginAs')
+                    const message = window.NeosCMS.I18n.translate('error.impersonateUser', 'Could not switch to the requested user.', 'Neos.Neos')
                     window.NeosCMS.Notification.error(message)
                 }
             });

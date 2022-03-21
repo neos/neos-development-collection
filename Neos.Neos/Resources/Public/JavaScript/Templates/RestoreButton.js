@@ -16,7 +16,7 @@ const RestoreButton = (user) => {
         ? window.Typo3Neos.I18n.translate(
             'label.restoreUserButton',
             'Back to user "{0}"',
-            'Unikka.LoginAs',
+            'Neos.Neos',
             'Main',
             user.accountIdentifier
         )

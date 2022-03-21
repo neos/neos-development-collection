@@ -68,7 +68,7 @@ export default class UserMenu {
                 const message = window.NeosCMS.I18n.translate(
                     'success.restoreUser',
                     'Switched back from {0} to the orginal user {1}.',
-                    'Unikka.LoginAs',
+                    'Neos.Neos',
                     'Main',
                     {
                         0: impersonate.accountIdentifier,
@@ -86,7 +86,7 @@ export default class UserMenu {
                     const message = window.NeosCMS.I18n.translate(
                         'error.restoreUser',
                         'Could not switch back to the original user.',
-                        'Unikka.LoginAs'
+                        'Neos.Neos'
                     )
                     window.NeosCMS.Notification.error(message)
                 }

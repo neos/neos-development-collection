@@ -2,7 +2,7 @@ import {isNil} from "../Helper"
 
 const impersonateIcon = '<i class="fas fa-random icon-white"></i>'
 const localizedTooltip = !isNil(window.Typo3Neos) ?
-    window.Typo3Neos.I18n.translate('tooltip.impersonateUserButton', 'Login as this user', 'Unikka.LoginAs') :
+    window.Typo3Neos.I18n.translate('tooltip.impersonateUserButton', 'Login as this user', 'Neos.Neos') :
     'Login as this user';
 
 const ImpersonateButton = (identifier, disabled) => {
