@@ -173,6 +173,10 @@ class ContentCacheFlusher
                     break;
                 }
                 $tagName = 'DescendantOf_' . $workspaceHash . '_' . $nodeInWorkspace->getIdentifier();
+                // Prevent traversing the same parent multiple times for multiple children of the same node
+                if (array_key_exists($tagName, $this->tagsToFlush)) {
+                    break;
+                }
                 $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $node->getPath());
 
                 $legacyTagName = 'DescendantOf_' . $nodeInWorkspace->getIdentifier();
