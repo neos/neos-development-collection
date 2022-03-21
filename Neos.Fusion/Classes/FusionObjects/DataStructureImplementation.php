@@ -11,15 +11,21 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Exception as FusionException;
+
 /**
  * Fusion object to render and array of key value pairs by evaluating all properties
  */
 class DataStructureImplementation extends AbstractArrayFusionObject
 {
     /**
-     * {@inheritdoc}
+     * Evaluate this Fusion object and return the result
      *
      * @return array
+     * @throws FusionException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Security\Exception
      */
     public function evaluate()
     {
@@ -27,11 +33,17 @@ class DataStructureImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * Returns TRUE if the given property has no object type assigned
+     * Sort the Fusion objects inside $this->properties depending on:
+     * - numerical ordering
+     * - position meta-property
      *
-     * @param mixed $property
-     * @return bool
-     * @deprecated since 8.0 can be removed with 9.0 use \Neos\Fusion\FusionObjects\AbstractArrayFusionObject::sortNestedProperties
+     * This will ignore all properties defined in "@ignoreProperties" in Fusion
+     *
+     * @see PositionalArraySorter
+     *
+     * @return array an ordered list of key value pairs
+     * @throws FusionException if the positional string has an unsupported format
+     * @deprecated since 8.0 can be removed with 9.0 use {@see \Neos\Fusion\FusionObjects\AbstractArrayFusionObject::sortNestedProperties}
      */
     protected function sortNestedFusionKeys()
     {
