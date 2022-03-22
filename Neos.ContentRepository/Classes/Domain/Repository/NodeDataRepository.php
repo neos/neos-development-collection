@@ -1334,6 +1334,7 @@ class NodeDataRepository extends Repository
                 }
             }
             $dimensionPositions[] = $workspacePosition;
+            $dimensionPositions[] = $node->isRemoved() ? PHP_INT_MAX : PHP_INT_MIN;
 
             $identifier = $node->getIdentifier();
             // Yes, it seems to work comparing arrays that way!
