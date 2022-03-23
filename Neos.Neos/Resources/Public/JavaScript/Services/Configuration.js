@@ -8,8 +8,8 @@ const init = () => {
     window.NeosCMS = {};
   }
 
-  if (isNil(window.Typo3Neos)) {
-    window.Typo3Neos = {};
+  if (isNil(window.Neos)) {
+    window.Neos = {};
   }
 
   if (isNil(window.NeosCMS.Configuration)) {
@@ -29,7 +29,7 @@ const init = () => {
   }
 
   // deprecated - to be removed in 8.0
-  window.Typo3Neos.Configuration = window.NeosCMS.Configuration;
+  window.Neos.Configuration = window.NeosCMS.Configuration;
 };
 
 const get = (key) => {

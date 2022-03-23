@@ -84,8 +84,8 @@ const init = () => {
     window.NeosCMS = {};
   }
 
-  if (isNil(window.Typo3Neos)) {
-    window.Typo3Neos = {};
+  if (isNil(window.Neos)) {
+    window.Neos = {};
   }
 
   if (isNil(window.NeosCMS.Notification)) {
@@ -100,7 +100,7 @@ const init = () => {
     };
 
     // deprecated - to be removed in 8.0
-    window.Typo3Neos.Notification = window.NeosCMS.Notification;
+    window.Neos.Notification = window.NeosCMS.Notification;
   }
 
   const notifications = Array.from(
