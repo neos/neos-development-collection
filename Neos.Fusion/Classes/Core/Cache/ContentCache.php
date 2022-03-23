@@ -383,6 +383,17 @@ class ContentCache
     }
 
     /**
+     * Flush content cache entries by tags
+     *
+     * @param array<string> $tags values that were assigned to a cache entry in Fusion, for example "Everything", "Node_[…]", "NodeType_[…]", "DescendantOf_[…]" whereas "…" is the node identifier or node type respectively
+     * @return integer The number of cache entries which actually have been flushed
+     */
+    public function flushByTags(array $tags): int
+    {
+        return $this->cache->flushByTags($this->sanitizeTags($tags));
+    }
+
+    /**
      * Flush all content cache entries
      *
      * @return void

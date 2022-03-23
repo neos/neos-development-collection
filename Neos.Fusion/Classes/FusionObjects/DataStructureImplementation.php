@@ -11,11 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\Runtime;
-use Neos\Utility\Exception\InvalidPositionException;
-use Neos\Utility\PositionalArraySorter;
-use Neos\Fusion;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * Fusion object to render and array of key value pairs by evaluating all properties
@@ -23,36 +19,17 @@ use Neos\Fusion;
 class DataStructureImplementation extends AbstractArrayFusionObject
 {
     /**
-     * {@inheritdoc}
+     * Evaluate this Fusion object and return the result
      *
      * @return array
+     * @throws FusionException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Security\Exception
      */
     public function evaluate()
     {
-        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
-
-        if (count($sortedChildFusionKeys) === 0) {
-            return [];
-        }
-
-        $result = [];
-        foreach ($sortedChildFusionKeys as $key) {
-            $propertyPath = $key;
-            if ($this->isUntypedProperty($this->properties[$key])) {
-                $propertyPath .= '<Neos.Fusion:DataStructure>';
-            }
-            try {
-                $value = $this->fusionValue($propertyPath);
-            } catch (\Exception $e) {
-                $value = $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
-            }
-            if ($value === null && $this->runtime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
-                continue;
-            }
-            $result[$key] = $value;
-        }
-
-        return $result;
+        return $this->evaluateNestedProperties('Neos.Fusion:DataStructure');
     }
 
     /**
@@ -65,37 +42,11 @@ class DataStructureImplementation extends AbstractArrayFusionObject
      * @see PositionalArraySorter
      *
      * @return array an ordered list of key value pairs
-     * @throws Fusion\Exception if the positional string has an unsupported format
+     * @throws FusionException if the positional string has an unsupported format
+     * @deprecated since 8.0 can be removed with 9.0 use {@see \Neos\Fusion\FusionObjects\AbstractArrayFusionObject::sortNestedProperties}
      */
     protected function sortNestedFusionKeys()
     {
-        $arraySorter = new PositionalArraySorter($this->properties, '__meta.position');
-        try {
-            $sortedFusionKeys = $arraySorter->getSortedKeys();
-        } catch (InvalidPositionException $exception) {
-            throw new Fusion\Exception('Invalid position string', 1345126502, $exception);
-        }
-
-        foreach ($this->ignoreProperties as $ignoredPropertyName) {
-            $key = array_search($ignoredPropertyName, $sortedFusionKeys);
-            if ($key !== false) {
-                unset($sortedFusionKeys[$key]);
-            }
-        }
-        return $sortedFusionKeys;
-    }
-
-    /**
-     * Returns TRUE if the given property has no object type assigned
-     *
-     * @param mixed $property
-     * @return bool
-     */
-    private function isUntypedProperty($property): bool
-    {
-        if (!is_array($property)) {
-            return false;
-        }
-        return array_intersect_key(array_flip(Parser::$reservedParseTreeKeys), $property) === [];
+        return $this->sortNestedProperties();
     }
 }

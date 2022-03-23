@@ -25,7 +25,7 @@ use Neos\Fusion\Service\DebugStack;
  * //fusionPath plaintext If true, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
  * @api
  */
-class DebugImplementation extends JoinImplementation
+class DebugImplementation extends AbstractArrayFusionObject
 {
     /**
      * If you iterate over "properties" these in here should usually be ignored.

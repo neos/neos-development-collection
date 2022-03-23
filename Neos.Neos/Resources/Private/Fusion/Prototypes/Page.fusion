@@ -63,19 +63,8 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     @position = '20'
     tagName = 'body'
     omitClosingTag = true
-    attributes.class.@process.addNeosBackendClass = Neos.Fusion:Case {
-      @if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-
-      classIsString {
-        condition = ${Type.isString(value)}
-        renderer = ${String.trim(value + ' neos-backend')}
-      }
-
-      classIsArray {
-        condition = ${Type.isArray(value)}
-        renderer = ${Array.push(value, 'neos-backend')}
-      }
-    }
+    attributes.class.@process.addNeosBackendClass = ${Array.push(value, 'neos-backend')}
+    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
   }
 
   # Content of the body tag. To be defined by the integrator.

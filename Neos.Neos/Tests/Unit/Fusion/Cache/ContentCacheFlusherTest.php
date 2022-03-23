@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
-use Neos\Neos\Fusion\Helper\CachingHelper;
 
 /**
  * Tests the CachingHelper
@@ -44,6 +43,7 @@ class ContentCacheFlusherTest extends UnitTestCase
         $nodeMock = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
         $nodeMock->expects(self::any())->method('getWorkspace')->willReturn($workspace);
         $nodeMock->expects(self::any())->method('getNodeType')->willReturn($nodeType);
+        $nodeMock->expects(self::any())->method('getIdentifier')->willReturn('some-node-identifier');
 
         $contentCacheFlusher->registerNodeChange($nodeMock);
     }

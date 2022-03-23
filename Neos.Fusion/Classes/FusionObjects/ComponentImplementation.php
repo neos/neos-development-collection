@@ -23,7 +23,7 @@ use Neos\Fusion\FusionObjects\Helpers\LazyProps;
  * //fusionPath * generic Fusion values that will be added to the ``props`` object in the context
  * @api
  */
-class ComponentImplementation extends JoinImplementation
+class ComponentImplementation extends AbstractArrayFusionObject
 {
     /**
      * Properties that are ignored and not included into the ``props`` context
@@ -66,7 +66,7 @@ class ComponentImplementation extends JoinImplementation
      */
     protected function getProps(array $context): \ArrayAccess
     {
-        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
+        $sortedChildFusionKeys = $this->sortNestedProperties();
         $props = new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $context);
         return $props;
     }

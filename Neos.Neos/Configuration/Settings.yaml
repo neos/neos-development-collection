@@ -21,6 +21,11 @@ Neos:
       # - in Production context
       enableObjectTreeCache: false
 
+      # If set to true, content cache flushes will be done on a per-tag basis and generate additional log output
+      # which allows understanding why flushed entries were flushed. This is useful for debugging but will
+      # hurt performance and should not be used in production.
+      contentCacheDebugMode: false
+
       # Packages can now register with this setting to get their Fusion in the path:
       # resources://MyVendor.MyPackageKey/Private/Fusion/Root.fusion
       # included automatically.
@@ -478,15 +483,18 @@ Neos:
               - 410
             options:
               viewClassName: \Neos\Neos\View\FusionExceptionView
+              viewOptions:
+                templatePathAndFilename: ~
           databaseConnectionExceptions:
             matchingExceptionClassNames:
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
             options: &welcomeTemplate
-              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Welcome.html'
-              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
-              format: html
+              viewClassName: Neos\FluidAdaptor\View\StandaloneView
+              viewOptions:
+                templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Welcome.html'
+                layoutRootPaths: ['resource://Neos.Neos/Private/Layouts/']
           noHomepageException:
             matchingExceptionClassNames:
               - Neos\Neos\Routing\Exception\NoHomepageException

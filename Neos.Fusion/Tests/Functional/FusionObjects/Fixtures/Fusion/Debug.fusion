@@ -12,7 +12,7 @@ debug.null = Neos.Fusion:Debug {
 
 debug.nullWithTitle = Neos.Fusion:Debug {
   title = 'Title'
-  value = NULL
+  value = null
 }
 
 debug.eelExpression = Neos.Fusion:Debug {

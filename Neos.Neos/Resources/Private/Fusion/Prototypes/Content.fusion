@@ -18,19 +18,7 @@ prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
   #   attributes.class.@process.nodeType >
   # }
   # in your site's Fusion if you don't need that behavior.
-  attributes.class.@process.nodeType = Neos.Fusion:Case {
-    @context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
-
-    classIsString {
-      condition = ${Type.isString(value)}
-      renderer = ${String.trim(String.trim(value) + ' ' + nodeTypeClassName)}
-    }
-
-    classIsArray {
-      condition = ${Type.isArray(value)}
-      renderer = ${Array.push(value, nodeTypeClassName)}
-    }
-  }
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeType.name, '/[[:^alnum:]]/', '-')))}
 
   # The following line must not be removed as it adds required meta data to all content elements in backend
   @process.contentElementWrapping {
