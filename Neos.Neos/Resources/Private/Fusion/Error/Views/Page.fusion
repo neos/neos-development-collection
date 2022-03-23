@@ -8,6 +8,8 @@ prototype(Neos.Neos:Error.View.Page) < prototype(Neos.Fusion:Component) {
       <html lang="en">
         <head>
           <meta charset="utf-8"/>
+          <meta name="robots" content="noindex,nofollow"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
           <title>{props.title}</title>
           <link href={StaticResource.uri('Neos.Neos', 'Public/Styles/Error.css')} rel="stylesheet"/>
           <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/apple-touch-icon.png')} sizes="180x180" rel="apple-touch-icon"/>
