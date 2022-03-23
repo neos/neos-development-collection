@@ -165,7 +165,7 @@ The following options are allowed for defining a NodeType:
 
     Preview icons are by default bit bigger. We scale them to the doubled size.
     It is also possible to adjust the scaling by the previewIconSize setting.
-    Like the icon it can be a Fontawesome icon name or an SVG Asset Resource URL.
+    It can be a Fontawesome icon name or an SVG Asset Resource URL like the icon.
 
     ``previewIconSize``
     The previewIconSize setting defines the size of the previewIcon. By default the previewIcon has the size "2x".
