@@ -39,6 +39,7 @@ use Neos\Media\Exception\AssetVariantGeneratorException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
+use Neos\Utility\MediaTypes;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -271,10 +272,19 @@ class AssetService
     public function replaceAssetResource(AssetInterface $asset, PersistentResource $resource, array $options = []): void
     {
         $originalAssetResource = $asset->getResource();
+        $resourceMediaType = $resource->getMediaType();
         $asset->setResource($resource);
 
         if (isset($options['keepOriginalFilename']) && (boolean)$options['keepOriginalFilename'] === true) {
-            $asset->getResource()->setFilename($originalAssetResource->getFilename());
+            $originalFilename = $originalAssetResource->getFilename();
+            if (MediaTypes::getMediaTypeFromFilename($originalFilename) !== $resourceMediaType) {
+                $originalFileExtension = $originalAssetResource->getFileExtension();
+                $fileExtensionForMediaType = MediaTypes::getFilenameExtensionFromMediaType($resourceMediaType);
+                // filename needs to get new matching extension
+                $originalFilename = preg_replace(sprintf('/(.*)\.%s$/', $originalFileExtension), '$1.' . $fileExtensionForMediaType, $originalFilename);
+            }
+            $asset->getResource()->setFilename($originalFilename);
+            $asset->getResource()->setMediaType($resourceMediaType);
         }
 
         $uriMapping = [];
