@@ -25,10 +25,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
   #   attributes.class.@process.collectionClass >
   # }
   attributes {
-    class.@process.collectionClass = Neos.Fusion:Value {
-      castedArray = ${Type.isArray(value) ? value : [value]}
-      value = ${Array.push(this.castedArray, 'neos-contentcollection')}
-    }
+    class.@process.collectionClass = ${Array.push(value, 'neos-contentcollection')}
     data-__neos-insertion-anchor = true
     data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${node.context.inBackend && node.context.currentRenderingMode.edit}
   }
