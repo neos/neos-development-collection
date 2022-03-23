@@ -63,7 +63,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     @position = '20'
     tagName = 'body'
     omitClosingTag = true
-    attributes.class.@process.addNeosBackendClass = ${Array.push(value, 'neos-backend')}
+    attributes.class.@process.addNeosBackendClass = ${Array.push(value || '', 'neos-backend')}
     attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
   }
 
