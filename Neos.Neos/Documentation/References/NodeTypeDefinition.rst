@@ -144,7 +144,7 @@ The following options are allowed for defining a NodeType:
 
   ``icon``
     This setting defines the icon that the Neos UI will use to display the node type.
-    The icon can contain a custom SVG icon as resource URI or a Fontawesome icon.
+    The icon can contain a custom SVG icon as a resource URI or a Fontawesome icon.
 
     Resource icon:
     For custom SVG icons a resource URI to the file needs to be configured.
