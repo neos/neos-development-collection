@@ -58,11 +58,9 @@ class ImpersonateService
     public function impersonate(Account $account): void
     {
         $currentAccount = $this->securityContext->getAccount();
-        $this->session->putData('OriginalIdentity', $this->persistenceManager->getIdentifierByObject($currentAccount));
-
+        $this->writeSession('OriginalIdentity', $this->persistenceManager->getIdentifierByObject($currentAccount));
         $this->refreshTokens($account);
-
-        $this->session->putData('Impersonate', $this->persistenceManager->getIdentifierByObject($account));
+        $this->writeSession('Impersonate', $this->persistenceManager->getIdentifierByObject($account));
     }
 
     /**
@@ -73,7 +71,7 @@ class ImpersonateService
     {
         $account = $this->getOriginalIdentity();
         $this->refreshTokens($account);
-        $this->session->putData('Impersonate', null);
+        $this->writeSession('Impersonate', null);
     }
 
     /**
@@ -82,8 +80,9 @@ class ImpersonateService
      */
     public function getImpersonation(): ?Account
     {
-        if ($this->session->getData('Impersonate') !== null) {
-            return $this->persistenceManager->getObjectByIdentifier($this->session->getData('Impersonate'), Account::class);
+        $impersonation = $this->getSessionData('Impersonate');
+        if ($impersonation !== null) {
+            return $this->persistenceManager->getObjectByIdentifier($impersonation, Account::class);
         }
         return null;
     }
@@ -111,8 +110,9 @@ class ImpersonateService
      */
     public function getOriginalIdentity(): ?Account
     {
-        if ($this->session->getData('OriginalIdentity') !== null) {
-            return $this->persistenceManager->getObjectByIdentifier($this->session->getData('OriginalIdentity'), Account::class);
+        $originalIdentity = $this->getSessionData('OriginalIdentity');
+        if ($originalIdentity !== null) {
+            return $this->persistenceManager->getObjectByIdentifier($originalIdentity, Account::class);
         }
         return $this->securityContext->getAccount();
     }
@@ -149,5 +149,27 @@ class ImpersonateService
         foreach ($tokens as $token) {
             $token->setAccount($account);
         }
+    }
+
+    /**
+     * @param string $key
+     * @param string|null $value
+     * @return void
+     * @throws SessionNotStartedException
+     */
+    protected function writeSession(string $key, ?string $value): void
+    {
+        if ($this->session->isStarted()) {
+            $this->session->putData($key, $value);
+        }
+    }
+
+    /**
+     * @param string $key
+     * @throws SessionNotStartedException
+     */
+    protected function getSessionData(string $key): mixed
+    {
+        return $this->session->isStarted() && $this->session->hasKey($key) ? $this->session->getData($key) : null;
     }
 }
