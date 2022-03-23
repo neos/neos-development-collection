@@ -1,6 +1,4 @@
-include: DebugConsole.fusion
-include: Match.fusion
-include: Memo.fusion
+include: *.fusion
 
 prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
@@ -145,7 +143,7 @@ prototype(Neos.Fusion:UriBuilder) {
 #   class = 'some-class'
 # }
 #
-prototype(Neos.Fusion:Augmenter) < prototype(Neos.Fusion:Component) {
+prototype(Neos.Fusion:Augmenter) {
   @class = 'Neos\\Fusion\\FusionObjects\\AugmenterImplementation'
 
   # If more than one tag is found the content is wrapped in the fallback tag before augmentation

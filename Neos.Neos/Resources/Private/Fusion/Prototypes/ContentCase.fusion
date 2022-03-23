@@ -6,6 +6,6 @@ prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
   default {
     @position = 'end'
     condition = true
-    type = ${q(node).property('_nodeType.name')}
+    type = ${node.nodeType.name}
   }
 }

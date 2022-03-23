@@ -11,11 +11,10 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-
 /**
  * Fusion object to render a list of items as single concatenated string
  */
-class JoinImplementation extends DataStructureImplementation
+class JoinImplementation extends AbstractArrayFusionObject
 {
 
     /**
@@ -31,15 +30,17 @@ class JoinImplementation extends DataStructureImplementation
     /**
      * {@inheritdoc}
      *
-     * @return string
+     * @return string|null
      */
     public function evaluate()
     {
         $glue = $this->getGlue();
-        $parentResult = parent::evaluate();
-        if ($parentResult !== []) {
-            return implode($glue, $parentResult);
+
+        $resultParts = $this->evaluateNestedProperties();
+        if ($resultParts !== []) {
+            return implode($glue, $resultParts);
         }
+
         return null;
     }
 }

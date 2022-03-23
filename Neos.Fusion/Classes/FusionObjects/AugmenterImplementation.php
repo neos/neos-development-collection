@@ -21,7 +21,7 @@ use Neos\Fusion\Service\HtmlAugmenter;
  *
  * @api
  */
-class AugmenterImplementation extends JoinImplementation
+class AugmenterImplementation extends AbstractArrayFusionObject
 {
 
     /**
@@ -45,14 +45,7 @@ class AugmenterImplementation extends JoinImplementation
         $content = $this->fusionValue('content');
         $fallbackTagName = $this->fusionValue('fallbackTagName');
 
-        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
-
-        $attributes = [];
-        foreach ($sortedChildFusionKeys as $key) {
-            if ($fusionValue = $this->fusionValue($key)) {
-                $attributes[$key] = $fusionValue;
-            }
-        }
+        $attributes = $this->evaluateNestedProperties();
 
         if ($attributes && is_array($attributes) && count($attributes) > 0) {
             return $this->htmlAugmenter->addAttributes($content, $attributes, $fallbackTagName);

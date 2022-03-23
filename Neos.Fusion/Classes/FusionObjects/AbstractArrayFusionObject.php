@@ -11,6 +11,10 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Utility\Exception\InvalidPositionException;
+use Neos\Utility\PositionalArraySorter;
+use Neos\Fusion\Exception as FusionException;
+use Neos\Fusion\Core\Runtime;
 
 /**
  * Base class for Fusion objects that need access to arbitrary properties, like DataStructureImplementation.
@@ -81,5 +85,87 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     public function offsetUnset($offset)
     {
         unset($this->properties[$offset]);
+    }
+
+    /**
+     * @param string|null $defaultFusionPrototypeName
+     * @return array
+     * @throws FusionException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Security\Exception
+     */
+    protected function evaluateNestedProperties(?string $defaultFusionPrototypeName = null): array
+    {
+        $sortedChildFusionKeys = $this->sortNestedProperties();
+
+        if (count($sortedChildFusionKeys) === 0) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($sortedChildFusionKeys as $key) {
+            $propertyPath = $key;
+            if ($defaultFusionPrototypeName !== null && $this->isUntyped($key)) {
+                $propertyPath .= '<' . $defaultFusionPrototypeName . '>';
+            }
+            try {
+                $value = $this->fusionValue($propertyPath);
+            } catch (\Exception $e) {
+                $value = $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
+            }
+            if ($value === null && $this->runtime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
+                continue;
+            }
+            $result[$key] = $value;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Sort the Fusion objects inside $this->properties depending on:
+     * - numerical ordering
+     * - position meta-property
+     *
+     * This will ignore all properties defined in "@ignoreProperties" in Fusion
+     *
+     * @see PositionalArraySorter
+     *
+     * @return array an ordered list of key value pairs
+     * @throws FusionException if the positional string has an unsupported format
+     */
+    protected function sortNestedProperties(): array
+    {
+        $arraySorter = new PositionalArraySorter($this->properties, '__meta.position');
+        try {
+            $sortedFusionKeys = $arraySorter->getSortedKeys();
+        } catch (InvalidPositionException $exception) {
+            throw new FusionException('Invalid position string', 1345126502, $exception);
+        }
+
+        foreach ($this->ignoreProperties as $ignoredPropertyName) {
+            $key = array_search($ignoredPropertyName, $sortedFusionKeys);
+            if ($key !== false) {
+                unset($sortedFusionKeys[$key]);
+            }
+        }
+        return $sortedFusionKeys;
+    }
+
+    /**
+     * Returns TRUE if the given fusion key has no type, meaning neither
+     * having a fusion objectType, eelExpression or value
+     *
+     * @param string|int $key fusion child key path to check
+     * @return bool
+     */
+    protected function isUntyped(string|int $key): bool
+    {
+        $property = $this->properties[$key];
+        if (!is_array($property)) {
+            return false;
+        }
+        return !isset($property['__objectType']) && !isset($property['__eelExpression']) && !isset($property['__value']);
     }
 }
