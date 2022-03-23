@@ -1,29 +1,4 @@
-include: Prototypes/ContentCase.fusion
-include: Prototypes/Document.fusion
-include: Prototypes/Content.fusion
-include: Prototypes/ContentComponent.fusion
-include: Prototypes/PrimaryContent.fusion
-include: Prototypes/ContentCollection.fusion
-include: Prototypes/Page.fusion
-include: Prototypes/Shortcut.fusion
-include: Prototypes/BreadcrumbMenu.fusion
-include: Prototypes/DimensionsMenu.fusion
-include: Prototypes/Menu.fusion
-include: Prototypes/MenuItems.fusion
-include: Prototypes/BreadcrumbMenuItems.fusion
-include: Prototypes/DimensionsMenuItems.fusion
-include: Prototypes/Plugin.fusion
-include: Prototypes/PluginView.fusion
-include: Prototypes/ConvertUris.fusion
-include: Prototypes/ConvertNodeUris.fusion
-include: Prototypes/DocumentMetadata.fusion
-include: Prototypes/Editable.fusion
-include: Prototypes/ContentElementWrapping.fusion
-include: Prototypes/ContentElementEditable.fusion
-include: Prototypes/NodeUri.fusion
-include: Prototypes/ImageUri.fusion
-include: Prototypes/NodeLink.fusion
-include: Prototypes/FallbackNode.fusion
+include: Prototypes/*.fusion
 
 # The root matcher used to start rendering in Neos
 #
