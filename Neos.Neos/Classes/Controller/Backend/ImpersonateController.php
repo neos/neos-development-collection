@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Controller\Backend;
 
 /*
@@ -59,10 +61,6 @@ class ImpersonateController extends ActionController
         'application/json'
     ];
 
-    /**
-     * @param Account $account
-     * @return void
-     */
     public function impersonateAction(Account $account): void
     {
         $this->impersonateService->impersonate($account);
@@ -72,11 +70,8 @@ class ImpersonateController extends ActionController
     /**
      * Fetching possible redirect options for the given action method and if everything is set we redirect to the
      * configured controller action.
-     *
-     * @param string $actionName
-     * @return void
      */
-    protected function redirectIfPossible($actionName): void
+    protected function redirectIfPossible(string $actionName): void
     {
         $action = $this->settings['redirectOptions'][$actionName]['action'] ?? '';
         $controller = $this->settings['redirectOptions'][$actionName]['controller'] ?? '';
@@ -97,7 +92,7 @@ class ImpersonateController extends ActionController
      * @param string $format The format to use for the redirect URI
      * @see redirect()
      */
-    protected function redirectWithParentRequest($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null): void
+    protected function redirectWithParentRequest(string $actionName, string $controllerName = null, string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, string $format = null): void
     {
         $request = $this->getControllerContext()->getRequest()->getMainRequest();
         $uriBuilder = new UriBuilder();
@@ -119,11 +114,9 @@ class ImpersonateController extends ActionController
     }
 
     /**
-     * @param User $user
-     * @return string
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      */
-    public function impersonateUserWithResponseAction(User $user)
+    public function impersonateUserWithResponseAction(User $user): void
     {
         /** @var Account $account */
         $account = $user->getAccounts()->first();
@@ -133,10 +126,9 @@ class ImpersonateController extends ActionController
     }
 
     /**
-     * @return void
      * @throws StopActionException
      */
-    public function restoreAction()
+    public function restoreAction(): void
     {
         $this->impersonateService->restoreOriginalIdentity();
         $this->redirectIfPossible('restore');
@@ -144,10 +136,9 @@ class ImpersonateController extends ActionController
 
 
     /**
-     * @return void
      * @throws StopActionException
      */
-    public function restoreWithResponseAction()
+    public function restoreWithResponseAction(): void
     {
         /** @var Account $originalIdentity */
         $originalIdentity = $this->impersonateService->getOriginalIdentity();
@@ -172,18 +163,12 @@ class ImpersonateController extends ActionController
         $this->view->assign('value', $response);
     }
 
-    /**
-     * @return string
-     */
-    public function statusAction()
+    public function statusAction(): void
     {
         $impersonateStatus = $this->getImpersonateStatus();
         $this->view->assign('value', $impersonateStatus);
     }
 
-    /**
-     * @return array
-     */
     public function getImpersonateStatus(): array
     {
         $impersonateStatus = [

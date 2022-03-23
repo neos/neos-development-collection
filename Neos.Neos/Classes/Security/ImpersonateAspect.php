@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Security;
 
 /*
@@ -41,7 +43,7 @@ class ImpersonateAspect
      * @return void
      * @throws \Exception
      */
-    public function logManagerAuthenticate(JoinPointInterface $joinPoint)
+    public function logManagerAuthenticate(JoinPointInterface $joinPoint): void
     {
         /** @var AuthenticationManagerInterface $proxy */
         $proxy = $joinPoint->getProxy();
