@@ -161,7 +161,7 @@ The following options are allowed for defining a NodeType:
 
     ``previewIcon``
     This setting defines the icon that will be used in the tile view of the NodeType selection dialog.
-    It is an additional icon that can be used to have more detailed icons for the node type. So that the users get a better idea what the node type is for.
+    It is an additional icon that can be used to have more detailed icons for the node type. So that the users get a better idea of what the node type is for.
 
     Preview icons are by default bit bigger. We scale them to the doubled size.
     It is also possible to adjust the scaling by the previewIconSize setting.
