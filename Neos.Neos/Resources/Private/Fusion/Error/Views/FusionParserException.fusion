@@ -7,7 +7,7 @@ prototype(Neos.Neos:Error.View.FusionParserException) < prototype(Neos.Fusion:Co
   renderer = afx`
     <Neos.Neos:Error.View.Page title='Exception while parsing Fusion'>
       <body class='neos'>
-        <div class="neos-error-screen">
+        <div class='neos-error-screen'>
           <h3>{String.htmlspecialchars(props.exception.headingMessagePart)}</h3>
           <pre>{String.htmlspecialchars(props.exception.asciiPreviewMessagePart)}</pre>
           <div>{String.htmlspecialchars(props.exception.helperMessagePart)}</div>
@@ -20,7 +20,7 @@ prototype(Neos.Neos:Error.View.FusionParserException) < prototype(Neos.Fusion:Co
               File: {String.replace(props.exception.file, props.flowPathRoot, '')}<br/>
               Line: {props.exception.line}
             </pre>
-            Open <b>Data/Logs/Exceptions/{props.exception.referenceCode}.txt</b> for a full stack trace.
+            Open <strong>Data/Logs/Exceptions/{props.exception.referenceCode}.txt</strong> for a full stack trace.
           </details>
         </div>
       </body>
