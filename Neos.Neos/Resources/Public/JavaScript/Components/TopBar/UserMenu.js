@@ -66,7 +66,7 @@ export default class UserMenu {
             .then((data) => {
                 const { origin, impersonate, status } = data
                 const message = window.NeosCMS.I18n.translate(
-                    'success.restoreUser',
+                    'impersonate.success.restoreUser',
                     'Switched back from {0} to the orginal user {1}.',
                     'Neos.Neos',
                     'Main',
@@ -84,7 +84,7 @@ export default class UserMenu {
             .catch(function (error) {
                 if (window.NeosCMS) {
                     const message = window.NeosCMS.I18n.translate(
-                        'error.restoreUser',
+                        'impersonate.error.restoreUser',
                         'Could not switch back to the original user.',
                         'Neos.Neos'
                     )

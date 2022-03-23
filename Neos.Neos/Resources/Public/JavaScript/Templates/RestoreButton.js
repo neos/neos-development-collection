@@ -12,9 +12,9 @@ const RestoreButton = (user) => {
         attributes += `${key}="${attributesObject[key]}" `
     })
 
-    const restoreLabel = isNil(window.Typo3Neos)
-        ? window.Typo3Neos.I18n.translate(
-            'label.restoreUserButton',
+    const restoreLabel = isNil(window.NeosCMS)
+        ? window.NeosCMS.I18n.translate(
+            'impersonate.label.restoreUserButton',
             'Back to user "{0}"',
             'Neos.Neos',
             'Main',

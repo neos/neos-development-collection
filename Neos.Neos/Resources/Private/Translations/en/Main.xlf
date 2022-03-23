@@ -836,25 +836,25 @@
 			<trans-unit id="login.loggedOut.body" xml:space="preserve">
 				<source>Successfully logged out</source>
 			</trans-unit>
-			<trans-unit id="success.impersonateUser" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="yes">
                 <source>Switched to the new user "{0}".</source>
             </trans-unit>
-			<trans-unit id="error.impersonateUser" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="yes">
                 <source>Could not switch to the selected user.</source>
             </trans-unit>
-			<trans-unit id="tooltip.impersonateUserButton" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="yes">
                 <source>Login as user</source>
             </trans-unit>
-			<trans-unit id="error.restoreUser" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="yes">
                 <source>Could not switch back to the original user.</source>
             </trans-unit>
-			<trans-unit id="success.restoreUser" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="yes">
                 <source>Switched back from "{0}" to the orginal user "{1}"</source>
             </trans-unit>
-			<trans-unit id="label.restoreUserButton" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="yes">
                 <source>Back to user "{0}"</source>
             </trans-unit>
-			<trans-unit id="title.restoreUserButton" xml:space="preserve" approved="yes">
+			<trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="yes">
                 <source>Switch back to the orginal user account</source>
             </trans-unit>
 		</body>
