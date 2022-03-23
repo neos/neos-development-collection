@@ -168,7 +168,7 @@ The following options are allowed for defining a NodeType:
     It can be a Fontawesome icon name or an SVG Asset Resource URL like the icon.
 
     ``previewIconSize``
-    The previewIconSize setting defines the size of the previewIcon. By default the previewIcon has the size "2x".
+    The previewIconSize setting defines the size of the previewIcon. By default, the previewIcon has the size "2x".
 
     The following options are available:
     - 'xs'
