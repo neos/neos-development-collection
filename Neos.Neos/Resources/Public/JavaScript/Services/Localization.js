@@ -254,8 +254,8 @@ const init = () => {
     window.NeosCMS = {};
   }
 
-  if (isNil(window.Typo3Neos)) {
-    window.Typo3Neos = {};
+  if (isNil(window.Neos)) {
+    window.Neos = {};
   }
 
   if (isNil(window.NeosCMS.I18n)) {
@@ -266,7 +266,7 @@ const init = () => {
     };
 
     // deprecated - to be removed in 8.0
-    window.Typo3Neos.I18n = window.NeosCMS.I18n;
+    window.Neos.I18n = window.NeosCMS.I18n;
   }
 };
 
