@@ -113,8 +113,7 @@ class ParserCache
             throw new \InvalidArgumentException("Couldn't resolve realpath for: '$fusionFileName'");
         }
 
-        $flowRoot = defined('FLOW_PATH_ROOT') ? FLOW_PATH_ROOT : '';
-        $realFusionFilePathWithoutRoot = str_replace($flowRoot, '', $realPath);
+        $realFusionFilePathWithoutRoot = str_replace(FLOW_PATH_ROOT, '', $realPath);
         return 'file_' . md5($realFusionFilePathWithoutRoot);
     }
 
