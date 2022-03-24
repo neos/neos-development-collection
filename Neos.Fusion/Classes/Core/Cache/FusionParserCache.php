@@ -50,8 +50,8 @@ class FusionParserCache
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
-        $identifier = 'file_' . $this->getCacheIdentifierForFile($contextPathAndFilename);
-        return $this->cacheByIdentifier($identifier, $generateValueToCache);
+        $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
+        return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
 
     public function cacheForDsl(string $identifier, string $code, \Closure $generateValueToCache): mixed
@@ -59,8 +59,8 @@ class FusionParserCache
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
-        $identifier = 'dsl_' . md5($identifier . $code);
-        return $this->cacheByIdentifier($identifier, $generateValueToCache);
+        $identifier = $this->getCacheIdentifierForDslCode($identifier, $code);
+        return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
 
     /**
@@ -87,6 +87,14 @@ class FusionParserCache
     }
 
     /**
+     * creates a comparable hash of the dsl type and content to be used as cache identifier
+     */
+    private function getCacheIdentifierForDslCode(string $identifier, string $code): string
+    {
+        return 'dsl_' . $identifier . '_' . md5($code);
+    }
+
+    /**
      * creates a comparable hash of the absolute, resolved $fusionFileName
      *
      * @throws \InvalidArgumentException
@@ -104,7 +112,7 @@ class FusionParserCache
 
         $flowRoot = defined('FLOW_PATH_ROOT') ? FLOW_PATH_ROOT : '';
         $realFusionFilePathWithoutRoot = str_replace($flowRoot, '', $realPath);
-        return md5($realFusionFilePathWithoutRoot);
+        return 'file_' . md5($realFusionFilePathWithoutRoot);
     }
 
     /**
