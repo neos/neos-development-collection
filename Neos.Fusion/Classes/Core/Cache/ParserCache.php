@@ -50,6 +50,9 @@ class ParserCache
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
+        if ($contextPathAndFilename === null) {
+            return $generateValueToCache();
+        }
         $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
