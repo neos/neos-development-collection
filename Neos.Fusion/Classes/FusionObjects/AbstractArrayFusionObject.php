@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Core\Parser;
 use Neos\Utility\Exception\InvalidPositionException;
 use Neos\Utility\PositionalArraySorter;
 use Neos\Fusion\Exception as FusionException;
@@ -164,6 +165,10 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     {
         $property = $this->properties[$key];
         if (!is_array($property)) {
+            return false;
+        }
+        if (array_diff(array_keys($property), Parser::$reservedParseTreeKeys) === []) {
+            // $property has no own properties (it might have @if or @process but this doesn't count.)
             return false;
         }
         return !isset($property['__objectType']) && !isset($property['__eelExpression']) && !isset($property['__value']);

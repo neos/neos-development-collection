@@ -153,3 +153,19 @@ dataStructure.unsetUntypedChildKeyWillRenderAsDataStructure = Neos.Fusion:DataSt
   }
   buz = 456
 }
+
+dataStructure.childKeysWithoutValueOrObjectOrEelIsNotUntyped = Neos.Fusion:DataStructure {
+  keyOnlyWithProcess {
+    // should be an EmptyString because of:
+    // https://github.com/neos/neos-development-collection/blob/694649dab4f4b8bf9c71c605bb5cf00180396198/Neos.Fusion/Classes/Core/RuntimeConfiguration.php#L161
+    @process.onNothing = ${value == '' ? 'EmptyString' : value}
+  }
+  keyOnlyWithIf {
+    @if.has = true
+  }
+  keyOnlyWithPrototype {
+    prototype(Neos.Foo:Bar) {
+      buz = "bat"
+    }
+  }
+}
