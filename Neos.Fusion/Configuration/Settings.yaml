@@ -27,6 +27,12 @@ Neos:
     # This is case if you use automatic deployment and is also assumed in Production context
     enableObjectTreeCache: false
 
+    # The Fusion Parser will, if set to true cache for each fusion file the AST Object Tree,
+    # And the used DSL expressions will also be cached.
+    # This is flushed partially on file change, but you can do so manually: `./flow cache:flushone --identifier Neos_Fusion_ParsePartials`
+    # This option is suited only for development and enabled there by default.
+    enableParsePartialsCache: false
+
     # Default context objects that are available in Eel expressions
     #
     # New variables should be added with a package key prefix. Example:

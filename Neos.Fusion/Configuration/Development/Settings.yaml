@@ -1,5 +1,6 @@
 
 Neos:
   Fusion:
+    enableParsePartialsCache: true
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler

@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
+use Neos\Fusion\Core\Cache\FusionParserCache;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTree;
@@ -38,6 +39,12 @@ class Parser implements ParserInterface
      * @var DslFactory
      */
     protected $dslFactory;
+
+    /**
+     * @Flow\Inject
+     * @var FusionParserCache
+     */
+    protected $parserCache;
 
     /**
      * Parses the given Fusion source code, resolves includes and returns a merged array tree
@@ -80,18 +87,20 @@ class Parser implements ParserInterface
 
     protected function handleDslTranspile(string $identifier, string $code)
     {
-        $dslObject = $this->dslFactory->create($identifier);
+        return $this->parserCache->cacheByIdentifier(md5($identifier . $code), function () use ($identifier, $code) {
+            $dslObject = $this->dslFactory->create($identifier);
 
-        $transpiledFusion = $dslObject->transpile($code);
+            $transpiledFusion = $dslObject->transpile($code);
 
-        $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
+            $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
 
-        $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
+            $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
 
-        $temporaryAst = $mergedArrayTree->getTree();
+            $temporaryAst = $mergedArrayTree->getTree();
 
-        $dslValue = $temporaryAst['value'];
-        return $dslValue;
+            $dslValue = $temporaryAst['value'];
+            return $dslValue;
+        });
     }
 
     protected function getMergedArrayTreeVisitor(MergedArrayTree $mergedArrayTree): MergedArrayTreeVisitor
@@ -99,12 +108,15 @@ class Parser implements ParserInterface
         return new MergedArrayTreeVisitor(
             $mergedArrayTree,
             fn (...$args) => $this->handleFileInclude(...$args),
-            fn (...$args) => $this->handleDslTranspile(...$args),
+            fn (...$args) => $this->handleDslTranspile(...$args)
         );
     }
 
     protected function getFusionFile(string $sourceCode, ?string $contextPathAndFilename): FusionFile
     {
-        return ObjectTreeParser::parse($sourceCode, $contextPathAndFilename);
+        return $this->parserCache->cacheByFusionFile(
+            $contextPathAndFilename,
+            fn () => ObjectTreeParser::parse($sourceCode, $contextPathAndFilename)
+        );
     }
 }

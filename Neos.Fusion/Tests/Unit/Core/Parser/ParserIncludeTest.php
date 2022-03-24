@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion;
+use Neos\Fusion\Core\Cache\FusionParserCache;
 use org\bovigo\vfs\vfsStream;
 use Neos\Fusion\Core\Parser;
 use org\bovigo\vfs\vfsStreamContent;
@@ -28,6 +29,15 @@ class ParserIncludeTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
+        $this->injectParserCacheMockIntoParser($this->parser);
+    }
+
+    private function injectParserCacheMockIntoParser(Parser $parser): void
+    {
+        $parserCache = $this->getMockBuilder(FusionParserCache::class)->getMock();
+        $parserCache->method('cacheByIdentifier')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $parserCache->method('cacheByFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $this->inject($parser, 'parserCache', $parserCache);
     }
 
     public static function setUpBeforeClass(): void
@@ -232,6 +242,7 @@ class ParserIncludeTest extends UnitTestCase
     public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern): void
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
+        $this->injectParserCacheMockIntoParser($parser);
         $parser
             ->expects(self::once())
             ->method('handleFileInclude')
@@ -269,6 +280,7 @@ class ParserIncludeTest extends UnitTestCase
         self::expectExceptionCode(1635878683);
 
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
+        $this->injectParserCacheMockIntoParser($parser);
         $parser
             ->expects(self::never())
             ->method('handleFileInclude');

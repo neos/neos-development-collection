@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  */
 
 use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Core\Cache\FusionParserCache;
 use Neos\Fusion;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -22,6 +23,15 @@ class ParserTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
+        $this->injectParserCacheMockIntoParser($this->parser);
+    }
+
+    private function injectParserCacheMockIntoParser(Parser $parser): void
+    {
+        $parserCache = $this->getMockBuilder(FusionParserCache::class)->getMock();
+        $parserCache->method('cacheByIdentifier')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $parserCache->method('cacheByFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $this->inject($parser, 'parserCache', $parserCache);
     }
 
     public function pathBlockTest(): array
@@ -1053,6 +1063,7 @@ class ParserTest extends UnitTestCase
     public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
+        $this->injectParserCacheMockIntoParser($parser);
 
         $parser
             ->expects($this->exactly(1))

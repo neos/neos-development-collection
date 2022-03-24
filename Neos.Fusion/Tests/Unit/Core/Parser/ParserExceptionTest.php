@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  */
 
 use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Core\Cache\FusionParserCache;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -22,6 +23,15 @@ class ParserExceptionTest extends UnitTestCase
     public function setUp(): void
     {
         $this->parser = new Parser();
+        $this->injectParserCacheMockIntoParser($this->parser);
+    }
+
+    private function injectParserCacheMockIntoParser(Parser $parser): void
+    {
+        $parserCache = $this->getMockBuilder(FusionParserCache::class)->getMock();
+        $parserCache->method('cacheByIdentifier')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $parserCache->method('cacheByFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $this->inject($parser, 'parserCache', $parserCache);
     }
 
     public function fullParserExceptionMessage(): \Generator

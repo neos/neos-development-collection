@@ -17,3 +17,13 @@ Neos\Fusion\Aspects\FusionCachingAspect:
         arguments:
           1:
             value: Neos_Fusion_ObjectTree
+
+Neos\Fusion\Core\Cache\FusionParserCache:
+  properties:
+    parsePartialsCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Fusion_ParsePartials
