@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core\Cache;
 
 /*
@@ -43,25 +45,21 @@ class FusionParserCache
      */
     protected $enableCache;
 
-    public function cacheByIdentifier(string $identifier, \Closure $generateValueToCache): mixed
-    {
-        if ($this->enableCache === false) {
-            return $generateValueToCache();
-        }
-        if ($this->parsePartialsCache->has($identifier)) {
-            return $this->parsePartialsCache->get($identifier);
-        }
-        $value = $generateValueToCache();
-        $this->parsePartialsCache->set($identifier, $value);
-        return $value;
-    }
-
-    public function cacheByFusionFile(?string $contextPathAndFilename, \Closure $generateValueToCache): FusionFile
+    public function cacheForFusionFile(?string $contextPathAndFilename, \Closure $generateValueToCache): FusionFile
     {
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
         $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
+        return $this->cacheByIdentifier($identifier, $generateValueToCache);
+    }
+
+    public function cacheForDsl(string $identifier, string $code, \Closure $generateValueToCache): mixed
+    {
+        if ($this->enableCache === false) {
+            return $generateValueToCache();
+        }
+        $identifier = md5($identifier . $code);
         return $this->cacheByIdentifier($identifier, $generateValueToCache);
     }
 
@@ -76,6 +74,16 @@ class FusionParserCache
                 $this->parsePartialsCache->remove($identifier);
             }
         }
+    }
+
+    private function cacheForIdentifier(string $identifier, \Closure $generateValueToCache): mixed
+    {
+        if ($this->parsePartialsCache->has($identifier)) {
+            return $this->parsePartialsCache->get($identifier);
+        }
+        $value = $generateValueToCache();
+        $this->parsePartialsCache->set($identifier, $value);
+        return $value;
     }
 
     /**

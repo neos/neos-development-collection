@@ -32,8 +32,8 @@ class ParserTest extends UnitTestCase
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
         $parserCache = $this->getMockBuilder(FusionParserCache::class)->getMock();
-        $parserCache->method('cacheByIdentifier')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
-        $parserCache->method('cacheByFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
+        $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
         $this->inject($parser, 'parserCache', $parserCache);
     }
 

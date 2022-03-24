@@ -87,7 +87,7 @@ class Parser implements ParserInterface
 
     protected function handleDslTranspile(string $identifier, string $code)
     {
-        return $this->parserCache->cacheByIdentifier(md5($identifier . $code), function () use ($identifier, $code) {
+        return $this->parserCache->cacheForDsl($identifier, $code, function () use ($identifier, $code) {
             $dslObject = $this->dslFactory->create($identifier);
 
             $transpiledFusion = $dslObject->transpile($code);
@@ -114,7 +114,7 @@ class Parser implements ParserInterface
 
     protected function getFusionFile(string $sourceCode, ?string $contextPathAndFilename): FusionFile
     {
-        return $this->parserCache->cacheByFusionFile(
+        return $this->parserCache->cacheForFusionFile(
             $contextPathAndFilename,
             fn () => ObjectTreeParser::parse($sourceCode, $contextPathAndFilename)
         );
