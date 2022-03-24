@@ -31,7 +31,7 @@ Neos:
     # And the used DSL expressions will also be cached.
     # This is flushed partially on file change, but you can do so manually: `./flow cache:flushone --identifier Neos_Fusion_ParsePartials`
     # This option is suited only for development and enabled there by default.
-    enableParsePartialsCache: false
+    enableParsePartialsCache: true
 
     # Default context objects that are available in Eel expressions
     #

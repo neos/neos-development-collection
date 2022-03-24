@@ -5,3 +5,4 @@
 Neos:
   Fusion:
     enableObjectTreeCache: true
+    enableParsePartialsCache: false
