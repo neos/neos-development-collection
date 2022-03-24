@@ -5,3 +5,7 @@ Neos_Fusion_Content:
 Neos_Fusion_ObjectTree:
   frontend: Neos\Cache\Frontend\VariableFrontend
   backend: Neos\Cache\Backend\FileBackend
+
+Neos_Fusion_ParsePartials:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\FileBackend
