@@ -1,26 +1,26 @@
 // Examples of Eel expressions
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 
-expressions.calculus = Value {
+expressions.calculus = Neos.Fusion:Value {
   value = ${21 * 2}
 }
 
-expressions.stringHelper = Value {
+expressions.stringHelper = Neos.Fusion:Value {
   value = ${String.toUpperCase(foo)}
 }
 
-expressions.dateHelper = Value {
+expressions.dateHelper = Neos.Fusion:Value {
   value = ${Date.format(Date.parse('2013-07-14 12:14:00', 'Y-m-d H:i:s'), 'd.m.Y H:i')}
 }
 
-expressions.arrayHelper = Value {
+expressions.arrayHelper = Neos.Fusion:Value {
   value = ${Array.reverse([1, 2, 3])[0]}
 }
 
-expressions.customHelper = Value {
+expressions.customHelper = Neos.Fusion:Value {
   value = ${Testing.String.substr('Neos Flow', 5)}
 }
 
-expressions.flowQuery = Value {
+expressions.flowQuery = Neos.Fusion:Value {
   value = ${q(q(['a', 'b', 'c'])).count()}
 }

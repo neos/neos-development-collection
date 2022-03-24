@@ -6,14 +6,14 @@
 
 
 
-object1 = Text
+object1 = Neos.Fusion:Text
 object1.value = 'Curly braces like this {} or {that} are ignored.'
 
-object2 = Text
+object2 = Neos.Fusion:Text
 object2.value = "Curly braces like this {} or {that} are ignored."
 
-object3 = Text
+object3 = Neos.Fusion:Text
 object3.value = 'Slashes // or hashes # or /* signs are not interpreted as comments.'
 
-object4 = Text
+object4 = Neos.Fusion:Text
 object4.value = "Slashes // or hashes # or /* signs are not interpreted as comments."

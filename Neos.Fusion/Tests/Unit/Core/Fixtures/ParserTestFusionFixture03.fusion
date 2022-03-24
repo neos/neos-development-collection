@@ -5,13 +5,13 @@
  *
  */
 
-object1.mySubObject.mySubSubObject = Text
+object1.mySubObject.mySubSubObject = Neos.Fusion:Text
 object1.mySubObject.mySubSubObject.value = "Espresso is a fine beverage."
 
 
-object2 = ObjectWithArrayProperty
+object2 = Neos.Fusion:ObjectWithArrayProperty
 object2.theArray.theKey = "theValue"
 
-object3 = ObjectWithArrayProperty
-object3.theArray.theKey = Text
+object3 = Neos.Fusion:ObjectWithArrayProperty
+object3.theArray.theKey = Neos.Fusion:Text
 object3.theArray.theKey.value = "theValue"

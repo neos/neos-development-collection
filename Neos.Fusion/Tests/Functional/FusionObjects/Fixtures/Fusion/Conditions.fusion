@@ -89,12 +89,12 @@ conditions.supportForConditionInProcessWithAdvancedProcessFalse = Neos.Fusion:Va
   }
 }
 
-conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Value {
+conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Neos.Fusion:Value {
   value = 'basic'
 
-  theArray = Array {
+  theArray = Neos.Fusion:Array {
     something = ' appended'
-    another = Value {
+    another = Neos.Fusion:Value {
       value = ' more'
       @if.thisIsNotAppended = ${false}
     }

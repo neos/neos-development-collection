@@ -11,74 +11,20 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * source code.
  */
 
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
-use Neos\Fusion\FusionObjects\JoinImplementation;
 
 /**
  * Testcase for the Fusion Parser
  */
 class ParserTest extends UnitTestCase
 {
-    /**
-     * @var Parser
-     */
-    protected $parser;
+    protected Parser $parser;
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $mockObjectManager;
-
-    /**
-     * Sets up this test case
-     *
-     */
     public function setUp(): void
     {
-        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('isRegistered')->will(self::returnCallback([$this, 'objectManagerIsRegisteredCallback']));
-
-        $this->parser = $this->getAccessibleMock(Parser::class, ['dummy']);
-        $this->parser->_set('objectManager', $this->mockObjectManager);
-    }
-
-    /**
-     * call back for mocking the object factory
-     * @return object fixture objects ...
-     */
-    public function objectManagerCallback()
-    {
-        $arguments = array_merge(func_get_args(), [$this->mockObjectManager]);
-        $objectName = array_shift($arguments);
-
-        $class = new \ReflectionClass($objectName);
-        return ($class->getConstructor() !== null) ? $class->newInstanceArgs($arguments) : $class->newInstance();
-    }
-
-    /**
-     * Call back for mocking the object manager's isRegistered() method
-     * @return boolean
-     */
-    public function objectManagerIsRegisteredCallback()
-    {
-        $arguments = array_merge(func_get_args(), [$this->mockObjectManager]);
-        $objectName = array_shift($arguments);
-        switch ($objectName) {
-            case 'Neos\Fusion\Fixtures\Text':
-            case 'Neos\Fusion\Fixtures\Page':
-            case 'Neos\Fusion\Fixtures\ContentArray':
-            case 'Neos\Fusion\Fixtures\ObjectWithArrayProperty':
-            case 'Neos\Fusion\Processors\WrapProcessor':
-            case 'Neos\Fusion\Processors\SubstringProcessor':
-            case 'Neos\Fusion\Processors\MultiplyProcessor':
-            case 'Neos\SomeOther\Namespace\MyWrapProcessor':
-                return true;
-            default:
-                return false;
-        }
+        $this->parser = new Parser();
     }
 
     /**
@@ -770,64 +716,6 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * Checks if namespace declarations are expanded correctly
-     *
-     * @test
-     */
-    public function parserCorrectlyParsesFixture18()
-    {
-        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture18');
-
-        $expectedParseTree = [
-            'object1' => [
-                '__objectType' => 'Neos.Neos:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            'object2' => [
-                '__objectType' => 'Neos.Neos:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            'object3' => [
-                '__objectType' => 'Neos.Schirmchen:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            'object4' => [
-                '__objectType' => 'Neos.Future:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            '__prototypes' => [
-                'Neos.Neos:Foo' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ],
-                'Neos.Neos:Bar' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ],
-                'Neos.Schirmchen:Baz' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ],
-                'Neos.Future:Quux' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ]
-            ]
-        ];
-
-        $actualParseTree = $this->parser->parse($sourceCode);
-        self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
-    }
-
-    /**
      * Checks if simple values (string, boolean, integer) are parsed correctly
      *
      * @test
@@ -966,19 +854,19 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * Checks if dsl value is handed over to the invokeAndParseDsl method
+     * Checks if dsl value is handed over to the handleDslTranspile method
      *
      * @test
      */
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(['invokeAndParseDsl'])->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
 
         $parser
             ->expects($this->exactly(2))
-            ->method('invokeAndParseDsl')
+            ->method('handleDslTranspile')
             ->withConsecutive(
                 ['dsl1', 'example value'],
                 ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value']

@@ -6,12 +6,12 @@
  *
  */
 
-object1 = Text
+object1 = Neos.Fusion:Text
 object1.value = "Hello world"
 
 object1 >
 
-object3 = Text
+object3 = Neos.Fusion:Text
 object3 {
   value = "Hello world"
 }
