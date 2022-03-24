@@ -30,9 +30,8 @@ class ContentCacheFlusherTest extends UnitTestCase
         $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
         $contentCacheFlusher->expects(self::never())->method('resolveWorkspaceChain');
 
-        // Assume 2 calls as we still register all legacy tags as well
-        $contentCacheFlusher->expects($this->exactly(2))->method('registerChangeOnNodeIdentifier');
-        $contentCacheFlusher->expects($this->exactly(2))->method('registerChangeOnNodeType');
+        $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeIdentifier');
+        $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeType');
 
         $this->inject($contentCacheFlusher, 'workspacesToFlush', ['live' => ['some-hash']]);
 
