@@ -1,5 +1,5 @@
 {namespace neos=Neos\Neos\ViewHelpers}
-<div class="neos-button-group neos-user-menu">
+<div class="neos-button-group neos-user-menu" data-csrf-Token="{f:security.csrfToken()}">
 	<button class="neos-dropdown-toggle neos-button" data-neos-toggle="dropdown" href="#" title="{neos:backend.translate(id: 'userSettings.usermenu', source: 'Modules', value: 'User Menu')}" data-neos-tooltip data-placement="left">
 		<i class="fas fa-user"></i> {user.name.fullName} <i class="fas fa-chevron-down"></i>
 	</button>

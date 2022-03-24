@@ -1,6 +1,7 @@
 import jQuery from "jquery";
 
-import { DropDownMenu, MenuPanel } from "./Components/TopBar";
+import { DropDownMenu, MenuPanel, UserMenu } from "./Components/TopBar";
+import { UserManagement } from './Module/Administration'
 import DropDown from "./Components/DropDown";
 import DropDownGroup from "./Components/DropDownGroup";
 import Tree from "./Components/Tree";
@@ -69,4 +70,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
   expandableGroupElements.forEach((expandableElement) => {
     new DropDownGroup(expandableElement);
   });
+
+  const userModuleContainer = document.querySelector('.neos-module-administration-users');
+  if (!isNil(userModuleContainer)) {
+    Array.from(userModuleContainer.querySelectorAll('.neos-table')).forEach(
+        (_userModule) => {
+          if (!isNil(_userModule)) {
+            new UserManagement(_userModule);
+          }
+        }
+    )
+  }
+
+  const userMenuContainer = document.querySelector('#neos-top-bar .neos-user-menu');
+  if (!isNil(userMenuContainer)) {
+    new UserMenu(userMenuContainer);
+  }
 });
