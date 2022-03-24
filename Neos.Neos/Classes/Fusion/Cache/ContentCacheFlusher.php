@@ -76,6 +76,11 @@ class ContentCacheFlusher
     protected $workspacesToFlush = [];
 
     /**
+     * @var array<string, string[]>
+     */
+    protected $implementedNodeTypeNamesByNodeType = [];
+
+    /**
      * @Flow\Inject
      * @var AssetService
      */
@@ -170,6 +175,10 @@ class ContentCacheFlusher
                     break;
                 }
                 $tagName = 'DescendantOf_' . $workspaceHash . '_' . $nodeInWorkspace->getIdentifier();
+                // Prevent traversing the same parent multiple times for multiple children of the same node
+                if (array_key_exists($tagName, $this->tagsToFlush)) {
+                    break;
+                }
                 $this->addTagToFlush($tagName, sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $node->getPath()));
             }
         }
@@ -324,12 +333,16 @@ class ContentCacheFlusher
      */
     protected function getAllImplementedNodeTypeNames(NodeType $nodeType): array
     {
-        $self = $this;
-        $types = array_reduce($nodeType->getDeclaredSuperTypes(), function (array $types, NodeType $superType) use ($self) {
-            return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
-        }, [$nodeType->getName()]);
+        if (array_key_exists($nodeType->getName(), $this->implementedNodeTypeNamesByNodeType)) {
+            return $this->implementedNodeTypeNamesByNodeType[$nodeType->getName()];
+        }
 
-        $types = array_unique($types);
+        $self = $this;
+        $types = array_unique(array_reduce($nodeType->getDeclaredSuperTypes(), static function (array $types, NodeType $superType) use ($self) {
+            return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
+        }, [$nodeType->getName()]));
+
+        $this->implementedNodeTypeNamesByNodeType[$nodeType->getName()] = $types;
         return $types;
     }
 
