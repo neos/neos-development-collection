@@ -26,7 +26,7 @@ use Neos\Utility\Files;
  * Caches partials when requested by the Fusion Parser.
  *
  */
-class FusionParserCache
+class ParserCache
 {
     /**
      * @Flow\Inject

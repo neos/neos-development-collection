@@ -18,7 +18,7 @@ Neos\Fusion\Aspects\FusionCachingAspect:
           1:
             value: Neos_Fusion_ObjectTree
 
-Neos\Fusion\Core\Cache\FusionParserCache:
+Neos\Fusion\Core\Cache\ParserCache:
   properties:
     parsePartialsCache:
       object:

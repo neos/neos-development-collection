@@ -14,7 +14,7 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
-use Neos\Fusion\Core\Cache\FusionParserCache;
+use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTree;
@@ -42,7 +42,7 @@ class Parser implements ParserInterface
 
     /**
      * @Flow\Inject
-     * @var FusionParserCache
+     * @var ParserCache
      */
     protected $parserCache;
 
@@ -87,20 +87,25 @@ class Parser implements ParserInterface
 
     protected function handleDslTranspile(string $identifier, string $code)
     {
-        return $this->parserCache->cacheForDsl($identifier, $code, function () use ($identifier, $code) {
-            $dslObject = $this->dslFactory->create($identifier);
+        return $this->parserCache->cacheForDsl(
+            $identifier,
+            $code,
+            function () use ($identifier, $code) {
+                $dslObject = $this->dslFactory->create($identifier);
 
-            $transpiledFusion = $dslObject->transpile($code);
+                $transpiledFusion = $dslObject->transpile($code);
 
-            $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
+                $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
 
-            $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
+                $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
 
-            $temporaryAst = $mergedArrayTree->getTree();
+                $temporaryAst = $mergedArrayTree->getTree();
 
-            $dslValue = $temporaryAst['value'];
-            return $dslValue;
-        });
+                $dslValue = $temporaryAst['value'];
+
+                return $dslValue;
+            }
+        );
     }
 
     protected function getMergedArrayTreeVisitor(MergedArrayTree $mergedArrayTree): MergedArrayTreeVisitor

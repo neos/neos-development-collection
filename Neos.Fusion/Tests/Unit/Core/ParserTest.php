@@ -13,7 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\Cache\FusionParserCache;
+use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Exception;
 
 /**
@@ -31,7 +31,7 @@ class ParserTest extends UnitTestCase
 
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
-        $parserCache = $this->getMockBuilder(FusionParserCache::class)->getMock();
+        $parserCache = $this->getMockBuilder(ParserCache::class)->getMock();
         $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
         $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
         $this->inject($parser, 'parserCache', $parserCache);
