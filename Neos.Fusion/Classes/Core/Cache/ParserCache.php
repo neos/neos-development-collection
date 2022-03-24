@@ -118,7 +118,7 @@ class ParserCache
     }
 
     /**
-     * Uses the same technic to resolve a package resource uri like flow.
+     * Uses the same technique to resolve a package resource URI like Flow.
      *
      * resource://My.Site/Private/Fusion/Foo/Bar.fusion
      * ->
