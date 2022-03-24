@@ -4,6 +4,7 @@ Neos:
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
     enableContentCache: false
+    enableParsePartialsCache: false
     defaultContext:
       Testing.String: Neos\Eel\Helper\StringHelper
       Testing.Utility: Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper\UtilityHelper
