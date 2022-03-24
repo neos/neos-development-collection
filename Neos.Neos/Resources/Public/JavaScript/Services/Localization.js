@@ -76,13 +76,6 @@ const setInitialized = (initialised) => {
     "NeosCMS.I18n.initialized",
     Boolean(initialised)
   );
-
-  // deprecated - to be removed in 8.0
-  createCollectionByPath(
-    window,
-    "Typo3Neos.I18n.initialized",
-    Boolean(initialised)
-  );
 };
 
 /**
@@ -254,19 +247,12 @@ const init = () => {
     window.NeosCMS = {};
   }
 
-  if (isNil(window.Neos)) {
-    window.Neos = {};
-  }
-
   if (isNil(window.NeosCMS.I18n)) {
     window.NeosCMS.I18n = {
       init: init,
       translate: translate,
       initialized: false,
     };
-
-    // deprecated - to be removed in 8.0
-    window.Neos.I18n = window.NeosCMS.I18n;
   }
 };
 

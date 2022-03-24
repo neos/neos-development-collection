@@ -11,10 +11,6 @@ const init = () => {
     window.NeosCMS = {};
   }
 
-  if (isNil(window.Neos)) {
-    window.Neos = {};
-  }
-
   if (isNil(window.NeosCMS.Helper)) {
     window.NeosCMS.Helper = {
       isNil,
@@ -24,9 +20,6 @@ const init = () => {
       createCollectionByPath,
     };
   }
-
-  // deprecated - to be removed in 8.0
-  window.Neos.Helper = window.NeosCMS.Helper;
 };
 
 export default { init };
