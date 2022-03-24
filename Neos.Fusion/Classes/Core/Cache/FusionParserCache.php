@@ -50,7 +50,7 @@ class FusionParserCache
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
-        $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
+        $identifier = 'file_' . $this->getCacheIdentifierForFile($contextPathAndFilename);
         return $this->cacheByIdentifier($identifier, $generateValueToCache);
     }
 
@@ -59,7 +59,7 @@ class FusionParserCache
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
-        $identifier = md5($identifier . $code);
+        $identifier = 'dsl_' . md5($identifier . $code);
         return $this->cacheByIdentifier($identifier, $generateValueToCache);
     }
 
