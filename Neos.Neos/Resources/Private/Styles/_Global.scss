@@ -111,15 +111,11 @@ body {
       background: none !important;
     }
 
-    // Handles around Aloha Blocks
     .neos-handle,
     .neos-status-indicator {
       display: none !important;
     }
 
-    // Aloha Floating Menu
-    #aloha-floatingmenu-shadow,
-    .aloha-floatingmenu,
     .x-shadow,
     .neos-contentelement-overlay,
     button.neos-create-new-content,
@@ -192,7 +188,3 @@ body {
     }
   }
 }
-
-// Include other global style files
-// @import "ContextBar/AlohaInlineTable";
-// @import "Shared/Select2";
