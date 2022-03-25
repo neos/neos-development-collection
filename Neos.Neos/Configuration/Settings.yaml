@@ -458,12 +458,6 @@ Neos:
     persistence:
       doctrine:
         eventListeners:
-          Neos\Neos\Domain\EventListener\AccountPostEventListener:
-            events:
-              - postPersist
-              - postUpdate
-              - postRemove
-            listener: Neos\Neos\Domain\EventListener\AccountPostEventListener
           Neos\Neos\EventLog\Integrations\EntityIntegrationService:
             events:
               - onFlush
