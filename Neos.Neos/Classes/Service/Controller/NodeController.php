@@ -408,7 +408,7 @@ class NodeController extends AbstractServiceController
     }
 
     /**
-     * Returns an array with the data needed by for example the Hallo and Aloha
+     * Returns an array with the data needed by for example the frontend editing
      * link plugins to represent the passed Node instance.
      *
      * @param NodeInterface $node
