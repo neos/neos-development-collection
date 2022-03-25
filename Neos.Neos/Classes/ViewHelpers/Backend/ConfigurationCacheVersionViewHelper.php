@@ -53,6 +53,6 @@ class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
             $version = (string)time();
             $this->configurationCache->set($cacheKey, $version);
         }
-        return $version;
+        return  $configurationIdentifier . '_' . $version;
     }
 }
