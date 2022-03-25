@@ -2,7 +2,7 @@ prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\V
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
-prototype(Neos.Fusion:Tag) {
+prototype(Neos.Fusion:LegacyTag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
 	attributes = Attributes
 	omitClosingTag = false
@@ -10,7 +10,7 @@ prototype(Neos.Fusion:Tag) {
 }
 
 
-prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:Tag) {
+prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:LegacyTag) {
 	attributes.class = Neos.Fusion:TestRenderer {
 		test = 'class'
 	}
