@@ -400,12 +400,8 @@ class Runtime
             if (isset($fusionConfiguration['__eelExpression']) || isset($fusionConfiguration['__value'])) {
                 return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject);
             }
-        } catch (StopActionException $stopActionException) {
-            throw $stopActionException;
-        } catch (SecurityException $securityException) {
-            throw $securityException;
-        } catch (RuntimeException $runtimeException) {
-            throw $runtimeException;
+        } catch (StopActionException|SecurityException|RuntimeException $exception) {
+            throw $exception;
         } catch (\Exception $exception) {
             return $this->handleRenderingException($fusionPath, $exception, true);
         }
@@ -425,15 +421,9 @@ class Runtime
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration, $applyPathsToPop);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
             $output = $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
-        } catch (StopActionException $stopActionException) {
+        } catch (StopActionException|SecurityException|RuntimeException $exception) {
             $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
-            throw $stopActionException;
-        } catch (SecurityException $securityException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
-            throw $securityException;
-        } catch (RuntimeException $runtimeException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
-            throw $runtimeException;
+            throw $exception;
         } catch (\Exception $exception) {
             $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             return $this->handleRenderingException($fusionPath, $exception, true);
