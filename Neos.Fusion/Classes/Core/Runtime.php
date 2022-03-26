@@ -404,7 +404,7 @@ class Runtime
             return $this->handleRenderingException($fusionPath, $exception, true);
         }
 
-        $cacheContext = $this->runtimeContentCache->enter(isset($fusionConfiguration['__meta']['cache']) ? $fusionConfiguration['__meta']['cache'] : [], $fusionPath);
+        $cacheContext = $this->runtimeContentCache->enter($fusionConfiguration['__meta']['cache'] ?? [], $fusionPath);
 
         if (!(isset($fusionConfiguration['__meta']['class']) && isset($fusionConfiguration['__objectType']))) {
             $this->finalizePathEvaluation($cacheContext);
@@ -551,7 +551,7 @@ class Runtime
         }
 
         if (isset($fusionConfiguration['__meta']['context'])) {
-            $newContextArray = isset($newContextArray) ? $newContextArray : $this->currentContext;
+            $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }
@@ -599,7 +599,7 @@ class Runtime
     {
         $fusionObjectType = $fusionConfiguration['__objectType'];
 
-        $fusionObjectClassName = isset($fusionConfiguration['__meta']['class']) ? $fusionConfiguration['__meta']['class'] : null;
+        $fusionObjectClassName = $fusionConfiguration['__meta']['class'] ?? null;
 
         if (!preg_match('#<[^>]*>$#', $fusionPath)) {
             // Only add Fusion object type to last path part if not already set
