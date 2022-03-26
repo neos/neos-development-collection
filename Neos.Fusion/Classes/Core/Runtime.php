@@ -406,7 +406,8 @@ class Runtime
 
         $cacheContext = $this->runtimeContentCache->enter($fusionConfiguration['__meta']['cache'] ?? [], $fusionPath);
 
-        if (!(isset($fusionConfiguration['__meta']['class']) && isset($fusionConfiguration['__objectType']))) {
+        if (isset($fusionConfiguration['__meta']['class']) === false
+            || isset($fusionConfiguration['__objectType']) === false) {
             $this->finalizePathEvaluation($cacheContext);
             $this->throwExceptionForUnrenderablePathIfNeeded($fusionPath, $fusionConfiguration, $behaviorIfPathNotFound);
             $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
