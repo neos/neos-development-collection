@@ -297,7 +297,7 @@ final class WorkspaceCommandHandler
 
         $streamName = StreamName::fromString((string)$contentStreamName->getEventStreamName());
 
-        /* @var array<int, EventEnvelope> $workspaceContentStream */
+        /** @var array<int,EventEnvelope> $workspaceContentStream */
         $workspaceContentStream = iterator_to_array($this->eventStore->load($streamName));
 
         $events = DomainEvents::createEmpty();
