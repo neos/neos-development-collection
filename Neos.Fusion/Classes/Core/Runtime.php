@@ -398,7 +398,7 @@ class Runtime
             if (isset($fusionConfiguration['__eelExpression']) || isset($fusionConfiguration['__value'])) {
                 return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject);
             }
-        } catch (StopActionException|SecurityException|RuntimeException $exception) {
+        } catch (StopActionException | SecurityException | RuntimeException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
             return $this->handleRenderingException($fusionPath, $exception, true);
@@ -421,7 +421,12 @@ class Runtime
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration, $applyPathsToPop);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
             return $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
-        } catch (StopActionException|SecurityException|RuntimeException $exception) {
+        } catch (
+            StopActionException
+            | SecurityException
+            | RuntimeException
+            $exception
+        ) {
             throw $exception;
         } catch (\Exception $exception) {
             return $this->handleRenderingException($fusionPath, $exception, true);
