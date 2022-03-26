@@ -420,17 +420,14 @@ class Runtime
             $applyPathsToPop = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration, $applyPathsToPop);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
-            $output = $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
+            return $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
         } catch (StopActionException|SecurityException|RuntimeException $exception) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             throw $exception;
         } catch (\Exception $exception) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             return $this->handleRenderingException($fusionPath, $exception, true);
+        } finally {
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
         }
-
-        $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
-        return $output;
     }
 
     /**
