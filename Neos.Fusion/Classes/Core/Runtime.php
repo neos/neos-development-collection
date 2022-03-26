@@ -373,8 +373,6 @@ class Runtime
      */
     public function evaluate(string $fusionPath, $contextObject = null, string $behaviorIfPathNotFound = self::BEHAVIOR_RETURNNULL)
     {
-        $needToPopContext = false;
-        $needToPopApply = false;
         $this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
 
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
@@ -415,6 +413,7 @@ class Runtime
             return null;
         }
 
+        $needToPopContext = false;
         $applyPathsToPop = [];
         try {
             $applyPathsToPop = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
