@@ -372,9 +372,11 @@ class Runtime
 
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
 
-        // Check if the current "@apply" contain an entry for the requested fusionPath
-        // in which case this value is returned after applying @if and @process rules
         if (isset($this->currentApplyValues[$fusionPath])) {
+            // the $fusionPath is an @apply value
+            // we evaluate @if and @process
+            // when the @apply value is lazy we trigger the evaluation
+            // we return directly
             if (isset($fusionConfiguration['__meta']['if']) && $this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
                 return null;
             }
