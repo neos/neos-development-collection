@@ -391,7 +391,7 @@ class Runtime
         }
 
         if (isset($fusionConfiguration['__eelExpression']) || isset($fusionConfiguration['__value'])) {
-            // Fast path for expression or value
+            // fast path for expression or value
             try {
                 return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject);
             } catch (StopActionException | SecurityException | RuntimeException $exception) {
@@ -401,16 +401,19 @@ class Runtime
             }
         }
 
+        // render fusion object
         $cacheContext = $this->runtimeContentCache->enter($fusionConfiguration['__meta']['cache'] ?? [], $fusionPath);
         $needToPopContext = false;
         $applyPathsToPop = [];
         try {
             if (isset($fusionConfiguration['__meta']['class']) === false
                 || isset($fusionConfiguration['__objectType']) === false) {
+                // fusion object not found / cannot be rendered
                 $this->throwExceptionForUnrenderablePathIfNeeded($fusionPath, $fusionConfiguration, $behaviorIfPathNotFound);
                 $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
                 return null;
             }
+
             $applyPathsToPop = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration, $applyPathsToPop);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
@@ -427,7 +430,7 @@ class Runtime
         } catch (\Exception $exception) {
             return $this->handleRenderingException($fusionPath, $exception, true);
         } finally {
-            // ends the evaluation of a fusion path by popping the context and property stack if needed and leaving the cache context.
+            // ends the evaluation of a fusion path
             if ($needToPopContext) {
                 $this->popContext();
             }
