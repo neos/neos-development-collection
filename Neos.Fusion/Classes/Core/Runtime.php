@@ -278,7 +278,7 @@ class Runtime
 
     /**
      * Handle an Exception thrown while rendering Fusion according to
-     * settings specified in Neos.Fusion.rendering.exceptionHandler
+     * settings specified in Neos.Fusion.rendering.exceptionHandler or {@exceptionHandler}
      *
      * @param string $fusionPath
      * @param \Exception $exception
@@ -289,49 +289,44 @@ class Runtime
      * @throws SecurityException
      * @throws StopActionException
      */
-    public function handleRenderingException($fusionPath, \Exception $exception, $useInnerExceptionHandler = false)
+    public function handleRenderingException(string $fusionPath, \Exception $exception, bool $useInnerExceptionHandler = false)
     {
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
 
-        if (isset($fusionConfiguration['__meta']['exceptionHandler'])) {
-            $exceptionHandlerClass = $fusionConfiguration['__meta']['exceptionHandler'];
-            $invalidExceptionHandlerMessage = 'The class "%s" is not valid for property "@exceptionHandler".';
-        } else {
-            if ($useInnerExceptionHandler === true) {
-                $exceptionHandlerClass = $this->settings['rendering']['innerExceptionHandler'];
-            } else {
-                $exceptionHandlerClass = $this->settings['rendering']['exceptionHandler'];
-            }
-            $invalidExceptionHandlerMessage = 'The class "%s" is not valid for setting "Neos.Fusion.rendering.exceptionHandler".';
-        }
+        $useLocalExceptionHandler = isset($fusionConfiguration['__meta']['exceptionHandler']);
+        $exceptionHandlerClass = $useLocalExceptionHandler
+            // use local configured @exceptionHandler
+            ? $fusionConfiguration['__meta']['exceptionHandler']
+            // use global configured exception handler
+            : $this->settings['rendering'][$useInnerExceptionHandler ? 'innerExceptionHandler' : 'exceptionHandler'];
+
         $exceptionHandler = null;
         if ($this->objectManager->isRegistered($exceptionHandlerClass)) {
             $exceptionHandler = $this->objectManager->get($exceptionHandlerClass);
         }
 
-        if ($exceptionHandler === null || !($exceptionHandler instanceof AbstractRenderingExceptionHandler)) {
-            $message = sprintf(
-                $invalidExceptionHandlerMessage . "\n" .
-                'Please specify a fully qualified classname to a subclass of %2$s\AbstractRenderingExceptionHandler.' . "\n" .
-                'You might implement an own handler or use one of the following:' . "\n" .
-                '%2$s\AbsorbingHandler' . "\n" .
-                '%2$s\HtmlMessageHandler' . "\n" .
-                '%2$s\PlainTextHandler' . "\n" .
-                '%2$s\ThrowingHandler' . "\n" .
-                '%2$s\XmlCommentHandler',
-                $exceptionHandlerClass,
-                'Neos\Fusion\Core\ExceptionHandlers'
-            );
-            throw new InvalidConfigurationException($message, 1368788926);
+        if ($exceptionHandler instanceof AbstractRenderingExceptionHandler === false) {
+            $usedExceptionHandler = $useLocalExceptionHandler
+                ? 'property "@exceptionHandler"'
+                : 'setting "Neos.Fusion.rendering.exceptionHandler"';
+
+            throw new InvalidConfigurationException(<<<MESSAGE
+                The class \"$exceptionHandlerClass\" is not valid for $usedExceptionHandler
+                Please specify a fully qualified classname to a subclass of Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler.
+                You might implement an own handler or use one of the following:
+                Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler
+                Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler
+                Neos\Fusion\Core\ExceptionHandlers\PlainTextHandler
+                Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
+                Neos\Fusion\Core\ExceptionHandlers\XmlCommentHandler
+                MESSAGE, 1368788926);
         }
 
         $exceptionHandler->setRuntime($this);
         if (array_key_exists('__objectType', $fusionConfiguration)) {
-            $fusionPath .= sprintf('<%s>', $fusionConfiguration['__objectType']);
+            $fusionPath .= "<{$fusionConfiguration['__objectType']}>";
         }
-        $output = $exceptionHandler->handleRenderingException($fusionPath, $exception);
-
-        return $output;
+        return $exceptionHandler->handleRenderingException($fusionPath, $exception);
     }
 
     /**
