@@ -597,12 +597,10 @@ class Runtime
             $fusionPath .= '<' . $fusionObjectType . '>';
         }
         if (!class_exists($fusionObjectClassName)) {
-            throw new Exception(sprintf(
-                'The implementation class `%s` defined for Fusion object of type `%s` does not exist.
-				Maybe a typo in the `@class` property.',
-                $fusionObjectClassName,
-                $fusionObjectType
-            ), 1347952109);
+            throw new Exception(<<<MESSAGE
+                The implementation class "$fusionObjectClassName" defined for Fusion object of type "$fusionObjectType" does not exist.
+                Maybe a typo in the "@class" property.
+                MESSAGE, 1347952109);
         }
 
         /** @var $fusionObject AbstractFusionObject */
@@ -884,25 +882,22 @@ class Runtime
     {
         if (isset($fusionConfiguration['__objectType'])) {
             $objectType = $fusionConfiguration['__objectType'];
-            throw new Exceptions\MissingFusionImplementationException(sprintf(
-                "The Fusion object `%s` cannot be rendered:
-					Most likely you mistyped the prototype name or did not define
-					the Fusion prototype with `prototype(%s) < prototype ...` .
-					Other possible reasons are a missing parent-prototype or
-					a missing `@class` annotation for prototypes without parent.
-					It is also possible your Fusion file is not read because
-					of a missing `include:` statement.",
-                $objectType,
-                $objectType
-            ), 1332493995);
+            throw new Exceptions\MissingFusionImplementationException(<<<MESSAGE
+                The Fusion object "$objectType" cannot be rendered:
+                Most likely you mistyped the prototype name or did not define
+                the Fusion prototype with "prototype($objectType) < prototype(...)".
+                Other possible reasons are a missing parent-prototype or
+                a missing "@class" annotation for prototypes without parent.
+                It is also possible your Fusion file is not read because
+                of a missing "include:" statement.
+                MESSAGE, 1332493995);
         }
 
         if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-            throw new Exceptions\MissingFusionObjectException(sprintf(
-                'No Fusion object found in path "%s"
-					Please make sure to define one in your Fusion configuration.',
-                $fusionPath
-            ), 1332493990);
+            throw new Exceptions\MissingFusionObjectException(<<<MESSAGE
+                No Fusion object found in path "$fusionPath"
+                Please make sure to define one in your Fusion configuration.
+                MESSAGE, 1332493990);
         }
     }
 
