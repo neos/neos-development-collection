@@ -594,13 +594,15 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
             ]);
 
             // set new
-            foreach ($event->getDestinationNodeAggregateIdentifiers() as $position => $destinationNodeIdentifier) {
+            $position = 0;
+            foreach ($event->getDestinationNodeAggregateIdentifiers() as $destinationNodeIdentifier) {
                 $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
                     'name' => $event->getReferenceName(),
                     'position' => $position,
                     'nodeanchorpoint' => $nodeAnchorPoint,
                     'destinationnodeaggregateidentifier' => $destinationNodeIdentifier,
                 ]);
+                $position++;
             }
         });
     }
