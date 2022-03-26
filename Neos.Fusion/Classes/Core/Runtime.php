@@ -405,18 +405,15 @@ class Runtime
         }
 
         $cacheContext = $this->runtimeContentCache->enter($fusionConfiguration['__meta']['cache'] ?? [], $fusionPath);
-
-        if (isset($fusionConfiguration['__meta']['class']) === false
-            || isset($fusionConfiguration['__objectType']) === false) {
-            $this->finalizePathEvaluation($cacheContext);
-            $this->throwExceptionForUnrenderablePathIfNeeded($fusionPath, $fusionConfiguration, $behaviorIfPathNotFound);
-            $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
-            return null;
-        }
-
         $needToPopContext = false;
         $applyPathsToPop = [];
         try {
+            if (isset($fusionConfiguration['__meta']['class']) === false
+                || isset($fusionConfiguration['__objectType']) === false) {
+                $this->throwExceptionForUnrenderablePathIfNeeded($fusionPath, $fusionConfiguration, $behaviorIfPathNotFound);
+                $this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
+                return null;
+            }
             $applyPathsToPop = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration, $applyPathsToPop);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
@@ -425,6 +422,8 @@ class Runtime
             StopActionException
             | SecurityException
             | RuntimeException
+            | Exception\MissingFusionImplementationException
+            | Exception\MissingFusionObjectException
             $exception
         ) {
             throw $exception;
