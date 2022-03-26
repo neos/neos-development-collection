@@ -390,15 +390,15 @@ class Runtime
             return $appliedValue;
         }
 
-        // Fast path for expression or value
-        try {
-            if (isset($fusionConfiguration['__eelExpression']) || isset($fusionConfiguration['__value'])) {
+        if (isset($fusionConfiguration['__eelExpression']) || isset($fusionConfiguration['__value'])) {
+            // Fast path for expression or value
+            try {
                 return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject);
+            } catch (StopActionException | SecurityException | RuntimeException $exception) {
+                throw $exception;
+            } catch (\Exception $exception) {
+                return $this->handleRenderingException($fusionPath, $exception, true);
             }
-        } catch (StopActionException | SecurityException | RuntimeException $exception) {
-            throw $exception;
-        } catch (\Exception $exception) {
-            return $this->handleRenderingException($fusionPath, $exception, true);
         }
 
         $cacheContext = $this->runtimeContentCache->enter($fusionConfiguration['__meta']['cache'] ?? [], $fusionPath);
