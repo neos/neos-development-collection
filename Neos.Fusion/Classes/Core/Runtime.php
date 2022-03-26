@@ -430,7 +430,14 @@ class Runtime
         } catch (\Exception $exception) {
             return $this->handleRenderingException($fusionPath, $exception, true);
         } finally {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
+            // ends the evaluation of a fusion path by popping the context and property stack if needed and leaving the cache context.
+            if ($needToPopContext) {
+                $this->popContext();
+            }
+            if ($applyPathsToPop !== []) {
+                $this->popApplyValues($applyPathsToPop);
+            }
+            $this->runtimeContentCache->leave($cacheContext);
         }
     }
 
@@ -568,27 +575,6 @@ class Runtime
         }
 
         return false;
-    }
-
-    /**
-     * Ends the evaluation of a fusion path by popping the context and property stack if needed and leaving the cache context.
-     *
-     * @param array $cacheContext
-     * @param boolean $needToPopContext
-     * @param array $applyPathsToPop
-     * @return void
-     */
-    protected function finalizePathEvaluation($cacheContext, $needToPopContext = false, array $applyPathsToPop = [])
-    {
-        if ($needToPopContext) {
-            $this->popContext();
-        }
-
-        if ($applyPathsToPop !== []) {
-            $this->popApplyValues($applyPathsToPop);
-        }
-
-        $this->runtimeContentCache->leave($cacheContext);
     }
 
     /**
