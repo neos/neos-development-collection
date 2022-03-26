@@ -362,7 +362,7 @@ class Runtime
      *
      * @param string $fusionPath
      * @param mixed $contextObject The object which will be "this" in Eel expressions. ONLY FOR INTERNAL USE!
-     * @param string $behaviorIfPathNotFound One of BEHAVIOR_EXCEPTION or BEHAVIOR_RETURNNULL
+     * @param (Runtime::BEHAVIOR_EXCEPTION|Runtime::BEHAVIOR_RETURNNULL) $behaviorIfPathNotFound
      * @return mixed
      *
      * @throws StopActionException
@@ -909,11 +909,11 @@ class Runtime
             $objectType = $fusionConfiguration['__objectType'];
             throw new Exceptions\MissingFusionImplementationException(sprintf(
                 "The Fusion object `%s` cannot be rendered:
-					Most likely you mistyped the prototype name or did not define 
-					the Fusion prototype with `prototype(%s) < prototype ...` . 
-					Other possible reasons are a missing parent-prototype or 
+					Most likely you mistyped the prototype name or did not define
+					the Fusion prototype with `prototype(%s) < prototype ...` .
+					Other possible reasons are a missing parent-prototype or
 					a missing `@class` annotation for prototypes without parent.
-					It is also possible your Fusion file is not read because 
+					It is also possible your Fusion file is not read because
 					of a missing `include:` statement.",
                 $objectType,
                 $objectType
