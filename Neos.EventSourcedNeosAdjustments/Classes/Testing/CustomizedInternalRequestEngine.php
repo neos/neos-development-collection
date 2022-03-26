@@ -19,12 +19,12 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Http;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class CustomizedInternalRequestEngine extends InternalRequestEngine
 {
-    public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
+    public function sendRequest(RequestInterface $httpRequest): ResponseInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         /** @phpstan-ignore-next-line */
@@ -45,6 +45,7 @@ class CustomizedInternalRequestEngine extends InternalRequestEngine
         $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
 
         try {
+            /** @phpstan-ignore-next-line */
             $response = $middlewaresChain->handle($httpRequest);
         } catch (\Throwable $throwable) {
             $response = $this->prepareErrorResponse($throwable, new Response());
