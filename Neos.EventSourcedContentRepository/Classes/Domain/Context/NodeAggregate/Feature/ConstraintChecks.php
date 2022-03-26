@@ -410,8 +410,7 @@ trait ConstraintChecks
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): void {
-        if ($nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes()
-            !== $dimensionSpacePointSet->getPointHashes()) {
+        if (!$dimensionSpacePointSet->getDifference($nodeAggregate->getCoveredDimensionSpacePoints())->isEmpty()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
                 $nodeAggregate->getIdentifier(),
                 $dimensionSpacePointSet,
