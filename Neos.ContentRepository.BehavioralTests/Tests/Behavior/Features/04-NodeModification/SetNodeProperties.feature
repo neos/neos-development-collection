@@ -94,6 +94,6 @@ Feature: Set properties
       | float         | 72.84                                                         |
       | bool          | true                                                          |
       | array         | {"givenName":"David", "familyName":"Nodenborough", "age": 84} |
-      | date          | "Date:2021-03-13T17:33:17+00:00"                              |
-      | uri           | "URI:https://www.neos.io"                                     |
-      | postalAddress | "PostalAddress:anotherDummy"                                  |
+      | date          | Date:2021-03-13T17:33:17+00:00                                |
+      | uri           | URI:https://www.neos.io                                       |
+      | postalAddress | PostalAddress:anotherDummy                                    |

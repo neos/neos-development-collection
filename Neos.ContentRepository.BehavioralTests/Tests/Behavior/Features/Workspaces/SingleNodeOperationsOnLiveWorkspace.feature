@@ -70,4 +70,4 @@ Feature: Single Node operations on live workspace
       | nodeAggregateIdentifier   | "nody-mc-nodeface"  |
       | originDimensionSpacePoint | {"not": "existing"} |
       | propertyValues            | {"text": "Hello"}   |
-    Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"
+    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
