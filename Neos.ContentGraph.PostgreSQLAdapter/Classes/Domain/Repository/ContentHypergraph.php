@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,8 +10,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
+
 use Doctrine\DBAL\Connection as DatabaseConnection;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
@@ -40,9 +40,9 @@ use Neos\Flow\Annotations as Flow;
  *
  * To be used as a read-only source of subhypergraphs, node aggregates and nodes
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope("singleton")]
 final class ContentHypergraph implements ContentGraphInterface
 {
     private DbalClient $databaseClient;
@@ -171,12 +171,12 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     /**
-     * @return array<string,NodeAggregate>
+     * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $query = HypergraphParentQuery::create($contentStreamIdentifier);
         $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
@@ -190,12 +190,12 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     /**
-     * @return array<string,NodeAggregate>
+     * @return iterable<NodeAggregate>
      */
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $query = HypergraphChildQuery::create(
             $contentStreamIdentifier,
             $parentNodeAggregateIdentifier
@@ -211,13 +211,13 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     /**
-     * @return array<string,NodeAggregate>
+     * @return iterable<string,NodeAggregate>
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
-    ): array {
+    ): iterable {
         $query = HypergraphChildQuery::create(
             $contentStreamIdentifier,
             $parentNodeAggregateIdentifier
@@ -234,14 +234,12 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array<string,NodeAggregate>
+     * @return iterable<string,NodeAggregate>
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
         $query = $query->withOnlyTethered();
 

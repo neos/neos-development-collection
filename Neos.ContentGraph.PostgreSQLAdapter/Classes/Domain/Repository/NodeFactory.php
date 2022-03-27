@@ -218,9 +218,9 @@ final class NodeFactory
 
     /**
      * @param array<string,mixed> $nodeRows
-     * @return array<string,NodeAggregate>
+     * @return iterable<int,ContentProjection\NodeAggregate>
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): array
+    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable
     {
         $nodeAggregates = [];
         if (empty($nodeRows)) {
@@ -296,7 +296,7 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIdentifiers as $key => $nodeAggregateIdentifier) {
-            $nodeAggregates[$key] = new NodeAggregate(
+            yield new NodeAggregate(
                 $contentStreamIdentifier,
                 $nodeAggregateIdentifier,
                 $nodeAggregateClassifications[$key],
@@ -311,7 +311,5 @@ final class NodeFactory
                 new DimensionSpacePointSet($disabledDimensionSpacePoints[$key])
             );
         }
-
-        return $nodeAggregates;
     }
 }
