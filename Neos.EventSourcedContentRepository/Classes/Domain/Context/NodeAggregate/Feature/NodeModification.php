@@ -46,10 +46,13 @@ trait NodeModification
 
     public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier
         );
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $nodeTypeName = $nodeAggregate->getNodeTypeName();
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
