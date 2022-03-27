@@ -60,7 +60,7 @@ trait NodeVariation
             $command->nodeAggregateIdentifier
         );
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
-        $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
