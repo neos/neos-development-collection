@@ -211,7 +211,7 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     /**
-     * @return iterable<string,NodeAggregate>
+     * @return iterable<NodeAggregate>
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -234,7 +234,7 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     /**
-     * @return iterable<string,NodeAggregate>
+     * @return iterable<NodeAggregate>
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,

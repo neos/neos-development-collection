@@ -63,6 +63,9 @@ trait NodeVariation
                 $event->specializationOrigin->toDimensionSpacePoint(),
                 $event->nodeAggregateIdentifier
             );
+            if (is_null($oldCoveringNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+            }
             $this->assignNewChildNodeToAffectedHierarchyRelations(
                 $event->contentStreamIdentifier,
                 $oldCoveringNode->relationAnchorPoint,
