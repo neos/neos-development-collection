@@ -31,7 +31,10 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodePropertiesWereSet implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+final class NodePropertiesWereSet implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -82,9 +85,9 @@ final class NodePropertiesWereSet implements DomainEventInterface, PublishableTo
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodePropertiesWereSet(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,

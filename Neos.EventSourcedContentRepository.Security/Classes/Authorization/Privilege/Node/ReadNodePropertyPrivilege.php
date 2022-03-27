@@ -22,9 +22,9 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
-    protected $methodNameToPropertyMapping = [
+    protected array $methodNameToPropertyMapping = [
         'getName' => 'name',
         'isHidden' => 'hidden',
         'isHiddenInIndex' => 'hiddenInIndex',
@@ -33,10 +33,7 @@ class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege
         'getAccessRoles' => 'accessRoles',
     ];
 
-    /**
-     * @return string
-     */
-    protected function buildMethodPrivilegeMatcher()
+    protected function buildMethodPrivilegeMatcher(): string
     {
         return  'within(' . NodeInterface::class . ') && method(.*->(getProperty|getProperties)())';
     }

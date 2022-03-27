@@ -13,14 +13,18 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A node aggregate was moved in a content stream as defined in the node move mappings.
  *
- * We always move a node aggregate (in a given ContenStreamIdentifier, identified by a NodeAggregateIdentifier).
+ * We always move a node aggregate (in a given ContentStreamIdentifier, identified by a NodeAggregateIdentifier).
  *
- * You can move any amount of nodes in the aggregate. The targets (new parents // new succeeding) for each node & dimension space point
+ * You can move any amount of nodes in the aggregate.
+ * The targets (new parents // new succeeding) for each node & dimension space point
  * are specified in {@see NodeMoveMappings}.
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWasMoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+final class NodeAggregateWasMoved implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -37,8 +41,8 @@ final class NodeAggregateWasMoved implements DomainEventInterface, PublishableTo
     private ?NodeMoveMappings $nodeMoveMappings;
 
     /**
-     * This specifies all "edges" which should move to the END of their siblings. All dimension space points included here
-     * must NOT be part of any MoveNodeMapping.
+     * This specifies all "edges" which should move to the END of their siblings.
+     * All dimension space points included here must NOT be part of any MoveNodeMapping.
      *
      * This case is needed because we can only specify a new parent or/and a new succeeding sibling in the
      * MoveNodeMappings; so we need a way to "move to the end".
@@ -88,9 +92,9 @@ final class NodeAggregateWasMoved implements DomainEventInterface, PublishableTo
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeAggregateWasMoved
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeAggregateWasMoved(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeMoveMappings,

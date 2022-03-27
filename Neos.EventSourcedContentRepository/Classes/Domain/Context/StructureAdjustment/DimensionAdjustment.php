@@ -25,13 +25,23 @@ class DimensionAdjustment
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
-                foreach ($nodeAggregate->getCoverageByOccupant($node->getOriginDimensionSpacePoint()) as $coveredDimensionSpacePoint) {
-                    $variantType = $this->interDimensionalVariationGraph->getVariantType($coveredDimensionSpacePoint, $node->getOriginDimensionSpacePoint())->getType();
-                    if ($node->getOriginDimensionSpacePoint()->getHash() !== $coveredDimensionSpacePoint->getHash() && $variantType !== VariantType::TYPE_SPECIALIZATION) {
+                foreach ($nodeAggregate->getCoverageByOccupant(
+                    $node->getOriginDimensionSpacePoint()
+                ) as $coveredDimensionSpacePoint) {
+                    $variantType = $this->interDimensionalVariationGraph->getVariantType(
+                        $coveredDimensionSpacePoint,
+                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint()
+                    );
+                    if (!$node->getOriginDimensionSpacePoint()->equals($coveredDimensionSpacePoint)
+                        && $variantType !== VariantType::TYPE_SPECIALIZATION
+                    ) {
                         $message = sprintf(
                             '
                                 The node has an Origin Dimension Space Point of %s,
@@ -44,7 +54,7 @@ class DimensionAdjustment
                             ',
                             json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
                             json_encode($coveredDimensionSpacePoint->jsonSerialize()),
-                            strtoupper($variantType)
+                            strtoupper($variantType->value)
                         );
 
                         yield StructureAdjustment::createForNode(

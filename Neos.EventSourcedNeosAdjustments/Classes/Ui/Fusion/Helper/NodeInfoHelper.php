@@ -20,6 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
@@ -114,38 +115,52 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected $ignoredNodeTypeRole;
 
     /**
-     * @param NodeInterface $node
-     * @param ControllerContext $controllerContext
-     * @param bool $omitMostPropertiesForTreeState
-     * @param string $nodeTypeFilterOverride
-     * @return array
+     * @return ?array<string,mixed>
      * @deprecated See methods with specific names for different behaviors
      */
-    public function renderNode(NodeInterface $node, ControllerContext $controllerContext = null, $omitMostPropertiesForTreeState = false, $nodeTypeFilterOverride = null)
-    {
-        return ($omitMostPropertiesForTreeState ?
-            $this->renderNodeWithMinimalPropertiesAndChildrenInformation($node, $controllerContext, $nodeTypeFilterOverride) :
-            $this->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext, $nodeTypeFilterOverride)
+    public function renderNode(
+        NodeInterface $node,
+        ControllerContext $controllerContext = null,
+        bool $omitMostPropertiesForTreeState = false,
+        string $nodeTypeFilterOverride = null
+    ):?array {
+        return ($omitMostPropertiesForTreeState
+            ? $this->renderNodeWithMinimalPropertiesAndChildrenInformation(
+                $node,
+                $controllerContext,
+                $nodeTypeFilterOverride
+            )
+            : $this->renderNodeWithPropertiesAndChildrenInformation(
+                $node,
+                $controllerContext,
+                $nodeTypeFilterOverride
+            )
         );
     }
 
     /**
-     * @param NodeInterface $node
-     * @param ControllerContext|null $controllerContext
-     * @param string $nodeTypeFilterOverride
-     * @return array|null
+     * @return ?array<string,mixed>
      */
-    public function renderNodeWithMinimalPropertiesAndChildrenInformation(NodeInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
-    {
-        //if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
-        //    return null;
-        //}
+    public function renderNodeWithMinimalPropertiesAndChildrenInformation(
+        NodeInterface $node,
+        ControllerContext $controllerContext = null,
+        string $nodeTypeFilterOverride = null
+    ): ?array {
+        /** @todo implement custom node policy service
+        if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
+            return null;
+        }*/
         $this->userLocaleService->switchToUILocale();
 
         $nodeInfo = $this->getBasicNodeInformation($node);
         $nodeInfo['properties'] = [
-            // if we are only rendering the tree state, ensure _isHidden is sent to hidden nodes are correctly shown in the tree.
-            '_hidden' => $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden(),
+            // if we are only rendering the tree state,
+            // ensure _isHidden is sent to hidden nodes are correctly shown in the tree.
+            '_hidden' => $this->nodeHiddenStateFinder->findHiddenState(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                $node->getNodeAggregateIdentifier()
+            )->isHidden(),
             '_hiddenInIndex' => $node->getProperty('_hiddenInIndex'),
             //'_hiddenBeforeDateTime' => $node->getHiddenBeforeDateTime() instanceof \DateTimeInterface,
             //'_hiddenAfterDateTime' => $node->getHiddenAfterDateTime() instanceof \DateTimeInterface,
@@ -155,8 +170,11 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             $nodeInfo = array_merge($nodeInfo, $this->getUriInformation($node, $controllerContext));
         }
 
-        $baseNodeType = $nodeTypeFilterOverride ? $nodeTypeFilterOverride : $this->baseNodeType;
-        $nodeTypeFilter = $this->buildNodeTypeFilterString($this->nodeTypeStringsToList($baseNodeType), $this->nodeTypeStringsToList($this->ignoredNodeTypeRole));
+        $baseNodeType = $nodeTypeFilterOverride ?: $this->baseNodeType;
+        $nodeTypeFilter = $this->buildNodeTypeFilterString(
+            $this->nodeTypeStringsToList($baseNodeType),
+            $this->nodeTypeStringsToList($this->ignoredNodeTypeRole)
+        );
 
         $nodeInfo['children'] = $this->renderChildrenInformation($node, $nodeTypeFilter);
 
@@ -166,16 +184,17 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param NodeInterface $node
-     * @param ControllerContext|null $controllerContext
-     * @param string $nodeTypeFilterOverride
-     * @return array|null
+     * @return ?array<string,mixed>
      */
-    public function renderNodeWithPropertiesAndChildrenInformation(NodeInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
-    {
-        //if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
-        //    return null;
-        //}
+    public function renderNodeWithPropertiesAndChildrenInformation(
+        NodeInterface $node,
+        ControllerContext $controllerContext = null,
+        string $nodeTypeFilterOverride = null
+    ): ?array {
+        /** @todo implement custom node policy service
+        if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
+            return null;
+        }**/
 
         $this->userLocaleService->switchToUILocale();
 
@@ -200,7 +219,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      *
      * @param NodeInterface $node
      * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<string,string>
      */
     protected function getUriInformation(NodeInterface $node, ControllerContext $controllerContext): array
     {
@@ -215,12 +234,17 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get the basic information about a node.
      *
-     * @param NodeInterface $node
-     * @return array
+     * @return array<string,mixed>
      */
     protected function getBasicNodeInformation(NodeInterface $node): array
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $parentNode = $nodeAccessor->findParentNode($node);
+
         return [
             'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
             'name' => $node->getNodeName() ? $node->getNodeName()->jsonSerialize() : null,
@@ -231,12 +255,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             // TODO: depth is expensive to calculate; maybe let's get rid of this?
             'depth' => $nodeAccessor->findNodePath($node)->getDepth(),
             'children' => [],
-            'parent' => $this->nodeAddressFactory->createFromNode($nodeAccessor->findParentNode($node))->serializeForUri(),
+            'parent' => $parentNode ? $this->nodeAddressFactory->createFromNode($parentNode)->serializeForUri() : null,
             'matchesCurrentDimensions' => $node->getDimensionSpacePoint()->equals($node->getOriginDimensionSpacePoint())
         ];
     }
 
-    public static function isAutoCreated(NodeInterface $node, NodeAccessorInterface $nodeAccessor)
+    public static function isAutoCreated(NodeInterface $node, NodeAccessorInterface $nodeAccessor): bool
     {
         $parent = $nodeAccessor->findParentNode($node);
         if ($parent) {
@@ -252,16 +276,28 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      *
      * @param NodeInterface $node
      * @param string $nodeTypeFilterString
-     * @return array
+     * @return array<int,array<string,string>>
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
     protected function renderChildrenInformation(NodeInterface $node, string $nodeTypeFilterString): array
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
-        $documentChildNodes = $nodeAccessor->findChildNodes($node, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString));
+        $documentChildNodes = $nodeAccessor->findChildNodes(
+            $node,
+            $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString)
+        );
         // child nodes for content tree, must not include those nodes filtered out by `baseNodeType`
-        $contentChildNodes = $nodeAccessor->findChildNodes($node, $this->nodeTypeConstraintFactory->parseFilterString($this->buildContentChildNodeFilterString()));
+        $contentChildNodes = $nodeAccessor->findChildNodes(
+            $node,
+            $this->nodeTypeConstraintFactory->parseFilterString(
+                $this->buildContentChildNodeFilterString()
+            )
+        );
         $childNodes = $documentChildNodes->merge($contentChildNodes);
 
         $infos = [];
@@ -275,14 +311,17 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param array $nodes
-     * @param ControllerContext $controllerContext
-     * @param bool $omitMostPropertiesForTreeState
-     * @return array
+     * @param array<int,NodeInterface> $nodes
+     * @return array<int,?array<string,mixed>>
      */
-    public function renderNodes(array $nodes, ControllerContext $controllerContext, $omitMostPropertiesForTreeState = false): array
-    {
-        $methodName = $omitMostPropertiesForTreeState ? 'renderNodeWithMinimalPropertiesAndChildrenInformation' : 'renderNodeWithPropertiesAndChildrenInformation';
+    public function renderNodes(
+        array $nodes,
+        ControllerContext $controllerContext,
+        bool $omitMostPropertiesForTreeState = false
+    ): array {
+        $methodName = $omitMostPropertiesForTreeState
+            ? 'renderNodeWithMinimalPropertiesAndChildrenInformation'
+            : 'renderNodeWithPropertiesAndChildrenInformation';
         $mapper = function (NodeInterface $node) use ($controllerContext, $methodName) {
             return $this->$methodName($node, $controllerContext);
         };
@@ -291,9 +330,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param array $nodes
-     * @param ControllerContext $controllerContext
-     * @return array
+     * @param array<int,?array<string,mixed>> $nodes
+     * @return array<int,?array<string,mixed>>
      */
     public function renderNodesWithParents(array $nodes, ControllerContext $controllerContext): array
     {
@@ -303,12 +341,20 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
 
         /** @var NodeInterface $node */
         foreach ($nodes as $node) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
 
             $nodePath = $nodeAccessor->findNodePath($node);
             if (array_key_exists($nodePath->jsonSerialize(), $renderedNodes)) {
                 $renderedNodes[(string)$nodePath]['matched'] = true;
-            } elseif ($renderedNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation($node, $controllerContext, $baseNodeTypeOverride)) {
+            } elseif ($renderedNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation(
+                $node,
+                $controllerContext,
+                $baseNodeTypeOverride
+            )) {
                 $renderedNode['matched'] = true;
                 $renderedNodes[(string)$nodePath] = $renderedNode;
             } else {
@@ -317,7 +363,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
 
             $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
-                // There are a multitude of reasons why a node might not have a parent and we should ignore these gracefully.
+                // There are a multitude of reasons why a node might not have a parent
+                // and we should ignore these gracefully.
                 continue;
             }
 
@@ -326,7 +373,11 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
                 if (array_key_exists((string)$parentNodePath, $renderedNodes)) {
                     $renderedNodes[(string)$parentNodePath]['intermediate'] = true;
                 } else {
-                    $renderedParentNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation($parentNode, $controllerContext, $baseNodeTypeOverride);
+                    $renderedParentNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation(
+                        $parentNode,
+                        $controllerContext,
+                        $baseNodeTypeOverride
+                    );
                     if ($renderedParentNode) {
                         $renderedParentNode['intermediate'] = true;
                         $renderedNodes[(string)$parentNodePath] = $renderedParentNode;
@@ -334,7 +385,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
                 }
                 $parentNode = $nodeAccessor->findParentNode($parentNode);
                 if ($parentNode === null) {
-                    // There are a multitude of reasons why a node might not have a parent and we should ignore these gracefully.
+                    // There are a multitude of reasons why a node might not have a parent
+                    // and we should ignore these gracefully.
                     break;
                 }
             }
@@ -346,59 +398,57 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * @param NodeInterface $documentNode
      * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<string,mixed>>
      */
-    public function renderDocumentNodeAndChildContent(NodeInterface $documentNode, ControllerContext $controllerContext)
-    {
+    public function renderDocumentNodeAndChildContent(
+        NodeInterface $documentNode,
+        ControllerContext $controllerContext
+    ): array {
         return $this->renderNodeAndChildContent($documentNode, $controllerContext);
     }
 
     /**
-     * @param NodeInterface $node
-     * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<string,mixed>>
      */
-    protected function renderNodeAndChildContent(NodeInterface $node, ControllerContext $controllerContext)
+    protected function renderNodeAndChildContent(NodeInterface $node, ControllerContext $controllerContext): array
     {
         $reducer = function ($nodes, $node) use ($controllerContext) {
-            $nodes = array_merge($nodes, $this->renderNodeAndChildContent($node, $controllerContext));
-
-            return $nodes;
+            return array_merge($nodes, $this->renderNodeAndChildContent($node, $controllerContext));
         };
 
-        return array_reduce($node->getChildNodes($this->buildContentChildNodeFilterString()), $reducer, [$this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)]);
+        return array_reduce(
+            $this->getChildNodes($node, $this->buildContentChildNodeFilterString())
+                ->getIterator()->getArrayCopy(),
+            $reducer,
+            [
+                $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
+                    => $this->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
+            ]
+        );
     }
 
     /**
-     * @param NodeInterface $site
-     * @param NodeInterface $documentNode
-     * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<string,array<string,mixed>|null>
      */
-    public function defaultNodesForBackend(NodeInterface $site, NodeInterface $documentNode, ControllerContext $controllerContext): array
-    {
+    public function defaultNodesForBackend(
+        NodeInterface $site,
+        NodeInterface $documentNode,
+        ControllerContext $controllerContext
+    ): array {
         return [
-            ($this->nodeAddressFactory->createFromNode($site)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
-            ($this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
+            ($this->nodeAddressFactory->createFromNode($site)->serializeForUri())
+                => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
+            ($this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri())
+                => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
         ];
     }
 
-    /**
-     * @param NodeAddress $nodeAddress
-     * @param ControllerContext $controllerContext
-     * @return string
-     */
-    public function uri(NodeAddress $nodeAddress, ControllerContext $controllerContext)
+    public function uri(NodeAddress $nodeAddress, ControllerContext $controllerContext): string
     {
         return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->uriFor($nodeAddress);
     }
 
-    /**
-     * @param NodeInterface $node
-     * @param ControllerContext $controllerContext
-     * @return string
-     */
-    public function previewUri(NodeInterface $node, ControllerContext $controllerContext)
+    public function previewUri(NodeInterface $node, ControllerContext $controllerContext): string
     {
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->previewUriFor($nodeAddress);
@@ -433,11 +483,10 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param array $includedNodeTypes
-     * @param array $excludedNodeTypes
-     * @return string
+     * @param array<int,string> $includedNodeTypes
+     * @param array<int,string> $excludedNodeTypes
      */
-    protected function buildNodeTypeFilterString(array $includedNodeTypes, array $excludedNodeTypes)
+    protected function buildNodeTypeFilterString(array $includedNodeTypes, array $excludedNodeTypes): string
     {
         $preparedExcludedNodeTypes = array_map(function ($nodeTypeName) {
             return '!' . $nodeTypeName;
@@ -446,12 +495,27 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return implode(',', $mergedIncludesAndExcludes);
     }
 
-    /**
-     * @return string
-     */
-    protected function buildContentChildNodeFilterString()
+    protected function buildContentChildNodeFilterString(): string
     {
-        return $this->buildNodeTypeFilterString([], $this->nodeTypeStringsToList($this->documentNodeTypeRole, $this->ignoredNodeTypeRole));
+        return $this->buildNodeTypeFilterString(
+            [],
+            $this->nodeTypeStringsToList(
+                $this->documentNodeTypeRole,
+                $this->ignoredNodeTypeRole
+            )
+        );
+    }
+
+    private function getChildNodes(NodeInterface $node, string $nodeTypeFilterString): Nodes
+    {
+        return $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        )->findChildNodes(
+            $node,
+            $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString)
+        );
     }
 
     public function nodeAddress(NodeInterface $node): NodeAddress
@@ -464,7 +528,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
-    public function inBackend(NodeInterface $node)
+    public function inBackend(NodeInterface $node): bool
     {
         return !$this->nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }

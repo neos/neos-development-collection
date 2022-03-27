@@ -17,7 +17,9 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -27,48 +29,40 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  */
 class ChangeNodeType implements NodeAggregateBasedTransformationInterface
 {
-
-    /**
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
     /**
      * The new Node Type to use as a string
-     *
-     * @var string
      */
-    protected $newType;
+    protected string $newType;
 
-    private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+    private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+        $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
         // by default, we won't delete anything.
-        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::happypath();
+        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+            = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
     }
 
-    /**
-     * @param string $newType
-     * @return void
-     */
-    public function setNewType($newType)
+    public function setNewType(string $newType): void
     {
         $this->newType = $newType;
     }
 
-    public function setForceDeleteNonMatchingChildren(bool $forceDeleteNonMatchingChildren)
+    public function setForceDeleteNonMatchingChildren(bool $forceDeleteNonMatchingChildren): void
     {
-        if ($forceDeleteNonMatchingChildren) {
-            $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete();
-        } else {
-            $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::happypath();
-        }
+        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = $forceDeleteNonMatchingChildren
+            ? NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE
+            : NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
     }
 
-    public function execute(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType(new ChangeNodeAggregateType(
             $contentStreamForWriting,
             $nodeAggregate->getIdentifier(),

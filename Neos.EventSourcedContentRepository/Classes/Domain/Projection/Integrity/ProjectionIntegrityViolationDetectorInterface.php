@@ -48,7 +48,8 @@ interface ProjectionIntegrityViolationDetectorInterface
      * Additionally, checks that e.g. dimensionSpacePoint and dimensionSpacePointHash match; and same for
      * originDimensionSpacePoint and originDimensionSpacePointHash.
      *
-     * Additionally, checks that a hierarchy edge (identified by source node aggregate identifier, target node aggregate identifier, dimension space point and content stream identifier)
+     * Additionally, checks that a hierarchy edge (identified by source node aggregate identifier,
+     * target node aggregate identifier, dimension space point and content stream identifier)
      * exists at most once.
      */
     public function hierarchyIntegrityIsProvided(): Result;
@@ -134,7 +135,8 @@ interface ProjectionIntegrityViolationDetectorInterface
     /**
      * Checks that references originating at the same origin (and name) have different sortings.
      *
-     * In the example, we have reference edges between A->B, and A->C; both named "ref" with sorting 10 (this is an error!)
+     * In the example, we have reference edges between A->B, and A->C;
+     * both named "ref" with sorting 10 (this is an error!)
      *
      * ┌─────┐   ref - 10 ┌─────┐
      * │  A  │───┬───────▶│  B  │

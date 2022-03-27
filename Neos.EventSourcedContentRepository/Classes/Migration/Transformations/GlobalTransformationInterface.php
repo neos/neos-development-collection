@@ -23,5 +23,8 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
  */
 interface GlobalTransformationInterface
 {
-    public function execute(ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult;
+    public function execute(
+        ContentStreamIdentifier $contentStreamForReading,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult;
 }

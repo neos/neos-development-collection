@@ -21,10 +21,11 @@ use Psr\Http\Message\ServerRequestInterface;
 interface ContentDimensionValueDetectorInterface
 {
     /**
-     * @param Dimension\ContentDimension $contentDimension
-     * @param ServerRequestInterface $request
-     * @param array|null $overrideOptions
-     * @return Dimension\ContentDimensionValue|null
+     * @param array<string,mixed>|null $overrideOptions
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue;
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        ?array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue;
 }

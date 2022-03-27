@@ -16,6 +16,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
 use Neos\Flow\Http;
@@ -43,32 +44,74 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $world = new Dimension\ContentDimensionValue('WORLD', null, [], ['resolution' => ['value' => 'com']]);
-        $greatBritain = new Dimension\ContentDimensionValue('GB', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'co.uk']]);
-        $germany = new Dimension\ContentDimensionValue('DE', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'de']]);
+        $emptyConstraints = new ContentDimensionConstraintSet([]);
+        $world = new Dimension\ContentDimensionValue(
+            'WORLD',
+            Dimension\ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'com']]
+        );
+        $greatBritain = new Dimension\ContentDimensionValue(
+            'GB',
+            new Dimension\ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'co.uk']]
+        );
+        $germany = new Dimension\ContentDimensionValue(
+            'DE',
+            new Dimension\ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'de']]
+        );
 
-        $defaultSeller = new Dimension\ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $sellerA = new Dimension\ContentDimensionValue('sellerA', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'sellerA']]);
+        $defaultSeller = new Dimension\ContentDimensionValue(
+            'default',
+            Dimension\ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'default']]
+        );
+        $sellerA = new Dimension\ContentDimensionValue(
+            'sellerA',
+            new Dimension\ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'sellerA']]
+        );
 
-        $defaultChannel = new Dimension\ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $channelA = new Dimension\ContentDimensionValue('channelA', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'channelA']]);
+        $defaultChannel = new Dimension\ContentDimensionValue(
+            'default',
+            Dimension\ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'default']]
+        );
+        $channelA = new Dimension\ContentDimensionValue(
+            'channelA',
+            new Dimension\ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'channelA']]
+        );
 
-        $english = new Dimension\ContentDimensionValue('en', null, [], ['resolution' => ['value' => 'en']]);
-        $german = new Dimension\ContentDimensionValue('de', null, [], ['resolution' => ['value' => 'de']]);
+        $english = new Dimension\ContentDimensionValue(
+            'en',
+            Dimension\ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'en']]
+        );
+        $german = new Dimension\ContentDimensionValue(
+            'de',
+            Dimension\ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'de']]
+        );
 
         $contentDimensions = [
             'market' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('market'),
-                [
-                    $world->getValue() => $world,
-                    $greatBritain->getValue() => $greatBritain,
-                    $germany->getValue() => $germany
-                ],
+                new Dimension\ContentDimensionValues([$world, $greatBritain, $germany]),
                 $world,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($greatBritain, $world),
                     new Dimension\ContentDimensionValueVariationEdge($germany, $world)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
@@ -77,14 +120,11 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             ),
             'seller' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('seller'),
-                [
-                    $defaultSeller->getValue() => $defaultSeller,
-                    $sellerA->getValue() => $sellerA
-                ],
+                new Dimension\ContentDimensionValues([$defaultSeller, $sellerA]),
                 $defaultSeller,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($sellerA, $defaultSeller)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'options' => [
@@ -95,14 +135,11 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             ),
             'channel' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('channel'),
-                [
-                    $defaultChannel->getValue() => $defaultChannel,
-                    $channelA->getValue() => $channelA
-                ],
+                new Dimension\ContentDimensionValues([$defaultChannel, $channelA]),
                 $defaultChannel,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($channelA, $defaultChannel)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'options' => [
@@ -113,12 +150,9 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             ),
             'language' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('language'),
-                [
-                    $english->getValue() => $english,
-                    $german->getValue() => $german
-                ],
+                new Dimension\ContentDimensionValues([$english, $german]),
                 $english,
-                [],
+                new Dimension\ContentDimensionValueVariationEdges([]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
@@ -156,7 +190,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         self::assertNull($this->routeParameters->getValue('workspaceName'));
         self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
-        $expectedDimensionSpacePoint = new DimensionSpacePoint([
+        $expectedDimensionSpacePoint = DimensionSpacePoint::fromArray([
             'market' => 'WORLD',
             'seller' => 'sellerA',
             'channel' => 'channelA',
@@ -183,7 +217,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         self::assertNull($this->routeParameters->getValue('workspaceName'));
         self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
-        $expectedDimensionSpacePoint = new DimensionSpacePoint([
+        $expectedDimensionSpacePoint = DimensionSpacePoint::fromArray([
             'market' => 'WORLD',
             'seller' => 'sellerA',
             'channel' => 'channelA',
@@ -209,7 +243,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         self::assertNull($this->routeParameters->getValue('workspaceName'));
         self::assertSame(0, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
-        $expectedDimensionSpacePoint = new DimensionSpacePoint([
+        $expectedDimensionSpacePoint = DimensionSpacePoint::fromArray([
             'market' => 'WORLD',
             'seller' => 'default',
             'channel' => 'default',

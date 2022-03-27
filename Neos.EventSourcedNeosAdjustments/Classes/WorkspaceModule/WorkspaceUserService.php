@@ -82,27 +82,32 @@ class WorkspaceUserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanManageWorkspace(Workspace $workspace)
+    public function currentUserCanManageWorkspace(Workspace $workspace): bool
     {
         if ($workspace->isPersonalWorkspace()) {
             return false;
         }
 
         if ($workspace->isInternalWorkspace()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+            );
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
+        /** @todo implement me
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->userService->getCurrentUser()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+            );
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->userService->getCurrentUser()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+            );
         }
+        */
 
         return false;
     }
@@ -112,11 +117,8 @@ class WorkspaceUserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param \Neos\ContentRepository\Domain\Model\Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace)
+    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace): bool
     {
         if ($workspace->isPersonalWorkspace()) {
             return false;
@@ -125,6 +127,8 @@ class WorkspaceUserService
         // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
         // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
         // ownership back to themselves.
-        return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted(
+            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        );
     }
 }

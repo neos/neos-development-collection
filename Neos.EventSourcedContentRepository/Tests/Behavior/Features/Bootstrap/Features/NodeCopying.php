@@ -48,14 +48,14 @@ trait NodeCopying
     public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentGraphs = $this->getContentGraphs()->getArrayCopy();
+        $contentGraphs = $this->getContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
         $subgraph = $contentGraph->getSubgraphByIdentifier(
             $this->getCurrentContentStreamIdentifier(),
             $this->getCurrentDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
-        $currentNodes = $this->getCurrentNodes()->getArrayCopy();
+        $currentNodes = $this->getCurrentNodes()->getIterator()->getArrayCopy();
         $currentNode = reset($currentNodes);
         $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])

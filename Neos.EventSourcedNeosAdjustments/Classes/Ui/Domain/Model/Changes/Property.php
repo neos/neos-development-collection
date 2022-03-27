@@ -26,7 +26,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -64,38 +66,25 @@ class Property extends AbstractChange
     protected $nodeService;
 
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
      * The node dom address
-     *
-     * @var RenderedNodeDomAddress
      */
-    protected $nodeDomAddress;
+    protected ?RenderedNodeDomAddress $nodeDomAddress = null;
 
     /**
      * The name of the property to be changed
-     *
-     * @var string
      */
-    protected $propertyName;
+    protected ?string $propertyName = null;
 
     /**
      * The value, the property will be set to
-     *
-     * @var string
+     * @var string|array<int|string,mixed>|null
      */
-    protected $value;
+    protected string|array|null $value = null;
 
     /**
      * The change has been initiated from the inline editing
-     *
-     * @var bool
      */
-    protected $isInline;
+    protected bool $isInline = false;
 
     /**
      * @Flow\Inject
@@ -109,96 +98,61 @@ class Property extends AbstractChange
      */
     protected $contentCacheFlusher;
 
-    /**
-     * Set the property name
-     *
-     * @param string $propertyName
-     * @return void
-     */
-    public function setPropertyName($propertyName)
+    public function setPropertyName(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }
 
-    /**
-     * Get the property name
-     *
-     * @return string
-     */
-    public function getPropertyName()
+    public function getPropertyName(): ?string
     {
         return $this->propertyName;
     }
 
-    /**
-     * Set the node dom address
-     *
-     * @param RenderedNodeDomAddress $nodeDomAddress
-     * @return void
-     */
-    public function setNodeDomAddress(RenderedNodeDomAddress $nodeDomAddress = null)
+    public function setNodeDomAddress(RenderedNodeDomAddress $nodeDomAddress = null): void
     {
         $this->nodeDomAddress = $nodeDomAddress;
     }
 
-    /**
-     * Get the node dom address
-     *
-     * @return RenderedNodeDomAddress
-     */
-    public function getNodeDomAddress()
+    public function getNodeDomAddress(): ?RenderedNodeDomAddress
     {
         return $this->nodeDomAddress;
     }
 
     /**
-     * Set the value
-     *
-     * @param string $value
+     * @param string|array<int|string,mixed>|null $value
      */
-    public function setValue($value)
+    public function setValue(string|array|null $value): void
     {
         $this->value = $value;
     }
 
     /**
-     * Get the value
-     *
-     * @return string
+     * @return string|array<int|string,mixed>|null
      */
-    public function getValue()
+    public function getValue(): string|array|null
     {
         return $this->value;
     }
 
-    /**
-     * Set isInline
-     *
-     * @param bool $isInline
-     */
-    public function setIsInline($isInline)
+    public function setIsInline(bool $isInline): void
     {
         $this->isInline = $isInline;
     }
 
-    /**
-     * Get isInline
-     *
-     * @return bool
-     */
-    public function getIsInline()
+    public function getIsInline(): bool
     {
         return $this->isInline;
     }
 
     /**
      * Checks whether this change can be applied to the subject
-     *
-     * @return boolean
      */
     public function canApply(): bool
     {
-        $nodeType = $this->getSubject()->getNodeType();
+        if (is_null($this->subject)) {
+            return false;
+        }
+        $nodeType = $this->subject->getNodeType();
         $propertyName = $this->getPropertyName();
         $nodeTypeProperties = $nodeType->getProperties();
 
@@ -208,7 +162,6 @@ class Property extends AbstractChange
     /**
      * Applies this change
      *
-     * @return void
      * @throws \Neos\ContentRepository\Exception\NodeException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws ContentStreamDoesNotExistYet
@@ -217,14 +170,13 @@ class Property extends AbstractChange
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            $node = $this->getSubject();
-
-            $propertyName = $this->getPropertyName();
-
-            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-            $node->getNodeType()->getFullConfiguration();
-            $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+        $subject = $this->subject;
+        $propertyName = $this->getPropertyName();
+        if ($this->canApply() && !is_null($subject) && !is_null($propertyName)) {
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
+            // so we need to trigger another method beforehand.
+            $subject->getNodeType()->getFullConfiguration();
+            $propertyType = $subject->getNodeType()->getPropertyType($propertyName);
             $userIdentifier = $this->getInitiatingUserIdentifier();
 
             // Use extra commands for reference handling
@@ -232,34 +184,34 @@ class Property extends AbstractChange
                 $value = $this->getValue();
                 $destinationNodeAggregateIdentifiers = [];
                 if ($propertyType === 'reference') {
-                    if (!empty($value)) {
-                        $destinationNodeAggregateIdentifiers[] = NodeAggregateIdentifier::fromString($value);
+                    if (is_string($value) && !empty($value)) {
+                        $destinationNodeAggregateIdentifiers[] = $value;
                     }
                 }
 
                 if ($propertyType === 'references') {
-                    /** @var array $values */
+                    /** @var array<int,string> $values */
                     $values = $value;
                     if (is_array($values)) {
                         foreach ($values as $singleNodeAggregateIdentifier) {
-                            $destinationNodeAggregateIdentifiers[] = NodeAggregateIdentifier::fromString($singleNodeAggregateIdentifier);
+                            $destinationNodeAggregateIdentifiers[] = $singleNodeAggregateIdentifier;
                         }
                     }
                 }
 
                 $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeReferences(
                     new SetNodeReferences(
-                        $node->getContentStreamIdentifier(),
-                        $node->getNodeAggregateIdentifier(),
-                        $node->getOriginDimensionSpacePoint(),
-                        new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
+                        $subject->getContentStreamIdentifier(),
+                        $subject->getNodeAggregateIdentifier(),
+                        $subject->getOriginDimensionSpacePoint(),
+                        NodeAggregateIdentifierCollection::fromArray($destinationNodeAggregateIdentifiers),
                         PropertyName::fromString($propertyName),
                         $this->getInitiatingUserIdentifier()
                     )
                 );
             } else {
                 $value = $this->nodePropertyConversionService->convert(
-                    $node->getNodeType(),
+                    $subject->getNodeType(),
                     $propertyName,
                     $this->getValue()
                 );
@@ -268,9 +220,9 @@ class Property extends AbstractChange
                 if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
                     $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeProperties(
                         new SetNodeProperties(
-                            $node->getContentStreamIdentifier(),
-                            $node->getNodeAggregateIdentifier(),
-                            $node->getOriginDimensionSpacePoint(),
+                            $subject->getContentStreamIdentifier(),
+                            $subject->getNodeAggregateIdentifier(),
+                            $subject->getOriginDimensionSpacePoint(),
                             PropertyValuesToWrite::fromArray(
                                 [
                                     $propertyName => $value
@@ -284,10 +236,10 @@ class Property extends AbstractChange
                     if ($propertyName === '_nodeType') {
                         $commandResult = $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType(
                             $command = new ChangeNodeAggregateType(
-                                $node->getContentStreamIdentifier(),
-                                $node->getNodeAggregateIdentifier(),
+                                $subject->getContentStreamIdentifier(),
+                                $subject->getNodeAggregateIdentifier(),
                                 NodeTypeName::fromString($value),
-                                NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
+                                NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE,
                                 $userIdentifier
                             )
                         );
@@ -295,10 +247,10 @@ class Property extends AbstractChange
                         if ($value === true) {
                             $commandResult = $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(
                                 new DisableNodeAggregate(
-                                    $node->getContentStreamIdentifier(),
-                                    $node->getNodeAggregateIdentifier(),
-                                    $node->getOriginDimensionSpacePoint(),
-                                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                    $subject->getContentStreamIdentifier(),
+                                    $subject->getNodeAggregateIdentifier(),
+                                    $subject->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                                    NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
                                     $userIdentifier
                                 )
                             );
@@ -306,10 +258,10 @@ class Property extends AbstractChange
                             // unhide
                             $commandResult = $this->nodeAggregateCommandHandler->handleEnableNodeAggregate(
                                 new EnableNodeAggregate(
-                                    $node->getContentStreamIdentifier(),
-                                    $node->getNodeAggregateIdentifier(),
-                                    $node->getOriginDimensionSpacePoint(),
-                                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                    $subject->getContentStreamIdentifier(),
+                                    $subject->getNodeAggregateIdentifier(),
+                                    $subject->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                                    NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
                                     $userIdentifier
                                 )
                             );
@@ -320,37 +272,60 @@ class Property extends AbstractChange
                 }
             }
 
-            if ($commandResult) {
-                $commandResult->blockUntilProjectionsAreUpToDate();
+            $commandResult->blockUntilProjectionsAreUpToDate();
+
+            // !!! REMEMBER: we are not allowed to use $node anymore,
+            // because it may have been modified by the commands above.
+            // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $subject->getContentStreamIdentifier(),
+                $subject->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $originalNodeAggregateIdentifier = $subject->getNodeAggregateIdentifier();
+            $node = $nodeAccessor->findByIdentifier($subject->getNodeAggregateIdentifier());
+            if (is_null($node)) {
+                throw new \InvalidArgumentException(
+                    'Cannot apply Property on missing node ' . $originalNodeAggregateIdentifier,
+                    1645560836
+                );
             }
 
-            // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.
-            // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $node = $nodeAccessor->findByIdentifier($node->getNodeAggregateIdentifier());
-
             $this->updateWorkspaceInfo();
+            $parentNode = $nodeAccessor->findParentNode($node);
 
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
-                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $nodeAccessor->findParentNode($node)->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath()
+                    && $parentNode
+                    && $parentNode->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                     // we render content directly as response of this operation, so we need to flush the caches
-                    $this->contentCacheFlusher->flushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
+                    $this->contentCacheFlusher->flushNodeAggregate(
+                        $node->getContentStreamIdentifier(),
+                        $node->getNodeAggregateIdentifier()
+                    );
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());
                     $this->feedbackCollection->add($reloadContentOutOfBand);
                 } else {
                     // we render content directly as response of this operation, so we need to flush the caches
-                    $this->contentCacheFlusher->flushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
+                    $this->contentCacheFlusher->flushNodeAggregate(
+                        $node->getContentStreamIdentifier(),
+                        $node->getNodeAggregateIdentifier()
+                    );
                     $this->reloadDocument($node);
                 }
             }
 
             $reloadPageIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadPageIfChanged', $propertyName);
-            if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadPageIfChangedConfigurationPath)) {
+            if (!$this->getIsInline()
+                && $node->getNodeType()->getConfiguration($reloadPageIfChangedConfigurationPath)) {
                 // we render content directly as response of this operation, so we need to flush the caches
-                $this->contentCacheFlusher->flushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
+                $this->contentCacheFlusher->flushNodeAggregate(
+                    $node->getContentStreamIdentifier(),
+                    $node->getNodeAggregateIdentifier()
+                );
                 $this->reloadDocument($node);
             }
 

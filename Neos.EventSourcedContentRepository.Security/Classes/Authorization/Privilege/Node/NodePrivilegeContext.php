@@ -11,7 +11,13 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 
@@ -27,23 +33,22 @@ class NodePrivilegeContext
     protected $securityContext;
 
     /**
-     * @var NodeInterface
+     * @Flow\Inject
+     * @var NodeAccessorManager
      */
-    protected $node;
+    protected $nodeAccessorManager;
+
+    protected NodeInterface $node;
+
+    protected ?NodeAccessorInterface $nodeAccessor;
 
     /**
-     * @param NodeInterface $node
+     * @Flow\Inject
+     * @var WorkspaceFinder
      */
-    public function __construct(NodeInterface $node = null)
-    {
-        $this->node = $node;
-    }
+    protected $workspaceFinder;
 
-    /**
-     * @param NodeInterface $node
-     * @return void
-     */
-    public function setNode(NodeInterface $node)
+    public function __construct(NodeInterface $node)
     {
         $this->node = $node;
     }
@@ -51,64 +56,68 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node is an *ancestor* of the given node specified by $nodePathOrIdentifier
      *
-     * Example: isAncestorNodeOf('/sites/some/path') matches for the nodes "/sites", "/sites/some" and "/sites/some/path" but not for "/sites/some/other"
+     * Example: isAncestorNodeOf('/sites/some/path') matches for the nodes "/sites",
+     *  "/sites/some" and "/sites/some/path" but not for "/sites/some/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
      * @return boolean true if the given node matches otherwise false
      */
-    public function isAncestorNodeOf($nodePathOrIdentifier)
+    public function isAncestorNodeOf(string $nodePathOrIdentifier): bool
     {
-        $nodePath = $this->resolveNodePath($nodePathOrIdentifier);
-        if (is_bool($nodePath)) {
-            return $nodePath;
+        $nodePathOrResult = $this->resolveNodePathOrResult($nodePathOrIdentifier);
+        if (is_bool($nodePathOrResult)) {
+            return $nodePathOrResult;
         }
 
-        return substr($nodePath, 0, strlen($this->node->getPath())) === $this->node->getPath();
+        return str_starts_with($nodePathOrResult, (string)$this->getNodeAccessor()->findNodePath($this->node));
     }
 
     /**
      * Matches if the selected node is a *descendant* of the given node specified by $nodePathOrIdentifier
      *
-     * Example: isDescendantNodeOf('/sites/some/path') matches for the nodes "/sites/some/path", "/sites/some/path/subnode" but not for "/sites/some/other"
+     * Example: isDescendantNodeOf('/sites/some/path') matches for the nodes "/sites/some/path",
+     * "/sites/some/path/subnode" but not for "/sites/some/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
-     * @return boolean true if the given node matches otherwise false
+     * @return bool true if the given node matches otherwise false
      */
-    public function isDescendantNodeOf($nodePathOrIdentifier)
+    public function isDescendantNodeOf(string $nodePathOrIdentifier): bool
     {
-        $nodePath = $this->resolveNodePath($nodePathOrIdentifier);
-        if (is_bool($nodePath)) {
-            return $nodePath;
+        $nodePathOrResult = $this->resolveNodePathOrResult($nodePathOrIdentifier);
+        if (is_bool($nodePathOrResult)) {
+            return $nodePathOrResult;
         }
-        return substr($this->node->getPath() . '/', 0, strlen($nodePath)) === $nodePath;
+
+        return str_starts_with((string)$this->getNodeAccessor()->findNodePath($this->node), $nodePathOrResult);
     }
 
     /**
      * Matches if the selected node is a *descendant* or *ancestor* of the given node specified by $nodePathOrIdentifier
      *
-     * Example: isAncestorOrDescendantNodeOf('/sites/some') matches for the nodes "/sites", "/sites/some", "/sites/some/sub" but not "/sites/other"
+     * Example: isAncestorOrDescendantNodeOf('/sites/some') matches for the nodes "/sites", "/sites/some",
+     * "/sites/some/sub" but not "/sites/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
-     * @return boolean true if the given node matches otherwise false
+     * @return bool true if the given node matches otherwise false
      */
-    public function isAncestorOrDescendantNodeOf($nodePathOrIdentifier)
+    public function isAncestorOrDescendantNodeOf(string $nodePathOrIdentifier): bool
     {
         return $this->isAncestorNodeOf($nodePathOrIdentifier) || $this->isDescendantNodeOf($nodePathOrIdentifier);
     }
 
     /**
-     * Matches if the selected node is of the given NodeType(s). If multiple types are specified, only one entry has to match
+     * Matches if the selected node is of the given NodeType(s).
+     * If multiple types are specified, only one entry has to match
      *
-     * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2']) matches if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
+     * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2'] matches,
+     * if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
      *
-     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "Neos.Neos:Document"
-     * @return boolean true if the selected node matches the $nodeTypes, otherwise false
+     * @param string|array<int,string> $nodeTypes A single or an array of fully qualified NodeType name(s),
+     * e.g. "Neos.Neos:Document"
+     * @return bool true if the selected node matches the $nodeTypes, otherwise false
      */
-    public function nodeIsOfType($nodeTypes)
+    public function nodeIsOfType(string|array $nodeTypes): bool
     {
-        if ($this->node === null) {
-            return true;
-        }
         if (!is_array($nodeTypes)) {
             $nodeTypes = [$nodeTypes];
         }
@@ -124,18 +133,18 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node belongs to one of the given $workspaceNames
      *
-     * Example: isInWorkspace(['live', 'user-admin']) matches if the selected node is in one of the workspaces "user-admin" or "live"
+     * Example: isInWorkspace(['live', 'user-admin']) matches,
+     * if the selected node is in one of the workspaces "user-admin" or "live"
      *
-     * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin"]
-     * @return boolean true if the selected node matches the $workspaceNames, otherwise false
+     * @param array<int,string> $workspaceNames An array of workspace names, e.g. ["live", "user-admin"]
+     * @return bool true if the selected node matches the $workspaceNames, otherwise false
      */
-    public function isInWorkspace($workspaceNames)
+    public function isInWorkspace(array $workspaceNames): bool
     {
-        if ($this->node === null) {
-            return true;
-        }
-
-        return in_array($this->node->getWorkspace()->getName(), $workspaceNames);
+        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $this->node->getContentStreamIdentifier()
+        );
+        return !is_null($workspace) && in_array((string)$workspace->getWorkspaceName(), $workspaceNames);
     }
 
     /**
@@ -148,73 +157,57 @@ class NodePrivilegeContext
      * dimension values itself; as the preset is user-visible and the actual dimension-values
      * for a preset are just implementation details.
      *
-     * @param string $dimensionName
-     * @param string|array $presets
-     * @return boolean
+     * @param string|array<int,string> $presets
      */
-    public function isInDimensionPreset($dimensionName, $presets)
+    public function isInDimensionPreset(string $dimensionName, string|array $presets): bool
     {
-        if ($this->node === null) {
-            return true;
-        }
-
-        $dimensionValues = $this->node->getContext()->getDimensions();
-        if (!isset($dimensionValues[$dimensionName])) {
-            return false;
-        }
-
-        $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionValues[$dimensionName]);
-
-        if ($preset === null) {
-            return false;
-        }
-        $presetIdentifier = $preset['identifier'];
-
         if (!is_array($presets)) {
             $presets = [$presets];
         }
 
-        return in_array($presetIdentifier, $presets);
+        return in_array(
+            $this->node->getDimensionSpacePoint()->getCoordinate(
+                new ContentDimensionIdentifier($dimensionName)
+            ),
+            $presets
+        );
     }
 
     /**
-     * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean if the result directly matches the currently selected node
+     * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean,
+     * if the result directly matches the currently selected node
      *
      * @param string $nodePathOrIdentifier identifier or absolute path for the node to resolve
-     * @return bool|string true if the node matches the selected node, false if the corresponding node does not exist. Otherwise the resolved absolute path with trailing slash
+     * @return bool|string true if the node matches the selected node, false if the corresponding node does not exist.
+     * Otherwise the resolved absolute path with trailing slash
      */
-    protected function resolveNodePath($nodePathOrIdentifier)
+    protected function resolveNodePathOrResult(string $nodePathOrIdentifier): bool|string
     {
-        if ($this->node === null) {
-            return true;
-        }
-        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $nodePathOrIdentifier) !== 1) {
+        try {
+            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodePathOrIdentifier);
+            if ($nodeAggregateIdentifier->equals($this->node->getNodeAggregateIdentifier())) {
+                return true;
+            }
+            $otherNode = $this->getNodeAccessor()->findByIdentifier($nodeAggregateIdentifier);
+            if (is_null($otherNode)) {
+                return false;
+            }
+            return $this->getNodeAccessor()->findNodePath($otherNode) . '/';
+        } catch (\InvalidArgumentException $e) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }
-        if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
-            return true;
-        }
-        $node = $this->getNodeByIdentifier($nodePathOrIdentifier);
-        if ($node === null) {
-            return false;
-        }
-        return $node->getPath() . '/';
     }
 
-    /**
-     * Returns a node from the given $nodeIdentifier (disabling authorization checks)
-     *
-     * @param string $nodeIdentifier
-     * @return NodeInterface
-     */
-    protected function getNodeByIdentifier($nodeIdentifier)
+    private function getNodeAccessor(): NodeAccessorInterface
     {
-        $context = $this->contextFactory->create();
-        $node = null;
-        $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
-            $node = $context->getNodeByIdentifier($nodeIdentifier);
-        });
-        $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
-        return $node;
+        if (is_null($this->nodeAccessor)) {
+            $this->nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $this->node->getContentStreamIdentifier(),
+                $this->node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+        }
+
+        return $this->nodeAccessor;
     }
 }

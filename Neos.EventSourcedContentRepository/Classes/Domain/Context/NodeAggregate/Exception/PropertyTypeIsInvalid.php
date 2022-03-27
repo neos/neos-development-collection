@@ -20,18 +20,28 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a property type is invalid
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class PropertyTypeIsInvalid extends \DomainException
 {
     public static function becauseItIsReference(PropertyName $propertyName, NodeTypeName $nodeTypeName): self
     {
-        return new self('Given property "' . $propertyName . '" is declared as "reference" in node type "' . $nodeTypeName . '" and must be treated as such.', 1630063201);
+        return new self(
+            'Given property "' . $propertyName . '" is declared as "reference" in node type "'
+                . $nodeTypeName . '" and must be treated as such.',
+            1630063201
+        );
     }
 
-    public static function becauseItIsUndefined(PropertyName $propertyName, string $declaredType, NodeTypeName $nodeTypeName): self
-    {
-        return new self('Given property "' . $propertyName . '" is declared as undefined type "' . $declaredType . '" in node type "' . $nodeTypeName . '"', 1630063406);
+    public static function becauseItIsUndefined(
+        PropertyName $propertyName,
+        string $declaredType,
+        NodeTypeName $nodeTypeName
+    ): self {
+        return new self(
+            'Given property "' . $propertyName . '" is declared as undefined type "' . $declaredType
+                . '" in node type "' . $nodeTypeName . '"',
+            1630063406
+        );
     }
 }

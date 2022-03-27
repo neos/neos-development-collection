@@ -12,9 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a non-root node is tried to be created with a node type which is of type root
  */
+#[Flow\Proxy(false)]
 final class NodeTypeIsOfTypeRoot extends \DomainException
 {
 }

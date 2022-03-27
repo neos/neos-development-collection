@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Doctrine\DBAL\DBALException;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -28,49 +29,32 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
  */
 interface ContentGraphInterface
 {
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
-     * @return ContentSubgraphInterface|null
-     */
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
-    ): ?ContentSubgraphInterface;
+    ): ContentSubgraphInterface;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @return NodeInterface|null
-     * @throws DBALException
-     */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeInterface;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeAggregate
-     */
-    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate;
+    public function findRootNodeAggregateByType(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeTypeName $nodeTypeName
+    ): NodeAggregate;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeAggregate[]|iterable<NodeAggregate>
+     * @return iterable<NodeAggregate>
      */
-    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): iterable;
+    public function findNodeAggregatesByType(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeTypeName $nodeTypeName
+    ): iterable;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate|null
      * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function findNodeAggregateByIdentifier(
@@ -80,10 +64,6 @@ interface ContentGraphInterface
 
     /**
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $childOriginDimensionSpacePoint
-     * @return NodeAggregate|null
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -93,8 +73,6 @@ interface ContentGraphInterface
     ): ?NodeAggregate;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
@@ -104,8 +82,6 @@ interface ContentGraphInterface
     ): iterable;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
@@ -118,9 +94,6 @@ interface ContentGraphInterface
      * A node aggregate may have multiple child node aggregates with the same name
      * as long as they do not share dimension space coverage
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $name
      * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
@@ -131,8 +104,6 @@ interface ContentGraphInterface
     ): iterable;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
@@ -142,12 +113,6 @@ interface ContentGraphInterface
     ): iterable;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $parentNodeOriginOriginDimensionSpacePoint
-     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
-     * @return DimensionSpacePointSet
      * @internal only for consumption inside the Command Handler
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(

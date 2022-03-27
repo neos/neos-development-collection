@@ -66,7 +66,9 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
         $this->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . NodeRecord::TABLE_NAME);
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . HierarchyHyperrelationRecord::TABLE_NAME);
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . RestrictionHyperrelationRecord::TABLE_NAME);
+            $this->getDatabaseConnection()->executeQuery(
+                'TRUNCATE table ' . RestrictionHyperrelationRecord::TABLE_NAME
+            );
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . ReferenceHyperrelationRecord::TABLE_NAME);
         });
     }
@@ -79,7 +81,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     /**
      * @throws \Throwable
      */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

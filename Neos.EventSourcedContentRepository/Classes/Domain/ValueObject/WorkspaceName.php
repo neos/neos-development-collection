@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
+
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -19,83 +21,56 @@ use Neos\Flow\Annotations as Flow;
  * Name of a workspace.
  *
  * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
- *
- * @Flow\Proxy(false)
  */
-final class WorkspaceName implements \JsonSerializable, CacheAwareInterface
+#[Flow\Proxy(false)]
+final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \Stringable
 {
     const WORKSPACE_NAME_LIVE = 'live';
 
     /**
-     * @var string
+     * @var array<string,self>
      */
-    private $name;
+    private static array $instances = [];
 
-    /**
-     * Name constructor.
-     *
-     * @param string $name
-     */
-    public function __construct(string $name)
-    {
-        $this->setName($name);
-    }
-
-    /**
-     * @param string $name
-     */
-    private function setName(string $name)
-    {
+    private function __construct(
+        public readonly string $name
+    ) {
         if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $name) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
-        $this->name = $name;
     }
 
-    /**
-     * @return WorkspaceName
-     */
-    public static function forLive(): WorkspaceName
+    private static function instance(string $name): self
     {
-        return new WorkspaceName(self::WORKSPACE_NAME_LIVE);
+        return self::$instances[$name] ??= new self($name);
     }
 
-    /**
-     * @return bool
-     */
+    public static function fromString(string $value): self
+    {
+        return self::instance($value);
+    }
+
+    public static function forLive(): self
+    {
+        return self::instance(self::WORKSPACE_NAME_LIVE);
+    }
+
     public function isLive(): bool
     {
         return $this->name === self::WORKSPACE_NAME_LIVE;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheEntryIdentifier(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
     {
         return $this->name;
     }

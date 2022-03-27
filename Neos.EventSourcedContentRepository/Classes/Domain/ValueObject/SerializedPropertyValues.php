@@ -23,23 +23,33 @@ use Neos\Flow\Annotations as Flow;
  * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
  * because we treat NULL and "not set" the same from an API perspective.
  *
- * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<string,?SerializedPropertyValue>
  */
+#[Flow\Proxy(false)]
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array|SerializedPropertyValue[]
+     * @var array<string,?SerializedPropertyValue>
      */
-    private array $values = [];
+    private array $values;
 
+    /**
+     * @var \ArrayIterator<string,?SerializedPropertyValue>
+     */
     protected \ArrayIterator $iterator;
 
+    /**
+     * @param array<string,?SerializedPropertyValue> $values
+     */
     private function __construct(array $values)
     {
         $this->values = $values;
         $this->iterator = new \ArrayIterator($this->values);
     }
 
+    /**
+     * @param array<string,mixed> $propertyValues
+     */
     public static function fromArray(array $propertyValues): self
     {
         $values = [];
@@ -52,7 +62,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', SerializedPropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid property value. Expected instance of %s, got: %s',
+                    SerializedPropertyValue::class,
+                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)
+                ), 1546524480);
             }
         }
 
@@ -81,22 +95,22 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return self::fromArray(\json_decode($jsonString, true));
     }
 
-    public static function fromNode(NodeInterface $node): self
-    {
-        return $node->getProperties();
-    }
-
-    private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
+    private static function assertTypeIsNoReference(string $propertyTypeFromSchema): void
     {
         if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
-            throw new \RuntimeException('TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.');
+            throw new \RuntimeException(
+                'TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.'
+            );
         }
     }
 
-    public function merge(SerializedPropertyValues $other): SerializedPropertyValues
+    public function merge(self $other): self
     {
         // here, we skip null values
-        return new SerializedPropertyValues(array_filter(array_merge($this->values, $other->getValues()), fn ($value) => $value !== null));
+        return new self(array_filter(
+            array_merge($this->values, $other->getValues()),
+            fn ($value) => $value !== null
+        ));
     }
 
     public function propertyExists(string $propertyName): bool
@@ -114,8 +128,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @param SerializedPropertyValue[] values
-     * @return array|SerializedPropertyValue[]
+     * @return array<string,?SerializedPropertyValue>
      */
     public function getValues(): array
     {
@@ -123,11 +136,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return SerializedPropertyValue[]|\ArrayIterator<SerializedPropertyValue>
+     * @return \ArrayIterator<string,?SerializedPropertyValue>
      */
     public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->values);
+        return $this->iterator;
     }
 
     public function count(): int
@@ -135,16 +148,22 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return count($this->values);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getPlainValues(): array
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue->getValue();
+            $values[$propertyName] = $propertyValue?->getValue();
         }
 
         return $values;
     }
 
+    /**
+     * @return array<string,?SerializedPropertyValue>
+     */
     public function jsonSerialize(): array
     {
         return $this->values;

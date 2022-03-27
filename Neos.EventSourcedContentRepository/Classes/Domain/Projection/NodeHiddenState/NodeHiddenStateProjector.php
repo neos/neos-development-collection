@@ -50,10 +50,11 @@ class NodeHiddenStateProjector implements ProjectorInterface
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->executeStatement('TRUNCATE table neos_contentrepository_projection_nodehiddenstate');
+        $this->getDatabaseConnection()
+            ->executeStatement('TRUNCATE table neos_contentrepository_projection_nodehiddenstate');
     }
 
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
             foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
@@ -68,7 +69,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
         });
     }
 
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->getDatabaseConnection()->executeQuery(
             '
@@ -90,7 +91,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
         );
     }
 
-    public function whenContentStreamWasForked(ContentStreamWasForked $event)
+    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('
@@ -116,7 +117,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
         });
     }
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeStatement(
@@ -130,8 +131,8 @@ class NodeHiddenStateProjector implements ProjectorInterface
                       AND nhs.contentstreamidentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
@@ -139,17 +140,11 @@ class NodeHiddenStateProjector implements ProjectorInterface
         });
     }
 
-    /**
-     * @param callable $operations
-     */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }
 
-    /**
-     * @return Connection
-     */
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();

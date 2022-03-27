@@ -162,20 +162,87 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments()
     {
         $this->registerUniversalTagAttributes();
-        $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-        $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
-        $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+        $this->registerTagAttribute(
+            'name',
+            'string',
+            'Specifies the name of an anchor'
+        );
+        $this->registerTagAttribute(
+            'rel',
+            'string',
+            'Specifies the relationship between the current document and the linked document'
+        );
+        $this->registerTagAttribute(
+            'rev',
+            'string',
+            'Specifies the relationship between the linked document and the current document'
+        );
+        $this->registerTagAttribute(
+            'target',
+            'string',
+            'Specifies where to open the linked document'
+        );
 
-        $this->registerArgument('node', 'mixed', 'A node object, a string node path (absolute or relative), a string node://-uri or NULL');
-        $this->registerArgument('format', 'string', 'Format to use for the URL, for example "html" or "json"');
-        $this->registerArgument('absolute', 'boolean', 'If set, an absolute URI is rendered', false, false);
-        $this->registerArgument('arguments', 'array', 'Additional arguments to be passed to the UriBuilder (for example pagination parameters)', false, []);
-        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
-        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
-        $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
-        $this->registerArgument('nodeVariableName', 'string', 'The variable the node will be assigned to for the rendered child content', false, 'linkedNode');
+        $this->registerArgument(
+            'node',
+            'mixed',
+            'A node object, a string node path (absolute or relative), a string node://-uri or NULL'
+        );
+        $this->registerArgument(
+            'format',
+            'string',
+            'Format to use for the URL, for example "html" or "json"'
+        );
+        $this->registerArgument(
+            'absolute',
+            'boolean',
+            'If set, an absolute URI is rendered',
+            false,
+            false
+        );
+        $this->registerArgument(
+            'arguments',
+            'array',
+            'Additional arguments to be passed to the UriBuilder (for example pagination parameters)',
+            false,
+            []
+        );
+        $this->registerArgument(
+            'section',
+            'string',
+            'The anchor to be added to the URI',
+            false,
+            ''
+        );
+        $this->registerArgument(
+            'addQueryString',
+            'boolean',
+            'If set, the current query parameters will be kept in the URI',
+            false,
+            false
+        );
+        $this->registerArgument(
+            'argumentsToBeExcludedFromQueryString',
+            'array',
+            'arguments to be removed from the URI. Only active if $addQueryString = true',
+            false,
+            []
+        );
+        $this->registerArgument(
+            'baseNodeName',
+            'string',
+            'The name of the base node inside the Fusion context to use for the ContentContext'
+                . ' or resolving relative paths',
+            false,
+            'documentNode'
+        );
+        $this->registerArgument(
+            'nodeVariableName',
+            'string',
+            'The variable the node will be assigned to for the rendered child content',
+            false,
+            'linkedNode'
+        );
     }
 
     /**
@@ -190,29 +257,40 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if (!$node instanceof NodeInterface) {
             $node = $this->getContextVariable($this->arguments['baseNodeName']);
         }
-        $nodeAddress = null;
 
         if ($node instanceof NodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
             $nodeAddress = $this->resolveNodeAddressFromString($node);
         } else {
-            throw new ViewHelperException(sprintf('The "node" argument can only be a string or an instance of %s. Given: %s', NodeInterface::class, is_object($node) ? get_class($node) : gettype($node)), 1601372376);
+            throw new ViewHelperException(sprintf(
+                'The "node" argument can only be a string or an instance of %s. Given: %s',
+                NodeInterface::class,
+                is_object($node) ? get_class($node) : gettype($node)
+            ), 1601372376);
         }
 
         $nodeAccessor = $this->getNodeAccessorForNodeAddress($nodeAddress);
-        $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
-            throw new ViewHelperException(sprintf('Failed to resolve node "%s" on subgraph "%s"', $nodeAddress->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601372444);
+            throw new ViewHelperException(sprintf(
+                'Failed to resolve node "%s" on subgraph "%s"',
+                $nodeAddress->nodeAggregateIdentifier,
+                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+            ), 1601372444);
         }
         if ($resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
             try {
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
-                throw new ViewHelperException(sprintf('Failed to resolve shortcut node "%s" on subgraph "%s"', $resolvedNode->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601370239, $e);
+                throw new ViewHelperException(sprintf(
+                    'Failed to resolve shortcut node "%s" on subgraph "%s"',
+                    $resolvedNode->getNodeAggregateIdentifier(),
+                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                ), 1601370239, $e);
             }
             if ($shortcutNodeAddress instanceof NodeAddress) {
-                $resolvedNode = $nodeAccessor->findByIdentifier($shortcutNodeAddress->getNodeAggregateIdentifier());
+                $resolvedNode = $nodeAccessor->findByIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
             }
         }
 
@@ -227,8 +305,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-        } catch (NodeAddressCannotBeSerializedException | HttpException | NoMatchingRouteException | MissingActionNameException $e) {
-            throw new ViewHelperException(sprintf('Failed to build URI for node: %s: %s', $nodeAddress, $e->getMessage()), 1601372594, $e);
+        } catch (NodeAddressCannotBeSerializedException | HttpException
+            | NoMatchingRouteException | MissingActionNameException $e) {
+            throw new ViewHelperException(sprintf(
+                'Failed to build URI for node: %s: %s',
+                $nodeAddress,
+                $e->getMessage()
+            ), 1601372594, $e);
         }
         $this->tag->addAttribute('href', $uri);
 
@@ -246,7 +329,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * Converts strings like "relative/path", "/absolute/path", "~/site-relative/path" and "~" to the corresponding NodeAddress
+     * Converts strings like "relative/path", "/absolute/path", "~/site-relative/path"
+     * and "~" to the corresponding NodeAddress
      *
      * @param string $path
      * @return NodeAddress
@@ -258,14 +342,21 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $documentNode = $this->getContextVariable('documentNode');
         $documentNodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
         if (strncmp($path, 'node://', 7) === 0) {
-            return $documentNodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString(\mb_substr($path, 7)));
+            return $documentNodeAddress->withNodeAggregateIdentifier(
+                NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
+            );
         }
         $nodeAccessor = $this->getNodeAccessorForNodeAddress($documentNodeAddress);
         if (strncmp($path, '~', 1) === 0) {
-            // TODO: This can be simplified once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
+            // TODO: This can be simplified
+            // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
             $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress);
             if ($siteNode === null) {
-                throw new ViewHelperException(sprintf('Failed to determine site node for aggregate node "%s" and subgraph "%s"', $documentNodeAddress->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601366598);
+                throw new ViewHelperException(sprintf(
+                    'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
+                    $documentNodeAddress->nodeAggregateIdentifier,
+                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                ), 1601366598);
             }
             if ($path === '~') {
                 $targetNode = $siteNode;
@@ -276,19 +367,29 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString($path), $documentNode);
         }
         if ($targetNode === null) {
-            throw new ViewHelperException(sprintf('Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"', $path, $documentNodeAddress->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601311789);
+            throw new ViewHelperException(sprintf(
+                'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
+                $path,
+                $documentNodeAddress->nodeAggregateIdentifier,
+                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+            ), 1601311789);
         }
         return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->getNodeAggregateIdentifier());
     }
 
     /**
-     * Returns the ContentSubgraph that is specified via "subgraph" argument, if present. Otherwise the Subgraph of the given $nodeAddress
+     * Returns the ContentSubgraph that is specified via "subgraph" argument, if present.
+     * Otherwise the Subgraph of the given $nodeAddress
      *
      * @param NodeAddress $nodeAddress
      * @return NodeAccessorInterface
      */
     private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
     {
-        return $this->nodeAccessorManager->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        return $this->nodeAccessorManager->accessorFor(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 }

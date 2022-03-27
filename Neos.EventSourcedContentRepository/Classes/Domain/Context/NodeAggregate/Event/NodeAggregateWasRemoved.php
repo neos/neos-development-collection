@@ -16,6 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -23,13 +24,16 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWasRemoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+final class NodeAggregateWasRemoved implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    private DimensionSpacePointSet $affectedOccupiedDimensionSpacePoints;
+    private OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints;
 
     private DimensionSpacePointSet $affectedCoveredDimensionSpacePoints;
 
@@ -45,7 +49,7 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, Publishable
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
+        OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
         DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
         UserIdentifier $initiatingUserIdentifier,
         ?NodeAggregateIdentifier $removalAttachmentPoint = null
@@ -68,7 +72,7 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, Publishable
         return $this->nodeAggregateIdentifier;
     }
 
-    public function getAffectedOccupiedDimensionSpacePoints(): DimensionSpacePointSet
+    public function getAffectedOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet
     {
         return $this->affectedOccupiedDimensionSpacePoints;
     }
@@ -91,7 +95,7 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, Publishable
         return $this->removalAttachmentPoint;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new NodeAggregateWasRemoved(
             $targetContentStreamIdentifier,

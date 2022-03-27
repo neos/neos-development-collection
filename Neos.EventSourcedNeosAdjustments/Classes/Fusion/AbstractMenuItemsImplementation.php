@@ -12,9 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Base class for Menu and DimensionsMenu
@@ -32,7 +34,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * An internal cache for the built menu items array.
      *
-     * @var array
+     * @var array<int,MenuItem>
      */
     protected $items;
 
@@ -63,6 +65,12 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $currentNodeRootline;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.
      *
      * @return boolean
@@ -79,13 +87,13 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Main API method which sends the to-be-rendered data to Fluid
      *
-     * @return array
+     * @return array<int,MenuItem>
      */
-    public function getItems()
+    public function getItems(): array
     {
         if ($this->items === null) {
             $fusionContext = $this->runtime->getCurrentContext();
-            $this->currentNode = isset($fusionContext['activeNode']) ? $fusionContext['activeNode'] : $fusionContext['documentNode'];
+            $this->currentNode = $fusionContext['activeNode'] ?? $fusionContext['documentNode'];
             $this->currentLevel = 1;
             $this->items = $this->buildItems();
         }
@@ -96,7 +104,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Returns the items as result of the fusion object.
      *
-     * @return array
+     * @return array<int,MenuItem>
      */
     public function evaluate()
     {
@@ -110,13 +118,13 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      * Must be overridden in subclasses.
      *
      * @throws FusionException
-     * @return array An array of menu items and further information
+     * @return array<int,mixed> An array of menu items and further information
      */
-    abstract protected function buildItems();
+    abstract protected function buildItems(): array;
 
     /**
-     * Return TRUE/FALSE if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
-     * of the Menu Fusion object into account.
+     * Return TRUE/FALSE if the node is currently hidden or not in the menu;
+     * taking the "renderHiddenInIndex" configuration of the Menu Fusion object into account.
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
@@ -138,18 +146,23 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Get the rootline from the current node up to the site node.
      *
-     * @return array
+     * @return array<int,NodeInterface>
      */
-    protected function getCurrentNodeRootline()
+    protected function getCurrentNodeRootline(): array
     {
         if ($this->currentNodeRootline === null) {
             /** @todo replace this */
-            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath($this->runtime->getCurrentContext()['site']->getPath(), $this->currentNode->getPath());
+            /*
+            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath(
+                $this->runtime->getCurrentContext()['site']->getPath(),
+                $this->currentNode->getPath()
+            );
             $this->currentNodeRootline = [];
 
             foreach ($nodeRootline as $rootlineElement) {
                 $this->currentNodeRootline[$this->getNodeLevelInSite($rootlineElement)] = $rootlineElement;
-            }
+            }*/
+            $this->currentNodeRootline = [];
         }
 
         return $this->currentNodeRootline;
@@ -158,13 +171,15 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Node Level relative to site root node.
      * 0 = Site root node
-     *
-     * @param NodeInterface $node
-     * @return integer
      */
-    protected function getNodeLevelInSite(NodeInterface $node)
+    protected function getNodeLevelInSite(NodeInterface $node): int
     {
-        $siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
-        return $node->getDepth() - $siteNode->getDepth();
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+
+        return $nodeAccessor->findNodePath($node)->getDepth() - 2; // sites always are depth 2;
     }
 }

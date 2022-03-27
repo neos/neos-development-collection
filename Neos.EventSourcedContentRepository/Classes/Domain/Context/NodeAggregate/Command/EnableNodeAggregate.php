@@ -23,10 +23,12 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
- *
- * @Flow\Proxy(false)
  */
-final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class EnableNodeAggregate implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -61,13 +63,16 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
+            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
@@ -97,6 +102,9 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -110,7 +118,7 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new EnableNodeAggregate(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
@@ -122,9 +130,9 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getCoveredDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
+                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

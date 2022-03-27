@@ -222,7 +222,7 @@ trait EventSourcedTrait
      */
     protected function currentNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        $currentNodes = $this->currentNodes->getArrayCopy();
+        $currentNodes = $this->currentNodes->getIterator()->getArrayCopy();
         $firstNode = reset($currentNodes);
         assert($firstNode instanceof NodeInterface);
         return $firstNode->getNodeAggregateIdentifier();
@@ -262,14 +262,12 @@ trait EventSourcedTrait
 
     /**
      * @Then /^workspace "([^"]*)" points to another content stream than workspace "([^"]*)"$/
-     * @param string $rawWorkspaceNameA
-     * @param string $rawWorkspaceNameB
      */
-    public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB)
+    public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
     {
-        $workspaceA = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceNameA));
+        $workspaceA = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
         Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceNameB));
+        $workspaceB = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
@@ -282,12 +280,10 @@ trait EventSourcedTrait
 
     /**
      * @Then /^workspace "([^"]*)" does not point to content stream "([^"]*)"$/
-     * @param string $rawWorkspaceName
-     * @param string $rawContentStreamIdentifier
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
     {
-        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceName));
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
     }

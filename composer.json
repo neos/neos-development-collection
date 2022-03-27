@@ -14,6 +14,16 @@
         "neos/content-repository": "*",
         "neos/content-repository-dimensionspace": "*"
     },
+    "require-dev": {
+        "dg/bypass-finals": "^1.2",
+        "neos/buildessentials": "^7.0",
+        "mikey179/vfsstream": "^1.6",
+        "phpunit/phpunit": "^9.0",
+        "symfony/css-selector": "^2.0",
+        "neos/behat": "dev-master",
+        "phpstan/phpstan": "^1.4",
+        "squizlabs/php_codesniffer": "^3.6"
+    },
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
@@ -24,6 +34,31 @@
         "neos/event-sourced-neos-adjustments": "self.version"
     },
     "suggest": {},
+    "scripts": {
+        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategyIdentifier.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php ./*/Classes",
+        "lint:phpstan": "../../bin/phpstan analyse",
+        "lint": [
+            "@lint:phpcs",
+            "@lint:phpstan"
+        ],
+        "test:unit": [
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.EventSourcedContentRepository/Tests/Unit"
+        ],
+        "test:functional": [
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.EventSourcedContentRepository/Tests/Functional",
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.EventSourcedNeosAdjustments/Tests/Functional"
+        ],
+        "test:behavioral": [
+            "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
+            "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+        ],
+        "test": [
+            "@test:unit",
+            "@test:functional",
+            "@test:behavioral"
+        ]
+    },
     "conflict": {
         "flowpack/nodetemplates": "*"
     },

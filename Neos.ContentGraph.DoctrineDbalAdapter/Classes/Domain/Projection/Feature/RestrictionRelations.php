@@ -45,12 +45,12 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeAllRestrictionRelationsUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
-    {
+    private function removeAllRestrictionRelationsUnderneathNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): void {
         $this->getDatabaseConnection()->executeUpdate(
             '
                 -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
@@ -70,7 +70,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                                 h.dimensionspacepointhash
                              from
                                 neos_contentgraph_node n
-                             -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+                             -- we need to join with the hierarchy relation,
+                             -- because we need the dimensionspacepointhash.
                              inner join neos_contentgraph_hierarchyrelation h
                                 on h.childnodeanchor = n.relationanchorpoint
                              where
@@ -111,17 +112,18 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $entryNodeAggregateIdentifier
-     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      * @throws \Doctrine\DBAL\DBALException
      */
     private function removeAllRestrictionRelationsInSubtreeImposedByAncestors(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
-    ) {
-        $descendantNodeAggregateIdentifiers = $this->projectionContentGraph->findDescendantNodeAggregateIdentifiers($contentStreamIdentifier, $entryNodeAggregateIdentifier, $affectedDimensionSpacePoints);
+    ): void {
+        $descendantNodeAggregateIdentifiers = $this->projectionContentGraph->findDescendantNodeAggregateIdentifiers(
+            $contentStreamIdentifier,
+            $entryNodeAggregateIdentifier,
+            $affectedDimensionSpacePoints
+        );
 
         $this->getDatabaseConnection()->executeUpdate(
             '

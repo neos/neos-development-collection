@@ -12,12 +12,15 @@ namespace Neos\EventSourcedNeosAdjustments\ServiceControllers;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
@@ -68,7 +71,13 @@ class ServiceNodesController extends ActionController
     protected $nodeTypeConstraintFactory;
 
     /**
-     * @var array
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @var array<string,string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -78,7 +87,7 @@ class ServiceNodesController extends ActionController
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = [
@@ -90,31 +99,51 @@ class ServiceNodesController extends ActionController
      * Shows a list of nodes
      *
      * @param string $searchTerm An optional search term used for filtering the list of nodes
-     * @param array $nodeIdentifiers An optional list of node identifiers
+     * @param array<int,string> $nodeIdentifiers An optional list of node identifiers
      * @param string $workspaceName Name of the workspace to search in, "live" by default
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying
-     * @param array $nodeTypes A list of node types the list should be filtered by
+     * @param array<string,mixed> $dimensions Optional list of dimensions
+     *                                        and their values which should be used for querying
+     * @param array<int,string> $nodeTypes A list of node types the list should be filtered by
      * @param NodeAddress $contextNode a node to use as context for the search
-     * @return string
      */
-    public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeAddress $contextNode = null)
-    {
+    public function indexAction(
+        string $searchTerm = '',
+        array $nodeIdentifiers = [],
+        string $workspaceName = 'live',
+        array $dimensions = [],
+        array $nodeTypes = ['Neos.Neos:Document'],
+        NodeAddress $contextNode = null
+    ): void {
         $nodeAddress = $contextNode;
         unset($contextNode);
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
-        );
+        if (is_null($nodeAddress)) {
+            $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+            if (is_null($workspace)) {
+                throw new \InvalidArgumentException(
+                    'Could not resolve a node address for the given parameters.',
+                    1645631728
+                );
+            }
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $workspace->getCurrentContentStreamIdentifier(),
+                DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
+                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+            );
+        } else {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+            );
+        }
 
-        if ($nodeIdentifiers === []) {
-            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
-            $nodes = $nodeAccessor->findDescendants(
+        if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
+            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+            $nodes = !is_null($entryNode) ? $nodeAccessor->findDescendants(
                 [$entryNode],
                 $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $nodeTypes)),
                 SearchTerm::fulltext($searchTerm)
-            );
-            $this->view->assign('nodes', $nodes);
+            ) : [];
         } else {
             if (!empty($searchTerm)) {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
@@ -127,7 +156,7 @@ class ServiceNodesController extends ActionController
                     $nodes[] = $node;
                 }
             }
-            $this->view->assign('nodes', $nodes);
         }
+        $this->view->assign('nodes', $nodes);
     }
 }

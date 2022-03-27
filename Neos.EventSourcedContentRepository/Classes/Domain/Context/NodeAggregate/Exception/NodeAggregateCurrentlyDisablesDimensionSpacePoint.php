@@ -12,9 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
- * The exception to be thrown if a node aggregate currently disables a given dimension space point but wasn't expected to do
+ * The exception to be thrown if a node aggregate currently disables a given dimension space point
+ * but wasn't expected to do
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateCurrentlyDisablesDimensionSpacePoint extends \DomainException
 {
 }

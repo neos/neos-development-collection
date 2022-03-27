@@ -21,12 +21,12 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
  */
 final class NodePathCache
 {
-    protected $nodePaths = [];
-
     /**
-     * @var bool
+     * @var array<string,NodePath>
      */
-    protected $isEnabled;
+    protected array $nodePaths = [];
+
+    protected bool $isEnabled;
 
     public function __construct(bool $isEnabled)
     {

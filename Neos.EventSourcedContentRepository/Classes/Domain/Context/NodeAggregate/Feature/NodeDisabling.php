@@ -55,36 +55,50 @@ trait NodeDisabling
 
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
-        $this->requireNodeAggregateToNotDisableDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        );
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $nodeAggregate,
+            $command->getCoveredDimensionSpacePoint()
+        );
+        $this->requireNodeAggregateToNotDisableDimensionSpacePoint(
+            $nodeAggregate,
+            $command->getCoveredDimensionSpacePoint()
+        );
 
         $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $affectedDimensionSpacePoints = AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
-                $command->getNodeVariantSelectionStrategy(),
-                $nodeAggregate,
-                $command->getCoveredDimensionSpacePoint(),
-                $this->getInterDimensionalVariationGraph()
-            );
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, $nodeAggregate, &$events) {
+                $affectedDimensionSpacePoints = AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
+                    $command->getNodeVariantSelectionStrategy(),
+                    $nodeAggregate,
+                    $command->getCoveredDimensionSpacePoint(),
+                    $this->getInterDimensionalVariationGraph()
+                );
 
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeAggregateWasDisabled(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $affectedDimensionSpacePoints,
-                        $command->getInitiatingUserIdentifier()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
-            );
+                $events = DomainEvents::withSingleEvent(
+                    DecoratedEvent::addIdentifier(
+                        new NodeAggregateWasDisabled(
+                            $command->getContentStreamIdentifier(),
+                            $command->getNodeAggregateIdentifier(),
+                            $affectedDimensionSpacePoints,
+                            $command->getInitiatingUserIdentifier()
+                        ),
+                        Uuid::uuid4()->toString()
+                    )
+                );
 
-            $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
-                $events
-            );
-        });
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+                        ->getEventStreamName(),
+                    $events
+                );
+            }
+        );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
@@ -102,38 +116,52 @@ trait NodeDisabling
 
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
-        $this->requireNodeAggregateToDisableDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        );
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $nodeAggregate,
+            $command->getCoveredDimensionSpacePoint()
+        );
+        $this->requireNodeAggregateToDisableDimensionSpacePoint(
+            $nodeAggregate,
+            $command->getCoveredDimensionSpacePoint()
+        );
 
         $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $affectedDimensionSpacePoints = AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
-                $command->getNodeVariantSelectionStrategy(),
-                $nodeAggregate,
-                $command->getCoveredDimensionSpacePoint(),
-                $this->getInterDimensionalVariationGraph()
-            );
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, $nodeAggregate, &$events) {
+                $affectedDimensionSpacePoints = AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
+                    $command->getNodeVariantSelectionStrategy(),
+                    $nodeAggregate,
+                    $command->getCoveredDimensionSpacePoint(),
+                    $this->getInterDimensionalVariationGraph()
+                );
 
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+                $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeAggregateWasEnabled(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $affectedDimensionSpacePoints,
-                        $command->getInitiatingUserIdentifier()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
-            );
+                $events = DomainEvents::withSingleEvent(
+                    DecoratedEvent::addIdentifier(
+                        new NodeAggregateWasEnabled(
+                            $command->getContentStreamIdentifier(),
+                            $command->getNodeAggregateIdentifier(),
+                            $affectedDimensionSpacePoints,
+                            $command->getInitiatingUserIdentifier()
+                        ),
+                        Uuid::uuid4()->toString()
+                    )
+                );
 
-            $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)
+                        ->getEventStreamName(),
+                    $events
+                );
+            }
+        );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

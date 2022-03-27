@@ -37,7 +37,11 @@ final class BasicContentDimensionResolutionMode implements \JsonSerializable
             && $mode !== self::RESOLUTION_MODE_URIPATHSEGMENT
             && $mode !== self::RESOLUTION_MODE_NULL
         ) {
-            throw new \InvalidArgumentException('Invalid basic content dimension resolution mode "' . $mode . '", must be one of the defined constants.', 1510778102);
+            throw new \InvalidArgumentException(
+                'Invalid basic content dimension resolution mode "'
+                    . $mode . '", must be one of the defined constants.',
+                1510778102
+            );
         }
 
         $this->mode = $mode;

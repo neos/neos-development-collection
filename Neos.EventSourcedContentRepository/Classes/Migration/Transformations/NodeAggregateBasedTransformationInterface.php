@@ -24,5 +24,8 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
  */
 interface NodeAggregateBasedTransformationInterface
 {
-    public function execute(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult;
+    public function execute(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult;
 }

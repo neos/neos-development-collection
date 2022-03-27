@@ -15,23 +15,33 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<int,NodeMoveMapping>
  */
+#[Flow\Proxy(false)]
 final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var NodeMoveMapping[]
+     * @var array<int,NodeMoveMapping>
      */
-    private $mappings;
+    private array $mappings;
 
     /**
-     * @param NodeMoveMapping[] values
+     * @var \ArrayIterator<int,NodeMoveMapping>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param array<int,NodeMoveMapping> $values
      */
     private function __construct(array $values)
     {
         $this->mappings = $values;
+        $this->iterator = new \ArrayIterator($values);
     }
 
+    /**
+     * @param array<int|string,array<string,mixed>|NodeMoveMapping> $mappings
+     */
     public static function fromArray(array $mappings): self
     {
         $processedMappings = [];
@@ -41,35 +51,41 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
             } elseif ($mapping instanceof NodeMoveMapping) {
                 $processedMappings[] = $mapping;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid NodeMoveMapping. Expected instance of %s, got: %s', NodeMoveMapping::class, is_object($mapping) ? get_class($mapping) : gettype($mapping)), 1547811318);
+                /** @var mixed $mapping */
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid NodeMoveMapping. Expected instance of %s, got: %s',
+                    NodeMoveMapping::class,
+                    is_object($mapping) ? get_class($mapping) : gettype($mapping)
+                ), 1547811318);
             }
         }
-        return new static($processedMappings);
+        return new self($processedMappings);
     }
 
     public static function createEmpty(): self
     {
-        return new static([]);
+        return new self([]);
     }
 
     public function appendMapping(NodeMoveMapping $mapping): self
     {
         $mappings = $this->mappings;
         $mappings[] = $mapping;
-        return new static($mappings);
+
+        return new self($mappings);
     }
 
     public function merge(NodeMoveMappings $other): self
     {
-        return new static(array_merge($this->mappings, $other->mappings));
+        return new self(array_merge($this->mappings, $other->mappings));
     }
 
     /**
-     * @return NodeMoveMapping[]|\Traversable<NodeMoveMapping>
+     * @return \ArrayIterator<int,NodeMoveMapping>
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->mappings);
+        return $this->iterator;
     }
 
     public function count(): int
@@ -77,6 +93,9 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
         return count($this->mappings);
     }
 
+    /**
+     * @return array<int,NodeMoveMapping>
+     */
     public function jsonSerialize(): array
     {
         return $this->mappings;

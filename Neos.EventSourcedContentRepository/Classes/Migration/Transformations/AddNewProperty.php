@@ -23,27 +23,15 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
-/**
- * Change the node type.
- */
 class AddNewProperty implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var string
-     */
     protected string $newPropertyName;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var mixed
-     */
-    protected $serializedValue;
+    protected mixed $serializedValue;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
@@ -52,9 +40,6 @@ class AddNewProperty implements NodeBasedTransformationInterface
 
     /**
      * Sets the name of the new property to be added.
-     *
-     * @param string $newPropertyName
-     * @return void
      */
     public function setNewPropertyName(string $newPropertyName): void
     {
@@ -68,27 +53,29 @@ class AddNewProperty implements NodeBasedTransformationInterface
 
     /**
      * Serialized Property value to be set.
-     *
-     * @param mixed $value
-     * @return void
      */
-    public function setSerializedValue($value): void
+    public function setSerializedValue(mixed $value): void
     {
         $this->serializedValue = $value;
     }
 
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if (!$node->hasProperty($this->newPropertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
-                $contentStreamForWriting,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray([
-                    $this->newPropertyName => new SerializedPropertyValue($this->serializedValue, $this->type)
-                ]),
-                UserIdentifier::forSystemUser()
-            ));
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
+                    $contentStreamForWriting,
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    SerializedPropertyValues::fromArray([
+                        $this->newPropertyName => new SerializedPropertyValue($this->serializedValue, $this->type)
+                    ]),
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return CommandResult::createEmpty();

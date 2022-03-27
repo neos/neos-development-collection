@@ -103,6 +103,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -118,7 +119,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         int $limit = null,
         int $offset = null
     ): Nodes {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamIdentifier,
+            $parentNodeAggregateIdentifier
+        );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
@@ -131,22 +135,31 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($childNodeRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $childNodeRows,
+            $this->visibilityConstraints
+        );
     }
 
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier, ['COUNT(*)']);
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamIdentifier,
+            $parentNodeAggregateIdentifier,
+            ['COUNT(*)']
+        );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
             $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
         }
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchNumeric();
 
         return $result[0];
@@ -168,6 +181,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->ordered();
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->visibilityConstraints);
@@ -189,9 +203,13 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->ordered();
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $referencedNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($referencedNodeRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $referencedNodeRows,
+            $this->visibilityConstraints
+        );
     }
 
     public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
@@ -200,6 +218,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -215,7 +234,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): ?NodeInterface {
         $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
-            throw new \RuntimeException('Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.');
+            throw new \RuntimeException(
+                'Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.'
+            );
         }
         foreach ($path->getParts() as $edgeName) {
             $currentNode = $this->findChildNodeConnectedThroughEdgeName(
@@ -234,11 +255,15 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
     ): ?NodeInterface {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamIdentifier,
+            $parentNodeAggregateIdentifier
+        );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeName($edgeName);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -256,7 +281,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
-            HypergraphSiblingQueryMode::all(),
+            HypergraphSiblingQueryMode::MODE_ALL,
             $nodeTypeConstraints,
             $limit,
             $offset
@@ -271,7 +296,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
-            HypergraphSiblingQueryMode::onlySucceeding(),
+            HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
             $nodeTypeConstraints,
             $limit,
             $offset
@@ -286,7 +311,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
-            HypergraphSiblingQueryMode::onlyPreceding(),
+            HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
             $nodeTypeConstraints,
             $limit,
             $offset
@@ -317,6 +342,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
@@ -324,7 +350,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
     {
-        // TODO: Implement findNodePath() method.
+        return NodePath::fromString('/');
     }
 
     public function findSubtrees(
@@ -372,7 +398,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $parameters = [
             'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers,
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $maximumLevels
         ];
 
@@ -380,7 +406,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             'entryNodeAggregateIdentifiers' => Connection::PARAM_STR_ARRAY
         ];
 
-        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative();
+        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+            ->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->visibilityConstraints);
     }
@@ -390,11 +417,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints,
         ?SearchTerm $searchTerm
     ): Nodes {
-        // TODO: Implement findDescendants() method.
+        return Nodes::empty();
     }
 
     /**
-     * @return int
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
@@ -409,15 +435,17 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $parameters = [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash()
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash
         ];
 
-        return $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric()[0];
+        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric();
+
+        return $result ? $result[0] : 0;
     }
 
     public function getInMemoryCache(): InMemoryCache
     {
-        // TODO: Implement getInMemoryCache() method.
+        return new InMemoryCache();
     }
 
     private function getDatabaseConnection(): DatabaseConnection
@@ -425,8 +453,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->databaseClient->getConnection();
     }
 
-    public function jsonSerialize()
+    /**
+     * @return array<string,mixed>
+     */
+    public function jsonSerialize(): array
     {
-        // TODO: Implement jsonSerialize() method.
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint
+        ];
     }
 }

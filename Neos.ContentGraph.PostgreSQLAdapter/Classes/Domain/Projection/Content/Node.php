@@ -157,12 +157,12 @@ final class Node implements NodeInterface
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint
-        ]));
+        ], JSON_THROW_ON_ERROR));
     }
 
     public function getLabel(): string
     {
-        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this) ?? '';
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
     public function getDimensionSpacePoint(): DimensionSpacePoint

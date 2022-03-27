@@ -1,8 +1,0 @@
-preset: psr2
-
-finder:
-  name: "*.php"
-
-enabled:
-  - no_unused_imports
-  - short_array_syntax

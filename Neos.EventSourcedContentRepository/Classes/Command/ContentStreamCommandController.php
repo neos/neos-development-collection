@@ -3,6 +3,7 @@ namespace Neos\EventSourcedContentRepository\Command;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
+use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -20,9 +21,6 @@ use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Cli\CommandController;
 use Neos\Utility\ObjectAccess;
 
-/**
- *
- */
 class ContentStreamCommandController extends CommandController
 {
     /**
@@ -56,15 +54,14 @@ class ContentStreamCommandController extends CommandController
     }
 
     /**
-     * @param string $contentStreamIdentifier
-     * @param int $startSequenceNumber
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function exportCommand(string $contentStreamIdentifier, int $startSequenceNumber = 0)
+    public function exportCommand(string $contentStreamIdentifier, int $startSequenceNumber = 0): void
     {
-        $events = $this->contentRepositoryEventStore->load(StreamName::fromString($contentStreamIdentifier), $startSequenceNumber);
-
-        $normalizer = new EventNormalizer();
+        $events = $this->contentRepositoryEventStore->load(
+            StreamName::fromString($contentStreamIdentifier),
+            $startSequenceNumber
+        );
 
         $this->outputLine('[');
         $i = 0;
@@ -83,13 +80,12 @@ class ContentStreamCommandController extends CommandController
      * Imports events to a content stream from the given file.
      * Note that the events in the file need to come from the same content stream you import to for now!
      *
-     * @param string $contentStreamIdentifier
-     * @param string $file
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists
      * @throws \Neos\EventSourcing\EventListener\Exception\EventCouldNotBeAppliedException
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function importCommand(string $contentStreamIdentifier, string $file = null)
+    public function importCommand(string $contentStreamIdentifier, string $file = null): void
     {
         if ($file !== null) {
             $fileStream = fopen($file, 'r');
@@ -98,11 +94,14 @@ class ContentStreamCommandController extends CommandController
             $fileStream = fopen('php://stdin', 'r');
             $this->outputLine('Reading import data from standard in.');
         }
-
-        $normalizer = new EventNormalizer();
+        if (!$fileStream) {
+            throw new \InvalidArgumentException('Failed to open file ' . $file);
+        }
+        $normalizer = new EventNormalizer(new EventTypeResolver());
 
         $contentStreamToImportTo = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)->getEventStreamName();
+        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)
+            ->getEventStreamName();
 
         $this->outputLine('Clearing workspace projection to create the workspace to import to.');
         $workspaceProjection = $this->projectionManager->getProjection('workspace');
@@ -155,7 +154,8 @@ class ContentStreamCommandController extends CommandController
         fclose($fileStream);
         $this->outputLine('');
         $this->outputLine('Finished importing events.');
-        $this->outputLine('Your events and projections are probably out of sync now, <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
+        $this->outputLine('Your events and projections are probably out of sync now,'
+            . ' <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
     }
 
     /**
@@ -167,33 +167,32 @@ class ContentStreamCommandController extends CommandController
      *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
      *       `./flow contentStream:prune`.
      */
-    public function pruneCommand()
+    public function pruneCommand(): void
     {
         $unusedContentStreams = $this->contentStreamPruner->prune();
-
-        if (!count($unusedContentStreams)) {
+        $unusedContentStreamsPresent = false;
+        foreach ($unusedContentStreams as $contentStream) {
+            $this->outputFormatted('Removed %s', [$contentStream]);
+            $unusedContentStreamsPresent = true;
+        }
+        if (!$unusedContentStreamsPresent) {
             $this->outputLine('There are no unused content streams.');
-        } else {
-            foreach ($unusedContentStreams as $contentStream) {
-                $this->outputFormatted('Removed %s', [$contentStream]);
-            }
         }
     }
-
 
     /**
      * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
      */
-    public function pruneRemovedFromEventStreamCommand()
+    public function pruneRemovedFromEventStreamCommand(): void
     {
         $unusedContentStreams = $this->contentStreamPruner->pruneRemovedFromEventStream();
-
-        if (!count($unusedContentStreams)) {
+        $unusedContentStreamsPresent = false;
+        foreach ($unusedContentStreams as $contentStream) {
+            $this->outputFormatted('Removed events for %s', [$contentStream]);
+            $unusedContentStreamsPresent = true;
+        }
+        if (!$unusedContentStreamsPresent) {
             $this->outputLine('There are no unused content streams.');
-        } else {
-            foreach ($unusedContentStreams as $contentStream) {
-                $this->outputFormatted('Removed events for %s', [$contentStream]);
-            }
         }
     }
 }

@@ -13,9 +13,9 @@ namespace Neos\EventSourcedContentRepository\Migration\Filters;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
@@ -29,13 +29,14 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
  *     CH
  *
  * ...and you check for "language=DE", then ONLY the node with originDimensionSpacePoint language=DE will match.
- * ...and you check for "language=DE" and includeSpecializations=TRUE, then the nodes with originDimensionSpacePoint language=DE and language=CH will match.
+ * ...and you check for "language=DE" and includeSpecializations=TRUE,
+ *    then the nodes with originDimensionSpacePoint language=DE and language=CH will match.
  */
 class DimensionSpacePoints implements NodeBasedFilterInterface
 {
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
-    protected DimensionSpacePointSet $points;
+    protected OriginDimensionSpacePointSet $points;
 
     protected bool $includeSpecializations = false;
 
@@ -44,9 +45,12 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
+    /**
+     * @param array<int,array<string,string>> $points
+     */
     public function setPoints(array $points): void
     {
-        $this->points = DimensionSpacePointSet::fromArray($points);
+        $this->points = OriginDimensionSpacePointSet::fromArray($points);
     }
 
     public function setIncludeSpecializations(bool $includeSpecializations): void
@@ -58,8 +62,11 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
     {
         if ($this->includeSpecializations) {
             foreach ($this->points as $point) {
-                $variantType = $this->interDimensionalVariationGraph->getVariantType($node->getOriginDimensionSpacePoint(), $point);
-                if ($variantType->equals(VariantType::same()) || $variantType->equals(VariantType::specialization())) {
+                $variantType = $this->interDimensionalVariationGraph->getVariantType(
+                    $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                    $point->toDimensionSpacePoint()
+                );
+                if ($variantType === VariantType::TYPE_SAME || $variantType === VariantType::TYPE_SPECIALIZATION) {
                     // this is true if the node is a specialization of $point (or if they are equal)
                     return true;
                 }

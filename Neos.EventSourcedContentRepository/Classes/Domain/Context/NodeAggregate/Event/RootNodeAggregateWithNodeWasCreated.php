@@ -23,10 +23,12 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A root node aggregate and its initial node were created
- *
- * @Flow\Proxy(false)
  */
-final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class RootNodeAggregateWithNodeWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**
      * @var ContentStreamIdentifier
@@ -106,9 +108,9 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): RootNodeAggregateWithNodeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new RootNodeAggregateWithNodeWasCreated(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,

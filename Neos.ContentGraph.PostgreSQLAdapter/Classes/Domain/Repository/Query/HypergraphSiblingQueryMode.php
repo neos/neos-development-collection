@@ -15,62 +15,22 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class HypergraphSiblingQueryMode
+#[Flow\Proxy(false)]
+enum HypergraphSiblingQueryMode: string
 {
-    const MODE_ALL = 'all';
-    const MODE_ONLY_PRECEDING = 'onlyPreceding';
-    const MODE_ONLY_SUCCEEDING = 'onlySucceeding';
-
-    private string $value;
-
-    private function __construct(
-        string $value
-    ) {
-        $this->value = $value;
-    }
-
-    public static function all(): self
-    {
-        return new self(self::MODE_ALL);
-    }
-
-    public static function onlyPreceding(): self
-    {
-        return new self(self::MODE_ONLY_PRECEDING);
-    }
-
-    public static function onlySucceeding(): self
-    {
-        return new self(self::MODE_ONLY_SUCCEEDING);
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
+    case MODE_ALL = 'all';
+    case MODE_ONLY_PRECEDING = 'onlyPreceding';
+    case MODE_ONLY_SUCCEEDING = 'onlySucceeding';
 
     public function renderCondition(): string
     {
-        switch ($this->value) {
-            case self::MODE_ALL:
-                return '
-    AND sn.relationanchorpoint = ANY(sh.childnodeanchors)';
-            case self::MODE_ONLY_PRECEDING:
-                return '
-    AND sn.relationanchorpoint = ANY(sh.childnodeanchors[:(array_position(sh.childnodeanchors, sh.relationanchorpoint))])';
-            case self::MODE_ONLY_SUCCEEDING:
-                return '
-    AND sn.relationanchorpoint = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])';
-            default:
-                return '';
-        }
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
+        return match ($this) {
+            self::MODE_ALL => '
+    AND sn.relationanchorpoint = ANY(sh.childnodeanchors)',
+            self::MODE_ONLY_PRECEDING => '
+    AND sn.relationanchorpoint = ANY(sh.childnodeanchors[:(array_position(sh.childnodeanchors, sh.relationanchorpoint))])',
+            self::MODE_ONLY_SUCCEEDING => '
+    AND sn.relationanchorpoint = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])'
+        };
     }
 }

@@ -13,11 +13,15 @@ namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraints;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdge;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -36,32 +40,74 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $world = new ContentDimensionValue('WORLD', null, [], ['resolution' => ['value' => '.com']]);
-        $greatBritain = new ContentDimensionValue('GB', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => '.co.uk']]);
-        $germany = new ContentDimensionValue('DE', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => '.de']]);
+        $emptyConstraints = new ContentDimensionConstraintSet([]);
+        $world = new ContentDimensionValue(
+            'WORLD',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => '.com']]
+        );
+        $greatBritain = new ContentDimensionValue(
+            'GB',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => '.co.uk']]
+        );
+        $germany = new ContentDimensionValue(
+            'DE',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => '.de']]
+        );
 
-        $defaultSeller = new ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $sellerA = new ContentDimensionValue('sellerA', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'sellerA']]);
+        $defaultSeller = new ContentDimensionValue(
+            'default',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'default']]
+        );
+        $sellerA = new ContentDimensionValue(
+            'sellerA',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'sellerA']]
+        );
 
-        $defaultChannel = new ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $channelA = new ContentDimensionValue('channelA', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'channelA']]);
+        $defaultChannel = new ContentDimensionValue(
+            'default',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'default']]
+        );
+        $channelA = new ContentDimensionValue(
+            'channelA',
+            new ContentDimensionValueSpecializationDepth(1),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'channelA']]
+        );
 
-        $english = new ContentDimensionValue('en', null, [], ['resolution' => ['value' => '']]);
-        $german = new ContentDimensionValue('de', null, [], ['resolution' => ['value' => 'de.']]);
+        $english = new ContentDimensionValue(
+            'en',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => '']]
+        );
+        $german = new ContentDimensionValue(
+            'de',
+            ContentDimensionValueSpecializationDepth::zero(),
+            $emptyConstraints,
+            ['resolution' => ['value' => 'de.']]
+        );
 
         $contentDimensions = [
             'market' => new ContentDimension(
                 new ContentDimensionIdentifier('market'),
-                [
-                    $world->getValue() => $world,
-                    $greatBritain->getValue() => $greatBritain,
-                    $germany->getValue() => $germany
-                ],
+                new ContentDimensionValues([$world, $greatBritain, $germany]),
                 $world,
-                [
+                new ContentDimensionValueVariationEdges([
                     new ContentDimensionValueVariationEdge($greatBritain, $world),
                     new ContentDimensionValueVariationEdge($germany, $world)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
@@ -70,14 +116,11 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ),
             'seller' => new ContentDimension(
                 new ContentDimensionIdentifier('seller'),
-                [
-                    $defaultSeller->getValue() => $defaultSeller,
-                    $sellerA->getValue() => $sellerA
-                ],
+                new ContentDimensionValues([$defaultSeller, $sellerA]),
                 $defaultSeller,
-                [
+                new ContentDimensionValueVariationEdges([
                     new ContentDimensionValueVariationEdge($sellerA, $defaultSeller)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
@@ -89,14 +132,11 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ),
             'channel' => new ContentDimension(
                 new ContentDimensionIdentifier('channel'),
-                [
-                    $defaultChannel->getValue() => $defaultChannel,
-                    $channelA->getValue() => $channelA
-                ],
+                new ContentDimensionValues([$defaultChannel, $channelA]),
                 $defaultChannel,
-                [
+                new ContentDimensionValueVariationEdges([
                     new ContentDimensionValueVariationEdge($channelA, $defaultChannel)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
@@ -108,12 +148,9 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ),
             'language' => new ContentDimension(
                 new ContentDimensionIdentifier('language'),
-                [
-                    $english->getValue() => $english,
-                    $german->getValue() => $german
-                ],
+                new ContentDimensionValues([$english, $german]),
                 $english,
-                [],
+                new ContentDimensionValueVariationEdges([]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
@@ -141,7 +178,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
         $contentQuery = new NodeAddress(
             ContentStreamIdentifier::create(),
-            new DimensionSpacePoint([
+            DimensionSpacePoint::fromArray([
                 'market' => 'GB',
                 'seller' => 'sellerA',
                 'channel' => 'channelA',

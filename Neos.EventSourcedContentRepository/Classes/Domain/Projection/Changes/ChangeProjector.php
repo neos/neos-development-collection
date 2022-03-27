@@ -61,9 +61,16 @@ class ChangeProjector implements ProjectorInterface
     }
 
 
-    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
+    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
+        // @todo properly handle this
+        if (is_null($event->getNodeMoveMappings())) {
+            throw new \Exception(
+                'Could not apply NodeAggregateWasMoved to change projection due to missing nodeMoveMappings.',
+                1645382694
+            );
+        }
         $mapping = iterator_to_array($event->getNodeMoveMappings());
 
         $this->markAsMoved(
@@ -73,36 +80,54 @@ class ChangeProjector implements ProjectorInterface
         );
     }
 
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
+        $this->markAsChanged(
+            $event->getContentStreamIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $event->getOriginDimensionSpacePoint()
+        );
     }
 
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event)
+    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
+        $this->markAsChanged(
+            $event->getContentStreamIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $event->getOriginDimensionSpacePoint()
+        );
     }
 
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
-            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
+        foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+            $this->markAsChanged(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
+            );
         }
     }
 
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
-        foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
-            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
+        foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+            $this->markAsChanged(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
+            );
         }
     }
 
     // TODO: Node Creation
 
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
+    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($event->getContentStreamIdentifier());
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                $event->getContentStreamIdentifier()
+            );
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
@@ -118,7 +143,8 @@ class ChangeProjector implements ProjectorInterface
                 [
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                     'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()->getPointHashes()
+                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()
+                        ->getPointHashes()
                 ],
                 [
                     'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
@@ -127,7 +153,9 @@ class ChangeProjector implements ProjectorInterface
 
             foreach ($event->getAffectedOccupiedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
-                    'INSERT INTO neos_contentrepository_projection_change (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint, originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
+                    'INSERT INTO neos_contentrepository_projection_change
+                            (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint,
+                             originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
                             :contentStreamIdentifier,
                             :nodeAggregateIdentifier,
@@ -143,15 +171,15 @@ class ChangeProjector implements ProjectorInterface
                         'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                         'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                         'originDimensionSpacePoint' => json_encode($dimensionSpacePoint),
-                        'originDimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-                        'removalAttachmentPoint' => $event->getRemovalAttachmentPoint() !== null ? (string)$event->getRemovalAttachmentPoint() : null
+                        'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                        'removalAttachmentPoint' => $event->getRemovalAttachmentPoint()?->__toString()
                     ]
                 );
             }
         });
     }
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeStatement(
@@ -165,8 +193,8 @@ class ChangeProjector implements ProjectorInterface
                       AND c.contentStreamIdentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
@@ -179,15 +207,24 @@ class ChangeProjector implements ProjectorInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
-        $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
-            // HACK: basically we are not allowed to read other Projection's finder methods here; but we nevertheless do it.
+        $this->transactional(function () use (
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $originDimensionSpacePoint
+        ) {
+            // HACK: basically we are not allowed to read other Projection's finder methods here;
+            // but we nevertheless do it.
             // we can maybe figure out another way of solving this lateron.
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
-            $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
+            $change = $this->getChange(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $originDimensionSpacePoint
+            );
             if ($change === null) {
                 $change = new Change(
                     $contentStreamIdentifier,
@@ -210,13 +247,21 @@ class ChangeProjector implements ProjectorInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
-        $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
+        $this->transactional(function () use (
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $originDimensionSpacePoint
+        ) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
-            $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
+            $change = $this->getChange(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $originDimensionSpacePoint
+            );
             if ($change === null) {
                 $change = new Change(
                     $contentStreamIdentifier,
@@ -247,7 +292,7 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             [
                 'contentStreamIdentifier' => $contentStreamIdentifier,
                 'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetch();
 
@@ -255,10 +300,7 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
     }
 
-    /**
-     * @param callable $operations
-     */
-    protected function transactional(callable $operations): void
+    protected function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }

@@ -22,7 +22,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 class ReloadDocument extends AbstractFeedback
 {
-    protected NodeInterface $node;
+    protected ?NodeInterface $node;
 
     /**
      * @Flow\Inject
@@ -30,35 +30,21 @@ class ReloadDocument extends AbstractFeedback
      */
     protected $nodeService;
 
-    /**
-     * Get the type identifier
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'Neos.Neos.Ui:ReloadDocument';
     }
 
-    /**
-     * Set the node
-     */
     public function setNode(NodeInterface $node): void
     {
         $this->node = $node;
     }
 
-    /**
-     * Get the node
-     */
-    public function getNode(): NodeInterface
+    public function getNode(): ?NodeInterface
     {
         return $this->node;
     }
 
-    /**
-     * Get the description
-     */
     public function getDescription(): string
     {
         return sprintf('Reload of current document required.');
@@ -79,10 +65,9 @@ class ReloadDocument extends AbstractFeedback
     /**
      * Serialize the payload for this feedback
      *
-     * @param ControllerContext $controllerContext
-     * @return mixed
+     * @return array<string,string>
      */
-    public function serializePayload(ControllerContext $controllerContext)
+    public function serializePayload(ControllerContext $controllerContext): array
     {
         if (!$this->node) {
             return [];

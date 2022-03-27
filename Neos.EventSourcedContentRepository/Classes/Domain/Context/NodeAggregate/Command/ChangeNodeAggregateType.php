@@ -18,15 +18,17 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 
-/**
- * @Flow\Proxy(false)
- */
-final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class ChangeNodeAggregateType implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -65,9 +67,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
     }
 
     /**
-     * @param array $array
-     * @return ChangeNodeAggregateType
-     * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
+     * @param array<string,mixed> $array
      */
     public static function fromArray(array $array): self
     {
@@ -75,7 +75,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['newNodeTypeName']),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($array['strategy']),
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($array['strategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             isset($array['tetheredDescendantNodeAggregateIdentifiers'])
                 ? NodeAggregateIdentifiersByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIdentifiers'])
@@ -115,10 +115,8 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
-        return (
-            (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
-            && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
-        );
+        return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+            && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier);
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
@@ -133,6 +131,9 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -146,16 +147,14 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
     }
 
     /**
-     * Create a new ChangeNodeAggregateType command with all original values, except the tetheredDescendantNodeAggregateIdentifiers (where
-     * the passed in arguments are used).
+     * Create a new ChangeNodeAggregateType command with all original values,
+     * except the tetheredDescendantNodeAggregateIdentifiers (where the passed in arguments are used).
      *
      * Is needed to make this command fully deterministic before storing it at the events.
-     *
-     * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return ChangeNodeAggregateType
      */
-    public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
-    {
+    public function withTetheredDescendantNodeAggregateIdentifiers(
+        NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
+    ): self {
         return new self(
             $this->contentStreamIdentifier,
             $this->nodeAggregateIdentifier,

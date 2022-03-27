@@ -226,11 +226,11 @@ trait ProjectedNodeTrait
      */
     public function iExpectThisNodeToBeClassifiedAs(string $serializedExpectedClassification): void
     {
-        $expectedClassification = NodeAggregateClassification::fromString($serializedExpectedClassification);
+        $expectedClassification = NodeAggregateClassification::from($serializedExpectedClassification);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
                 $expectedClassification->equals($currentNode->getClassification()),
-                'Node was expected to be classified as "' . $expectedClassification . '" but is as "' . $currentNode->getClassification() . '" in adapter "' . $adapterName . '"'
+                'Node was expected to be classified as "' . $expectedClassification->value . '" but is as "' . $currentNode->getClassification()->value . '" in adapter "' . $adapterName . '"'
             );
         });
     }
@@ -244,7 +244,7 @@ trait ProjectedNodeTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedNodeTypeName) {
             $actualNodeTypeName = $currentNode->getNodeTypeName();
-            Assert::assertTrue($expectedNodeTypeName->equals($actualNodeTypeName), 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
         });
     }
 

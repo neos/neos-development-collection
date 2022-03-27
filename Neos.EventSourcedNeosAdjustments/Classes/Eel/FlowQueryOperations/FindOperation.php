@@ -32,31 +32,31 @@ use Neos\Flow\Annotations as Flow;
  *
  * Example (node name):
  *
- * 	q(node).find('main')
+ *  q(node).find('main')
  *
  * Example (relative path):
  *
- * 	q(node).find('main/text1')
+ *  q(node).find('main/text1')
  *
  * Example (absolute path):
  *
- * 	q(node).find('/sites/my-site/home')
+ *  q(node).find('/sites/my-site/home')
  *
  * Example (identifier):
  *
- * 	q(node).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
+ *  q(node).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
  *
  * Example (node type):
  *
- * 	q(node).find('[instanceof Neos.NodeTypes:Text]')
+ *  q(node).find('[instanceof Neos.NodeTypes:Text]')
  *
  * Example (multiple node types):
  *
- * 	q(node).find('[instanceof Neos.NodeTypes:Text],[instanceof Neos.NodeTypes:Image]')
+ *  q(node).find('[instanceof Neos.NodeTypes:Text],[instanceof Neos.NodeTypes:Image]')
  *
  * Example (node type with filter):
  *
- * 	q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
+ *  q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
  *
  */
 class FindOperation extends AbstractOperation
@@ -90,7 +90,7 @@ class FindOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -108,15 +108,15 @@ class FindOperation extends AbstractOperation
      * and thus may work with the legacy node interface until subgraphs are available
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
-     * @return void
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @throws FlowQueryException
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Eel\FlowQuery\FizzleException
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
+        /** @var array<int,NodeInterface> $contextNodes */
         $contextNodes = $flowQuery->getContext();
         if (count($contextNodes) === 0 || empty($arguments[0])) {
             return;
@@ -143,7 +143,7 @@ class FindOperation extends AbstractOperation
                 $filterResults = $this->addNodesByIdentifier($nodeAggregateIdentifier, $entryPoints, $filterResults);
                 $generatedNodes = true;
             } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
-                $nodePath = NodePath::fromString(isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter']);
+                $nodePath = NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
                 $filterResults = $this->addNodesByPath($nodePath, $entryPoints, $filterResults);
                 $generatedNodes = true;
             }
@@ -156,13 +156,17 @@ class FindOperation extends AbstractOperation
             }
             if (isset($filter['AttributeFilters']) && count($filter['AttributeFilters']) > 0) {
                 if (!$generatedNodes) {
-                    throw new FlowQueryException('find() needs an identifier, path or instanceof filter for the first filter part', 1436884196);
+                    throw new FlowQueryException(
+                        'find() needs an identifier, path or instanceof filter for the first filter part',
+                        1436884196
+                    );
                 }
                 $filterQuery = new FlowQuery($filterResults);
                 foreach ($filter['AttributeFilters'] as $attributeFilter) {
                     $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
                 }
-                $filterResults = $filterQuery->get();
+                /** @var array<int,mixed> $filterResults */
+                $filterResults = $filterQuery->getContext();
             }
             $result = array_merge($result, $filterResults);
         }
@@ -170,7 +174,12 @@ class FindOperation extends AbstractOperation
         $uniqueResult = [];
         $usedKeys = [];
         foreach ($result as $item) {
-            $identifier = (string) new NodeAddress($item->getContentStreamIdentifier(), $item->getDimensionSpacePoint(), $item->getNodeAggregateIdentifier(), null);
+            $identifier = (string) new NodeAddress(
+                $item->getContentStreamIdentifier(),
+                $item->getDimensionSpacePoint(),
+                $item->getNodeAggregateIdentifier(),
+                null
+            );
             if (!isset($usedKeys[$identifier])) {
                 $uniqueResult[] = $item;
                 $usedKeys[$identifier] = $identifier;
@@ -180,6 +189,10 @@ class FindOperation extends AbstractOperation
         $flowQuery->setContext($uniqueResult);
     }
 
+    /**
+     * @param array<int,NodeInterface> $contextNodes
+     * @return array<string,mixed>
+     */
     protected function getEntryPoints(array $contextNodes, VisibilityConstraints $visibilityConstraints): array
     {
         $entryPoints = [];
@@ -189,7 +202,8 @@ class FindOperation extends AbstractOperation
                 $contextNode->getDimensionSpacePoint(),
                 $visibilityConstraints
             );
-            $subgraphIdentifier = md5($nodeAccessor->getContentStreamIdentifier() . '@' . $nodeAccessor->getDimensionSpacePoint());
+            $subgraphIdentifier = md5($nodeAccessor->getContentStreamIdentifier()
+                . '@' . $nodeAccessor->getDimensionSpacePoint());
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
                     'subgraph' => $nodeAccessor,
@@ -202,8 +216,16 @@ class FindOperation extends AbstractOperation
         return $entryPoints;
     }
 
-    protected function addNodesByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier, array $entryPoints, array $result): array
-    {
+    /**
+     * @param array<string,mixed> $entryPoints
+     * @param array<int,NodeInterface> $result
+     * @return array<int,NodeInterface>
+     */
+    protected function addNodesByIdentifier(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        array $entryPoints,
+        array $result
+    ): array {
         foreach ($entryPoints as $entryPoint) {
             /** @var NodeAccessorInterface $nodeAccessor */
             $nodeAccessor = $entryPoint['subgraph'];
@@ -216,6 +238,11 @@ class FindOperation extends AbstractOperation
         return $result;
     }
 
+    /**
+     * @param array<string,mixed> $entryPoints
+     * @param array<int,NodeInterface> $result
+     * @return array<int,NodeInterface>
+     */
     protected function addNodesByPath(NodePath $nodePath, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
@@ -225,14 +252,16 @@ class FindOperation extends AbstractOperation
                 /** @var NodeInterface $node */
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
-                    while (!$rootNode->isRoot()) {
+                    while ($rootNode instanceof NodeInterface && !$rootNode->isRoot()) {
                         $rootNode = $nodeAccessor->findParentNode($rootNode);
                     }
-                    $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
+                    if ($rootNode instanceof NodeInterface) {
+                        $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
+                    }
                 } else {
                     $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $node);
                 }
-                if ($nodeByPath) {
+                if (isset($nodeByPath)) {
                     $result[] = $nodeByPath;
                 }
             }
@@ -241,13 +270,24 @@ class FindOperation extends AbstractOperation
         return $result;
     }
 
+    /**
+     * @param array<string,mixed> $entryPoints
+     * @param array<int,NodeInterface> $result
+     * @return array<int,NodeInterface>
+     */
     protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
             /** @var NodeAccessorInterface $nodeAccessor */
             $nodeAccessor = $entryPoint['subgraph'];
 
-            foreach ($nodeAccessor->findDescendants($entryPoint['nodes'], $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null) as $descendant) {
+            foreach ($nodeAccessor->findDescendants(
+                $entryPoint['nodes'],
+                $this->nodeTypeConstraintFactory->parseFilterString(
+                    $nodeTypeName->jsonSerialize()
+                ),
+                null
+            ) as $descendant) {
                 $result[] = $descendant;
             }
         }

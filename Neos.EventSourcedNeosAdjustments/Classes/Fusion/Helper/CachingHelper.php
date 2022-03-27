@@ -27,12 +27,10 @@ class CachingHelper implements ProtectedContextAwareInterface
     /**
      * Render a caching configuration for array of Nodes
      *
-     * @param mixed $nodes
-     * @param string $prefix
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    protected function convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, $prefix)
+    protected function convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix(mixed $nodes, string $prefix): array
     {
         if ($nodes === null) {
             $nodes = [];
@@ -43,15 +41,23 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         if (!is_array($nodes) && !$nodes instanceof \Traversable) {
-            throw new Exception(sprintf('FlowQuery result, Array or Traversable expected by this helper, given: "%s".', gettype($nodes)), 1437169992);
+            throw new Exception(sprintf(
+                'FlowQuery result, Array or Traversable expected by this helper, given: "%s".',
+                gettype($nodes)
+            ), 1437169992);
         }
 
         $prefixedNodeIdentifiers = [];
         foreach ($nodes as $node) {
             if ($node instanceof NodeInterface) {
-                $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderContentStreamIdentifierTag($node->getContentStreamIdentifier()) . '_' . $node->getNodeAggregateIdentifier();
+                $prefixedNodeIdentifiers[] = $prefix . '_'
+                    . $this->renderContentStreamIdentifierTag($node->getContentStreamIdentifier())
+                    . '_' . $node->getNodeAggregateIdentifier();
             } else {
-                throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
+                throw new Exception(sprintf(
+                    'One of the elements in array passed to this helper was not a Node, but of type: "%s".',
+                    gettype($node)
+                ), 1437169991);
             }
         }
         return $prefixedNodeIdentifiers;
@@ -63,10 +69,10 @@ class CachingHelper implements ProtectedContextAwareInterface
      * given nodes (for any variant) is updated.
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    public function nodeTag($nodes)
+    public function nodeTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'Node');
     }
@@ -83,7 +89,9 @@ class CachingHelper implements ProtectedContextAwareInterface
     {
         $contentStreamTag = '';
         if ($contextNode instanceof NodeInterface) {
-            $contentStreamTag = $this->renderContentStreamIdentifierTag($contextNode->getContentStreamIdentifier()) .'_';
+            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+                $contextNode->getContentStreamIdentifier()
+            ) .'_';
         }
 
         return 'Node_' . $contentStreamTag . $identifier;
@@ -124,7 +132,9 @@ class CachingHelper implements ProtectedContextAwareInterface
         $contentStreamTag = '';
 
         if ($contextNode instanceof NodeInterface) {
-            $contentStreamTag = $this->renderContentStreamIdentifierTag($contextNode->getContentStreamIdentifier()) .'_';
+            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+                $contextNode->getContentStreamIdentifier()
+            ) .'_';
         }
 
         if (is_string($nodeType)) {
@@ -148,10 +158,10 @@ class CachingHelper implements ProtectedContextAwareInterface
      * the given nodes is updated.
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    public function descendantOfTag($nodes)
+    public function descendantOfTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'DescendantOf');
     }

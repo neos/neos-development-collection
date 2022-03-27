@@ -43,6 +43,9 @@ final class ReferenceHyperrelationRecord
         $this->destinationNodeAggregateIdentifiers = $destinationNodeAggregateIdentifiers;
     }
 
+    /**
+     * @param array<string,string> $databaseRow
+     */
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
@@ -88,6 +91,9 @@ final class ReferenceHyperrelationRecord
         $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function getDatabaseIdentifier(): array
     {
         return [

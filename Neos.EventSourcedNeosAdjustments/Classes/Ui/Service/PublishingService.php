@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Service\UserService;
 
 /**
@@ -49,8 +50,10 @@ class PublishingService
 
     public function publishWorkspace(WorkspaceName $workspaceName): void
     {
+        /** @var User $backendUser */
+        $backendUser = $this->userService->getBackendUser();
         $userIdentifier = UserIdentifier::fromString(
-            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
+            $this->persistenceManager->getIdentifierByObject($backendUser)
         );
 
         // TODO: only rebase if necessary!

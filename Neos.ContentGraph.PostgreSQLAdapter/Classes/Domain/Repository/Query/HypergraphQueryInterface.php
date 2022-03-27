@@ -23,5 +23,8 @@ use Doctrine\DBAL\Driver\ResultStatement;
  */
 interface HypergraphQueryInterface
 {
+    /**
+     * @return ResultStatement<string,mixed>
+     */
     public function execute(Connection $databaseConnection): ResultStatement;
 }

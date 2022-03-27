@@ -15,10 +15,12 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Create a named reference from source to destination node
- *
- * @Flow\Proxy(false)
  */
-final class SetNodeReferences implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class SetNodeReferences implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -48,12 +50,15 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['sourceOriginDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
             NodeAggregateIdentifierCollection::fromArray($array['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($array['referenceName']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
@@ -90,6 +95,9 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -117,9 +125,9 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
-                && $this->getSourceOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-                && $this->getSourceNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->sourceOriginDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
+                && $this->sourceNodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

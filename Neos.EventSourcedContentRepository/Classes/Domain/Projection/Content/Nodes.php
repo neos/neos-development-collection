@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
@@ -13,27 +14,50 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable, type-safe collection of NodeInterface objects
- * @Flow\Proxy(false)
+ *
+ * @implements \IteratorAggregate<int,NodeInterface>
+ * @implements \ArrayAccess<int,NodeInterface>
  */
-final class Nodes extends ImmutableArrayObject
+#[Flow\Proxy(false)]
+final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 {
+    /**
+     * @var array<int,NodeInterface>
+     */
+    private array $nodes;
+
+    /**
+     * @var \ArrayIterator<int,NodeInterface>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param iterable<int,NodeInterface> $collection
+     */
     private function __construct(iterable $collection)
     {
         $nodes = [];
         foreach ($collection as $item) {
             if (!$item instanceof NodeInterface) {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeInterface::class . ' objects.', 1618044512);
+                throw new \InvalidArgumentException(
+                    'Nodes can only consist of ' . NodeInterface::class . ' objects.',
+                    1618044512
+                );
             }
             $nodes[] = $item;
         }
-        parent::__construct($nodes);
+
+        $this->nodes = $nodes;
+        $this->iterator = new \ArrayIterator($nodes);
     }
 
+    /**
+     * @param array<int,NodeInterface> $nodes
+     */
     public static function fromArray(array $nodes): self
     {
         return new self($nodes);
@@ -44,10 +68,43 @@ final class Nodes extends ImmutableArrayObject
         return new self([]);
     }
 
+    public function offsetGet(mixed $offset): ?NodeInterface
+    {
+        return $this->nodes[$offset] ?? null;
+    }
+
+    /**
+     * @return \ArrayIterator<int,NodeInterface>
+     */
+    public function getIterator(): \ArrayIterator
+    {
+        return $this->iterator;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->nodes[$offset]);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): never
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class Nodes.', 1643488734);
+    }
+
+    public function offsetUnset(mixed $offset): never
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class Nodes.', 1643488734);
+    }
+
+    public function count(): int
+    {
+        return count($this->nodes);
+    }
+
     public function first(): ?NodeInterface
     {
-        if (count($this) > 0) {
-            $array = $this->getArrayCopy();
+        if (count($this->nodes) > 0) {
+            $array = $this->nodes;
             return reset($array);
         }
 
@@ -56,41 +113,14 @@ final class Nodes extends ImmutableArrayObject
 
     public function merge(self $other): self
     {
-        $nodes = array_merge($this->getArrayCopy(), $other->getArrayCopy());
+        $nodes = array_merge($this->nodes, $other->getIterator()->getArrayCopy());
 
         return self::fromArray($nodes);
     }
 
-    /**
-     * @return array|NodeInterface[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|NodeInterface[]
-     */
-    public function getIterator(): \ArrayIterator
-    {
-        return parent::getIterator();
-    }
-
-
-    /**
-     * @param mixed $key
-     * @return NodeInterface|false
-     */
-    public function offsetGet($key): ?NodeInterface
-    {
-        return parent::offsetGet($key) ?: null;
-    }
-
-
     public function reverse(): self
     {
-        return new self(array_reverse($this->getArrayCopy()));
+        return new self(array_reverse($this->nodes));
     }
 
     public function isEmpty(): bool
@@ -100,16 +130,20 @@ final class Nodes extends ImmutableArrayObject
 
     private function getNodeIndex(NodeInterface $subject): int
     {
-        foreach ($this->getArrayCopy() as $index => $node) {
+        foreach ($this->nodes as $index => $node) {
             if ($node->equals($subject)) {
                 return $index;
             }
         }
-        throw new \InvalidArgumentException(sprintf('The node %s does not exist in this set', $subject->getNodeAggregateIdentifier()), 1542901216);
+        throw new \InvalidArgumentException(sprintf(
+            'The node %s does not exist in this set',
+            $subject->getNodeAggregateIdentifier()
+        ), 1542901216);
     }
 
     /**
-     * Returns the node before the given $referenceNode in this set. Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
+     * Returns the node before the given $referenceNode in this set.
+     * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
      *
      * @param NodeInterface $referenceNode
      * @return NodeInterface
@@ -130,11 +164,12 @@ final class Nodes extends ImmutableArrayObject
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
-        return new self(array_slice($this->getArrayCopy(), 0, $referenceNodeIndex));
+        return new self(array_slice($this->nodes, 0, $referenceNodeIndex));
     }
 
     /**
-     * Returns the node after the given $referenceNode in this set. Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no following sibling
+     * Returns the node after the given $referenceNode in this set.
+     * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no following sibling
      */
     public function next(NodeInterface $referenceNode): ?NodeInterface
     {
@@ -153,7 +188,7 @@ final class Nodes extends ImmutableArrayObject
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
-        return new self(array_slice($this->getArrayCopy(), $referenceNodeIndex + 1));
+        return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
     }
 
     /**
@@ -162,6 +197,6 @@ final class Nodes extends ImmutableArrayObject
     public function until(NodeInterface $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
-        return new self(array_slice($this->getArrayCopy(), $referenceNodeIndex + 1));
+        return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
     }
 }

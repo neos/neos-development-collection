@@ -30,7 +30,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  * This is the main "node access" API which the upper layers of Neos, the Neos UI, Fusion should always use
  * to fetch Nodes and traverse the Node Tree.
  *
- * You can retrieve instances of NodeAccessor by injecting {@see NodeAccessorManager} and calling {@see NodeAccessorManager::accessorFor()).
+ * You can retrieve instances of NodeAccessor by injecting {@see NodeAccessorManager}
+ * and calling {@see NodeAccessorManager::accessorFor()).
  *
  * ## Extensibility
  *
@@ -43,108 +44,73 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  *
  * To build an own NodeAccessor, the following things need to be done:
  *
- * 1) Create a custom implementation of {@see NodeAccessorInterface}. We recommend to use the {@see AbstractDelegatingNodeAccessor}
- *    for a base implementation of the full {@see NodeAccessorInterface} which delegates every call to the next accessor,
+ * 1) Create a custom implementation of {@see NodeAccessorInterface}.
+ *    We recommend to use the {@see AbstractDelegatingNodeAccessor} for a base implementation
+ *    of the full {@see NodeAccessorInterface} which delegates every call to the next accessor,
  *    and then overriding the methods selectively where you want to hook in.
  *
- * 2) Create a custom factory for your NodeAccessor, by implementing {@see NodeAccessorFactoryInterface}. Ensure that you pass on
- *    $nextAccessor to your custom factory.
+ * 2) Create a custom factory for your NodeAccessor, by implementing {@see NodeAccessorFactoryInterface}.
+ *    Ensure that you pass on $nextAccessor to your custom factory.
  *
  * 3) Register your custom factory in `Settings.yaml` underneath `nodeAccessorFactories`.
  */
 interface NodeAccessorInterface
 {
-
     // IDENTITY of this NodeAccessor.
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     // Find by ID
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeInterface|null
-     */
     public function findByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
 
     // Traversal
-    /**
-     * @param NodeInterface $parentNode
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return iterable<NodeInterface>
-     */
-    public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes;
+    public function findChildNodes(
+        NodeInterface $parentNode,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): Nodes;
 
     // Nodes implements IteratorAggregate oÄ
 
-    // TODO: DO NOT RETURN SIMPLY ITERABLE, BUT A TYPED OBJECT
-    /**
-     * @param NodeAggregateIdentifier $node
-     * @param PropertyName|null $name
-     * @return NodeInterface[]
-     */
     public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): Nodes;
 
-    /**
-     * @param NodeAggregateIdentifier $node
-     * @param PropertyName $name
-     * @return NodeInterface[]
-     */
     public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): Nodes;
 
-    /**
-     * @param NodeInterface $childNode
-     * @return NodeInterface|null
-     */
     public function findParentNode(NodeInterface $childNode): ?NodeInterface;
 
-    /**
-     * @param NodePath $path
-     * @param NodeAggregateIdentifier $startingNode
-     * @return NodeInterface|null
-     */
     public function findNodeByPath(NodePath $path, NodeInterface $startingNode): ?NodeInterface;
 
-    /**
-     * @param NodeAggregateIdentifier $parentNode
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     */
-    public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNode, NodeName $edgeName): ?NodeInterface;
+    public function findChildNodeConnectedThroughEdgeName(
+        NodeInterface $parentNode,
+        NodeName $edgeName
+    ): ?NodeInterface;
 
     // NO SIBLING methods - as we do not use them except in constraint checks
 
-    /**
-     * @param NodeInterface $node
-     * @return NodePath
-     */
     public function findNodePath(NodeInterface $node): NodePath;
 
     /**
      * @param NodeInterface[] $entryNodes
-     * @param int $maximumLevels
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @return mixed
      */
-    public function findSubtrees(array $entryNodes, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
+    public function findSubtrees(
+        array $entryNodes,
+        int $maximumLevels,
+        NodeTypeConstraints $nodeTypeConstraints
+    ): SubtreeInterface;
 
     /**
-     * Recursively find all nodes underneath the $entryNodeAggregateIdentifiers, which match the node type constraints specified by NodeTypeConstraints.
+     * Recursively find all nodes underneath the $entryNodeAggregateIdentifiers,
+     * which match the node type constraints specified by NodeTypeConstraints.
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
      * @param NodeInterface[] $entryNodes
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param SearchTerm|null $searchTerm
-     * @return array|NodeInterface[]
      */
-    public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes;
+    public function findDescendants(
+        array $entryNodes,
+        NodeTypeConstraints $nodeTypeConstraints,
+        ?SearchTerm $searchTerm
+    ): Nodes;
 }

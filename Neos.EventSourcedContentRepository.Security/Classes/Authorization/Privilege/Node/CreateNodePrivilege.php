@@ -12,7 +12,9 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  */
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
@@ -28,20 +30,24 @@ class CreateNodePrivilege extends AbstractNodePrivilege
      */
     protected $nodeContext;
 
-    /**
-     * @var string
-     */
-    protected $nodeContextClassName = CreateNodePrivilegeContext::class;
+    protected string $nodeContextClassName = CreateNodePrivilegeContext::class;
 
     /**
      * @param PrivilegeSubjectInterface|CreateNodePrivilegeSubject|MethodPrivilegeSubject $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException
      */
-    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
-        if ($subject instanceof CreateNodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', CreateNodePrivilege::class, CreateNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014353);
+        if ($subject instanceof CreateNodePrivilegeSubject === false
+            && $subject instanceof MethodPrivilegeSubject === false) {
+            throw new InvalidPrivilegeTypeException(sprintf(
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
+                CreateNodePrivilege::class,
+                CreateNodePrivilegeSubject::class,
+                MethodPrivilegeSubject::class,
+                get_class($subject)
+            ), 1417014353);
         }
 
         $this->initialize();
@@ -53,7 +59,9 @@ class CreateNodePrivilege extends AbstractNodePrivilege
 
             $joinPoint = $subject->getJoinPoint();
             $allowedCreationNodeTypes = $this->nodeContext->getCreationNodeTypes();
-            $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate' ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName() : $joinPoint->getMethodArgument('nodeType')->getName();
+            $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate'
+                ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName()
+                : $joinPoint->getMethodArgument('nodeType')->getName();
 
             if ($allowedCreationNodeTypes !== [] && !in_array($actualNodeType, $allowedCreationNodeTypes)) {
                 return false;
@@ -62,29 +70,32 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             /** @var NodeInterface $node */
             $node = $joinPoint->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
-            $result = parent::matchesSubject($nodePrivilegeSubject);
-            return $result;
+            return parent::matchesSubject($nodePrivilegeSubject);
         }
 
-        if ($this->nodeContext->getCreationNodeTypes() === [] || ($subject->hasCreationNodeType() === false) || in_array($subject->getCreationNodeType()->getName(), $this->nodeContext->getCreationNodeTypes()) === true) {
+        $creationNodeType = $subject->getCreationNodeType();
+        if ($this->nodeContext->getCreationNodeTypes() === []
+            || ($subject->hasCreationNodeType() === false)
+            || !is_null($creationNodeType) && in_array(
+                $creationNodeType->getName(),
+                $this->nodeContext->getCreationNodeTypes()
+            ) === true) {
             return parent::matchesSubject($subject);
         }
         return false;
     }
 
     /**
-     * @return array $creationNodeTypes
+     * @return array<int,string> $creationNodeTypes
      */
-    public function getCreationNodeTypes()
+    public function getCreationNodeTypes(): array
     {
         return $this->nodeContext->getCreationNodeTypes();
     }
 
-    /**
-     * @return string
-     */
-    protected function buildMethodPrivilegeMatcher()
+    protected function buildMethodPrivilegeMatcher(): string
     {
-        return 'method(' . CreateNodeVariant::class . '->__construct()) && method(' . CreateNodeAggregateWithNodeAndSerializedProperties::class . '->__construct())';
+        return 'method(' . CreateNodeVariant::class . '->__construct()) && method('
+            . CreateNodeAggregateWithNodeAndSerializedProperties::class . '->__construct())';
     }
 }

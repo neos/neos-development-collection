@@ -27,10 +27,13 @@ final class Subtree implements SubtreeInterface
     protected NodeInterface $node;
 
     /**
-     * @var array|SubtreeInterface[]
+     * @var array<int,SubtreeInterface>
      */
     protected array $children = [];
 
+    /**
+     * @param array<int,SubtreeInterface> $children
+     */
     public function __construct(int $level, NodeInterface $node, array $children = [])
     {
         $this->level = $level;
@@ -49,7 +52,7 @@ final class Subtree implements SubtreeInterface
     }
 
     /**
-     * @return array|SubtreeInterface[]
+     * @return array<int,SubtreeInterface>
      */
     public function getChildren(): array
     {

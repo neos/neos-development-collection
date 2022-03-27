@@ -26,7 +26,11 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
      */
     protected $reflectionService;
 
-    public function normalize($object, string $format = null, array $context = [])
+    /**
+     * @param array<string,mixed> $context
+     * @return array<string,mixed>
+     */
+    public function normalize($object, string $format = null, array $context = []): array
     {
         return [
             '__flow_object_type' => TypeHandling::getTypeForValue($object),
@@ -39,10 +43,16 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
         return (
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), Entity::class) ||
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), \Doctrine\ORM\Mapping\Entity::class)
+            $this->reflectionService->isClassAnnotatedWith(
+                TypeHandling::getTypeForValue($data),
+                \Doctrine\ORM\Mapping\Entity::class
+            )
         );
     }
 
+    /**
+     * @param array<string,mixed> $context
+     */
     public function denormalize($data, $type, string $format = null, array $context = [])
     {
         return $this->persistenceManager->getObjectByIdentifier($data['__identifier'], $data['__flow_object_type']);
@@ -59,7 +69,10 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
             return (
                 $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], Entity::class) ||
                 $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], ValueObject::class) ||
-                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], \Doctrine\ORM\Mapping\Entity::class)
+                $this->reflectionService->isClassAnnotatedWith(
+                    $data['__flow_object_type'],
+                    \Doctrine\ORM\Mapping\Entity::class
+                )
             );
         }
         return false;

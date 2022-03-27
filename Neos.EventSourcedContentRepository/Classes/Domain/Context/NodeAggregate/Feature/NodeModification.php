@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
@@ -43,36 +44,63 @@ trait NodeModification
 
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
+    {
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
+        );
+        $nodeTypeName = $nodeAggregate->getNodeTypeName();
+
+        $this->validateProperties($command->propertyValues, $nodeTypeName);
+
+        $lowLevelCommand = new SetSerializedNodeProperties(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $command->originDimensionSpacePoint,
+            $this->getPropertyConverter()->serializePropertyValues(
+                $command->propertyValues,
+                $this->requireNodeType($nodeTypeName)
+            ),
+            $command->initiatingUserIdentifier
+        );
+
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
+    }
+
     public function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
             // Check if node exists
-            $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-            $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getOriginDimensionSpacePoint());
+            $nodeAggregate = $this->requireProjectedNodeAggregate(
+                $command->contentStreamIdentifier,
+                $command->nodeAggregateIdentifier
+            );
+            $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
 
             $events = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new NodePropertiesWereSet(
-                        $contentStreamIdentifier,
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyValues(),
-                        $command->getInitiatingUserIdentifier()
+                        $command->contentStreamIdentifier,
+                        $command->nodeAggregateIdentifier,
+                        $command->originDimensionSpacePoint,
+                        $command->propertyValues,
+                        $command->initiatingUserIdentifier
                     ),
                     Uuid::uuid4()->toString()
                 )
             );
 
             $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                    ->getEventStreamName(),
                 $events
             );
         });
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

@@ -11,27 +11,21 @@ use Neos\Flow\Annotations as Flow;
  * A move mapping for a single node
  *
  * It declares:
- * * The moved node's origin dimension space point. With this the node can be uniquely identified (as we are moving a single NodeAggregate)
- * * The new parent assignments if given - the node might be assigned to different parents, depending on covered dimension space point
- * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings, depending on covered dimension space point
- * @Flow\Proxy(false)
+ * * The moved node's origin dimension space point.
+ *      With this the node can be uniquely identified (as we are moving a single NodeAggregate)
+ * * The new parent assignments if given - the node might be assigned to different parents,
+ *      depending on covered dimension space point
+ * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings,
+ *      depending on covered dimension space point
  */
+#[Flow\Proxy(false)]
 final class NodeMoveMapping
 {
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $movedNodeOrigin;
+    private OriginDimensionSpacePoint $movedNodeOrigin;
 
-    /**
-     * @var NodeVariantAssignments
-     */
-    private $newParentAssignments;
+    private NodeVariantAssignments $newParentAssignments;
 
-    /**
-     * @var NodeVariantAssignments
-     */
-    private $newSucceedingSiblingAssignments;
+    private NodeVariantAssignments $newSucceedingSiblingAssignments;
 
     public function __construct(
         OriginDimensionSpacePoint $movedNodeOrigin,
@@ -43,10 +37,13 @@ final class NodeMoveMapping
         $this->newSucceedingSiblingAssignments = $newSucceedingSiblingAssignments;
     }
 
-    public static function fromArray(array $array): NodeMoveMapping
+    /**
+     * @param array<string,mixed> $array
+     */
+    public static function fromArray(array $array): self
     {
-        return new static(
-            new OriginDimensionSpacePoint($array['movedNodeOrigin']),
+        return new self(
+            OriginDimensionSpacePoint::fromArray($array['movedNodeOrigin']),
             NodeVariantAssignments::createFromArray($array['newParentAssignments']),
             NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments'])
         );

@@ -22,27 +22,25 @@ use Neos\Utility\Arrays;
 final class UriPathSegmentContentDimensionValueUriProcessor implements ContentDimensionValueUriProcessorInterface
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $defaultOptions = [
+    protected array $defaultOptions = [
         'offset' => 0,
         'delimiter' => '_'
     ];
 
     /**
-     * @param Routing\Dto\UriConstraints $uriConstraints
-     * @param Dimension\ContentDimension $contentDimension
-     * @param Dimension\ContentDimensionValue $contentDimensionValue
-     * @param array|null $overrideOptions
-     * @return Routing\Dto\UriConstraints
+     * @param array<string,mixed>|null $overrideOptions
      */
     public function processUriConstraints(
         Routing\Dto\UriConstraints $uriConstraints,
         Dimension\ContentDimension $contentDimension,
         Dimension\ContentDimensionValue $contentDimensionValue,
-        array $overrideOptions = null
+        ?array $overrideOptions = null
     ): Routing\Dto\UriConstraints {
-        $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
+        $options = $overrideOptions
+            ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions)
+            : $this->defaultOptions;
         $pathSegmentPart = $options['offset'] > 0 ? $options['delimiter'] : '';
         $pathSegmentPart .= $contentDimensionValue->getConfigurationValue('resolution.value');
 

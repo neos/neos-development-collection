@@ -23,13 +23,17 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
  */
 final class NodeByNodeAggregateIdentifierCache
 {
-    protected $nodes = [];
-    protected $nonExistingNodeAggregateIdentifiers = [];
+    /**
+     * @var array<string,NodeInterface>
+     */
+    protected array $nodes = [];
 
     /**
-     * @var bool
+     * @var array<string,bool>
      */
-    protected $isEnabled;
+    protected array $nonExistingNodeAggregateIdentifiers = [];
+
+    protected bool $isEnabled;
 
     public function __construct(bool $isEnabled)
     {

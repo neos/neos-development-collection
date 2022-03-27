@@ -14,11 +14,14 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdge;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Utility\Arrays;
@@ -117,7 +120,7 @@ trait NodeOperationsTrait
                     $dimensionValues[$rawDimensionValue] = new ContentDimensionValue(
                         $rawDimensionValue,
                         new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0),
-                        [],
+                        ContentDimensionConstraintSet::createEmpty(),
                         $dimensionValueConfiguration
                     );
                 }
@@ -132,9 +135,9 @@ trait NodeOperationsTrait
                 }
                 $dimensions[$row['Identifier']] = new ContentDimension(
                     new ContentDimensionIdentifier($row['Identifier']),
-                    $dimensionValues,
+                    new ContentDimensionValues($dimensionValues),
                     $dimensionValues[$row['Default']],
-                    $variationEdges,
+                    new ContentDimensionValueVariationEdges($variationEdges),
                     $dimensionConfiguration
                 );
             }

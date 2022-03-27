@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
@@ -12,50 +14,72 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * The content subgraph repository collection, indexed by adapter package
- * @Flow\Proxy(false)
+ *
+ * @implements \IteratorAggregate<string,ContentSubgraphInterface>
+ * @implements \ArrayAccess<string,ContentSubgraphInterface>
  */
-final class ContentSubgraphs extends ImmutableArrayObject
+#[Flow\Proxy(false)]
+final class ContentSubgraphs implements \IteratorAggregate, \ArrayAccess
 {
-    public function __construct(Iterable $collection)
+    /**
+     * @var array<string,ContentSubgraphInterface>
+     */
+    private array $contentSubgraphs;
+
+    /**
+     * @var \ArrayIterator<string,ContentSubgraphInterface>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param iterable<string,ContentSubgraphInterface> $collection
+     */
+    public function __construct(iterable $collection)
     {
-        $subgraphs = [];
+        $contentSubgraphs = [];
         foreach ($collection as $adapterName => $item) {
-            if (!$item instanceof ContentSubgraphInterface) {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . ContentSubgraphInterface::class . ' objects.', 1618130758);
+            if (!is_string($adapterName) || empty($adapterName)) {
+                throw new \InvalidArgumentException('ContentSubgraphs must be indexed by adapter name', 1643560134);
             }
-            $subgraphs[$adapterName] = $item;
+            if (!$item instanceof ContentSubgraphInterface) {
+                throw new \InvalidArgumentException('ContentSubgraphs can only consist of ' . ContentSubgraphInterface::class . ' objects.', 1618130758);
+            }
+            $contentSubgraphs[$adapterName] = $item;
         }
-        parent::__construct($subgraphs);
+        $this->contentSubgraphs = $contentSubgraphs;
+        $this->iterator = new \ArrayIterator($contentSubgraphs);
     }
 
-    /**
-     * @param mixed $key
-     * @return ContentSubgraphInterface|false
-     */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): ContentSubgraphInterface|null
     {
-        return parent::offsetGet($key);
+        return $this->contentSubgraphs[$offset] ?? null;
     }
 
     /**
-     * @return array|ContentSubgraphInterface[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|ContentSubgraphInterface[]
+     * @return \ArrayIterator<string,ContentSubgraphInterface>
      */
     public function getIterator(): \ArrayIterator
     {
-        return parent::getIterator();
+        return $this->iterator;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->contentGraphs[$offset]);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): never
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class ContentSubgraphs.', 1643560225);
+    }
+
+    public function offsetUnset(mixed $offset): never
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class ContentSubgraphs.', 1643560225);
     }
 }

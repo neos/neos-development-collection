@@ -22,22 +22,24 @@ use Psr\Http\Message\ServerRequestInterface;
 final class UriPathSegmentContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $defaultOptions = [
+    protected array $defaultOptions = [
         'delimiter' => '_',
         'offset' => 0
     ];
 
     /**
-     * @param Dimension\ContentDimension $contentDimension
-     * @param ServerRequestInterface $request
-     * @param array|null $overrideOptions
-     * @return Dimension\ContentDimensionValue|null
+     * @param array<string,mixed>|null $overrideOptions
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
-    {
-        $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        ?array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue {
+        $options = $overrideOptions
+            ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions)
+            : $this->defaultOptions;
         $requestPath = $request->getUri()->getPath();
 
         if (!empty($requestPath) && $requestPath !== '/' && mb_strpos($requestPath, '/') !== false) {
@@ -53,7 +55,7 @@ final class UriPathSegmentContentDimensionValueDetector implements ContentDimens
             }
             $detectedValue = $detectedValues[$options['offset']];
 
-            foreach ($contentDimension->getValues() as $contentDimensionValue) {
+            foreach ($contentDimension->values as $contentDimensionValue) {
                 $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
                 if ($resolutionValue === $detectedValue) {
                     return $contentDimensionValue;

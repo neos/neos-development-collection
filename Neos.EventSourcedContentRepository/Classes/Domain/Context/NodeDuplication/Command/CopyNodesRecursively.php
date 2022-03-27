@@ -31,10 +31,12 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
- *
- * @Flow\Proxy(false)
  */
-final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNodeAddressInterface, RebasableToOtherContentStreamsInterface
+#[Flow\Proxy(false)]
+final class CopyNodesRecursively implements
+    \JsonSerializable,
+    MatchableWithNodeAddressInterface,
+    RebasableToOtherContentStreamsInterface
 {
     /**
      * The identifier of the content stream this command is to be handled in
@@ -122,10 +124,10 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
         ?NodeName $targetNodeName
-    ) {
+    ): self {
         $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $startNode);
 
-        return new static(
+        return new self(
             $subgraph->getContentStreamIdentifier(),
             $nodeSubtreeSnapshot,
             $dimensionSpacePoint,
@@ -137,16 +139,20 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         );
     }
 
-
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeSubtreeSnapshot::fromArray($array['nodeToInsert']),
-            new OriginDimensionSpacePoint($array['targetDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['targetDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['targetParentNodeAggregateIdentifier']),
-            isset($array['targetSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['targetSucceedingSiblingNodeAggregateIdentifier']) : null,
+            isset($array['targetSucceedingSiblingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($array['targetSucceedingSiblingNodeAggregateIdentifier'])
+                : null,
             isset($array['targetNodeName']) ? NodeName::fromString($array['targetNodeName']) : null,
             NodeAggregateIdentifierMapping::fromArray($array['nodeAggregateIdentifierMapping'])
         );
@@ -192,6 +198,9 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         return $this->nodeAggregateIdentifierMapping;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -208,11 +217,14 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
-        $targetNodeAggregateIdentifier = $this->getNodeAggregateIdentifierMapping()->getNewNodeAggregateIdentifier($this->getNodeToInsert()->getNodeAggregateIdentifier());
+        $targetNodeAggregateIdentifier = $this->getNodeAggregateIdentifierMapping()->getNewNodeAggregateIdentifier(
+            $this->getNodeToInsert()->getNodeAggregateIdentifier()
+        );
         return (
-            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
-            && $this->getTargetDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-            && $targetNodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->targetDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
+                && !is_null($targetNodeAggregateIdentifier)
+                && $targetNodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 
@@ -230,8 +242,9 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         );
     }
 
-    public function withNodeAggregateIdentifierMapping(NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping): self
-    {
+    public function withNodeAggregateIdentifierMapping(
+        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+    ): self {
         return new self(
             $this->contentStreamIdentifier,
             $this->nodeToInsert,

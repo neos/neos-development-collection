@@ -13,16 +13,33 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * source code.
  */
 
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\ImmutableArrayObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * The node relation anchor points value object collection
  *
  * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<int,NodeRelationAnchorPoint>
  */
-final class NodeRelationAnchorPoints extends ImmutableArrayObject
+final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 {
+    /**
+     * @var \ArrayIterator<int,NodeRelationAnchorPoint>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints
+     */
+    private function __construct(
+        private array $nodeRelationAnchorPoints
+    ) {
+        $this->iterator = new \ArrayIterator($nodeRelationAnchorPoints);
+    }
+
+    /**
+     * @param array<int|string,string|NodeRelationAnchorPoint> $array
+     */
     public static function fromArray(array $array): self
     {
         $values = [];
@@ -32,7 +49,11 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
             } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
             } else {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeRelationAnchorPoint::class . ' objects.', 1616603754);
+                throw new \InvalidArgumentException(
+                    'NodeRelationAnchorPoints can only consist of '
+                        . NodeRelationAnchorPoint::class . ' objects.',
+                    1616603754
+                );
             }
         }
 
@@ -45,15 +66,17 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
 
     public function toDatabaseString(): string
     {
-        return '{' . implode(',', $this->getArrayCopy()) .  '}';
+        return '{' . implode(',', $this->nodeRelationAnchorPoints) .  '}';
     }
 
-    public function add(NodeRelationAnchorPoint $nodeRelationAnchorPoint, ?NodeRelationAnchorPoint $succeedingSibling): self
-    {
-        $childNodeAnchors = $this->getArrayCopy();
+    public function add(
+        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
+        ?NodeRelationAnchorPoint $succeedingSibling
+    ): self {
+        $childNodeAnchors = $this->nodeRelationAnchorPoints;
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $childNodeAnchors);
-            if ($pivot) {
+            if (is_int($pivot)) {
                 array_splice($childNodeAnchors, $pivot, 0, $nodeRelationAnchorPoint);
             } else {
                 $childNodeAnchors[] = $nodeRelationAnchorPoint;
@@ -65,10 +88,12 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         return self::fromArray($childNodeAnchors);
     }
 
-    public function replace(NodeRelationAnchorPoint $nodeRelationAnchorPoint, NodeRelationAnchorPoint $replacement): self
-    {
-        $childNodeAnchors = $this->getArrayCopy();
-        $position = array_search($nodeRelationAnchorPoint, $childNodeAnchors);
+    public function replace(
+        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
+        NodeRelationAnchorPoint $replacement
+    ): self {
+        $childNodeAnchors = $this->nodeRelationAnchorPoints;
+        $position = (int)array_search($nodeRelationAnchorPoint, $childNodeAnchors);
         array_splice($childNodeAnchors, $position, 1, $replacement);
 
         return self::fromArray($childNodeAnchors);
@@ -76,7 +101,7 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
 
     public function remove(NodeRelationAnchorPoint $nodeRelationAnchorPoint): self
     {
-        $childNodeAnchors = $this->getArrayCopy();
+        $childNodeAnchors = $this->nodeRelationAnchorPoints;
         $pivot = array_search($nodeRelationAnchorPoint, $childNodeAnchors);
         if ($pivot !== false) {
             unset($childNodeAnchors[$pivot]);
@@ -86,27 +111,15 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
     }
 
     /**
-     * @param mixed $key
-     * @return NodeRelationAnchorPoint|false
-     */
-    public function offsetGet($key)
-    {
-        return parent::offsetGet($key);
-    }
-
-    /**
-     * @return array|NodeRelationAnchorPoint[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|NodeRelationAnchorPoint[]
+     * @return \ArrayIterator<int,NodeRelationAnchorPoint>
      */
     public function getIterator(): \ArrayIterator
     {
-        return parent::getIterator();
+        return $this->iterator;
+    }
+
+    public function count(): int
+    {
+        return count($this->nodeRelationAnchorPoints);
     }
 }

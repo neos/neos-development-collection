@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,10 +10,17 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Excep
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception;
+
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a dimension space point is found in the projection; thus we cannot allow a global
  * operation on it.
  */
+#[Flow\Proxy(false)]
 final class DimensionSpacePointAlreadyExists extends \DomainException
 {
 }

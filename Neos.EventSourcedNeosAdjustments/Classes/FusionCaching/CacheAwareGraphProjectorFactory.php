@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 
 /**
  * This class is used as factory for {@see GraphProjector}, wired in Objects.yaml.
@@ -57,52 +58,80 @@ class CacheAwareGraphProjectorFactory
     public function build(
         DbalClient             $eventStorageDatabaseClient,
         VariableFrontend       $processedEventsCache,
-        ProjectionContentGraph $projectionContentGraph
+        ProjectionContentGraph $projectionContentGraph,
+        ThrowableStorageInterface $throwableStorageInterface
     ): GraphProjector {
-        $graphProjector = new GraphProjector($eventStorageDatabaseClient, $processedEventsCache, $projectionContentGraph);
+        $graphProjector = new GraphProjector(
+            $eventStorageDatabaseClient,
+            $processedEventsCache,
+            $projectionContentGraph,
+            $throwableStorageInterface
+        );/*
         $graphProjector->onBeforeInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
-                // performance optimization: on full replay, we assume all caches to be flushed anyways - so we do not need to do it
-                // individually here.
+                // performance optimization: on full replay, we assume all caches to be flushed anyways
+                // - so we do not need to do it individually here.
                 return;
             }
 
             $domainEvent = $eventEnvelope->getDomainEvent();
             if ($domainEvent instanceof NodeAggregateWasRemoved) {
-                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($domainEvent->getContentStreamIdentifier(), $domainEvent->getNodeAggregateIdentifier());
+                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+                    $domainEvent->getContentStreamIdentifier(),
+                    $domainEvent->getNodeAggregateIdentifier()
+                );
                 if ($nodeAggregate) {
-                    $parentNodeAggregates = $this->contentGraph->findParentNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+                    $parentNodeAggregates = $this->contentGraph->findParentNodeAggregates(
+                        $nodeAggregate->getContentStreamIdentifier(),
+                        $nodeAggregate->getIdentifier()
+                    );
                     foreach ($parentNodeAggregates as $parentNodeAggregate) {
                         assert($parentNodeAggregate instanceof NodeAggregate);
-                        $this->scheduleCacheFlushJobForNodeAggregate($parentNodeAggregate->getContentStreamIdentifier(), $parentNodeAggregate->getIdentifier());
+                        $this->scheduleCacheFlushJobForNodeAggregate(
+                            $parentNodeAggregate->getContentStreamIdentifier(),
+                            $parentNodeAggregate->getIdentifier()
+                        );
                     }
                 }
             }
         });
-
         $graphProjector->onAfterInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
-                // performance optimization: on full replay, we assume all caches to be flushed anyways - so we do not need to do it
-                // individually here.
+                // performance optimization: on full replay, we assume all caches to be flushed anyways
+                // - so we do not need to do it individually here.
                 return;
             }
 
             $domainEvent = $eventEnvelope->getDomainEvent();
-            if (!($domainEvent instanceof NodeAggregateWasRemoved) && $domainEvent instanceof EmbedsContentStreamAndNodeAggregateIdentifier) {
-                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($domainEvent->getContentStreamIdentifier(), $domainEvent->getNodeAggregateIdentifier());
+            if (!($domainEvent instanceof NodeAggregateWasRemoved)
+                && $domainEvent instanceof EmbedsContentStreamAndNodeAggregateIdentifier
+            ) {
+                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+                    $domainEvent->getContentStreamIdentifier(),
+                    $domainEvent->getNodeAggregateIdentifier()
+                );
+
                 if ($nodeAggregate) {
-                    $this->scheduleCacheFlushJobForNodeAggregate($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+                    $this->scheduleCacheFlushJobForNodeAggregate(
+                        $nodeAggregate->getContentStreamIdentifier(),
+                        $nodeAggregate->getIdentifier()
+                    );
                 }
             }
-        });
+        });*/
 
         return $graphProjector;
     }
 
+    /**
+     * @var array<int,array<string,mixed>>
+     */
     protected array $cacheFlushes = [];
 
-    protected function scheduleCacheFlushJobForNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): void
-    {
+    protected function scheduleCacheFlushJobForNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): void {
         $this->cacheFlushes[] = [
             'csi' => $contentStreamIdentifier,
             'nai' => $nodeAggregateIdentifier
@@ -112,13 +141,13 @@ class CacheAwareGraphProjectorFactory
         }
     }
 
-    protected function flushCache()
+    protected function flushCache(): void
     {
         $this->jobManager->queue($this->queueName, new CacheFlushJob($this->cacheFlushes));
         $this->cacheFlushes = [];
     }
 
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
         $this->flushCache();
     }

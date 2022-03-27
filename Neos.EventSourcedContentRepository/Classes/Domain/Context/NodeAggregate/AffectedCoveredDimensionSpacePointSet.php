@@ -32,25 +32,20 @@ final class AffectedCoveredDimensionSpacePointSet
         DimensionSpacePoint $referenceDimensionSpacePoint,
         InterDimensionalVariationGraph $variationGraph
     ): DimensionSpacePointSet {
-        switch ($identifier->getIdentifier()) {
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS:
-                return static::allVariants($nodeAggregate);
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS:
-                return static::allSpecializations(
-                    $nodeAggregate,
-                    $referenceDimensionSpacePoint,
-                    $variationGraph
-                );
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS:
-                return static::virtualSpecializations(
-                    $nodeAggregate,
-                    $referenceDimensionSpacePoint,
-                    $variationGraph
-                );
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_ONLY_GIVEN_VARIANT:
-            default:
-                return static::onlyGivenVariant($referenceDimensionSpacePoint);
-        }
+        return match ($identifier) {
+            NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS => self::allVariants($nodeAggregate),
+            NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS => self::allSpecializations(
+                $nodeAggregate,
+                $referenceDimensionSpacePoint,
+                $variationGraph
+            ),
+            NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS => self::virtualSpecializations(
+                $nodeAggregate,
+                $referenceDimensionSpacePoint,
+                $variationGraph
+            ),
+            default => self::onlyGivenVariant($referenceDimensionSpacePoint),
+        };
     }
 
     /**
@@ -86,7 +81,11 @@ final class AffectedCoveredDimensionSpacePointSet
             if ($specializedDimensionSpacePoint->equals($referenceDimensionSpacePoint)) {
                 continue;
             }
-            if ($nodeAggregate->occupiesDimensionSpacePoint($specializedDimensionSpacePoint)) {
+            if ($nodeAggregate->occupiesDimensionSpacePoint(
+                OriginDimensionSpacePoint::fromDimensionSpacePoint(
+                    $specializedDimensionSpacePoint
+                )
+            )) {
                 $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getIntersection(
                     $variationGraph->getSpecializationSet($specializedDimensionSpacePoint)
                 );

@@ -30,13 +30,16 @@ trait NodeDisabling
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
-            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
-                $event->getContentStreamIdentifier(),
-                $event->getAffectedDimensionSpacePoints(),
-                $event->getNodeAggregateIdentifier()
-            );
+            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
+                = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
+                    $event->getContentStreamIdentifier(),
+                    $event->getAffectedDimensionSpacePoints(),
+                    $event->getNodeAggregateIdentifier()
+                );
 
+            /** @codingStandardsIgnoreStart */
             foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers) {
+            /** @codingStandardsIgnoreEnd */
                 $restrictionRelation = new RestrictionHyperrelationRecord(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePointHash,
@@ -71,7 +74,7 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

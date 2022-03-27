@@ -21,16 +21,16 @@ use Psr\Http\Message\ServerRequestInterface;
 final class HostSuffixContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
     /**
-     * @param Dimension\ContentDimension $contentDimension
-     * @param ServerRequestInterface $request
-     * @param array|null $overrideOptions
-     * @return Dimension\ContentDimensionValue|null
+     * @param array<string,mixed>|null $overrideOptions
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
-    {
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        ?array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue {
         $host = $request->getUri()->getHost();
         $hostLength = mb_strlen($host);
-        foreach ($contentDimension->getValues() as $contentDimensionValue) {
+        foreach ($contentDimension->values as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
             $pivot = $hostLength - mb_strlen($resolutionValue);
 

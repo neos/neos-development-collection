@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -13,76 +10,31 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
+
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
  */
-class HierarchyRelation
+#[Flow\Proxy(false)]
+final class HierarchyRelation
 {
-    /**
-     * @var NodeRelationAnchorPoint
-     */
-    public $parentNodeAnchor;
-
-    /**
-     * @var NodeRelationAnchorPoint
-     */
-    public $childNodeAnchor;
-
-    /**
-     * @var NodeName
-     */
-    public $name;
-
-    /**
-     * @var ContentStreamIdentifier
-     */
-    public $contentStreamIdentifier;
-
-    /**
-     * @var DimensionSpacePoint
-     */
-    public $dimensionSpacePoint;
-
-    /**
-     * @var string
-     */
-    public $dimensionSpacePointHash;
-
-    /**
-     * @var int
-     */
-    public $position;
-
-    /**
-     * @param NodeRelationAnchorPoint $parentNodeAnchor
-     * @param NodeRelationAnchorPoint $childNodeAnchor
-     * @param NodeName|null $name
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param string $dimensionSpacePointHash
-     * @param int $position
-     */
     public function __construct(
-        NodeRelationAnchorPoint $parentNodeAnchor,
-        NodeRelationAnchorPoint $childNodeAnchor,
-        ?NodeName $name,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        string $dimensionSpacePointHash,
-        int $position
+        public NodeRelationAnchorPoint $parentNodeAnchor,
+        public NodeRelationAnchorPoint $childNodeAnchor,
+        public ?NodeName $name,
+        public ContentStreamIdentifier $contentStreamIdentifier,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        public string $dimensionSpacePointHash,
+        public int $position
     ) {
-        $this->parentNodeAnchor = $parentNodeAnchor;
-        $this->childNodeAnchor = $childNodeAnchor;
-        $this->name = $name;
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->dimensionSpacePointHash = $dimensionSpacePointHash;
-        $this->position = $position;
     }
 
     /**
@@ -125,13 +77,13 @@ class HierarchyRelation
     }
 
     /**
-     * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param int|null $position
-     * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, ?int $position, Connection $databaseConnection): void
-    {
+    public function assignNewParentNode(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        ?int $position,
+        Connection $databaseConnection
+    ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint
         ];
@@ -144,10 +96,7 @@ class HierarchyRelation
             $this->getDatabaseIdentifier()
         );
     }
-    /**
-     * @param int $position
-     * @param Connection $databaseConnection
-     */
+
     public function assignNewPosition(int $position, Connection $databaseConnection): void
     {
         $databaseConnection->update(
@@ -160,7 +109,7 @@ class HierarchyRelation
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     public function getDatabaseIdentifier(): array
     {

@@ -21,13 +21,13 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\PositionalArraySorter;
 
 /**
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope("singleton")]
 class NodeAccessorChainFactory
 {
     /**
-     * @var array
+     * @var array<string,array<string,int|string>>
      * @Flow\InjectConfiguration(path="nodeAccessorFactories")
      */
     protected $nodeAccessorFactoriesConfiguration;
@@ -38,21 +38,37 @@ class NodeAccessorChainFactory
      */
     protected $objectManager;
 
-    public function build(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): NodeAccessorInterface
-    {
-        $nodeAccessorFactoriesConfiguration = (new PositionalArraySorter($this->nodeAccessorFactoriesConfiguration))->toArray();
+    public function build(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
+    ): NodeAccessorInterface {
+        $nodeAccessorFactoriesConfiguration = (new PositionalArraySorter($this->nodeAccessorFactoriesConfiguration))
+            ->toArray();
 
         $nodeAccessorFactories = [];
         foreach ($nodeAccessorFactoriesConfiguration as $nodeAccessorFactoryConfiguration) {
             $nodeAccessorFactories[] = $this->objectManager->get($nodeAccessorFactoryConfiguration['className']);
         }
 
-        // now, $nodeAccessorFactories contains a list of Factories, where the FIRST factory creates the OUTERMOST NodeAccessor.
+        // now, $nodeAccessorFactories contains a list of Factories,
+        // where the FIRST factory creates the OUTERMOST NodeAccessor.
         // thus, we need to start creating the *last* NodeAccessor in the list; and then work ourselves upwards.
         $nextAccessor = null;
         foreach (array_reverse($nodeAccessorFactories) as $nodeAccessorFactory) {
             assert($nodeAccessorFactory instanceof NodeAccessorFactoryInterface);
-            $nextAccessor = $nodeAccessorFactory->build($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints, $nextAccessor);
+            $nextAccessor = $nodeAccessorFactory->build(
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                $visibilityConstraints,
+                $nextAccessor
+            );
+        }
+        if (is_null($nextAccessor)) {
+            throw new \Exception(
+                'No node accessor factories were configured, please check the configuration',
+                1645362731
+            );
         }
 
         return $nextAccessor;

@@ -12,9 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a node aggregate is classified as tethered but wasn't expected to be
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateIsTethered extends \DomainException
 {
 }

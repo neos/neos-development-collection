@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-
 /**
  * An Eel context matching expression for the node privileges including
  * node properties.
@@ -19,15 +18,15 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
 class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $propertyNames = [];
+    protected array $propertyNames = [];
 
     /**
-     * @param string|array $propertyNames
+     * @param string|array<int,string> $propertyNames
      * @return boolean
      */
-    public function nodePropertyIsIn($propertyNames)
+    public function nodePropertyIsIn(string|array $propertyNames): bool
     {
         if (!is_array($propertyNames)) {
             $propertyNames = [$propertyNames];
@@ -37,19 +36,17 @@ class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
     }
 
     /**
-     * @return array
+     * @return array<int,string>
      */
-    public function getNodePropertyNames()
+    public function getNodePropertyNames(): array
     {
         return $this->propertyNames;
     }
 
     /**
      * Whether or not this context is bound to specific properties
-     *
-     * @return boolean
      */
-    public function hasProperties()
+    public function hasProperties(): bool
     {
         return $this->propertyNames !== [];
     }

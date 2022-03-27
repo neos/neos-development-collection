@@ -46,7 +46,8 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
      * @return NodeAddress
      *
      * @throws ViewHelperException
-     * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers to get variables from the Fusion context.
+     * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers
+     * to get variables from the Fusion context.
      */
     protected function getNodeAddressOfContextNode(?NodeInterface $node): NodeAddress
     {
@@ -65,7 +66,11 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
         }
 
         if ($baseNode === null) {
-            throw new ViewHelperException('The ' . get_class($this) . ' needs a Node to determine the state. We could not find one in your context so please provide it as "node" argument to the ViewHelper.', 1427267133);
+            throw new ViewHelperException(
+                'The ' . get_class($this) . ' needs a Node to determine the state.'
+                . ' We could not find one in your context so please provide it as "node" argument to the ViewHelper.',
+                1427267133
+            );
         }
 
         return $this->nodeAddressFactory->createFromNode($baseNode);

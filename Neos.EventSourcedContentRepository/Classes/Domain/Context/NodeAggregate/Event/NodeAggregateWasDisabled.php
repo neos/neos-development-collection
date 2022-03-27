@@ -21,10 +21,12 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A node aggregate was disabled
- *
- * @Flow\Proxy(false)
  */
-final class NodeAggregateWasDisabled implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodeAggregateWasDisabled implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**
      * The identifier of the content stream the node aggregate was disabled in
@@ -77,7 +79,7 @@ final class NodeAggregateWasDisabled implements DomainEventInterface, Publishabl
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeAggregateWasDisabled(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->affectedDimensionSpacePoints,

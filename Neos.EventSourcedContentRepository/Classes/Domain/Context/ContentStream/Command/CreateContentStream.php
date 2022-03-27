@@ -16,7 +16,8 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
- * CreateContentStream for creating the FIRST content stream. All other content streams will be FORKED from this FIRST content stream.
+ * CreateContentStream for creating the FIRST content stream.
+ * All other content streams will be FORKED from this FIRST content stream.
  */
 final class CreateContentStream
 {
@@ -24,8 +25,10 @@ final class CreateContentStream
 
     private UserIdentifier $initiatingUserIdentifier;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, UserIdentifier $initiatingUserIdentifier)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }

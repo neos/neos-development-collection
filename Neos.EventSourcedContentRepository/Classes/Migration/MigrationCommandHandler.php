@@ -22,7 +22,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Node Migrations are manually written adjustments to the Node tree; stored in "Migrations/ContentRepository" in a package.
+ * Node Migrations are manually written adjustments to the Node tree;
+ * stored in "Migrations/ContentRepository" in a package.
  *
  * They are used to transform properties on nodes, or change the dimension space points in the system to others.
  *
@@ -32,11 +33,12 @@ use Neos\Flow\Annotations as Flow;
  * - on a NodeAggregate, like changing a NodeAggregate type
  * - on a (materialized) Node, like changing node properties.
  *
- * In a single migration, only transformations belonging to a single "level" can be applied; as otherwise, the order (and semantics)
- * becomes non-obvious.
+ * In a single migration, only transformations belonging to a single "level" can be applied;
+ * as otherwise, the order (and semantics) becomes non-obvious.
  *
- * All migrations are applied in an empty, new ContentStream, which is forked off the target workspace where the
- * migrations are done. This way, migrations can be easily rolled back by discarding the content stream instead of publishing it.
+ * All migrations are applied in an empty, new ContentStream,
+ * which is forked off the target workspace where the migrations are done.
+ * This way, migrations can be easily rolled back by discarding the content stream instead of publishing it.
  *
  * A migration file is structured like this:
  * migrations: [
@@ -44,8 +46,9 @@ use Neos\Flow\Annotations as Flow;
  *   {filters: ... transformations: ...}
  * ]
  *
- * Every pair of filters/transformations is a "submigration". Inside a submigration, you'll operate on the result state of all
- * *previous* submigrations; but you do not see the modified state of the current submigration while you are running it.
+ * Every pair of filters/transformations is a "submigration". Inside a submigration,
+ * you'll operate on the result state of all *previous* submigrations;
+ * but you do not see the modified state of the current submigration while you are running it.
  *
  * @Flow\Scope("singleton")
  */
@@ -57,8 +60,13 @@ class MigrationCommandHandler
     protected FilterFactory $filterFactory;
     protected TransformationFactory $transformationFactory;
 
-    public function __construct(WorkspaceFinder $workspaceFinder, WorkspaceCommandHandler $contentStreamCommandHandler, ContentGraphInterface $contentGraph, FilterFactory $filterFactory, TransformationFactory $transformationFactory)
-    {
+    public function __construct(
+        WorkspaceFinder $workspaceFinder,
+        WorkspaceCommandHandler $contentStreamCommandHandler,
+        ContentGraphInterface $contentGraph,
+        FilterFactory $filterFactory,
+        TransformationFactory $transformationFactory
+    ) {
         $this->workspaceFinder = $workspaceFinder;
         $this->contentStreamCommandHandler = $contentStreamCommandHandler;
         $this->contentGraph = $contentGraph;
@@ -70,7 +78,10 @@ class MigrationCommandHandler
     {
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $command->getWorkspaceName()), 1611688225);
+            throw new WorkspaceDoesNotExist(sprintf(
+                'The workspace %s does not exist',
+                $command->getWorkspaceName()
+            ), 1611688225);
         }
 
         $contentStreamForReading = $workspace->getCurrentContentStreamIdentifier();
@@ -79,7 +90,7 @@ class MigrationCommandHandler
             $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
             $this->contentStreamCommandHandler->handleCreateWorkspace(
                 new CreateWorkspace(
-                    new WorkspaceName($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
                     $workspace->getWorkspaceName(),
                     WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
                     WorkspaceDescription::fromString(''),
@@ -88,7 +99,11 @@ class MigrationCommandHandler
                 )
             )->blockUntilProjectionsAreUpToDate();
             /** array $migrationDescription */
-            $this->executeSubMigration($migrationDescription, $workspace->getCurrentContentStreamIdentifier(), $contentStreamForWriting)->blockUntilProjectionsAreUpToDate();
+            $this->executeSubMigration(
+                $migrationDescription,
+                $workspace->getCurrentContentStreamIdentifier(),
+                $contentStreamForWriting
+            )->blockUntilProjectionsAreUpToDate();
 
             // TODO: WORKSPACE NAME pass through
             $contentStreamForReading = $contentStreamForWriting;
@@ -98,27 +113,36 @@ class MigrationCommandHandler
     /**
      * Execute a single "filters / transformation" pair, i.e. a single sub-migration
      *
-     * @param array $migrationDescription
-     * @param ContentStreamIdentifier $contentStreamForReading
-     * @param ContentStreamIdentifier $contentStreamForWriting
-     * @return void
+     * @param array<string,mixed> $migrationDescription
      * @throws MigrationException
      */
-    protected function executeSubMigration(array $migrationDescription, ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    protected function executeSubMigration(
+        array $migrationDescription,
+        ContentStreamIdentifier $contentStreamForReading,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
-        $transformations = $this->transformationFactory->buildTransformation($migrationDescription['transformations'] ?? []);
+        $transformations = $this->transformationFactory->buildTransformation(
+            $migrationDescription['transformations'] ?? []
+        );
 
         if ($transformations->containsMoreThanOneTransformationType()) {
             throw new InvalidMigrationFilterSpecified('more than one transformation type', 1617389468);
         }
 
-        if ($transformations->containsGlobal() && ($filters->containsNodeAggregateBased() || $filters->containsNodeBased())) {
-            throw new InvalidMigrationFilterSpecified('Global transformations are only supported without any filters', 1617389474);
+        if ($transformations->containsGlobal()
+            && ($filters->containsNodeAggregateBased() || $filters->containsNodeBased())) {
+            throw new InvalidMigrationFilterSpecified(
+                'Global transformations are only supported without any filters',
+                1617389474
+            );
         }
 
         if ($transformations->containsNodeAggregateBased() && $filters->containsNodeBased()) {
-            throw new InvalidMigrationFilterSpecified('NodeAggregate Based transformations are only supported without any node based filters', 1617389479);
+            throw new InvalidMigrationFilterSpecified(
+                'NodeAggregate Based transformations are only supported without any node based filters',
+                1617389479
+            );
         }
 
         $commandResult = CommandResult::createEmpty();
@@ -126,7 +150,10 @@ class MigrationCommandHandler
             $commandResult = $transformations->executeGlobal($contentStreamForReading, $contentStreamForWriting);
         } elseif ($transformations->containsNodeAggregateBased()) {
             foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
-                foreach ($this->contentGraph->findNodeAggregatesByType($contentStreamForReading, $nodeTypeName) as $nodeAggregate) {
+                foreach ($this->contentGraph->findNodeAggregatesByType(
+                    $contentStreamForReading,
+                    $nodeTypeName
+                ) as $nodeAggregate) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
                         $commandResult = $commandResult->merge(
                             $transformations->executeNodeAggregateBased($nodeAggregate, $contentStreamForWriting)
@@ -136,20 +163,29 @@ class MigrationCommandHandler
             }
         } elseif ($transformations->containsNodeBased()) {
             foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
-                foreach ($this->contentGraph->findNodeAggregatesByType($contentStreamForReading, $nodeTypeName) as $nodeAggregate) {
-                    // we *also* apply the node-aggregate-based filters on the node based transformations, so that you can filter
-                    // Nodes e.g. based on node type
+                foreach ($this->contentGraph->findNodeAggregatesByType(
+                    $contentStreamForReading,
+                    $nodeTypeName
+                ) as $nodeAggregate) {
+                    // we *also* apply the node-aggregate-based filters on the node based transformations,
+                    // so that you can filter Nodes e.g. based on node type
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
                         foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $originDimensionSpacePoint) {
                             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
-                            // The node at $contentStreamIdentifier and $originDimensionSpacePoint *really* exists at this point,
-                            // and is no shine-through.
+                            // The node at $contentStreamIdentifier and $originDimensionSpacePoint
+                            // *really* exists at this point, and is no shine-through.
 
-                            $coveredDimensionSpacePoints = $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint);
+                            $coveredDimensionSpacePoints = $nodeAggregate->getCoverageByOccupant(
+                                $originDimensionSpacePoint
+                            );
 
                             if ($filters->matchesNode($node)) {
                                 $commandResult = $commandResult->merge(
-                                    $transformations->executeNodeBased($node, $coveredDimensionSpacePoints, $contentStreamForWriting)
+                                    $transformations->executeNodeBased(
+                                        $node,
+                                        $coveredDimensionSpacePoints,
+                                        $contentStreamForWriting
+                                    )
                                 );
                             }
                         }

@@ -12,8 +12,6 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 
 class EmulatedLegacyWorkspace
 {
-
-
     /**
      * @Flow\Inject
      * @var LegacyLoggerInterface
@@ -26,39 +24,42 @@ class EmulatedLegacyWorkspace
      */
     protected $workspaceFinder;
 
-    /**
-     * @var NodeAddress
-     */
-    protected $nodeAddressOfContextNode;
-    /**
-     * @var Workspace
-     */
-    protected $workspace;
+    protected NodeAddress $nodeAddressOfContextNode;
 
-    /**
-     * EmulatedLegacyWorkspace constructor.
-     * @param NodeAddress $nodeAddressOfContextNode
-     */
+    protected ?Workspace $workspace;
+
     public function __construct(NodeAddress $nodeAddressOfContextNode)
     {
         $this->nodeAddressOfContextNode = $nodeAddressOfContextNode;
     }
 
-    public function initializeObject()
+    public function initializeObject(): void
     {
-        $this->workspace = $this->workspaceFinder->findOneByName($this->nodeAddressOfContextNode->getWorkspaceName());
+        $this->workspace = $this->nodeAddressOfContextNode->workspaceName
+            ? $this->workspaceFinder->findOneByName($this->nodeAddressOfContextNode->workspaceName)
+            : null;
     }
 
-    public function getBaseWorkspace(): EmulatedLegacyBaseWorkspace
+    public function getBaseWorkspace(): ?EmulatedLegacyBaseWorkspace
     {
         $this->legacyLogger->info('context.workspace.baseWorkspace called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return new EmulatedLegacyBaseWorkspace($this->workspace);
+        return !is_null($this->workspace)
+            ? new EmulatedLegacyBaseWorkspace($this->workspace)
+            : null;
     }
 
+    /**
+     * @param string $methodName
+     * @param array<int|string,mixed> $args
+     * @return null
+     */
     public function __call($methodName, $args)
     {
-        $this->legacyLogger->warning('context.workspace.* method not implemented', LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName));
+        $this->legacyLogger->warning(
+            'context.workspace.* method not implemented',
+            LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName)
+        );
         return null;
     }
 }

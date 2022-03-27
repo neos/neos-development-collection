@@ -48,9 +48,9 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     /**
      * Additional attributes to be rendered in the ContentElementWrapping
      *
-     * @return array
+     * @return array<string,string>
      */
-    public function getAdditionalAttributes()
+    public function getAdditionalAttributes(): array
     {
         return $this->fusionValue('additionalAttributes') ?? [];
     }
@@ -77,7 +77,12 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             return '';
         }
 
-        return $this->contentElementWrappingService->wrapContentObject($node, $content, $this->getContentElementFusionPath(), $this->getAdditionalAttributes());
+        return $this->contentElementWrappingService->wrapContentObject(
+            $node,
+            $content,
+            $this->getContentElementFusionPath(),
+            $this->getAdditionalAttributes()
+        );
     }
 
     /**
@@ -93,8 +98,8 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 2])
             && $fusionPathSegments[$numberOfFusionPathSegments - 2] === 'process') {
-
-            // cut off the SHORT processing syntax "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
+            // cut off the SHORT processing syntax
+            // "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -3));
         }
 
@@ -102,8 +107,8 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             && $fusionPathSegments[$numberOfFusionPathSegments - 4] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 3])
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === 'process') {
-
-            // cut off the LONG processing syntax "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
+            // cut off the LONG processing syntax
+            // "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -4));
         }
         return $this->path;

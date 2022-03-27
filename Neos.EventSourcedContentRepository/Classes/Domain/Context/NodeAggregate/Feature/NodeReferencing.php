@@ -45,37 +45,56 @@ trait NodeReferencing
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getSourceOriginDimensionSpacePoint());
-        $sourceNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSourceNodeAggregateIdentifier());
-        $this->requireNodeAggregateToOccupyDimensionSpacePoint($sourceNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist(
+            $command->getSourceOriginDimensionSpacePoint()->toDimensionSpacePoint()
+        );
+        $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->getContentStreamIdentifier(),
+            $command->getSourceNodeAggregateIdentifier()
+        );
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint(
+            $sourceNodeAggregate,
+            $command->getSourceOriginDimensionSpacePoint()
+        );
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->getReferenceName());
         foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
-            $destinationNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
-            $this->requireNodeAggregateToCoverDimensionSpacePoint($destinationNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+            $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
+                $command->getContentStreamIdentifier(),
+                $destinationNodeAggregateIdentifier
+            );
+            $this->requireNodeAggregateToCoverDimensionSpacePoint(
+                $destinationNodeAggregate,
+                $command->getSourceOriginDimensionSpacePoint()->toDimensionSpacePoint()
+            );
 
             // @todo check reference node type constraints
         }
 
         $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeReferencesWereSet(
-                        $command->getContentStreamIdentifier(),
-                        $command->getSourceNodeAggregateIdentifier(),
-                        $command->getSourceOriginDimensionSpacePoint(),
-                        $command->getDestinationNodeAggregateIdentifiers(),
-                        $command->getReferenceName(),
-                        $command->getInitiatingUserIdentifier()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
-            );
-            $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
-                $events
-            );
-        });
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, &$events) {
+                $events = DomainEvents::withSingleEvent(
+                    DecoratedEvent::addIdentifier(
+                        new NodeReferencesWereSet(
+                            $command->getContentStreamIdentifier(),
+                            $command->getSourceNodeAggregateIdentifier(),
+                            $command->getSourceOriginDimensionSpacePoint(),
+                            $command->getDestinationNodeAggregateIdentifiers(),
+                            $command->getReferenceName(),
+                            $command->getInitiatingUserIdentifier()
+                        ),
+                        Uuid::uuid4()->toString()
+                    )
+                );
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+                        ->getEventStreamName(),
+                    $events
+                );
+            }
+        );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

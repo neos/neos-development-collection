@@ -69,6 +69,7 @@ final class NodeRecord
     }
 
     /**
+     * @param array<string,string> $databaseRow
      * @throws \Exception
      */
     public static function fromDatabaseRow(array $databaseRow): self
@@ -80,7 +81,7 @@ final class NodeRecord
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),
             NodeTypeName::fromString($databaseRow['nodetypename']),
-            NodeAggregateClassification::fromString($databaseRow['classification']),
+            NodeAggregateClassification::from($databaseRow['classification']),
             $databaseRow['nodename'] ? NodeName::fromString($databaseRow['nodename']) : null
         );
     }
@@ -93,10 +94,10 @@ final class NodeRecord
         $databaseConnection->insert(self::TABLE_NAME, [
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-            'origindimensionspacepointhash' => $this->originDimensionSpacePoint->getHash(),
+            'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
             'nodetypename' => (string) $this->nodeTypeName,
-            'classification' => (string) $this->classification,
+            'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
             'nodename' => (string) $this->nodeName
         ]);
@@ -111,10 +112,10 @@ final class NodeRecord
             self::TABLE_NAME,
             [
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-                'origindimensionspacepointhash' => $this->originDimensionSpacePoint->getHash(),
+                'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
                 'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
                 'nodetypename' => (string) $this->nodeTypeName,
-                'classification' => (string) $this->classification,
+                'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),
                 'nodename' => (string) $this->nodeName,
             ],

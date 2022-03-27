@@ -52,6 +52,8 @@ Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathF
             value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents
     3:
       object: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph'
+    4:
+      object: 'Neos\Flow\Log\ThrowableStorageInterface'
 
 Neos\Neos\Domain\Service\NodeSearchServiceInterface:
   className: Neos\EventSourcedNeosAdjustments\Domain\Service\NodeSearchService

@@ -1,10 +1,7 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,6 +10,21 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exceptio
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception;
+
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\Flow\Annotations as Flow;
+
+#[Flow\Proxy(false)]
 final class NodeAddressCannotBeSerializedException extends \Neos\EventSourcedContentRepository\Exception
 {
+    public static function becauseNoWorkspaceNameWasResolved(NodeAddress $nodeAddress): self
+    {
+        return new self(
+            'The node Address ' . $nodeAddress . ' cannot be serialized because no workspace name was resolved.',
+            1531637028
+        );
+    }
 }

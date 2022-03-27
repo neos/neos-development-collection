@@ -45,7 +45,7 @@ trait MigrationsTrait
     {
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
         $contentStreamIdentifiers = array_map(fn (string $cs) => ContentStreamIdentifier::fromString($cs), explode(',', $contentStreams));
-        $command = new ExecuteMigration($migrationConfiguration, new WorkspaceName($workspaceName), $contentStreamIdentifiers);
+        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIdentifiers);
         $this->migrationCommandHandler->handleExecuteMigration($command);
     }
 

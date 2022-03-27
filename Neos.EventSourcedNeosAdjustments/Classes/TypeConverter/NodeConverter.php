@@ -36,7 +36,7 @@ class NodeConverter extends AbstractTypeConverter
     protected $nodeAddressFactory;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = [NodeInterface::class];
 
@@ -50,8 +50,19 @@ class NodeConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    /**
+     * @param NodeInterface $source
+     * @param string $targetType
+     * @param array<string,mixed> $subProperties
+     * @return mixed|\Neos\Error\Messages\Error|string|null
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     */
+    public function convertFrom(
+        $source,
+        $targetType = null,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         return $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
     }
 }

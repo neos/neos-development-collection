@@ -14,7 +14,6 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 final class Transformations
 {
-
     /**
      * @var GlobalTransformationInterface[]
      */
@@ -30,6 +29,11 @@ final class Transformations
      */
     protected array $nodeBasedTransformations = [];
 
+    /**
+     * @codingStandardsIgnoreStart
+     * @param array<int|string,GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface> $transformationObjects
+     * @codingStandardsIgnoreEnd
+     */
     public function __construct(array $transformationObjects)
     {
         foreach ($transformationObjects as $transformationObject) {
@@ -40,7 +44,16 @@ final class Transformations
             } elseif ($transformationObject instanceof NodeBasedTransformationInterface) {
                 $this->nodeBasedTransformations[] = $transformationObject;
             } else {
-                throw new \InvalidArgumentException(sprintf('Transformation object must implement either %s, %s or %s. Given: %s', GlobalTransformationInterface::class, NodeAggregateBasedTransformationInterface::class, NodeBasedTransformationInterface::class, is_object($transformationObject) ? get_class($transformationObject) : gettype($transformationObject)), 1611735528);
+                /** @var mixed $transformationObject */
+                throw new \InvalidArgumentException(sprintf(
+                    'Transformation object must implement either %s, %s or %s. Given: %s',
+                    GlobalTransformationInterface::class,
+                    NodeAggregateBasedTransformationInterface::class,
+                    NodeBasedTransformationInterface::class,
+                    is_object($transformationObject)
+                        ? get_class($transformationObject)
+                        : gettype($transformationObject)
+                ), 1611735528);
             }
         }
     }
@@ -59,7 +72,6 @@ final class Transformations
     {
         return count($this->nodeBasedTransformations) > 0;
     }
-
 
     public function containsMoreThanOneTransformationType(): bool
     {
@@ -80,8 +92,10 @@ final class Transformations
         return $nonEmptyTransformationTypes > 1;
     }
 
-    public function executeGlobal(ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function executeGlobal(
+        ContentStreamIdentifier $contentStreamForReading,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         $commandResult = CommandResult::createEmpty();
         foreach ($this->globalTransformations as $globalTransformation) {
             $commandResult = $commandResult->merge(
@@ -91,8 +105,10 @@ final class Transformations
         return $commandResult;
     }
 
-    public function executeNodeAggregateBased(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function executeNodeAggregateBased(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         $commandResult = CommandResult::createEmpty();
         foreach ($this->nodeAggregateBasedTransformations as $nodeAggregateBasedTransformation) {
             $commandResult = $commandResult->merge(
@@ -102,8 +118,11 @@ final class Transformations
         return $commandResult;
     }
 
-    public function executeNodeBased(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function executeNodeBased(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         $commandResult = CommandResult::createEmpty();
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
             $commandResult = $commandResult->merge(

@@ -30,17 +30,21 @@ final class HypergraphQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
 
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier, bool $joinRestrictionRelations = false): self
-    {
+    public static function create(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        bool $joinRestrictionRelations = false
+    ): self {
         $query = /** @lang PostgreSQL */
-            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename,
+            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier,
+                n.nodetypename, n.classification, n.properties, n.nodename,
                 h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
                 r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
             FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
             JOIN ' . NodeRecord::TABLE_NAME .' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinRestrictionRelations
                 ? '
-            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
+            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r
+                ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
                 AND r.contentstreamidentifier = h.contentstreamidentifier
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
                 : '')
@@ -60,7 +64,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
+        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
         return new self($query, $parameters);
     }
@@ -71,7 +75,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             AND n.origindimensionspacepointhash = :originDimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->getHash();
+        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
         return new self($query, $parameters);
     }

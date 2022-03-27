@@ -96,59 +96,61 @@ class LinkHelper implements ProtectedContextAwareInterface
         return '';
     }
 
-    /**
-     * @param string|Uri $uri
-     * @param NodeInterface $contextNode
-     * @param ControllerContext $controllerContext
-     * @return string
-     */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext): ?string
-    {
+    public function resolveNodeUri(
+        string|Uri $uri,
+        NodeInterface $contextNode,
+        ControllerContext $controllerContext
+    ): ?string {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
         if (!$targetNode instanceof NodeInterface) {
-            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->info(
+                sprintf(
+                    'Could not resolve "%s" to an existing node; The node was probably deleted.',
+                    $uri
+                ),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
             return null;
         }
         $targetNodeAddress = $this->nodeAddressFactory->createFromNode($targetNode);
-        if ($targetNodeAddress === null) {
-            $this->systemLogger->info(sprintf('Could not create node address from node "%s".', $targetNode->getNodeAggregateIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
-            return null;
-        }
         try {
-            $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())->uriFor($targetNodeAddress);
-        } catch (NodeAddressCannotBeSerializedException | HttpException | NoMatchingRouteException | MissingActionNameException $e) {
-            $this->systemLogger->info(sprintf('Failed to build URI for node "%s": %e', $targetNode->getNodeAggregateIdentifier(), $e->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
+            $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
+                ->uriFor($targetNodeAddress);
+        } catch (NodeAddressCannotBeSerializedException | HttpException
+            | NoMatchingRouteException | MissingActionNameException $e) {
+            $this->systemLogger->info(sprintf(
+                'Failed to build URI for node "%s": %e',
+                $targetNode->getNodeAggregateIdentifier(),
+                $e->getMessage()
+            ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
-        if ($targetUri === null) {
-            return null;
-        }
+
         return (string)$targetUri;
     }
 
-    /**
-     * @param string|Uri $uri
-     * @return string
-     */
-    public function resolveAssetUri($uri): string
+    public function resolveAssetUri(string|Uri $uri): string
     {
         if (!$uri instanceof UriInterface) {
             $uri = new Uri($uri);
         }
         $asset = $this->assetRepository->findByIdentifier($uri->getHost());
-        if ($asset === null) {
-            throw new \InvalidArgumentException(sprintf('Failed to resolve asset from URI "%s", probably the corresponding asset was deleted', $uri), 1601373937);
+        if (!$asset instanceof AssetInterface) {
+            throw new \InvalidArgumentException(sprintf(
+                'Failed to resolve asset from URI "%s", probably the corresponding asset was deleted',
+                $uri
+            ), 1601373937);
         }
-        return $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+
+        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+
+        return is_string($assetUri) ? $assetUri : '';
     }
 
-    /**
-     * @param string|Uri $uri
-     * @param NodeInterface|null $contextNode
-     * @return NodeInterface|AssetInterface|NULL
-     */
-    public function convertUriToObject($uri, NodeInterface $contextNode = null)
-    {
+    public function convertUriToObject(
+        string|Uri $uri,
+        NodeInterface $contextNode = null
+    ): NodeInterface|AssetInterface|null {
         if (empty($uri)) {
             return null;
         }
@@ -160,27 +162,30 @@ class LinkHelper implements ProtectedContextAwareInterface
             switch ($matches[1]) {
                 case 'node':
                     if ($contextNode === null) {
-                        throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
+                        throw new \RuntimeException(
+                            'node:// URI conversion requires a context node to be passed',
+                            1409734235
+                        );
                     }
                     $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
-                    if ($contextNodeAddress === null) {
-                        throw new \RuntimeException(sprintf('Failed to create node address for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
+                    if ($contextNodeAddress->workspaceName === null) {
+                        throw new \RuntimeException(sprintf(
+                            'Failed to create node address for context node "%s"',
+                            $contextNode->getNodeAggregateIdentifier()
+                        ));
                     }
-                    $visibilityConstraints = $contextNodeAddress->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+                    $visibilityConstraints = $contextNodeAddress->workspaceName->isLive()
+                        ? VisibilityConstraints::frontend()
+                        : VisibilityConstraints::withoutRestrictions();
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                         $contextNode->getContentStreamIdentifier(),
                         $contextNode->getDimensionSpacePoint(),
                         $visibilityConstraints
                     );
-                    if ($nodeAccessor === null) {
-                        throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
-                    }
 
-                    $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
-                    if ($node === null) {
-                        return null;
-                    }
-                    return $node;
+                    return $nodeAccessor->findByIdentifier(
+                        NodeAggregateIdentifier::fromString($matches[2])
+                    );
                 case 'asset':
                     /** @var AssetInterface|null $asset */
                     /** @noinspection OneTimeUseVariablesInspection */

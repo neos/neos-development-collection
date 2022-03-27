@@ -19,44 +19,23 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject
 {
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected ?string $propertyName = null;
 
-    /**
-     * @var string
-     */
-    protected $propertyName = null;
-
-    /**
-     * @var JoinPointInterface
-     */
-    protected $joinPoint = null;
-
-    /**
-     * @param NodeInterface $node
-     * @param JoinPointInterface $joinPoint
-     * @param string $propertyName
-     */
-    public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = null, $propertyName = null)
-    {
+    public function __construct(
+        NodeInterface $node,
+        ?JoinPointInterface $joinPoint = null,
+        ?string $propertyName = null
+    ) {
         $this->propertyName = $propertyName;
         parent::__construct($node, $joinPoint);
     }
 
-    /**
-     * @return string
-     */
-    public function getPropertyName()
+    public function getPropertyName(): ?string
     {
         return $this->propertyName;
     }
 
-    /**
-     * @return boolean
-     */
-    public function hasPropertyName()
+    public function hasPropertyName(): bool
     {
         return $this->propertyName !== null;
     }

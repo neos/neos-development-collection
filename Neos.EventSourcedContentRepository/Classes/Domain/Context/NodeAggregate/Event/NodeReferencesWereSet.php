@@ -14,10 +14,12 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A named reference from source to destination node was created
- *
- * @Flow\Proxy(false)
  */
-final class NodeReferencesWereSet implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodeReferencesWereSet implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -77,9 +79,9 @@ final class NodeReferencesWereSet implements DomainEventInterface, PublishableTo
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeReferencesWereSet(
+        return new self(
             $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,

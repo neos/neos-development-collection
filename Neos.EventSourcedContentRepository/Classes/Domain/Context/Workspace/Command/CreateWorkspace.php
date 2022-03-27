@@ -66,7 +66,7 @@ final class CreateWorkspace
         return $this->workspaceName;
     }
 
-    public function getBaseWorkspaceName()
+    public function getBaseWorkspaceName(): WorkspaceName
     {
         return $this->baseWorkspaceName;
     }

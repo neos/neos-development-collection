@@ -38,7 +38,6 @@ use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
  */
 class NodeSearchService implements NodeSearchServiceInterface
 {
-
     /**
      * @Flow\Inject
      * @var NodeAccessorManager
@@ -57,16 +56,27 @@ class NodeSearchService implements NodeSearchServiceInterface
      */
     protected $nodeTypeConstraintFactory;
 
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null): array
-    {
-        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($context->getWorkspaceName()));
+    /**
+     * @param string $term
+     * @param array<int,string> $searchNodeTypes
+     * @return array<int,NodeInterface>
+     */
+    public function findByProperties(
+        $term,
+        array $searchNodeTypes,
+        Context $context,
+        ?NodeInterface $startingPoint = null
+    ): array {
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));
         if ($workspace === null) {
             return [];
         }
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $workspace->getCurrentContentStreamIdentifier(),
             DimensionSpacePoint::fromLegacyDimensionArray($context->getDimensions()),
-            $context->isInvisibleContentShown() ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend()
+            $context->isInvisibleContentShown()
+                ? VisibilityConstraints::withoutRestrictions()
+                : VisibilityConstraints::frontend()
         );
         if ($startingPoint !== null) {
             $entryNodeIdentifier = $startingPoint->getNodeAggregateIdentifier();
@@ -76,11 +86,14 @@ class NodeSearchService implements NodeSearchServiceInterface
             $entryNodeIdentifier = NodeAggregateIdentifier::fromString($context->getRootNode()->getIdentifier());
         }
         $entryNode = $nodeAccessor->findByIdentifier($entryNodeIdentifier);
-        $nodes = $nodeAccessor->findDescendants(
-            [$entryNode],
-            $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $searchNodeTypes)),
-            SearchTerm::fulltext($term)
-        );
-        return iterator_to_array($nodes);
+        if (!is_null($entryNode)) {
+            $nodes = $nodeAccessor->findDescendants(
+                [$entryNode],
+                $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $searchNodeTypes)),
+                SearchTerm::fulltext($term)
+            );
+            return iterator_to_array($nodes);
+        }
+        return [];
     }
 }

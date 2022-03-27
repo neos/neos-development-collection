@@ -24,32 +24,23 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
+use Psr\Http\Message\ResponseInterface;
 
 class RenderContentOutOfBand extends AbstractFeedback
 {
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected ?NodeInterface $node = null;
 
     /**
      * The node dom address for the parent node of the created node
-     *
-     * @var RenderedNodeDomAddress
      */
-    protected $parentDomAddress;
+    protected ?RenderedNodeDomAddress $parentDomAddress = null;
 
     /**
      * The node dom address for the referenced sibling node of the created node
-     *
-     * @var RenderedNodeDomAddress
      */
-    protected $siblingDomAddress;
+    protected ?RenderedNodeDomAddress $siblingDomAddress = null;
 
-    /**
-     * @var string
-     */
-    protected $mode;
+    protected ?string $mode = null;
 
     /**
      * @Flow\Inject
@@ -69,171 +60,144 @@ class RenderContentOutOfBand extends AbstractFeedback
      */
     protected $nodeAccessorManager;
 
-    /**
-     * Set the node
-     *
-     * @param NodeInterface $node
-     * @return void
-     */
-    public function setNode(NodeInterface $node)
+    public function setNode(NodeInterface $node): void
     {
         $this->node = $node;
     }
 
-    /**
-     * Get the node
-     *
-     * @return NodeInterface
-     */
-    public function getNode()
+    public function getNode(): ?NodeInterface
     {
         return $this->node;
     }
 
-    /**
-     * Set the parent node dom address
-     *
-     * @param RenderedNodeDomAddress $parentDomAddress
-     * @return void
-     */
-    public function setParentDomAddress(RenderedNodeDomAddress $parentDomAddress = null)
+    public function setParentDomAddress(RenderedNodeDomAddress $parentDomAddress = null): void
     {
         $this->parentDomAddress = $parentDomAddress;
     }
 
-    /**
-     * Get the parent node dom address
-     *
-     * @return RenderedNodeDomAddress
-     */
-    public function getParentDomAddress()
+    public function getParentDomAddress(): ?RenderedNodeDomAddress
     {
         return $this->parentDomAddress;
     }
 
-    /**
-     * Set the sibling node dom address
-     *
-     * @param RenderedNodeDomAddress $siblingDomAddress
-     * @return void
-     */
-    public function setSiblingDomAddress(RenderedNodeDomAddress $siblingDomAddress = null)
+    public function setSiblingDomAddress(RenderedNodeDomAddress $siblingDomAddress = null): void
     {
         $this->siblingDomAddress = $siblingDomAddress;
     }
 
-    /**
-     * Get the sibling node dom address
-     *
-     * @return RenderedNodeDomAddress
-     */
-    public function getSiblingDomAddress()
+    public function getSiblingDomAddress(): ?RenderedNodeDomAddress
     {
         return $this->siblingDomAddress;
     }
 
     /**
      * Set the insertion mode (before|after|into)
-     *
-     * @param string $mode
-     * @return void
      */
-    public function setMode($mode)
+    public function setMode(string $mode): void
     {
         $this->mode = $mode;
     }
 
     /**
      * Get the insertion mode (before|after|into)
-     *
-     * @return string
      */
-    public function getMode()
+    public function getMode(): ?string
     {
         return $this->mode;
     }
 
-    /**
-     * Get the type identifier
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'Neos.Neos.Ui:RenderContentOutOfBand';
     }
 
-    /**
-     * Get the description
-     *
-     * @return string
-     */
     public function getDescription(): string
     {
-        return sprintf('Rendering of node "%s" required.', $this->getNode()->getNodeAggregateIdentifier());
+        return sprintf('Rendering of node "%s" required.', $this->node?->getNodeAggregateIdentifier());
     }
 
     /**
      * Checks whether this feedback is similar to another
-     *
-     * @param FeedbackInterface $feedback
-     * @return boolean
      */
-    public function isSimilarTo(FeedbackInterface $feedback)
+    public function isSimilarTo(FeedbackInterface $feedback): bool
     {
         if (!$feedback instanceof RenderContentOutOfBand) {
             return false;
         }
+        if (is_null($this->node)) {
+            return false;
+        }
+        $feedbackNode = $feedback->getNode();
+        if (is_null($feedbackNode)) {
+            return false;
+        }
 
         return (
-            (string)$this->getNode()->getContentStreamIdentifier() === (string)$feedback->getNode()->getContentStreamIdentifier() &&
-            $this->getNode()->getDimensionSpacePoint()->getHash() === $feedback->getNode()->getDimensionSpacePoint()->getHash() &&
-            (string)$this->getNode()->getNodeAggregateIdentifier() === (string)$feedback->getNode()->getNodeAggregateIdentifier() &&
-
-            $this->getReferenceData() == $feedback->getReferenceData()
+            $this->node->getContentStreamIdentifier() === $feedbackNode->getContentStreamIdentifier() &&
+            $this->node->getDimensionSpacePoint() === $feedbackNode->getDimensionSpacePoint() &&
+            $this->node->getNodeAggregateIdentifier()->equals($feedbackNode->getNodeAggregateIdentifier())
+            // @todo what's this? && $this->getReferenceData() == $feedback->getReferenceData()
         );
     }
 
     /**
      * Serialize the payload for this feedback
      *
-     * @return mixed
+     * @return array<string,mixed>
      */
-    public function serializePayload(ControllerContext $controllerContext)
+    public function serializePayload(ControllerContext $controllerContext): array
     {
-        return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
-            'parentDomAddress' => $this->getParentDomAddress(),
-            'siblingDomAddress' => $this->getSiblingDomAddress(),
-            'mode' => $this->getMode(),
-            'renderedContent' => $this->renderContent($controllerContext)
-        ];
+        return !is_null($this->node)
+            ? [
+                'contextPath' => $this->nodeAddressFactory->createFromNode($this->node)->serializeForUri(),
+                'parentDomAddress' => $this->getParentDomAddress(),
+                'siblingDomAddress' => $this->getSiblingDomAddress(),
+                'mode' => $this->getMode(),
+                'renderedContent' => $this->renderContent($controllerContext)
+            ]
+            : [];
     }
 
     /**
      * Render the node
-     *
-     * @param ControllerContext $controllerContext
-     * @return string
      */
-    protected function renderContent(ControllerContext $controllerContext)
+    protected function renderContent(ControllerContext $controllerContext): string|ResponseInterface
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->getNode()->getContentStreamIdentifier(), $this->getNode()->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $this->contentCache->flushByTag(sprintf('Node_%s', (string)$nodeAccessor->findParentNode($this->getNode())->getNodeAggregateIdentifier()));
+        if (is_null($this->node)) {
+            return '';
+        }
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $this->node->getContentStreamIdentifier(),
+            $this->node->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $parentNode = $nodeAccessor->findParentNode($this->node);
+        if ($parentNode) {
+            $this->contentCache->flushByTag(sprintf(
+                'Node_%s',
+                $parentNode->getNodeAggregateIdentifier()
+            ));
 
-        $parentDomAddress = $this->getParentDomAddress();
+            $parentDomAddress = $this->getParentDomAddress();
+            if ($parentDomAddress) {
+                $fusionView = new FusionView();
+                $fusionView->setControllerContext($controllerContext);
 
-        $fusionView = new FusionView();
-        $fusionView->setControllerContext($controllerContext);
+                $fusionView->assign('value', $parentNode);
+                $fusionView->assign('subgraph', $nodeAccessor);
+                $fusionView->setFusionPath($parentDomAddress->getFusionPath());
 
-        $fusionView->assign('value', $nodeAccessor->findParentNode($this->getNode()));
-        $fusionView->assign('subgraph', $nodeAccessor);
-        $fusionView->setFusionPath($parentDomAddress->getFusionPath());
+                return $fusionView->render();
+            }
+        }
 
-        return $fusionView->render();
+        return '';
     }
 
-    public function serialize(ControllerContext $controllerContext)
+    /**
+     * @return array<string,mixed>
+     */
+    public function serialize(ControllerContext $controllerContext): array
     {
         try {
             return parent::serialize($controllerContext);

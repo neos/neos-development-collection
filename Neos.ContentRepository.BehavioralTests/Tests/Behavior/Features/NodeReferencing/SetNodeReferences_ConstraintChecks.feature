@@ -107,7 +107,7 @@ Feature: Constraint checks on SetNodeReferences
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"]      |
       | referenceName                       | "referenceProperty"        |
       | initiatingUserIdentifier            | "user"                     |
-    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound" with code 1520260137
+    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound" with code 1505929456
 
   Scenario: Try to reference nodes in an origin dimension space point the source node aggregate does not occupy
     Given I have the following content dimensions:

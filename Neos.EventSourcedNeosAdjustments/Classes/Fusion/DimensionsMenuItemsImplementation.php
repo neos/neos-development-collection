@@ -35,7 +35,8 @@ use Neos\Flow\Annotations as Flow;
  * Main Options:
  * - dimension (optional, string): Name of the dimension which this menu should be limited to. Example: "language".
  * - values (optional, array): If set, only the given dimension values for the given dimension will be evaluated
- * - includeAllPresets (optional, bool): If set, generalizations in the other dimensions will be evaluated additionally if necessary to fetch a result for a given dimension value
+ * - includeAllPresets (optional, bool): If set, generalizations in the other dimensions will be evaluated additionally
+ *   if necessary to fetch a result for a given dimension value
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
@@ -58,40 +59,33 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected $interDimensionalVariationGraph;
 
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
-     * @var NodeInterface
-     */
-    protected $currentNode;
-
-
-    /**
      * Builds the array of Menu items for this variant menu
+     * @return array<int,array<string,mixed>>
      */
-    protected function buildItems()
+    protected function buildItems(): array
     {
         $menuItems = [];
 
-
         $currentDimensionSpacePoint = $this->currentNode->getDimensionSpacePoint();
-        foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace()->getPoints() as $dimensionSpacePoint) {
+        $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
+        foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
                     $variant = $this->currentNode;
                 } else {
-                    $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint, VisibilityConstraints::frontend());
+                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                        $this->currentNode->getContentStreamIdentifier(),
+                        $dimensionSpacePoint,
+                        VisibilityConstraints::frontend()
+                    );
                     $variant = $nodeAccessor->findByIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
 
-                if (!$variant && $this->includeGeneralizations()) {
+                if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
-                        $this->getContentDimensionIdentifierToLimitTo(),
+                        $contentDimensionIdentifierToLimitTo,
                         $this->currentNode->getNodeAggregateIdentifier()
                     );
                 }
@@ -109,12 +103,21 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             }
         }
 
-
-        if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
-            $order = array_flip($this->getValuesToRestrictTo());
-            usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
-                return $order[$menuItemA['node']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())]
-                    <=> $order[$menuItemB['node']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())];
+        $valuesToRestrictTo = $this->getValuesToRestrictTo();
+        if ($contentDimensionIdentifierToLimitTo && $valuesToRestrictTo) {
+            $order = array_flip($valuesToRestrictTo);
+            usort($menuItems, function (
+                array $menuItemA,
+                array $menuItemB
+            ) use (
+                $order,
+                $contentDimensionIdentifierToLimitTo
+            ) {
+                return (int)$order[$menuItemA['node']?->getDimensionSpacePoint()?->getCoordinate(
+                    $contentDimensionIdentifierToLimitTo
+                )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
+                    $contentDimensionIdentifierToLimitTo
+                )];
             });
         }
 
@@ -128,18 +131,23 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function isDimensionSpacePointRelevant(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return !$this->getContentDimensionIdentifierToLimitTo() // no limit to one dimension, so all DSPs are relevant
-            || $dimensionSpacePoint->equals($this->currentNode->getDimensionSpacePoint()) // always include the current variant
-            // include all direct variants in the dimension we're limited to unless their values in that dimension are missing in the specified list
-            || $dimensionSpacePoint->isDirectVariantInDimension($this->currentNode->getDimensionSpacePoint(), $this->getContentDimensionIdentifierToLimitTo())
-            && (empty($this->getValuesToRestrictTo()) || in_array($dimensionSpacePoint->getCoordinate($this->getContentDimensionIdentifierToLimitTo()), $this->getValuesToRestrictTo()));
+            // always include the current variant
+            || $dimensionSpacePoint->equals($this->currentNode->getDimensionSpacePoint())
+            // include all direct variants in the dimension we're limited to unless their values
+            // in that dimension are missing in the specified list
+            || $dimensionSpacePoint->isDirectVariantInDimension(
+                $this->currentNode->getDimensionSpacePoint(),
+                $this->getContentDimensionIdentifierToLimitTo()
+            )
+            && (
+                empty($this->getValuesToRestrictTo())
+                    || in_array(
+                        $dimensionSpacePoint->getCoordinate($this->getContentDimensionIdentifierToLimitTo()),
+                        $this->getValuesToRestrictTo()
+                    )
+            );
     }
 
-    /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param ContentDimensionIdentifier $contentDimensionIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeInterface|null
-     */
     protected function findClosestGeneralizationMatchingDimensionValue(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentDimensionIdentifier $contentDimensionIdentifier,
@@ -148,8 +156,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
-            if ($generalization->getCoordinate($contentDimensionIdentifier) === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)) {
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $generalization, VisibilityConstraints::frontend());
+            if ($generalization->getCoordinate($contentDimensionIdentifier)
+                === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)) {
+                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                    $this->currentNode->getContentStreamIdentifier(),
+                    $generalization,
+                    VisibilityConstraints::frontend()
+                );
                 $variant = $nodeAccessor->findByIdentifier($nodeAggregateIdentifier);
                 if ($variant) {
                     return $variant;
@@ -161,18 +174,20 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return array
+     * @return array<string,mixed>
      */
     protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint): array
     {
-        $metadata = $dimensionSpacePoint->getCoordinates();
+        $metadata = $dimensionSpacePoint->coordinates;
         array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier) {
             $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
             $dimensionValue = [
                 'value' => $dimensionValue,
-                'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)->getValue($dimensionValue)->getConfigurationValue('label'),
-                'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo() || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo()))
+                'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)
+                    ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
+                'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo()
+                    || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo())
+                )
             ];
         });
 
@@ -180,11 +195,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @param NodeInterface|null $variant
-     * @param array $metadata
-     * @return string
+     * @param array<string,mixed> $metadata
      */
-    protected function determineLabel(NodeInterface $variant = null, array $metadata): string
+    protected function determineLabel(?NodeInterface $variant = null, array $metadata = []): string
     {
         if ($this->getContentDimensionIdentifierToLimitTo()) {
             return $metadata[(string)$this->getContentDimensionIdentifierToLimitTo()]['label'] ?: '';
@@ -199,11 +212,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         }
     }
 
-    /**
-     * @param NodeInterface|null $variant
-     * @return string
-     */
-    protected function calculateItemState(NodeInterface $variant = null): string
+    protected function calculateItemState(?NodeInterface $variant = null): string
     {
         if (is_null($variant)) {
             return self::STATE_ABSENT;
@@ -235,7 +244,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     protected function getValuesToRestrictTo(): array
     {

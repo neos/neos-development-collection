@@ -12,7 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonCreateNodeAggregateWithNodeTrait;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -27,10 +29,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
  * CreateNodeAggregateWithNode command
- *
- * @Flow\Proxy(false)
  */
-final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class CreateNodeAggregateWithNodeAndSerializedProperties implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     use CommonCreateNodeAggregateWithNodeTrait;
 
@@ -60,16 +64,20 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
         $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues ?: SerializedPropertyValues::fromArray([]);
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers
+            ?: new NodeAggregateIdentifiersByNodePaths([]);
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['parentNodeAggregateIdentifier']),
             isset($array['succeedingSiblingNodeAggregateIdentifier'])
@@ -93,16 +101,15 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
     }
 
     /**
-     * Create a new CreateNodeAggregateWithNode command with all original values, except the tetheredDescendantNodeAggregateIdentifiers (where
-     * the passed in arguments are used).
+     * Create a new CreateNodeAggregateWithNode command with all original values,
+     * except the tetheredDescendantNodeAggregateIdentifiers (where the passed in arguments are used).
      *
      * Is needed to make this command fully deterministic before storing it at the events
      * - we need this
-     * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return self
      */
-    public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
-    {
+    public function withTetheredDescendantNodeAggregateIdentifiers(
+        NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
+    ): self {
         return new self(
             $this->contentStreamIdentifier,
             $this->nodeAggregateIdentifier,
@@ -117,6 +124,9 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -152,9 +162,9 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
-            && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
-            && $this->originDimensionSpacePoint->equals(OriginDimensionSpacePoint::fromDimensionSpacePoint($nodeAddress->getDimensionSpacePoint()))
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
+                && $this->originDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
         );
     }
 }

@@ -14,6 +14,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -39,24 +42,38 @@ trait NodeRemoval
                     $dimensionSpacePoint,
                     $event->getNodeAggregateIdentifier()
                 );
+                if (is_null($nodeRecord)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+                }
 
-                $ingoingHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByChildNodeAnchor(
-                    $event->getContentStreamIdentifier(),
-                    $dimensionSpacePoint,
-                    $nodeRecord->relationAnchorPoint
+                /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
+                $ingoingHierarchyRelation = $this->getProjectionHypergraph()
+                    ->findHierarchyHyperrelationRecordByChildNodeAnchor(
+                        $event->getContentStreamIdentifier(),
+                        $dimensionSpacePoint,
+                        $nodeRecord->relationAnchorPoint
+                    );
+                $ingoingHierarchyRelation->removeChildNodeAnchor(
+                    $nodeRecord->relationAnchorPoint,
+                    $this->getDatabaseConnection()
                 );
-                $ingoingHierarchyRelation->removeChildNodeAnchor($nodeRecord->relationAnchorPoint, $this->getDatabaseConnection());
                 $this->removeFromRestrictions(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePoint,
                     $event->getNodeAggregateIdentifier()
                 );
 
-                if ($event->getAffectedOccupiedDimensionSpacePoints()->contains($nodeRecord->originDimensionSpacePoint)) {
-                    $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->getHash()] = $nodeRecord;
+                if ($event->getAffectedOccupiedDimensionSpacePoints()->contains(
+                    $nodeRecord->originDimensionSpacePoint
+                )) {
+                    $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->hash] = $nodeRecord;
                 }
 
-                $this->cascadeHierarchy($event->getContentStreamIdentifier(), $dimensionSpacePoint, $nodeRecord->relationAnchorPoint);
+                $this->cascadeHierarchy(
+                    $event->getContentStreamIdentifier(),
+                    $dimensionSpacePoint,
+                    $nodeRecord->relationAnchorPoint
+                );
             }
             foreach ($nodeRecordsToBeRemoved as $nodeRecord) {
                 $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
@@ -82,8 +99,11 @@ trait NodeRemoval
             $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
 
             foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
-                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
-                $ingoingHierarchyRelations = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
+                /** @var NodeRecord $nodeRecord */
+                $nodeRecord = $this->getProjectionHypergraph()
+                    ->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
+                $ingoingHierarchyRelations = $this->getProjectionHypergraph()
+                    ->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
                 if (empty($ingoingHierarchyRelations)) {
                     $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
                 }
@@ -92,7 +112,11 @@ trait NodeRemoval
                     $dimensionSpacePoint,
                     $nodeRecord->nodeAggregateIdentifier
                 );
-                $this->cascadeHierarchy($contentStreamIdentifier, $dimensionSpacePoint, $nodeRecord->relationAnchorPoint);
+                $this->cascadeHierarchy(
+                    $contentStreamIdentifier,
+                    $dimensionSpacePoint,
+                    $nodeRecord->relationAnchorPoint
+                );
             }
         }
     }
@@ -114,7 +138,10 @@ trait NodeRemoval
             $dimensionSpacePoint,
             $nodeAggregateIdentifier
         ) as $restrictionRelation) {
-            $restrictionRelation->removeAffectedNodeAggregateIdentifier($nodeAggregateIdentifier, $this->getDatabaseConnection());
+            $restrictionRelation->removeAffectedNodeAggregateIdentifier(
+                $nodeAggregateIdentifier,
+                $this->getDatabaseConnection()
+            );
         }
     }
 
@@ -123,7 +150,7 @@ trait NodeRemoval
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

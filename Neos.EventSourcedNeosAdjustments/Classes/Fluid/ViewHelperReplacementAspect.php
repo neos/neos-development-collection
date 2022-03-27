@@ -22,18 +22,30 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class ViewHelperReplacementAspect
 {
-    protected $viewHelperClassMapping = [
-        \Neos\Neos\ViewHelpers\Link\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link\NodeViewHelper::class,
-        \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri\NodeViewHelper::class,
-        \Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement\EditableViewHelper::class,
-        \Neos\Neos\ViewHelpers\ContentElement\WrapViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement\WrapViewHelper::class,
-        \Neos\Neos\ViewHelpers\Rendering\InBackendViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InBackendViewHelper::class,
-        \Neos\Neos\ViewHelpers\Rendering\InEditModeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InEditModeViewHelper::class,
-        \Neos\Neos\ViewHelpers\Rendering\InPreviewModeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InPreviewModeViewHelper::class,
-        \Neos\Neos\ViewHelpers\Rendering\LiveViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\LiveViewHelper::class,
-        \Neos\Neos\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper::class,
-        \Neos\Neos\ViewHelpers\Node\ClosestDocumentViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Node\ClosestDocumentViewHelper::class
-
+    /**
+     * @var array<string,string>
+     */
+    protected array $viewHelperClassMapping = [
+        \Neos\Neos\ViewHelpers\Link\NodeViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link\NodeViewHelper::class,
+        \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri\NodeViewHelper::class,
+        \Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement\EditableViewHelper::class,
+        \Neos\Neos\ViewHelpers\ContentElement\WrapViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement\WrapViewHelper::class,
+        \Neos\Neos\ViewHelpers\Rendering\InBackendViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InBackendViewHelper::class,
+        \Neos\Neos\ViewHelpers\Rendering\InEditModeViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InEditModeViewHelper::class,
+        \Neos\Neos\ViewHelpers\Rendering\InPreviewModeViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InPreviewModeViewHelper::class,
+        \Neos\Neos\ViewHelpers\Rendering\LiveViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\LiveViewHelper::class,
+        \Neos\Neos\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper::class,
+        \Neos\Neos\ViewHelpers\Node\ClosestDocumentViewHelper::class
+        => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Node\ClosestDocumentViewHelper::class
     ];
 
     /**

@@ -51,13 +51,12 @@ class LiveViewHelper extends AbstractRenderingStateViewHelper
     }
 
     /**
-     * @param NodeInterface|null $node
-     * @return boolean
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render()
+    public function render(): bool
     {
         $nodeAddress = $this->getNodeAddressOfContextNode($this->arguments['node']);
+
         return $nodeAddress->isInLiveWorkspace();
     }
 }

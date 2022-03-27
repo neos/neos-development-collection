@@ -16,38 +16,34 @@ class CreateAfter extends AbstractCreate
 {
     /**
      * Get the insertion mode (before|after|into) that is represented by this change
-     *
-     * @return string
      */
-    public function getMode()
+    public function getMode(): string
     {
         return 'after';
     }
 
     /**
      * Check if the new node's node type is allowed in the requested position
-     *
-     * @return boolean
      */
     public function canApply(): bool
     {
-        $parent = $this->findParentNode($this->getSubject());
+        if (is_null($this->subject)) {
+            return false;
+        }
+        $parent = $this->findParentNode($this->subject);
         $nodeType = $this->getNodeType();
 
-        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $parent && $nodeType && $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**
      * Create a new node after the subject
-     *
-     * @return void
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            $subject = $this->getSubject();
-            $parentNode = $this->findParentNode($subject);
-
+        $parentNode = $this->subject ? $this->findParentNode($this->subject) : null;
+        $subject = $this->subject;
+        if ($this->canApply() && !is_null($subject) && !is_null($parentNode)) {
             $succeedingSibling = null;
             try {
                 $succeedingSibling = $this->findChildNodes($parentNode)->next($subject);
@@ -55,11 +51,7 @@ class CreateAfter extends AbstractCreate
                 // do nothing; $succeedingSibling is null.
             }
 
-            if ($succeedingSibling) {
-                $this->createNode($parentNode, $succeedingSibling->getNodeAggregateIdentifier());
-            } else {
-                $this->createNode($parentNode, null);
-            }
+            $this->createNode($parentNode, $succeedingSibling?->getNodeAggregateIdentifier());
 
             $this->updateWorkspaceInfo();
         }

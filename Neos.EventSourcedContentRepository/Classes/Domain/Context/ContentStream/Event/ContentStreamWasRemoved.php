@@ -26,8 +26,10 @@ final class ContentStreamWasRemoved implements DomainEventInterface
 
     private UserIdentifier $initiatingUserIdentifier;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, UserIdentifier $initiatingUserIdentifier)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }

@@ -51,13 +51,16 @@ final class CreateNodeVariant implements \JsonSerializable
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['sourceOrigin']),
-            new OriginDimensionSpacePoint($array['targetOrigin']),
+            OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
+            OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
@@ -87,6 +90,9 @@ final class CreateNodeVariant implements \JsonSerializable
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [

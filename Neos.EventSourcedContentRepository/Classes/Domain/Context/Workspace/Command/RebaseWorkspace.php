@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Rebase a workspace
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RebaseWorkspace
 {
     private WorkspaceName $workspaceName;
@@ -30,8 +29,11 @@ final class RebaseWorkspace
 
     private ContentStreamIdentifier $rebasedContentStreamIdentifier;
 
-    public function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $rebasedContentStreamIdentifier)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $rebasedContentStreamIdentifier
+    ) {
         $this->workspaceName = $workspaceName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->rebasedContentStreamIdentifier = $rebasedContentStreamIdentifier;
@@ -45,8 +47,11 @@ final class RebaseWorkspace
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */
-    public static function createFullyDeterministic(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier): self
-    {
+    public static function createFullyDeterministic(
+        WorkspaceName $workspaceName,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $newContentStreamIdentifier
+    ): self {
         return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
     }
 

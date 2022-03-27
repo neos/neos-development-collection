@@ -41,7 +41,6 @@ use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
     /**
      * @var FusionView
      */
@@ -151,13 +150,14 @@ class BackendController extends ActionController
 
     public function initializeView(ViewInterface $view)
     {
+        /** @var FusionView $view */
         $view->setFusionPath('backend');
     }
 
     /**
      * Displays the backend interface
      *
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node The node that will be displayed on the first tab
+     * @param NodeAddress $node The node that will be displayed on the first tab
      * @return void
      */
     public function indexAction(NodeAddress $node = null)
@@ -173,21 +173,37 @@ class BackendController extends ActionController
         }
 
         $currentAccount = $this->securityContext->getAccount();
-        $workspace = $this->workspaceFinder->findOneByName(NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName());
+        $workspace = $this->workspaceFinder->findOneByName(
+            NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+                ->toContentRepositoryWorkspaceName()
+        );
+        if (is_null($workspace)) {
+            $this->redirectToUri($this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos'));
+        }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $workspace->getCurrentContentStreamIdentifier(),
+            $this->findDefaultDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
         // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
         // to call the contentGraph here directly.
-        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($workspace->getCurrentContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
+        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType(
+            $workspace->getCurrentContentStreamIdentifier(),
+            NodeTypeName::fromString('Neos.Neos:Sites')
+        );
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($this->findDefaultDimensionSpacePoint());
-        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($rootNode, NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
+            $rootNode,
+            NodeName::fromString($this->siteRepository->findDefault()->getNodeName())
+        );
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
             $node = $siteNode;
         } else {
-            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         }
 
         $this->view->assign('user', $user);
@@ -209,10 +225,9 @@ class BackendController extends ActionController
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    public function redirectToAction(NodeAddress $node)
+    public function redirectToAction(NodeAddress $node): void
     {
         $this->response->setHttpHeader('Cache-Control', [
             'no-cache',
@@ -225,9 +240,9 @@ class BackendController extends ActionController
     {
         $coordinates = [];
         foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $dimension) {
-            $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();
+            $coordinates[(string)$dimension->identifier] = (string)$dimension->defaultValue;
         }
 
-        return new DimensionSpacePoint($coordinates);
+        return DimensionSpacePoint::fromArray($coordinates);
     }
 }

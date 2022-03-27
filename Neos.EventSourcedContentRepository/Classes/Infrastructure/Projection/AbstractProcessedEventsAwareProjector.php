@@ -14,7 +14,7 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
     private bool $assumeProjectorRunsSynchronously = false;
 
     /**
-     * @var array|string[]
+     * @var array<int,string>
      */
     private array $processedEventIdentifiers = [];
 
@@ -50,9 +50,12 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
         }
         foreach ($events as $event) {
             if (!$event instanceof DecoratedEvent || !$event->hasIdentifier()) {
-                throw new \RuntimeException(sprintf('The given DomainEvents instance contains an event "%s" that has not identifier', get_class($event)), 1550314769);
+                throw new \RuntimeException(sprintf(
+                    'The given DomainEvents instance contains an event "%s" that has not identifier',
+                    get_class($event)
+                ), 1550314769);
             }
-            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
+            if (!is_null($event->getIdentifier()) && !$this->processedEventsCache->has(md5($event->getIdentifier()))) {
                 return false;
             }
         }
@@ -74,7 +77,8 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
         // To prevent a race condition where the CommandResult::blockUntilProjectionsAreUpToDate() returns before
         // the database transaction updating the projection tables is committed, we simply record the processed
         // event identifiers here; and then, inside releaseHighestAppliedSequenceNumber(), we record that
-        // the events have been successfully applied (and are VISIBLE in the database because the transaction has committed).
+        // the events have been successfully applied
+        // (and are VISIBLE in the database because the transaction has committed).
         $this->processedEventIdentifiers[] = $eventEnvelope->getRawEvent()->getIdentifier();
     }
 

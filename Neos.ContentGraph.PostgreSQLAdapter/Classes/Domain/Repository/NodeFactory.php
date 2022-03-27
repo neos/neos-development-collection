@@ -21,10 +21,13 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginByCoverage;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
@@ -50,6 +53,9 @@ final class NodeFactory
         $this->propertyConverter = $propertyConverter;
     }
 
+    /**
+     * @param array<string,string> $nodeRow
+     */
     public function mapNodeRowToNode(
         array $nodeRow,
         VisibilityConstraints $visibilityConstraints,
@@ -57,30 +63,42 @@ final class NodeFactory
         ?ContentStreamIdentifier $contentStreamIdentifier = null
     ): NodeInterface {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $nodeClassName = $nodeType->getConfiguration('class') ?: \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node::class;
+        $nodeClassName = $nodeType->getConfiguration('class')
+            ?: Node::class;
         if (!class_exists($nodeClassName)) {
-            throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
+            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
         }
-        if (!in_array(ContentProjection\NodeInterface::class, class_implements($nodeClassName))) {
-            if (in_array(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class, class_implements($nodeClassName))) {
-                throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassImplementsTheDeprecatedLegacyInterface($nodeClassName);
+        if (!in_array(NodeInterface::class, class_implements($nodeClassName) ?: [])) {
+            if (in_array(NodeInterface::class, class_implements($nodeClassName) ?: [])) {
+                throw NodeImplementationClassNameIsInvalid
+                    ::becauseTheClassImplementsTheDeprecatedLegacyInterface($nodeClassName);
             }
-            throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface($nodeClassName);
+            throw NodeImplementationClassNameIsInvalid
+                ::becauseTheClassDoesNotImplementTheRequiredInterface($nodeClassName);
         }
-        return new $nodeClassName(
+        /** @var NodeInterface $result */
+        $result = new $nodeClassName(
             $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
-            new PropertyCollection(SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)), $this->propertyConverter),
-            NodeAggregateClassification::fromString($nodeRow['classification']),
+            new PropertyCollection(
+                SerializedPropertyValues::fromJsonString($nodeRow['properties']),
+                $this->propertyConverter
+            ),
+            NodeAggregateClassification::from($nodeRow['classification']),
             $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             $visibilityConstraints
         );
+
+        return $result;
     }
 
+    /**
+     * @param array<int,array<string,string>> $nodeRows
+     */
     public function mapNodeRowsToNodes(
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints,
@@ -99,6 +117,9 @@ final class NodeFactory
         return Nodes::fromArray($nodes);
     }
 
+    /**
+     * @param array<int,array<string,string>> $nodeRows
+     */
     public function mapNodeRowsToSubtree(
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
@@ -110,7 +131,7 @@ final class NodeFactory
                 $visibilityConstraints
             );
             $subtreesByParentNodeAggregateIdentifier[$nodeRow['parentnodeaggregateidentifier']][] = new Subtree(
-                $nodeRow['level'],
+                (int)$nodeRow['level'],
                 $node,
                 $subtreesByParentNodeAggregateIdentifier[$nodeRow['nodeaggregateidentifier']] ?? []
             );
@@ -119,8 +140,13 @@ final class NodeFactory
         return $subtreesByParentNodeAggregateIdentifier['ROOT'][0];
     }
 
-    public function mapNodeRowsToNodeAggregate(array $nodeRows, VisibilityConstraints $visibilityConstraints): ?NodeAggregate
-    {
+    /**
+     * @param array<int,array<string,string>> $nodeRows
+     */
+    public function mapNodeRowsToNodeAggregate(
+        array $nodeRows,
+        VisibilityConstraints $visibilityConstraints
+    ): ?NodeAggregate {
         if (empty($nodeRows)) {
             return null;
         }
@@ -142,29 +168,35 @@ final class NodeFactory
         /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
-            $contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
+            $contentStreamIdentifier = $contentStreamIdentifier
+                ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
                 null,
                 $contentStreamIdentifier
             );
-            $nodeAggregateIdentifier = $nodeAggregateIdentifier ?: NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
-            $nodeAggregateClassification = $nodeAggregateClassification ?: NodeAggregateClassification::fromString($nodeRow['classification']);
+            $nodeAggregateIdentifier = $nodeAggregateIdentifier
+                ?: NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
+            $nodeAggregateClassification = $nodeAggregateClassification
+                ?: NodeAggregateClassification::from($nodeRow['classification']);
             $nodeTypeName = $nodeTypeName ?: NodeTypeName::fromString($nodeRow['nodetypename']);
             if (!empty($nodeRow['nodename']) && is_null($nodeName)) {
                 $nodeName = NodeName::fromString($nodeRow['nodename']);
             }
-            $occupiedDimensionSpacePoints[$node->getOriginDimensionSpacePoint()->getHash()] = $node->getOriginDimensionSpacePoint();
-            $nodesByOccupiedDimensionSpacePoint[$node->getOriginDimensionSpacePoint()->getHash()] = $node;
+            $occupiedDimensionSpacePoints[$node->getOriginDimensionSpacePoint()->hash]
+                = $node->getOriginDimensionSpacePoint();
+            $nodesByOccupiedDimensionSpacePoint[$node->getOriginDimensionSpacePoint()->hash] = $node;
 
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
-            $coverageByOccupant[$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->getHash()] = $node;
-            $occupationByCovered[$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            $coverageByOccupant[$node->getOriginDimensionSpacePoint()->hash][$coveredDimensionSpacePoint->hash]
+                = $coveredDimensionSpacePoint;
+            $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash] = $node;
+            $occupationByCovered[$coveredDimensionSpacePoint->hash] = $node->getOriginDimensionSpacePoint();
             if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
-                $disabledDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']] = $coveredDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']];
+                $disabledDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']]
+                    = $coveredDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']];
             }
         }
 
@@ -176,19 +208,17 @@ final class NodeFactory
             $nodeName,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
             $nodesByOccupiedDimensionSpacePoint,
-            array_map(function (array $dimensionSpacePoints) {
-                return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
-            }, $coverageByOccupant),
+            CoverageByOrigin::fromArray($coverageByOccupant),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
-            $occupationByCovered,
+            OriginByCoverage::fromArray($occupationByCovered),
             new DimensionSpacePointSet($disabledDimensionSpacePoints)
         );
     }
 
     /**
-     * @param array $nodeRows
-     * @return array|NodeAggregate[]
+     * @param array<string,mixed> $nodeRows
+     * @return array<string,NodeAggregate>
      */
     public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): array
     {
@@ -222,16 +252,21 @@ final class NodeFactory
         $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
             $key = $nodeRow['nodeaggregateidentifier'];
-            $contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
+            $contentStreamIdentifier = $contentStreamIdentifier
+                ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
                 null,
                 $contentStreamIdentifier
             );
-            $nodeAggregateIdentifiers[$key] = NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
+            $nodeAggregateIdentifiers[$key] = NodeAggregateIdentifier::fromString(
+                $nodeRow['nodeaggregateidentifier']
+            );
             if (!isset($nodeAggregateClassifications[$key])) {
-                $nodeAggregateClassifications[$key] = NodeAggregateClassification::fromString($nodeRow['classification']);
+                $nodeAggregateClassifications[$key] = NodeAggregateClassification::from(
+                    $nodeRow['classification']
+                );
             }
             if (!isset($nodeTypeNames[$key])) {
                 $nodeTypeNames[$key] = NodeTypeName::fromString($nodeRow['nodetypename']);
@@ -241,19 +276,22 @@ final class NodeFactory
             } else {
                 $nodeNames[$key] = null;
             }
-            $occupiedDimensionSpacePoints[$key][$node->getOriginDimensionSpacePoint()->getHash()] = $node->getOriginDimensionSpacePoint();
-            $nodesByOccupiedDimensionSpacePoint[$key][$node->getOriginDimensionSpacePoint()->getHash()] = $node;
+            $occupiedDimensionSpacePoints[$key][$node->getOriginDimensionSpacePoint()->hash]
+                = $node->getOriginDimensionSpacePoint();
+            $nodesByOccupiedDimensionSpacePoint[$key][$node->getOriginDimensionSpacePoint()->hash] = $node;
 
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
-            $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $coverageByOccupant[$key][$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->getHash()] = $node;
-            $occupationByCovered[$key][$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            $coverageByOccupant[$key][$node->getOriginDimensionSpacePoint()->hash][$coveredDimensionSpacePoint->hash]
+                = $coveredDimensionSpacePoint;
+            $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->hash] = $node;
+            $occupationByCovered[$key][$coveredDimensionSpacePoint->hash] = $node->getOriginDimensionSpacePoint();
             if (!isset($disabledDimensionSpacePoints[$key])) {
                 $disabledDimensionSpacePoints[$key] = [];
             }
             if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
-                $disabledDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']] = $coveredDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']];
+                $disabledDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']]
+                    = $coveredDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']];
             }
         }
 
@@ -266,10 +304,10 @@ final class NodeFactory
                 $nodeNames[$key],
                 new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints[$key]),
                 $nodesByOccupiedDimensionSpacePoint[$key],
-                $coverageByOccupant[$key],
+                CoverageByOrigin::fromArray($coverageByOccupant[$key]),
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 $nodesByCoveredDimensionSpacePoint[$key],
-                $occupationByCovered[$key],
+                OriginByCoverage::fromArray($occupationByCovered[$key]),
                 new DimensionSpacePointSet($disabledDimensionSpacePoints[$key])
             );
         }

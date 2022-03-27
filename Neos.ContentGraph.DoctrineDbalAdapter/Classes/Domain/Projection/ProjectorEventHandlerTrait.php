@@ -25,12 +25,14 @@ trait ProjectorEventHandlerTrait
 {
 
     /**
-     * @var array<callable> handlers to be executed in beforeInvoke - called with ({@see EventEnvelope}, bool $doingFullReplayOfProjection).
+     * @var array<callable> handlers to be executed in beforeInvoke
+     * - called with ({@see EventEnvelope}, bool $doingFullReplayOfProjection).
      */
     private array $beforeInvokeHandlers = [];
 
     /**
-     * @var array<callable> handlers to be executed in afterInvoke - called with ({@see EventEnvelope}, bool $doingFullReplayOfProjection).
+     * @var array<callable> handlers to be executed in afterInvoke
+     * - called with ({@see EventEnvelope}, bool $doingFullReplayOfProjection).
      */
     private array $afterInvokeHandlers = [];
 

@@ -24,20 +24,13 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
+use Psr\Http\Message\ResponseInterface;
 
 class ReloadContentOutOfBand extends AbstractFeedback
 {
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected ?NodeInterface $node;
 
-    /**
-     * The node dom address
-     *
-     * @var RenderedNodeDomAddress
-     */
-    protected $nodeDomAddress;
+    protected ?RenderedNodeDomAddress $nodeDomAddress;
 
     /**
      * @Flow\Inject
@@ -57,85 +50,54 @@ class ReloadContentOutOfBand extends AbstractFeedback
      */
     protected $nodeAccessorManager;
 
-    /**
-     * Set the node
-     *
-     * @param NodeInterface $node
-     * @return void
-     */
-    public function setNode(NodeInterface $node)
+    public function setNode(NodeInterface $node): void
     {
         $this->node = $node;
     }
 
-    /**
-     * Get the node
-     *
-     * @return NodeInterface
-     */
     public function getNode(): ?NodeInterface
     {
         return $this->node;
     }
 
-    /**
-     * Set the node dom address
-     *
-     * @param RenderedNodeDomAddress $nodeDomAddress
-     * @return void
-     */
-    public function setNodeDomAddress(RenderedNodeDomAddress $nodeDomAddress = null)
+    public function setNodeDomAddress(RenderedNodeDomAddress $nodeDomAddress = null): void
     {
         $this->nodeDomAddress = $nodeDomAddress;
     }
 
-    /**
-     * Get the node dom address
-     *
-     * @return RenderedNodeDomAddress
-     */
-    public function getNodeDomAddress()
+    public function getNodeDomAddress(): ?RenderedNodeDomAddress
     {
         return $this->nodeDomAddress;
     }
 
-    /**
-     * Get the type identifier
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return 'Neos.Neos.Ui:ReloadContentOutOfBand';
     }
 
-    /**
-     * Get the description
-     *
-     * @return string
-     */
     public function getDescription(): string
     {
-        return sprintf('Rendering of node "%s" required.', $this->getNode()->getNodeAggregateIdentifier());
+        return sprintf('Rendering of node "%s" required.', $this->node?->getNodeAggregateIdentifier() ?: '');
     }
 
     /**
      * Checks whether this feedback is similar to another
-     *
-     * @param FeedbackInterface $feedback
-     * @return boolean
      */
-    public function isSimilarTo(FeedbackInterface $feedback)
+    public function isSimilarTo(FeedbackInterface $feedback): bool
     {
         if (!$feedback instanceof ReloadContentOutOfBand) {
             return false;
         }
 
+        $feedbackNode = $feedback->getNode();
         return (
-            (string)$this->getNode()->getContentStreamIdentifier() === (string)$feedback->getNode()->getContentStreamIdentifier() &&
-            $this->getNode()->getDimensionSpacePoint()->getHash() === $feedback->getNode()->getDimensionSpacePoint()->getHash() &&
-            (string)$this->getNode()->getNodeAggregateIdentifier() === (string)$feedback->getNode()->getNodeAggregateIdentifier() &&
-
+            $this->node instanceof NodeInterface &&
+            $feedbackNode instanceof NodeInterface &&
+            $this->node->getContentStreamIdentifier() === $feedbackNode->getContentStreamIdentifier() &&
+            $this->node->getDimensionSpacePoint() === $feedbackNode->getDimensionSpacePoint() &&
+            $this->node->getNodeAggregateIdentifier()->equals(
+                $feedbackNode->getNodeAggregateIdentifier()
+            ) &&
             $this->getNodeDomAddress() == $feedback->getNodeDomAddress()
         );
     }
@@ -143,43 +105,48 @@ class ReloadContentOutOfBand extends AbstractFeedback
     /**
      * Serialize the payload for this feedback
      *
-     * @return mixed
+     * @return array<string,mixed>
      */
-    public function serializePayload(ControllerContext $controllerContext)
+    public function serializePayload(ControllerContext $controllerContext): array
     {
-        return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
-            'nodeDomAddress' => $this->getNodeDomAddress(),
-            'renderedContent' => $this->renderContent($controllerContext)
-        ];
+        return !is_null($this->node) && !is_null($this->nodeDomAddress)
+            ? [
+                'contextPath' => $this->nodeAddressFactory->createFromNode($this->node)->serializeForUri(),
+                'nodeDomAddress' => $this->nodeDomAddress,
+                'renderedContent' => $this->renderContent($controllerContext)
+            ]
+            : [];
     }
 
     /**
      * Render the node
-     *
-     * @param ControllerContext $controllerContext
-     * @return string
      */
-    protected function renderContent(ControllerContext $controllerContext)
+    protected function renderContent(ControllerContext $controllerContext): string|ResponseInterface
     {
-        $this->contentCache->flushByTag(sprintf('Node_%s', (string)$this->getNode()->getNodeAggregateIdentifier()));
+        if (!is_null($this->node)) {
+            $this->contentCache->flushByTag(sprintf('Node_%s', $this->node->getNodeAggregateIdentifier()));
+            if ($this->nodeDomAddress) {
+                $fusionView = new FusionView();
+                $fusionView->setControllerContext($controllerContext);
 
-        $nodeDomAddress = $this->getNodeDomAddress();
+                $fusionView->assign('value', $this->node);
+                $fusionView->assign('subgraph', $this->nodeAccessorManager->accessorFor(
+                    $this->node->getContentStreamIdentifier(),
+                    $this->node->getDimensionSpacePoint(),
+                    VisibilityConstraints::withoutRestrictions()
+                ));
+                $fusionView->setFusionPath($this->nodeDomAddress->getFusionPathForContentRendering());
 
-        $fusionView = new FusionView();
-        $fusionView->setControllerContext($controllerContext);
+                return $fusionView->render();
+            }
+        }
 
-        $fusionView->assign('value', $this->getNode());
-        $fusionView->assign('subgraph', $this->nodeAccessorManager->accessorFor(
-            $this->getNode()->getContentStreamIdentifier(),
-            $this->getNode()->getDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        ));
-        $fusionView->setFusionPath($nodeDomAddress->getFusionPathForContentRendering());
-
-        return $fusionView->render();
+        return '';
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function serialize(ControllerContext $controllerContext)
     {
         try {

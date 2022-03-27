@@ -22,48 +22,65 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
  */
 final class AllChildNodesByNodeIdentifierCache
 {
-    protected $childNodes = [];
-
     /**
-     * @var bool
+     * @var array<string,array<string,array<int,NodeInterface>>>
      */
-    protected $isEnabled;
+    protected array $childNodes = [];
+
+    protected bool $isEnabled;
 
     public function __construct(bool $isEnabled)
     {
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeTypeConstraints $nodeTypeConstraints, array $allChildNodes): void
-    {
+    /**
+     * @param array<int,NodeInterface> $allChildNodes
+     */
+    public function add(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ?NodeTypeConstraints $nodeTypeConstraints,
+        array $allChildNodes
+    ): void {
         if ($this->isEnabled === false) {
             return;
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
-        $nodeTypeConstraintsSerialized = $nodeTypeConstraints ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : '*';
+        $nodeTypeConstraintsSerialized = $nodeTypeConstraints
+            ? $nodeTypeConstraints->asLegacyNodeTypeFilterString()
+            : '*';
         $this->childNodes[$key][$nodeTypeConstraintsSerialized] = $allChildNodes;
     }
 
-    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeTypeConstraints $nodeTypeConstraints): bool
-    {
+    public function contains(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ?NodeTypeConstraints $nodeTypeConstraints
+    ): bool {
         if ($this->isEnabled === false) {
             return false;
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
-        $nodeTypeConstraintsSerialized = $nodeTypeConstraints ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : '*';
+        $nodeTypeConstraintsSerialized = $nodeTypeConstraints?->asLegacyNodeTypeFilterString() ?: '*';
         return isset($this->childNodes[$key][$nodeTypeConstraintsSerialized]) || isset($this->childNodes[$key]['*']);
     }
 
-    public function findChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
-    {
+    /**
+     * @return array<int,NodeInterface>
+     */
+    public function findChildNodes(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): array {
         if ($this->isEnabled === false) {
             return [];
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
-        $nodeTypeConstraintsSerialized = $nodeTypeConstraints ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : '*';
+        $nodeTypeConstraintsSerialized = $nodeTypeConstraints?->asLegacyNodeTypeFilterString() ?: '*';
         $result = [];
 
         if (isset($this->childNodes[$key][$nodeTypeConstraintsSerialized])) {

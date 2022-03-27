@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -40,13 +41,13 @@ trait NodeCreation
     public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = new OriginDimensionSpacePoint([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
 
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->getNodeAggregateIdentifier(),
             $originDimensionSpacePoint,
-            $originDimensionSpacePoint->getHash(),
+            $originDimensionSpacePoint->hash,
             SerializedPropertyValues::fromArray([]),
             $event->getNodeTypeName(),
             $event->getNodeAggregateClassification(),
@@ -76,7 +77,7 @@ trait NodeCreation
             $nodeRelationAnchorPoint,
             $event->getNodeAggregateIdentifier(),
             $event->getOriginDimensionSpacePoint(),
-            $event->getOriginDimensionSpacePoint()->getHash(),
+            $event->getOriginDimensionSpacePoint()->hash,
             $event->getInitialPropertyValues(),
             $event->getNodeTypeName(),
             $event->getNodeAggregateClassification(),
@@ -103,13 +104,22 @@ trait NodeCreation
                             $succeedingSiblingNodeAnchor = $succeedingSiblingNode->relationAnchorPoint;
                         }
                     }
-                    $hierarchyRelation->addChildNodeAnchor($node->relationAnchorPoint, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
+                    $hierarchyRelation->addChildNodeAnchor(
+                        $node->relationAnchorPoint,
+                        $succeedingSiblingNodeAnchor,
+                        $this->getDatabaseConnection()
+                    );
                 } else {
                     $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                         $event->getContentStreamIdentifier(),
                         $dimensionSpacePoint,
                         $event->getParentNodeAggregateIdentifier()
                     );
+                    if (is_null($parentNode)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            get_class($event)
+                        );
+                    }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
                         $event->getContentStreamIdentifier(),
                         $parentNode->relationAnchorPoint,
@@ -146,7 +156,11 @@ trait NodeCreation
                 $parentNodeAnchor
             );
             if ($hierarchyRelation) {
-                $hierarchyRelation->addChildNodeAnchor($childNodeAnchor, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
+                $hierarchyRelation->addChildNodeAnchor(
+                    $childNodeAnchor,
+                    $succeedingSiblingNodeAnchor,
+                    $this->getDatabaseConnection()
+                );
             } else {
                 $hierarchyRelation = new HierarchyHyperrelationRecord(
                     $contentStreamIdentifier,
@@ -174,7 +188,10 @@ trait NodeCreation
             $dimensionSpacePoint,
             $parentNodeAggregateIdentifier
         ) as $ingoingRestrictionRelation) {
-            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier($affectedNodeAggregateIdentifier, $this->getDatabaseConnection());
+            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
+                $affectedNodeAggregateIdentifier,
+                $this->getDatabaseConnection()
+            );
         }
     }
 
@@ -183,7 +200,7 @@ trait NodeCreation
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

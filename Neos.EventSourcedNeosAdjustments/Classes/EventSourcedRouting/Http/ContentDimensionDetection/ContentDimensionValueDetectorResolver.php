@@ -28,36 +28,45 @@ final class ContentDimensionValueDetectorResolver
      * @return ContentDimensionValueDetectorInterface
      * @throws Exception\InvalidContentDimensionValueDetectorException
      */
-    public function resolveContentDimensionValueDetector(Dimension\ContentDimension $contentDimension): ContentDimensionValueDetectorInterface
-    {
-        $detectorClassName = $contentDimension->getConfigurationValue('resolution.detectionComponent.implementationClassName');
+    public function resolveContentDimensionValueDetector(
+        Dimension\ContentDimension $contentDimension
+    ): ContentDimensionValueDetectorInterface {
+        $detectorClassName = $contentDimension->getConfigurationValue(
+            'resolution.detectionComponent.implementationClassName'
+        );
         if ($detectorClassName) {
             if (class_exists($detectorClassName)) {
                 $detector = new $detectorClassName();
                 if (!$detector instanceof ContentDimensionValueDetectorInterface) {
                     throw new Exception\InvalidContentDimensionValueDetectorException(
-                        '"' . $detectorClassName . '", configured as content dimension value detector for content dimension "' . $contentDimension->getIdentifier() . '", does not implement ' . ContentDimensionValueDetectorInterface::class . '. Please check your dimension configuration.',
+                        '"' . $detectorClassName
+                            . '", configured as content dimension value detector for content dimension "'
+                            . $contentDimension->identifier . '", does not implement '
+                            . ContentDimensionValueDetectorInterface::class
+                            . '. Please check your dimension configuration.',
                         1510826082
                     );
                 }
                 return $detector;
             } else {
                 throw new Exception\InvalidContentDimensionValueDetectorException(
-                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->getIdentifier() . '". Please check your dimension configuration.',
+                    'Could not resolve dimension preset detection component for dimension "'
+                        . $contentDimension->identifier . '". Please check your dimension configuration.',
                     1510750184
                 );
             }
         }
 
-        $resolutionMode = new BasicContentDimensionResolutionMode($contentDimension->getConfigurationValue('resolution.mode') ?: BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
-        switch ($resolutionMode->getMode()) {
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX:
-                return new HostPrefixContentDimensionValueDetector();
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX:
-                return new HostSuffixContentDimensionValueDetector();
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT:
-            default:
-                return new UriPathSegmentContentDimensionValueDetector();
-        }
+        $resolutionMode = new BasicContentDimensionResolutionMode(
+            $contentDimension->getConfigurationValue('resolution.mode')
+                ?: BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
+        );
+        return match ($resolutionMode->getMode()) {
+            BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX
+                => new HostPrefixContentDimensionValueDetector(),
+            BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
+                => new HostSuffixContentDimensionValueDetector(),
+            default => new UriPathSegmentContentDimensionValueDetector(),
+        };
     }
 }

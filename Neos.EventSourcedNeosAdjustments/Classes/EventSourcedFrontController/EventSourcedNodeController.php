@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
@@ -128,20 +129,19 @@ class EventSourcedNodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
+     * with unsafe requests from widgets or plugins that are rendered on the node
+     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function previewAction(NodeAddress $node)
+    public function previewAction(NodeAddress $node): void
     {
         $nodeAddress = $node;
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        if ($subgraph === null) {
-            throw new NodeNotFoundException("TODO: SUBGRAPH NOT FOUND; should not happen (for address " . $nodeAddress);
-        }
 
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         if ($site === null) {
@@ -151,14 +151,17 @@ class EventSourcedNodeController extends ActionController
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+            throw new NodeNotFoundException(
+                'The requested node does not exist or isn\'t accessible to the current user',
+                1430218623
+            );
         }
 
 
@@ -188,9 +191,11 @@ class EventSourcedNodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
+     * with unsafe requests from widgets or plugins that are rendered on the node
+     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(NodeAddress $node)
+    public function showAction(NodeAddress $node): void
     {
         $nodeAddress = $node;
         if (!$nodeAddress->isInLiveWorkspace()) {
@@ -198,13 +203,10 @@ class EventSourcedNodeController extends ActionController
         }
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
-        if ($subgraph === null) {
-            throw new NodeNotFoundException("TODO: SUBGRAPH NOT FOUND; should not happen (for address " . $nodeAddress);
-        }
 
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         if ($site === null) {
@@ -214,11 +216,11 @@ class EventSourcedNodeController extends ActionController
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
@@ -246,19 +248,22 @@ class EventSourcedNodeController extends ActionController
     protected function overrideViewVariablesFromInternalArguments()
     {
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
-            $node = $this->propertyMapper->convert($nodeContextPath, NodeInterface::class);
+            $node = $this->propertyMapper->convert((string)$nodeContextPath, NodeInterface::class);
             if (!$node instanceof NodeInterface) {
-                throw new NodeNotFoundException(sprintf('The node with context path "%s" could not be resolved', $nodeContextPath), 1437051934);
+                throw new NodeNotFoundException(sprintf(
+                    'The node with context path "%s" could not be resolved',
+                    (string)$nodeContextPath
+                ), 1437051934);
             }
             $this->view->assign('value', $node);
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setHttpHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
+            $this->response->setHttpHeader('X-Neos-AffectedNodePath', (string)$affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
-            $this->view->setFusionPath($fusionPath);
+            $this->view->setFusionPath((string)$fusionPath);
         }
     }
 
@@ -275,7 +280,11 @@ class EventSourcedNodeController extends ActionController
         try {
             $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
         } catch (InvalidShortcutException $e) {
-            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved: %s', $nodeAddress, $e->getMessage()), 1430218730, $e);
+            throw new NodeNotFoundException(sprintf(
+                'The shortcut node target of node "%s" could not be resolved: %s',
+                $nodeAddress,
+                $e->getMessage()
+            ), 1430218730, $e);
         }
         if ($resolvedTarget instanceof NodeAddress) {
             if ($resolvedTarget === $nodeAddress) {
@@ -284,7 +293,11 @@ class EventSourcedNodeController extends ActionController
             try {
                 $resolvedUri = NodeUriBuilder::fromRequest($this->request)->uriFor($nodeAddress);
             } catch (NoMatchingRouteException $e) {
-                throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved: %s', $nodeAddress, $e->getMessage()), 1599670695, $e);
+                throw new NodeNotFoundException(sprintf(
+                    'The shortcut node target of node "%s" could not be resolved: %s',
+                    $nodeAddress,
+                    $e->getMessage()
+                ), 1599670695, $e);
             }
         } else {
             $resolvedUri = $resolvedTarget;
@@ -292,46 +305,84 @@ class EventSourcedNodeController extends ActionController
         $this->redirectToUri($resolvedUri);
     }
 
-    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress)
+    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress): void
     {
-        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
+        $subtree = $subgraph->findSubtrees(
+            [$nodeAddress->nodeAggregateIdentifier],
+            10,
+            $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document')
+        );
         $subtree = $subtree->getChildren()[0];
 
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
 
         $currentDocumentNode = $subtree->getNode();
+        if (is_null($currentDocumentNode)) {
+            return;
+        }
         $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
 
         $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
-            self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
+            self::fillCacheInternal(
+                $childSubtree,
+                $currentDocumentNode,
+                $nodePathOfDocumentNode,
+                $subgraph->getInMemoryCache()
+            );
         }
     }
 
-    private static function fillCacheInternal(SubtreeInterface $subtree, NodeInterface $parentNode, NodePath $parentNodePath, InMemoryCache $inMemoryCache)
-    {
-        $parentNodeIdentifierByChildNodeIdentifierCache = $inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
+    private static function fillCacheInternal(
+        SubtreeInterface $subtree,
+        NodeInterface $parentNode,
+        NodePath $parentNodePath,
+        InMemoryCache $inMemoryCache
+    ): void {
+        $node = $subtree->getNode();
+        if (is_null($node)) {
+            return;
+        }
+
+        $parentNodeIdentifierByChildNodeIdentifierCache
+            = $inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $nodePathCache = $inMemoryCache->getNodePathCache();
-
-        $node = $subtree->getNode();
         if ($node->getNodeName() !== null) {
             $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
             $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
-            $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
+            $namedChildNodeByNodeIdentifierCache->add(
+                $parentNode->getNodeAggregateIdentifier(),
+                $node->getNodeName(),
+                $node
+            );
+        } else {
+            // @todo use node aggregate identifier instead?
         }
 
-        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
+        $parentNodeIdentifierByChildNodeIdentifierCache->add(
+            $node->getNodeAggregateIdentifier(),
+            $parentNode->getNodeAggregateIdentifier()
+        );
 
         $allChildNodes = [];
         foreach ($subtree->getChildren() as $childSubtree) {
-            self::fillCacheInternal($childSubtree, $node, $nodePath, $inMemoryCache);
-            $allChildNodes[] = $childSubtree->getNode();
+            if (isset($nodePath)) {
+                self::fillCacheInternal($childSubtree, $node, $nodePath, $inMemoryCache);
+            }
+            $childNode = $childSubtree->getNode();
+            if (!is_null($childNode)) {
+                $allChildNodes[] = $childNode;
+            }
         }
 
         // TODO Explain why this is safe (Content can not contain other documents)
-        $allChildNodesByNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), null, $allChildNodes);
+        $allChildNodesByNodeIdentifierCache->add(
+            $node->getNodeAggregateIdentifier(),
+            null,
+            $allChildNodes
+        );
     }
 }

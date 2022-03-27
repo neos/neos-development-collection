@@ -25,7 +25,10 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeGeneralizationVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+final class NodeGeneralizationVariantWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -85,8 +88,9 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeGeneralizationVariantWasCreated
-    {
+    public function createCopyForContentStream(
+        ContentStreamIdentifier $targetContentStreamIdentifier
+    ): self {
         return new NodeGeneralizationVariantWasCreated(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,

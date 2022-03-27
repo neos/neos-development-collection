@@ -37,11 +37,14 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     /**
      * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getIdentifier())")
      */
-    public function getIdentifier(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    public function getIdentifier(\Neos\Flow\Aop\JoinPointInterface $joinPoint): string
     {
-        $this->legacyLogger->info('NodeInterface.getIdentifier() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getIdentifier'));
+        $this->legacyLogger->info(
+            'NodeInterface.getIdentifier() called',
+            LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getIdentifier')
+        );
 
-        /* @var NodeInterface $traversableNode */
+        /** @var NodeInterface $traversableNode */
         $traversableNode = $joinPoint->getProxy();
         return $traversableNode->getNodeAggregateIdentifier()->jsonSerialize();
     }
@@ -49,22 +52,32 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     /**
      * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getDepth())")
      */
-    public function getDepth(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    public function getDepth(\Neos\Flow\Aop\JoinPointInterface $joinPoint): int
     {
-        $this->legacyLogger->info('NodeInterface.getDepth() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getDepth'));
+        $this->legacyLogger->info(
+            'NodeInterface.getDepth() called',
+            LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getDepth')
+        );
 
-        /* @var NodeInterface $traversableNode */
+        /** @var NodeInterface $traversableNode */
         $traversableNode = $joinPoint->getProxy();
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($traversableNode->getContentStreamIdentifier(), $traversableNode->getDimensionSpacePoint(), $traversableNode->getVisibilityConstraints());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $traversableNode->getContentStreamIdentifier(),
+            $traversableNode->getDimensionSpacePoint(),
+            $traversableNode->getVisibilityConstraints()
+        );
         return $nodeAccessor->findNodePath($traversableNode)->getDepth();
     }
 
     /**
      * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getHiddenBeforeDateTime())")
      */
-    public function getHiddenBeforeDateTime(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    public function getHiddenBeforeDateTime(\Neos\Flow\Aop\JoinPointInterface $joinPoint): ?\DateTimeInterface
     {
-        $this->legacyLogger->info('NodeInterface.getHiddenBeforeDateTime() called (not supported)', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getHiddenBeforeDateTime'));
+        $this->legacyLogger->info(
+            'NodeInterface.getHiddenBeforeDateTime() called (not supported)',
+            LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getHiddenBeforeDateTime')
+        );
         // not supported
         return null;
     }
@@ -72,9 +85,12 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     /**
      * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getHiddenAfterDateTime())")
      */
-    public function getHiddenAfterDateTime(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    public function getHiddenAfterDateTime(\Neos\Flow\Aop\JoinPointInterface $joinPoint): ?\DateTimeInterface
     {
-        $this->legacyLogger->info('NodeInterface.getHiddenAfterDateTime() called (not supported)', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getHiddenAfterDateTime'));
+        $this->legacyLogger->info(
+            'NodeInterface.getHiddenAfterDateTime() called (not supported)',
+            LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getHiddenAfterDateTime')
+        );
         // not supported
         return null;
     }
@@ -82,11 +98,14 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     /**
      * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getContextPath())")
      */
-    public function getContextPath(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    public function getContextPath(\Neos\Flow\Aop\JoinPointInterface $joinPoint): string
     {
-        $this->legacyLogger->info('NodeInterface.getContextPath() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getContextPath'));
+        $this->legacyLogger->info(
+            'NodeInterface.getContextPath() called',
+            LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getContextPath')
+        );
 
-        /* @var NodeInterface $node */
+        /** @var NodeInterface $node */
         $node = $joinPoint->getProxy();
         return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }

@@ -15,10 +15,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * The exception to be thrown if a node aggregate does currently not cover the given dimension space point set but is supposed to
+ * The exception to be thrown if a node aggregate does currently not cover the given dimension space point set
+ * but is supposed to
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet extends \DomainException
 {
     public static function butWasSupposedTo(
@@ -26,6 +29,10 @@ final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet extends \Do
         DimensionSpacePointSet $expectedCoveredDimensionSpacePointSet,
         DimensionSpacePointSet $actualDimensionSpacePointSet
     ): NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet {
-        return new static('Node aggregate "' . $identifier . '" does not cover expected dimension space point set ' . $expectedCoveredDimensionSpacePointSet . ' but ' . $actualDimensionSpacePointSet . '.', 1571134743);
+        return new self(
+            'Node aggregate "' . $identifier . '" does not cover expected dimension space point set '
+                . $expectedCoveredDimensionSpacePointSet . ' but ' . $actualDimensionSpacePointSet . '.',
+            1571134743
+        );
     }
 }

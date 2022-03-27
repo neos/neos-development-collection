@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
@@ -12,50 +14,72 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable, type-safe collection of NodeInterface objects, indexed by content graph adapter
- * @Flow\Proxy(false)
+ *
+ * @implements \IteratorAggregate<string,NodeInterface>
+ * @implements \ArrayAccess<string,NodeInterface>
  */
-final class NodesByAdapter extends ImmutableArrayObject
+#[Flow\Proxy(false)]
+final class NodesByAdapter implements \IteratorAggregate, \ArrayAccess
 {
-    public function __construct(Iterable $collection)
+    /**
+     * @var array<string,NodeInterface>
+     */
+    private array $nodes;
+
+    /**
+     * @var \ArrayIterator<string,NodeInterface>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param iterable<string,NodeInterface> $collection
+     */
+    public function __construct(iterable $collection)
     {
         $nodes = [];
         foreach ($collection as $adapterName => $item) {
+            if (!is_string($adapterName) || empty($adapterName)) {
+                throw new \InvalidArgumentException('NodesByAdapter must be indexed by adapter name', 1643562288);
+            }
             if (!$item instanceof NodeInterface) {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeInterface::class . ' objects.', 1618137807);
+                throw new \InvalidArgumentException('NodesByAdapter can only consist of ' . NodeInterface::class . ' objects.', 1618137807);
             }
             $nodes[$adapterName] = $item;
         }
-        parent::__construct($nodes);
+        $this->nodes = $nodes;
+        $this->iterator = new \ArrayIterator($nodes);
     }
 
     /**
-     * @param mixed $key
-     * @return NodeInterface|false
-     */
-    public function offsetGet($key)
-    {
-        return parent::offsetGet($key);
-    }
-
-    /**
-     * @return array|NodeInterface[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|NodeInterface[]
+     * @return \ArrayIterator<string,NodeInterface>
      */
     public function getIterator(): \ArrayIterator
     {
-        return parent::getIterator();
+        return $this->iterator;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->nodes[$offset]);
+    }
+
+    public function offsetGet(mixed $offset): ?NodeInterface
+    {
+        return $this->nodes[$offset] ?? null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class NodesByAdapter.', 1643562390);
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class NodesByAdapter.', 1643562390);
     }
 }

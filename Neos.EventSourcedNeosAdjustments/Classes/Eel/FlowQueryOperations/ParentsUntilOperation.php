@@ -49,7 +49,7 @@ class ParentsUntilOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -60,8 +60,8 @@ class ParentsUntilOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return void
      * @throws \Neos\Eel\Exception
      */
@@ -74,7 +74,7 @@ class ParentsUntilOperation extends AbstractOperation
             if (isset($arguments[0]) && !empty($arguments[0] && !$parentNodes->isEmpty())) {
                 $untilQuery = new FlowQuery([$parentNodes->first()]);
                 $untilQuery->pushOperation('closest', [$arguments[0]]);
-                $until = $untilQuery->get();
+                $until = $untilQuery->getContext();
             }
 
             if (isset($until) && is_array($until) && !empty($until) && isset($until[0])) {
@@ -82,7 +82,8 @@ class ParentsUntilOperation extends AbstractOperation
             }
 
             foreach ($parentNodes as $parentNode) {
-                if ($parentNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
+                if ($parentNode !== null
+                    && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
                     $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $parentNode;
                 }
@@ -96,10 +97,6 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    /**
-     * @param NodeInterface $contextNode
-     * @return NodeInterface[]
-     */
     protected function getParents(NodeInterface $contextNode): Nodes
     {
         $ancestors = [];

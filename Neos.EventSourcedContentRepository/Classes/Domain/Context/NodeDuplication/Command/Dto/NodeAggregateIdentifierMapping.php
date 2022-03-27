@@ -19,9 +19,8 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
  * An assignment of "old" to "new" NodeAggregateIdentifiers
  *
  * Usable for predefining NodeAggregateIdentifiers if multiple nodes are copied.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateIdentifierMapping implements \JsonSerializable
 {
     /**
@@ -29,16 +28,22 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
      *
      * e.g. {main => my-main-node}
      *
-     * @var array|NodeAggregateIdentifier[]
+     * @var array<string,NodeAggregateIdentifier>
      */
-    protected $nodeAggregateIdentifiers = [];
+    protected array $nodeAggregateIdentifiers = [];
 
+    /**
+     * @param array<string,NodeAggregateIdentifier> $nodeAggregateIdentifiers
+     */
     public function __construct(array $nodeAggregateIdentifiers)
     {
         foreach ($nodeAggregateIdentifiers as $oldNodeAggregateIdentifier => $newNodeAggregateIdentifier) {
             $oldNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($oldNodeAggregateIdentifier);
             if (!$newNodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
-                throw new \InvalidArgumentException('NodeAggregateIdentifierMapping objects can only be composed of NodeAggregateIdentifiers.', 1573042379);
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifierMapping objects can only be composed of NodeAggregateIdentifiers.',
+                    1573042379
+                );
             }
 
             $this->nodeAggregateIdentifiers[(string)$oldNodeAggregateIdentifier] = $newNodeAggregateIdentifier;
@@ -47,45 +52,53 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
 
     /**
      * Create a new identifier mapping, *GENERATING* new identifiers.
-     *
-     * @param NodeSubtreeSnapshot $nodeSubtreeSnapshot
-     * @return static
      */
     public static function generateForNodeSubtreeSnapshot(NodeSubtreeSnapshot $nodeSubtreeSnapshot): self
     {
         $nodeAggregateIdentifierMapping = [];
-        $nodeSubtreeSnapshot->walk(function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
-            // here, we create new random NodeAggregateIdentifiers.
-            $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->getNodeAggregateIdentifier()] = NodeAggregateIdentifier::create();
-        });
+        $nodeSubtreeSnapshot->walk(
+            function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
+                // here, we create new random NodeAggregateIdentifiers.
+                $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->getNodeAggregateIdentifier()]
+                    = NodeAggregateIdentifier::create();
+            }
+        );
 
         return new self($nodeAggregateIdentifierMapping);
     }
 
+    /**
+     * @param array<string,string> $array
+     */
     public static function fromArray(array $array): self
     {
         $nodeAggregateIdentifiers = [];
         foreach ($array as $oldNodeAggregateIdentifier => $newNodeAggregateIdentifier) {
-            $nodeAggregateIdentifiers[$oldNodeAggregateIdentifier] = NodeAggregateIdentifier::fromString($newNodeAggregateIdentifier);
+            $nodeAggregateIdentifiers[$oldNodeAggregateIdentifier]
+                = NodeAggregateIdentifier::fromString($newNodeAggregateIdentifier);
         }
 
         return new self($nodeAggregateIdentifiers);
     }
 
-    public function getNewNodeAggregateIdentifier(NodeAggregateIdentifier $oldNodeAggregateIdentifier): ?NodeAggregateIdentifier
-    {
+    public function getNewNodeAggregateIdentifier(
+        NodeAggregateIdentifier $oldNodeAggregateIdentifier
+    ): ?NodeAggregateIdentifier {
         return $this->nodeAggregateIdentifiers[(string)$oldNodeAggregateIdentifier] ?? null;
     }
 
+    /**
+     * @return array<string,NodeAggregateIdentifier>
+     */
     public function jsonSerialize(): array
     {
         return $this->nodeAggregateIdentifiers;
     }
 
     /**
-     * @return NodeAggregateIdentifier[]|iterable
+     * @return array<int,NodeAggregateIdentifier>
      */
-    public function getAllNewNodeAggregateIdentifiers(): iterable
+    public function getAllNewNodeAggregateIdentifiers(): array
     {
         return array_values($this->nodeAggregateIdentifiers);
     }

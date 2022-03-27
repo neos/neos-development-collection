@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Migration\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -12,6 +10,13 @@ namespace Neos\EventSourcedContentRepository\Migration\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Migration\Exception;
+
+use Neos\Flow\Annotations as Flow;
+
+#[Flow\Proxy(false)]
 final class InvalidMigrationFilterSpecified extends \DomainException
 {
 }

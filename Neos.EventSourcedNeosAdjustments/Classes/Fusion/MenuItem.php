@@ -17,10 +17,21 @@ final class MenuItem
 
     protected int $menuLevel;
 
+    /**
+     * @var array<int,MenuItem>
+     */
     protected array $children;
 
-    public function __construct(NodeInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
-    {
+    /**
+     * @param array<int,MenuItem> $children
+     */
+    public function __construct(
+        NodeInterface $node,
+        ?MenuItemState $state = null,
+        ?string $label = null,
+        int $menuLevel = 1,
+        array $children = []
+    ) {
         $this->node = $node;
         $this->state = $state;
         $this->label = $label;
@@ -33,7 +44,7 @@ final class MenuItem
         return $this->node;
     }
 
-    public function getState(): MenuItemState
+    public function getState(): ?MenuItemState
     {
         return $this->state;
     }
@@ -49,7 +60,7 @@ final class MenuItem
     }
 
     /**
-     * @return array|MenuItem[]
+     * @return array<int,MenuItem>
      */
     public function getChildren(): array
     {
@@ -57,7 +68,7 @@ final class MenuItem
     }
 
     /**
-     * @return array|MenuItem[]
+     * @return array<int,MenuItem>
      * @deprecated Use getChildren instead
      */
     public function getSubItems(): array

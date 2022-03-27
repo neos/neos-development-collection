@@ -19,5 +19,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 
 interface NodeAccessorFactoryInterface
 {
-    public function build(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints, ?NodeAccessorInterface $nextAccessor = null): NodeAccessorInterface;
+    public function build(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints,
+        ?NodeAccessorInterface $nextAccessor = null
+    ): NodeAccessorInterface;
 }
