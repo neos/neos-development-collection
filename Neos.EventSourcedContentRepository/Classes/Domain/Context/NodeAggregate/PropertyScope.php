@@ -17,26 +17,24 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The node variant selection strategy for node aggregates as selected when creating commands.
- * Used for calculating the affected dimension space points
- * to e.g. build restriction relations to other node aggregates or to remove nodes.
+ * The property scope to be used in NodeType property declarations.
+ * Will affect node operations on properties in that they decide which of the node's variants will be modified as well.
  */
 #[Flow\Proxy(false)]
 enum PropertyScope: string implements \JsonSerializable
 {
     /**
-     * The "only given" strategy, meaning only the given dimension space point is affected
+     * The "node" scope, meaning only the node in the selected origin will be modified
      */
     case SCOPE_NODE = 'node';
 
     /**
-     * The "virtual specializations" strategy,
-     * meaning only the specializations covered but unoccupied by this node aggregate are affected.
+     * The "specializations" scope, meaning only the node and its specializations will be modified
      */
     case SCOPE_SPECIALIZATIONS = 'specializations';
 
     /**
-     * The "all specializations" strategy, meaning all specializations covered by this node aggregate are affected
+     * The "nodeAggregate" scope, meaning that all variants, e.g. all nodes in the aggregate will be modified
      */
     case SCOPE_NODE_AGGREGATE = 'nodeAggregate';
 
