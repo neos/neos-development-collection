@@ -80,7 +80,6 @@ trait EventSourcedTrait
     use NodeDisabling;
     use NodeModification;
     use NodeMove;
-    use NodeProperties;
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;

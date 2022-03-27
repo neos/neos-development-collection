@@ -297,16 +297,19 @@ trait ProjectedNodeTrait
     {
         switch ($serializedPropertyValue) {
             case 'PostalAddress:dummy':
+            case '"PostalAddress:dummy"':
                 return PostalAddress::dummy();
             case 'PostalAddress:anotherDummy':
+            case '"PostalAddress:anotherDummy"':
                 return PostalAddress::anotherDummy();
             case 'Date:now':
+            case '"Date:now"':
                 return new \DateTimeImmutable();
             default:
-                if (\mb_strpos($serializedPropertyValue, 'Date:') === 0) {
-                    return \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($serializedPropertyValue, 5));
-                } elseif (\mb_strpos($serializedPropertyValue, 'URI:') === 0) {
-                    return new Uri(\mb_substr($serializedPropertyValue, 4));
+                if (\mb_strpos($serializedPropertyValue, '"Date:') === 0) {
+                    return \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr(trim($serializedPropertyValue, '"'), 5));
+                } elseif (\mb_strpos($serializedPropertyValue, '"URI:') === 0) {
+                    return new Uri(\mb_substr(trim($serializedPropertyValue, '"'), 4));
                 }
         }
 
