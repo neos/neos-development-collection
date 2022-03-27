@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Create a node aggregate with complex default values
 
   As a user of the CR I want default properties of complex types to be un/serialized

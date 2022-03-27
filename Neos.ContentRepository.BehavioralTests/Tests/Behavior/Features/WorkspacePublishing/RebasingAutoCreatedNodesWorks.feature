@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Rebasing auto-created nodes works
 
   Tests a bugfix for auto-created nodes, which appeared in Neos UI.

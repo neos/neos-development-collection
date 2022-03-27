@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Set properties
 
   As a user of the CR I want to modify node properties.
@@ -80,10 +80,10 @@ Feature: Set properties
 
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                                                                                                                                                                                                                                         |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                                                                                                               |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                                                                                                                                                                                                            |
-      | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                                                                                                            |
+      | Key                       | Value                                                                                                                                                                                                                                                           |
+      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                                                                                                                 |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                                                                                                                                                                                                              |
+      | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                                                                                                              |
       | propertyValues            | {"string":"My new string", "int":8472, "float":72.84, "bool":true, "array":{"givenName":"David", "familyName":"Nodenborough","age":84}, "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "postalAddress":"PostalAddress:anotherDummy"} |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph

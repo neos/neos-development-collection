@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Run projection integrity violation detection regarding node aggregate type consistency
 
   As a user of the CR I want to be able to detect whether there are node aggregates of ambiguous type in a content stream

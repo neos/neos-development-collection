@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Create node variant
 
   As a user of the CR I want to create a copy of a node within an aggregate to another dimension space point.

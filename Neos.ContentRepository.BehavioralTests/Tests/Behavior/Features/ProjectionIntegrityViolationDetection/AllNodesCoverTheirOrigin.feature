@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Run projection integrity violation detection to find nodes that do not cover their origin dimension space point
 
   As a user of the CR I want to be able to detect whether there are nodes that are disconnected from the subgraph they originate in

@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Disable a node
 
   As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.

@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Set node properties: Constraint checks
 
   As a user of the CR I want to modify node properties.

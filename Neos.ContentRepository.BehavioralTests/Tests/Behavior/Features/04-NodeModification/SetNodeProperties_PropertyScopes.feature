@@ -1,5 +1,5 @@
-@fixtures
-Feature: Set properties
+@fixtures @adapters=DoctrineDBAL,Postgres
+Feature: Set node properties with different scopes
 
   As a user of the CR I want to modify node properties with different scopes.
 

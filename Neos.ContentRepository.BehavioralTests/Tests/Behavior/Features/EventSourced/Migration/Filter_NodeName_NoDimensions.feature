@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Filter - Node Name
 
   Background:

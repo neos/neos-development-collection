@@ -32,7 +32,7 @@ trait CurrentSubgraphTrait
 
     protected ?VisibilityConstraints $visibilityConstraints = null;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getActiveContentGraphs(): ContentGraphs;
 
     abstract protected function getWorkspaceFinder(): WorkspaceFinder;
 
@@ -127,7 +127,7 @@ trait CurrentSubgraphTrait
     protected function getCurrentSubgraphs(): ContentSubgraphs
     {
         $currentSubgraphs = [];
-        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             $currentSubgraphs[$adapterName] = $contentGraph->getSubgraphByIdentifier(
                 $this->contentStreamIdentifier,
                 $this->dimensionSpacePoint,

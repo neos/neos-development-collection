@@ -36,7 +36,7 @@ trait ProjectedNodeAggregateTrait
 
     protected ?NodeAggregatesByAdapter $currentNodeAggregates = null;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     /**
      * @Then /^I expect the node aggregate "([^"]*)" to exist$/
@@ -56,7 +56,7 @@ trait ProjectedNodeAggregateTrait
     protected function initializeCurrentNodeAggregates(callable $query): void
     {
         $currentNodeAggregates = [];
-        foreach ($this->getContentGraphs() as $adapterName => $graph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $graph) {
             $currentNodeAggregates[$adapterName] = $query($graph, $adapterName);
         }
 
@@ -171,7 +171,7 @@ trait ProjectedNodeAggregateTrait
     {
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
-                iterator_to_array($this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
+                iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
                 )),
@@ -194,7 +194,7 @@ trait ProjectedNodeAggregateTrait
             $actualDiscriminators = array_values(array_map(function (ReadableNodeAggregateInterface $parentNodeAggregate) {
                 return $parentNodeAggregate->getContentStreamIdentifier() . ';' . $parentNodeAggregate->getIdentifier();
             }, iterator_to_array(
-                $this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
+                $this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
                 )
@@ -214,7 +214,7 @@ trait ProjectedNodeAggregateTrait
     {
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
-                iterator_to_array($this->getContentGraphs()[$adapterName]->findChildNodeAggregates(
+                iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
                 )),
@@ -236,7 +236,7 @@ trait ProjectedNodeAggregateTrait
             }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (ReadableNodeAggregateInterface $parentNodeAggregate) {
                 return $parentNodeAggregate->getContentStreamIdentifier() . ':' . $parentNodeAggregate->getIdentifier();
-            }, iterator_to_array($this->getContentGraphs()[$adapterName]->findChildNodeAggregates(
+            }, iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
                 $nodeAggregate->getContentStreamIdentifier(),
                 $nodeAggregate->getIdentifier()
             ))));

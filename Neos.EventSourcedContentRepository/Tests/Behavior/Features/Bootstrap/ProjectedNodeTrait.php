@@ -40,7 +40,7 @@ trait ProjectedNodeTrait
 
     protected ?NodesByAdapter $currentNodes = null;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     abstract protected function getCurrentSubgraphs(): ContentSubgraphs;
 
@@ -204,7 +204,7 @@ trait ProjectedNodeTrait
     protected function initializeCurrentNodesFromContentGraphs(callable $query): void
     {
         $currentNodes = [];
-        foreach ($this->getContentGraphs() as $adapterName => $graph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $graph) {
             $currentNodes[$adapterName] = $query($graph, $adapterName);
         }
 

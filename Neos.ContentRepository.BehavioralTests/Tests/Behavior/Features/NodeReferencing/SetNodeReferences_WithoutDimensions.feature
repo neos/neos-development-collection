@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Node References without Dimensions
 
   As a user of the CR I want to be able to create, overwrite, reorder an delete reference between nodes
