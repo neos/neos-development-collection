@@ -58,15 +58,20 @@ trait NodeVariation
                 $event->specializationOrigin
             );
 
+            $oldCoveringNode = $this->projectionHypergraph->findNodeRecordByCoverage(
+                $event->contentStreamIdentifier,
+                $event->specializationOrigin->toDimensionSpacePoint(),
+                $event->nodeAggregateIdentifier
+            );
             $this->assignNewChildNodeToAffectedHierarchyRelations(
                 $event->contentStreamIdentifier,
-                $sourceNode->relationAnchorPoint,
+                $oldCoveringNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint,
                 $event->specializationCoverage
             );
             $this->assignNewParentNodeToAffectedHierarchyRelations(
                 $event->contentStreamIdentifier,
-                $sourceNode->relationAnchorPoint,
+                $oldCoveringNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint,
                 $event->specializationCoverage
             );
