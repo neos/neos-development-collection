@@ -97,3 +97,23 @@ Feature: Set properties
       | date          | Date:2021-03-13T17:33:17+00:00                                |
       | uri           | URI:https://www.neos.io                                       |
       | postalAddress | PostalAddress:anotherDummy                                    |
+
+  Scenario: Set node properties, partially
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | contentStreamIdentifier   | "cs-identifier"            |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"         |
+      | originDimensionSpacePoint | {"language": "de"}         |
+      | propertyValues            | {"string":"My new string"} |
+    And the graph projection is fully up to date
+    Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect this node to have the following properties:
+      | Key           | Value                                                      |
+      | string        | "My new string"                                            |
+      | int           | 42                                                         |
+      | float         | 84.72                                                      |
+      | bool          | false                                                      |
+      | array         | {"givenName":"Nody", "familyName":"McNodeface", "age": 42} |
+      | date          | Date:2020-08-20T18:56:15+00:00                             |
+      | uri           | URI:https://neos.io                                        |
+      | postalAddress | PostalAddress:dummy                                        |
