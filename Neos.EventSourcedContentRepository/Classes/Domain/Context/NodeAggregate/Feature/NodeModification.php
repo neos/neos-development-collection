@@ -93,8 +93,10 @@ trait NodeModification
             $events = [];
             foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
                 $scope = PropertyScope::from($scopeValue);
-                $affectedOrigins = match($scope) {
-                    PropertyScope::SCOPE_NODE => new OriginDimensionSpacePointSet([$command->originDimensionSpacePoint]),
+                $affectedOrigins = match ($scope) {
+                    PropertyScope::SCOPE_NODE => new OriginDimensionSpacePointSet([
+                        $command->originDimensionSpacePoint
+                    ]),
                     PropertyScope::SCOPE_SPECIALIZATIONS => OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
                         $this->getInterDimensionalVariationGraph()->getSpecializationSet(
                             $command->originDimensionSpacePoint->toDimensionSpacePoint()

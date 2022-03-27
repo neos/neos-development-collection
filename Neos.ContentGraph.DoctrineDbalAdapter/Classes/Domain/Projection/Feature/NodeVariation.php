@@ -143,10 +143,10 @@ trait NodeVariation
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
                 $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                        $sourceNode->relationAnchorPoint,
-                        $event->contentStreamIdentifier,
-                        new DimensionSpacePointSet([$event->sourceOrigin->toDimensionSpacePoint()])
-                    )[$event->sourceOrigin->hash] ?? null;
+                    $sourceNode->relationAnchorPoint,
+                    $event->contentStreamIdentifier,
+                    new DimensionSpacePointSet([$event->sourceOrigin->toDimensionSpacePoint()])
+                )[$event->sourceOrigin->hash] ?? null;
                 if (is_null($ingoingSourceHierarchyRelation)) {
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
                         get_class($event)
