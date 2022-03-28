@@ -12,6 +12,9 @@ Feature: Set node properties with different scopes
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
+        unscopedProperty:
+          type: string
+          defaultValue: 'My string'
         nodeScopedProperty:
           type: string
           scope: node
@@ -58,27 +61,30 @@ Feature: Set node properties with different scopes
 
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                                                                                                                  |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                        |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                                                                                     |
-      | originDimensionSpacePoint | {"language": "de"}                                                                                                                     |
-      | propertyValues            | {"nodeScopedProperty":"My new string", "specializationsScopedProperty":"My new string", "nodeAggregateScopedProperty":"My new string"} |
+      | Key                       | Value                                                                                                                                                                      |
+      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                            |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                                                                                                                         |
+      | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                         |
+      | propertyValues            | {"unscopedProperty":"My new string", "nodeScopedProperty":"My new string", "specializationsScopedProperty":"My new string", "nodeAggregateScopedProperty":"My new string"} |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"mul"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key                           | Value           |
+      | unscopedProperty              | "My string"     |
       | nodeScopedProperty            | "My string"     |
       | specializationsScopedProperty | "My string"     |
       | nodeAggregateScopedProperty   | "My new string" |
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key                           | Value           |
+      | unscopedProperty              | "My new string" |
       | nodeScopedProperty            | "My new string" |
       | specializationsScopedProperty | "My new string" |
       | nodeAggregateScopedProperty   | "My new string" |
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"gsw"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key                           | Value           |
+      | unscopedProperty              | "My string"     |
       | nodeScopedProperty            | "My string"     |
       | specializationsScopedProperty | "My new string" |
       | nodeAggregateScopedProperty   | "My new string" |
