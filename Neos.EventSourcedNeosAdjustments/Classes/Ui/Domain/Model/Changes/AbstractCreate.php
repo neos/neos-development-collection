@@ -56,7 +56,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
     /**
      * Incoming data from creationDialog
      *
-     * @var array<int|string,mixed>
+     * @var array
      */
     protected array $data = [];
 
@@ -65,7 +65,10 @@ abstract class AbstractCreate extends AbstractStructuralChange
      */
     protected ?string $name = null;
 
-    public function setNodeType(string|NodeType $nodeType): void
+    /**
+     * @param string $nodeType
+     */
+    public function setNodeType($nodeType): void
     {
         if (is_string($nodeType)) {
             $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
@@ -80,7 +83,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
     }
 
     /**
-     * @param array<int|string,mixed> $data
+     * @param array $data
      */
     public function setData(array $data): void
     {

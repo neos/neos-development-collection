@@ -234,13 +234,14 @@ class BackendController extends ActionController
     /**
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    public function redirectToAction(NodeAddress $node): void
+    public function redirectToAction(string $node): void
     {
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
         $this->response->setHttpHeader('Cache-Control', [
             'no-cache',
             'no-store'
         ]);
-        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
+        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $nodeAddress]);
     }
 
     protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint

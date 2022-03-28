@@ -215,7 +215,7 @@ class BackendServiceController extends ActionController
     /**
      * Publish nodes
      *
-     * @param array<int,string> $nodeContextPaths
+     * @param array $nodeContextPaths
      */
     public function publishAction(array $nodeContextPaths, string $targetWorkspaceName): void
     {
@@ -258,7 +258,7 @@ class BackendServiceController extends ActionController
     /**
      * Discard nodes
      *
-     * @param array<int,string> $nodeContextPaths
+     * @param array $nodeContextPaths
      */
     public function discardAction(array $nodeContextPaths): void
     {
@@ -388,7 +388,7 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on copy
      *
-     * @param array<int|string,mixed> $nodes
+     * @param array $nodes
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @throws \Neos\Flow\Property\Exception
@@ -419,7 +419,7 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on cut
      *
-     * @param array<int,string> $nodes
+     * @param array $nodes
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
@@ -535,7 +535,7 @@ class BackendServiceController extends ActionController
     /**
      * Build and execute a flow query chain
      *
-     * @param array<int,array<string,mixed>> $chain
+     * @param array $chain
      */
     public function flowQueryAction(array $chain): string
     {
