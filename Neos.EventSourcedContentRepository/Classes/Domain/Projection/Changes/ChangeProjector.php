@@ -83,9 +83,9 @@ class ChangeProjector implements ProjectorInterface
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
         $this->markAsChanged(
-            $event->getContentStreamIdentifier(),
-            $event->getNodeAggregateIdentifier(),
-            $event->getOriginDimensionSpacePoint()
+            $event->contentStreamIdentifier,
+            $event->nodeAggregateIdentifier,
+            $event->originDimensionSpacePoint
         );
     }
 

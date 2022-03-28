@@ -564,7 +564,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-                $node->properties = $node->properties->merge($event->getPropertyValues());
+                $node->properties = $node->properties->merge($event->propertyValues);
             });
         });
     }

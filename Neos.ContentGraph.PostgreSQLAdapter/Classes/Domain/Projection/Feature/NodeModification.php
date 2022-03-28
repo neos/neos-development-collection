@@ -33,18 +33,18 @@ trait NodeModification
     {
         $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                $event->getContentStreamIdentifier(),
-                $event->getOriginDimensionSpacePoint(),
-                $event->getNodeAggregateIdentifier()
+                $event->contentStreamIdentifier,
+                $event->originDimensionSpacePoint,
+                $event->nodeAggregateIdentifier
             );
             if (is_null($nodeRecord)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
             $this->copyOnWrite(
-                $event->getContentStreamIdentifier(),
+                $event->contentStreamIdentifier,
                 $nodeRecord,
                 function (NodeRecord $node) use ($event) {
-                    $node->properties = $node->properties->merge($event->getPropertyValues());
+                    $node->properties = $node->properties->merge($event->propertyValues);
                 }
             );
         });

@@ -384,10 +384,10 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, RawEvent $rawEvent): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        $newPropertyValues = $event->getPropertyValues()->getPlainValues();
+        $newPropertyValues = $event->propertyValues->getPlainValues();
         if (!isset($newPropertyValues['uriPathSegment']) && !isset($newPropertyValues['targetMode'])
             && !isset($newPropertyValues['target'])) {
             return;
@@ -397,8 +397,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         // see https://github.com/neos/contentrepository-development-collection/issues/163
 
         $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $event->getNodeAggregateIdentifier(),
-            $event->getOriginDimensionSpacePoint()->hash
+            $event->nodeAggregateIdentifier,
+            $event->originDimensionSpacePoint->hash
         ));
 
         if ($node === null) {
@@ -412,8 +412,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'target' => $newPropertyValues['target'] ?? $shortcutTarget['target'],
             ];
             $this->updateNodeByIdAndDimensionSpacePointHash(
-                $event->getNodeAggregateIdentifier(),
-                $event->getOriginDimensionSpacePoint()->hash,
+                $event->nodeAggregateIdentifier,
+                $event->originDimensionSpacePoint->hash,
                 ['shortcutTarget' => $shortcutTarget]
             );
         }
@@ -441,7 +441,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             [
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
-                'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
+                'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]
