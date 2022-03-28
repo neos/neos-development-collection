@@ -34,8 +34,7 @@ trait NodeRemoval
      */
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        return;
-        $this->transactional(function () use ($event) {
+        /* $this->transactional(function () use ($event) {
             $nodeRecordsToBeRemoved = [];
             foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
@@ -47,7 +46,7 @@ trait NodeRemoval
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
                 }
 
-                /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
+                @var HierarchyHyperrelationRecord $ingoingHierarchyRelation
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordByChildNodeAnchor(
                         $event->getContentStreamIdentifier(),
@@ -79,7 +78,7 @@ trait NodeRemoval
             foreach ($nodeRecordsToBeRemoved as $nodeRecord) {
                 $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
             }
-        });
+        });*/
     }
 
     /**
