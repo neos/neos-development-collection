@@ -80,7 +80,7 @@ trait NodeModification
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $domainEvents = null;
+        $domainEvents = DomainEvents::createEmpty();
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$domainEvents) {
             // Check if node exists
             $nodeAggregate = $this->requireProjectedNodeAggregate(
@@ -99,20 +99,23 @@ trait NodeModification
                     $this->interDimensionalVariationGraph
                 );
                 foreach ($affectedOrigins as $affectedOrigin) {
-                    $events[] = DecoratedEvent::addIdentifier(
-                        new NodePropertiesWereSet(
-                            $command->contentStreamIdentifier,
-                            $command->nodeAggregateIdentifier,
-                            $affectedOrigin,
-                            $propertyValues,
-                            $command->initiatingUserIdentifier
-                        ),
-                        Uuid::uuid4()->toString()
+                    $events[] = new NodePropertiesWereSet(
+                        $command->contentStreamIdentifier,
+                        $command->nodeAggregateIdentifier,
+                        $affectedOrigin,
+                        $propertyValues,
+                        $command->initiatingUserIdentifier
                     );
                 }
             }
-
-            $domainEvents = DomainEvents::fromArray($events);
+            $events = $this->mergeSplitEvents($events);
+            $domainEvents = DomainEvents::fromArray(array_map(
+                fn(NodePropertiesWereSet $event): DecoratedEvent => DecoratedEvent::addIdentifier(
+                    $event,
+                    Uuid::uuid4()->toString()
+                ),
+                $events
+            ));
 
             $this->getNodeAggregateEventPublisher()->publishMany(
                 ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
@@ -120,7 +123,6 @@ trait NodeModification
                 $domainEvents
             );
         });
-        /** @var DomainEvents $domainEvents */
 
         return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
     }
@@ -145,5 +147,25 @@ trait NodeModification
             fn(array $propertyValues): SerializedPropertyValues => SerializedPropertyValues::fromArray($propertyValues),
             $propertyValuesByScope
         );
+    }
+
+    /**
+     * @param array<int,NodePropertiesWereSet> $events
+     * @return array<int,NodePropertiesWereSet>
+     */
+    private function mergeSplitEvents(array $events): array
+    {
+        /** @var array<string,NodePropertiesWereSet> $eventsByOrigin */
+        $eventsByOrigin = [];
+        foreach ($events as $domainEvent) {
+            if (!isset($eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash])) {
+                $eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash] = $domainEvent;
+            } else {
+                $eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash]
+                    = $eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash]->mergeProperties($domainEvent);
+            }
+        }
+
+        return array_values($eventsByOrigin);
     }
 }

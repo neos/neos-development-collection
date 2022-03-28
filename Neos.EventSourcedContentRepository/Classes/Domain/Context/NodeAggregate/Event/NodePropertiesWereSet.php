@@ -71,4 +71,15 @@ final class NodePropertiesWereSet implements
             $this->initiatingUserIdentifier
         );
     }
+
+    public function mergeProperties(self $other): self
+    {
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->originDimensionSpacePoint,
+            $this->propertyValues->merge($other->propertyValues),
+            $this->initiatingUserIdentifier
+        );
+    }
 }
