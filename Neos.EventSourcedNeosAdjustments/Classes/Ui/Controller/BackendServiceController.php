@@ -32,6 +32,7 @@ use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
+use Neos\EventSourcedNeosAdjustments\Ui\TypeConverter\ChangeCollectionConverter;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
@@ -136,6 +137,12 @@ class BackendServiceController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var ChangeCollectionConverter
+     */
+    protected $changeCollectionConverter;
+
+    /**
+     * @Flow\Inject
      * @var NodeClipboard
      */
     protected $clipboard;
@@ -165,8 +172,9 @@ class BackendServiceController extends ActionController
     /**
      * Apply a set of changes to the system
      */
-    public function changeAction(ChangeCollection $changes): void
+    public function changeAction(array $changes): void
     {
+        $changes = $this->changeCollectionConverter->convertFrom($changes, ChangeCollection::class);
         try {
             $count = $changes->count();
             $changes->apply();
