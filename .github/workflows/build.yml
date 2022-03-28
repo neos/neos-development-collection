@@ -115,6 +115,7 @@ jobs:
         run: |
           rm -f Configuration/Routes.yaml
           rm -f Configuration/Testing/Settings.yaml
+          rm -f Configuration/Testing/Postgres/Settings.yaml
           cat <<EOF >> Configuration/Testing/Settings.yaml
           Neos:
             Flow:
@@ -138,6 +139,18 @@ jobs:
                     user: 'neos'
                     password: 'neos'
           EOF
+          cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
+          EOF
           echo "Running in context '$FLOW_CONTEXT'"
 
       - name: Run Linter
@@ -147,6 +160,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           cd Packages/CR
           composer test
 
