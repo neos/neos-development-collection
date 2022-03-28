@@ -147,6 +147,7 @@ jobs:
                   host: '127.0.0.1'
                   port: 5432
                   driver: pdo_pgsql
+                  charset: 'UTF8'
                   user: 'neos'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
