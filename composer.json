@@ -66,6 +66,9 @@
     },
     "autoload": {
         "psr-4": {
+            "Neos\\CliSetup\\": [
+                "Neos.CliSetup/Classes"
+            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/Classes"
             ],
@@ -113,9 +116,6 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
-            ],
-            "Neos\\CliSetup\\\\": [
-                "Neos.CliSetup/Classes"
             ]
         }
     },
