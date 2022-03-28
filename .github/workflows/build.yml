@@ -115,6 +115,7 @@ jobs:
         run: |
           rm -f Configuration/Routes.yaml
           rm -f Configuration/Testing/Settings.yaml
+          touch Configuration/Testing/Postgres/Settings.yaml
           rm -f Configuration/Testing/Postgres/Settings.yaml
           cat <<EOF >> Configuration/Testing/Settings.yaml
           Neos:
