@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -37,6 +39,22 @@ enum PropertyScope: string implements \JsonSerializable
      * The "nodeAggregate" scope, meaning that all variants, e.g. all nodes in the aggregate will be modified
      */
     case SCOPE_NODE_AGGREGATE = 'nodeAggregate';
+
+    public function resolveAffectedOrigins(
+        OriginDimensionSpacePoint $origin,
+        NodeAggregate $nodeAggregate,
+        InterDimensionalVariationGraph $variationGraph
+    ): OriginDimensionSpacePointSet {
+        return match ($this) {
+            PropertyScope::SCOPE_NODE => new OriginDimensionSpacePointSet([$origin]),
+            PropertyScope::SCOPE_SPECIALIZATIONS => OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
+                $variationGraph->getSpecializationSet(
+                    $origin->toDimensionSpacePoint()
+                )
+            )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()),
+            PropertyScope::SCOPE_NODE_AGGREGATE => $nodeAggregate->getOccupiedDimensionSpacePoints()
+        };
+    }
 
     public function jsonSerialize(): string
     {

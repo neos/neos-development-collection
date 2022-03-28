@@ -93,17 +93,11 @@ trait NodeModification
             $events = [];
             foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
                 $scope = PropertyScope::from($scopeValue);
-                $affectedOrigins = match ($scope) {
-                    PropertyScope::SCOPE_NODE => new OriginDimensionSpacePointSet([
-                        $command->originDimensionSpacePoint
-                    ]),
-                    PropertyScope::SCOPE_SPECIALIZATIONS => OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
-                        $this->getInterDimensionalVariationGraph()->getSpecializationSet(
-                            $command->originDimensionSpacePoint->toDimensionSpacePoint()
-                        )
-                    )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()),
-                    PropertyScope::SCOPE_NODE_AGGREGATE => $nodeAggregate->getOccupiedDimensionSpacePoints()
-                };
+                $affectedOrigins = $scope->resolveAffectedOrigins(
+                    $command->originDimensionSpacePoint,
+                    $nodeAggregate,
+                    $this->interDimensionalVariationGraph
+                );
                 foreach ($affectedOrigins as $affectedOrigin) {
                     $events[] = DecoratedEvent::addIdentifier(
                         new NodePropertiesWereSet(
