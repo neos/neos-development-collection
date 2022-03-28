@@ -465,13 +465,12 @@ class BackendServiceController extends ActionController
 
     /**
      * Fetches all the node information that can be lazy-loaded
-     *
-     * @param array<int,NodeAddress> $nodes
      */
     public function getAdditionalNodeMetadataAction(array $nodes): void
     {
         $result = [];
-        foreach ($nodes as $nodeAddress) {
+        foreach ($nodes as $nodeAddressString) {
+            $nodeAddress = $this->nodeAddressFactory->createFromUriString($nodeAddressString);
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
