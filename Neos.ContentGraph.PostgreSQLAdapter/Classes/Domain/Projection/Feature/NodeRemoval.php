@@ -34,6 +34,7 @@ trait NodeRemoval
      */
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
+        return;
         $this->transactional(function () use ($event) {
             $nodeRecordsToBeRemoved = [];
             foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
