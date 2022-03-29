@@ -4,7 +4,6 @@ prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayI
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:LegacyTag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-	attributes = Attributes
 	omitClosingTag = false
 	selfClosingTag = false
 }
@@ -25,6 +24,6 @@ nestedOverwritesAndProcessors.deepProcessorAppliesToEel = Neos.Fusion:SpecialTag
 	attributes.tea.@process.addProcessed = ${value + ' infused'}
 }
 
-nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
-	attributes.coffee.@process.addProcessed = ${String.trim(value + ' harvey')}
+nnestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:Value {
+  value.@process.expectEmptyStringIfBaseIsNotDefined = ${value == '' ? 'EmptyString' : value}
 }
