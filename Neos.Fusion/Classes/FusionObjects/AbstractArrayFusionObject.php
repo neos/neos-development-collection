@@ -54,7 +54,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * @param mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->properties[$offset]);
     }
@@ -63,7 +63,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->fusionValue($offset);
     }
@@ -73,7 +73,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->properties[$offset] = $value;
     }
@@ -82,7 +82,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->properties[$offset]);
     }
