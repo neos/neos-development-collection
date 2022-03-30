@@ -44,6 +44,6 @@ class NestedOverwritesAndProcessorsTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('nestedOverwritesAndProcessors/deepProcessorAppliesWithNoBaseValue');
-        self::assertEquals('<div class="Xclass" tea="green" coffee="harvey"></div>', $view->render());
+        self::assertEquals('EmptyString', $view->render());
     }
 }

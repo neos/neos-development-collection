@@ -16,13 +16,3 @@
   className: Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator
 'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
   className: Neos\ContentRepository\Domain\Service\NodeService
-
-'Neos\ContentRepository\Domain\Service\NodeTypeManager':
-  properties:
-    fullConfigurationCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_ContentRepository_FullNodeTypeConfiguration

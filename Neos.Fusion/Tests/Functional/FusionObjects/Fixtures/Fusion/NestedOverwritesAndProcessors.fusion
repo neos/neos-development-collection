@@ -3,10 +3,11 @@ prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImpleme
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
-  @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-  attributes = Attributes
-  omitClosingTag = false
-  selfClosingTag = false
+	# dummy declaration, will be overriden someplace - due to merged import of fixtures.
+	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
+	attributes = Neos.Fusion:DataStructure
+	omitClosingTag = false
+	selfClosingTag = false
 }
 
 
@@ -25,6 +26,6 @@ nestedOverwritesAndProcessors.deepProcessorAppliesToEel = Neos.Fusion:SpecialTag
   attributes.tea.@process.addProcessed = ${value + ' infused'}
 }
 
-nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
-  attributes.coffee.@process.addProcessed = ${String.trim(value + ' harvey')}
+nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:Value {
+  value.@process.expectEmptyStringIfBaseIsNotDefined = ${value == '' ? 'EmptyString' : value}
 }
