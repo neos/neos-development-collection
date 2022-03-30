@@ -17,18 +17,12 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
-use Neos\Neos\Service\VieSchemaBuilder;
 
 /**
  * @Flow\Scope("singleton")
  */
 class SchemaController extends ActionController
 {
-    /**
-     * @var VieSchemaBuilder
-     * @Flow\Inject
-     */
-    protected $vieSchemaBuilder;
 
     /**
      * @var NodeTypeSchemaBuilder
@@ -41,29 +35,6 @@ class SchemaController extends ActionController
      * @var VariableFrontend
      */
     protected $nodeTypeSchemaCache;
-
-    /**
-     * Generate and renders the JSON schema for the node types for VIE.
-     * Schema format example: http://schema.rdfs.org/all.json
-     *
-     * @return string
-     */
-    public function vieSchemaAction(): string
-    {
-        $version = $this->request->hasArgument('version') ? $this->request->getArgument('version') : '';
-        $cacheIdentifier = 'vieSchema_' . $version;
-
-        $this->response->setContentType('application/json');
-        $this->response->setHttpHeader('Cache-Control', 'max-age=' . (3600 * 24 * 7));
-
-        $vieSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
-        if (!$vieSchema) {
-            $vieSchema = json_encode($this->vieSchemaBuilder->generateVieSchema());
-            $this->nodeTypeSchemaCache->flushByTag('vie');
-            $this->nodeTypeSchemaCache->set($cacheIdentifier, $vieSchema, ['vie']);
-        }
-        return $vieSchema;
-    }
 
     /**
      * Get the node type configuration schema for the Neos UI
