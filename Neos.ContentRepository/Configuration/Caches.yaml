@@ -1,5 +1,0 @@
-# This cache is currently not cleared via FileMonitor,
-# therefore it is activated only in Production Context (see Production/Caches.yaml).
-Neos_ContentRepository_FullNodeTypeConfiguration:
-  frontend: Neos\Cache\Frontend\VariableFrontend
-  backend: Neos\Cache\Backend\NullBackend

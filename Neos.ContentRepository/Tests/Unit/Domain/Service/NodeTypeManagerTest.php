@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\Cache\Frontend\StringFrontend;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -48,10 +47,6 @@ class NodeTypeManagerTest extends UnitTestCase
         $this->nodeTypeManager = new NodeTypeManager();
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-
-        $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::any())->method('get')->willReturn(null);
-        $this->inject($this->nodeTypeManager, 'fullConfigurationCache', $mockCache);
 
         $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('NodeTypes')->will(self::returnValue($nodeTypesFixtureData));
         $this->inject($this->nodeTypeManager, 'configurationManager', $this->mockConfigurationManager);
