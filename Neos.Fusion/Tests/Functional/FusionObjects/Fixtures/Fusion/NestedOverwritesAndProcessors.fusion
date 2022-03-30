@@ -2,8 +2,10 @@ prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\V
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
-prototype(Neos.Fusion:LegacyTag) {
+prototype(Neos.Fusion:Tag) {
+	# dummy declaration, will be overriden someplace - due to merged import of fixtures.
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
+	attributes = Neos.Fusion:DataStructure
 	omitClosingTag = false
 	selfClosingTag = false
 }
