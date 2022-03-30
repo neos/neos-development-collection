@@ -9,7 +9,7 @@ prototype(Neos.Fusion:LegacyTag) {
 }
 
 
-prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:LegacyTag) {
+prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:Tag) {
 	attributes.class = Neos.Fusion:TestRenderer {
 		test = 'class'
 	}
@@ -24,6 +24,6 @@ nestedOverwritesAndProcessors.deepProcessorAppliesToEel = Neos.Fusion:SpecialTag
 	attributes.tea.@process.addProcessed = ${value + ' infused'}
 }
 
-nnestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:Value {
+nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:Value {
   value.@process.expectEmptyStringIfBaseIsNotDefined = ${value == '' ? 'EmptyString' : value}
 }
