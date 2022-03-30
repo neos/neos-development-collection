@@ -137,8 +137,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
     {
         $setNoOpener = $this->fusionValue('setNoOpener');
         $setExternal = $this->fusionValue('setExternal');
-        $externalLinkTarget = \trim($this->fusionValue('externalLinkTarget'));
-        $resourceLinkTarget = \trim($this->fusionValue('resourceLinkTarget'));
+        $externalLinkTarget = \trim((string)$this->fusionValue('externalLinkTarget'));
+        $resourceLinkTarget = \trim((string)$this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = \preg_replace_callback(
@@ -152,7 +152,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget && $resourceLinkTarget !== '' && \strpos($linkHref, '_Resources') !== false) {
+                if ($resourceLinkTarget && $resourceLinkTarget !== '' && str_contains($linkHref, '_Resources')) {
                     $target = $resourceLinkTarget;
                 }
                 if ($isExternalLink && $setNoOpener) {
@@ -161,7 +161,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if ($isExternalLink && $setExternal) {
                     $linkText = self::setAttribute('rel', 'external', $linkText);
                 }
-                if (is_string($target) && strlen($target) !== 0) {
+                if (is_string($target) && $target !== '') {
                     return self::setAttribute('target', $target, $linkText);
                 }
                 return $linkText;

@@ -49,6 +49,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
 
         $mockDomains[0]->setHostname('neos.io');
         $mockDomains[1]->setHostname('flow.neos.io');
+        $mockDomains[2]->setHostname('');
         $mockDomains[3]->setHostname('yacumboolu.neos.io');
 
         $expectedDomains = [
