@@ -69,6 +69,11 @@ class Parser implements ParserInterface
         return $mergedArrayTree->getTree();
     }
 
+    public function enableParsePartialsCache(bool $enable): void
+    {
+        $this->parserCache->enableCache($enable);
+    }
+
     protected function handleFileInclude(MergedArrayTree $mergedArrayTree, string $filePattern, ?string $contextPathAndFilename): void
     {
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $contextPathAndFilename, '.fusion');

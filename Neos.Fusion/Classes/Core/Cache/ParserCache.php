@@ -45,6 +45,11 @@ class ParserCache
      */
     protected $enableCache;
 
+    public function enableCache(bool $enable): void
+    {
+        $this->enableCache = $enable;
+    }
+
     public function cacheForFusionFile(?string $contextPathAndFilename, \Closure $generateValueToCache): FusionFile
     {
         if ($this->enableCache === false) {
