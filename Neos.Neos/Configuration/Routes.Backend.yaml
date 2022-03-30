@@ -56,14 +56,6 @@
     '@action':     'masterPlugins'
 
 -
-  name: 'Schema - VIE'
-  uriPattern: 'schema/vie'
-  defaults:
-    '@controller': 'Backend\Schema'
-    '@action':     'vieSchema'
-  appendExceedingArguments: true
-
--
   name: 'Schema - NodeType'
   uriPattern: 'schema/node-type'
   defaults:

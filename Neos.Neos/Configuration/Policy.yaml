@@ -41,7 +41,7 @@ privilegeTargets:
 
     'Neos.Neos:Backend.Content.Services':
       label: Access to content service APIs
-      matcher: 'method(Neos\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(Neos\Neos\Controller\Backend\SettingsController->editPreviewAction())'
+      matcher: 'method(Neos\Neos\Controller\Backend\SchemaController->(nodeTypeSchema)Action()) || method(Neos\Neos\Controller\Backend\SettingsController->editPreviewAction())'
 
     'Neos.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter':
       label: Access to own personal workspace
