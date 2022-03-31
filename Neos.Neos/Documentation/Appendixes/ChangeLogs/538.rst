@@ -1,0 +1,55 @@
+`5.3.8 (2022-03-18) <https://github.com/neos/neos-development-collection/releases/tag/5.3.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Only emit thumbnailCreated when successful <https://github.com/neos/neos-development-collection/pull/3574>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3573 <https://github.com/neos/neos-development-collection/issues/3573>`_
+
+`BUGFIX: Persist Thumbnail using DBAL to avoid unique constraint errors <https://github.com/neos/neos-development-collection/pull/3583>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This uses a direct SQL INSERT via DBAL to store Thumbnails. Doing this
+avoid unique constraint exceptions that otherwise occur when multiple
+concurrent requests trigger Thumbnail creation.
+
+* Fixes: `#3479 <https://github.com/neos/neos-development-collection/issues/3479>`_
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Check for the native PHP extension instead of the ImagineService, since ImageService is not used further in this generator. <https://github.com/neos/neos-development-collection/pull/3617>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Since there is no use of the ImagineService within the DocumentThumbnailGenerator, the availability of the native PHP extension for Imagick should be checked instead. This allows the use of the DocumentThumbnailGenerator with Imagick and the use of other Imagine based thumbnail generators using GDlib, for example.
+
+* Packages: ``Media`` ``NodeTypes``
+
+`BUGFIX: backend message partials not found <https://github.com/neos/neos-development-collection/pull/3584>`_
+-------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Fix error the circumstances leading to:
+
+```
+The partial files "resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData.html", "resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData" could not be loaded.
+```
+
+This error message is hiding the actual error message I need to see.
+
+**How I did it**
+
+Remove usage of partials that had been deleted already in 2019 in 86088dc 
+
+**How to verify it**
+
+Go to various page in backend with a certain content Node Type on it. Go to this Node Type's yaml and change its Name from, e.g. `Vendor.Site:Box` to `Vendor.Site:Boxers`. Reload the backend and find the partial error above occur. After applying this bugfix, you'll find the real error message, `An exception was thrown while Neos tried to render your page`
+
+fixes: #2757
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.3.7...5.3.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
