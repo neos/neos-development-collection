@@ -20,7 +20,7 @@ privilegeTargets:
       matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'Neos.Neos:PublicFrontendAccess':
-      label: General Access to frontend rendering
+      label: General access to frontend rendering
       matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->showAction())'
 
     'Neos.Neos:ContentPreview':
@@ -121,7 +121,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
 
     'Neos.Neos:Backend.DataSource':
-      label: General access to data-sources
+      label: General access to data sources
       matcher: 'method(Neos\Neos\Service\Controller\DataSourceController->(index|error)Action())'
 
     'Neos.Neos:Impersonate':
@@ -300,17 +300,17 @@ roles:
 
   'Neos.Neos:RestrictedEditor':
     label: Restricted Editor
-    description: Grants access to the content, asset, workspace and history module. The user is only allowed to publish to internal workspace.
+    description: Grants access to the content, media, workspace and history module. The user is allowed to publish to internal workspaces.
     parentRoles: ['Neos.Neos:AbstractEditor']
 
   'Neos.Neos:Editor':
     label: Editor
-    description: Grants access to the content, asset, workspace and history module. Users with this role is able to publish to the live workspace.
+    description: Grants access to the content, media, workspace and history module. The user is allowed to publish to the live workspace.
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
 
   'Neos.Neos:UserManager':
     label: Neos User Manager
-    description: A user with this role is able to create, edit and delete users which has the same or a subset of his own roles.
+    description: The user is allowed to create, edit and delete users having the same or a subset of their own roles.
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
