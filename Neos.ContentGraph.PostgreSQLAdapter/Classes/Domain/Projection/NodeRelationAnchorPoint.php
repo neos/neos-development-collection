@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,21 +10,22 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
  * The node relation anchor value object
- *
- * @Flow\Proxy(false)
  */
-final class NodeRelationAnchorPoint implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
 {
-    private string $value;
-
-    private function __construct(string $value)
-    {
-        $this->value = $value;
+    private function __construct(
+        public readonly string $value
+    ) {
     }
 
     public static function create(): self

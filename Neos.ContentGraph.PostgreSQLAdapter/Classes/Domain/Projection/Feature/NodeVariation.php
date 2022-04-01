@@ -20,6 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -78,6 +79,10 @@ trait NodeVariation
                 $specializedNode->relationAnchorPoint,
                 $event->specializationCoverage
             );
+            $this->copyReferenceRelations(
+                $sourceNode->relationAnchorPoint,
+                $specializedNode->relationAnchorPoint
+            );
         });
     }
 
@@ -103,7 +108,6 @@ trait NodeVariation
                 $event->generalizationCoverage,
                 $generalizedNode->relationAnchorPoint
             );
-
             $this->addMissingHierarchyRelations(
                 $event->contentStreamIdentifier,
                 $event->nodeAggregateIdentifier,
@@ -111,6 +115,10 @@ trait NodeVariation
                 $generalizedNode->relationAnchorPoint,
                 $event->generalizationCoverage,
                 get_class($event)
+            );
+            $this->copyReferenceRelations(
+                $sourceNode->relationAnchorPoint,
+                $generalizedNode->relationAnchorPoint
             );
         });
     }
@@ -137,7 +145,6 @@ trait NodeVariation
                 $event->peerCoverage,
                 $peerNode->relationAnchorPoint
             );
-
             $this->addMissingHierarchyRelations(
                 $event->contentStreamIdentifier,
                 $event->nodeAggregateIdentifier,
@@ -145,6 +152,10 @@ trait NodeVariation
                 $peerNode->relationAnchorPoint,
                 $event->peerCoverage,
                 get_class($event)
+            );
+            $this->copyReferenceRelations(
+                $sourceNode->relationAnchorPoint,
+                $peerNode->relationAnchorPoint
             );
         });
     }
@@ -338,5 +349,31 @@ trait NodeVariation
                 $this->getDatabaseConnection()
             );
         }
+    }
+
+    protected function copyReferenceRelations(
+        NodeRelationAnchorPoint $sourceRelationAnchorPoint,
+        NodeRelationAnchorPoint $destinationRelationAnchorPoint
+    ) {
+        // we don't care whether the target node aggregate covers the variant's origin
+        // since if it doesn't, it already didn't match the source's coverage before
+
+        $this->getDatabaseConnection()->executeStatement('
+                INSERT INTO ' . ReferenceHyperrelationRecord::TABLE_NAME . ' (
+                  originnodeanchor,
+                  name,
+                  destinationnodeaggregateidentifiers
+                )
+                SELECT
+                  :destinationRelationAnchorPoint AS originnodeanchor,
+                  ref.name,
+                  ref.destinationnodeaggregateidentifiers
+                FROM
+                    ' . ReferenceHyperrelationRecord::TABLE_NAME . ' ref
+                    WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
+            ', [
+            'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
+            'destinationRelationAnchorPoint' => $destinationRelationAnchorPoint->value
+        ]);
     }
 }
