@@ -570,11 +570,12 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Publishes or discards the given nodes
      *
-     * @param array<int,string> $nodes
+     * @param array $nodes
      * @throws \Exception
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
+    /** @phpstan-ignore-next-line */
     public function publishOrDiscardNodesAction(array $nodes, string $action, WorkspaceName $selectedWorkspace): void
     {
         $nodeAddresses = [];

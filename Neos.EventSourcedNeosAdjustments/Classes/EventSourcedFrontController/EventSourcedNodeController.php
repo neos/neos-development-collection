@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -50,6 +51,12 @@ class EventSourcedNodeController extends ActionController
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
@@ -122,7 +129,7 @@ class EventSourcedNodeController extends ActionController
     protected $nodeSiteResolvingService;
 
     /**
-     * @param NodeAddress $node Legacy name for backwards compatibility of route components
+     * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
@@ -133,9 +140,9 @@ class EventSourcedNodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function previewAction(NodeAddress $node): void
+    public function previewAction(string $node): void
     {
-        $nodeAddress = $node;
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->contentStreamIdentifier,
@@ -184,7 +191,7 @@ class EventSourcedNodeController extends ActionController
     /**
      * Initializes the view with the necessary parameters encoded in the given NodeAddress
      *
-     * @param NodeAddress $node Legacy name for backwards compatibility of route components
+     * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
@@ -195,9 +202,9 @@ class EventSourcedNodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(NodeAddress $node): void
+    public function showAction(string $node): void
     {
-        $nodeAddress = $node;
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
         if (!$nodeAddress->isInLiveWorkspace()) {
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }

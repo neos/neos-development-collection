@@ -34,7 +34,7 @@ final class DocumentNodeInfo
     /**
      * @var array<string,mixed>|null
      */
-    private ?array $shortcutTarget;
+    private ?array $shortcutTarget = null;
 
     /**
      * @param array<string,mixed> $source

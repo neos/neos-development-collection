@@ -32,6 +32,7 @@ use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
+use Neos\EventSourcedNeosAdjustments\Ui\TypeConverter\ChangeCollectionConverter;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
@@ -136,6 +137,12 @@ class BackendServiceController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var ChangeCollectionConverter
+     */
+    protected $changeCollectionConverter;
+
+    /**
+     * @Flow\Inject
      * @var NodeClipboard
      */
     protected $clipboard;
@@ -165,8 +172,12 @@ class BackendServiceController extends ActionController
     /**
      * Apply a set of changes to the system
      */
-    public function changeAction(ChangeCollection $changes): void
+    /** @phpstan-ignore-next-line */
+    public function changeAction(array $changes): void
     {
+        /** @param array<int,array<string,mixed>> $changes */
+        $changes = $this->changeCollectionConverter->convertFrom($changes, ChangeCollection::class);
+        /** @var ChangeCollection $changes */
         try {
             $count = $changes->count();
             $changes->apply();
@@ -207,8 +218,9 @@ class BackendServiceController extends ActionController
     /**
      * Publish nodes
      *
-     * @param array<int,string> $nodeContextPaths
+     * @param array $nodeContextPaths
      */
+    /** @phpstan-ignore-next-line */
     public function publishAction(array $nodeContextPaths, string $targetWorkspaceName): void
     {
         try {
@@ -250,8 +262,9 @@ class BackendServiceController extends ActionController
     /**
      * Discard nodes
      *
-     * @param array<int,string> $nodeContextPaths
+     * @param array $nodeContextPaths
      */
+    /** @phpstan-ignore-next-line */
     public function discardAction(array $nodeContextPaths): void
     {
         try {
@@ -380,12 +393,13 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on copy
      *
-     * @param array<int|string,mixed> $nodes
+     * @param array $nodes
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
+    /** @phpstan-ignore-next-line */
     public function copyNodesAction(array $nodes): void
     {
         // TODO @christianm want's to have a property mapper for this
@@ -411,11 +425,12 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on cut
      *
-     * @param array<int,string> $nodes
+     * @param array $nodes
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
+    /** @phpstan-ignore-next-line */
     public function cutNodesAction(array $nodes): void
     {
         // TODO @christianm wants to have a property mapper for this
@@ -457,13 +472,13 @@ class BackendServiceController extends ActionController
 
     /**
      * Fetches all the node information that can be lazy-loaded
-     *
-     * @param array<int,NodeAddress> $nodes
      */
+    /** @phpstan-ignore-next-line */
     public function getAdditionalNodeMetadataAction(array $nodes): void
     {
         $result = [];
-        foreach ($nodes as $nodeAddress) {
+        foreach ($nodes as $nodeAddressString) {
+            $nodeAddress = $this->nodeAddressFactory->createFromUriString($nodeAddressString);
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
@@ -528,8 +543,9 @@ class BackendServiceController extends ActionController
     /**
      * Build and execute a flow query chain
      *
-     * @param array<int,array<string,mixed>> $chain
+     * @param array $chain
      */
+    /** @phpstan-ignore-next-line */
     public function flowQueryAction(array $chain): string
     {
         $createContext = array_shift($chain);
