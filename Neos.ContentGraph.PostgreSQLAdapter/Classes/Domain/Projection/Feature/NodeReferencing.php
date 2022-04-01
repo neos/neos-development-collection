@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeAggregateIdentifiers;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
@@ -65,7 +66,7 @@ trait NodeReferencing
                     $referenceRelation->addToDatabase($this->getDatabaseConnection());
                 }
             } else {
-                // @todo log
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
         });
     }
