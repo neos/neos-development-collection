@@ -1,7 +1,7 @@
-@fixtures @adapters=DoctrineDBAL
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Node References without Dimensions
 
-  As a user of the CR I want to be able to create, overwrite, reorder an delete reference between nodes
+  As a user of the CR I want to be able to create, overwrite, reorder and delete reference between nodes
 
   Background:
     Given I have no content dimensions
@@ -14,17 +14,22 @@ Feature: Node References without Dimensions
           type: reference
         referencesProperty:
           type: references
+        restrictedReferenceProperty:
+          type: reference
+          constraints:
+            nodeTypes:
+              '*': false
+              'Neos.ContentRepository.Testing:NodeWithReferences': true
     """
+    And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
-    And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
@@ -187,3 +192,21 @@ Feature: Node References without Dimensions
       | Key               | Value                                                                      |
       | referenceProperty | ["cs-identifier;source-nodandaise;{}", "cs-identifier;berta-destinode;{}"] |
 
+  Scenario: Ensure that a reference between nodes can be set and read when matching constraints
+    When the command SetNodeReferences is executed with payload:
+      | Key                                 | Value                         |
+      | sourceNodeAggregateIdentifier       | "source-nodandaise"           |
+      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]         |
+      | referenceName                       | "restrictedReferenceProperty" |
+      | initiatingUserIdentifier            | "user"                        |
+    And the graph projection is fully up to date
+
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
+    And I expect this node to have the following references:
+      | Key                         | Value                                  |
+      | restrictedReferenceProperty | ["cs-identifier;anthony-destinode;{}"] |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
+    And I expect this node to be referenced by:
+      | Key                         | Value                                  |
+      | restrictedReferenceProperty | ["cs-identifier;source-nodandaise;{}"] |

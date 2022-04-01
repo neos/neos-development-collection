@@ -23,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyScope;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
@@ -89,7 +88,7 @@ trait NodeModification
             );
             $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
             $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
-            $propertyValuesByScope = $this->splitPropertiesByScope($command->propertyValues, $nodeType);
+            $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
             $events = [];
             foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
                 $scope = PropertyScope::from($scopeValue);
@@ -125,28 +124,6 @@ trait NodeModification
         });
 
         return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
-    }
-
-    /**
-     * @return array<string,SerializedPropertyValues>
-     */
-    private function splitPropertiesByScope(SerializedPropertyValues $propertyValues, NodeType $nodeType): array
-    {
-        $propertyValuesByScope = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
-            $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
-            if (is_string($declaration)) {
-                $scope = PropertyScope::from($declaration);
-            } else {
-                $scope = PropertyScope::SCOPE_NODE;
-            }
-            $propertyValuesByScope[$scope->value][$propertyName] = $propertyValue;
-        }
-
-        return array_map(
-            fn(array $propertyValues): SerializedPropertyValues => SerializedPropertyValues::fromArray($propertyValues),
-            $propertyValuesByScope
-        );
     }
 
     /**

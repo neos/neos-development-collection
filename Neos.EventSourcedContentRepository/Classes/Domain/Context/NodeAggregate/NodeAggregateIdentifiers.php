@@ -70,6 +70,14 @@ final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSeriali
         return self::fromArray(\json_decode($jsonString, true));
     }
 
+    public function merge(self $other): self
+    {
+        return new self(...array_merge(
+            $this->nodeAggregateIdentifiers,
+            $other->getIterator()->getArrayCopy()
+        ));
+    }
+
     /**
      * @return array<string,NodeAggregateIdentifier>
      */

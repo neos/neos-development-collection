@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +10,10 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
+
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\Flow\Annotations as Flow;
@@ -20,11 +21,11 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The node discriminator value object collection
  *
- * @implements \IteratorAggregate<string,ContentGraphInterface>
- * @implements \ArrayAccess<string,ContentGraphInterface>
+ * @implements \IteratorAggregate<string,NodeDiscriminator>
+ * @implements \ArrayAccess<string,NodeDiscriminator>
  */
 #[Flow\Proxy(false)]
-final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess
+final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \JsonSerializable
 {
     /**
      * @var array<int,NodeDiscriminator>
@@ -36,21 +37,10 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess
      */
     private \ArrayIterator $iterator;
 
-    /**
-     * @param iterable<int,NodeDiscriminator> $iterable
-     */
-    private function __construct(iterable $iterable)
+    private function __construct(NodeDiscriminator ...$iterable)
     {
-        $discriminators = [];
-        foreach ($iterable as $item) {
-            if (!$item instanceof NodeDiscriminator) {
-                throw new \InvalidArgumentException('ContentGraphs can only consist of ' . NodeDiscriminator::class . ' objects.', 1643561582);
-            }
-            $discriminators[] = $item;
-        }
-
-        $this->discriminators = $discriminators;
-        $this->iterator = new \ArrayIterator($discriminators);
+        $this->discriminators = $iterable;
+        $this->iterator = new \ArrayIterator($iterable);
     }
 
     public static function fromJsonString(string $jsonString): self
@@ -62,20 +52,16 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess
 
     public static function fromArray(array $array): self
     {
-        return new self(array_map(
-            function (string $shorthand) {
-                return NodeDiscriminator::fromShorthand($shorthand);
-            },
+        return new self(...array_map(
+            fn (string $shorthand): NodeDiscriminator => NodeDiscriminator::fromShorthand($shorthand),
             $array
         ));
     }
 
     public static function fromNodes(Nodes $nodes): self
     {
-        return new self(array_map(
-            function (NodeInterface $node) {
-                return NodeDiscriminator::fromNode($node);
-            },
+        return new self(...array_map(
+            fn (NodeInterface $node): NodeDiscriminator => NodeDiscriminator::fromNode($node),
             $nodes->getIterator()->getArrayCopy()
         ));
     }
@@ -113,13 +99,21 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess
         return isset($this->discriminators[$offset]);
     }
 
-    public function offsetSet(mixed $offset, mixed $value): void
+    public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new \BadMethodCallException('Cannot modify immutable object of class NodeDiscriminators.', 1643561864);
     }
 
-    public function offsetUnset(mixed $offset): void
+    public function offsetUnset(mixed $offset): never
     {
         throw new \BadMethodCallException('Cannot modify immutable object of class NodeDiscriminators.', 1643561864);
+    }
+
+    /**
+     * @return array<int,NodeDiscriminator>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->discriminators;
     }
 }
