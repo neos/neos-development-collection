@@ -113,6 +113,7 @@ class ServiceNodesController extends ActionController
      * @param array $nodeTypes A list of node types the list should be filtered by (array(string)
      * @param string $contextNode a node to use as context for the search
      */
+    /* @phpstan-ignore-next-line */
     public function indexAction(
         string $searchTerm = '',
         array $nodeIdentifiers = [],
@@ -121,7 +122,7 @@ class ServiceNodesController extends ActionController
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null
     ): void {
-        $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextNode);
+        $nodeAddress = $contextNode ? $this->nodeAddressFactory->createFromUriString($contextNode) : null;
         unset($contextNode);
         if (is_null($nodeAddress)) {
             $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));

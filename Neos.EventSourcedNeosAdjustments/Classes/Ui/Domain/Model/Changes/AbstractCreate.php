@@ -56,7 +56,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
     /**
      * Incoming data from creationDialog
      *
-     * @var array
+     * @var array<int|string,mixed>
      */
     protected array $data = [];
 
@@ -83,7 +83,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
     }
 
     /**
-     * @param array $data
+     * @param array<int|string,mixed> $data
      */
     public function setData(array $data): void
     {

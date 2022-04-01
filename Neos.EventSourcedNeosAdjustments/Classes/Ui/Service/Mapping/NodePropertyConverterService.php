@@ -318,40 +318,36 @@ class NodePropertyConverterService
         PropertyMappingConfiguration $propertyMappingConfiguration,
         string $dataType = null
     ): bool {
-        if (!isset($this->typesConfiguration[$dataType])
-            || !isset($this->typesConfiguration[$dataType]['typeConverter'])) {
+        $typeConverterClassName = $this->typesConfiguration[$dataType]['typeConverter'] ?? null;
+        if (!is_string($typeConverterClassName)) {
             return false;
         }
 
-        $typeConverter = $this->objectManager->get($this->typesConfiguration[$dataType]['typeConverter']);
+        $typeConverter = $this->objectManager->get($typeConverterClassName);
         if (!$typeConverter instanceof TypeConverterInterface) {
             throw new \RuntimeException(
-                'Configured class ' . $this->typesConfiguration[$dataType]['typeConverter']
+                'Configured class ' . $typeConverterClassName
                     . ' does not implement the required TypeConverterInterface',
                 1645557392
             );
         }
         $propertyMappingConfiguration->setTypeConverter($typeConverter);
-        $this->setTypeConverterOptionsForType(
-            $propertyMappingConfiguration,
-            $this->typesConfiguration[$dataType]['typeConverter'],
-            $dataType
-        );
+        if (is_string($dataType)) {
+            $this->setTypeConverterOptionsForType(
+                $propertyMappingConfiguration,
+                $typeConverterClassName,
+                $dataType
+            );
+        }
 
         return true;
     }
 
-    /**
-     * @param PropertyMappingConfiguration $propertyMappingConfiguration
-     * @param string $typeConverterClass
-     * @param string $dataType
-     * @return void
-     */
     protected function setTypeConverterOptionsForType(
         PropertyMappingConfiguration $propertyMappingConfiguration,
-        $typeConverterClass,
-        $dataType
-    ) {
+        string $typeConverterClass,
+        string $dataType
+    ): void {
         if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
             || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])) {
             return;

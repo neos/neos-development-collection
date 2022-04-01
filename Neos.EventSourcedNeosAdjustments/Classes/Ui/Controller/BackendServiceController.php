@@ -172,9 +172,12 @@ class BackendServiceController extends ActionController
     /**
      * Apply a set of changes to the system
      */
+    /** @phpstan-ignore-next-line */
     public function changeAction(array $changes): void
     {
+        /** @param array<int,array<string,mixed>> $changes */
         $changes = $this->changeCollectionConverter->convertFrom($changes, ChangeCollection::class);
+        /** @var ChangeCollection $changes */
         try {
             $count = $changes->count();
             $changes->apply();
@@ -217,6 +220,7 @@ class BackendServiceController extends ActionController
      *
      * @param array $nodeContextPaths
      */
+    /** @phpstan-ignore-next-line */
     public function publishAction(array $nodeContextPaths, string $targetWorkspaceName): void
     {
         try {
@@ -260,6 +264,7 @@ class BackendServiceController extends ActionController
      *
      * @param array $nodeContextPaths
      */
+    /** @phpstan-ignore-next-line */
     public function discardAction(array $nodeContextPaths): void
     {
         try {
@@ -394,6 +399,7 @@ class BackendServiceController extends ActionController
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
+    /** @phpstan-ignore-next-line */
     public function copyNodesAction(array $nodes): void
     {
         // TODO @christianm want's to have a property mapper for this
@@ -424,6 +430,7 @@ class BackendServiceController extends ActionController
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
+    /** @phpstan-ignore-next-line */
     public function cutNodesAction(array $nodes): void
     {
         // TODO @christianm wants to have a property mapper for this
@@ -466,6 +473,7 @@ class BackendServiceController extends ActionController
     /**
      * Fetches all the node information that can be lazy-loaded
      */
+    /** @phpstan-ignore-next-line */
     public function getAdditionalNodeMetadataAction(array $nodes): void
     {
         $result = [];
@@ -537,6 +545,7 @@ class BackendServiceController extends ActionController
      *
      * @param array $chain
      */
+    /** @phpstan-ignore-next-line */
     public function flowQueryAction(array $chain): string
     {
         $createContext = array_shift($chain);
