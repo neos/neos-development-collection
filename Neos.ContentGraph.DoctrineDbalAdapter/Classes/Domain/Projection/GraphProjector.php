@@ -580,22 +580,22 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
             $nodeAnchorPoint = $this->projectionContentGraph
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                    $event->getSourceNodeAggregateIdentifier(),
-                    $event->getSourceOriginDimensionSpacePoint(),
-                    $event->getContentStreamIdentifier()
+                    $event->sourceNodeAggregateIdentifier,
+                    $event->sourceOriginDimensionSpacePoint,
+                    $event->contentStreamIdentifier
                 );
 
             // remove old
             $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
                 'nodeanchorpoint' => $nodeAnchorPoint,
-                'name' => $event->getReferenceName()
+                'name' => $event->referenceName
             ]);
 
             // set new
             $position = 0;
-            foreach ($event->getDestinationNodeAggregateIdentifiers() as $destinationNodeIdentifier) {
+            foreach ($event->destinationNodeAggregateIdentifiers as $destinationNodeIdentifier) {
                 $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
-                    'name' => $event->getReferenceName(),
+                    'name' => $event->referenceName,
                     'position' => $position,
                     'nodeanchorpoint' => $nodeAnchorPoint,
                     'destinationnodeaggregateidentifier' => $destinationNodeIdentifier,
@@ -860,9 +860,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                 /** @var NodeReferencesWereSet $event */
                 $anchorPoint = $this->projectionContentGraph
                     ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                        $event->getSourceNodeAggregateIdentifier(),
-                        $event->getSourceOriginDimensionSpacePoint(),
-                        $event->getContentStreamIdentifier()
+                        $event->sourceNodeAggregateIdentifier,
+                        $event->sourceOriginDimensionSpacePoint,
+                        $event->contentStreamIdentifier
                     );
                 break;
             default:
@@ -888,13 +888,13 @@ insert ignore into neos_contentgraph_restrictionrelation
             throw new \InvalidArgumentException(
                 'Cannot update node with copy on write since no anchor point could be resolved for node '
                     . $event->getNodeAggregateIdentifier() . ' in content stream '
-                    . $event->getContentStreamIdentifier(),
+                    . $event->contentStreamIdentifier,
                 1645303332
             );
         }
 
         return $this->updateNodeRecordWithCopyOnWrite(
-            $event->getContentStreamIdentifier(),
+            $event->contentStreamIdentifier,
             $anchorPoint,
             $operations
         );

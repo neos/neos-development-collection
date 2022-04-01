@@ -44,30 +44,35 @@ trait NodeReferencing
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist(
-            $command->getSourceOriginDimensionSpacePoint()->toDimensionSpacePoint()
+            $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->getContentStreamIdentifier(),
-            $command->getSourceNodeAggregateIdentifier()
+            $command->contentStreamIdentifier,
+            $command->sourceNodeAggregateIdentifier
         );
+        $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint(
             $sourceNodeAggregate,
-            $command->getSourceOriginDimensionSpacePoint()
+            $command->sourceOriginDimensionSpacePoint
         );
-        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->getReferenceName());
-        foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
+        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->referenceName);
+        foreach ($command->destinationNodeAggregateIdentifiers as $destinationNodeAggregateIdentifier) {
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->getContentStreamIdentifier(),
+                $command->contentStreamIdentifier,
                 $destinationNodeAggregateIdentifier
             );
+            $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
             $this->requireNodeAggregateToCoverDimensionSpacePoint(
                 $destinationNodeAggregate,
-                $command->getSourceOriginDimensionSpacePoint()->toDimensionSpacePoint()
+                $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
             );
-
-            // @todo check reference node type constraints
+            $this->requireNodeTypeToAllowNodesOfTypeInReference(
+                $sourceNodeAggregate->getNodeTypeName(),
+                $command->referenceName,
+                $destinationNodeAggregate->getNodeTypeName()
+            );
         }
 
         $events = null;
@@ -77,18 +82,18 @@ trait NodeReferencing
                 $events = DomainEvents::withSingleEvent(
                     DecoratedEvent::addIdentifier(
                         new NodeReferencesWereSet(
-                            $command->getContentStreamIdentifier(),
-                            $command->getSourceNodeAggregateIdentifier(),
-                            $command->getSourceOriginDimensionSpacePoint(),
-                            $command->getDestinationNodeAggregateIdentifiers(),
-                            $command->getReferenceName(),
-                            $command->getInitiatingUserIdentifier()
+                            $command->contentStreamIdentifier,
+                            $command->sourceNodeAggregateIdentifier,
+                            $command->sourceOriginDimensionSpacePoint,
+                            $command->destinationNodeAggregateIdentifiers,
+                            $command->referenceName,
+                            $command->initiatingUserIdentifier
                         ),
                         Uuid::uuid4()->toString()
                     )
                 );
                 $this->getNodeAggregateEventPublisher()->publishMany(
-                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                         ->getEventStreamName(),
                     $events
                 );

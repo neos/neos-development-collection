@@ -21,7 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeAggregatesByAdapter;
@@ -186,7 +186,7 @@ trait ProjectedNodeAggregateTrait
      */
     public function iExpectThisNodeAggregateToHaveTheParentNodeAggregates(string $serializedExpectedNodeAggregateIdentifiers): void
     {
-        $expectedNodeAggregateIdentifiers = NodeAggregateIdentifierCollection::fromJsonString($serializedExpectedNodeAggregateIdentifiers);
+        $expectedNodeAggregateIdentifiers = NodeAggregateIdentifiers::fromJsonString($serializedExpectedNodeAggregateIdentifiers);
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIdentifiers) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
                 return $this->contentStreamIdentifier . ';' . $nodeAggregateIdentifier;
@@ -229,7 +229,7 @@ trait ProjectedNodeAggregateTrait
      */
     public function iExpectThisNodeAggregateToHaveTheChildNodeAggregates(string $serializedExpectedNodeAggregateIdentifiers): void
     {
-        $expectedNodeAggregateIdentifiers = NodeAggregateIdentifierCollection::fromJsonString($serializedExpectedNodeAggregateIdentifiers);
+        $expectedNodeAggregateIdentifiers = NodeAggregateIdentifiers::fromJsonString($serializedExpectedNodeAggregateIdentifiers);
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIdentifiers) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
                 return $this->contentStreamIdentifier . ':' . $nodeAggregateIdentifier;

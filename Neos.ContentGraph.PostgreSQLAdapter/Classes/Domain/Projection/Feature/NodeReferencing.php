@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeAggregateIdentifiers;
@@ -34,32 +35,32 @@ trait NodeReferencing
     {
         $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                $event->getContentStreamIdentifier(),
-                $event->getSourceOriginDimensionSpacePoint(),
-                $event->getSourceNodeAggregateIdentifier()
+                $event->contentStreamIdentifier,
+                $event->sourceOriginDimensionSpacePoint,
+                $event->sourceNodeAggregateIdentifier
             );
 
             if ($nodeRecord) {
                 $anchorPoint = $this->copyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamIdentifier,
                     $nodeRecord,
                     function (NodeRecord $node) {
                     }
                 );
                 $existingReferenceRelation = $this->getProjectionHypergraph()->findReferenceRelationByOrigin(
                     $anchorPoint,
-                    $event->getReferenceName()
+                    $event->referenceName
                 );
                 if ($existingReferenceRelation) {
                     $existingReferenceRelation->setDestinationNodeAggregateIdentifiers(
-                        NodeAggregateIdentifiers::fromCollection($event->getDestinationNodeAggregateIdentifiers()),
+                        NodeAggregateIdentifiers::fromCollection($event->destinationNodeAggregateIdentifiers),
                         $this->getDatabaseConnection()
                     );
                 } else {
                     $referenceRelation = new ReferenceHyperrelationRecord(
                         $anchorPoint,
-                        $event->getReferenceName(),
-                        NodeAggregateIdentifiers::fromCollection($event->getDestinationNodeAggregateIdentifiers())
+                        $event->referenceName,
+                        NodeAggregateIdentifiers::fromCollection($event->destinationNodeAggregateIdentifiers)
                     );
                     $referenceRelation->addToDatabase($this->getDatabaseConnection());
                 }

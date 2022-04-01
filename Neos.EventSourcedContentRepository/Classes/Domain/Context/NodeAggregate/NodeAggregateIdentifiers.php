@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -12,15 +10,20 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * An immutable collection of NodeAggregateIdentifiers
+ * An immutable collection of NodeAggregateIdentifiers, indexed by their value
+ *
  * @implements \IteratorAggregate<string,NodeAggregateIdentifier>
  */
 #[Flow\Proxy(false)]
-final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \JsonSerializable
+final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSerializable
 {
     /**
      * @var array<string,NodeAggregateIdentifier>
@@ -32,10 +35,7 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
      */
     private \ArrayIterator $iterator;
 
-    /**
-     * @param array<string,NodeAggregateIdentifier> $nodeAggregateIdentifiers
-     */
-    private function __construct(array $nodeAggregateIdentifiers)
+    private function __construct(NodeAggregateIdentifier ...$nodeAggregateIdentifiers)
     {
         $this->nodeAggregateIdentifiers = $nodeAggregateIdentifiers;
         $this->iterator = new \ArrayIterator($nodeAggregateIdentifiers);
@@ -43,7 +43,7 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
 
     public static function createEmpty(): self
     {
-        return new self([]);
+        return new self(...[]);
     }
 
     /**
@@ -62,7 +62,7 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
             }
         }
 
-        return new self($nodeAggregateIdentifiers);
+        return new self(...$nodeAggregateIdentifiers);
     }
 
     public static function fromJsonString(string $jsonString): self
