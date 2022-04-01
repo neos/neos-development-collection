@@ -24,7 +24,7 @@
 			"supertypes":[
 
 			],
-			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"url":"https:\/\/www.neos.io\/ns\/2022\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
 
 			],
@@ -51,7 +51,7 @@
 			"supertypes":[
 				"neoscms:Neos.Neos:ContentObject"
 			],
-			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"url":"https:\/\/www.neos.io\/ns\/2022\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
 				"neoscms:Neos.Neos:ContentObject"
 			],
@@ -79,7 +79,7 @@
 			"supertypes":[
 				"neoscms:Neos.Neos:ContentObject"
 			],
-			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"url":"https:\/\/www.neos.io\/ns\/2022\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
 				"neoscms:Neos.Neos:ContentObject"
 			],
@@ -108,7 +108,7 @@
 			"supertypes":[
 				"neoscms:Neos.Neos:ContentObject"
 			],
-			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"url":"https:\/\/www.neos.io\/ns\/2022\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
 				"neoscms:Neos.Neos:ContentObject"
 			],
@@ -138,7 +138,7 @@
 			"supertypes":[
 				"neoscms:Neos.Neos:Text"
 			],
-			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"url":"https:\/\/www.neos.io\/ns\/2022\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
 				"neoscms:Neos.Neos:Text",
 				"neoscms:Neos.Neos:ContentObject"

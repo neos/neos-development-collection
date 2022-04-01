@@ -148,7 +148,7 @@ class VieSchemaBuilder
             'subtypes' => [],
             'metadata' => (object)$metadata,
             'supertypes' => $this->superTypeConfiguration['neoscms:' . $nodeTypeName],
-            'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
+            'url' => 'https://www.neos.io/ns/2022/Flow/Packages/Neos/Content/',
             'ancestors' => [],
             'comment' => '',
             'comment_plain' => ''
