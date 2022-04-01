@@ -65,7 +65,10 @@ abstract class AbstractCreate extends AbstractStructuralChange
      */
     protected ?string $name = null;
 
-    public function setNodeType(string|NodeType $nodeType): void
+    /**
+     * @param string $nodeType
+     */
+    public function setNodeType($nodeType): void
     {
         if (is_string($nodeType)) {
             $nodeType = $this->nodeTypeManager->getNodeType($nodeType);

@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -108,6 +109,12 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
@@ -157,12 +164,12 @@ class BackendController extends ActionController
     /**
      * Displays the backend interface
      *
-     * @param NodeAddress $node The node that will be displayed on the first tab
+     * @param string $node The node that will be displayed on the first tab
      * @return void
      */
-    public function indexAction(NodeAddress $node = null)
+    public function indexAction(string $node = null)
     {
-        $nodeAddress = $node;
+        $nodeAddress = $node !== null ? $this->nodeAddressFactory->createFromUriString($node) : null;
         unset($node);
         $this->session->start();
         $this->session->putData('__neosLegacyUiEnabled__', false);
@@ -227,13 +234,14 @@ class BackendController extends ActionController
     /**
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    public function redirectToAction(NodeAddress $node): void
+    public function redirectToAction(string $node): void
     {
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
         $this->response->setHttpHeader('Cache-Control', [
             'no-cache',
             'no-store'
         ]);
-        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
+        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $nodeAddress]);
     }
 
     protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint

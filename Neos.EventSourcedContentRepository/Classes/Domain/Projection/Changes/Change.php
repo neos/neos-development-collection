@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -20,6 +21,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 
 /**
  * Change Read Model
+ *
+ * @Flow\Proxy(false)
  */
 class Change
 {

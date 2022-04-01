@@ -108,13 +108,13 @@ class ContentRepositoryMigrateCommandController extends CommandController
     protected $readSideMemoryCacheManager;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var RuntimeBlocker
      */
     protected $runtimeBlocker;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var PropertyConverter
      */
     protected $propertyConverter;
