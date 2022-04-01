@@ -293,12 +293,12 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-                $event->getNodeAggregateIdentifier(),
+                $event->nodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
             if ($node === null) {
@@ -316,7 +316,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                             OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix
                         )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifier' => $event->nodeAggregateIdentifier,
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
         }

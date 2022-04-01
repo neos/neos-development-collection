@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -30,37 +32,15 @@ final class DisableNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    /**
-     * Node aggregate identifier of the node the user intends to disable
-     */
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    /**
-     * One of the dimension space points covered by the node aggregate in which the user intends to disable it
-     */
-    private DimensionSpacePoint $coveredDimensionSpacePoint;
-
-    /**
-     * The strategy the user chose to determine which specialization variants will also be disabled
-     */
-    private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        /** One of the dimension space points covered by the node aggregate in which the user intends to disable it */
+        public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
+        /** The strategy the user chose to determine which specialization variants will also be disabled */
+        public readonly NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
-        $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -75,31 +55,6 @@ final class DisableNodeAggregate implements
             NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getCoveredDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->coveredDimensionSpacePoint;
-    }
-
-    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategyIdentifier
-    {
-        return $this->nodeVariantSelectionStrategy;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
     }
 
     /**

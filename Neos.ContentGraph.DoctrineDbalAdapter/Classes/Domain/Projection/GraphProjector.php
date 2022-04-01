@@ -656,17 +656,17 @@ insert ignore into neos_contentgraph_restrictionrelation
     )
 
     select
-        "' . $event->getContentStreamIdentifier() . '" as contentstreamidentifier,
+        "' . $event->contentStreamIdentifier . '" as contentstreamidentifier,
         dimensionspacepointhash,
-        "' . $event->getNodeAggregateIdentifier() . '" as originnodeidentifier,
+        "' . $event->nodeAggregateIdentifier . '" as originnodeidentifier,
         nodeaggregateidentifier as affectednodeaggregateidentifier
     from tree
 )
             ',
                 [
-                    'entryNodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                    'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
+                    'entryNodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                    'contentStreamIdentifier' => (string)$event->nodeAggregateIdentifier,
+                    'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
                 ],
                 [
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
