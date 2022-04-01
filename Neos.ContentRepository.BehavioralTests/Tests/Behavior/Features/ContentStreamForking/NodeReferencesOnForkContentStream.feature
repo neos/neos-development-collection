@@ -47,7 +47,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
     And the graph projection is fully up to date
 
-    When the command "ForkContentStream" is executed with payload:
+    When the command ForkContentStream is executed with payload:
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
@@ -76,13 +76,13 @@ Feature: On forking a content stream, node references should be copied as well.
 
     # after then modifying the node's properties (thus triggering copy-on-write), the reference property
     # should still exist (this was a BUG)
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     And the command SetNodeProperties is executed with payload:
       | Key                     | Value                                  |
       | contentStreamIdentifier | "user-cs-identifier"                   |
       | nodeAggregateIdentifier | "source-nodandaise"                    |
       | propertyValues          | {"text": "Modified in live workspace"} |
     And the graph projection is fully up to date
-    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Key               | Value                                                           |
