@@ -12,11 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Service\AuthorizationService;
-use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**
  * The content element editable service adds the necessary markup around
@@ -27,50 +23,12 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class ContentElementEditableService
 {
-
-    /**
-     * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
-     * @var AuthorizationService
-     */
-    protected $nodeAuthorizationService;
-
-    /**
-     * @Flow\Inject
-     * @var FusionHtmlAugmenter
-     */
-    protected $htmlAugmenter;
-
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
-     *
-     * @param NodeInterface $node
-     * @param string $property
-     * @param string $content
-     * @return string
+     * This method is extended by the Neos.Ui package via an aspect to add the needed markup for inline editing.
      */
-    public function wrapContentProperty(NodeInterface $node, $property, $content)
+    public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            return $content;
-        }
-
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            return $content;
-        }
-
-        $attributes = [];
-        $attributes['class'] = 'neos-inline-editable';
-        $attributes['property'] = 'neoscms:' . $property ;
-        $attributes['data-neos-node-type'] = $node->getNodeType()->getName();
-
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
+        return $content;
     }
 }
