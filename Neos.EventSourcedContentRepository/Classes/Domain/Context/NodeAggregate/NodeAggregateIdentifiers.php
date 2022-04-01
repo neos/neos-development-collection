@@ -37,6 +37,7 @@ final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSeriali
 
     private function __construct(NodeAggregateIdentifier ...$nodeAggregateIdentifiers)
     {
+        /** @var array<string,NodeAggregateIdentifier> $nodeAggregateIdentifiers */
         $this->nodeAggregateIdentifiers = $nodeAggregateIdentifiers;
         $this->iterator = new \ArrayIterator($nodeAggregateIdentifiers);
     }

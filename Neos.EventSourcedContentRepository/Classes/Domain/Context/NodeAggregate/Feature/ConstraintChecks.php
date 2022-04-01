@@ -191,8 +191,7 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeName,
         PropertyName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
-    ): void
-    {
+    ): void {
         $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
         $nodeTypeInQuestion = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeNameInQuestion);
         $propertyDeclaration = $nodeType->getProperties()[(string)$referenceName] ?? null;
@@ -204,7 +203,12 @@ trait ConstraintChecks
                 $propertyDeclaration['constraints']['nodeTypes']
             );
 
-            $constraintCheckClosure = function(NodeType $nodeType) use($nodeTypeConstraints, $referenceName, $nodeTypeName, $nodeTypeNameInQuestion) {
+            $constraintCheckClosure = function (NodeType $nodeType) use (
+                $nodeTypeConstraints,
+                $referenceName,
+                $nodeTypeName,
+                $nodeTypeNameInQuestion
+            ) {
                 foreach ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames() as $allowedNodeTypeName) {
                     if ($allowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
                         return false;
@@ -226,7 +230,7 @@ trait ConstraintChecks
     }
 
     /**
-     * @param array<string,NodeType> $nodeTypes
+     * @param array<int,NodeType> $nodeTypes
      */
     private function traverseNodeTypeTreeBreadthFirst(array $nodeTypes, \Closure $closure): bool
     {
@@ -243,6 +247,8 @@ trait ConstraintChecks
         }
 
         $this->traverseNodeTypeTreeBreadthFirst($nextLevelNodeTypes, $closure);
+
+        return true;
     }
 
     /**

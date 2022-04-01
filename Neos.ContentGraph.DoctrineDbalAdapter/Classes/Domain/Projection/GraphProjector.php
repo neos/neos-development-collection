@@ -888,13 +888,13 @@ insert ignore into neos_contentgraph_restrictionrelation
             throw new \InvalidArgumentException(
                 'Cannot update node with copy on write since no anchor point could be resolved for node '
                     . $event->getNodeAggregateIdentifier() . ' in content stream '
-                    . $event->contentStreamIdentifier,
+                    . $event->getContentStreamIdentifier(),
                 1645303332
             );
         }
 
         return $this->updateNodeRecordWithCopyOnWrite(
-            $event->contentStreamIdentifier,
+            $event->getContentStreamIdentifier(),
             $anchorPoint,
             $operations
         );

@@ -15,7 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers as NodeAggregateIdentifierCollection;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers
+    as NodeAggregateIdentifierCollection;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -354,7 +354,7 @@ trait NodeVariation
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
         NodeRelationAnchorPoint $destinationRelationAnchorPoint
-    ) {
+    ): void {
         // we don't care whether the target node aggregate covers the variant's origin
         // since if it doesn't, it already didn't match the source's coverage before
 
