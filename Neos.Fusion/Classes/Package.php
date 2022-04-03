@@ -19,6 +19,7 @@ use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\Cache\FileMonitorListener;
 use Neos\Fusion\Core\Cache\ParserCache;
+use Neos\Fusion\Core\Cache\ParserCacheFlusher;
 
 /**
  * The Neos Fusion Package
@@ -72,7 +73,7 @@ class Package extends BasePackage
                             return;
                         }
                         $objectManager = $bootstrap->getObjectManager();
-                        if ($objectManager->isRegistered(ParserCache::class) === false) {
+                        if ($objectManager->isRegistered(ParserCacheFlusher::class) === false) {
                             // if we make a total `rm -rf Data/Temporary` all monitored `*.fusion` files will be seen as newly created.
                             // this triggers pretty early this `filesHaveChanged` and we still have the CompileTimeObjectManager
                             // we would get an exception like:
@@ -83,8 +84,8 @@ class Package extends BasePackage
                             $fusionParsePartialsCache->flush();
                             return;
                         }
-                        $fusionParserCache = $objectManager->get(ParserCache::class);
-                        $fusionParserCache->flushFileAstCacheOnFileChanges($changedFilesAndStatus);
+                        $fusionParserCacheFlusher = $objectManager->get(ParserCacheFlusher::class);
+                        $fusionParserCacheFlusher->flushFileAstCacheOnFileChanges($changedFilesAndStatus);
                     };
                     $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $flushParsePartialsCache);
                 }
