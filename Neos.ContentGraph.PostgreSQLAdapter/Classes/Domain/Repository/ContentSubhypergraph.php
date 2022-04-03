@@ -361,6 +361,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = /** @lang PostgreSQL */ '-- ContentSubhypergraph::findSubtrees
     WITH RECURSIVE subtree AS (
         SELECT n.*, h.contentstreamidentifier,
+            h.dimensionspacepoint,
             \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
             0 as level
         FROM ' . NodeRecord::TABLE_NAME . ' n
@@ -377,6 +378,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
          -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
          -- --------------------------------
         SELECT cn.*, ch.contentstreamidentifier,
+            ch.dimensionspacepoint,
             p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
      	    p.level + 1 as level
         FROM subtree p
