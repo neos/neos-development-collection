@@ -20,7 +20,6 @@ use Psr\Log\LoggerInterface;
 /**
  * Helper around the ParsePartials Cache.
  * Connected in the boot to flush caches on file-change.
- * Caches partials when requested by the Fusion Parser.
  *
  */
 class ParserCacheFlusher
