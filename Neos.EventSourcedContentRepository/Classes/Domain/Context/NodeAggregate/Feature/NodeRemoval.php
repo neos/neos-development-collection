@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
@@ -74,14 +75,12 @@ trait NodeRemoval
                         new NodeAggregateWasRemoved(
                             $command->getContentStreamIdentifier(),
                             $command->getNodeAggregateIdentifier(),
-                            AffectedOccupiedDimensionSpacePointSet::forStrategyIdentifier(
-                                $command->getNodeVariantSelectionStrategy(),
-                                $nodeAggregate,
+                            $command->getNodeVariantSelectionStrategy()->resolveAffectedOriginDimensionSpacePoints(
                                 $nodeAggregate->getOccupationByCovered($command->getCoveredDimensionSpacePoint()),
+                                $nodeAggregate,
                                 $this->getInterDimensionalVariationGraph()
                             ),
-                            $command->getNodeVariantSelectionStrategy()
-                                ->resolveAffectedDimensionSpacePoints(
+                            $command->getNodeVariantSelectionStrategy()->resolveAffectedDimensionSpacePoints(
                                     $command->getCoveredDimensionSpacePoint(),
                                     $nodeAggregate,
                                     $this->getInterDimensionalVariationGraph()

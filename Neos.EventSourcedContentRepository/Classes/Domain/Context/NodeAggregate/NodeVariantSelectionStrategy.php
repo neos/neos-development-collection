@@ -92,6 +92,23 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
         return $affectedDimensionSpacePoints;
     }
 
+    public function resolveAffectedOriginDimensionSpacePoints(
+        OriginDimensionSpacePoint $referenceDimensionSpacePoint,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        InterDimensionalVariationGraph $variationGraph
+    ): OriginDimensionSpacePointSet {
+        return match ($this) {
+            self::STRATEGY_ALL_VARIANTS => $nodeAggregate->getOccupiedDimensionSpacePoints(),
+            self::STRATEGY_ALL_SPECIALIZATIONS => OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
+                $variationGraph->getSpecializationSet($referenceDimensionSpacePoint->toDimensionSpacePoint())
+                )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()),
+            self::STRATEGY_VIRTUAL_SPECIALIZATIONS, self::STRATEGY_ONLY_GIVEN_VARIANT =>
+                $nodeAggregate->occupiesDimensionSpacePoint($referenceDimensionSpacePoint)
+                    ? new OriginDimensionSpacePointSet([$referenceDimensionSpacePoint])
+                    : new OriginDimensionSpacePointSet([])
+        };
+    }
+
     public function equals(self $other): bool
     {
         return $this === $other;

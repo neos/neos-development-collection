@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
@@ -6,9 +7,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
@@ -168,15 +169,15 @@ class DisallowedChildNodeAdjustment
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
     ): CommandResult {
+        $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new NodeAggregateWasRemoved(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier(),
-                    AffectedOccupiedDimensionSpacePointSet::onlyGivenVariant(
-                        $nodeAggregate,
-                        OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
-                    ),
+                    $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
+                        ? new OriginDimensionSpacePointSet([$referenceOrigin])
+                        : new OriginDimensionSpacePointSet([]),
                     new DimensionSpacePointSet([$dimensionSpacePoint]),
                     UserIdentifier::forSystemUser()
                 ),
