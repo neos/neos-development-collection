@@ -13,9 +13,6 @@ namespace Neos\Fusion\Core\Cache;
  * source code.
  */
 
-use Neos\Utility\Unicode\Functions as UnicodeFunctions;
-use Neos\Utility\Files;
-
 /**
  * Identifier for the ParsePartials Cache.
  */
@@ -37,10 +34,6 @@ trait ParserCacheIdentifierTrait
      */
     private function getCacheIdentifierForFile(string $fusionFileName): string
     {
-        if (str_contains($fusionFileName, '://')) {
-            $fusionFileName = $this->getAbsolutePathForPackageRessourceUri($fusionFileName);
-        }
-
         $realPath = realpath($fusionFileName);
         if ($realPath === false) {
             throw new \InvalidArgumentException("Couldn't resolve realpath for: '$fusionFileName'");
@@ -48,30 +41,5 @@ trait ParserCacheIdentifierTrait
 
         $realFusionFilePathWithoutRoot = str_replace(FLOW_PATH_ROOT, '', $realPath);
         return 'file_' . md5($realFusionFilePathWithoutRoot);
-    }
-
-    /**
-     * Uses the same technique to resolve a package resource URI like Flow.
-     *
-     * resource://My.Site/Private/Fusion/Foo/Bar.fusion
-     * ->
-     * FLOW_PATH_ROOT/Packages/Sites/My.Package/Resources/Private/Fusion/Foo/Bar.fusion
-     *
-     * {@see \Neos\Flow\ResourceManagement\Streams\ResourceStreamWrapper::evaluateResourcePath()}
-     * {@link https://github.com/neos/flow-development-collection/issues/2687}
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function getAbsolutePathForPackageRessourceUri(string $requestedPath): string
-    {
-        $resourceUriParts = UnicodeFunctions::parse_url($requestedPath);
-
-        if ((isset($resourceUriParts['scheme']) === false
-            || $resourceUriParts['scheme'] !== 'resource')) {
-            throw new \InvalidArgumentException("Unsupported stream wrapper: '$requestedPath'");
-        }
-
-        $package = $this->packageManager->getPackage($resourceUriParts['host']);
-        return Files::concatenatePaths([$package->getResourcesPath(), $resourceUriParts['path']]);
     }
 }

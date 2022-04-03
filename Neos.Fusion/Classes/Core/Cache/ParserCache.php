@@ -17,6 +17,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Files;
 
 /**
  * Helper around the ParsePartials Cache.
@@ -53,6 +55,9 @@ class ParserCache
         if ($contextPathAndFilename === null) {
             return $generateValueToCache();
         }
+        if (str_contains($contextPathAndFilename, '://')) {
+            $contextPathAndFilename = $this->getAbsolutePathForPackageRessourceUri($contextPathAndFilename);
+        }
         $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
@@ -74,5 +79,30 @@ class ParserCache
         $value = $generateValueToCache();
         $this->parsePartialsCache->set($identifier, $value);
         return $value;
+    }
+
+    /**
+     * Uses the same technique to resolve a package resource URI like Flow.
+     *
+     * resource://My.Site/Private/Fusion/Foo/Bar.fusion
+     * ->
+     * FLOW_PATH_ROOT/Packages/Sites/My.Package/Resources/Private/Fusion/Foo/Bar.fusion
+     *
+     * {@see \Neos\Flow\ResourceManagement\Streams\ResourceStreamWrapper::evaluateResourcePath()}
+     * {@link https://github.com/neos/flow-development-collection/issues/2687}
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function getAbsolutePathForPackageRessourceUri(string $requestedPath): string
+    {
+        $resourceUriParts = UnicodeFunctions::parse_url($requestedPath);
+
+        if ((isset($resourceUriParts['scheme']) === false
+            || $resourceUriParts['scheme'] !== 'resource')) {
+            throw new \InvalidArgumentException("Unsupported stream wrapper: '$requestedPath'");
+        }
+
+        $package = $this->packageManager->getPackage($resourceUriParts['host']);
+        return Files::concatenatePaths([$package->getResourcesPath(), $resourceUriParts['path']]);
     }
 }
