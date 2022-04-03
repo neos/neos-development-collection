@@ -26,19 +26,19 @@ use Neos\Flow\Annotations as Flow;
 final class AffectedOccupiedDimensionSpacePointSet
 {
     public static function forStrategyIdentifier(
-        NodeVariantSelectionStrategyIdentifier $identifier,
+        NodeVariantSelectionStrategy $identifier,
         ReadableNodeAggregateInterface $nodeAggregate,
         OriginDimensionSpacePoint $referenceDimensionSpacePoint,
         InterDimensionalVariationGraph $variationGraph
     ): OriginDimensionSpacePointSet {
         return match ($identifier) {
-            NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS => self::allVariants($nodeAggregate),
-            NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS => self::allSpecializations(
+            NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS => self::allVariants($nodeAggregate),
+            NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS => self::allSpecializations(
                 $nodeAggregate,
                 $referenceDimensionSpacePoint,
                 $variationGraph
             ),
-            NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS => self::virtualSpecializations(
+            NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS => self::virtualSpecializations(
                 $nodeAggregate,
                 $referenceDimensionSpacePoint
             ),

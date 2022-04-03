@@ -16,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -36,7 +36,7 @@ final class RemoveNodeAggregate implements
      */
     private DimensionSpacePoint $coveredDimensionSpacePoint;
 
-    private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
+    private NodeVariantSelectionStrategy $nodeVariantSelectionStrategy;
 
     private UserIdentifier $initiatingUserIdentifier;
 
@@ -59,7 +59,7 @@ final class RemoveNodeAggregate implements
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
         UserIdentifier $initiatingUserIdentifier,
         ?NodeAggregateIdentifier $removalAttachmentPoint = null
     ) {
@@ -75,7 +75,7 @@ final class RemoveNodeAggregate implements
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
         UserIdentifier $initiatingUserIdentifier
     ): self {
         return new self(
@@ -96,7 +96,7 @@ final class RemoveNodeAggregate implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             isset($array['removalAttachmentPoint'])
                 ? NodeAggregateIdentifier::fromString($array['removalAttachmentPoint'])
@@ -119,7 +119,7 @@ final class RemoveNodeAggregate implements
         return $this->coveredDimensionSpacePoint;
     }
 
-    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategyIdentifier
+    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategy
     {
         return $this->nodeVariantSelectionStrategy;
     }

@@ -18,7 +18,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\Flow\Annotations as Flow;
@@ -88,7 +88,7 @@ class Remove extends AbstractChange
                 $subject->getContentStreamIdentifier(),
                 $subject->getNodeAggregateIdentifier(),
                 $subject->getDimensionSpacePoint(),
-                NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
+                NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS,
                 $this->getInitiatingUserIdentifier()
             );
             $closestDocumentParentNode = $this->findClosestDocumentNode($subject);

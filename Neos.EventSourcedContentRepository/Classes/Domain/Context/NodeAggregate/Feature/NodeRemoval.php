@@ -16,7 +16,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
@@ -24,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -82,12 +80,12 @@ trait NodeRemoval
                                 $nodeAggregate->getOccupationByCovered($command->getCoveredDimensionSpacePoint()),
                                 $this->getInterDimensionalVariationGraph()
                             ),
-                            AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
-                                $command->getNodeVariantSelectionStrategy(),
-                                $nodeAggregate,
-                                $command->getCoveredDimensionSpacePoint(),
-                                $this->getInterDimensionalVariationGraph()
-                            ),
+                            $command->getNodeVariantSelectionStrategy()
+                                ->resolveAffectedDimensionSpacePoints(
+                                    $command->getCoveredDimensionSpacePoint(),
+                                    $nodeAggregate,
+                                    $this->getInterDimensionalVariationGraph()
+                                ),
                             $command->getInitiatingUserIdentifier(),
                             $command->getRemovalAttachmentPoint()
                         ),

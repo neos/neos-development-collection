@@ -18,7 +18,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -38,7 +38,7 @@ final class DisableNodeAggregate implements
         /** One of the dimension space points covered by the node aggregate in which the user intends to disable it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         /** The strategy the user chose to determine which specialization variants will also be disabled */
-        public readonly NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -52,7 +52,7 @@ final class DisableNodeAggregate implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }

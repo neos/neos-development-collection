@@ -16,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -45,7 +45,7 @@ final class EnableNodeAggregate implements
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
      */
-    private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
+    private NodeVariantSelectionStrategy $nodeVariantSelectionStrategy;
 
     private UserIdentifier $initiatingUserIdentifier;
 
@@ -53,7 +53,7 @@ final class EnableNodeAggregate implements
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
         UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -72,7 +72,7 @@ final class EnableNodeAggregate implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
@@ -92,7 +92,7 @@ final class EnableNodeAggregate implements
         return $this->coveredDimensionSpacePoint;
     }
 
-    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategyIdentifier
+    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategy
     {
         return $this->nodeVariantSelectionStrategy;
     }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
@@ -177,9 +177,7 @@ class DisallowedChildNodeAdjustment
                         $nodeAggregate,
                         OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
                     ),
-                    AffectedCoveredDimensionSpacePointSet::onlyGivenVariant(
-                        $dimensionSpacePoint
-                    ),
+                    new DimensionSpacePointSet([$dimensionSpacePoint]),
                     UserIdentifier::forSystemUser()
                 ),
                 Uuid::uuid4()->toString()

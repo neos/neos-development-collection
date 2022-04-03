@@ -16,7 +16,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -72,12 +71,12 @@ trait NodeDisabling
         $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
             function () use ($command, $nodeAggregate, &$events) {
-                $affectedDimensionSpacePoints = AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
-                    $command->nodeVariantSelectionStrategy,
-                    $nodeAggregate,
-                    $command->coveredDimensionSpacePoint,
-                    $this->getInterDimensionalVariationGraph()
-                );
+                $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
+                    ->resolveAffectedDimensionSpacePoints(
+                        $command->coveredDimensionSpacePoint,
+                        $nodeAggregate,
+                        $this->getInterDimensionalVariationGraph()
+                    );
 
                 $events = DomainEvents::withSingleEvent(
                     DecoratedEvent::addIdentifier(
@@ -133,12 +132,12 @@ trait NodeDisabling
         $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
             function () use ($command, $nodeAggregate, &$events) {
-                $affectedDimensionSpacePoints = AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
-                    $command->getNodeVariantSelectionStrategy(),
-                    $nodeAggregate,
-                    $command->getCoveredDimensionSpacePoint(),
-                    $this->getInterDimensionalVariationGraph()
-                );
+                $affectedDimensionSpacePoints = $command->getNodeVariantSelectionStrategy()
+                    ->resolveAffectedDimensionSpacePoints(
+                        $command->getCoveredDimensionSpacePoint(),
+                        $nodeAggregate,
+                        $this->getInterDimensionalVariationGraph()
+                    );
 
                 $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
