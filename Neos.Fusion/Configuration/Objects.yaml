@@ -27,13 +27,3 @@ Neos\Fusion\Core\Cache\ParserCache:
         arguments:
           1:
             value: Neos_Fusion_ParsePartials
-
-Neos\Fusion\Core\Cache\ParserCacheFlusher:
-  properties:
-    parsePartialsCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_Fusion_ParsePartials

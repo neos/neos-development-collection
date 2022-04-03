@@ -13,9 +13,7 @@ namespace Neos\Fusion\Core\Cache;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\VariableFrontend;
-use Psr\Log\LoggerInterface;
+use Neos\Flow\Cache\CacheManager;
 
 /**
  * Helper around the ParsePartials Cache.
@@ -27,62 +25,41 @@ class ParserCacheFlusher
     use ParserCacheIdentifierTrait;
 
     /**
-     * @Flow\Inject
-     * @var VariableFrontend
+     * @var CacheManager
      */
-    protected $parsePartialsCache;
+    protected $flowCacheManager;
 
     /**
-     * @Flow\Inject
-     * @var LoggerInterface
+     * @param CacheManager $flowCacheManager
      */
-    protected $systemLogger;
-
-    /**
-     * @var string[]
-     */
-    protected $identifiersToFlush = [];
-
-    /**
-     * @param array<string, int> $changedFiles
-     */
-    public function registerFileChanges(array $changedFiles): void
+    public function __construct(CacheManager $flowCacheManager)
     {
+        $this->flowCacheManager = $flowCacheManager;
+    }
+
+    /**
+     * @param $fileMonitorIdentifier
+     * @param array $changedFiles
+     * @return void
+     */
+    public function flushPartialCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)
+    {
+        if ($fileMonitorIdentifier !== 'Fusion_Files') {
+            return;
+        }
+
+        $identifiersToFlush = [];
         foreach ($changedFiles as $changedFile => $status) {
-            $this->identifiersToFlush[] = $this->getCacheIdentifierForFile($changedFile);
+            $identifiersToFlush[] = $this->getCacheIdentifierForFile($changedFile);
         }
-        // only call cache flushing immediately if the dependencies are already injected
-        // otherwise the commit is triggered on initializeObject or shutdownObject
-        if ($this->parsePartialsCache) {
-            $this->commit();
-        }
-    }
 
-    public function initializeObject(): void
-    {
-        $this->commit();
-    }
-
-    public function shutdownObject(): void
-    {
-        $this->commit();
-    }
-
-    /**
-     * Flush caches according to the previously registered identifiers.
-     */
-    protected function commit(): void
-    {
-        $affectedEntries = 0;
-        if ($this->identifiersToFlush !== []) {
-            foreach ($this->identifiersToFlush as $identifierToFlush) {
-                if ($this->parsePartialsCache->has($identifierToFlush)) {
-                    $this->parsePartialsCache->remove($identifierToFlush);
-                    $affectedEntries ++;
+        if ($identifiersToFlush !== []) {
+            $partialsCache = $this->flowCacheManager->getCache('Neos_Fusion_ParsePartials');
+            foreach ($identifiersToFlush as $identifierToFlush) {
+                if ($partialsCache->has($identifierToFlush)) {
+                    $partialsCache->remove($identifierToFlush);
                 }
             }
-            $this->systemLogger->debug(sprintf('Fusion parser partials cache: Removed %s entries', $affectedEntries));
-            $this->identifiersToFlush = [];
         }
     }
 }
