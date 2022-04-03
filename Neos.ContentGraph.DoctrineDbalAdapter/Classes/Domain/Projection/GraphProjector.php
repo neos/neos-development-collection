@@ -694,9 +694,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     {
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getAffectedDimensionSpacePoints()
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->affectedDimensionSpacePoints
             );
         });
     }

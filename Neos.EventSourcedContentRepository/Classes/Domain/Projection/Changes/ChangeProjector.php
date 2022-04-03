@@ -111,10 +111,10 @@ class ChangeProjector implements ProjectorInterface
 
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
-        foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
             );
         }

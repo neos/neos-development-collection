@@ -81,9 +81,9 @@ class NodeHiddenStateProjector implements ProjectorInterface
                     AND dimensionspacepointhash IN (:dimensionSpacePointHashes)
             ',
             [
-                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
             ],
             [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY

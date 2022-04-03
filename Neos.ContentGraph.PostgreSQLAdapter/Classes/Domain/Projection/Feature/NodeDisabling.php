@@ -59,9 +59,9 @@ trait NodeDisabling
     {
         $this->transactional(function () use ($event) {
             $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
-                $event->getContentStreamIdentifier(),
-                $event->getAffectedDimensionSpacePoints(),
-                $event->getNodeAggregateIdentifier(),
+                $event->contentStreamIdentifier,
+                $event->affectedDimensionSpacePoints,
+                $event->nodeAggregateIdentifier,
             );
             foreach ($restrictionRelations as $restrictionRelation) {
                 $restrictionRelation->removeFromDatabase($this->getDatabaseConnection());
