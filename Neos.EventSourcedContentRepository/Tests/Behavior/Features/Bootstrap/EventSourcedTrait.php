@@ -323,17 +323,17 @@ trait EventSourcedTrait
 
     /**
      * @Then /^the subtree for node aggregate "([^"]*)" with node types "([^"]*)" and (\d+) levels deep should be:$/
-     * @param string $nodeAggregateIdentifier
-     * @param string $nodeTypeConstraints
-     * @param int $maximumLevels
-     * @param TableNode $table
      */
-    public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(string $nodeAggregateIdentifier, string $nodeTypeConstraints, int $maximumLevels, TableNode $table)
-    {
+    public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(
+        string $serializedNodeAggregateIdentifier,
+        string $serializedNodeTypeConstraints,
+        int $maximumLevels,
+        TableNode $table
+    ): void {
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
+        $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             $expectedRows = $table->getHash();
-            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
-            $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeConstraints);
 
             $subtree = $contentGraph
                 ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
