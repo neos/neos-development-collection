@@ -18,7 +18,6 @@ use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\Cache\FileMonitorListener;
-use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\Cache\ParserCacheFlusher;
 
 /**
@@ -85,7 +84,7 @@ class Package extends BasePackage
                             return;
                         }
                         $fusionParserCacheFlusher = $objectManager->get(ParserCacheFlusher::class);
-                        $fusionParserCacheFlusher->flushFileAstCacheOnFileChanges($changedFilesAndStatus);
+                        $fusionParserCacheFlusher->registerFileChanges($changedFilesAndStatus);
                     };
                     $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $flushParsePartialsCache);
                 }

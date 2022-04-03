@@ -15,6 +15,7 @@ namespace Neos\Fusion\Core\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Psr\Log\LoggerInterface;
 
 /**
  * Helper around the ParsePartials Cache.
@@ -33,15 +34,56 @@ class ParserCacheFlusher
     protected $parsePartialsCache;
 
     /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $systemLogger;
+
+    /**
+     * @var string[]
+     */
+    protected $identifiersToFlush = [];
+
+    /**
      * @param array<string, int> $changedFiles
      */
-    public function flushFileAstCacheOnFileChanges(array $changedFiles): void
+    public function registerFileChanges(array $changedFiles): void
     {
         foreach ($changedFiles as $changedFile => $status) {
-            $identifier = $this->getCacheIdentifierForFile($changedFile);
-            if ($this->parsePartialsCache->has($identifier)) {
-                $this->parsePartialsCache->remove($identifier);
+            $this->identifiersToFlush[] = $this->getCacheIdentifierForFile($changedFile);
+        }
+        // only call cache flushing immediately if the dependencies are already injected
+        // otherwise the commit is triggered on initializeObject or shutdownObject
+        if ($this->parsePartialsCache) {
+            $this->commit();
+        }
+    }
+
+    public function initializeObject(): void
+    {
+        $this->commit();
+    }
+
+    public function shutdownObject(): void
+    {
+        $this->commit();
+    }
+
+    /**
+     * Flush caches according to the previously registered identifiers.
+     */
+    protected function commit(): void
+    {
+        $affectedEntries = 0;
+        if ($this->identifiersToFlush !== []) {
+            foreach ($this->identifiersToFlush as $identifierToFlush) {
+                if ($this->parsePartialsCache->has($identifierToFlush)) {
+                    $this->parsePartialsCache->remove($identifierToFlush);
+                    $affectedEntries ++;
+                }
             }
+            $this->systemLogger->debug(sprintf('Fusion parser partials cache: Removed %s entries', $affectedEntries));
+            $this->identifiersToFlush = [];
         }
     }
 }
