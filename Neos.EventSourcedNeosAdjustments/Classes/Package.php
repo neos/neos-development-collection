@@ -60,7 +60,7 @@ class Package extends BasePackage
                         $newUriPath,
                         301,
                         [],
-                        (string)$event->getInitiatingUserIdentifier(),
+                        (string)$event->initiatingUserIdentifier,
                         'via DocumentUriPathProjector'
                     );
                 }

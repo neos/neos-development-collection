@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Create node specialization
 
   As a user of the CR I want to create a copy of a node within an aggregate to a more specialized dimension space point.
@@ -24,15 +24,14 @@ Feature: Create node specialization
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     'Neos.ContentRepository.Testing:LeafDocument': []
     """
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And I am user identified by "initiating-user-identifier"
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
@@ -398,3 +397,23 @@ Feature: Create node specialization
     # @todo test based on NodeSpecializationVariantWasCreated ({"market":"CH", "language":"DE"})
     # and VirtualNodeVariantWasRemoved ({"market":"CH", "language":"gsw"})
     # to test that explicitly removed virtual variants are not implicitly created again
+
+  Scenario: Create specialization of node to dimension space point that is already covered
+    Given the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                            |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | sourceOrigin            | {"market":"DE", "language":"en"} |
+      | targetOrigin            | {"market":"DE", "language":"de"} |
+    And the graph projection is fully up to date
+    When the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                            |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | sourceOrigin            | {"market":"DE", "language":"en"} |
+      | targetOrigin            | {"market":"DE", "language":"gsw"} |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"gsw"}

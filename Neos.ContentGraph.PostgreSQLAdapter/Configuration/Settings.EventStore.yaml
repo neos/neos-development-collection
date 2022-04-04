@@ -2,7 +2,6 @@ Neos:
   EventSourcing:
     EventStore:
       stores:
-        'DISABLEDContentRepository':
-          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+        'ContentRepository':
           listeners:
             'Neos\ContentGraph\PostgreSQLAdapter\.*': true

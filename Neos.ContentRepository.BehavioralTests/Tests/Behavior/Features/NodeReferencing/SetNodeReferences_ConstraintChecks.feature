@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Constraint checks on SetNodeReferences
 
   As a user of the CR I expect invalid SetNodeReferences commands to be blocked

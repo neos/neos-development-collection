@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Tethered Nodes integrity violations
 
   As a user of the CR I want to be able to detect and fix tethered nodes that are missing, not allowed or otherwise incorrect

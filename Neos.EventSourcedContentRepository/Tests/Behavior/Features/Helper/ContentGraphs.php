@@ -81,4 +81,21 @@ final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
     {
         throw new \BadMethodCallException('Cannot modify immutable object of class ContentGraphs.', 1643488734);
     }
+
+    /**
+     * @param array<int,string> $identifiers
+     */
+    public function reduceTo(array $identifiers): self
+    {
+        $reduction = [];
+        foreach ($identifiers as $identifier) {
+            if (isset($this->contentGraphs[$identifier])) {
+                $reduction[$identifier] = $this->contentGraphs[$identifier];
+            } else {
+                throw new \InvalidArgumentException('Unknown adapter "' . $identifier . '"', 1648406324);
+            }
+        }
+
+        return new self($reduction);
+    }
 }

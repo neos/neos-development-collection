@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Create a root node aggregate
 
   As a user of the CR I want to create a new root node aggregate with an initial node.

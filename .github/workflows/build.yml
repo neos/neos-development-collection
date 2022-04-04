@@ -44,7 +44,16 @@ jobs:
         ports:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
+      postgres:
+        image: postgres:13.2
+        env:
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+          POSTGRES_DB: flow_functional_testing
+          POSTGRES_ROOT_PASSWORD: neos
+        ports:
+          - "5432:5432"
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=5
     env:
       FLOW_CONTEXT: Testing
       NEOS_TARGET_VERSION: master
@@ -119,6 +128,29 @@ jobs:
               mvc:
                 routes:
                   'Neos.Flow': TRUE
+            ContentGraph:
+              PostgreSQLAdapter:
+                persistence:
+                  backendOptions:
+                    host: '127.0.0.1'
+                    port: 5432
+                    dbname: 'flow_functional_testing'
+                    user: 'neos'
+                    password: 'neos'
+          EOF
+          mkdir Configuration/Testing/Postgres
+          cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  charset: 'UTF8'
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
 
@@ -129,6 +161,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           cd Packages/CR
           composer test
 

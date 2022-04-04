@@ -36,7 +36,7 @@ trait NodeCopying
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     abstract protected function getCurrentNodes(): ?NodesByAdapter;
 
@@ -48,7 +48,7 @@ trait NodeCopying
     public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentGraphs = $this->getContentGraphs()->getIterator()->getArrayCopy();
+        $contentGraphs = $this->getAvailableContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
         $subgraph = $contentGraph->getSubgraphByIdentifier(
             $this->getCurrentContentStreamIdentifier(),

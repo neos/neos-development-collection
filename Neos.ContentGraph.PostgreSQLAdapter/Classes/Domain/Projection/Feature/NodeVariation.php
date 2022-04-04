@@ -46,29 +46,37 @@ trait NodeVariation
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
-                $event->getContentStreamIdentifier(),
-                $event->getSourceOrigin(),
-                $event->getNodeAggregateIdentifier()
+                $event->contentStreamIdentifier,
+                $event->sourceOrigin,
+                $event->nodeAggregateIdentifier
             );
             if (is_null($sourceNode)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
             }
             $specializedNode = $this->copyNodeToOriginDimensionSpacePoint(
                 $sourceNode,
-                $event->getSpecializationOrigin()
+                $event->specializationOrigin
             );
 
+            $oldCoveringNode = $this->projectionHypergraph->findNodeRecordByCoverage(
+                $event->contentStreamIdentifier,
+                $event->specializationOrigin->toDimensionSpacePoint(),
+                $event->nodeAggregateIdentifier
+            );
+            if (is_null($oldCoveringNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+            }
             $this->assignNewChildNodeToAffectedHierarchyRelations(
-                $event->getContentStreamIdentifier(),
-                $sourceNode->relationAnchorPoint,
+                $event->contentStreamIdentifier,
+                $oldCoveringNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint,
-                $event->getSpecializationCoverage()
+                $event->specializationCoverage
             );
             $this->assignNewParentNodeToAffectedHierarchyRelations(
-                $event->getContentStreamIdentifier(),
-                $sourceNode->relationAnchorPoint,
+                $event->contentStreamIdentifier,
+                $oldCoveringNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint,
-                $event->getSpecializationCoverage()
+                $event->specializationCoverage
             );
         });
     }
@@ -77,31 +85,31 @@ trait NodeVariation
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
-                $event->getContentStreamIdentifier(),
-                $event->getSourceOrigin(),
-                $event->getNodeAggregateIdentifier()
+                $event->contentStreamIdentifier,
+                $event->sourceOrigin,
+                $event->nodeAggregateIdentifier
             );
             if (!$sourceNode) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
             $generalizedNode = $this->copyNodeToOriginDimensionSpacePoint(
                 $sourceNode,
-                $event->getGeneralizationOrigin()
+                $event->generalizationOrigin
             );
 
             $this->replaceNodeRelationAnchorPoint(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getGeneralizationCoverage(),
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->generalizationCoverage,
                 $generalizedNode->relationAnchorPoint
             );
 
             $this->addMissingHierarchyRelations(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getSourceOrigin(),
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->sourceOrigin,
                 $generalizedNode->relationAnchorPoint,
-                $event->getGeneralizationCoverage(),
+                $event->generalizationCoverage,
                 get_class($event)
             );
         });
@@ -111,31 +119,31 @@ trait NodeVariation
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
-                $event->getContentStreamIdentifier(),
-                $event->getSourceOrigin(),
-                $event->getNodeAggregateIdentifier()
+                $event->contentStreamIdentifier,
+                $event->sourceOrigin,
+                $event->nodeAggregateIdentifier
             );
             if (!$sourceNode) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
             $peerNode = $this->copyNodeToOriginDimensionSpacePoint(
                 $sourceNode,
-                $event->getPeerOrigin()
+                $event->peerOrigin
             );
 
             $this->replaceNodeRelationAnchorPoint(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getPeerCoverage(),
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->peerCoverage,
                 $peerNode->relationAnchorPoint
             );
 
             $this->addMissingHierarchyRelations(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getSourceOrigin(),
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->sourceOrigin,
                 $peerNode->relationAnchorPoint,
-                $event->getPeerCoverage(),
+                $event->peerCoverage,
                 get_class($event)
             );
         });

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection;
 
 use Doctrine\DBAL\Connection;
@@ -36,9 +38,7 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
 {
     public const TABLE_NAME_DOCUMENT_URIS = 'neos_neos_projection_document_uri';
@@ -226,40 +226,40 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
         $this->copyVariants(
-            $event->getNodeAggregateIdentifier(),
-            $event->getSourceOrigin(),
-            $event->getPeerOrigin(),
-            $event->getPeerCoverage()
+            $event->nodeAggregateIdentifier,
+            $event->sourceOrigin,
+            $event->peerOrigin,
+            $event->peerCoverage
         );
     }
 
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
         $this->copyVariants(
-            $event->getNodeAggregateIdentifier(),
-            $event->getSourceOrigin(),
-            $event->getGeneralizationOrigin(),
-            $event->getGeneralizationCoverage()
+            $event->nodeAggregateIdentifier,
+            $event->sourceOrigin,
+            $event->generalizationOrigin,
+            $event->generalizationCoverage
         );
     }
 
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
         $this->copyVariants(
-            $event->getNodeAggregateIdentifier(),
-            $event->getSourceOrigin(),
-            $event->getSpecializationOrigin(),
-            $event->getSpecializationCoverage()
+            $event->nodeAggregateIdentifier,
+            $event->sourceOrigin,
+            $event->specializationOrigin,
+            $event->specializationCoverage
         );
     }
 
@@ -384,10 +384,10 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, RawEvent $rawEvent): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        $newPropertyValues = $event->getPropertyValues()->getPlainValues();
+        $newPropertyValues = $event->propertyValues->getPlainValues();
         if (!isset($newPropertyValues['uriPathSegment']) && !isset($newPropertyValues['targetMode'])
             && !isset($newPropertyValues['target'])) {
             return;
@@ -397,8 +397,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         // see https://github.com/neos/contentrepository-development-collection/issues/163
 
         $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $event->getNodeAggregateIdentifier(),
-            $event->getOriginDimensionSpacePoint()->hash
+            $event->nodeAggregateIdentifier,
+            $event->originDimensionSpacePoint->hash
         ));
 
         if ($node === null) {
@@ -412,8 +412,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'target' => $newPropertyValues['target'] ?? $shortcutTarget['target'],
             ];
             $this->updateNodeByIdAndDimensionSpacePointHash(
-                $event->getNodeAggregateIdentifier(),
-                $event->getOriginDimensionSpacePoint()->hash,
+                $event->nodeAggregateIdentifier,
+                $event->originDimensionSpacePoint->hash,
                 ['shortcutTarget' => $shortcutTarget]
             );
         }
@@ -441,7 +441,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             [
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
-                'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
+                'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]

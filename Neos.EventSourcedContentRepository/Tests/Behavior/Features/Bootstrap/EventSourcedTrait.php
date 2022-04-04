@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
@@ -43,7 +44,6 @@ use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Feature
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeProperties;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
@@ -80,7 +80,6 @@ trait EventSourcedTrait
     use NodeDisabling;
     use NodeModification;
     use NodeMove;
-    use NodeProperties;
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
@@ -91,7 +90,9 @@ trait EventSourcedTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected ContentGraphs $contentGraphs;
+    protected ContentGraphs $availableContentGraphs;
+
+    protected ContentGraphs $activeContentGraphs;
 
     /**
      * @var WorkspaceFinder
@@ -117,9 +118,14 @@ trait EventSourcedTrait
         return $this->workspaceFinder;
     }
 
-    protected function getContentGraphs(): ContentGraphs
+    protected function getAvailableContentGraphs(): ContentGraphs
     {
-        return $this->contentGraphs;
+        return $this->availableContentGraphs;
+    }
+
+    protected function getActiveContentGraphs(): ContentGraphs
+    {
+        return $this->activeContentGraphs;
     }
 
     protected function setupEventSourcedTrait()
@@ -132,16 +138,16 @@ trait EventSourcedTrait
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
             'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.activeContentGraphs'
         );
-        $activeContentGraphs = [];
+        $availableContentGraphs = [];
         foreach ($activeContentGraphsConfig as $name => $className) {
             if (is_string($className)) {
-                $activeContentGraphs[$name] = $this->getObjectManager()->get($className);
+                $availableContentGraphs[$name] = $this->getObjectManager()->get($className);
             }
         }
-        if (count($activeContentGraphs) === 0) {
+        if (count($availableContentGraphs) === 0) {
             throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
         }
-        $this->contentGraphs = new ContentGraphs($activeContentGraphs);
+        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
 
@@ -163,9 +169,24 @@ trait EventSourcedTrait
      * @return void
      * @throws \Exception
      */
-    public function beforeEventSourcedScenarioDispatcher()
+    public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
-        foreach ($this->getContentGraphs() as $contentGraph) {
+        $adapterTagPrefix = 'adapters=';
+        $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
+        /** @var array<int,string> $adapterKeys */
+        $adapterKeys = [];
+        foreach ($scope->getFeature()->getTags() as $tagName) {
+            if (\str_starts_with($tagName, $adapterTagPrefix)) {
+                $adapterKeys = explode(',', \mb_substr($tagName, $adapterTagPrefixLength));
+                break;
+            }
+        }
+
+        $this->activeContentGraphs = count($adapterKeys) === 0
+            ? $this->availableContentGraphs
+            : $this->availableContentGraphs->reduceTo($adapterKeys);
+
+        foreach ($this->getAvailableContentGraphs() as $contentGraph) {
             $contentGraph->enableCache();
         }
         $this->visibilityConstraints = VisibilityConstraints::frontend();
@@ -294,7 +315,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
     {
-        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             $actualNumberOfNodes = $contentGraph->countNodes();
             Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph in adapter "' . $adapterName . '" consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
         }
@@ -309,7 +330,7 @@ trait EventSourcedTrait
      */
     public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(string $nodeAggregateIdentifier, string $nodeTypeConstraints, int $maximumLevels, TableNode $table)
     {
-        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             $expectedRows = $table->getHash();
             $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
             $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeConstraints);
@@ -475,7 +496,7 @@ trait EventSourcedTrait
             return $this->rootNodeAggregateIdentifier;
         }
 
-        $contentGraphs = $this->getContentGraphs();
+        $contentGraphs = $this->getActiveContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
         $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Domain\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
         if ($sitesNodeAggregate) {

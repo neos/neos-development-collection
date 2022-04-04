@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
+
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -21,8 +23,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyScope;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -46,10 +51,13 @@ trait NodeModification
 
     public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier
         );
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $nodeTypeName = $nodeAggregate->getNodeTypeName();
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
@@ -72,36 +80,92 @@ trait NodeModification
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
+        $domainEvents = DomainEvents::createEmpty();
+        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$domainEvents) {
             // Check if node exists
             $nodeAggregate = $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
                 $command->nodeAggregateIdentifier
             );
+            $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
             $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
-
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodePropertiesWereSet(
+            $propertyValuesByScope = $this->splitPropertiesByScope($command->propertyValues, $nodeType);
+            $events = [];
+            foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
+                $scope = PropertyScope::from($scopeValue);
+                $affectedOrigins = $scope->resolveAffectedOrigins(
+                    $command->originDimensionSpacePoint,
+                    $nodeAggregate,
+                    $this->interDimensionalVariationGraph
+                );
+                foreach ($affectedOrigins as $affectedOrigin) {
+                    $events[] = new NodePropertiesWereSet(
                         $command->contentStreamIdentifier,
                         $command->nodeAggregateIdentifier,
-                        $command->originDimensionSpacePoint,
-                        $command->propertyValues,
+                        $affectedOrigin,
+                        $propertyValues,
                         $command->initiatingUserIdentifier
-                    ),
+                    );
+                }
+            }
+            $events = $this->mergeSplitEvents($events);
+            $domainEvents = DomainEvents::fromArray(array_map(
+                fn(NodePropertiesWereSet $event): DecoratedEvent => DecoratedEvent::addIdentifier(
+                    $event,
                     Uuid::uuid4()->toString()
-                )
-            );
+                ),
+                $events
+            ));
 
             $this->getNodeAggregateEventPublisher()->publishMany(
                 ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                     ->getEventStreamName(),
-                $events
+                $domainEvents
             );
         });
-        /** @var DomainEvents $events */
 
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+        return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
+    }
+
+    /**
+     * @return array<string,SerializedPropertyValues>
+     */
+    private function splitPropertiesByScope(SerializedPropertyValues $propertyValues, NodeType $nodeType): array
+    {
+        $propertyValuesByScope = [];
+        foreach ($propertyValues as $propertyName => $propertyValue) {
+            $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
+            if (is_string($declaration)) {
+                $scope = PropertyScope::from($declaration);
+            } else {
+                $scope = PropertyScope::SCOPE_NODE;
+            }
+            $propertyValuesByScope[$scope->value][$propertyName] = $propertyValue;
+        }
+
+        return array_map(
+            fn(array $propertyValues): SerializedPropertyValues => SerializedPropertyValues::fromArray($propertyValues),
+            $propertyValuesByScope
+        );
+    }
+
+    /**
+     * @param array<int,NodePropertiesWereSet> $events
+     * @return array<int,NodePropertiesWereSet>
+     */
+    private function mergeSplitEvents(array $events): array
+    {
+        /** @var array<string,NodePropertiesWereSet> $eventsByOrigin */
+        $eventsByOrigin = [];
+        foreach ($events as $domainEvent) {
+            if (!isset($eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash])) {
+                $eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash] = $domainEvent;
+            } else {
+                $eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash]
+                    = $eventsByOrigin[$domainEvent->originDimensionSpacePoint->hash]->mergeProperties($domainEvent);
+            }
+        }
+
+        return array_values($eventsByOrigin);
     }
 }

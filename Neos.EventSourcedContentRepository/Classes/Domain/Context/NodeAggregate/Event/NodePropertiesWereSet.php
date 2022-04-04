@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -28,36 +30,20 @@ use Neos\Flow\Annotations as Flow;
  *
  * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
  * because we treat NULL and "not set" the same from an API perspective.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodePropertiesWereSet implements
     DomainEventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private OriginDimensionSpacePoint $originDimensionSpacePoint;
-
-    private SerializedPropertyValues $propertyValues;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        SerializedPropertyValues $propertyValues,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public readonly SerializedPropertyValues $propertyValues,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->propertyValues = $propertyValues;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -75,16 +61,6 @@ final class NodePropertiesWereSet implements
         return $this->originDimensionSpacePoint;
     }
 
-    public function getPropertyValues(): SerializedPropertyValues
-    {
-        return $this->propertyValues;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new self(
@@ -92,6 +68,17 @@ final class NodePropertiesWereSet implements
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
             $this->propertyValues,
+            $this->initiatingUserIdentifier
+        );
+    }
+
+    public function mergeProperties(self $other): self
+    {
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->originDimensionSpacePoint,
+            $this->propertyValues->merge($other->propertyValues),
             $this->initiatingUserIdentifier
         );
     }

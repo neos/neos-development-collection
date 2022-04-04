@@ -95,6 +95,27 @@ The new code should be compatible with **PHP 7.4**
 
 See https://github.com/neos/neos-development-distribution/tree/event-sourced
 
+## Linting
+
+Linting is done via CodeSniffer and PHPStan.
+Both are integrated as composer scripts (see composer.json).
+To manually lint your branch before opening a PR, you can run
+```sh
+composer lint
+```
+from the folder the collection resides (probably `Packages/CR` in a Neos distribution)
+
+### Commit hooks
+
+Linting can be added to commit hooks if desired.
+In the collection folder (probably `Packages/CR` in a Neos distribution),
+add lines similar to the following to your `.git/hooks/pre-commit` file (the example is for a DDEV environment):
+
+```sh
+#!/bin/sh
+ddev exec "cd Packages/CR; composer lint"
+```
+
 ## Road to first running beta
 
 - [x] create standalone package collection instead of branches
