@@ -28,9 +28,21 @@ final class ReferenceCannotBeSet extends \DomainException
         NodeTypeName $nodeTypeName
     ): self {
         return new self(
-            'Property "' . $propertyName . '" cannot be set because node type "'
+            'Reference "' . $propertyName . '" cannot be set because node type "'
                 . $nodeTypeName . '" does not declare it.',
             1618670106
+        );
+    }
+
+    public static function becauseTheConstraintsAreNotMatched(
+        PropertyName $referenceName,
+        NodeTypeName $nodeTypeName,
+        NodeTypeName $nameOfAttemptedType
+    ): self {
+        return new self(
+            'Reference "' . $referenceName . '" cannot be set for node type "'
+            . $nodeTypeName . '" because the constraints do not allow nodes of type "' . $nameOfAttemptedType . '"',
+            1648502149
         );
     }
 }

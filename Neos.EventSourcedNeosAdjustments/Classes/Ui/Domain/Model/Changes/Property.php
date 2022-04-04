@@ -25,7 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 /** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd */
@@ -204,7 +204,7 @@ class Property extends AbstractChange
                         $subject->getContentStreamIdentifier(),
                         $subject->getNodeAggregateIdentifier(),
                         $subject->getOriginDimensionSpacePoint(),
-                        NodeAggregateIdentifierCollection::fromArray($destinationNodeAggregateIdentifiers),
+                        NodeAggregateIdentifiers::fromArray($destinationNodeAggregateIdentifiers),
                         PropertyName::fromString($propertyName),
                         $this->getInitiatingUserIdentifier()
                     )

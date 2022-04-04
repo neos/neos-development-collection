@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyScope;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -111,6 +112,28 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
             array_merge($this->values, $other->getValues()),
             fn ($value) => $value !== null
         ));
+    }
+
+    /**
+     * @return array<string,self>
+     */
+    public function splitByScope(NodeType $nodeType): array
+    {
+        $propertyValuesByScope = [];
+        foreach ($this->values as $propertyName => $propertyValue) {
+            $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
+            if (is_string($declaration)) {
+                $scope = PropertyScope::from($declaration);
+            } else {
+                $scope = PropertyScope::SCOPE_NODE;
+            }
+            $propertyValuesByScope[$scope->value][$propertyName] = $propertyValue;
+        }
+
+        return array_map(
+            fn(array $propertyValues): self => self::fromArray($propertyValues),
+            $propertyValuesByScope
+        );
     }
 
     public function propertyExists(string $propertyName): bool

@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeConstraintException;
@@ -47,6 +48,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\ReferenceCannotBeSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeTypeConstraintsFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -175,7 +177,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType((string) $nodeTypeName);
+        $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
         if (isset($nodeType->getProperties()[(string)$propertyName])) {
             $propertyType = $nodeType->getPropertyType((string)$propertyName);
             if ($propertyType === 'reference' || $propertyType === 'references') {
@@ -183,6 +185,70 @@ trait ConstraintChecks
             }
         }
         throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($propertyName, $nodeTypeName);
+    }
+
+    protected function requireNodeTypeToAllowNodesOfTypeInReference(
+        NodeTypeName $nodeTypeName,
+        PropertyName $referenceName,
+        NodeTypeName $nodeTypeNameInQuestion
+    ): void {
+        $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
+        $nodeTypeInQuestion = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeNameInQuestion);
+        $propertyDeclaration = $nodeType->getProperties()[(string)$referenceName] ?? null;
+        if (is_null($propertyDeclaration)) {
+            throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
+        }
+        if (isset($propertyDeclaration['constraints']['nodeTypes'])) {
+            $nodeTypeConstraints = NodeTypeConstraintsFactory::createFromNodeTypeDeclaration(
+                $propertyDeclaration['constraints']['nodeTypes']
+            );
+
+            $constraintCheckClosure = function (NodeType $nodeType) use (
+                $nodeTypeConstraints,
+                $referenceName,
+                $nodeTypeName,
+                $nodeTypeNameInQuestion
+            ) {
+                foreach ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames() as $allowedNodeTypeName) {
+                    if ($allowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
+                        return false;
+                    }
+                }
+                foreach ($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames() as $disallowedNodeTypeName) {
+                    if ($disallowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
+                        throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+                            $referenceName,
+                            $nodeTypeName,
+                            $nodeTypeNameInQuestion
+                        );
+                    }
+                }
+                return true;
+            };
+            $this->traverseNodeTypeTreeBreadthFirst([$nodeTypeInQuestion], $constraintCheckClosure);
+        }
+    }
+
+    /**
+     * @param array<int,NodeType> $nodeTypes
+     */
+    private function traverseNodeTypeTreeBreadthFirst(array $nodeTypes, \Closure $closure): bool
+    {
+        $nextLevelNodeTypes = [];
+        foreach ($nodeTypes as $nodeType) {
+            $continue = $closure($nodeType);
+            if (!$continue) {
+                return false;
+            }
+            $nextLevelNodeTypes = array_merge(
+                $nextLevelNodeTypes,
+                $this->nodeTypeManager->getSubNodeTypes($nodeType->getName())
+            );
+        }
+
+        $this->traverseNodeTypeTreeBreadthFirst($nextLevelNodeTypes, $closure);
+
+        return true;
     }
 
     /**

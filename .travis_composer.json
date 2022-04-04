@@ -40,7 +40,7 @@
       "phpunit/phpunit": "^9.0",
       "symfony/css-selector": "~2.0",
       "neos/behat": "dev-master",
-      "phpstan/phpstan": "^1.4",
+      "phpstan/phpstan": "^1.5",
       "squizlabs/php_codesniffer": "^3.6",
 
       "cweagans/composer-patches": "dev-master#a18d1ca38ae09d16aa21846f60649d99d6775639"
