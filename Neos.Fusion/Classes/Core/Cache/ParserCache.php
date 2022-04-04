@@ -28,6 +28,8 @@ use Neos\Utility\Files;
  */
 class ParserCache
 {
+    use ParserCacheIdentifierTrait;
+
     /**
      * @Flow\Inject
      * @var VariableFrontend
@@ -53,6 +55,9 @@ class ParserCache
         if ($contextPathAndFilename === null) {
             return $generateValueToCache();
         }
+        if (str_contains($contextPathAndFilename, '://')) {
+            $contextPathAndFilename = $this->getAbsolutePathForPackageRessourceUri($contextPathAndFilename);
+        }
         $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
@@ -66,19 +71,6 @@ class ParserCache
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
 
-    /**
-     * @param array<string, int> $changedFiles
-     */
-    public function flushFileAstCacheOnFileChanges(array $changedFiles): void
-    {
-        foreach ($changedFiles as $changedFile => $status) {
-            $identifier = $this->getCacheIdentifierForFile($changedFile);
-            if ($this->parsePartialsCache->has($identifier)) {
-                $this->parsePartialsCache->remove($identifier);
-            }
-        }
-    }
-
     private function cacheForIdentifier(string $identifier, \Closure $generateValueToCache): mixed
     {
         if ($this->parsePartialsCache->has($identifier)) {
@@ -87,34 +79,6 @@ class ParserCache
         $value = $generateValueToCache();
         $this->parsePartialsCache->set($identifier, $value);
         return $value;
-    }
-
-    /**
-     * creates a comparable hash of the dsl type and content to be used as cache identifier
-     */
-    private function getCacheIdentifierForDslCode(string $identifier, string $code): string
-    {
-        return 'dsl_' . $identifier . '_' . md5($code);
-    }
-
-    /**
-     * creates a comparable hash of the absolute, resolved $fusionFileName
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function getCacheIdentifierForFile(string $fusionFileName): string
-    {
-        if (str_contains($fusionFileName, '://')) {
-            $fusionFileName = $this->getAbsolutePathForPackageRessourceUri($fusionFileName);
-        }
-
-        $realPath = realpath($fusionFileName);
-        if ($realPath === false) {
-            throw new \InvalidArgumentException("Couldn't resolve realpath for: '$fusionFileName'");
-        }
-
-        $realFusionFilePathWithoutRoot = str_replace(FLOW_PATH_ROOT, '', $realPath);
-        return 'file_' . md5($realFusionFilePathWithoutRoot);
     }
 
     /**
