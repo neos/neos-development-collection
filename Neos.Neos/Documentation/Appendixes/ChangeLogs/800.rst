@@ -1,0 +1,874 @@
+`8.0.0 (2022-04-05) <https://github.com/neos/neos-development-collection/releases/tag/8.0.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`!!! FEATURE: Rewrite Fusion Parser <https://github.com/neos/neos-development-collection/pull/3497>`_
+-----------------------------------------------------------------------------------------------------
+
+The fusion parser has been rewritten from a single file to an architecture with separate parser and lexer.  
+The architecture is more precise and accessible and will allow to add new features and optimization to fusion in future. The fusion parser tests are generally unchanged, only the removed fusion namespace support required some adjustments. 
+
+The existing parser class and interface are unchanged but the inner working is: 
+- The Fusion Parser hands the parsing of fusion files to the ObjectTreeParser which returns not an Array but actual Objects representing the parsed fusion
+- The Parser then uses the MergedArrayTreeVisitor to traverse the ObjectTree and convert convert it to the Array structure the Fusion Runtime expects. Closures for handling includes and dsl are allow the visitor to resolve those on the go.
+
+About breakiness:
+- The fusion namespace feature is removed so the new parser only supports fully qualified prototype names
+- The new parser is a bit stricter as the old parser. However only clearly broken fusion-syntax is rejected. Since the parser adds clear error messages that help to fix such issues.
+
+About Performance: 
+- In Production the Fusion ObjectTreeArray is cached so as this is unchanged the Performance in Production is unchanged. 
+- In Development mode the architecture adds a little to the parsing time for now. However the architecture will eventually allow us to cache the parsed fusion for each fusion file and only parse changed fusion files. This is not part of this pr but a follow up.
+
+Note: The architecture with the old Parser staying in place as a wrapper is an immediate step as is the generation of the old ArrayAst via MergedArrayTreeVisitor. In the end also the runtime should use an object tree directly but this step allowed to adjust the parser separately with high confidence because the testsuite is unchanged. That us also the reason the new ObjectTreeParser is not marked as beeing public api yet. 
+
+* Resolves: `#3593 <https://github.com/neos/neos-development-collection/issues/3593>`_
+* Resolves: `#3500 <https://github.com/neos/neos-development-collection/issues/3500>`_
+* Resolves: `#3430 <https://github.com/neos/neos-development-collection/issues/3430>`_
+* Related: `#3507 <https://github.com/neos/neos-development-collection/issues/3507>`_
+
+* Packages: ``Fusion``
+
+`!!! FEATURE: Remove legacy cache tag support <https://github.com/neos/neos-development-collection/pull/3639>`_
+---------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+In Neos 4.1 new Eel helpers were introduced to generate content cache tags in Fusion. Those make sure that the cache tags provided by the integrator are valid. 
+Until Neos 4.0 they needed to be written manually as string which was error prone. 
+
+But to support old cache tags that were lacking the workspace context the ``ContentCacheFlusher`` still cleared them.
+This change removes that support. So this is breaking and projects need to be adjusted when upgrading and still using those old cache tags.
+
+The advantage of removing them is that the number of cache tags to be flushed during publishing is lower. TODO: Add number.
+
+This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_to be merged first.
+
+**How I did it**
+
+Removed the legacy cache tag generation.
+
+The change also include a new code migration version ``20220318111600`` to replace the most commonly used legacy cache tags with matching eel helper calls:
+
+```
+node = ${'Node_' + node.identifier}
+descendants = ${'DescendantOf_' + node.identifier}
+nodeType = 'NodeType_My.Vendor:Content.Foo'
+```
+
+* Packages: ``Neos``
+
+`!!! FEATURE: Neos.Media: Extend SupportsTaggingInterface by countByTag <https://github.com/neos/neos-development-collection/pull/3451>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Currently classes that implement the SupportsTaggingInterface can only count untagged Assets. 
+When using the interface with external Assets, this leads to the MediaBrowser displaying the count of Neos Media Assets for the external Source, not the count of the Assets matching that Tag in the external source. 
+I extended the SupportsTaggingInterface so that Classes using this interface can change the count of the Tags that are displayed in the Media Browser, just like they can change the count of untagged Assets. 
+
+**How I did it**
+I added the countByTag method to the SupportsTaggingInterface and implemented it in the Neos MediaBrowser where the count happens. 
+Since I am new to Neos I was not sure if countByTags should also pass the active AssetCollection, but I decided against it since the findByTag function also does not pass the active AssetCollection and the count should match the result. This could both be changed. 
+Also, this could throw errors with Packages implementing the Interface. 
+
+**How to verify it**
+When implementing the SupportsTaggingInterface the method countByTag must be implemented and will change the count of Assets for every tag  displayed in the left sidebar.
+
+* Related: `#3452 <https://github.com/neos/neos-development-collection/issues/3452>`_
+
+
+* Packages: ``Neos`` ``Media``
+
+`FEATURE: Add ParsePartials cache to the fusion parser <https://github.com/neos/neos-development-collection/pull/3659>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#3661 <https://github.com/neos/neos-development-collection/issues/3661>`_
+
+The New Fusion Parser now uses a ``Neos_Fusion_ParsePartials`` cache to store the generated FileAst _*_ for each Fusion File. Those File partials are flushed via file monitor when the source Fusion file was changed.
+The generated merged array Fusion tree for a Fusion DSL is also cached seperately in this cache.
+
+With this cache layer in place, only changed files are reparsed which **speeds up Fusion parsing** in Development mode by **factor of 2 to 8** depending on context. _**_
+
+The ParsePartials cache is disabled in Production mode as this one already uses the ObjectTreeCache.
+
+since we cache mostly AstNode objects its recommended to have the php extension ``igbinary`` installed.
+
+the cache can be turned of by disabling: ``Neos.Fusion.enableParsePartialsCache``
+
+_*_ there are now more representations of the Fusion code - we created a step in between where we create AstNode Objects
+see for more infos the PR of the New Fusion Parser: https://github.com/neos/neos-development-collection/pull/3497
+
+_**_ in my tests, when the cached is warmed _***_, performance boost might not be notable on small projects.
+
+_***_ of course is the cache warmed - as always for the statistics ;)
+
+* Packages: ``Fusion``
+
+`FEATURE: Optimise cache tag generation before flushing content cache after publishing <https://github.com/neos/neos-development-collection/pull/3650>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+The generation of cache tags is quite slow for a large number of published changes as many operations
+are done for each involved node and workspace.
+I improved the performance by skipping repeated operations on the same node with the same context
+and by caching the result of nodetype related calculations.
+
+**How I did it**
+
+* Reuse calculated list of implemented nodetypes for each node changed by introducing a variable to store each calculation
+* Stop traversal through a nodes parents if one of the parents was already traversed before to generate ``DescendantOf`` cache tags.
+
+**How to verify it**
+
+* Tests still run fine
+
+* Packages: ``Neos``
+
+`FEATURE: Implement user impersonation <https://github.com/neos/neos-development-collection/pull/3648>`_
+--------------------------------------------------------------------------------------------------------
+
+Extending the Neos with endpoints to impersonate a logged-in user and also restoring the user.
+For that, the change will add a new controller ImpersonateController for the backend.
+
+Backend Administrators will get the permission to impersonate users, and everybody is able to restore the origin user if the user is authenticated by the impersonation. The change extends the user management module with a button for each user and the user menu in the to bar to be able to restore the user.
+
+The user menu in the content module needs to be adjusted in the neos-ui.
+
+
+https://user-images.githubusercontent.com/1014126/159288830-23440aea-399b-444a-a0f4-c0f01408977e.mp4
+
+
+
+* Resolves: `#3647 <https://github.com/neos/neos-development-collection/issues/3647>`_ 
+
+* Packages: ``Neos``
+
+`FEATURE: Pass tags to be flushed to content cache backend <https://github.com/neos/neos-development-collection/pull/3631>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Instead of calling the cache backend for each tag to flush
+individually, the list of tags is passed to the backend with
+the newly introduced ``flushByTags`` method in
+https://github.com/neos/flow-development-collection/pull/2718.
+
+This allows each type of backend to optimise the flushing
+of all tags, which can lead to huge performance improvements.
+Especially when content is published to the live workspace
+which leads to large numbers of cache tags that will be flushed.
+
+Also the messages stored with individual content cache tags
+take up a lot of unnecessary memory in production
+context and not are even used there.
+
+With this change the behaviour can be enabled via
+the setting ``Neos.Neos.fusion.contentCacheDebugMode``.
+
+* Resolves: `#3640 <https://github.com/neos/neos-development-collection/issues/3640>`_
+
+**How I did it**
+
+The ``ContentCacheFlusher`` now calls the ``flushByTags`` method introduced in https://github.com/neos/flow-development-collection/pull/2718.
+
+Only in the newly introduced debug mode the old style of flushing by tag individually is used to provide the individual logged feedback why entries were flushed.
+
+
+* Packages: ``Neos``
+
+`FEATURE: Add external rel attribute to link in ConvertUrisImplementation <https://github.com/neos/neos-development-collection/pull/3542>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3543 <https://github.com/neos/neos-development-collection/issues/3543>`_
+
+**What I did**
+I added the posibility of adding 'rel="external"' to external links,  when using the ConvertUrisImplementation 
+
+**How I did it**
+Just like the already existing attribute setNoOpener, I added the option setExternal. 
+
+I was wondering about making this more open by allowing a string/array to be set here, since rel-attributes can contain a lot of different attributes. But then again, this could be misused. 
+
+**How to verify it**
+When using the ConvertUrisImplementation in fusion, the option setExternal can be used to add rel="external" to a link. 
+
+`
+   @class = 'Neos\\\Neos\\\Fusion\\\ConvertUrisImplementation'
+    value = ${value}
+    node = ${node}
+    externalLinkTarget = '_blank'
+    resourceLinkTarget = '_blank'
+    absolute = false
+    forceConversion = false
+    setNoOpener = true
+    setExternal = true
+`
+
+
+* Packages: ``Neos``
+
+`!!! BUGFIX: Prevent busting the configuration cache version when a user logs in or is updated <https://github.com/neos/neos-development-collection/pull/3564>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Without this patch the configuration version was flushed and raised after every login or any other change to an account, always forcing the browsers to reload nodetype schemas and other configuration-requests which used the configuration version as cache-buster parameter. So if a user would reload the Neos backend after someone else logged in or logs in and out, the backend loading time would be much slower, as the nodetype schema and xliff data would have to be regenerated and downloaded skipping the possibly already cached version in the browser.
+
+Also each role combination of users now has their own version identifier and therefore can share the resulting nodetype schema, xliff, etc.
+
+Before everyone had the version of the user that last logged in or had any other change to their account as every change would have flushed the configuration version.
+
+**How I did it**
+
+* Removed the ``AccountPostEventListener`` which only flushed the ``Neos_Neos_Configuration_Version``. This could be breaking if anyone relied on it.
+* Make sure every role combination has their own configuration version.
+
+**How to verify it**
+
+* Log in with first user and note down configuration version query parameter of nodetype request
+* Log in with second user with same roles and compare configuration version, should be the same
+* Reload with first user and make sure the version is still the same
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Separate fusion parserCache and parserCacheFlusher  <https://github.com/neos/neos-development-collection/pull/3691>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This fixes a race condition described in #3685. When PHP code was changed at the same time as Fusion code, the parse partial cache tried to flush before the cache was injected which lead to a PHP error.
+
+The change extracts the logic for flushing the partial cache into a very simple object with the generating of identifiers kept as a shared trait between ``ParserCacheFlusher`` and ``ParserCache``.
+
+resolves: https://github.com/neos/neos-development-collection/issues/3685
+related: https://github.com/neos/neos-development-collection/pull/3659
+replaces: https://github.com/neos/neos-development-collection/pull/3688
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Add missing placeholder to sprintf call <https://github.com/neos/neos-development-collection/pull/3669>`_
+------------------------------------------------------------------------------------------------------------------
+
+In removeBrokenEntityReferences the number of placeholders did not
+match the number of variables given.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Adjust code leading to deprecation warnings with PHP 8.1 <https://github.com/neos/neos-development-collection/pull/3683>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3682 <https://github.com/neos/neos-development-collection/issues/3682>`_
+
+* Packages: ``Neos`` ``SiteKickstarter`` ``Fusion``
+
+`BUGFIX: Remove unused nodetype configuration cache <https://github.com/neos/neos-development-collection/pull/3684>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The cache with its current implementation actually
+hurts performance as it forces loading of all
+nodetypes instead of lazy loading the required ones.
+Also the cached data is never used.
+In development context all nodetypes are reloaded
+on every request accessing the nodetypemanager.
+
+Therefore its better to remove the cache until there
+is a proper implementation.
+
+* Resolves: `#3681 <https://github.com/neos/neos-development-collection/issues/3681>`_
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Initialize assetCollections in ImageVariant <https://github.com/neos/neos-development-collection/pull/3561>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3559 <https://github.com/neos/neos-development-collection/issues/3559>`_
+
+`BUGFIX: Use media type of new resource during asset replacement <https://github.com/neos/neos-development-collection/pull/3366>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+When the resource of an asset is replaced but the filename kept, the
+media type of the new asset is replaced by whatever the original
+filename indicates.
+
+This change fixes that by re-setting the media type from the new
+resource after the original filename has been set.
+
+* Fixes: `#3365 <https://github.com/neos/neos-development-collection/issues/3365>`_
+
+* Packages: ``Media``
+
+`BUGFIX: Only emit thumbnailCreated when successful <https://github.com/neos/neos-development-collection/pull/3574>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3573 <https://github.com/neos/neos-development-collection/issues/3573>`_
+
+`BUGFIX: Persist Thumbnail using DBAL to avoid unique constraint errors <https://github.com/neos/neos-development-collection/pull/3583>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This uses a direct SQL INSERT via DBAL to store Thumbnails. Doing this
+avoid unique constraint exceptions that otherwise occur when multiple
+concurrent requests trigger Thumbnail creation.
+
+* Fixes: `#3479 <https://github.com/neos/neos-development-collection/issues/3479>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Allow adding first asset collection again <https://github.com/neos/neos-development-collection/pull/3622>`_
+--------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+This fix resolves a regression in `0143d67d8bdfa4458fd9bfb02f3ce6d82d1b400f <https://github.com/neos/neos-development-collection/commit/0143d67d8bdfa4458fd9bfb02f3ce6d82d1b400f>`_
+which prevents adding an asset collection if there was none before
+as the form was not rendered.
+
+**How I did it**
+
+Move collection creation form outside of condition which checks for the existence of any least one collection.
+
+**How to verify it**
+
+Try to add a new collection inside the media module in a fresh Neos without any collections
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Check for the native PHP extension instead of the ImagineService, since ImageService is not used further in this generator. <https://github.com/neos/neos-development-collection/pull/3617>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Since there is no use of the ImagineService within the DocumentThumbnailGenerator, the availability of the native PHP extension for Imagick should be checked instead. This allows the use of the DocumentThumbnailGenerator with Imagick and the use of other Imagine based thumbnail generators using GDlib, for example.
+
+* Packages: ``NodeTypes`` ``Media``
+
+`BUGFIX: Remove unused formatting options <https://github.com/neos/neos-development-collection/pull/3613>`_
+-----------------------------------------------------------------------------------------------------------
+
+fixes: `#3612 <https://github.com/neos/neos-development-collection/issues/3612>`_
+
+Thanks to MonTea from Slack reporting that, we appreciate it!
+
+* Packages: ``Neos``
+
+`BUGFIX: backend message partials not found <https://github.com/neos/neos-development-collection/pull/3584>`_
+-------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Fix error the circumstances leading to:
+
+```
+The partial files "resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData.html", "resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData" could not be loaded.
+```
+
+This error message is hiding the actual error message I need to see.
+
+**How I did it**
+
+Remove usage of partials that had been deleted already in 2019 in 86088dc 
+
+**How to verify it**
+
+Go to various page in backend with a certain content Node Type on it. Go to this Node Type's yaml and change its Name from, e.g. ``Vendor.Site:Box`` to ``Vendor.Site:Boxers``. Reload the backend and find the partial error above occur. After applying this bugfix, you'll find the real error message, ``An exception was thrown while Neos tried to render your page``
+
+fixes: #2757
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion Runtime when no context is set, preparing it for Eel will fail <https://github.com/neos/neos-development-collection/pull/3549>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3548 <https://github.com/neos/neos-development-collection/issues/3548>`_
+fixes: `#3556 <https://github.com/neos/neos-development-collection/issues/3556>`_
+
+added tests, that verify that the runtime context stack is working correctly.
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Update Noto Sans to latest version <https://github.com/neos/neos-development-collection/pull/3545>`_
+-------------------------------------------------------------------------------------------------------------
+
+We cannot use some accent signs with the font NotoSans. This has been fixed in the latest version of NotoSans. This change just updates the Font assets to the latest version of Noto fonts v20201206-phase3 as of 2020.12.06.
+
+
+**What I did**
+Replaced the Font assets to the latest version.
+
+**How to verify it**
+Go to a textfield in the backend module (e.g. the user management) and enter an accent like `
+
+Related to https://github.com/neos/neos-ui/issues/3006
+
+
+* Packages: ``Neos``
+
+`BUGFIX: move comment on @Flow\SkipCsrfProtection tag <https://github.com/neos/neos-development-collection/pull/3541>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When using Neos 7.2+ with the Flowpack.Neos.FrontendLogin package trying to login with a frontend leads to a CSRF protection error:
+
+``21-12-12 10:29:27 6580       DEBUG                          CSRF: token was empty but a valid token is required for Neos\\Neos\\Controller\\Frontend\\NodeController::showAction()``
+
+See `#2612 <https://github.com/neos/flow-development-collection/issues/2612>`_ – that discusses a change from Neos 7.1 to 7.2 where the tag changes in combination with a comment.
+
+This PR allows to use the FrontendLogin again.
+
+
+* Packages: ``Neos``
+
+`!!! TASK: Remove remaining aloha configuration compatibility code <https://github.com/neos/neos-development-collection/pull/3665>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Removed the last remaining PHP and SCSS code related to the old aloha editor which was deprecated since Neos 4.x.
+
+This can be breaking if nodetypes still contain old style aloha specific configurations.
+But the Neos.Ui package contains a migration ``20180907103800`` to adjust it.
+
+* Packages: ``Neos``
+
+`!!! TASK: Remove window.Typo3Neos API <https://github.com/neos/neos-development-collection/pull/3656>`_
+--------------------------------------------------------------------------------------------------------
+
+The successor of the JavaScript API has been introduced due to the removal of the EmberJS UI.
+For more details check the pull request or the release blog post.
+https://github.com/neos/neos-development-collection/pull/3302
+https://www.neos.io/blog/neos-flow-71-released.html#neos-7-1-emberjs
+
+The new API is ``window.NeosCMS`` is available since Neos 7.1. With Neos 8.0 we will remove the compatibility layer of the old JS API. When a developer need to support multiple Neos versions at once, it is of course possible to write a wrapper for that in the package.
+
+* Packages: ``Neos``
+
+`!!! TASK: Cleanup inheritence of ArrayFusionObjects <https://github.com/neos/neos-development-collection/pull/3645>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Many FusionObjects inherited from DateStructure or Join because they used methods like sortNestedFusionKeys.
+This change moves the methods that made this necessary to the AbstractArrayFusionObject and adjusts the inheritence chain.
+
+New methods of the AbstractArrayFusionObject
+- ``evaluateNestedProperties(?string $defaultFusionPrototypeName = null)`` - evaluate all children after sorting and applying an optional default fusion prototype name
+- ``isUntyped($key)`` - dermine wether a fusion path configuration is untyped or not
+- ``sortNestedProperties()`` - return the property configuration with sorted keys
+
+The methods sortNestedFusionKeys and isUntypedProperty are still in the DateStructureImplementation but deprecated.
+
+!!! This is breaky for everyone that inherited from the join implementation if methods previously inherited from DataStructure are used !!!
+
+* Resolves: `#3577 <https://github.com/neos/neos-development-collection/issues/3577>`_
+* Resolves: `#3646 <https://github.com/neos/neos-development-collection/issues/3646>`_ 
+
+This also removes unwanted effects of the inheritance when unnamed keys of ``HttpMessges`` or ``Join`` were interpreted as ``DataStructure`` which caused trouble. Also the problem that keys with only meta attributes where treated as typed was addressed.
+
+Fixes: https://github.com/neos/neos-development-collection/issues/3513
+Fixes: https://github.com/neos/neos-development-collection/issues/3441
+Fixes: https://github.com/neos/neos-development-collection/issues/3576
+
+Related: https://github.com/neos/neos-development-collection/pull/2729
+
+
+* Packages: ``Fusion``
+
+`!!! TASK: Remove (long) deprecated ConvertNodeUris <https://github.com/neos/neos-development-collection/pull/3649>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This has been replaced by ``ConvertUris`` since 1.1
+
+* Packages: ``Neos``
+
+`!!! TASK: Fusion ContentCollectionRenderer remove legacy 'collection' prop <https://github.com/neos/neos-development-collection/pull/3643>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves: `#3642 <https://github.com/neos/neos-development-collection/issues/3642>`_
+
+## !!! Breaking, migrate the following in your Fusion:
+
+```diff
+Neos.Neos:ContentCollectionRenderer {
+-    collection = ${[]}
++    items = ${[]}
+}
+```
+
+With 5.3 https://github.com/neos/neos-development-collection/pull/2772
+``Neos.Neos:ContentCollectionRenderer`` was changed from ``Neos.Fusion:Collection`` to ``Neos.Fusion:Loop``
+
+for backwards compatibility, the prop ``collection`` was also allowed to be set as alias for ``items``
+
+but the ``collection`` prop alias doenst fully work as 1:1 replacement fx. it doesnt work if it was set to an empty array:
+https://github.com/neos/neos-development-collection/issues/3114
+
+this pr removes this this legacy fallback with 8.0
+
+
+* Packages: ``Neos``
+
+`!!! TASK: Raise minimal supported PHP version to 8.0.0 <https://github.com/neos/neos-development-collection/pull/3626>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Adjust composer json and test matrix to match raised version requirements for flow.
+
+* Resolves: `#3625 <https://github.com/neos/neos-development-collection/issues/3625>`_ 
+
+* Packages: ``.github``
+
+`TASK: Add new login wallpaper for Neos 8.0 <https://github.com/neos/neos-development-collection/pull/3693>`_
+-------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Streamline role description, ensure gender neutrality <https://github.com/neos/neos-development-collection/pull/3628>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+I streamlined the role labels and description and ensured gender neutrality. The descriptions are now a bit shorted, using less space in the Neos backend.
+
+* Packages: ``Neos``
+
+`TASK: Remove deprecated VIE schema <https://github.com/neos/neos-development-collection/pull/3686>`_
+-----------------------------------------------------------------------------------------------------
+
+This schema was required for the Aloha editor which is not supported by Neos anymore.
+Backend modules were still loading this schema, so this might help making them a slightly more responsive on initial load.
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Fix Fusion Test And Make Them Test What They Say <https://github.com/neos/neos-development-collection/pull/3663>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+currently, when testing this locally:
+```
+NestedOverwritesAndProcessorsTest::applyingProcessorToNonExistingValueWorks
+```
+
+one gets a:
+
+```
+Array to string conversion
+```
+
+this is because the test is lying in our faces.
+
+the fixture ``NestedOverwritesAndProcessors.fusion`` is telling us, that ``Neos.Fusion:Tag`` uses as attributes ``Neos.Fusion:Attributes``.
+
+but it's not!
+
+``Neos.Fusion:Tag`` uses ``Neos.Fusion:DataStructure`` because the fixtures are all merged together and not namespaced. So someplace this was changed to a DataStructure, and now we have a ``Tag`` with a ``DataStructure``.
+
+This *was* fine until we changed the behaviour of the ``DataStructure`` with: https://github.com/neos/neos-development-collection/pull/3645
+
+so when a ``DataStructure``
+
+previously didn't make nested DataStructures here:
+```
+nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
+  attributes = Neos.Fusion:DataStructure {
+    coffee { // since `#3645 <https://github.com/neos/neos-development-collection/issues/3645>`_becomes a Neos.Fusion:DataStructure
+      @process.addProcessed = ${String.trim(value + ' harvey')}
+    }
+  }
+}
+```
+
+it now does.
+That leads to ``coffee`` being an empty array, what leads to the process trying to append a string to it - what surprisingly always fails.
+
+I agree, that based on the code above It's not really clear at first glance, that value is an empty array. But then again I would expect it to be null - which surprisingly isn't it either! Since we magically give ``@process`` an empty string, in case there is no value:
+https://github.com/neos/neos-development-collection/blob/`694649dab4f4b8bf9c71c605bb5cf00180396198 <https://github.com/neos/neos-development-collection/commit/694649dab4f4b8bf9c71c605bb5cf00180396198>`_/Neos.Fusion/Classes/Core/RuntimeConfiguration.php#L161
+
+so either way there stucks the worm in this issue, and I choose know to make the tests do what they say - no more.
+
+we can still think about if a DataStructure should not create nested DataStructures when the only key is a ``@process``.
+
+--------
+
+note this targets master on purpose.
+
+* Packages: ``Fusion``
+
+`TASK: Correct class loading for Neos.CliSetup in master and restore alphabetical order <https://github.com/neos/neos-development-collection/pull/3680>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+as is in the 7.3 branch already
+
+
+`TASK: Drop $packagePath from getFilteredPackages() <https://github.com/neos/neos-development-collection/pull/3671>`_
+---------------------------------------------------------------------------------------------------------------------
+
+See `#2774 <https://github.com/neos/flow-development-collection/issues/2774>`_
+
+* Packages: ``Neos``
+
+`TASK: Introduce migration to convert Fusion objects without namespace <https://github.com/neos/neos-development-collection/pull/3672>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Fusion Objects without namespace were located in Neos.Fusion namespace in the past.
+The namespace support is dropped with Neos 8 and this migration migrates Object names that
+made use of this to the fully qualified names.
+
+Note: This converts the only the default namespace. If custom namespaces are used they 
+are not touched but have to be removed manually. The new Fusion parser tell you that.
+
+* Relates: `#3497 <https://github.com/neos/neos-development-collection/issues/3497>`_
+
+This is based on an older migration when we changed the default Namespace to Neos.Fusion with Neos 4.0
+see: https://github.com/neos/neos-development-collection/blob/4.0/Neos.Fusion/Migrations/Code/Version20180211175500.php
+
+**How to verify it**
+
+Run the migration with some fusion code that  uses FusionObjects without the Neos.Fusion namespace
+
+```
+./flow core:migrate Neos.Demo --force --verbose --version Neos.Fusion-20220326120900
+```
+
+A possible example for fusion code to check is here.
+
+```
+test = Join {
+
+    #####################################################################################
+    # Fusion objects without namespace that should be converted to Neos.Fusion Namspace #
+    #####################################################################################
+
+    objectWithoutBraces1 = Tag
+    objectWithoutBraces2 = Http.Message
+
+    objectWithBraces1 = Tag {
+        tagName = "div"
+    }
+    objectWithBraces2 = Http.Message  {
+        foo = "bar"
+    }
+
+    ##########################################################################################
+    # Things that should not be converted because they already use the Neos.Fusion namespace #
+    ##########################################################################################
+
+    namespacedObjectWithoutBraces1 = Neos.Fusion:Tag
+    namespacedObjectWithoutBraces1 = Neos.Fusion:Http.Message
+
+    namespacedObjectWithBraces1 = Neos.Fusion:Tag {
+        tagName = "div"
+    }
+    namespacedObjectWithBraces1 = Neos.Fusion:Http.Message  {
+        foo = "bar"
+    }
+
+    #################################################################
+    # Examples for objects without namespace that did not exist and #
+    # that should not be touched and are left as invalid as before  # 
+    #################################################################
+
+    unknownObjectNameWithoutBraces1 = TagFooBar
+    unknownObjectNameWithoutBraces2 = FooBarTag
+    unknownObjectNameWithoutBraces3 = FooTagBar
+    unknownObjectNameWithoutBraces4 = Tag.FooBar
+    unknownObjectNameWithoutBraces5 = Foo.Tag.Bar
+    unknownObjectNameWithoutBraces6 = FooBar.Tag
+
+    unknownObjectNameWithBraces1 = TagFooBar {
+        foo = "bar"
+    }
+    unknownObjectNameWithBraces2 = FooTagBar {
+        foo = "bar"
+    }
+    unknownObjectNameWithBraces3 = FooBarTag {
+        foo = "bar"
+    }
+    unknownObjectNameWithBraces4 = Tag.FooBar {
+        foo = "bar"
+    }
+    unknownObjectNameWithBraces5 = Foo.Tag.Bar {
+        foo = "bar"
+    }
+    unknownObjectNameWithBraces6 = FooBar.Tag {
+        foo = "bar"
+    }
+}
+```
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Avoid deprecated Doctrine ORM proxy <https://github.com/neos/neos-development-collection/pull/3670>`_
+------------------------------------------------------------------------------------------------------------
+
+The ``Doctrine\\ORM\\Proxy\\Proxy`` is deprecated and extends the
+``Doctrine\\Persistence\\Proxy``.
+
+* Packages: ``ContentRepository`` ``Fusion``
+
+`TASK: Render CSS from Neos.Neos <https://github.com/neos/neos-development-collection/pull/3666>`_
+--------------------------------------------------------------------------------------------------
+
+This is a follow-up PR from `#3665 <https://github.com/neos/neos-development-collection/issues/3665>`_
+
+I've just run ``yarn build:styles:prod`` in the ``Neos.Neos`` folder
+
+* Packages: ``Neos``
+
+`TASK: Add documentation for previewIcon <https://github.com/neos/neos-development-collection/pull/3655>`_
+----------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+The neos-ui introduces a new NodeType setting called ``previewIcon`` and ``previewIconSize``.
+As the neos-ui does not contain documentation, the PR will add the new options here.
+
+The change also adjust the icon description, as we are now able to use custom SVG icons.
+
+Related PR: https://github.com/neos/neos-ui/pull/3042
+
+* Packages: ``Neos``
+
+`TASK: Fusion clean up the usages how `@process` adds css classes. <https://github.com/neos/neos-development-collection/pull/3654>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+with: https://github.com/neos/flow-development-collection/issues/2710
+
+we can add any scalar types to Array.push as base, which will be auto casted to an array:
+``Array.push("foo", "bar")``
+which results in -> ``["foo", "bar"]``
+which is rendered as ``foo bar``
+
+previously we had to cast it to an array beforehand. I integrated this for the 'neos-contentcollection' once: https://github.com/neos/neos-development-collection/pull/3438 - but this cleans the manual cast up.
+
+(this also fixes any real low level css class adding via ``Type.isString()`` etc by just casting to an array and then pushing the new value.)
+
+Also the last use of copy will be removed, by manually copying the (now little) code over.
+fixes: https://github.com/neos/neos-development-collection/issues/3588
+
+* Packages: ``Neos`` ``NodeTypes.Navigation``
+
+`TASK: Fusion use glob includes. <https://github.com/neos/neos-development-collection/pull/3653>`_
+--------------------------------------------------------------------------------------------------
+
+this makes it easier for us to maintain those lists. As when adding or removing prototypes this can be forgotten.
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Fusion Page Rendering - access internal node properties directly: `node.nodeType.name` <https://github.com/neos/neos-development-collection/pull/3641>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+replace FlowQuery style syntax (underscore for internal props) with direct object access via ``get*`` in EEL.
+
+see discussion:
+https://neos-project.slack.com/archives/C04PYL8H3/p1647433062072679
+
+There is no performance difference, it just reads better IMO - and is easier to understand.
+
+* Packages: ``Neos``
+
+`TASK: Add workspace/parent index to NodeEvent table <https://github.com/neos/neos-development-collection/pull/3531>`_
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Address PHP 8 deprecation warnings <https://github.com/neos/neos-development-collection/pull/3620>`_
+-----------------------------------------------------------------------------------------------------------
+
+This fixes the following deprecation warnings by removing optional arguments that were placed before non optional ones.
+While this changes the api it should not break any code as the optional arguments could not be used that way anyways.
+
+```
+PHP Deprecated:  Optional parameter $junkCallback declared before required parameter $options is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Diff/Classes/SequenceMatcher.php on line 83
+PHP Deprecated:  Optional parameter $arguments declared before required parameter $renderingContext is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Neos/Classes/ViewHelpers/Backend/IfModuleAccessibleViewHelper.php on line 66
+PHP Deprecated:  Optional parameter $tidy declared before required parameter $packageKey is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Neos/Classes/Domain/Service/SiteExportService.php on line 91
+PHP Deprecated:  Optional parameter $tidy declared before required parameter $pathAndFilename is implicitly treated as a required parameter in /var/www/html/Packages/Neos/Neos.Neos/Classes/Domain/Service/SiteExportService.php on line 119
+```
+
+This change targets Neos 7.0 as this is the lowest version that allows php 8. No class or method that is @api is changed. When used the changes are non breaking and the modified classes are unlikely to be extended.
+
+* Resolves: `#3619 <https://github.com/neos/neos-development-collection/issues/3619>`_ 
+
+* Packages: ``NodeTypes.BaseMixins`` ``Diff`` ``Neos``
+
+`TASK: Replace TS (TypoScript) with Fusion <https://github.com/neos/neos-development-collection/pull/3591>`_
+------------------------------------------------------------------------------------------------------------
+
+I've found some old ``TS`` (TypoScript) wording in the code. I replaced it with ``Fusion``
+
+* Packages: ``Neos`` ``Fusion`` ``NodeTypes.ColumnLayouts`` ``NodeTypes.ContentReferences`` ``NodeTypes.Form``
+
+`TASK: improve admin command description <https://github.com/neos/neos-development-collection/pull/3579>`_
+----------------------------------------------------------------------------------------------------------
+
+**What I did**
+I have adapted the description for the ``user:create`` command.
+
+**How I did it**
+I have customized the ``WelcomeCommandController.php``.
+
+
+* Packages: ``Neos`` ``CliSetup``
+
+`TASK: Allow Neos.Fusion:Match to return a default value with a type other than string <https://github.com/neos/neos-development-collection/pull/3581>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+I removed the return type declaration of the ``Neos\\Fusion\\FusionObjects\\MatchImplementation::getDefault()`` method. This allows developers to return other types then string when using ``Neos.Fusion:Match``. 
+
+**How to verify it**
+
+Create a new fusion value and use a value that is not a string, for example:
+
+```
+prototype(Vendor.Prefix:Component) {
+  value = Neos.Fusion:Match {
+    @subject = ${q(node).property('someProp')}
+    valueA = Neos.Fusion:DataStructure {
+      key = 'valueA'
+    }
+    @default = Neos.Fusion:DataStructure {
+      key = 'valueB'
+    }
+  }
+}
+```
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Replace deprecated fusion protoypes from transpiled AFX code <https://github.com/neos/neos-development-collection/pull/3557>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Neos.Fusion:Array and Neos.Fusion:RawArray are deprected for a while now but are still used in AFX. This change makes afx use:
+
+- Neos.Fusion:Join instead of Neos.Fusion:Array
+- Neos.Fusion:DataStructure instead of Neos.Fusion:RawArray
+
+* Resolves: `#3558 <https://github.com/neos/neos-development-collection/issues/3558>`_
+
+* Packages: ``Neos`` ``Fusion.Afx``
+
+`TASK: Update lowest maintained branch in readme <https://github.com/neos/neos-development-collection/pull/3554>`_
+------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Add documentation of range slider <https://github.com/neos/neos-development-collection/pull/3537>`_
+----------------------------------------------------------------------------------------------------------
+
+Add documentation  for newly added range slider https://github.com/neos/neos-ui/pull/2986
+
+* Packages: ``Neos``
+
+`TASK: Adds 7.3.0 changelog <https://github.com/neos/neos-development-collection/pull/3535>`_
+---------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.0...8.0.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
