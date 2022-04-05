@@ -20,14 +20,12 @@ jobs:
         # Use https://hub.docker.com/_/postgres for available versions
         postgresql-versions: ['14-alpine', '13-alpine', '12-alpine', '11-alpine', '10-alpine']
         dependencies: ['highest']
-        composer-arguments: ['--ignore-platform-reqs'] # to run --ignore-platform-reqs in experimental builds
-        experimental: [true]
+        composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         include:
           # Build for minimum dependencies.
           - flow-versions: 'master'
             php-versions: '8.0'
             postgresql-versions: '10-alpine'
-            experimental: true
             dependencies: 'lowest'
 
     runs-on: ubuntu-latest
