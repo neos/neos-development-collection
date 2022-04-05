@@ -87,7 +87,7 @@ jobs:
 
       - name: Update composer.json
         run: |
-          git -C ../${{ env.FLOW_FOLDER }} checkout -b build
+          git -C ../${{ env.NEOS_DIST_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
 
