@@ -824,7 +824,7 @@ HELPTEXT;
                         $convertedProperty = $this->propertyMapper->convert($propertyValue, $propertyType);
                         if ($convertedProperty === null) {
                             $nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
-                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>", property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
+                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>" (%s), property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
                             $brokenReferencesCount ++;
                         }
                     }
@@ -833,7 +833,7 @@ HELPTEXT;
                             $convertedProperty->__load();
                         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (EntityNotFoundException $e) {
                             $nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
-                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>", property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
+                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>" (%s), property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
                             $brokenReferencesCount ++;
                         }
                     }
