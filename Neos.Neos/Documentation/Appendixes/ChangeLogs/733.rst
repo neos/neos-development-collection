@@ -1,0 +1,112 @@
+`7.3.3 (2022-04-05) <https://github.com/neos/neos-development-collection/releases/tag/7.3.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add missing placeholder to sprintf call <https://github.com/neos/neos-development-collection/pull/3669>`_
+------------------------------------------------------------------------------------------------------------------
+
+In removeBrokenEntityReferences the number of placeholders did not
+match the number of variables given.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Remove unused nodetype configuration cache <https://github.com/neos/neos-development-collection/pull/3684>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The cache with its current implementation actually
+hurts performance as it forces loading of all
+nodetypes instead of lazy loading the required ones.
+Also the cached data is never used.
+In development context all nodetypes are reloaded
+on every request accessing the nodetypemanager.
+
+Therefore its better to remove the cache until there
+is a proper implementation.
+
+* Resolves: `#3681 <https://github.com/neos/neos-development-collection/issues/3681>`_
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Initialize assetCollections in ImageVariant <https://github.com/neos/neos-development-collection/pull/3561>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3559 <https://github.com/neos/neos-development-collection/issues/3559>`_
+
+`BUGFIX: Use media type of new resource during asset replacement <https://github.com/neos/neos-development-collection/pull/3366>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+When the resource of an asset is replaced but the filename kept, the
+media type of the new asset is replaced by whatever the original
+filename indicates.
+
+This change fixes that by re-setting the media type from the new
+resource after the original filename has been set.
+
+* Fixes: `#3365 <https://github.com/neos/neos-development-collection/issues/3365>`_
+
+* Packages: ``Media``
+
+`TASK: Fix Fusion Test And Make Them Test What They Say <https://github.com/neos/neos-development-collection/pull/3663>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+currently, when testing this locally:
+```
+NestedOverwritesAndProcessorsTest::applyingProcessorToNonExistingValueWorks
+```
+
+one gets a:
+
+```
+Array to string conversion
+```
+
+this is because the test is lying in our faces.
+
+the fixture ``NestedOverwritesAndProcessors.fusion`` is telling us, that ``Neos.Fusion:Tag`` uses as attributes ``Neos.Fusion:Attributes``.
+
+but it's not!
+
+``Neos.Fusion:Tag`` uses ``Neos.Fusion:DataStructure`` because the fixtures are all merged together and not namespaced. So someplace this was changed to a DataStructure, and now we have a ``Tag`` with a ``DataStructure``.
+
+This *was* fine until we changed the behaviour of the ``DataStructure`` with: https://github.com/neos/neos-development-collection/pull/3645
+
+so when a ``DataStructure``
+
+previously didn't make nested DataStructures here:
+```
+nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
+  attributes = Neos.Fusion:DataStructure {
+    coffee { // since `#3645 <https://github.com/neos/neos-development-collection/issues/3645>`_becomes a Neos.Fusion:DataStructure
+      @process.addProcessed = ${String.trim(value + ' harvey')}
+    }
+  }
+}
+```
+
+it now does.
+That leads to ``coffee`` being an empty array, what leads to the process trying to append a string to it - what surprisingly always fails.
+
+I agree, that based on the code above It's not really clear at first glance, that value is an empty array. But then again I would expect it to be null - which surprisingly isn't it either! Since we magically give ``@process`` an empty string, in case there is no value:
+https://github.com/neos/neos-development-collection/blob/`694649dab4f4b8bf9c71c605bb5cf00180396198 <https://github.com/neos/neos-development-collection/commit/694649dab4f4b8bf9c71c605bb5cf00180396198>`_/Neos.Fusion/Classes/Core/RuntimeConfiguration.php#L161
+
+so either way there stucks the worm in this issue, and I choose know to make the tests do what they say - no more.
+
+we can still think about if a DataStructure should not create nested DataStructures when the only key is a ``@process``.
+
+--------
+
+note this targets master on purpose.
+
+* Packages: ``Fusion``
+
+`TASK: Add workspace/parent index to NodeEvent table <https://github.com/neos/neos-development-collection/pull/3531>`_
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.2...7.3.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
