@@ -1,0 +1,20 @@
+`8.0.1 (2022-04-06) <https://github.com/neos/neos-development-collection/releases/tag/8.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Apply array_filter to augmenter values to prevent rendering attributes for null values <https://github.com/neos/neos-development-collection/pull/3696>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Originally the fusion augmenter only passed non falsy values to the HtmlAugmenter.
+This was changed by using the evaluateNestedProperties method (inherited from AbstractArrayFusionObject) instead ob the previously used sortNestedFusionKeys (inherited from JoinImplementation) plus custom loop.
+
+See: https://github.com/neos/neos-development-collection/pull/3645/files#diff-`40c9edd185fdb14a7c3b4b89b78f32b4fa58eba2 <https://github.com/neos/neos-development-collection/commit/40c9edd185fdb14a7c3b4b89b78f32b4fa58eba2>`_6d5e750b236ce730f45342b6
+
+This is fixed by applying array_filter that will filter all falsy values (null | false).
+
+* Packages: ``Neos`` ``Fusion``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.0...8.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
