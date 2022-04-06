@@ -68,7 +68,8 @@ class Workspace
      *     |                    |
      *   Content Stream A <-- Content Stream B
      *
-     * This is the case if the contentStream of the base workspace IS EQUAL TO the sourceContentStream of this workspace's content stream.
+     * This is the case if the contentStream of the base workspace IS EQUAL TO the sourceContentStream
+     * of this workspace's content stream.
      *
      * By definition, a base workspace (like "live") is ALWAYS UP_TO_DATE.
      */
@@ -84,7 +85,8 @@ class Workspace
      *      .   Content Stream A2 (current)       |
      *      Content Stream A1 (previous) <-- Content Stream B
      *
-     *     This is the case if the contentStream of the base workspace IS NEWER THAN the sourceContentStream of this workspace's content stream.
+     *     This is the case if the contentStream of the base workspace IS NEWER THAN the sourceContentStream
+     *     of this workspace's content stream.
      *
      *     In the example, Content Stream B would need to be rebased to Content stream A2.
      *
@@ -152,15 +154,12 @@ class Workspace
      */
     public function getBaseWorkspaceName(): ?WorkspaceName
     {
-        return $this->baseWorkspaceName ? new WorkspaceName($this->baseWorkspaceName) : null;
+        return $this->baseWorkspaceName ? WorkspaceName::fromString($this->baseWorkspaceName) : null;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
-        return new WorkspaceName($this->workspaceName);
+        return WorkspaceName::fromString($this->workspaceName);
     }
 
     public function getWorkspaceTitle(): WorkspaceTitle
@@ -176,19 +175,18 @@ class Workspace
         return $this->workspaceOwner;
     }
 
-
-
     /**
      * Checks if this workspace is a user's personal workspace
-     *
-     * @return boolean
      * @api
      */
-    public function isPersonalWorkspace()
+    public function isPersonalWorkspace(): bool
     {
         return $this->workspaceOwner !== null;
     }
 
+    /**
+     * @param array<string,string> $row
+     */
     public static function fromDatabaseRow(array $row): self
     {
         $workspace = new Workspace();
@@ -199,6 +197,7 @@ class Workspace
         $workspace->workspaceOwner = $row['workspaceowner'];
         $workspace->currentContentStreamIdentifier = $row['currentcontentstreamidentifier'];
         $workspace->status = $row['status'];
+
         return $workspace;
     }
 }

@@ -33,21 +33,27 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return Nodes
      */
-    public function findChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes;
+    public function findChildNodes(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): Nodes;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
      * @param PropertyName|null $name
      * @return Nodes
      */
-    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateAggregateIdentifier, PropertyName $name = null): Nodes;
+    public function findReferencedNodes(
+        NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
+        PropertyName $name = null
+    ): Nodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return NodeInterface[]
-     */
-    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): Nodes;
+    public function findReferencingNodes(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        PropertyName $name = null
+    ): Nodes;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -60,7 +66,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @return int
      */
-    public function countChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null): int;
+    public function countChildNodes(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null
+    ): int;
 
     /**
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
@@ -73,14 +82,20 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
      */
-    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByPath(
+        NodePath $path,
+        NodeAggregateIdentifier $startingNodeAggregateIdentifier
+    ): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $edgeName
      * @return NodeInterface|null
      */
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
+    public function findChildNodeConnectedThroughEdgeName(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeName $edgeName
+    ): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $sibling
@@ -89,7 +104,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return Nodes
      */
-    public function findSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes;
+    public function findSiblings(
+        NodeAggregateIdentifier $sibling,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): Nodes;
 
     /**
      * @param NodeAggregateIdentifier $sibling
@@ -98,7 +118,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return Nodes
      */
-    public function findSucceedingSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes;
+    public function findSucceedingSiblings(
+        NodeAggregateIdentifier $sibling,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): Nodes;
 
     /**
      * @param NodeAggregateIdentifier $sibling
@@ -107,7 +132,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return Nodes
      */
-    public function findPrecedingSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes;
+    public function findPrecedingSiblings(
+        NodeAggregateIdentifier $sibling,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): Nodes;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -131,19 +161,28 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return SubtreeInterface
      */
-    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
+    public function findSubtrees(
+        array $entryNodeAggregateIdentifiers,
+        int $maximumLevels,
+        NodeTypeConstraints $nodeTypeConstraints
+    ): SubtreeInterface;
 
     /**
-     * Recursively find all nodes underneath the $entryNodeAggregateIdentifiers, which match the node type constraints specified by NodeTypeConstraints.
+     * Recursively find all nodes underneath the $entryNodeAggregateIdentifiers,
+     * which match the node type constraints specified by NodeTypeConstraints.
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
-     * @param array $entryNodeAggregateIdentifiers
+     * @param array<int,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param SearchTerm|null $searchTerm
      * @return Nodes
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes;
+    public function findDescendants(
+        array $entryNodeAggregateIdentifiers,
+        NodeTypeConstraints $nodeTypeConstraints,
+        ?SearchTerm $searchTerm
+    ): Nodes;
 
     public function countNodes(): int;
 

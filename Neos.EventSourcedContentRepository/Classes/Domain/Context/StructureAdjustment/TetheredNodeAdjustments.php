@@ -33,9 +33,7 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
@@ -74,6 +72,9 @@ class TetheredNodeAdjustments
         return $this->runtimeBlocker;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -90,11 +91,19 @@ class TetheredNodeAdjustments
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName($node->getNodeAggregateIdentifier(), $tetheredNodeName);
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                        $node->getContentStreamIdentifier(),
+                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                        VisibilityConstraints::withoutRestrictions()
+                    );
+                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                        $node->getNodeAggregateIdentifier(),
+                        $tetheredNodeName
+                    );
                     if ($tetheredNode === null) {
                         $foundMissingOrDisallowedTetheredNodes = true;
-                        // $nestedNode not found - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
+                        // $nestedNode not found
+                        // - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::TETHERED_NODE_MISSING,
@@ -102,9 +111,18 @@ class TetheredNodeAdjustments
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $this->readSideMemoryCacheManager->disableCache();
 
-                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, null, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
+                                $events = $this->createEventsForMissingTetheredNode(
+                                    $nodeAggregate,
+                                    $node,
+                                    $tetheredNodeName,
+                                    null,
+                                    $expectedTetheredNodeType,
+                                    UserIdentifier::forSystemUser()
+                                );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
+                                $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+                                    $node->getContentStreamIdentifier()
+                                );
                                 $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
                                 return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
                             }
@@ -117,14 +135,18 @@ class TetheredNodeAdjustments
             }
 
             // find disallowed tethered nodes
-            $tetheredNodeAggregates = $this->contentGraph->findTetheredChildNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+            $tetheredNodeAggregates = $this->contentGraph->findTetheredChildNodeAggregates(
+                $nodeAggregate->getContentStreamIdentifier(),
+                $nodeAggregate->getIdentifier()
+            );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
-                        'The tethered child node "' . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.',
+                        'The tethered child node "'
+                            . $tetheredNodeAggregate->getNodeName() . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
@@ -136,7 +158,11 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($nodeAggregate->getNodes() as $node) {
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                        $node->getContentStreamIdentifier(),
+                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                        VisibilityConstraints::withoutRestrictions()
+                    );
                     $childNodes = $subgraph->findChildNodes($node->getNodeAggregateIdentifier());
 
                     /** is indexed by node name, and the value is the tethered node itself */
@@ -152,7 +178,10 @@ class TetheredNodeAdjustments
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
-                            'Tethered nodes wrongly ordered, expected: ' . implode(', ', array_keys($expectedTetheredNodes)) . ' - actual: ' . implode(', ', array_keys($actualTetheredChildNodes)),
+                            'Tethered nodes wrongly ordered, expected: '
+                                . implode(', ', array_keys($expectedTetheredNodes))
+                                . ' - actual: '
+                                . implode(', ', array_keys($actualTetheredChildNodes)),
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->reorderNodes(
@@ -168,6 +197,9 @@ class TetheredNodeAdjustments
         }
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     private function ensureNodeIsTethered(NodeInterface $node): \Generator
     {
         if (!$node->isTethered()) {
@@ -179,6 +211,9 @@ class TetheredNodeAdjustments
         }
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     private function ensureNodeIsOfType(NodeInterface $node, NodeType $expectedNodeType): \Generator
     {
         if ($node->getNodeTypeName()->getValue() !== $expectedNodeType->getName()) {
@@ -211,13 +246,16 @@ class TetheredNodeAdjustments
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param array $actualTetheredChildNodes array key: name of tethered child node. Value: the Node itself.
-     * @param array $expectedNodeOrdering an array depicting the expected tethered order, like ["node1", "node2"]
-     * @return CommandResult
+     * array key: name of tethered child node. Value: the Node itself.
+     * @param array<string,NodeInterface> $actualTetheredChildNodes
+     * an array depicting the expected tethered order, like ["node1", "node2"]
+     * @param array<int,string> $expectedNodeOrdering
      */
-    private function reorderNodes(ContentStreamIdentifier $contentStreamIdentifier, array $actualTetheredChildNodes, array $expectedNodeOrdering): CommandResult
-    {
+    private function reorderNodes(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        array $actualTetheredChildNodes,
+        array $expectedNodeOrdering
+    ): CommandResult {
         $events = DomainEvents::createEmpty();
 
         // we move from back to front through the expected ordering; as we always specify the **succeeding** sibling.
@@ -239,7 +277,7 @@ class TetheredNodeAdjustments
                                 $nodeToMove->getOriginDimensionSpacePoint(),
                                 NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
                                 NodeVariantAssignments::createFromArray([
-                                    $nodeToMove->getOriginDimensionSpacePoint()->getHash() => new NodeVariantAssignment(
+                                    $nodeToMove->getOriginDimensionSpacePoint()->hash => new NodeVariantAssignment(
                                         $succeedingNode->getNodeAggregateIdentifier(),
                                         $succeedingNode->getOriginDimensionSpacePoint()
                                     )

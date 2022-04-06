@@ -40,7 +40,7 @@ trait ProjectedNodeTrait
 
     protected ?NodesByAdapter $currentNodes = null;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     abstract protected function getCurrentSubgraphs(): ContentSubgraphs;
 
@@ -204,7 +204,7 @@ trait ProjectedNodeTrait
     protected function initializeCurrentNodesFromContentGraphs(callable $query): void
     {
         $currentNodes = [];
-        foreach ($this->getContentGraphs() as $adapterName => $graph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $graph) {
             $currentNodes[$adapterName] = $query($graph, $adapterName);
         }
 
@@ -226,11 +226,11 @@ trait ProjectedNodeTrait
      */
     public function iExpectThisNodeToBeClassifiedAs(string $serializedExpectedClassification): void
     {
-        $expectedClassification = NodeAggregateClassification::fromString($serializedExpectedClassification);
+        $expectedClassification = NodeAggregateClassification::from($serializedExpectedClassification);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
                 $expectedClassification->equals($currentNode->getClassification()),
-                'Node was expected to be classified as "' . $expectedClassification . '" but is as "' . $currentNode->getClassification() . '" in adapter "' . $adapterName . '"'
+                'Node was expected to be classified as "' . $expectedClassification->value . '" but is as "' . $currentNode->getClassification()->value . '" in adapter "' . $adapterName . '"'
             );
         });
     }
@@ -244,7 +244,7 @@ trait ProjectedNodeTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedNodeTypeName) {
             $actualNodeTypeName = $currentNode->getNodeTypeName();
-            Assert::assertTrue($expectedNodeTypeName->equals($actualNodeTypeName), 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
         });
     }
 
@@ -303,9 +303,9 @@ trait ProjectedNodeTrait
             case 'Date:now':
                 return new \DateTimeImmutable();
             default:
-                if (\mb_strpos($serializedPropertyValue, 'Date:') === 0) {
+                if (\str_starts_with($serializedPropertyValue, 'Date:')) {
                     return \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($serializedPropertyValue, 5));
-                } elseif (\mb_strpos($serializedPropertyValue, 'URI:') === 0) {
+                } elseif (\str_starts_with($serializedPropertyValue, 'URI:')) {
                     return new Uri(\mb_substr($serializedPropertyValue, 4));
                 }
         }

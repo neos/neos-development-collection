@@ -12,8 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -21,11 +22,16 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     public function initializeArguments()
     {
@@ -33,22 +39,28 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
         $this->registerArgument('node', NodeInterface::class, 'Node', true);
     }
 
-    public function render()
+    public function render(): mixed
     {
         $node = $this->arguments['node'];
         assert($node instanceof NodeInterface);
         $documentNodes = [];
-        $flowQuery = new FlowQuery([$node]);
-        $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());
-        foreach ($nodes as $documentNode) {
-            $documentNodes[] = $documentNode;
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+        $currentNode = $node;
+        while ($currentNode instanceof NodeInterface) {
+            if ($currentNode->getNodeType()->isOfType('Neos.Neos:Document')) {
+                $documentNodes[] = $currentNode;
+            }
+            $currentNode = $nodeAccessor->findParentNode($currentNode);
         }
-        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $documentNodes[] = $node;
-        }
+        $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove('documentNodes');
+
         return $content;
     }
 }

@@ -13,9 +13,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class WorkspaceMaintenanceService
 {
     protected WorkspaceFinder $workspaceFinder;
@@ -26,8 +24,11 @@ class WorkspaceMaintenanceService
 
     protected ?CommandResult $lastCommandResult;
 
-    public function __construct(WorkspaceFinder $workspaceFinder, WorkspaceCommandHandler $workspaceCommandHandler, DbalClient $dbalClient)
-    {
+    public function __construct(
+        WorkspaceFinder $workspaceFinder,
+        WorkspaceCommandHandler $workspaceCommandHandler,
+        DbalClient $dbalClient
+    ) {
         $this->workspaceFinder = $workspaceFinder;
         $this->workspaceCommandHandler = $workspaceCommandHandler;
         $this->connection = $dbalClient->getConnection();
@@ -39,9 +40,17 @@ class WorkspaceMaintenanceService
      * NOTE: This still **keeps** the event stream as is; so it would be possible to re-construct the content stream
      *       at a later point in time (though we currently do not provide any API for it).
      *
-     *       To remove the deleted Content Streams, call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
+     *       To remove the deleted Content Streams,
+     *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
-     * @return array|Workspace[] the removed content streams
+     * @return array<string,Workspace> the workspaces of the removed content streams
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist
+     * @throws \Neos\EventSourcedContentRepository\Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function rebaseOutdatedWorkspaces(): array
     {

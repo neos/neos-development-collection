@@ -1,8 +1,8 @@
 <?php
-namespace Neos\ContentRepository\Intermediary\Tests\Unit\Domain\Property;
+namespace Neos\EventSourcedContentRepository\Tests\Unit\Domain\Property;
 
 /*
- * This file is part of the Neos.ContentRepository.Intermediary package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,9 @@ namespace Neos\ContentRepository\Intermediary\Tests\Unit\Domain\Property;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyType;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyType;
 use Neos\EventSourcedContentRepository\Tests\Unit\Fixtures\PostalAddress;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
@@ -33,7 +35,11 @@ class PropertyTypeTest extends TestCase
     public function testIsMatchedBy(array $declarationsByType, array $validValues, array $invalidValues): void
     {
         foreach ($declarationsByType as $declaration) {
-            $subject = PropertyType::fromNodeTypeDeclaration($declaration);
+            $subject = PropertyType::fromNodeTypeDeclaration(
+                $declaration,
+                PropertyName::fromString('test'),
+                NodeTypeName::fromString('Neos.ContentRepository:Test')
+            );
             foreach ($validValues as $validValue) {
                 Assert::assertTrue($subject->isMatchedBy($validValue));
             }
@@ -123,7 +129,11 @@ class PropertyTypeTest extends TestCase
     public function testGetSerializationType(array $declaredTypes, string $expectedSerializationType): void
     {
         foreach ($declaredTypes as $declaredType) {
-            $actualSerializationType = PropertyType::fromNodeTypeDeclaration($declaredType)->getSerializationType();
+            $actualSerializationType = PropertyType::fromNodeTypeDeclaration(
+                $declaredType,
+                PropertyName::fromString('test'),
+                NodeTypeName::fromString('Neos.ContentRepository:Test')
+            )->getSerializationType();
             Assert::assertSame(
                 $expectedSerializationType,
                 $actualSerializationType,

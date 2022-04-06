@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,16 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
+
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyScope;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -44,39 +47,77 @@ trait NodeReferencing
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getSourceOriginDimensionSpacePoint());
-        $sourceNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSourceNodeAggregateIdentifier());
-        $this->requireNodeAggregateToOccupyDimensionSpacePoint($sourceNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
-        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->getReferenceName());
-        foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
-            $destinationNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
-            $this->requireNodeAggregateToCoverDimensionSpacePoint($destinationNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
-
-            // @todo check reference node type constraints
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireDimensionSpacePointToExist(
+            $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
+        );
+        $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->sourceNodeAggregateIdentifier
+        );
+        $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint(
+            $sourceNodeAggregate,
+            $command->sourceOriginDimensionSpacePoint
+        );
+        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->referenceName);
+        foreach ($command->destinationNodeAggregateIdentifiers as $destinationNodeAggregateIdentifier) {
+            $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
+                $command->contentStreamIdentifier,
+                $destinationNodeAggregateIdentifier
+            );
+            $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
+            $this->requireNodeAggregateToCoverDimensionSpacePoint(
+                $destinationNodeAggregate,
+                $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
+            );
+            $this->requireNodeTypeToAllowNodesOfTypeInReference(
+                $sourceNodeAggregate->getNodeTypeName(),
+                $command->referenceName,
+                $destinationNodeAggregate->getNodeTypeName()
+            );
         }
 
-        $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeReferencesWereSet(
-                        $command->getContentStreamIdentifier(),
-                        $command->getSourceNodeAggregateIdentifier(),
-                        $command->getSourceOriginDimensionSpacePoint(),
-                        $command->getDestinationNodeAggregateIdentifiers(),
-                        $command->getReferenceName(),
-                        $command->getInitiatingUserIdentifier()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
-            );
-            $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
-                $events
-            );
-        });
+        $domainEvents = DomainEvents::createEmpty();
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, &$domainEvents, $sourceNodeAggregate) {
+                $events = [];
+                $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
+                $declaration = $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? null;
+                if (is_string($declaration)) {
+                    $scope = PropertyScope::from($declaration);
+                } else {
+                    $scope = PropertyScope::SCOPE_NODE;
+                }
+                $affectedOrigins = $scope->resolveAffectedOrigins(
+                    $command->sourceOriginDimensionSpacePoint,
+                    $sourceNodeAggregate,
+                    $this->interDimensionalVariationGraph
+                );
+                foreach ($affectedOrigins as $originDimensionSpacePoint) {
+                    $events[] = DecoratedEvent::addIdentifier(
+                        new NodeReferencesWereSet(
+                            $command->contentStreamIdentifier,
+                            $command->sourceNodeAggregateIdentifier,
+                            $originDimensionSpacePoint,
+                            $command->destinationNodeAggregateIdentifiers,
+                            $command->referenceName,
+                            $command->initiatingUserIdentifier
+                        ),
+                        Uuid::uuid4()->toString()
+                    );
+                }
 
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+                $domainEvents = DomainEvents::fromArray($events);
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                        ->getEventStreamName(),
+                    $domainEvents
+                );
+            }
+        );
+
+        return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
     }
 }

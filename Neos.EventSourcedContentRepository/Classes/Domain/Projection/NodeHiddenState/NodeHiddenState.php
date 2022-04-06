@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -24,65 +25,66 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
  *
  * It can NOT answer the question whether a Node is hidden because some node above it has been hidden - for that,
  * use the Content Subgraph.
+ *
+ * @Flow\Proxy(false)
  */
 class NodeHiddenState
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ?ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $dimensionSpacePoint;
+    private ?DimensionSpacePoint $dimensionSpacePoint;
 
-    /**
-     * @var boolean
-     */
-    private $hidden;
+    private bool $hidden;
 
-    /**
-     * NodeHiddenState constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param bool $hidden
-     */
-    public function __construct(?ContentStreamIdentifier $contentStreamIdentifier, ?NodeAggregateIdentifier $nodeAggregateIdentifier, ?DimensionSpacePoint $dimensionSpacePoint, ?bool $hidden)
-    {
+    public function __construct(
+        ?ContentStreamIdentifier $contentStreamIdentifier,
+        ?NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?DimensionSpacePoint $dimensionSpacePoint,
+        bool $hidden
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->hidden = $hidden;
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
     public function addToDatabase(Connection $databaseConnection): void
     {
+        if (is_null($this->contentStreamIdentifier)) {
+            throw new \BadMethodCallException(
+                'Cannot add NodeHiddenState to database without a contentStreamIdentifier',
+                1645383933
+            );
+        }
+        if (is_null($this->nodeAggregateIdentifier)) {
+            throw new \BadMethodCallException(
+                'Cannot add NodeHiddenState to database without a nodeAggregateIdentifier',
+                1645383950
+            );
+        }
+        if (is_null($this->dimensionSpacePoint)) {
+            throw new \BadMethodCallException(
+                'Cannot add NodeHiddenState to database without a dimensionSpacePoint',
+                1645383962
+            );
+        }
         $databaseConnection->insert('neos_contentrepository_projection_nodehiddenstate', [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'hidden' => (int)$this->hidden,
         ]);
     }
 
     /**
-     * @param array $databaseRow
-     * @return static
+     * @param array<string,mixed> $databaseRow
      */
-    public static function fromDatabaseRow(array $databaseRow)
+    public static function fromDatabaseRow(array $databaseRow): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
             DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
@@ -90,9 +92,9 @@ class NodeHiddenState
         );
     }
 
-    public static function noRestrictions(): NodeHiddenState
+    public static function noRestrictions(): self
     {
-        return new static(
+        return new self(
             null,
             null,
             null,
@@ -100,9 +102,6 @@ class NodeHiddenState
         );
     }
 
-    /**
-     * @return bool
-     */
     public function isHidden(): bool
     {
         return $this->hidden;

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -13,39 +10,37 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
  * The node relation anchor value object
- *
- * @Flow\Proxy(false)
  */
-class NodeRelationAnchorPoint implements \JsonSerializable
+#[Flow\Proxy(false)]
+class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    private function __construct(string $value)
-    {
-        $this->value = $value;
+    private function __construct(
+        private string $value
+    ) {
     }
 
     public static function create(): self
     {
-        return new static(Algorithms::generateUUID());
+        return new self(Algorithms::generateUUID());
     }
 
     public static function forRootEdge(): self
     {
-        return new static('00000000-0000-0000-0000-000000000000');
+        return new self('00000000-0000-0000-0000-000000000000');
     }
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return new self($value);
     }
 
     public function jsonSerialize(): string

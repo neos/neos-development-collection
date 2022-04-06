@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
+
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -20,37 +22,20 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class NodePeerVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodePeerVariantWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private OriginDimensionSpacePoint $sourceOrigin;
-
-    private OriginDimensionSpacePoint $peerOrigin;
-
-    private DimensionSpacePointSet $peerCoverage;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $sourceOrigin,
-        OriginDimensionSpacePoint $peerOrigin,
-        DimensionSpacePointSet $peerCoverage,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly OriginDimensionSpacePoint $sourceOrigin,
+        public readonly OriginDimensionSpacePoint $peerOrigin,
+        public readonly DimensionSpacePointSet $peerCoverage,
+        public readonly  UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceOrigin = $sourceOrigin;
-        $this->peerOrigin = $peerOrigin;
-        $this->peerCoverage = $peerCoverage;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -63,29 +48,9 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, Publishab
         return $this->nodeAggregateIdentifier;
     }
 
-    public function getSourceOrigin(): OriginDimensionSpacePoint
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return $this->sourceOrigin;
-    }
-
-    public function getPeerOrigin(): OriginDimensionSpacePoint
-    {
-        return $this->peerOrigin;
-    }
-
-    public function getPeerCoverage(): DimensionSpacePointSet
-    {
-        return $this->peerCoverage;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodePeerVariantWasCreated
-    {
-        return new NodePeerVariantWasCreated(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,

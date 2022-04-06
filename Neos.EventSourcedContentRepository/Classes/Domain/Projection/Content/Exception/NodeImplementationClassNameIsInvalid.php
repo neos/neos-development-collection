@@ -24,16 +24,27 @@ final class NodeImplementationClassNameIsInvalid extends \DomainException
 {
     public static function becauseTheClassDoesNotExist(string $attemptedClassName): self
     {
-        return new self('The given node implementation class "' . $attemptedClassName . '" does not exist.', 1615415122);
+        return new self(
+            'The given node implementation class "' . $attemptedClassName . '" does not exist.',
+            1615415122
+        );
     }
 
     public static function becauseTheClassDoesNotImplementTheRequiredInterface(string $attemptedClassName): self
     {
-        return new self('The given node implementation class "' . $attemptedClassName . '" does not implement the required ' . NodeInterface::class . '.', 1615415501);
+        return new self(
+            'The given node implementation class "' . $attemptedClassName
+                . '" does not implement the required ' . NodeInterface::class . '.',
+            1615415501
+        );
     }
 
     public static function becauseTheClassImplementsTheDeprecatedLegacyInterface(string $attemptedClassName): self
     {
-        return new self('The given node implementation class "' . $attemptedClassName . '" implements the deprecated legacy NodeInterface.', 1615415586);
+        return new self(
+            'The given node implementation class "' . $attemptedClassName
+                . '" implements the deprecated legacy NodeInterface.',
+            1615415586
+        );
     }
 }

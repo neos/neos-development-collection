@@ -17,7 +17,7 @@ class EmulatedLegacyContext
     /**
      * @var NodeInterface
      */
-    protected $traversableNode;
+    protected $node;
 
     /**
      * @Flow\Inject
@@ -37,9 +37,9 @@ class EmulatedLegacyContext
      */
     protected $privilegeManager;
 
-    public function __construct(NodeInterface $traversableNode)
+    public function __construct(NodeInterface $node)
     {
-        $this->traversableNode = $traversableNode;
+        $this->node = $node;
     }
 
     public function isInBackend(): bool
@@ -69,16 +69,11 @@ class EmulatedLegacyContext
         return $nodeAddress->isInLiveWorkspace();
     }
 
-
     public function getWorkspaceName(): ?string
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        $workspaceName = $this->getNodeAddressOfContextNode()->getWorkspaceName();
-        if ($workspaceName) {
-            return $workspaceName->getName();
-        }
-        return null;
+        return $this->getNodeAddressOfContextNode()->workspaceName?->name;
     }
 
     public function getWorkspace(): EmulatedLegacyWorkspace
@@ -88,22 +83,16 @@ class EmulatedLegacyContext
         return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
     }
 
-    public function __call($methodName, $args)
-    {
-        $this->legacyLogger->warning('Context method not implemented', LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName));
-        return null;
-    }
-
     public function getCurrentSite(): EmulatedLegacySite
     {
         $this->legacyLogger->info('context.currentSite called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return new EmulatedLegacySite($this->traversableNode);
+        return new EmulatedLegacySite($this->node);
     }
 
     private function getNodeAddressOfContextNode(): NodeAddress
     {
-        return $this->nodeAddressFactory->createFromNode($this->traversableNode);
+        return $this->nodeAddressFactory->createFromNode($this->node);
     }
 
     private function hasAccessToBackend(): bool
@@ -113,5 +102,19 @@ class EmulatedLegacyContext
         } catch (Exception $exception) {
             return false;
         }
+    }
+
+    /**
+     * @param string $methodName
+     * @param array<int,string|mixed> $args
+     * @return null
+     */
+    public function __call($methodName, $args)
+    {
+        $this->legacyLogger->warning(
+            'Context method not implemented',
+            LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName)
+        );
+        return null;
     }
 }

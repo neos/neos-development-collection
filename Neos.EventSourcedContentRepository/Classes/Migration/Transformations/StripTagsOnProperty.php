@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -30,9 +31,6 @@ class StripTagsOnProperty implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var string
-     */
     protected string $propertyName = '';
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
@@ -42,28 +40,44 @@ class StripTagsOnProperty implements NodeBasedTransformationInterface
 
     /**
      * Sets the name of the property to work on.
-     *
-     * @param string $propertyName
-     * @return void
      */
     public function setProperty(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }
 
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($node->hasProperty($this->propertyName)) {
-            $newValue = strip_tags($node->getProperties()->serialized()->getProperty($this->propertyName)->getValue());
-            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
-                $contentStreamForWriting,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray([
-                    $this->propertyName => new SerializedPropertyValue($newValue, $node->getProperties()->serialized()->getProperty($this->propertyName)->getType())
-                ]),
-                UserIdentifier::forSystemUser()
-            ));
+            /** @var PropertyCollectionInterface $properties */
+            $properties = $node->getProperties();
+            /** @var SerializedPropertyValue $serializedPropertyValue safe since NodeInterface::hasProperty */
+            $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
+            $propertyValue = $serializedPropertyValue->getValue();
+            if (!is_string($propertyValue)) {
+                throw new \Exception(
+                    'StripTagsOnProperty can only be applied to properties of type string.',
+                    1645391885
+                );
+            }
+            $newValue = strip_tags($propertyValue);
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
+                    $contentStreamForWriting,
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    SerializedPropertyValues::fromArray([
+                        $this->propertyName => new SerializedPropertyValue(
+                            $newValue,
+                            $serializedPropertyValue->getType()
+                        )
+                    ]),
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return CommandResult::createEmpty();

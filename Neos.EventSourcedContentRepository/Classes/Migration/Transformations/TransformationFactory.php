@@ -16,10 +16,7 @@ use Neos\Utility\ObjectAccess;
  */
 class TransformationFactory
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     public function __construct(ObjectManagerInterface $objectManager)
     {
@@ -27,7 +24,7 @@ class TransformationFactory
     }
 
     /**
-     * @param array $transformationConfiguration
+     * @param array<int|string,array<string,mixed>> $transformationConfigurations
      * @throws MigrationException
      */
     public function buildTransformation(array $transformationConfigurations): Transformations
@@ -43,18 +40,32 @@ class TransformationFactory
     /**
      * Builds a transformation object from the given configuration.
      *
-     * @param array $transformationConfiguration
+     * @param array<string,mixed> $transformationConfiguration
      * @throws MigrationException if a given setting is not supported
      */
-    protected function buildTransformationObject(array $transformationConfiguration)
-    {
+    protected function buildTransformationObject(
+        array $transformationConfiguration
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $transformationClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
         $transformation = new $transformationClassName();
+        if (!$transformation instanceof GlobalTransformationInterface
+            && !$transformation instanceof NodeAggregateBasedTransformationInterface
+            && !$transformation instanceof NodeBasedTransformationInterface
+        ) {
+            throw new \InvalidArgumentException(
+                'Transformations must implement one of the interfaces, ' . $transformationClassName . ' given.',
+                1645392135
+            );
+        }
 
         if (isset($transformationConfiguration['settings']) && is_array($transformationConfiguration['settings'])) {
             foreach ($transformationConfiguration['settings'] as $settingName => $settingValue) {
                 if (!ObjectAccess::setProperty($transformation, $settingName, $settingValue)) {
-                    throw new MigrationException('Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName . '" , check your configuration.', 1343293094);
+                    throw new MigrationException(
+                        'Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName
+                            . '" , check your configuration.',
+                        1343293094
+                    );
                 }
             }
         }
@@ -80,26 +91,51 @@ class TransformationFactory
         }
 
         if ($transformationName === 'AddDimensions') {
-            throw new MigrationException('The "AddDimensions" transformation from the legacy content repository has been replaced by the "AddDimensionSpecialization" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178179);
+            throw new MigrationException(
+                'The "AddDimensions" transformation from the legacy content repository has been replaced'
+                    . ' by the "AddDimensionSpecialization" transformation in the event-sourced content repository.'
+                    . ' Please adjust your node migrations.',
+                1637178179
+            );
         }
 
         if ($transformationName === 'RenameDimension') {
-            throw new MigrationException('The "RenameDimension" transformation from the legacy content repository has been replaced by the "MoveToDimensionSpacePoints" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178184);
+            throw new MigrationException(
+                'The "RenameDimension" transformation from the legacy content repository has been replaced'
+                    . ' by the "MoveToDimensionSpacePoints" transformation in the event-sourced content repository.'
+                    . ' Please adjust your node migrations.',
+                1637178184
+            );
         }
 
         if ($transformationName === 'RenameNode') {
-            throw new MigrationException('The "RenameNode" transformation from the legacy content repository has been replaced by the "RenameNodeAggregate" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178234);
+            throw new MigrationException(
+                'The "RenameNode" transformation from the legacy content repository has been replaced'
+                    . ' by the "RenameNodeAggregate" transformation in the event-sourced content repository.'
+                    . ' Please adjust your node migrations.',
+                1637178234
+            );
         }
 
         if ($transformationName === 'SetDimensions') {
-            throw new MigrationException('The "SetDimensions" transformation from the legacy content repository has been replaced by the "AddDimensionSpecialization" and "MoveToDimensionSpacePoints" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178280);
+            throw new MigrationException(
+                'The "SetDimensions" transformation from the legacy content repository has been replaced'
+                    . ' by the "AddDimensionSpecialization" and "MoveToDimensionSpacePoints" transformation'
+                    . ' in the event-sourced content repository. Please adjust your node migrations.',
+                1637178280
+            );
         }
 
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\EventSourcedContentRepository\Migration\Transformations\\' . $transformationName);
+        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName(
+            'Neos\EventSourcedContentRepository\Migration\Transformations\\' . $transformationName
+        );
         if ($resolvedObjectName !== null) {
             return $resolvedObjectName;
         }
 
-        throw new MigrationException('A transformation with the name "' . $transformationName . '" could not be found.', 1343293064);
+        throw new MigrationException(
+            'A transformation with the name "' . $transformationName . '" could not be found.',
+            1343293064
+        );
     }
 }

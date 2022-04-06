@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\View;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
@@ -47,11 +48,11 @@ class FusionView extends AbstractView
     /**
      * Renders the view
      *
-     * @return string The rendered view
+     * @return string|ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
-    public function render()
+    public function render(): string|ResponseInterface
     {
         $currentNode = $this->getCurrentNode();
 
@@ -62,13 +63,13 @@ class FusionView extends AbstractView
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
-            'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
+            'editPreviewMode' => $this->variables['editPreviewMode'] ?? null
         ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
             $output = $this->parsePotentialRawHttpResponse($output);
         } catch (RuntimeException $exception) {
-            throw $exception->getPrevious();
+            throw $exception->getPrevious() ?: $exception;
         }
         $fusionRuntime->popContext();
 
@@ -80,10 +81,14 @@ class FusionView extends AbstractView
     /**
      * This contains the supported options, their default values, descriptions and types.
      *
-     * @var array
+     * @var array<string,array<int,mixed>>
      */
     protected $supportedOptions = [
-        'enableContentCache' => [null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+        'enableContentCache' => [
+            null,
+            'Flag to enable content caching inside Fusion (overriding the global setting).',
+            'boolean'
+        ]
     ];
 
     /**
@@ -99,10 +104,7 @@ class FusionView extends AbstractView
      */
     protected $fusionPath = 'root';
 
-    /**
-     * @var Runtime
-     */
-    protected $fusionRuntime;
+    protected ?Runtime $fusionRuntime;
 
     /**
      * @Flow\Inject
@@ -112,7 +114,8 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
+     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface
+     *                                  otherwise the original output.
      */
     protected function parsePotentialRawHttpResponse($output)
     {
@@ -172,15 +175,16 @@ class FusionView extends AbstractView
         return $this->fusionPath;
     }
 
-    /**
-     * @param NodeInterface $node
-     * @return NodeInterface
-     */
-    protected function getClosestDocumentNode(NodeInterface $node)
+    protected function getClosestDocumentNode(NodeInterface $node): ?NodeInterface
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $node = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findParentNode($node);
+            $node = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            )->findParentNode($node);
         }
+
         return $node;
     }
 
@@ -214,9 +218,10 @@ class FusionView extends AbstractView
      * @param NodeInterface $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $currentSiteNode)
+    protected function getFusionRuntime(NodeInterface $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
+            /** @var TraversableNodeInterface $currentSiteNode */
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
@@ -231,9 +236,8 @@ class FusionView extends AbstractView
      *
      * @param string $key
      * @param mixed $value
-     * @return \Neos\Neos\View\FusionView
      */
-    public function assign($key, $value)
+    public function assign($key, $value): AbstractView
     {
         $this->fusionRuntime = null;
         return parent::assign($key, $value);

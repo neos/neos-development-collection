@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,38 +10,34 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
+
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class PropertyName implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class PropertyName implements \JsonSerializable, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    private function __construct(string $value)
-    {
+    private function __construct(
+        public readonly string $value
+    ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Property name must not be empty.', 1519745994);
         }
-
-        $this->value = $value;
     }
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return new self($value);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

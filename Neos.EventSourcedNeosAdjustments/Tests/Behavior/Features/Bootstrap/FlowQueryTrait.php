@@ -45,7 +45,7 @@ trait FlowQueryTrait
      */
     private ?DimensionSpacePoint $dimensionSpacePoint = null;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     /**
      * @When /^I have a FlowQuery with node "([^"]*)"$/

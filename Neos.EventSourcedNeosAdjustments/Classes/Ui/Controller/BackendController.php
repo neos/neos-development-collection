@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -41,7 +42,6 @@ use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
     /**
      * @var FusionView
      */
@@ -109,6 +109,12 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
@@ -151,18 +157,19 @@ class BackendController extends ActionController
 
     public function initializeView(ViewInterface $view)
     {
+        /** @var FusionView $view */
         $view->setFusionPath('backend');
     }
 
     /**
      * Displays the backend interface
      *
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node The node that will be displayed on the first tab
+     * @param string $node The node that will be displayed on the first tab
      * @return void
      */
-    public function indexAction(NodeAddress $node = null)
+    public function indexAction(string $node = null)
     {
-        $nodeAddress = $node;
+        $nodeAddress = $node !== null ? $this->nodeAddressFactory->createFromUriString($node) : null;
         unset($node);
         $this->session->start();
         $this->session->putData('__neosLegacyUiEnabled__', false);
@@ -173,21 +180,37 @@ class BackendController extends ActionController
         }
 
         $currentAccount = $this->securityContext->getAccount();
-        $workspace = $this->workspaceFinder->findOneByName(NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName());
+        $workspace = $this->workspaceFinder->findOneByName(
+            NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+                ->toContentRepositoryWorkspaceName()
+        );
+        if (is_null($workspace)) {
+            $this->redirectToUri($this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos'));
+        }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $workspace->getCurrentContentStreamIdentifier(),
+            $this->findDefaultDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
         // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
         // to call the contentGraph here directly.
-        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($workspace->getCurrentContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
+        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType(
+            $workspace->getCurrentContentStreamIdentifier(),
+            NodeTypeName::fromString('Neos.Neos:Sites')
+        );
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($this->findDefaultDimensionSpacePoint());
-        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($rootNode, NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
+            $rootNode,
+            NodeName::fromString($this->siteRepository->findDefault()->getNodeName())
+        );
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
             $node = $siteNode;
         } else {
-            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         }
 
         $this->view->assign('user', $user);
@@ -209,25 +232,25 @@ class BackendController extends ActionController
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    public function redirectToAction(NodeAddress $node)
+    public function redirectToAction(string $node): void
     {
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
         $this->response->setHttpHeader('Cache-Control', [
             'no-cache',
             'no-store'
         ]);
-        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
+        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $nodeAddress]);
     }
 
     protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint
     {
         $coordinates = [];
         foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $dimension) {
-            $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();
+            $coordinates[(string)$dimension->identifier] = (string)$dimension->defaultValue;
         }
 
-        return new DimensionSpacePoint($coordinates);
+        return DimensionSpacePoint::fromArray($coordinates);
     }
 }

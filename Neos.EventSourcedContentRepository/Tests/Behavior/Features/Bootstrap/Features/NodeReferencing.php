@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
@@ -64,7 +64,7 @@ trait NodeReferencing
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['sourceNodeAggregateIdentifier']),
             $sourceOriginDimensionSpacePoint,
-            NodeAggregateIdentifierCollection::fromArray($commandArguments['destinationNodeAggregateIdentifiers']),
+            NodeAggregateIdentifiers::fromArray($commandArguments['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($commandArguments['referenceName']),
             $initiatingUserIdentifier
         );

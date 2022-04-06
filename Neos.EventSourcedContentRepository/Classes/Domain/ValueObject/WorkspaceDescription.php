@@ -16,34 +16,13 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Description for a workspace
- * @Flow\Proxy(false)
  */
-class WorkspaceDescription implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class WorkspaceDescription implements \JsonSerializable, \Stringable
 {
-    /**
-     * @var string
-     */
-    protected $description;
+    protected string $description;
 
-    /**
-     * Name constructor.
-     *
-     * @param string $description
-     */
     public function __construct(string $description)
-    {
-        $this->setDescription($description);
-    }
-
-    public static function fromString(string $value): self
-    {
-        return new static($value);
-    }
-
-    /**
-     * @param string $description
-     */
-    protected function setDescription(string $description)
     {
         if (preg_match('/^[\p{L}\p{P}\d \.]{0,500}$/u', $description) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace description given.', 1505831660363);
@@ -51,18 +30,17 @@ class WorkspaceDescription implements \JsonSerializable
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
+    public static function fromString(string $value): self
+    {
+        return new self($value);
+    }
+
     public function __toString(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return string
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->description;
     }

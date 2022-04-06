@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Service\Infrastructure\Service;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\SQLLogger;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -27,7 +28,7 @@ class DbalClient
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.backendOptions")
-     * @var array
+     * @var array<string,mixed>
      */
     protected $backendOptions;
 
@@ -35,24 +36,23 @@ class DbalClient
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.doctrine.sqlLogger")
      * @var string
      */
-    protected $sqlLogger;
+    protected $sqlLoggerName;
 
     /**
      * @var Connection
      */
     protected $connection;
 
-
-    public function initializeObject()
+    public function initializeObject(): void
     {
         $configuration = new Configuration();
-        if (!empty($this->sqlLogger)) {
-            $configuredSqlLogger = $this->sqlLogger;
-            $configuration->setSQLLogger(new $configuredSqlLogger());
+        if (!empty($this->sqlLoggerName)) {
+            /** @var SQLLogger $configuredSqlLogger */
+            $configuredSqlLogger = new $this->sqlLoggerName();
+            $configuration->setSQLLogger($configuredSqlLogger);
         }
         $this->connection = DriverManager::getConnection($this->backendOptions, $configuration);
     }
-
 
     public function getConnection(): Connection
     {

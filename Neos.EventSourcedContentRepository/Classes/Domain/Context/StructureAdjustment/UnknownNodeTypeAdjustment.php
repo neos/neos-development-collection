@@ -46,6 +46,9 @@ class UnknownNodeTypeAdjustment
         return $this->runtimeBlocker;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -60,13 +63,17 @@ class UnknownNodeTypeAdjustment
         return $this->eventStore;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     private function removeAllNodesOfType(NodeTypeName $nodeTypeName): \Generator
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             yield StructureAdjustment::createForNodeAggregate(
                 $nodeAggregate,
                 StructureAdjustment::NODE_TYPE_MISSING,
-                'The node type "' . $nodeTypeName->jsonSerialize() . '" is not found; so the node should be removed (or converted)',
+                'The node type "' . $nodeTypeName->jsonSerialize()
+                    . '" is not found; so the node should be removed (or converted)',
                 function () use ($nodeAggregate) {
                     $this->readSideMemoryCacheManager->disableCache();
                     return $this->removeNodeAggregate($nodeAggregate);

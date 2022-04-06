@@ -1,5 +1,4 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 
@@ -21,45 +24,30 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
  * as a new parent, sibling etc.
  *
  * In case of move, this is the "target node" underneath which or next to which we want to move our source.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeVariantAssignment implements \JsonSerializable
 {
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
-
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $originDimensionSpacePoint;
-
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, OriginDimensionSpacePoint $originDimensionSpacePoint)
-    {
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
+    public function __construct(
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
+    ) {
     }
 
-    public static function createFromArray(array $array): NodeVariantAssignment
+    /**
+     * @param array<string,mixed> $array
+     */
+    public static function createFromArray(array $array): self
     {
-        return new static(
+        return new self(
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint'])
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint'])
         );
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
-    {
-        return $this->originDimensionSpacePoint;
-    }
-
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -70,6 +58,6 @@ final class NodeVariantAssignment implements \JsonSerializable
 
     public function __toString(): string
     {
-        return json_encode($this);
+        return json_encode($this, JSON_THROW_ON_ERROR);
     }
 }

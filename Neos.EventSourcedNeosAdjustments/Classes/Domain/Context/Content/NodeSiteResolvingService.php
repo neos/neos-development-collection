@@ -41,11 +41,16 @@ class NodeSiteResolvingService
     public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint(),
-            $nodeAddress->isInLiveWorkspace() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions()
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
+            $nodeAddress->isInLiveWorkspace()
+                ? VisibilityConstraints::frontend()
+                : VisibilityConstraints::withoutRestrictions()
         );
-        $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        if (is_null($node)) {
+            return null;
+        }
         $previousNode = null;
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {

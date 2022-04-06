@@ -9,21 +9,22 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNode
 use Neos\EventSourcedContentRepository\Migration\Filters\NodeAggregateBasedFilterInterface;
 use Neos\EventSourcedContentRepository\Migration\Filters\NodeBasedFilterInterface;
 
-/**
- * @Flow\Proxy("false")
- */
+#[Flow\Proxy(false)]
 final class Filters
 {
-
     /**
-     * @var NodeBasedFilterInterface[]
+     * @var array<int,NodeBasedFilterInterface>
      */
     protected array $nodeBasedFilters = [];
+
     /**
-     * @var NodeAggregateBasedFilterInterface[]
+     * @var array<int,NodeAggregateBasedFilterInterface>
      */
     protected array $nodeAggregateBasedFilters = [];
 
+    /**
+     * @param array<int|string,NodeBasedFilterInterface|NodeAggregateBasedFilterInterface> $filterObjects
+     */
     public function __construct(array $filterObjects)
     {
         foreach ($filterObjects as $filterObject) {
@@ -32,7 +33,13 @@ final class Filters
             } elseif ($filterObject instanceof NodeAggregateBasedFilterInterface) {
                 $this->nodeAggregateBasedFilters[] = $filterObject;
             } else {
-                throw new  \InvalidArgumentException(sprintf('Filter object must implement either %s or %s. Given: %s', NodeBasedFilterInterface::class, NodeAggregateBasedFilterInterface::class, is_object($filterObject) ? get_class($filterObject) : gettype($filterObject)), 1611735521);
+                /** @var mixed $filterObject */
+                throw new \InvalidArgumentException(sprintf(
+                    'Filter object must implement either %s or %s. Given: %s',
+                    NodeBasedFilterInterface::class,
+                    NodeAggregateBasedFilterInterface::class,
+                    is_object($filterObject) ? get_class($filterObject) : gettype($filterObject)
+                ), 1611735521);
             }
         }
     }

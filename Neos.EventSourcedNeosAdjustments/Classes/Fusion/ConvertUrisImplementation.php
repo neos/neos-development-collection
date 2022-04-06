@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 
@@ -56,7 +57,8 @@ use Neos\Neos\Domain\Exception as NeosException;
  */
 class ConvertUrisImplementation extends AbstractFusionObject
 {
-    public const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
+    public const PATTERN_SUPPORTED_URIS
+        = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
 
     /**
      * @Flow\Inject
@@ -94,13 +96,19 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }
 
         if (!is_string($text)) {
-            throw new NeosException(sprintf('Only strings can be processed by this Fusion object, given: "%s".', gettype($text)), 1382624080);
+            throw new NeosException(sprintf(
+                'Only strings can be processed by this Fusion object, given: "%s".',
+                gettype($text)
+            ), 1382624080);
         }
 
         $node = $this->fusionValue('node');
 
         if (!$node instanceof NodeInterface) {
-            throw new NeosException(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
+            throw new NeosException(sprintf(
+                'The current node must be an instance of NodeInterface, given: "%s".',
+                gettype($text)
+            ), 1382624087);
         }
 
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
@@ -112,38 +120,50 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
-            $resolvedUri = null;
-            switch ($matches[1]) {
-                case 'node':
-                    $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
-                    $uriBuilder = new UriBuilder();
-                    $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
-                    $uriBuilder->setCreateAbsoluteUri($absolute);
+        $processedContent = preg_replace_callback(
+            self::PATTERN_SUPPORTED_URIS,
+            function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
+                $resolvedUri = null;
+                switch ($matches[1]) {
+                    case 'node':
+                        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
+                            NodeAggregateIdentifier::fromString($matches[2])
+                        );
+                        $uriBuilder = new UriBuilder();
+                        $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+                        $uriBuilder->setCreateAbsoluteUri($absolute);
 
-                    $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-                    $this->runtime->addCacheTag('node', $matches[2]);
-                    break;
-                case 'asset':
-                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
-                    if ($asset !== null) {
-                        $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
-                        $this->runtime->addCacheTag('asset', $matches[2]);
-                    }
-                    break;
-            }
+                        $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+                        $this->runtime->addCacheTag('node', $matches[2]);
+                        break;
+                    case 'asset':
+                        $asset = $this->assetRepository->findByIdentifier($matches[2]);
+                        if ($asset instanceof AssetInterface) {
+                            $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
+                                $asset->getResource()
+                            );
+                            $this->runtime->addCacheTag('asset', $matches[2]);
+                        }
+                        break;
+                }
 
-            if ($resolvedUri === null) {
-                $unresolvedUris[] = $matches[0];
-                return $matches[0];
-            }
+                if ($resolvedUri === null) {
+                    $unresolvedUris[] = $matches[0];
+                    return $matches[0];
+                }
 
-            return $resolvedUri;
-        }, $text);
+                return $resolvedUri;
+            },
+            $text
+        ) ?: '';
 
         if ($unresolvedUris !== []) {
-            $processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
-            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent);
+            $processedContent = preg_replace(
+                '/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/',
+                '$2',
+                $processedContent
+            ) ?: '';
+            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent) ?: '';
         }
 
         $processedContent = $this->replaceLinkTargets($processedContent);
@@ -155,11 +175,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
      * Additionally set rel="noopener" for links with target="_blank".
-     *
-     * @param string $processedContent
-     * @return string
      */
-    protected function replaceLinkTargets($processedContent)
+    protected function replaceLinkTargets(string $processedContent): string
     {
         $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
         $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
@@ -185,12 +202,20 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     return $linkText;
                 }
                 if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                    return preg_replace(
+                        '/target=".*?"/',
+                        sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''),
+                        $linkText
+                    );
                 }
-                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                return str_replace(
+                    '<a',
+                    sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''),
+                    $linkText
+                );
             },
             $processedContent
-        );
+        ) ?: '';
         return $processedContent;
     }
 }

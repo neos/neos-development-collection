@@ -34,7 +34,5 @@ final class HypergraphCommandController extends CommandController
             ContentStreamIdentifier::fromString('cs-identifier'),
             NodeAggregateIdentifier::fromString('sir-david-nodenborough')
         );
-
-        \Neos\Flow\var_dump($nodeAggregate);
     }
 }

@@ -125,7 +125,7 @@ trait NodeCreation
             ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
             : $this->getCurrentContentStreamIdentifier();
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
-            ? new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint'])
+            ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
         $userIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
@@ -226,7 +226,7 @@ trait NodeCreation
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
-            ? new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint'])
+            ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
 
         $command = new CreateNodeAggregateWithNodeAndSerializedProperties(

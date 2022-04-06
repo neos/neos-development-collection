@@ -1,10 +1,7 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,6 +10,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
+
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -29,96 +31,69 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  *  in contentStreamIdentifier $contentStreamIdentifier
  *
  * It is used in Neos Routing to build a URI to a node.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAddress
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected ContentStreamIdentifier $contentStreamIdentifier;
-
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected DimensionSpacePoint $dimensionSpacePoint;
-
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    protected NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    /**
-     * @var WorkspaceName|null
-     */
-    protected ?WorkspaceName $workspaceName;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?WorkspaceName $workspaceName
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly DimensionSpacePoint $dimensionSpacePoint,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ?WorkspaceName $workspaceName
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->workspaceName = $workspaceName;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            isset($array['workspaceName']) ? new WorkspaceName($array['workspaceName']) : null
+            isset($array['workspaceName']) ? WorkspaceName::fromString($array['workspaceName']) : null
         );
     }
 
     public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
-        return new self($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint,
+            $nodeAggregateIdentifier,
+            $this->workspaceName
+        );
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new self($this->contentStreamIdentifier, $dimensionSpacePoint, $this->nodeAggregateIdentifier, $this->workspaceName);
+        return new self(
+            $this->contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $this->nodeAggregateIdentifier,
+            $this->workspaceName
+        );
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getWorkspaceName(): ?WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
+    /**
+     * @throws NodeAddressCannotBeSerializedException
+     */
     public function serializeForUri(): string
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
         if ($this->workspaceName === null) {
-            throw new \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException('The node Address ' . $this->__toString() . ' cannot be serialized because no workspace name was resolved.', 1531637028);
+            throw NodeAddressCannotBeSerializedException::becauseNoWorkspaceNameWasResolved($this);
         }
-        return $this->workspaceName->jsonSerialize() . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
+        return $this->workspaceName->name
+            . '__' . $this->dimensionSpacePoint->serializeForUri()
+            . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
     }
 
     public function isInLiveWorkspace(): bool
     {
-        return $this->workspaceName != null && $this->workspaceName->isLive();
+        return $this->workspaceName?->isLive() ?: false;
     }
 
     public function __toString(): string

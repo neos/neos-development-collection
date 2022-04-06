@@ -45,11 +45,11 @@ final class ContentStreamCommandController extends CommandController
         $this->hypergraphProjector = $hypergraphProjector;
         $this->contentStreamIdentifier = ContentStreamIdentifier::fromString('cs-identifier');
         $this->dimensionSpacePoints = new DimensionSpacePointSet([
-            new DimensionSpacePoint(['language' => 'mul']),
-            new DimensionSpacePoint(['language' => 'de']),
-            new DimensionSpacePoint(['language' => 'gsw']),
-            new DimensionSpacePoint(['language' => 'en']),
-            new DimensionSpacePoint(['language' => 'fr'])
+            DimensionSpacePoint::fromArray(['language' => 'mul']),
+            DimensionSpacePoint::fromArray(['language' => 'de']),
+            DimensionSpacePoint::fromArray(['language' => 'gsw']),
+            DimensionSpacePoint::fromArray(['language' => 'en']),
+            DimensionSpacePoint::fromArray(['language' => 'fr'])
         ]);
         parent::__construct();
     }
@@ -67,7 +67,7 @@ final class ContentStreamCommandController extends CommandController
             $rootNodeAggregateIdentifier,
             NodeTypeName::fromString('Neos.ContentRepository:Root'),
             $this->dimensionSpacePoints,
-            NodeAggregateClassification::root(),
+            NodeAggregateClassification::CLASSIFICATION_ROOT,
             UserIdentifier::forSystemUser()
         );
         $this->graphProjector->whenRootNodeAggregateWithNodeWasCreated($rootNodeAggregateWasCreated);
@@ -80,8 +80,12 @@ final class ContentStreamCommandController extends CommandController
     /**
      * @throws \Throwable
      */
-    private function createHierarchy(NodeAggregateIdentifier $parentNodeAggregateIdentifier, int $currentLevel, int $maximumLevel, int $numberOfNodes): void
-    {
+    private function createHierarchy(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        int $currentLevel,
+        int $maximumLevel,
+        int $numberOfNodes
+    ): void {
         if ($currentLevel <= $maximumLevel) {
             for ($i = 0; $i < $numberOfNodes; $i++) {
                 $nodeAggregateIdentifier = NodeAggregateIdentifier::create();
@@ -89,12 +93,12 @@ final class ContentStreamCommandController extends CommandController
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     NodeTypeName::fromString('Neos.ContentRepository:Testing'),
-                    new OriginDimensionSpacePoint(['language' => 'mul']),
+                    OriginDimensionSpacePoint::fromArray(['language' => 'mul']),
                     $this->dimensionSpacePoints,
                     $parentNodeAggregateIdentifier,
                     null,
                     SerializedPropertyValues::fromArray([]),
-                    NodeAggregateClassification::regular(),
+                    NodeAggregateClassification::CLASSIFICATION_REGULAR,
                     UserIdentifier::forSystemUser()
                 );
                 $this->graphProjector->whenNodeAggregateWithNodeWasCreated($nodeAggregateWasCreated);

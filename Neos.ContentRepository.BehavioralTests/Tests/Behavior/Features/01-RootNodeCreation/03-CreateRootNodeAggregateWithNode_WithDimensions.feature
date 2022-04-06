@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Create a root node aggregate
 
   As a user of the CR I want to create a new root node aggregate with an initial node.
@@ -7,11 +7,12 @@ Feature: Create a root node aggregate
   and Nody McNodeface, a new root node aggregate to be added.
 
   Background:
-    Given I have no content dimensions
+    Given I have the following content dimensions:
+      | Identifier | Default | Values           | Generalizations       |
+      | language   | mul     | mul, de, en, gsw | gsw->de->mul, en->mul |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:NonRoot': []
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -23,7 +24,7 @@ Feature: Create a root node aggregate
       | initiatingUserIdentifier   | "user-id"            |
     And I am in content stream "cs-identifier"
 
-  Scenario: Create the initial root node aggregate using valid payload without dimensions
+  Scenario: Create the initial root node aggregate using valid payload with dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
@@ -31,13 +32,13 @@ Feature: Create a root node aggregate
 
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 1 is of type "Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-      | coveredDimensionSpacePoints | [[]]                          |
-      | initiatingUserIdentifier    | "initiating-user-identifier"  |
-      | nodeAggregateClassification | "root"                        |
+      | Key                         | Expected                                                                    |
+      | contentStreamIdentifier     | "cs-identifier"                                                             |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                    |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
+      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
+      | initiatingUserIdentifier    | "initiating-user-identifier"                                                |
+      | nodeAggregateClassification | "root"                                                                      |
 
     When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
@@ -45,7 +46,7 @@ Feature: Create a root node aggregate
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
     And I expect this node aggregate to be unnamed
     And I expect this node aggregate to occupy dimension space points [[]]
-    And I expect this node aggregate to cover dimension space points [[]]
+    And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}]
     And I expect this node aggregate to disable dimension space points []
     And I expect this node aggregate to have no parent node aggregates
     And I expect this node aggregate to have no child node aggregates
@@ -57,9 +58,10 @@ Feature: Create a root node aggregate
     And I expect this node to be unnamed
     And I expect this node to have no properties
 
-    When I am in dimension space point {}
+    When I am in dimension space point {"language":"mul"}
     Then I expect the subgraph projection to consist of exactly 1 node
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be classified as "root"
     And I expect this node to have no parent node
     And I expect this node to have no child nodes
     And I expect this node to have no siblings
@@ -67,6 +69,16 @@ Feature: Create a root node aggregate
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
     And I expect this node to not be referenced
+
+    When I am in dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 1 node
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    When I am in dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 1 node
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    When I am in dimension space point {"language":"en"}
+    Then I expect the subgraph projection to consist of exactly 1 node
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
 
   Scenario: Create a root node aggregate using valid payload without dimensions
     Given the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -82,13 +94,13 @@ Feature: Create a root node aggregate
 
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 2 is of type "Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "nody-mc-nodeface"            |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-      | coveredDimensionSpacePoints | [[]]                          |
-      | initiatingUserIdentifier    | "initiating-user-identifier"  |
-      | nodeAggregateClassification | "root"                        |
+      | Key                         | Expected                                                                    |
+      | contentStreamIdentifier     | "cs-identifier"                                                             |
+      | nodeAggregateIdentifier     | "nody-mc-nodeface"                                                          |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
+      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
+      | initiatingUserIdentifier    | "initiating-user-identifier"                                                |
+      | nodeAggregateClassification | "root"                                                                      |
 
     When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
@@ -99,7 +111,7 @@ Feature: Create a root node aggregate
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
     And I expect this node aggregate to be unnamed
     And I expect this node aggregate to occupy dimension space points [[]]
-    And I expect this node aggregate to cover dimension space points [[]]
+    And I expect this node aggregate to cover dimension space points [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}]
     And I expect this node aggregate to disable dimension space points []
     And I expect this node aggregate to have no parent node aggregates
     And I expect this node aggregate to have no child node aggregates
@@ -112,7 +124,7 @@ Feature: Create a root node aggregate
     And I expect this node to be unnamed
     And I expect this node to have no properties
 
-    When I am in dimension space point {}
+    When I am in dimension space point {"language":"mul"}
     Then I expect the subgraph projection to consist of exactly 2 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following siblings:
@@ -137,3 +149,16 @@ Feature: Create a root node aggregate
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
     And I expect this node to not be referenced
+
+    When I am in dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 2 nodes
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    When I am in dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 2 nodes
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    When I am in dimension space point {"language":"en"}
+    Then I expect the subgraph projection to consist of exactly 2 nodes
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}

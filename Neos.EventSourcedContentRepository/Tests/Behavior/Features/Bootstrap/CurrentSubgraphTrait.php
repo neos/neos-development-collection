@@ -32,7 +32,7 @@ trait CurrentSubgraphTrait
 
     protected ?VisibilityConstraints $visibilityConstraints = null;
 
-    abstract protected function getContentGraphs(): ContentGraphs;
+    abstract protected function getActiveContentGraphs(): ContentGraphs;
 
     abstract protected function getWorkspaceFinder(): WorkspaceFinder;
 
@@ -66,13 +66,11 @@ trait CurrentSubgraphTrait
 
     /**
      * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
-     * @param string $workspaceName
-     * @param string $dimensionSpacePoint
-     * @throws Exception
+     * @throws \Exception
      */
-    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint)
+    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
     {
-        $workspaceName = new WorkspaceName($workspaceName);
+        $workspaceName = WorkspaceName::fromString($workspaceName);
         $workspace = $this->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
@@ -129,7 +127,7 @@ trait CurrentSubgraphTrait
     protected function getCurrentSubgraphs(): ContentSubgraphs
     {
         $currentSubgraphs = [];
-        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+        foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             $currentSubgraphs[$adapterName] = $contentGraph->getSubgraphByIdentifier(
                 $this->contentStreamIdentifier,
                 $this->dimensionSpacePoint,

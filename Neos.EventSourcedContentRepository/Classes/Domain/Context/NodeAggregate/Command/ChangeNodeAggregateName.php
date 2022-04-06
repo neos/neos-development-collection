@@ -24,10 +24,12 @@ use Neos\Flow\Annotations as Flow;
  * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
  * This is the case because Node Names are usually only used for tethered nodes (=autocreated in the old CR);
  * as then the Node Name is used for querying.
- *
- * @Flow\Proxy(false)
  */
-final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class ChangeNodeAggregateName implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -49,9 +51,12 @@ final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOth
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,string> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeName::fromString($array['newNodeName']),
@@ -79,6 +84,9 @@ final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOth
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -102,8 +110,8 @@ final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOth
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

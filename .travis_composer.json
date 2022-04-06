@@ -16,7 +16,7 @@
   ],
   "require": {
       "neos/neos-development-collection": "@dev",
-      "neos/flow-development-collection": "@dev",
+      "neos/flow-development-collection": "dev-master",
 
       "neos/contentrepository-development-collection": "dev-master",
       "neos/content-repository-dimensionspace": "dev-master",
@@ -37,9 +37,11 @@
       "flowpack/neos-frontendlogin": "@dev",
       "neos/buildessentials": "@dev",
       "mikey179/vfsstream": "~1.6",
-      "phpunit/phpunit": "~7.1.0",
+      "phpunit/phpunit": "^9.0",
       "symfony/css-selector": "~2.0",
       "neos/behat": "dev-master",
+      "phpstan/phpstan": "^1.5",
+      "squizlabs/php_codesniffer": "^3.6",
 
       "cweagans/composer-patches": "dev-master#a18d1ca38ae09d16aa21846f60649d99d6775639"
   },

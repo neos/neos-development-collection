@@ -37,9 +37,7 @@ final class ContentStreamFinder
     protected $client;
 
     /**
-     *
-     * @param WorkspaceName $name
-     * @return ContentStreamIdentifier[]
+     * @return array<int,ContentStreamIdentifier>
      */
     public function findUnusedContentStreams(): iterable
     {
@@ -59,7 +57,7 @@ final class ContentStreamFinder
             [
                 'state' => Connection::PARAM_STR_ARRAY
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $contentStreams = [];
         foreach ($databaseRows as $databaseRow) {
@@ -96,7 +94,7 @@ final class ContentStreamFinder
     }
 
     /**
-     * @return ContentStreamIdentifier[]
+     * @return array<int,ContentStreamIdentifier>
      */
     public function findUnusedAndRemovedContentStreams(): iterable
     {
@@ -113,7 +111,9 @@ final class ContentStreamFinder
                     -- now, when a content stream is in use by a workspace, its source content stream is
                     -- also "transitively" in use.
                     SELECT sourceContentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
-                    JOIN transitiveUsedContentStreams ON neos_contentrepository_projection_contentstream_v1.contentStreamIdentifier = transitiveUsedContentStreams.contentStreamIdentifier
+                    JOIN transitiveUsedContentStreams
+                        ON neos_contentrepository_projection_contentstream_v1.contentStreamIdentifier
+                            = transitiveUsedContentStreams.contentStreamIdentifier
                     WHERE
                         neos_contentrepository_projection_contentstream_v1.sourceContentStreamIdentifier IS NOT NULL
             )

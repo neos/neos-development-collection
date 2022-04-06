@@ -21,14 +21,11 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 
 class ContentDimensionsHelper implements ProtectedContextAwareInterface
 {
-
-
     /**
      * @Flow\Inject
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
-
 
     /**
      * @Flow\Inject
@@ -37,28 +34,28 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
     protected $contentDimensionsPresetSource;
 
     /**
-     * @return array Dimensions indexed by name with presets indexed by name
+     * @return array<string,array<string,mixed>> Dimensions indexed by name with presets indexed by name
      */
-    public function contentDimensionsByName()
+    public function contentDimensionsByName(): array
     {
         $dimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
 
         $result = [];
         foreach ($dimensions as $dimension) {
-            $result[(string)$dimension->getIdentifier()] = [
+            $result[(string)$dimension->identifier] = [
                 'label' => $dimension->getConfigurationValue('label'),
                 'icon' => $dimension->getConfigurationValue('icon'),
 
-                'default' => $dimension->getDefaultValue()->getValue(),
-                'defaultPreset' => $dimension->getDefaultValue()->getValue(),
+                'default' => $dimension->defaultValue->value,
+                'defaultPreset' => $dimension->defaultValue->value,
                 'presets' => []
             ];
 
-            foreach ($dimension->getValues() as $value) {
+            foreach ($dimension->values as $value) {
                 // TODO: make certain values hidable
-                $result[(string)$dimension->getIdentifier()]['presets'][$value->getValue()] = [
+                $result[(string)$dimension->identifier]['presets'][$value->value] = [
                     // TODO: name, uriSegment!
-                    'values' => [$value->getValue()],
+                    'values' => [$value->value],
                     'label' => $value->getConfigurationValue('label')
                 ];
             }
@@ -68,17 +65,20 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
 
     /**
      * @param DimensionSpacePoint $dimensions Dimension values indexed by dimension name
-     * @return array Allowed preset names for the given dimension combination indexed by dimension name
+     * @return array<string,array<int,string>> Allowed preset names for the given dimension combination
+     *                                         indexed by dimension name
      */
-    public function allowedPresetsByName(DimensionSpacePoint $dimensions)
+    public function allowedPresetsByName(DimensionSpacePoint $dimensions): array
     {
         // TODO: re-implement this here; currently EVERYTHING is allowed!!
         $allowedPresets = [];
-        foreach ($dimensions->getCoordinates() as $dimensionName => $dimensionValue) {
+        foreach ($dimensions->coordinates as $dimensionName => $dimensionValue) {
             $dimension = $this->contentDimensionSource->getDimension(new ContentDimensionIdentifier($dimensionName));
-            $value = $dimension->getValue($dimensionValue);
-            if ($value !== null) {
-                $allowedPresets[$dimensionName] = array_keys($dimension->getValues());
+            if (!is_null($dimension)) {
+                $value = $dimension->getValue($dimensionValue);
+                if ($value !== null) {
+                    $allowedPresets[$dimensionName] = array_keys($dimension->values->values);
+                }
             }
         }
 

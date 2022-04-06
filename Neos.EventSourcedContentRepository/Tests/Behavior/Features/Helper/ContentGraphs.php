@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
@@ -12,50 +14,88 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * The content graph repository collection, indexed by adapter package
- * @Flow\Proxy(false)
+ *
+ * @implements \IteratorAggregate<string,ContentGraphInterface>
+ * @implements \ArrayAccess<string,ContentGraphInterface>
  */
-final class ContentGraphs extends ImmutableArrayObject
+#[Flow\Proxy(false)]
+final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
 {
-    public function __construct(Iterable $collection)
-    {
+    /**
+     * @var array<string,ContentGraphInterface>
+     */
+    private array $contentGraphs;
+
+    /**
+     * @var \ArrayIterator<string,ContentGraphInterface>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param iterable<string,ContentGraphInterface> $iterable
+     */
+    public function __construct(iterable $iterable) {
         $contentGraphs = [];
-        foreach ($collection as $adapterName => $item) {
+        foreach ($iterable as $adapterName => $item) {
+            if (!is_string($adapterName) || empty($adapterName)) {
+                throw new \InvalidArgumentException('ContentGraphs must be indexed by adapter name', 1643488356);
+            }
             if (!$item instanceof ContentGraphInterface) {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . ContentGraphInterface::class . ' objects.', 1618130675);
+                throw new \InvalidArgumentException('ContentGraphs can only consist of ' . ContentGraphInterface::class . ' objects.', 1618130675);
             }
             $contentGraphs[$adapterName] = $item;
         }
-        parent::__construct($contentGraphs);
+        $this->contentGraphs = $contentGraphs;
+        $this->iterator = new \ArrayIterator($contentGraphs);
     }
 
-    /**
-     * @param mixed $key
-     * @return ContentGraphInterface|false
-     */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): ContentGraphInterface|null
     {
-        return parent::offsetGet($key);
+        return $this->contentGraphs[$offset] ?? null;
     }
 
     /**
-     * @return array|ContentGraphInterface[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|ContentGraphInterface[]
+     * @return \ArrayIterator<string,ContentGraphInterface>
      */
     public function getIterator(): \ArrayIterator
     {
-        return parent::getIterator();
+        return $this->iterator;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->contentGraphs[$offset]);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): never
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class ContentGraphs.', 1643488734);
+    }
+
+    public function offsetUnset(mixed $offset): never
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class ContentGraphs.', 1643488734);
+    }
+
+    /**
+     * @param array<int,string> $identifiers
+     */
+    public function reduceTo(array $identifiers): self
+    {
+        $reduction = [];
+        foreach ($identifiers as $identifier) {
+            if (isset($this->contentGraphs[$identifier])) {
+                $reduction[$identifier] = $this->contentGraphs[$identifier];
+            } else {
+                throw new \InvalidArgumentException('Unknown adapter "' . $identifier . '"', 1648406324);
+            }
+        }
+
+        return new self($reduction);
     }
 }

@@ -2,8 +2,9 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\AOP\JoinPointInterface;
+use Neos\Flow\Aop\JoinPointInterface;
 
 /**
  * @Flow\Aspect
@@ -16,7 +17,7 @@ class AddContextToNodeBasedReadModelInterfaceAspect
      */
     public function newMethodImplementation(JoinPointInterface $joinPoint): EmulatedLegacyContext
     {
-        /* @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface $node */
+        /** @var NodeInterface $node */
         $node = $joinPoint->getProxy();
 
         return new EmulatedLegacyContext($node);

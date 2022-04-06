@@ -12,9 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a requested node aggregate does already exist
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateCurrentlyExists extends \DomainException
 {
 }

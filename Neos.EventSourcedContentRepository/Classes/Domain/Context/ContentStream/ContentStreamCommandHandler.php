@@ -62,7 +62,8 @@ final class ContentStreamCommandHandler
         $this->readSideMemoryCacheManager->disableCache();
 
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+            ->getEventStreamName();
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new Event\ContentStreamWasCreated(
@@ -90,10 +91,13 @@ final class ContentStreamCommandHandler
         $this->requireContentStreamToExist($command->getSourceContentStreamIdentifier());
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
 
-        $sourceContentStream = $this->contentStreamRepository->findContentStream($command->getSourceContentStreamIdentifier());
+        $sourceContentStream = $this->contentStreamRepository->findContentStream(
+            $command->getSourceContentStreamIdentifier()
+        );
         $sourceContentStreamVersion = $sourceContentStream !== null ? $sourceContentStream->getVersion() : -1;
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+            ->getEventStreamName();
 
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
@@ -115,7 +119,9 @@ final class ContentStreamCommandHandler
     {
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $command->getContentStreamIdentifier()
+        )->getEventStreamName();
 
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
@@ -135,10 +141,13 @@ final class ContentStreamCommandHandler
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamAlreadyExists
      */
-    protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier)
+    protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier): void
     {
         if ($this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
-            throw new ContentStreamAlreadyExists('Content stream "' . $contentStreamIdentifier . '" already exists.', 1521386345);
+            throw new ContentStreamAlreadyExists(
+                'Content stream "' . $contentStreamIdentifier . '" already exists.',
+                1521386345
+            );
         }
     }
 
@@ -146,10 +155,13 @@ final class ContentStreamCommandHandler
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier)
+    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier): void
     {
         if (!$this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
-            throw new ContentStreamDoesNotExistYet('Content stream "' . $contentStreamIdentifier . '" does not exist yet.', 1521386692);
+            throw new ContentStreamDoesNotExistYet(
+                'Content stream "' . $contentStreamIdentifier . '" does not exist yet.',
+                1521386692
+            );
         }
     }
 }

@@ -24,46 +24,38 @@ use Neos\Flow\Annotations as Flow;
  */
 final class WorkspaceFinder
 {
-
     /**
      * @Flow\Inject
      * @var DbalClient
      */
     protected $client;
 
-    /**
-     * @var bool
-     */
-    private $cacheEnabled = true;
+    private bool $cacheEnabled = true;
 
     /**
-     * @var array
+     * @var array<string,Workspace>
      */
-    private $cachedWorkspacesByName = [];
+    private array $cachedWorkspacesByName = [];
 
     /**
-     * @var array
+     * @var array<string,Workspace>
      */
-    private $cachedWorkspacesByContentStreamIdentifier = [];
+    private array $cachedWorkspacesByContentStreamIdentifier = [];
 
-    public function disableCache()
+    public function disableCache(): void
     {
         $this->cacheEnabled = false;
         $this->cachedWorkspacesByName = [];
         $this->cachedWorkspacesByContentStreamIdentifier = [];
     }
 
-    public function enableCache()
+    public function enableCache(): void
     {
         $this->cacheEnabled = true;
         $this->cachedWorkspacesByName = [];
         $this->cachedWorkspacesByContentStreamIdentifier = [];
     }
 
-    /**
-     * @param WorkspaceName $name
-     * @return Workspace|null
-     */
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
         if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByName[(string)$name])) {
@@ -79,7 +71,7 @@ final class WorkspaceFinder
             [
                 ':workspaceName' => (string)$name
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         if ($workspaceRow === false) {
             return null;
@@ -94,13 +86,11 @@ final class WorkspaceFinder
         return $workspace;
     }
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return Workspace|null
-     */
-    public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
-    {
-        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+    public function findOneByCurrentContentStreamIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier
+    ): ?Workspace {
+        if ($this->cacheEnabled
+            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
             return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
         }
 
@@ -113,7 +103,7 @@ final class WorkspaceFinder
             [
                 ':currentContentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         if ($workspaceRow === false) {
             return null;
@@ -129,9 +119,7 @@ final class WorkspaceFinder
     }
 
     /**
-     * @param WorkspaceName $prefix
-     * @return array|Workspace[]
-     * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
+     * @return array<string,Workspace>
      */
     public function findByPrefix(WorkspaceName $prefix): array
     {
@@ -144,9 +132,9 @@ final class WorkspaceFinder
                 WHERE workspaceName LIKE :workspaceNameLike
             ',
             [
-                ':workspaceNameLike' => (string)$prefix . '%'
+                ':workspaceNameLike' => $prefix . '%'
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
@@ -158,8 +146,7 @@ final class WorkspaceFinder
     }
 
     /**
-     * @param WorkspaceName $baseWorkspace
-     * @return array|Workspace[]
+     * @return array<string,Workspace>
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
@@ -175,7 +162,7 @@ final class WorkspaceFinder
             [
                 ':workspaceName' => (string)$baseWorkspace
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
@@ -197,7 +184,7 @@ final class WorkspaceFinder
             [
                 ':workspaceOwner' => $owner
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         if ($workspaceRow === false) {
             return null;
@@ -207,7 +194,7 @@ final class WorkspaceFinder
     }
 
     /**
-     * @return array|Workspace[]
+     * @return array<string,Workspace>
      */
     public function findAll(): array
     {
@@ -218,7 +205,7 @@ final class WorkspaceFinder
             '
                 SELECT * FROM neos_contentrepository_projection_workspace_v1
             '
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
@@ -230,7 +217,9 @@ final class WorkspaceFinder
     }
 
     /**
-     * @return Workspace[]
+     * @return array<string,Workspace>
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findOutdated(): array
     {
@@ -244,11 +233,10 @@ final class WorkspaceFinder
             [
                 'outdated' => Workspace::STATUS_OUTDATED
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
-            /** @var Workspace $similarlyNamedWorkspace */
             $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
         }
 

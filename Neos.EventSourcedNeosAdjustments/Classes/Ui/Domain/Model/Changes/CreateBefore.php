@@ -17,37 +17,35 @@ class CreateBefore extends AbstractCreate
 {
     /**
      * Get the insertion mode (before|after|into) that is represented by this change
-     *
-     * @return string
      */
-    public function getMode()
+    public function getMode(): string
     {
         return 'before';
     }
 
     /**
      * Check if the new node's node type is allowed in the requested position
-     *
-     * @return boolean
      */
     public function canApply(): bool
     {
-        $parent = $this->findParentNode($this->getSubject());
+        if (is_null($this->subject)) {
+            return false;
+        }
+        $parent = $this->findParentNode($this->subject);
         $nodeType = $this->getNodeType();
 
-        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return !is_null($parent) && !is_null($nodeType)
+            && $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**
      * Create a new node after the subject
-     *
-     * @return void
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            $subject = $this->getSubject();
-            $parent = $this->findParentNode($subject);
+        $parent = $this->subject ? $this->findParentNode($this->subject) : null;
+        $subject = $this->subject;
+        if ($this->canApply() && !is_null($subject) && !is_null($parent)) {
             $this->createNode($parent, $subject->getNodeAggregateIdentifier());
             $this->updateWorkspaceInfo();
         }

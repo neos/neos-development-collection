@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Infrastructure;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\SQLLogger;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -27,7 +28,7 @@ class DbalClient
 {
     /**
      * @Flow\InjectConfiguration(path="persistence.backendOptions")
-     * @var array
+     * @var array<string,mixed>
      */
     protected array $backendOptions = [];
 
@@ -43,8 +44,10 @@ class DbalClient
     {
         $configuration = new Configuration();
         if (!empty($this->sqlLogger)) {
-            $configuredSqlLogger = $this->sqlLogger;
-            $configuration->setSQLLogger(new $configuredSqlLogger());
+            $configuredSqlLoggerName = $this->sqlLogger;
+            /** @var SQLLogger $configuredSqlLogger */
+            $configuredSqlLogger = new $configuredSqlLoggerName();
+            $configuration->setSQLLogger($configuredSqlLogger);
         }
         $this->connection = DriverManager::getConnection($this->backendOptions, $configuration);
     }

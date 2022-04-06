@@ -32,14 +32,19 @@ final class RuntimeBlocker
 
     protected ProcessedEventsAwareProjectorCollection $defaultProjectorsToBeBlocked;
 
+    /**
+     * @param iterable<int,ProcessedEventsAwareProjectorInterface> $defaultProjectorsToBeBlocked
+     */
     public function __construct(
         DeferEventPublisher $eventPublisher,
         DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
-        Iterable $defaultProjectorsToBeBlocked
+        iterable $defaultProjectorsToBeBlocked
     ) {
         $this->eventPublisher = $eventPublisher;
         $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
-        $this->defaultProjectorsToBeBlocked = new ProcessedEventsAwareProjectorCollection($defaultProjectorsToBeBlocked);
+        $this->defaultProjectorsToBeBlocked = new ProcessedEventsAwareProjectorCollection(
+            $defaultProjectorsToBeBlocked
+        );
     }
 
     public function blockUntilProjectionsAreUpToDate(
@@ -57,12 +62,17 @@ final class RuntimeBlocker
         }
     }
 
-    private function filterPublishedEventsByListener(DomainEvents $publishedEvents, string $listenerClassName): DomainEvents
-    {
-        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName($listenerClassName);
-        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
-            return $mapping->getListenerClassName() === $listenerClassName;
-        });
+    private function filterPublishedEventsByListener(
+        DomainEvents $publishedEvents,
+        string $listenerClassName
+    ): DomainEvents {
+        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName(
+            $listenerClassName
+        );
+        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)
+            ->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
+                return $mapping->getListenerClassName() === $listenerClassName;
+            });
         $eventClassNames = [];
         foreach ($listenerMappings as $mapping) {
             $eventClassNames[$mapping->getEventClassName()] = true;
@@ -84,10 +94,16 @@ final class RuntimeBlocker
             if (++$attempts > 300) { // 15 seconds
                 $ids = '';
                 foreach ($events as $event) {
-                    $ids .= '   ' . $event->getIdentifier();
+                    if ($event instanceof DecoratedEvent) {
+                        $ids .= '   ' . $event->getIdentifier();
+                    }
                 }
 
-                throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s" - check the error logs for details.', $ids, get_class($projector)), 1550232279);
+                throw new \RuntimeException(sprintf(
+                    'TIMEOUT while waiting for event(s) %s for projector "%s" - check the error logs for details.',
+                    $ids,
+                    get_class($projector)
+                ), 1550232279);
             }
         }
     }

@@ -19,8 +19,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSp
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 /**
- * Add a Dimension Space Point Shine-Through; basically making all content available not just in the source(original) DSP, but also
- * in the target-DimensionSpacePoint.
+ * Add a Dimension Space Point Shine-Through;
+ * basically making all content available not just in the source(original) DSP,
+ * but also in the target-DimensionSpacePoint.
  *
  * NOTE: the Source Dimension Space Point must be a parent of the target Dimension Space Point.
  */
@@ -28,15 +29,9 @@ class AddDimensionShineThrough implements GlobalTransformationInterface
 {
     protected DimensionSpaceCommandHandler $dimensionSpacePointCommandHandler;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected $from;
+    protected ?DimensionSpacePoint $from;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected $to;
+    protected ?DimensionSpacePoint $to;
 
     public function __construct(DimensionSpaceCommandHandler $dimensionSpacePointCommandHandler)
     {
@@ -44,7 +39,7 @@ class AddDimensionShineThrough implements GlobalTransformationInterface
     }
 
     /**
-     * @param array $from
+     * @param array<string,string> $from
      */
     public function setFrom(array $from): void
     {
@@ -52,19 +47,30 @@ class AddDimensionShineThrough implements GlobalTransformationInterface
     }
 
     /**
-     * @param array $to
+     * @param array<string,string> $to
      */
     public function setTo(array $to): void
     {
         $this->to = DimensionSpacePoint::fromArray($to);
     }
 
-    public function execute(ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
-        return $this->dimensionSpacePointCommandHandler->handleAddDimensionShineThrough(new \Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Command\AddDimensionShineThrough(
-            $contentStreamForWriting,
-            $this->from,
-            $this->to
-        ));
+    public function execute(
+        ContentStreamIdentifier $contentStreamForReading,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
+        if (is_null($this->from)) {
+            throw new \RuntimeException('Cannot execute ' . self::class . ' without "from".', 1645387439);
+        }
+        if (is_null($this->to)) {
+            throw new \RuntimeException('Cannot execute ' . self::class . ' without "to".', 1645387450);
+        }
+
+        return $this->dimensionSpacePointCommandHandler->handleAddDimensionShineThrough(
+            new \Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Command\AddDimensionShineThrough(
+                $contentStreamForWriting,
+                $this->from,
+                $this->to
+            )
+        );
     }
 }

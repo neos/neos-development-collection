@@ -37,8 +37,14 @@ class WorkspaceRebaseFailed implements DomainEventInterface
 
     private UserIdentifier $initiatingUserIdentifier;
 
+    /**
+     * @var array<int,array<string,mixed>>
+     */
     private array $errors;
 
+    /**
+     * @param array<int,array<string,mixed>> $errors
+     */
     public function __construct(
         WorkspaceName $workspaceName,
         ContentStreamIdentifier $candidateContentStreamIdentifier,
@@ -73,6 +79,9 @@ class WorkspaceRebaseFailed implements DomainEventInterface
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function getErrors(): array
     {
         return $this->errors;

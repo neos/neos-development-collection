@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Change node aggregate type - basic error cases
 
   As a user of the CR I want to change the type of a node aggregate.

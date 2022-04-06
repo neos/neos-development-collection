@@ -17,7 +17,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -34,13 +33,16 @@ use Neos\Flow\Annotations as Flow;
  * using `relationDistributionStrategy`
  * initiated by `initiatingUserIdentifier`
  *
- * Why can you specify **both** newPrecedingSiblingNodeAggregateIdentifier and newSucceedingSiblingNodeAggregateIdentifier?
+ * Why can you specify **both** newPrecedingSiblingNodeAggregateIdentifier
+ * and newSucceedingSiblingNodeAggregateIdentifier?
  * - it can happen that in one subgraph, only one of these match.
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
- *
- * @Flow\Proxy(false)
  */
-final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class MoveNodeAggregate implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     /**
      * The content stream in which the move operation is to be performed
@@ -48,7 +50,8 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
     private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
-     * This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones.
+     * This is one of the *covered* dimension space points of the node aggregate
+     * and not necessarily one of the occupied ones.
      * This allows us to move virtual specializations only when using the scatter strategy.
      */
     private DimensionSpacePoint $dimensionSpacePoint;
@@ -68,7 +71,8 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
     /**
      * This is the identifier of the new preceding sibling node aggregate.
      * If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate.
-     * In dimension space points this aggregate does not cover, other siblings, in order of proximity, are tried to be used instead.
+     * In dimension space points this aggregate does not cover, other siblings,
+     * in order of proximity, are tried to be used instead.
      */
     private ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier;
 
@@ -107,19 +111,23 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
     }
 
     /**
-     * @param array $array
-     * @return MoveNodeAggregate
-     * @throws RelationDistributionStrategyIsInvalid
+     * @param array<string,mixed> $array
      */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            isset($array['newParentNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier']) : null,
-            isset($array['newPrecedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newPrecedingSiblingNodeAggregateIdentifier']) : null,
-            isset($array['newSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newSucceedingSiblingNodeAggregateIdentifier']) : null,
+            isset($array['newParentNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier'])
+                : null,
+            isset($array['newPrecedingSiblingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($array['newPrecedingSiblingNodeAggregateIdentifier'])
+                : null,
+            isset($array['newSucceedingSiblingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($array['newSucceedingSiblingNodeAggregateIdentifier'])
+                : null,
             RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
@@ -165,6 +173,9 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -181,7 +192,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new MoveNodeAggregate(
+        return new self(
             $targetContentStreamIdentifier,
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,
@@ -195,8 +206,8 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
-        return (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
-            && $this->dimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint());
+        return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+            && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
+            && $this->dimensionSpacePoint === $nodeAddress->dimensionSpacePoint;
     }
 }

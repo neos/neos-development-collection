@@ -21,7 +21,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Content\NodeInterface
 {
     /**
-     * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences().
+     * Returns all properties of this node. References are NOT part of this API;
+     * there you need to check getReference() and getReferences().
      *
      * To read the serialized properties, call getProperties()->serialized().
      *
@@ -31,7 +32,8 @@ interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Conten
     public function getProperties(): PropertyCollectionInterface;
 
     /**
-     * DimensionSpacePoint this node has been accessed in. This is part of the node's "Read Model" identity, whis is defined by:
+     * DimensionSpacePoint this node has been accessed in.
+     * This is part of the node's "Read Model" identity, whis is defined by:
      * - {@see getContentStreamIdentifier}
      * - {@see getNodeAggregateIdentifier}
      * - {@see getDimensionSpacePoint} (this method)
@@ -40,8 +42,9 @@ interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Conten
      * With the above information, you can fetch a Node Accessor using {@see NodeAccessorManager::accessorFor()}, or
      * (for lower-level access) a Subgraph using {@see ContentGraphInterface::getSubgraphByIdentifier()}.
      *
-     * This is the DimensionSpacePoint this node has been accessed in - NOT the DimensionSpacePoint where
-     * the node is "at home". The DimensionSpacePoint where the node is (at home) is called the ORIGIN DimensionSpacePoint,
+     * This is the DimensionSpacePoint this node has been accessed in
+     * - NOT the DimensionSpacePoint where the node is "at home".
+     * The DimensionSpacePoint where the node is (at home) is called the ORIGIN DimensionSpacePoint,
      * and this can be accessed using {@see getOriginDimensionSpacePoint}. If in doubt, you'll usually need this method
      * insead of the Origin DimensionSpacePoint.
      *
@@ -53,7 +56,8 @@ interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Conten
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
-     * VisibilityConstraints of the Subgraph / NodeAccessor this node has been read from. This is part of the node's "Read Model" identity, whis is defined by:
+     * VisibilityConstraints of the Subgraph / NodeAccessor this node has been read from.
+     * This is part of the node's "Read Model" identity, whis is defined by:
      * - {@see getContentStreamIdentifier}
      * - {@see getNodeAggregateIdentifier}
      * - {@see getDimensionSpacePoint}

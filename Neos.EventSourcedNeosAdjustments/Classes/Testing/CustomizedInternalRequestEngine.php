@@ -12,45 +12,53 @@ namespace Neos\EventSourcedNeosAdjustments\Testing;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Client\InternalRequestEngine;
-use Neos\Flow\Http\Component\ComponentChain;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Http;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Neos\Flow\Http\Component\ComponentContext;
-use Psr\Http\Message\ServerRequestInterface;
 
 class CustomizedInternalRequestEngine extends InternalRequestEngine
 {
-    public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
+    public function sendRequest(RequestInterface $httpRequest): ResponseInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
+        /** @phpstan-ignore-next-line */
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
-            throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
+            throw new Http\Exception(
+                'The browser\'s internal request engine has only been designed for use within functional tests.',
+                1335523749
+            );
         }
-
+        /** @phpstan-ignore-next-line */
+        $requestHandler->setHttpRequest($httpRequest);
         // TODO: THE FOLLOWING LINE THIS IS THE ONLY CHANGE NEEDED!!!
         //$this->securityContext->clearContext();
         $this->validatorResolver->reset();
 
-        $response = $this->responseFactory->createResponse();
-        $componentContext = new ComponentContext($httpRequest, $response);
-        $requestHandler->setComponentContext($componentContext);
-
         $objectManager = $this->bootstrap->getObjectManager();
-        $baseComponentChain = $objectManager->get(ComponentChain::class);
+        /** @var Http\Middleware\MiddlewaresChain $middlewaresChain */
+        $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
 
         try {
-            $baseComponentChain->handle($componentContext);
+            /** @phpstan-ignore-next-line */
+            $response = $middlewaresChain->handle($httpRequest);
         } catch (\Throwable $throwable) {
-            $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
+            $response = $this->prepareErrorResponse($throwable, new Response());
         }
-        $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
+        /** @var SessionInterface $session */
+        $session = $objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }
+        // FIXME: ObjectManager should forget all instances created during the request
+        $objectManager->forgetInstance(SessionManager::class);
+        $objectManager->forgetInstance(FlashMessageService::class);
         $this->persistenceManager->clearState();
-        return $componentContext->getHttpResponse();
+        return $response;
     }
 }

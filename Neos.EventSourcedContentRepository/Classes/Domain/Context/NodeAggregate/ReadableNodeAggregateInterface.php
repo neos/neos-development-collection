@@ -55,20 +55,19 @@ interface ReadableNodeAggregateInterface
 
     /**
      * A node aggregate occupies a dimension space point if any node originates in it.
-     *
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return bool
      */
-    public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
+    public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool;
 
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint;
 
     /**
-     * @return iterable|NodeInterface[]
+     * @return iterable<int,NodeInterface>
      */
     public function getNodes(): iterable;
 
-    public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface;
+    public function getNodeByOccupiedDimensionSpacePoint(
+        OriginDimensionSpacePoint $occupiedDimensionSpacePoint
+    ): NodeInterface;
 
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
 
@@ -81,7 +80,9 @@ interface ReadableNodeAggregateInterface
      */
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
-    public function getCoverageByOccupant(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): DimensionSpacePointSet;
+    public function getCoverageByOccupant(
+        OriginDimensionSpacePoint $occupiedDimensionSpacePoint
+    ): DimensionSpacePointSet;
 
     /**
      * @return array|NodeInterface[]

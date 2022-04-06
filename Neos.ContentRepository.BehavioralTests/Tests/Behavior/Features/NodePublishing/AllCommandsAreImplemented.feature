@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Publishing hide/show scenario of nodes
 
   Node structure is as follows:

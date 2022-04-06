@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,13 +10,19 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
@@ -29,6 +33,7 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCach
 trait NodeVariation
 {
     use NodeVariationInternals;
+    use ConstraintChecks;
 
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
@@ -37,8 +42,6 @@ trait NodeVariation
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
-     * @param CreateNodeVariant $command
-     * @return CommandResult
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws DimensionSpacePointNotFound
@@ -51,33 +54,38 @@ trait NodeVariation
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getSourceOrigin());
-        $this->requireDimensionSpacePointToExist($command->getTargetOrigin());
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
+        );
+        $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
-        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getSourceOrigin());
-        $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->getTargetOrigin());
-
-        $parentNodeAggregate = $this->getContentGraph()->findParentNodeAggregateByChildOriginDimensionSpacePoint(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
-            $command->getSourceOrigin()
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
+        $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
+        $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $command->sourceOrigin
         );
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetOrigin());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $parentNodeAggregate,
+            $command->targetOrigin->toDimensionSpacePoint()
+        );
 
         $events = $this->createEventsForVariations(
-            $command->getContentStreamIdentifier(),
-            $command->getSourceOrigin(),
-            $command->getTargetOrigin(),
+            $command->contentStreamIdentifier,
+            $command->sourceOrigin,
+            $command->targetOrigin,
             $nodeAggregate,
-            $command->getInitiatingUserIdentifier()
+            $command->initiatingUserIdentifier
         );
 
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $events) {
             $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->getContentStreamIdentifier()
+                $command->contentStreamIdentifier
             );
 
             $this->getNodeAggregateEventPublisher()->publishMany($streamName->getEventStreamName(), $events);

@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Psr\Http\Message\UriInterface;
@@ -26,37 +27,45 @@ use Psr\Http\Message\UriInterface;
 final class DocumentNodeInfo
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    private $source;
+    private array $source;
 
     /**
-     * @var array|null
+     * @var array<string,mixed>|null
      */
-    private $shortcutTarget;
+    private ?array $shortcutTarget = null;
 
+    /**
+     * @param array<string,mixed> $source
+     */
     public function __construct(array $source)
     {
         $this->source = $source;
     }
 
+    /**
+     * @param array<string,string> $row
+     */
     public static function fromDatabaseRow(array $row): self
     {
-        return new static($row);
+        return new self($row);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
         $source = $this->source;
-        $source['dimensionspacepointhash'] = $dimensionSpacePoint->getHash();
-        return new static($source);
+        $source['dimensionspacepointhash'] = $dimensionSpacePoint->hash;
+
+        return new self($source);
     }
 
-    public function withOriginDimensionSpacePoint(DimensionSpacePoint $originDimensionSpacePoint): self
+    public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
     {
         $source = $this->source;
-        $source['origindimensionspacepointhash'] = $originDimensionSpacePoint->getHash();
-        return new static($source);
+        $source['origindimensionspacepointhash'] = $originDimensionSpacePoint->hash;
+
+        return new self($source);
     }
 
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
@@ -172,13 +181,20 @@ final class DocumentNodeInfo
         return NodeName::fromString($this->source['sitenodename']);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getShortcutTarget(): array
     {
         if ($this->shortcutTarget === null) {
             try {
                 $this->shortcutTarget = json_decode($this->source['shortcuttarget'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $e) {
-                throw new \RuntimeException(sprintf('Invalid shortcut target "%s": %s', $this->source['shortcuttarget'], $e->getMessage()), 1599036735, $e);
+                throw new \RuntimeException(sprintf(
+                    'Invalid shortcut target "%s": %s',
+                    $this->source['shortcuttarget'],
+                    $e->getMessage()
+                ), 1599036735, $e);
             }
             if ($this->shortcutTarget === null) {
                 $this->shortcutTarget = ['mode' => 'none', 'target' => null];
@@ -187,6 +203,9 @@ final class DocumentNodeInfo
         return $this->shortcutTarget;
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function toArray(): array
     {
         return $this->source;
@@ -194,6 +213,7 @@ final class DocumentNodeInfo
 
     public function __toString(): string
     {
-        return ($this->source['nodeaggregateidentifier'] ?? '<unknown nodeAggregateIdentifier>') . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
+        return ($this->source['nodeaggregateidentifier'] ?? '<unknown nodeAggregateIdentifier>')
+            . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
     }
 }

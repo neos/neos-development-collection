@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Migration\Filters;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
  * Filter nodes having the given property and its value not empty.
@@ -23,16 +24,12 @@ class PropertyValue implements NodeBasedFilterInterface
     /**
      * The property name
      */
-    protected string $propertyName;
+    protected ?string $propertyName;
 
-
-    protected $serializedValue;
+    protected mixed $serializedValue;
 
     /**
      * Sets the property name to be checked.
-     *
-     * @param string $propertyName
-     * @return void
      */
     public function setPropertyName(string $propertyName): void
     {
@@ -41,21 +38,20 @@ class PropertyValue implements NodeBasedFilterInterface
 
     /**
      * Sets the property value to be checked against.
-     *
-     * @param mixed $propertyValue
-     * @return void
      */
-    public function setSerializedValue($serializedValue): void
+    public function setSerializedValue(mixed $serializedValue): void
     {
         $this->serializedValue = $serializedValue;
     }
 
     public function matches(NodeInterface $node): bool
     {
-        if (!$node->hasProperty($this->propertyName)) {
+        if (is_null($this->propertyName) || !$node->hasProperty($this->propertyName)) {
             return false;
         }
-        $serializedPropertyValue = $node->getProperties()->serialized()->getProperty($this->propertyName);
+        /** @var PropertyCollectionInterface $properties */
+        $properties = $node->getProperties();
+        $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
         if (!$serializedPropertyValue) {
             return false;
         }

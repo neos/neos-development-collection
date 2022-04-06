@@ -56,7 +56,7 @@ trait WorkspacePublishing
             : ContentStreamIdentifier::create();
 
         $command = PublishIndividualNodesFromWorkspace::createFullyDeterministic(
-            new WorkspaceName($commandArguments['workspaceName']),
+            WorkspaceName::fromString($commandArguments['workspaceName']),
             $nodeAddresses,
             $initiatingUserIdentifier,
             $contentStreamIdentifierForMatchingPart,
@@ -80,7 +80,7 @@ trait WorkspacePublishing
             : $this->getCurrentUserIdentifier();
 
         $command = new PublishWorkspace(
-            new WorkspaceName($commandArguments['workspaceName']),
+            WorkspaceName::fromString($commandArguments['workspaceName']),
             $initiatingUserIdentifier
         );
 

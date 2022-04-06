@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph package.
@@ -12,78 +9,38 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
+
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing nodes from and to the database
  */
-class NodeRecord
+#[Flow\Proxy(false)]
+final class NodeRecord
 {
-    /**
-     * @var NodeRelationAnchorPoint
-     */
-    public $relationAnchorPoint;
-
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    public $nodeAggregateIdentifier;
-
-    /**
-     * @var array
-     */
-    public $originDimensionSpacePoint;
-
-    /**
-     * @var string
-     */
-    public $originDimensionSpacePointHash;
-
-    /**
-     * @var SerializedPropertyValues
-     */
-    public $properties;
-
-    /**
-     * @var NodeTypeName
-     */
-    public $nodeTypeName;
-
-    /**
-     * Transient node name to store a node name after fetching a node with hierarchy (not always available)
-     *
-     * @var NodeName
-     */
-    public $nodeName;
-
-    /**
-     * @var NodeAggregateClassification
-     */
-    public $classification;
-
     public function __construct(
-        NodeRelationAnchorPoint $relationAnchorPoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?array $originDimensionSpacePoint,
-        ?string $originDimensionSpacePointHash,
-        SerializedPropertyValues $properties,
-        NodeTypeName $nodeTypeName,
-        NodeAggregateClassification $classification,
-        NodeName $nodeName = null
+        public NodeRelationAnchorPoint $relationAnchorPoint,
+        public NodeAggregateIdentifier $nodeAggregateIdentifier,
+        /** @var array<string,string> */
+        public array $originDimensionSpacePoint,
+        public string $originDimensionSpacePointHash,
+        public SerializedPropertyValues $properties,
+        public NodeTypeName $nodeTypeName,
+        public NodeAggregateClassification $classification,
+        /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
+        public ?NodeName $nodeName = null
     ) {
-        $this->relationAnchorPoint = $relationAnchorPoint;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
-        $this->properties = $properties;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->classification = $classification;
-        $this->nodeName = $nodeName;
     }
 
     /**
@@ -93,13 +50,13 @@ class NodeRecord
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert('neos_contentgraph_node', [
-            'relationanchorpoint' => (string) $this->relationAnchorPoint,
-            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+            'relationanchorpoint' => (string)$this->relationAnchorPoint,
+            'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-            'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
+            'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName,
-            'classification' => (string) $this->classification
+            'nodetypename' => (string)$this->nodeTypeName,
+            'classification' => $this->classification->value
         ]);
     }
 
@@ -112,12 +69,12 @@ class NodeRecord
         $databaseConnection->update(
             'neos_contentgraph_node',
             [
-                'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+                'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-                'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
+                'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
-                'nodetypename' => (string) $this->nodeTypeName,
-                'classification' => (string) $this->classification
+                'nodetypename' => (string)$this->nodeTypeName,
+                'classification' => $this->classification->value
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
@@ -138,20 +95,19 @@ class NodeRecord
     }
 
     /**
-     * @param array $databaseRow
-     * @return static
+     * @param array<string,string> $databaseRow
      * @throws \Exception
      */
-    public static function fromDatabaseRow(array $databaseRow): NodeRecord
+    public static function fromDatabaseRow(array $databaseRow): self
     {
-        return new static(
+        return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
-            NodeAggregateClassification::fromString($databaseRow['classification']),
+            NodeAggregateClassification::from($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
         );
     }

@@ -31,14 +31,8 @@ class RemoveNode implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var NodeVariantSelectionStrategyIdentifier|null
-     */
     private ?NodeVariantSelectionStrategyIdentifier $strategy = null;
 
-    /**
-     * @var DimensionSpacePoint|null
-     */
     private ?DimensionSpacePoint $overriddenDimensionSpacePoint = null;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
@@ -46,16 +40,13 @@ class RemoveNode implements NodeBasedTransformationInterface
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
     }
 
-    /**
-     * @param string $strategy
-     */
     public function setStrategy(string $strategy): void
     {
-        $this->strategy = NodeVariantSelectionStrategyIdentifier::fromString($strategy);
+        $this->strategy = NodeVariantSelectionStrategyIdentifier::from($strategy);
     }
 
     /**
-     * @param string $overriddenDimensionSpacePoint
+     * @param array<string,string> $overriddenDimensionSpacePoint
      */
     public function setOverriddenDimensionSpacePoint(array $overriddenDimensionSpacePoint): void
     {
@@ -64,28 +55,31 @@ class RemoveNode implements NodeBasedTransformationInterface
 
     /**
      * Remove the property from the given node.
-     *
-     * @param NodeInterface $node
-     * @param ContentStreamIdentifier $contentStreamForWriting
-     * @return CommandResult
      */
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
-            $this->strategy = NodeVariantSelectionStrategyIdentifier::onlyGivenVariant();
+            $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_ONLY_GIVEN_VARIANT;
         } elseif ($this->strategy === null) {
-            $this->strategy = NodeVariantSelectionStrategyIdentifier::virtualSpecializations();
+            $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS;
         }
 
-        if ($this->strategy->equals(NodeVariantSelectionStrategyIdentifier::allVariants())) {
-            throw new InvalidMigrationConfiguration('For RemoveNode, the strategy allVariants is not supported, as this would lead to nodes being deleted which might potentially not be matched by this filter.');
+        if ($this->strategy === NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS) {
+            throw new InvalidMigrationConfiguration(
+                'For RemoveNode, the strategy allVariants is not supported, as this would lead to nodes'
+                    . ' being deleted which might potentially not be matched by this filter.'
+            );
         }
 
-        $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint ?? $node->getOriginDimensionSpacePoint();
+        $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint
+            ?: $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint();
 
         if (!$coveredDimensionSpacePoints->contains($coveredDimensionSpacePoint)) {
-            // we are currently in a Node which has other covered dimension space points than the target ones, so we do not need
-            // to do anything.
+            // we are currently in a Node which has other covered dimension space points than the target ones,
+            // so we do not need to do anything.
             return CommandResult::createEmpty();
         }
 

@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -20,6 +21,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 
 /**
  * Change Read Model
+ *
+ * @Flow\Proxy(false)
  */
 class Change
 {
@@ -86,11 +89,11 @@ class Change
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
-            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
+            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint !== null ? (string)$this->removalAttachmentPoint : null
+            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
         ]);
     }
 
@@ -99,34 +102,35 @@ class Change
         $databaseConnection->update(
             'neos_contentrepository_projection_change',
             [
-            'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved,
-            'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint !== null ? (string)$this->removalAttachmentPoint : null
-        ],
+                'changed' => (int)$this->changed,
+                'moved' => (int)$this->moved,
+                'deleted' => (int)$this->deleted,
+                'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+            ],
             [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
-            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
-            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
-        ]
+                'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+                'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+                'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+            ]
         );
     }
 
     /**
-     * @param array $databaseRow
-     * @return static
+     * @param array<string,mixed> $databaseRow
      */
-    public static function fromDatabaseRow(array $databaseRow)
+    public static function fromDatabaseRow(array $databaseRow): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
+            OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted'],
-            isset($databaseRow['removalAttachmentPoint']) ? NodeAggregateIdentifier::fromString($databaseRow['removalAttachmentPoint']) : null
+            isset($databaseRow['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($databaseRow['removalAttachmentPoint'])
+                : null
         );
     }
 }

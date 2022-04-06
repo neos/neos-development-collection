@@ -14,14 +14,20 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignment;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if an invalid node variant assignment is to be used
  */
+#[Flow\Proxy(false)]
 final class NodeVariantAssignmentCollectionIsInvalid extends \DomainException
 {
     public static function becauseItContainsSomethingOther(): NodeVariantAssignmentCollectionIsInvalid
     {
-        return new static('Given node variant assignment collection is invalid because it contains an item of another type than ' . NodeVariantAssignment::class, 1571045106);
+        return new self(
+            'Given node variant assignment collection is invalid because it contains an item of another type than '
+                . NodeVariantAssignment::class,
+            1571045106
+        );
     }
 }

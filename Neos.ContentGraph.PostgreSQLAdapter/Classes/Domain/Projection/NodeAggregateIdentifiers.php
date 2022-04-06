@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,27 +10,37 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
+
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers
+    as NodeAggregateIdentifierCollection;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * The node aggregate identifier value object collection
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateIdentifiers
 {
     /**
-     * @var array|NodeAggregateIdentifier[]
+     * @var array<string,NodeAggregateIdentifier>
      */
     private array $identifiers;
 
+    /**
+     * @param array<string,NodeAggregateIdentifier> $identifiers
+     */
     private function __construct(array $identifiers)
     {
         $this->identifiers = $identifiers;
     }
 
+    /**
+     * @param array<int|string,string|NodeAggregateIdentifier> $array
+     */
     public static function fromArray(array $array): self
     {
         $values = [];
@@ -43,7 +50,11 @@ final class NodeAggregateIdentifiers
             } elseif ($item instanceof NodeAggregateIdentifier) {
                 $values[(string)$item] = $item;
             } else {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeAggregateIdentifier::class . ' objects.', 1616841637);
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifiers can only consist of '
+                        . NodeAggregateIdentifier::class . ' objects.',
+                    1616841637
+                );
             }
         }
 
@@ -68,14 +79,16 @@ final class NodeAggregateIdentifiers
         return '{' . implode(',', $this->identifiers) .  '}';
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, ?NodeAggregateIdentifier $succeedingSibling = null): self
-    {
+    public function add(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $succeedingSibling = null
+    ): self {
         $nodeAggregateIdentifiers = $this->identifiers;
         if ($succeedingSibling) {
-            $pivot = array_search($succeedingSibling, $nodeAggregateIdentifiers);
+            $pivot = (int)array_search($succeedingSibling, $nodeAggregateIdentifiers);
             array_splice($nodeAggregateIdentifiers, $pivot, 0, $nodeAggregateIdentifier);
         } else {
-            $nodeAggregateIdentifiers[] = $nodeAggregateIdentifier;
+            $nodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $nodeAggregateIdentifier;
         }
 
         return new self($nodeAggregateIdentifiers);
@@ -89,5 +102,10 @@ final class NodeAggregateIdentifiers
         }
 
         return new self($identifiers);
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->identifiers) === 0;
     }
 }

@@ -27,13 +27,17 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
 
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier, array $fieldsToFetch = null): self
+    /**
+     * @param array<int,string>|null $fieldsToFetch
+     */
+    public static function create(ContentStreamIdentifier $contentStreamIdentifier, ?array $fieldsToFetch = null): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
-                : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename, pn.classification, pn.properties, pn.nodename,
-                ph.contentstreamidentifier, ph.dimensionspacepoint') . '
+                : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename,
+                    pn.classification, pn.properties, pn.nodename,
+                    ph.contentstreamidentifier, ph.dimensionspacepoint') . '
             FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
             JOIN ' . NodeRecord::TABLE_NAME . ' pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
             JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch ON ch.parentnodeanchor = pn.relationanchorpoint
@@ -66,7 +70,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
             AND ch.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
+        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
         return new self($query, $parameters);
     }

@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Move a node with content dimensions
 
   As a user of the CR I want to move a node to a new parent

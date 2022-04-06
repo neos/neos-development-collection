@@ -23,5 +23,5 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
  */
 interface PublishableToOtherContentStreamsInterface
 {
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier);
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self;
 }

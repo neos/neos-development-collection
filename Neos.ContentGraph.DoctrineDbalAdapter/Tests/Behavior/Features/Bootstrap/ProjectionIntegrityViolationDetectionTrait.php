@@ -130,10 +130,10 @@ trait ProjectionIntegrityViolationDetectionTrait
     public function iSetTheFollowingPosition(TableNode $payloadTable): void
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
-        $dimensionSpacePoint = new DimensionSpacePoint($dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $record = [
             'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
-            'dimensionspacepointhash' => $dimensionSpacePoint->getHash(),
+            'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'childnodeanchor' => $this->findRelationAnchorPointByDataset($dataset)
         ];
 
@@ -184,13 +184,11 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function transformDatasetToReferenceRelationRecord(array $dataset): array
     {
-        $dimensionSpacePoint = new DimensionSpacePoint($dataset['dimensionSpacePoint']);
-
         return [
             'name' => $dataset['referenceName'],
             'nodeanchorpoint' => $this->findRelationAnchorPointByIdentifiers(
                 ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
-                $dimensionSpacePoint,
+                DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
                 NodeAggregateIdentifier::fromString($dataset['sourceNodeAggregateIdentifier'])
             ),
             'destinationnodeaggregateidentifier' => $dataset['destinationNodeAggregateIdentifier']
@@ -199,11 +197,11 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function transformDatasetToRestrictionRelationRecord(array $dataset): array
     {
-        $dimensionSpacePoint = new DimensionSpacePoint($dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
 
         return [
             'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
-            'dimensionspacepointhash' => $dimensionSpacePoint->getHash(),
+            'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'originnodeaggregateidentifier' => $dataset['originNodeAggregateIdentifier'],
             'affectednodeaggregateidentifier' => $dataset['affectedNodeAggregateIdentifier'],
         ];
@@ -211,14 +209,14 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function transformDatasetToHierarchyRelationRecord(array $dataset): array
     {
-        $dimensionSpacePoint = new DimensionSpacePoint($dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $parentNodeAggregateIdentifier = TestingNodeAggregateIdentifier::fromString($dataset['parentNodeAggregateIdentifier']);
         $childAggregateIdentifier = TestingNodeAggregateIdentifier::fromString($dataset['childNodeAggregateIdentifier']);
 
         return [
             'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
             'dimensionspacepoint' => \json_encode($dimensionSpacePoint),
-            'dimensionspacepointhash' => $dimensionSpacePoint->getHash(),
+            'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentNodeAggregateIdentifier->isNonExistent()
                 ? Algorithms::generateUUID()
                 : $this->findRelationAnchorPointByIdentifiers(
@@ -239,7 +237,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function findRelationAnchorPointByDataset(array $dataset): string
     {
-        $dimensionSpacePoint = new DimensionSpacePoint($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
         return $this->findRelationAnchorPointByIdentifiers(
             ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
@@ -263,7 +261,7 @@ trait ProjectionIntegrityViolationDetectionTrait
                             AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
             ]
         )->fetch();

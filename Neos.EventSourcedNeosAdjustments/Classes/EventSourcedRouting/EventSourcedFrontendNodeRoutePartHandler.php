@@ -19,7 +19,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
@@ -45,7 +47,10 @@ use Psr\Http\Message\UriInterface;
  *
  * @Flow\Scope("singleton")
  */
-final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements DynamicRoutePartInterface, ParameterAwareRoutePartInterface, FrontendNodeRoutePartHandlerInterface
+final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements
+    DynamicRoutePartInterface,
+    ParameterAwareRoutePartInterface,
+    FrontendNodeRoutePartHandlerInterface
 {
     private string $splitString = '';
 
@@ -104,14 +109,21 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!$parameters->has('dimensionSpacePoint') || !$parameters->has('requestUriHost')) {
             return false;
         }
+        /** @var string $requestUriHost */
+        $requestUriHost = $parameters->getValue('requestUriHost');
 
+        /** @var int $uriPathSegmentOffset */
         $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSegmentOffset);
         /** @var DimensionSpacePoint $dimensionSpacePoint */
         $dimensionSpacePoint = $parameters->getValue('dimensionSpacePoint');
 
         try {
-            $matchResult = $this->matchUriPath($requestPath, $dimensionSpacePoint, $parameters->getValue('requestUriHost'));
+            $matchResult = $this->matchUriPath(
+                $requestPath,
+                $dimensionSpacePoint,
+                $requestUriHost
+            );
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
@@ -122,12 +134,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
     /**
-     * @param array $routeValues
-     * @param RouteParameters $parameters
-     * @return ResolveResult|bool
+     * @param array<string,mixed> &$routeValues
      * @throws InvalidContentDimensionValueUriProcessorException
      */
-    public function resolveWithParameters(array &$routeValues, RouteParameters $parameters)
+    public function resolveWithParameters(array &$routeValues, RouteParameters $parameters): ResolveResult|false
     {
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
@@ -135,6 +145,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!$parameters->has('requestUriHost')) {
             return false;
         }
+        /** @var string $requestUriHost */
+        $requestUriHost = $parameters->getValue('requestUriHost');
 
         $nodeAddress = $routeValues[$this->name];
         if (!$nodeAddress instanceof NodeAddress) {
@@ -142,7 +154,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $parameters->getValue('requestUriHost'));
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $requestUriHost);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -161,9 +173,15 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      */
     private function resolveNodeAddress(NodeAddress $nodeAddress, string $host): ResolveResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
+        $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $nodeAddress->nodeAggregateIdentifier,
+            $nodeAddress->dimensionSpacePoint->hash
+        );
         if ($nodeInfo->isDisabled()) {
-            throw new NodeNotFoundException(sprintf('The resolved node for address %s is disabled', $nodeAddress), 1599668357);
+            throw new NodeNotFoundException(sprintf(
+                'The resolved node for address %s is disabled',
+                $nodeAddress
+            ), 1599668357);
         }
         if ($nodeInfo->isShortcut()) {
             $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo);
@@ -200,7 +218,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      */
     private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, string $host): MatchResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash($this->getCurrentSiteNodeName($host), $uriPath, $dimensionSpacePoint->getHash());
+        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
+            $this->getCurrentSiteNodeName($host),
+            $uriPath,
+            $dimensionSpacePoint->hash
+        );
         $nodeAddress = new NodeAddress(
             $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
             $dimensionSpacePoint,
@@ -299,13 +321,26 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $this->splitString = $splitString;
     }
 
-    public function match(&$routePath)
+    public function match(&$routePath): bool
     {
-        throw new \BadMethodCallException('match() is not supported by this Route Part Handler, use "matchWithParameters" instead', 1568287772);
+        return false;
+        /*
+        throw new \BadMethodCallException(
+            'match() is not supported by this Route Part Handler, use "matchWithParameters" instead',
+            1568287772
+        );*/
     }
 
-    public function resolve(array &$routeValues)
+    /**
+     * @param array<int|string,mixed> $routeValues
+     */
+    public function resolve(array &$routeValues): bool
     {
-        throw new \BadMethodCallException('resolve() is not supported by this Route Part Handler, use "resolveWithParameters" instead', 1611600169);
+        return false;
+        /*
+        throw new \BadMethodCallException(
+            'resolve() is not supported by this Route Part Handler, use "resolveWithParameters" instead',
+            1611600169
+        );*/
     }
 }

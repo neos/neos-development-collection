@@ -34,18 +34,37 @@ class Package extends BasePackage
     public function boot(Bootstrap $bootstrap)
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
-        $dispatcher->connect(AuthenticationProviderManager::class, 'authenticatedToken', EditorContentStreamZookeeper::class, 'relayEditorAuthentication');
-        $dispatcher->connect(DocumentUriPathProjector::class, 'documentUriPathChanged', function(string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event) use ($bootstrap) {
-            /** @var RouterCachingService $routerCachingService */
-            $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
-            $routerCachingService->flushCachesForUriPath($oldUriPath);
+        $dispatcher->connect(
+            AuthenticationProviderManager::class,
+            'authenticatedToken',
+            EditorContentStreamZookeeper::class,
+            'relayEditorAuthentication'
+        );
+        $dispatcher->connect(
+            DocumentUriPathProjector::class,
+            'documentUriPathChanged',
+            function (string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event) use ($bootstrap) {
+                /** @var RouterCachingService $routerCachingService */
+                $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
+                $routerCachingService->flushCachesForUriPath($oldUriPath);
 
-            if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
-                return;
+                if (class_exists(RedirectStorageInterface::class)) {
+                    if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
+                        return;
+                    }
+                    /** @var RedirectStorageInterface $redirectStorage */
+                    // @phpstan-ignore-next-line
+                    $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
+                    $redirectStorage->addRedirect(
+                        $oldUriPath,
+                        $newUriPath,
+                        301,
+                        [],
+                        (string)$event->initiatingUserIdentifier,
+                        'via DocumentUriPathProjector'
+                    );
+                }
             }
-            /** @var RedirectStorageInterface $redirectStorage */
-            $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
-            $redirectStorage->addRedirect($oldUriPath, $newUriPath, 301, [], (string)$event->getInitiatingUserIdentifier(), 'via DocumentUriPathProjector');
-        });
+        );
     }
 }

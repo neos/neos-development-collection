@@ -20,27 +20,22 @@ class ChangeCollection
     /**
      * Changes in this collection
      *
-     * @var array
+     * @var array<int,ChangeInterface>
      */
-    protected $changes = [];
+    protected array $changes = [];
 
     /**
      * Add a change to this collection
-     *
-     * @param ChangeInterface $change
-     * @return void
      */
-    public function add(ChangeInterface $change)
+    public function add(ChangeInterface $change): void
     {
         $this->changes[] = $change;
     }
 
     /**
      * Apply all changes
-     *
-     * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         while ($change = array_shift($this->changes)) {
             if ($change->canApply()) {
@@ -51,10 +46,8 @@ class ChangeCollection
 
     /**
      * Get the number of changes in this collection
-     *
-     * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return count($this->changes);
     }

@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Change node name
 
   As a user of the CR I want to change the name of a hierarchical relation between two nodes (e.g. in taxonomies)

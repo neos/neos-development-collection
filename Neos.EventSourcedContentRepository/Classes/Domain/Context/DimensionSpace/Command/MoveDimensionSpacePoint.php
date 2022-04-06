@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Comma
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Move a dimension space point to a new location; basically moving all content to the new dimension space point.
@@ -23,33 +24,31 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Reba
  *
  * NOTE: the target dimension space point must not contain any content.
  */
+#[Flow\Proxy(false)]
 final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOtherContentStreamsInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $source;
+    private DimensionSpacePoint $source;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $target;
+    private DimensionSpacePoint $target;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $source, DimensionSpacePoint $target)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $source,
+        DimensionSpacePoint $target
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->source = $source;
         $this->target = $target;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
@@ -61,22 +60,19 @@ final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOth
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getSource(): DimensionSpacePoint
     {
         return $this->source;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getTarget(): DimensionSpacePoint
     {
         return $this->target;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -88,7 +84,7 @@ final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOth
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new DimensionSpacePointWasMoved(
+        return new self(
             $targetContentStreamIdentifier,
             $this->source,
             $this->target

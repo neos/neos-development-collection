@@ -9,9 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class StructureAdjustment extends Message
 {
     const TETHERED_NODE_MISSING = 'TETHERED_NODE_MISSING';
@@ -31,12 +29,9 @@ class StructureAdjustment extends Message
     private string $type;
 
     /**
-     * Constructs this error
-     *
      * @param string $message An english error message which is used if no other error message can be resolved
      * @param integer|null $code A unique error code
-     * @param array $arguments Array of arguments to be replaced in message
-     * @param \Closure|null $adjustment
+     * @param array<string,mixed> $arguments Array of arguments to be replaced in message
      * @api
      */
     private function __construct(
@@ -58,7 +53,8 @@ class StructureAdjustment extends Message
         ?\Closure $remediation = null
     ): self {
         return new self(
-            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
+            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- '
+                . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
                 'contentStream' => $node->getContentStreamIdentifier()->jsonSerialize(),
@@ -78,7 +74,8 @@ class StructureAdjustment extends Message
         ?\Closure $remediation = null
     ): self {
         return new self(
-            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
+            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- '
+                . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
                 'contentStream' => $nodeAggregate->getContentStreamIdentifier()->jsonSerialize(),

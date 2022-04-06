@@ -56,7 +56,7 @@ final class ChangeFinder
     public function countByContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): int
     {
         $connection = $this->client->getConnection();
-        return $connection->executeQuery(
+        return (int)$connection->executeQuery(
             '
                 SELECT * FROM neos_contentrepository_projection_change
                 WHERE contentStreamIdentifier = :contentStreamIdentifier

@@ -18,7 +18,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
+/** @codingStandardsIgnoreEnd */
 
 /**
  * The default content subgraph URI processor
@@ -40,25 +42,18 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     protected $contentDimensionValueUriProcessorResolver;
 
     /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressService;
-
-    /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="routing.supportEmptySegmentForDimensions")
      * @var boolean
      */
     protected $supportEmptySegmentForDimensions;
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress
-     * @param bool $currentNodeIsSiteNode
-     * @return UriConstraints
      * @throws ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
      */
-    public function resolveDimensionUriConstraints(NodeAddress $nodeAddress, bool $currentNodeIsSiteNode = false): UriConstraints
-    {
+    public function resolveDimensionUriConstraints(
+        NodeAddress $nodeAddress,
+        bool $currentNodeIsSiteNode = false
+    ): UriConstraints {
         $uriConstraints = UriConstraints::create();
 
         if ($nodeAddress->isInLiveWorkspace()) {
@@ -68,25 +63,42 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
             $uriPathSegmentConstraints = UriConstraints::create();
             $allUriPathSegmentDetectableDimensionPresetsAreDefault = true;
 
-            foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $rawContentDimensionIdentifier => $contentDimension) {
+            $orderedDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
+            foreach ($orderedDimensions as $rawContentDimensionIdentifier => $contentDimension) {
                 $resolutionOptions = $contentDimension->getConfigurationValue('resolution.options') ?? [];
                 $resolutionMode = $contentDimension->getConfigurationValue('resolution.mode')
-                    ? new BasicContentDimensionResolutionMode($contentDimension->getConfigurationValue('resolution.mode'))
-                    : null;
+                    ? new BasicContentDimensionResolutionMode(
+                        $contentDimension->getConfigurationValue('resolution.mode')
+                    ) : null;
 
-                $contentDimensionValue = $contentDimension->getValue($nodeAddress->getDimensionSpacePoint()->getCoordinates()[$rawContentDimensionIdentifier]);
-                $linkProcessor = $this->contentDimensionValueUriProcessorResolver->resolveContentDimensionValueUriProcessor($contentDimension);
-                if ($resolutionMode !== null && $resolutionMode->getMode() === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
-                    if (!isset($resolutionOptions['offset'])) {
-                        $resolutionOptions['offset'] = $uriPathSegmentOffset;
+                $contentDimensionValue = $contentDimension
+                    ->getValue($nodeAddress->dimensionSpacePoint->coordinates[$rawContentDimensionIdentifier]);
+                $linkProcessor = $this->contentDimensionValueUriProcessorResolver
+                    ->resolveContentDimensionValueUriProcessor($contentDimension);
+                if (!is_null($contentDimensionValue)) {
+                    if ($resolutionMode !== null && $resolutionMode->getMode()
+                        === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                        if (!isset($resolutionOptions['offset'])) {
+                            $resolutionOptions['offset'] = $uriPathSegmentOffset;
+                        }
+                        if ($contentDimensionValue->value !== $contentDimension->defaultValue->value) {
+                            $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
+                        }
+                        $uriPathSegmentOffset++;
+                        $uriPathSegmentConstraints = $linkProcessor->processUriConstraints(
+                            $uriPathSegmentConstraints,
+                            $contentDimension,
+                            $contentDimensionValue,
+                            $resolutionOptions
+                        );
+                    } else {
+                        $uriConstraints = $linkProcessor->processUriConstraints(
+                            $uriConstraints,
+                            $contentDimension,
+                            $contentDimensionValue,
+                            $resolutionOptions
+                        );
                     }
-                    if ($contentDimensionValue !== $contentDimension->getDefaultValue()) {
-                        $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
-                    }
-                    $uriPathSegmentOffset++;
-                    $uriPathSegmentConstraints = $linkProcessor->processUriConstraints($uriPathSegmentConstraints, $contentDimension, $contentDimensionValue, $resolutionOptions);
-                } else {
-                    $uriConstraints = $linkProcessor->processUriConstraints($uriConstraints, $contentDimension, $contentDimensionValue, $resolutionOptions);
                 }
             }
 
@@ -104,7 +116,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
      * @param array|Dimension\ContentDimension[] $dimensions
      * @return void
      */
-    protected function sortDimensionsByOffset(array & $dimensions)
+    protected function sortDimensionsByOffset(array &$dimensions)
     {
         uasort($dimensions, function (Dimension\ContentDimension $dimensionA, Dimension\ContentDimension $dimensionB) {
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)

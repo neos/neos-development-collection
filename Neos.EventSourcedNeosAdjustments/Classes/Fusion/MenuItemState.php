@@ -27,7 +27,10 @@ final class MenuItemState
             && $state !== self::STATE_CURRENT
             && $state !== self::STATE_ACTIVE
             && $state !== self::STATE_ABSENT) {
-            throw new Exception\InvalidMenuItemStateException('"' . $state . '" is no valid menu item state', 1519668881);
+            throw new Exception\InvalidMenuItemStateException(
+                '"' . $state . '" is no valid menu item state',
+                1519668881
+            );
         }
 
         $this->state = $state;

@@ -64,40 +64,50 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
         }
 
         /** @var Workspace $currentWorkspace */
-        $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentSubgraph->getContentStreamIdentifier());
+        $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $contentSubgraph->getContentStreamIdentifier()
+        );
         $workspaceChain = [];
         // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
             $workspaceChain[(string)$currentWorkspace->getWorkspaceName()] = $currentWorkspace;
-            $currentWorkspace = $currentWorkspace->getBaseWorkspaceName() ? $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName()) : null;
+            $currentWorkspace = $currentWorkspace->getBaseWorkspaceName()
+                ? $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName())
+                : null;
         }
 
         return $workspaceChain;
     }
 
     /**
-     * @param WorkspaceName $workspaceName
-     * @return array
+     * @return array<int,array<string,string>>
      */
-    public function getPublishableNodeInfo(WorkspaceName $workspaceName)
+    public function getPublishableNodeInfo(WorkspaceName $workspaceName): array
     {
         return $this->workspaceService->getPublishableNodeInfo($workspaceName);
     }
 
-    public function getPersonalWorkspace()
+    /**
+     * @return array<string,mixed>
+     */
+    public function getPersonalWorkspace(): array
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier(
+            $currentAccount->getAccountIdentifier()
+        )->toContentRepositoryWorkspaceName();
         $personalWorkspace = $this->workspaceFinder->findOneByName($personalWorkspaceName);
 
-        return [
-            'name' => $personalWorkspace->getWorkspaceName(),
-            'publishableNodes' => $this->getPublishableNodeInfo($personalWorkspaceName),
-            'baseWorkspace' => $personalWorkspace->getBaseWorkspaceName(),
-            // TODO: FIX readonly flag!
-            //'readOnly' => !$this->domainUserService->currentUserCanPublishToWorkspace($baseWorkspace)
-            'readOnly' => false
-        ];
+        return !is_null($personalWorkspace)
+            ? [
+                'name' => $personalWorkspace->getWorkspaceName(),
+                'publishableNodes' => $this->getPublishableNodeInfo($personalWorkspaceName),
+                'baseWorkspace' => $personalWorkspace->getBaseWorkspaceName(),
+                // TODO: FIX readonly flag!
+                //'readOnly' => !$this->domainUserService->currentUserCanPublishToWorkspace($baseWorkspace)
+                'readOnly' => false
+            ]
+            : [];
     }
 
     /**

@@ -48,8 +48,7 @@ class WorkspaceWasPartiallyPublished implements DomainEventInterface
 
     /**
      * TODO build
-     *
-     * @var array|NodeAddress[]
+     * @var array<int,NodeAddress>
      */
     private array $publishedNodeAddresses;
 
@@ -65,6 +64,7 @@ class WorkspaceWasPartiallyPublished implements DomainEventInterface
         $this->newSourceContentStreamIdentifier = $newSourceContentStreamIdentifier;
         $this->previousSourceContentStreamIdentifier = $previousSourceContentStreamIdentifier;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->publishedNodeAddresses = [];
     }
 
     public function getSourceWorkspaceName(): WorkspaceName
@@ -90,5 +90,13 @@ class WorkspaceWasPartiallyPublished implements DomainEventInterface
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    /**
+     * @return array<int,NodeAddress>
+     */
+    public function getPublishedNodeAddresses(): array
+    {
+        return $this->publishedNodeAddresses;
     }
 }

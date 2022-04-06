@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Remove Nodes from Aggregate
 
   As a user of the CR I want to be able to remove a node.

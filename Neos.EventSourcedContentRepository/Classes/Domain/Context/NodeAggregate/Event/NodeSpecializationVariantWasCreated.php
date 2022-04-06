@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -22,37 +24,21 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A node specialization variant was created
- *
- * @Flow\Proxy(false)
  */
-final class NodeSpecializationVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodeSpecializationVariantWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private OriginDimensionSpacePoint $sourceOrigin;
-
-    private OriginDimensionSpacePoint $specializationOrigin;
-
-    private DimensionSpacePointSet $specializationCoverage;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $sourceOrigin,
-        OriginDimensionSpacePoint $specializationOrigin,
-        DimensionSpacePointSet $specializationCoverage,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly OriginDimensionSpacePoint $sourceOrigin,
+        public readonly OriginDimensionSpacePoint $specializationOrigin,
+        public readonly DimensionSpacePointSet $specializationCoverage,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceOrigin = $sourceOrigin;
-        $this->specializationOrigin = $specializationOrigin;
-        $this->specializationCoverage = $specializationCoverage;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -64,30 +50,9 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
     {
         return $this->nodeAggregateIdentifier;
     }
-
-    public function getSourceOrigin(): OriginDimensionSpacePoint
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return $this->sourceOrigin;
-    }
-
-    public function getSpecializationOrigin(): OriginDimensionSpacePoint
-    {
-        return $this->specializationOrigin;
-    }
-
-    public function getSpecializationCoverage(): DimensionSpacePointSet
-    {
-        return $this->specializationCoverage;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeSpecializationVariantWasCreated
-    {
-        return new NodeSpecializationVariantWasCreated(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,

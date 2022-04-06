@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
@@ -13,49 +15,71 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable, type-safe collection of ReadableNodeAggregateInterface objects, indexed by content graph adapter
- * @Flow\Proxy(false)
+ *
+ * @implements \IteratorAggregate<string,ReadableNodeAggregateInterface>
+ * @implements \ArrayAccess<string,ReadableNodeAggregateInterface>
  */
-final class NodeAggregatesByAdapter extends ImmutableArrayObject
+#[Flow\Proxy(false)]
+final class NodeAggregatesByAdapter implements \IteratorAggregate, \ArrayAccess
 {
-    public function __construct(Iterable $collection)
+    /**
+     * @var array<string,ReadableNodeAggregateInterface>
+     */
+    private array $nodeAggregates;
+
+    /**
+     * @var \ArrayIterator<string,ReadableNodeAggregateInterface>
+     */
+    private \ArrayIterator $iterator;
+
+    /**
+     * @param iterable<string,ReadableNodeAggregateInterface> $collection
+     */
+    public function __construct(iterable $collection)
     {
         $nodeAggregates = [];
         foreach ($collection as $adapterName => $item) {
+            if (!is_string($adapterName) || empty($adapterName)) {
+                throw new \InvalidArgumentException('NodeAggregatesByAdapter must be indexed by adapter name', 1643562024);
+            }
             if (!$item instanceof ReadableNodeAggregateInterface) {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . ReadableNodeAggregateInterface::class . ' objects.', 1618138191);
+                throw new \InvalidArgumentException('NodeAggregatesByAdapter can only consist of ' . ReadableNodeAggregateInterface::class . ' objects.', 1618138191);
             }
             $nodeAggregates[$adapterName] = $item;
         }
-        parent::__construct($nodeAggregates);
+        $this->nodeAggregates = $nodeAggregates;
+        $this->iterator = new \ArrayIterator($nodeAggregates);
     }
 
     /**
-     * @param mixed $key
-     * @return ReadableNodeAggregateInterface|false
-     */
-    public function offsetGet($key)
-    {
-        return parent::offsetGet($key);
-    }
-
-    /**
-     * @return array|ReadableNodeAggregateInterface[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|ReadableNodeAggregateInterface[]
+     * @return \ArrayIterator<string,ReadableNodeAggregateInterface>
      */
     public function getIterator(): \ArrayIterator
     {
-        return parent::getIterator();
+        return $this->iterator;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->nodeAggregates[$offset]);
+    }
+
+    public function offsetGet(mixed $offset): ?ReadableNodeAggregateInterface
+    {
+        return $this->nodeAggregates[$offset] ?? null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class NodeAggregatesByAdapter.', 1643562191);
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        throw new \BadMethodCallException('Cannot modify immutable object of class NodeAggregatesByAdapter.', 1643562191);
     }
 }

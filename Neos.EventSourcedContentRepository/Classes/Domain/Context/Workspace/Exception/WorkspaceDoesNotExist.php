@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,22 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Exception;
+declare(strict_types=1);
 
-/**
- * WorkspaceDoesNotExist
- */
+namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
+
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Exception;
+use Neos\Flow\Annotations as Flow;
+
+#[Flow\Proxy(false)]
 final class WorkspaceDoesNotExist extends Exception
 {
+    public static function butWasSupposedTo(WorkspaceName $name): self
+    {
+        return new self(sprintf(
+            'The source workspace %s does not exist',
+            $name
+        ), 1513924741);
+    }
 }

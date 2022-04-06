@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Creation of nodes underneath hidden nodes
 
   If we create new nodes underneath of hidden nodes, they must be marked as "hidden" as well; i.e. they

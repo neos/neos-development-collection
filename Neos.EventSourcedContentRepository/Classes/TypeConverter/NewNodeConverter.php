@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -29,14 +30,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFac
 class NewNodeConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface::class;
+    protected $targetType = NodeInterface::class;
 
     /**
      * @var integer
@@ -50,21 +51,31 @@ class NewNodeConverter extends AbstractTypeConverter
     protected $contentGraph;
 
     /**
-     * TODO: Dependency to Neos; get rid of this!
-     *
      * @Flow\Inject
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
-     *
+     * @param string $source
+     * @param string $targetType
+     * @param array<string,string> $subProperties
+     * @return ?NodeInterface
      */
-    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType = null,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+
+        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
     }
 }

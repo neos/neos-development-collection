@@ -24,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeService
 {
-
     /**
      * @Flow\Inject
      * @var NodeAddressFactory
@@ -40,15 +39,26 @@ class NodeService
     /**
      * Helper method to retrieve the closest document for a node
      */
-    public function getClosestDocument(NodeInterface $node): NodeInterface
+    public function getClosestDocument(NodeInterface $node): ?NodeInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return $node;
         }
 
-        $flowQuery = new FlowQuery([$node]);
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
 
-        return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+        while ($node instanceof NodeInterface) {
+            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+            $node = $nodeAccessor->findParentNode($node);
+        }
+
+        return null;
     }
 
     /**
@@ -65,11 +75,15 @@ class NodeService
     /**
      * Converts a given context path to a node object
      */
-    public function getNodeFromContextPath(string $contextPath): NodeInterface
+    public function getNodeFromContextPath(string $contextPath): ?NodeInterface
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        return $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+        return $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
     }
 }

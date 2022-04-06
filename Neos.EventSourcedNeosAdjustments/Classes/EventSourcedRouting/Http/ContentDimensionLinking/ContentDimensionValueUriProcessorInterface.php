@@ -21,16 +21,12 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 interface ContentDimensionValueUriProcessorInterface
 {
     /**
-     * @param Routing\Dto\UriConstraints $uriConstraints
-     * @param Dimension\ContentDimension $contentDimension
-     * @param Dimension\ContentDimensionValue $contentDimensionValue
-     * @param array|null $overrideOptions
-     * @return Routing\Dto\UriConstraints
+     * @param array<string,mixed>|null $overrideOptions
      */
     public function processUriConstraints(
         Routing\Dto\UriConstraints $uriConstraints,
         Dimension\ContentDimension $contentDimension,
         Dimension\ContentDimensionValue $contentDimensionValue,
-        array $overrideOptions = null
+        ?array $overrideOptions = null
     ): Routing\Dto\UriConstraints;
 }

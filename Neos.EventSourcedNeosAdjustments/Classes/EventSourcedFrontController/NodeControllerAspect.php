@@ -34,6 +34,9 @@ class NodeControllerAspect
     public function replaceNodeController(JoinPointInterface $joinPoint)
     {
         $controller = new EventSourcedNodeController();
-        $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
+        $controller->processRequest(
+            $joinPoint->getMethodArgument('request'),
+            $joinPoint->getMethodArgument('response')
+        );
     }
 }

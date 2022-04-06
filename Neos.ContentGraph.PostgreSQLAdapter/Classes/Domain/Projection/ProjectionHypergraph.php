@@ -73,6 +73,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -89,6 +90,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -115,7 +117,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
+            'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
         ];
 
@@ -126,11 +128,10 @@ final class ProjectionHypergraph
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
-    public function findSucceedingSiblingNodeRecordByOrigin(
-
-    ): ?NodeRecord {
-        $query = /** @lang PostgreSQL */
-            'SELECT * FROM neos_contentgraph_node sn,
+    public function findSucceedingSiblingNodeRecordByOrigin(): ?NodeRecord
+    {
+        //$query = /** @lang PostgreSQL */
+        /*    'SELECT * FROM neos_contentgraph_node sn,
     (
         SELECT n.relationanchorpoint, h.childnodeanchors, h.contentstreamidentifier, h.dimensionspacepointhash
             FROM neos_contentgraph_node n
@@ -143,9 +144,10 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
-        ];
+        ];*/
+        return null;
     }
 
     /**
@@ -168,7 +170,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->getHash(),
+            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
         ];
 
@@ -180,10 +182,7 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @return array|NodeRecord[]
+     * @return array<int,NodeRecord>
      * @throws \Exception
      */
     public function findNodeRecordsForNodeAggregate(
@@ -193,6 +192,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
+        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return array_map(function ($row) {
@@ -258,8 +258,8 @@ final class ProjectionHypergraph
         if ($affectedDimensionSpacePoints) {
             $query .= '
             AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)';
+            $parameters['affectedDimensionSpacePointHashes'] = $affectedDimensionSpacePoints->getPointHashes();
         }
-        $parameters['affectedDimensionSpacePointHashes'] = $affectedDimensionSpacePoints->getPointHashes();
         $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
         $hierarchyHyperrelations = [];
@@ -312,7 +312,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'parentNodeAnchor' => (string)$parentNodeAnchor
         ];
 
@@ -339,7 +339,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'childNodeAnchor' => (string)$childNodeAnchor
         ];
 
@@ -394,7 +394,7 @@ final class ProjectionHypergraph
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -429,7 +429,7 @@ final class ProjectionHypergraph
             $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
-        return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
+        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -459,7 +459,7 @@ final class ProjectionHypergraph
             $dimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
-        return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
+        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -492,7 +492,8 @@ final class ProjectionHypergraph
         ];
 
         $restrictionRelationRecords = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+                     ->fetchAllAssociative() as $row) {
             $restrictionRelationRecords[] = RestrictionHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -518,7 +519,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
 
@@ -555,7 +556,8 @@ final class ProjectionHypergraph
                        n.relationanchorpoint,
                        h.dimensionspacepointhash
                     FROM ' . NodeRecord::TABLE_NAME . ' n
-                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        ON n.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
                         AND h.contentstreamidentifier = :contentStreamIdentifier
                         AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
@@ -570,7 +572,8 @@ final class ProjectionHypergraph
                         h.dimensionspacepointhash
                     FROM
                         descendantNodes p
-                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
+                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        ON h.parentnodeanchor = p.relationanchorpoint
                     INNER JOIN neos_contentgraph_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
@@ -588,10 +591,13 @@ final class ProjectionHypergraph
             'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
         ];
 
-        $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative();
+        $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+            ->fetchAllAssociative();
         $nodeAggregateIdentifiersByDimensionSpacePoint = [];
         foreach ($rows as $row) {
-            $nodeAggregateIdentifiersByDimensionSpacePoint[$row['dimensionspacepointhash']][$row['nodeaggregateidentifier']] = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
+            $nodeAggregateIdentifiersByDimensionSpacePoint[$row['dimensionspacepointhash']]
+                [$row['nodeaggregateidentifier']]
+                = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
         }
 
         return array_map(function (array $nodeAggregateIdentifiers) {
@@ -599,8 +605,10 @@ final class ProjectionHypergraph
         }, $nodeAggregateIdentifiersByDimensionSpacePoint);
     }
 
-    public function findReferenceRelationByOrigin(NodeRelationAnchorPoint $origin, PropertyName $name): ?ReferenceHyperrelationRecord
-    {
+    public function findReferenceRelationByOrigin(
+        NodeRelationAnchorPoint $origin,
+        PropertyName $name
+    ): ?ReferenceHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT ref.*
             FROM ' . ReferenceHyperrelationRecord::TABLE_NAME .' ref
@@ -628,7 +636,7 @@ final class ProjectionHypergraph
             'anchorPoint' => (string)$anchorPoint
         ];
 
-        return $this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
+        return (int)$this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
     }
 
     protected function getDatabaseConnection(): Connection

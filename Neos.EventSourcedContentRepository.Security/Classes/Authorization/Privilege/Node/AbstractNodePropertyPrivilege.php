@@ -26,28 +26,32 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
      */
     protected $nodeContext;
 
-    /**
-     * @var string
-     */
-    protected $nodeContextClassName = PropertyAwareNodePrivilegeContext::class;
+    protected string $nodeContextClassName = PropertyAwareNodePrivilegeContext::class;
 
     /**
-     * With this mapping we can treat methods like properties. E.g. we want to be able to have a property "hidden" even though there is no real property
+     * With this mapping we can treat methods like properties.
+     * E.g. we want to be able to have a property "hidden" even though there is no real property
      * called like this. Instead the set/getHidden() methods should match this "property".
      *
-     * @var array
+     * @var array<string,string>
      */
-    protected $methodNameToPropertyMapping = [];
+    protected array $methodNameToPropertyMapping = [];
 
     /**
      * @param PrivilegeSubjectInterface|PropertyAwareNodePrivilegeSubject|MethodPrivilegeSubject $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException
      */
-    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
-        if ($subject instanceof PropertyAwareNodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', ReadNodePropertyPrivilege::class, PropertyAwareNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417018448);
+        if (!$subject instanceof PropertyAwareNodePrivilegeSubject && !$subject instanceof MethodPrivilegeSubject) {
+            throw new InvalidPrivilegeTypeException(sprintf(
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
+                ReadNodePropertyPrivilege::class,
+                PropertyAwareNodePrivilegeSubject::class,
+                MethodPrivilegeSubject::class,
+                get_class($subject)
+            ), 1417018448);
         }
 
         $this->initialize();
@@ -62,13 +66,8 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
             // if the context isn't restricted to certain properties, it matches *all* properties
             if ($this->nodeContext->hasProperties()) {
                 $methodName = $joinPoint->getMethodName();
-                $actualPropertyName = null;
-
-                if (isset($this->methodNameToPropertyMapping[$methodName])) {
-                    $propertyName = $this->methodNameToPropertyMapping[$methodName];
-                } else {
-                    $propertyName = $joinPoint->getMethodArgument('propertyName');
-                }
+                $propertyName = $this->methodNameToPropertyMapping[$methodName]
+                    ?? $joinPoint->getMethodArgument('propertyName');
                 if (!in_array($propertyName, $this->nodeContext->getNodePropertyNames())) {
                     return false;
                 }
@@ -79,16 +78,19 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);
         }
-        if ($subject->hasPropertyName() && in_array($subject->getPropertyName(), $this->nodeContext->getNodePropertyNames()) === false) {
+        if ($subject->hasPropertyName() && !in_array(
+            $subject->getPropertyName(),
+            $this->nodeContext->getNodePropertyNames()
+        )) {
             return false;
         }
         return parent::matchesSubject($subject);
     }
 
     /**
-     * @return array
+     * @return array<int,string>
      */
-    public function getNodePropertyNames()
+    public function getNodePropertyNames(): array
     {
         return $this->nodeContext->getNodePropertyNames();
     }

@@ -30,9 +30,6 @@ class RemoveProperty implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var string
-     */
     protected string $propertyName = '';
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
@@ -42,34 +39,32 @@ class RemoveProperty implements NodeBasedTransformationInterface
 
     /**
      * Sets the name of the property to be removed.
-     *
-     * @param string $propertyName
-     * @return void
      */
-    public function setProperty(string $propertyName)
+    public function setProperty(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }
 
     /**
      * Remove the property from the given node.
-     *
-     * @param NodeData $node
-     * @return void
-     * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($node->hasProperty($this->propertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
-                $contentStreamForWriting,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray([
-                    $this->propertyName => null
-                ]),
-                UserIdentifier::forSystemUser()
-            ));
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
+                    $contentStreamForWriting,
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    SerializedPropertyValues::fromArray([
+                        $this->propertyName => null
+                    ]),
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return CommandResult::createEmpty();

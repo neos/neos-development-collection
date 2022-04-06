@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL
 Feature: Move a node aggregate considering disable state but without content dimensions
 
   As a user of the CR I want to move a node that

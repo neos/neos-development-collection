@@ -13,15 +13,14 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 
 /**
  * Low-Level helper service, iterating over the "real" Nodes in the Live workspace; that is, the nodes,
- * which have an entry in the Graph Projection's "node" table. You need to iterate over the nodeAggregates of type, and then call "getNode()" on
- * each aggregate.
+ * which have an entry in the Graph Projection's "node" table.
+ * You need to iterate over the nodeAggregates of type, and then call "getNode()" on each aggregate.
  *
  * This is needed for e.g. Structure Adjustments.
  *
  * You should not need this class in your own code.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope("singleton")]
 class ProjectedNodeIterator
 {
     protected WorkspaceFinder $workspaceFinder;

@@ -24,9 +24,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
-    protected $methodNameToPropertyMapping = [
+    protected array $methodNameToPropertyMapping = [
         'setName' => 'name',
         'setHidden' => 'hidden',
         'setHiddenInIndex' => 'hiddenInIndex',
@@ -35,11 +35,13 @@ class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
         'setAccessRoles' => 'accessRoles',
     ];
 
-    /**
-     * @return string
-     */
-    protected function buildMethodPrivilegeMatcher()
+    protected function buildMethodPrivilegeMatcher(): string
     {
-        return  'method(' . SetSerializedNodeProperties::class . '->__construct()) || method(' . SetNodeReferences::class . '->__construct()) || method(' . EnableNodeAggregate::class . '->__construct()) || method(' . DisableNodeAggregate::class . '->__construct()) || method(' . ChangeNodeAggregateName::class . '->__construct()) || method(' . ChangeNodeAggregateType::class . '->__construct())';
+        return  'method(' . SetSerializedNodeProperties::class . '->__construct()) || method('
+            . SetNodeReferences::class . '->__construct()) || method('
+            . EnableNodeAggregate::class . '->__construct()) || method('
+            . DisableNodeAggregate::class . '->__construct()) || method('
+            . ChangeNodeAggregateName::class . '->__construct()) || method('
+            . ChangeNodeAggregateType::class . '->__construct())';
     }
 }

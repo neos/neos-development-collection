@@ -8,6 +8,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
@@ -26,9 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\St
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
@@ -67,6 +66,9 @@ class DisallowedChildNodeAdjustment
         return $this->runtimeBlocker;
     }
 
+    /**
+     * @return \Generator<int,StructureAdjustment>
+     */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         $nodeType = $this->loadNodeType($nodeTypeName);
@@ -83,13 +85,20 @@ class DisallowedChildNodeAdjustment
                 continue;
             }
 
-            // Here, we iterate over the covered dimension space points of the node aggregate one by one; as it can happen that the constraint
-            // is only violated in e.g. "AT", but not in "DE". Then, we only want to remove the single edge.
+            // Here, we iterate over the covered dimension space points of the node aggregate one by one;
+            // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
+            // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAggregate->getContentStreamIdentifier(), $coveredDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+                $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                    $nodeAggregate->getContentStreamIdentifier(),
+                    $coveredDimensionSpacePoint,
+                    VisibilityConstraints::withoutRestrictions()
+                );
 
                 $parentNode = $subgraph->findParentNode($nodeAggregate->getIdentifier());
-                $grandparentNode = $parentNode !== null ? $subgraph->findParentNode($parentNode->getNodeAggregateIdentifier()) : null;
+                $grandparentNode = $parentNode !== null
+                    ? $subgraph->findParentNode($parentNode->getNodeAggregateIdentifier())
+                    : null;
 
 
                 $allowedByParent = true;
@@ -103,15 +112,23 @@ class DisallowedChildNodeAdjustment
 
                 $allowedByGrandparent = false;
                 $grandparentNodeType = null;
-                if ($grandparentNode != null && $parentNode->isTethered()) {
+                if ($parentNode !== null && $grandparentNode != null
+                    && $parentNode->isTethered() && !is_null($parentNode->getNodeName())
+                ) {
                     $grandparentNodeType = $this->loadNodeType($grandparentNode->getNodeTypeName());
                     if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType($parentNode->getNodeName()->jsonSerialize(), $nodeType);
+                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
+                            $parentNode->getNodeName()->jsonSerialize(),
+                            $nodeType
+                        );
                     }
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
                     $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregate->getIdentifier());
+                    if (is_null($node)) {
+                        continue;
+                    }
 
                     $message = sprintf(
                         '
@@ -131,7 +148,10 @@ class DisallowedChildNodeAdjustment
                         $message,
                         function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
                             $this->readSideMemoryCacheManager->disableCache();
-                            return $this->removeNodeInSingleDimensionSpacePoint($nodeAggregate, $coveredDimensionSpacePoint);
+                            return $this->removeNodeInSingleDimensionSpacePoint(
+                                $nodeAggregate,
+                                $coveredDimensionSpacePoint
+                            );
                         }
                     );
                 }
@@ -144,8 +164,10 @@ class DisallowedChildNodeAdjustment
         return $this->eventStore;
     }
 
-    private function removeNodeInSingleDimensionSpacePoint(ReadableNodeAggregateInterface $nodeAggregate, DimensionSpacePoint $dimensionSpacePoint): CommandResult
-    {
+    private function removeNodeInSingleDimensionSpacePoint(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): CommandResult {
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new NodeAggregateWasRemoved(
@@ -153,7 +175,7 @@ class DisallowedChildNodeAdjustment
                     $nodeAggregate->getIdentifier(),
                     AffectedOccupiedDimensionSpacePointSet::onlyGivenVariant(
                         $nodeAggregate,
-                        $dimensionSpacePoint
+                        OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
                     ),
                     AffectedCoveredDimensionSpacePointSet::onlyGivenVariant(
                         $dimensionSpacePoint
@@ -164,7 +186,9 @@ class DisallowedChildNodeAdjustment
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($nodeAggregate->getContentStreamIdentifier());
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $nodeAggregate->getContentStreamIdentifier()
+        );
         $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
 
         return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);

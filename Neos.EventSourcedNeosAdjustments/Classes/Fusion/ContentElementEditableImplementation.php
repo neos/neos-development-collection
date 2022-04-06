@@ -59,7 +59,7 @@ class ContentElementEditableImplementation extends AbstractFusionObject
             return $content;
         }
 
-        /** @var $property string */
+        /** @var string $property */
         $property = $this->fusionValue('property');
 
         if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {

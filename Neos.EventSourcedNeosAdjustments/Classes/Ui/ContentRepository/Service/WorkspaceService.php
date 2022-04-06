@@ -17,7 +17,6 @@ use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Changes\Change;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -86,23 +85,21 @@ class WorkspaceService
     /**
      * Get all publishable node context paths for a workspace
      *
-     * @param Workspace $workspaceName
-     * @return array
+     * @return array<int,array<string,string>>
      */
-    public function getPublishableNodeInfo(WorkspaceName $workspaceName)
+    public function getPublishableNodeInfo(WorkspaceName $workspaceName): array
     {
         $workspace = $this->workspaceFinder->findOneByName($workspaceName);
-        if ($workspace->getBaseWorkspaceName() === null) {
+        if (is_null($workspace) || $workspace->getBaseWorkspaceName() === null) {
             return [];
         }
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $unpublishedNodes = [];
         foreach ($changes as $change) {
-            /* @var $change Change */
             if ($change->removalAttachmentPoint) {
                 $nodeAddress = new NodeAddress(
                     $change->contentStreamIdentifier,
-                    $change->originDimensionSpacePoint,
+                    $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                     $change->nodeAggregateIdentifier,
                     $workspaceName
                 );
@@ -112,7 +109,7 @@ class WorkspaceService
                  */
                 $documentNodeAddress = new NodeAddress(
                     $change->contentStreamIdentifier,
-                    $change->originDimensionSpacePoint,
+                    $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                     $change->removalAttachmentPoint,
                     $workspaceName
                 );
@@ -124,17 +121,20 @@ class WorkspaceService
             } else {
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                     $workspace->getCurrentContentStreamIdentifier(),
-                    $change->originDimensionSpacePoint,
+                    $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );
                 $node = $nodeAccessor->findByIdentifier($change->nodeAggregateIdentifier);
 
                 if ($node instanceof NodeInterface) {
-                    $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
-                    $unpublishedNodes[] = [
-                        'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                        'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
-                    ];
+                    $documentNode = $this->getClosestDocumentNode($node);
+                    if ($documentNode instanceof NodeInterface) {
+                        $unpublishedNodes[] = [
+                            'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                            'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)
+                                ->serializeForUri()
+                        ];
+                    }
                 }
             }
         }
@@ -147,9 +147,9 @@ class WorkspaceService
     /**
      * Get allowed target workspaces for current user
      *
-     * @return array
+     * @return array<string,array<string,mixed>>
      */
-    public function getAllowedTargetWorkspaces()
+    public function getAllowedTargetWorkspaces(): array
     {
         $user = $this->domainUserService->getCurrentUser();
 
@@ -193,5 +193,23 @@ class WorkspaceService
     {
         $userWorkspace = $this->userService->getPersonalWorkspace();
         $userWorkspace->setBaseWorkspace($workspace);
+    }
+
+    private function getClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    {
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+
+        while ($node instanceof NodeInterface) {
+            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+            $node = $nodeAccessor->findParentNode($node);
+        }
+
+        return null;
     }
 }

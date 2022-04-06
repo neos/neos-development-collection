@@ -22,10 +22,11 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
  */
 interface RebasableToOtherContentStreamsInterface
 {
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier);
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self;
 
     /**
      * called during deserialization from metadata
+     * @param array<string,mixed> $array
      */
     public static function fromArray(array $array): self;
 }

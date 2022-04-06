@@ -8,9 +8,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class StructureAdjustmentService
 {
     protected ContentGraphInterface $contentGraph;
@@ -20,8 +18,14 @@ class StructureAdjustmentService
     protected PropertyAdjustment $propertyAdjustment;
     protected DimensionAdjustment $dimensionAdjustment;
 
-    public function __construct(ContentGraphInterface $contentGraph, TetheredNodeAdjustments $tetheredNodeAdjustments, UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment, DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment, PropertyAdjustment $propertyAdjustment, DimensionAdjustment $dimensionAdjustment)
-    {
+    public function __construct(
+        ContentGraphInterface $contentGraph,
+        TetheredNodeAdjustments $tetheredNodeAdjustments,
+        UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment,
+        DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment,
+        PropertyAdjustment $propertyAdjustment,
+        DimensionAdjustment $dimensionAdjustment
+    ) {
         $this->contentGraph = $contentGraph;
         $this->tetheredNodeAdjustments = $tetheredNodeAdjustments;
         $this->unknownNodeTypeAdjustment = $unknownNodeTypeAdjustment;

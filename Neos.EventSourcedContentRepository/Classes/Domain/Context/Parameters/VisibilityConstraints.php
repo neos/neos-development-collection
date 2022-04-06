@@ -20,23 +20,15 @@ use Neos\Flow\Annotations as Flow;
  * Maybe future: "Node Filter" tree or so as replacement of ReadNodePrivilege?
  *
  * TODO: move to ContentSubgraph
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class VisibilityConstraints
 {
-    /**
-     * @var \DateTimeImmutable
-     */
-    protected $currentDateTime;
+    protected \DateTimeImmutable $currentDateTime;
 
-    /**
-     * @var boolean
-     */
-    protected $disabledContentShown = false;
+    protected bool $disabledContentShown = false;
 
-    protected static $currentDateTimeOnInitialization;
-
+    protected static ?\DateTimeImmutable $currentDateTimeOnInitialization = null;
 
     private function __construct(\DateTimeImmutable $currentDateTime, bool $disabledContentShown)
     {
@@ -44,17 +36,11 @@ final class VisibilityConstraints
         $this->disabledContentShown = $disabledContentShown;
     }
 
-    /**
-     * @return \DateTimeImmutable
-     */
     public function getCurrentDateTime(): \DateTimeImmutable
     {
         return $this->currentDateTime;
     }
 
-    /**
-     * @return bool
-     */
     public function isDisabledContentShown(): bool
     {
         return $this->disabledContentShown;

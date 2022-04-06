@@ -13,9 +13,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
- * The exception to be thrown if a dimension space point is already covered by a node aggregate but is supposed not to be
+ * The exception to be thrown if a dimension space point is already covered by a node aggregate
+ * but is supposed not to be
  */
+#[Flow\Proxy(false)]
 final class DimensionSpacePointIsAlreadyCovered extends \DomainException
 {
 }

@@ -23,10 +23,12 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
- *
- * @Flow\Proxy(false)
  */
-final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class DisableNodeAggregate implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -61,13 +63,16 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
+            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
@@ -97,6 +102,9 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return array<string,\JsonSerializable>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -122,9 +130,9 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getCoveredDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

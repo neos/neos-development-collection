@@ -17,7 +17,9 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\A
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NodePathCache;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
+/** @codingStandardsIgnoreEnd */
 
 /**
  * Accessors to In Memory Cache
@@ -117,6 +119,7 @@ final class InMemoryCache
         $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache($isEnabled);
         $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache($isEnabled);
         $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache($isEnabled);
-        $this->parentNodeIdentifierByChildNodeIdentifierCache = new ParentNodeIdentifierByChildNodeIdentifierCache($isEnabled);
+        $this->parentNodeIdentifierByChildNodeIdentifierCache
+            = new ParentNodeIdentifierByChildNodeIdentifierCache($isEnabled);
     }
 }

@@ -25,9 +25,9 @@ use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Serializer;
 
 /**
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope("singleton")]
 final class PropertyConverter
 {
     private Serializer $serializer;
@@ -37,12 +37,15 @@ final class PropertyConverter
         $this->serializer = $serializer;
     }
 
-    public function serializePropertyValues(PropertyValuesToWrite $propertyValuesToWrite, NodeType $nodeType): SerializedPropertyValues
-    {
+    public function serializePropertyValues(
+        PropertyValuesToWrite $propertyValuesToWrite,
+        NodeType $nodeType
+    ): SerializedPropertyValues {
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
-            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
+            // so we need to trigger another method beforehand.
             $nodeType->getOptions();
 
             $propertyType = PropertyType::fromNodeTypeDeclaration(
@@ -55,10 +58,17 @@ final class PropertyConverter
                 try {
                     $propertyValue = $this->serializer->normalize($propertyValue);
                 } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                    throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
+                    throw new \RuntimeException(
+                        'TODO: There was a problem serializing ' . get_class($propertyValue),
+                        1594842314,
+                        $e
+                    );
                 }
 
-                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
+                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(
+                    $propertyValue,
+                    (string)$propertyType
+                );
             } else {
                 if (array_key_exists($propertyName, $nodeType->getProperties())) {
                     // $propertyValue == null and defined in node types -> we want to set the $propertyName to NULL
@@ -73,12 +83,15 @@ final class PropertyConverter
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
     }
 
-    public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue)
+    public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
         if (is_null($serializedPropertyValue->getValue())) {
             return null;
         }
 
-        return $this->serializer->denormalize($serializedPropertyValue->getValue(), $serializedPropertyValue->getType());
+        return $this->serializer->denormalize(
+            $serializedPropertyValue->getValue(),
+            $serializedPropertyValue->getType()
+        );
     }
 }

@@ -49,7 +49,7 @@ class PrevAllOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -60,8 +60,8 @@ class PrevAllOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
@@ -74,9 +74,11 @@ class PrevAllOperation extends AbstractOperation
                 $contextNode->getDimensionSpacePoint(),
                 $contextNode->getVisibilityConstraints()
             );
-
+            // @todo: implement NodeAccessor::getPrecedingSiblings
             foreach ($this->getPrevForNode($contextNode, $nodeAccessor) as $prevNode) {
-                if ($prevNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
+                if ($prevNode !== null
+                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])
+                ) {
                     $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $prevNode;
                 }

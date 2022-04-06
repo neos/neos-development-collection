@@ -99,10 +99,9 @@ class ContentElementWrappingService
     /**
      * All editable nodes rendered in the document
      *
-     * @var array
+     * @var array<string,NodeInterface>
      */
-    protected $renderedNodes = [];
-
+    protected array $renderedNodes = [];
 
     /**
      * String containing `<script>` tags for non rendered nodes
@@ -114,18 +113,20 @@ class ContentElementWrappingService
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
-     * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
-     * @return string
+     * @param array<string,string> $additionalAttributes
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentObject(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = []): ?string
-    {
+    public function wrapContentObject(
+        NodeInterface $node,
+        $content,
+        $fusionPath,
+        array $additionalAttributes = []
+    ): ?string {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
         }
-
 
         // TODO: reenable permissions
         //if ($this->nodeAuthorizationService->isGrantedToEditNode($node) === false) {
@@ -147,7 +148,9 @@ class ContentElementWrappingService
 
         $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
         $nodeContextPath = $nodeAddress->serializeForUri();
+        /** @codingStandardsIgnoreStart */
         $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
+        /** @codingStandardsIgnoreEnd */
 
         return $wrappedContent;
     }
@@ -157,18 +160,20 @@ class ContentElementWrappingService
      * within the current document node. This way we can show e.g. content collections
      * within the structure tree which are not actually rendered.
      *
-     * @param NodeInterface $documentNode
-     * @return mixed
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode)
+    protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode): void
     {
         if ($this->isContentStreamOfLiveWorkspace($documentNode->getContentStreamIdentifier())) {
-            return '';
+            return;
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($documentNode->getContentStreamIdentifier(), $documentNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $documentNode->getContentStreamIdentifier(),
+            $documentNode->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
         foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
             if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
@@ -178,7 +183,9 @@ class ContentElementWrappingService
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+                /** @codingStandardsIgnoreStart */
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
+                /** @codingStandardsIgnoreEnd */
             }
 
             $nestedNodes = $nodeAccessor->findChildNodes($node);
@@ -189,7 +196,7 @@ class ContentElementWrappingService
             }
 
             if ($hasChildNodes) {
-                $this->nonRenderedContentNodeMetadata .= $this->appendNonRenderedContentNodeMetadata($node);
+                $this->appendNonRenderedContentNodeMetadata($node);
             }
         }
     }
@@ -197,7 +204,7 @@ class ContentElementWrappingService
     /**
      * Clear rendered nodes helper array to prevent possible side effects.
      */
-    protected function clearRenderedNodesArray()
+    protected function clearRenderedNodesArray(): void
     {
         $this->renderedNodes = [];
     }
@@ -205,7 +212,7 @@ class ContentElementWrappingService
     /**
      * Clear non rendered content node metadata to prevent possible side effects.
      */
-    protected function clearNonRenderedContentNodeMetadata()
+    protected function clearNonRenderedContentNodeMetadata(): void
     {
         $this->nonRenderedContentNodeMetadata = '';
     }
@@ -230,8 +237,9 @@ class ContentElementWrappingService
         return $nonRenderedContentNodeMetadata;
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier)
+    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
     {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)->getWorkspaceName()->isLive();
+        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ?->getWorkspaceName()->isLive() ?: false;
     }
 }

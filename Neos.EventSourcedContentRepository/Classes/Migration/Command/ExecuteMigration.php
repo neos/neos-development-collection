@@ -58,8 +58,11 @@ final class ExecuteMigration
      * @param WorkspaceName $workspaceName
      * @param ContentStreamIdentifier[] $contentStreamIdentifiersForWriting
      */
-    public function __construct(MigrationConfiguration $migrationConfiguration, WorkspaceName $workspaceName, array $contentStreamIdentifiersForWriting = [])
-    {
+    public function __construct(
+        MigrationConfiguration $migrationConfiguration,
+        WorkspaceName $workspaceName,
+        array $contentStreamIdentifiersForWriting = []
+    ) {
         $this->migrationConfiguration = $migrationConfiguration;
         $this->workspaceName = $workspaceName;
         $this->contentStreamIdentifiersForWriting = array_values($contentStreamIdentifiersForWriting);

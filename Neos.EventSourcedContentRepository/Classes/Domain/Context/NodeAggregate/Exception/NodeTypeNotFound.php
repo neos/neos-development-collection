@@ -13,9 +13,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a given node type was not found
  */
+#[Flow\Proxy(false)]
 final class NodeTypeNotFound extends \OutOfBoundsException
 {
 }

@@ -55,25 +55,40 @@ class ContextOperation extends AbstractOperation
 
     private const SUPPORTED_ADJUSTMENTS = ['invisibleContentShown', 'workspaceName'];
 
-    public function canEvaluate($context)
+    /**
+     * @param array<int,mixed> $context
+     */
+    public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    /**
+     * @param FlowQuery<int,mixed> $flowQuery
+     * @param array<int,mixed> $arguments
+     * @throws FlowQueryException
+     */
+    public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         if (!isset($arguments[0]) || !is_array($arguments[0])) {
             throw new FlowQueryException('context() requires an array argument of context properties', 1398030427);
         }
 
-        $this->legacyLogger->info('FlowQuery context(' . json_encode($arguments[0]) . ' called', LogEnvironment::fromMethodName(__METHOD__));
+        $this->legacyLogger->info(
+            'FlowQuery context(' . json_encode($arguments[0]) . ' called',
+            LogEnvironment::fromMethodName(__METHOD__)
+        );
 
         $targetContext = $arguments[0];
 
         $forbiddenTargetContextAdjustments = array_diff(array_keys($targetContext), self::SUPPORTED_ADJUSTMENTS);
         if (count($forbiddenTargetContextAdjustments) > 0) {
             // TODO: maybe log this instead of throwing exception??
-            throw new FlowQueryException('LEGACY LAYER: we only support the following context adjustments :' . implode(', ', self::SUPPORTED_ADJUSTMENTS) . ' - you tried ' . implode(', ', $forbiddenTargetContextAdjustments));
+            throw new FlowQueryException(
+                'LEGACY LAYER: we only support the following context adjustments :'
+                    . implode(', ', self::SUPPORTED_ADJUSTMENTS)
+                    . ' - you tried ' . implode(', ', $forbiddenTargetContextAdjustments)
+            );
         }
 
         $output = [];
@@ -87,20 +102,31 @@ class ContextOperation extends AbstractOperation
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
-                $visibilityConstraints = ($invisibleContentShown ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend());
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor($nodeAccessor->getContentStreamIdentifier(), $nodeAccessor->getDimensionSpacePoint(), $visibilityConstraints);
+                $visibilityConstraints = $invisibleContentShown
+                    ? VisibilityConstraints::withoutRestrictions()
+                    : VisibilityConstraints::frontend();
+                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                    $nodeAccessor->getContentStreamIdentifier(),
+                    $nodeAccessor->getDimensionSpacePoint(),
+                    $visibilityConstraints
+                );
             }
 
             if (array_key_exists('workspaceName', $targetContext)) {
-                $workspaceName = new WorkspaceName($targetContext['workspaceName']);
+                $workspaceName = WorkspaceName::fromString($targetContext['workspaceName']);
                 $workspace = $this->workspaceFinder->findOneByName($workspaceName);
-
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $nodeAccessor->getDimensionSpacePoint(), $visibilityConstraints);
+                if (!is_null($workspace)) {
+                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                        $workspace->getCurrentContentStreamIdentifier(),
+                        $nodeAccessor->getDimensionSpacePoint(),
+                        $visibilityConstraints
+                    );
+                }
             }
 
             $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->getNodeAggregateIdentifier());
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->jsonSerialize()] = $nodeInModifiedSubgraph;
+                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->__toString()] = $nodeInModifiedSubgraph;
             }
         }
 
@@ -109,6 +135,10 @@ class ContextOperation extends AbstractOperation
 
     private function getSubgraphFromNode(NodeInterface $contextNode): NodeAccessorInterface
     {
-        return $this->nodeAccessorManager->accessorFor($contextNode->getContentStreamIdentifier(), $contextNode->getDimensionSpacePoint(), $contextNode->getVisibilityConstraints());
+        return $this->nodeAccessorManager->accessorFor(
+            $contextNode->getContentStreamIdentifier(),
+            $contextNode->getDimensionSpacePoint(),
+            $contextNode->getVisibilityConstraints()
+        );
     }
 }

@@ -26,34 +26,27 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  */
 class RenameNodeAggregate implements NodeAggregateBasedTransformationInterface
 {
-
-    /**
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
     /**
      * The new Node Name to use as a string
-     *
-     * @var string
      */
-    protected $newNodeName;
+    protected string $newNodeName;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
     }
 
-    /**
-     * @param string $newNodeName
-     */
     public function setNewNodeName(string $newNodeName): void
     {
         $this->newNodeName = $newNodeName;
     }
 
-    public function execute(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName(new ChangeNodeAggregateName(
             $contentStreamForWriting,
             $nodeAggregate->getIdentifier(),

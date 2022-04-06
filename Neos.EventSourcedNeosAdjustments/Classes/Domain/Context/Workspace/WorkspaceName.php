@@ -24,34 +24,30 @@ final class WorkspaceName implements \JsonSerializable
     const PREFIX = 'user-';
     const SUFFIX_DELIMITER = '_';
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-
-    /**
-     * @param string $name
-     */
     public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @param string $accountIdentifier
-     * @return WorkspaceName
-     */
-    public static function fromAccountIdentifier(string $accountIdentifier): WorkspaceName
+    public static function fromAccountIdentifier(string $accountIdentifier): self
     {
-        return new WorkspaceName(preg_replace('/[^A-Za-z0-9\-]/', '-', self::PREFIX . $accountIdentifier));
+        $name = preg_replace('/[^A-Za-z0-9\-]/', '-', self::PREFIX . $accountIdentifier);
+        if (is_null($name)) {
+            throw new \InvalidArgumentException(
+                'Cannot convert account identifier ' . $accountIdentifier . ' to workspace name.',
+                1645656253
+            );
+        }
+
+        return new self($name);
     }
 
     /**
-     * @param array $takenWorkspaceNames
-     * @return WorkspaceName
+     * @param array<string,mixed> $takenWorkspaceNames
      */
-    public function increment(array $takenWorkspaceNames): WorkspaceName
+    public function increment(array $takenWorkspaceNames): self
     {
         $name = $this->name;
         $i = 1;
@@ -67,25 +63,16 @@ final class WorkspaceName implements \JsonSerializable
         }
     }
 
-    /**
-     * @return ContentRepository\ValueObject\WorkspaceName
-     */
     public function toContentRepositoryWorkspaceName(): ContentRepository\ValueObject\WorkspaceName
     {
-        return new ContentRepository\ValueObject\WorkspaceName($this->name);
+        return ContentRepository\ValueObject\WorkspaceName::fromString($this->name);
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->name;

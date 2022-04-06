@@ -29,7 +29,9 @@ final class StructureAdjustmentsCommandController extends CommandController
     public function detectCommand(string $nodeType = null): void
     {
         if ($nodeType !== null) {
-            $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeType));
+            $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(
+                NodeTypeName::fromString($nodeType)
+            );
         } else {
             $errors = $this->structureAdjustmentService->findAllAdjustments();
         }
@@ -40,7 +42,9 @@ final class StructureAdjustmentsCommandController extends CommandController
     public function fixCommand(string $nodeType = null): void
     {
         if ($nodeType !== null) {
-            $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeType));
+            $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(
+                NodeTypeName::fromString($nodeType)
+            );
         } else {
             $errors = $this->structureAdjustmentService->findAllAdjustments();
         }
@@ -53,7 +57,10 @@ final class StructureAdjustmentsCommandController extends CommandController
         $this->outputLine('Fixed all.');
     }
 
-    private function printErrors(\Generator $errors)
+    /**
+     * @param \Generator<int,StructureAdjustment> $errors
+     */
+    private function printErrors(\Generator $errors): void
     {
         foreach ($errors as $error) {
             assert($error instanceof StructureAdjustment);

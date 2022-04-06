@@ -22,9 +22,8 @@ use Psr\Http\Message\UriInterface;
  * The property type value object as declared in a NodeType
  *
  * Only for use on the write side to enforce constraints
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class PropertyType
 {
     const TYPE_BOOL = 'boolean';
@@ -69,7 +68,14 @@ final class PropertyType
         if ($declaration === 'float' || $declaration === 'double') {
             return self::float($isNullable);
         }
-        if (in_array($declaration, ['DateTime', '\DateTime', 'DateTimeImmutable', '\DateTimeImmutable', 'DateTimeInterface', '\DateTimeInterface'])) {
+        if (in_array($declaration, [
+            'DateTime',
+            '\DateTime',
+            'DateTimeImmutable',
+            '\DateTimeImmutable',
+            'DateTimeInterface',
+            '\DateTimeInterface'
+        ])) {
             return self::date($isNullable);
         }
         if ($declaration === 'Uri' || $declaration === Uri::class || $declaration === UriInterface::class) {
@@ -142,7 +148,7 @@ final class PropertyType
 
     public function isArrayOf(): bool
     {
-        return preg_match(self::PATTERN_ARRAY_OF, $this->value);
+        return (bool)preg_match(self::PATTERN_ARRAY_OF, $this->value);
     }
 
     public function isDate(): bool
@@ -165,7 +171,7 @@ final class PropertyType
         return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
     }
 
-    public function isMatchedBy($propertyValue): bool
+    public function isMatchedBy(mixed $propertyValue): bool
     {
         if (is_null($propertyValue)) {
             return true;

@@ -28,8 +28,14 @@ final class PropertyCollection implements PropertyCollectionInterface
      */
     private SerializedPropertyValues $serializedPropertyValues;
 
+    /**
+     * @var array<string,mixed>
+     */
     private array $deserializedPropertyValues;
 
+    /**
+     * @var \ArrayIterator<string,mixed>
+     */
     private \ArrayIterator $iterator;
 
     private PropertyConverter $propertyConverter;
@@ -37,8 +43,10 @@ final class PropertyCollection implements PropertyCollectionInterface
     /**
      * @internal do not create from userspace
      */
-    public function __construct(SerializedPropertyValues $serializedPropertyValues, PropertyConverter $propertyConverter)
-    {
+    public function __construct(
+        SerializedPropertyValues $serializedPropertyValues,
+        PropertyConverter $propertyConverter
+    ) {
         $this->serializedPropertyValues = $serializedPropertyValues;
         $this->iterator = new \ArrayIterator($serializedPropertyValues->getPlainValues());
         $this->propertyConverter = $propertyConverter;
@@ -49,34 +57,37 @@ final class PropertyCollection implements PropertyCollectionInterface
         return $this->serializedPropertyValues->propertyExists($offset);
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (!$this->offsetExists($offset)) {
             return null;
         }
         if (!isset($this->deserializedPropertyValues[$offset])) {
-            $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
-                $this->serializedPropertyValues->getProperty($offset)
-            );
+            $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
+            if (!is_null($serializedProperty)) {
+                $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
+                    $serializedProperty
+                );
+            }
         }
 
         return $this->deserializedPropertyValues[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): never
     {
         throw new \RuntimeException("Do not use!");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): never
     {
         throw new \RuntimeException("Do not use!");
     }
 
-    public function getIterator()
+    /**
+     * @return \ArrayIterator<string,mixed>
+     */
+    public function getIterator(): \ArrayIterator
     {
         return $this->iterator;
     }

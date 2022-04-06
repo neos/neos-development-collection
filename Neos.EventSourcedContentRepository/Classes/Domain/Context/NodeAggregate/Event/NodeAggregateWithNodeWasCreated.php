@@ -26,71 +26,55 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A node aggregate with its initial node was created
- *
- * @Flow\Proxy(false)
  */
-final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodeAggregateWithNodeWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**
      * The content stream identifier the node aggregate and its node were created in
-     *
-     * @var ContentStreamIdentifier
      */
     private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * The origin dimension space point the node aggregate and its node were created in
-     *
-     * @var OriginDimensionSpacePoint
      */
     private OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     /**
      * The dimension space points the node aggregate and its node cover
-     *
-     * @var DimensionSpacePointSet
      */
     private DimensionSpacePointSet $coveredDimensionSpacePoints;
 
     /**
      * The node aggregate's identifier
-     *
-     * @var NodeAggregateIdentifier
      */
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * The node aggregate type's name
-     *
-     * @var NodeTypeName
      */
     private NodeTypeName $nodeTypeName;
 
     /**
      * The parent node aggregate's identifier
-     *
-     * @var NodeAggregateIdentifier
      */
     private NodeAggregateIdentifier $parentNodeAggregateIdentifier;
 
     /**
      * The node aggregate's name
-     *
-     * @var NodeName|null
      */
     private ?NodeName $nodeName;
 
     /**
      * The node's initial property values
-     *
-     * @var SerializedPropertyValues
      */
     private SerializedPropertyValues $initialPropertyValues;
 
     /**
      * The node aggregate's classification
-     *
-     * @var NodeAggregateClassification
      */
     private NodeAggregateClassification $nodeAggregateClassification;
 
@@ -98,8 +82,6 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
 
     /**
      * The node's succeeding sibling's node aggregate identifier
-     *
-     * @var NodeAggregateIdentifier|null
      */
     private ?NodeAggregateIdentifier $succeedingNodeAggregateIdentifier;
 
@@ -184,9 +166,9 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
         return $this->succeedingNodeAggregateIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeAggregateWithNodeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeAggregateWithNodeWasCreated(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,

@@ -48,6 +48,9 @@ final class RestrictionHyperrelationRecord
         $this->affectedNodeAggregateIdentifiers = $affectedNodeAggregateIdentifiers;
     }
 
+    /**
+     * @param array<string,string> $databaseRow
+     */
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
@@ -78,7 +81,7 @@ final class RestrictionHyperrelationRecord
         Connection $databaseConnection
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->remove($nodeAggregateIdentifier);
-        if (empty($affectedNodeAggregateIdentifiers)) {
+        if ($affectedNodeAggregateIdentifiers->isEmpty()) {
             $this->removeFromDatabase($databaseConnection);
         } else {
             $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
@@ -104,7 +107,7 @@ final class RestrictionHyperrelationRecord
     private function updateAffectedNodeAggregateIdentifiers(
         NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers,
         Connection $databaseConnection
-    ) {
+    ): void {
         $databaseConnection->update(
             self::TABLE_NAME,
             [
@@ -123,6 +126,9 @@ final class RestrictionHyperrelationRecord
         $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function getDatabaseIdentifier(): array
     {
         return [

@@ -56,7 +56,7 @@ class ChildrenOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -67,8 +67,8 @@ class ChildrenOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @return void
      * @throws \Neos\Eel\FlowQuery\FizzleException
      * @throws \Neos\Eel\Exception
@@ -110,8 +110,8 @@ class ChildrenOperation extends AbstractOperation
      * by NodeType (instanceof). These cases are now optimized and will
      * only load the nodes that match the filters.
      *
-     * @param FlowQuery $flowQuery
-     * @param array $parsedFilter
+     * @param FlowQuery<int,mixed> $flowQuery
+     * @param array<string,mixed> $parsedFilter
      * @return boolean
      * @throws \Neos\Eel\Exception
      */
@@ -119,7 +119,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        //$outputNodeAggregateIdentifiers = [];
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = [];
             $attributeFilters = [];
@@ -133,14 +133,16 @@ class ChildrenOperation extends AbstractOperation
                 }
             }
 
-            // Only apply optimization if there's a property name filter or a instanceof filter or another filter already did optimization
-            if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) || count($instanceOfFilters) > 0 || $optimized === true) {
+            // Only apply optimization if there's a property name filter or an instanceof filter
+            // or another filter already did optimization
+            if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter']))
+                || count($instanceOfFilters) > 0 || $optimized === true) {
                 $optimized = true;
                 $filteredOutput = [];
                 $filteredOutputNodeIdentifiers = [];
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
-                    $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
+                    $nodePath = $filter['PropertyNameFilter'] ?? $filter['PathFilter'];
                     $nodePathSegments = explode('/', $nodePath);
                     /** @var NodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
@@ -151,10 +153,15 @@ class ChildrenOperation extends AbstractOperation
                                 $resolvedNode->getContentStreamIdentifier(),
                                 $resolvedNode->getDimensionSpacePoint(),
                                 $resolvedNode->getVisibilityConstraints()
-                            )->findChildNodeConnectedThroughEdgeName($resolvedNode, NodeName::fromString($nodePathSegment));
+                            )->findChildNodeConnectedThroughEdgeName(
+                                $resolvedNode,
+                                NodeName::fromString($nodePathSegment)
+                            );
                         }
 
-                        if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()])) {
+                        if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
+                            (string)$resolvedNode->getNodeAggregateIdentifier()
+                        ])) {
                             $filteredOutput[] = $resolvedNode;
                             $filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()] = true;
                         }
@@ -171,10 +178,17 @@ class ChildrenOperation extends AbstractOperation
                             $contextNode->getContentStreamIdentifier(),
                             $contextNode->getDimensionSpacePoint(),
                             $contextNode->getVisibilityConstraints()
-                        )->findChildNodes($contextNode, $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $allowedNodeTypes)));
+                        )->findChildNodes(
+                            $contextNode,
+                            $this->nodeTypeConstraintFactory->parseFilterString(
+                                implode(',', $allowedNodeTypes)
+                            )
+                        );
 
                         foreach ($childNodes as $childNode) {
-                            if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
+                            if (!isset($filteredOutputNodeIdentifiers[
+                                (string)$childNode->getNodeAggregateIdentifier()
+                            ])) {
                                 $filteredOutput[] = $childNode;
                                 $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
                             }
@@ -184,21 +198,24 @@ class ChildrenOperation extends AbstractOperation
 
                 // Apply attribute filters if present
                 if (isset($filter['AttributeFilters'])) {
-                    $attributeFilters = array_reduce($filter['AttributeFilters'], function ($filters, $attributeFilter) {
+                    $attributeFilters = array_reduce($filter['AttributeFilters'], function (
+                        $filters,
+                        $attributeFilter
+                    ) {
                         return $filters . $attributeFilter['text'];
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
-                    $filteredOutput = $filteredFlowQuery->get();
+                    #$filteredOutput = $filteredFlowQuery->getContext();
                 }
 
                 // Add filtered nodes to output
+                /* $outputNodeAggregateIdentifiers is never used, what is this for?
                 foreach ($filteredOutput as $filteredNode) {
-                    /** @var NodeInterface $filteredNode */
                     if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->getNodeAggregateIdentifier()])) {
                         $output[] = $filteredNode;
                     }
-                }
+                }*/
             }
         }
 

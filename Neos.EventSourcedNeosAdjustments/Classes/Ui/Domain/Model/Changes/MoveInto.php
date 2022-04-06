@@ -30,30 +30,13 @@ class MoveInto extends AbstractStructuralChange
      */
     protected $nodeAggregateCommandHandler;
 
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
+    protected ?string $parentContextPath;
 
-    /**
-     * @var string
-     */
-    protected $parentContextPath;
-
-    /**
-     * @param string $parentContextPath
-     */
-    public function setParentContextPath($parentContextPath)
+    public function setParentContextPath(string $parentContextPath): void
     {
         $this->parentContextPath = $parentContextPath;
     }
 
-    /**
-     * Get the sibling node
-     *
-     * @return NodeInterface
-     */
     public function getParentNode(): ?NodeInterface
     {
         if ($this->parentContextPath === null) {
@@ -68,45 +51,50 @@ class MoveInto extends AbstractStructuralChange
 
     /**
      * Get the insertion mode (before|after|into) that is represented by this change
-     *
-     * @return string
      */
-    public function getMode()
+    public function getMode(): string
     {
         return 'into';
     }
 
     /**
      * Checks whether this change can be applied to the subject
-     *
-     * @return boolean
      */
     public function canApply(): bool
     {
+        if (is_null($this->subject)) {
+            return false;
+        }
         $parent = $this->getParentNode();
-        $nodeType = $this->getSubject()->getNodeType();
+        $nodeType = $this->subject->getNodeType();
 
-        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $parent && $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**
      * Applies this change
-     *
-     * @return void
      */
     public function apply(): void
     {
-        if ($this->canApply()) {
-            // "subject" is the to-be-moved node
-            $subject = $this->getSubject();
-            // "parentNode" is the node where the $subject should be moved INTO
-            $parentNode = $this->getParentNode();
-
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($subject->getContentStreamIdentifier(), $subject->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()->equals($parentNode->getNodeAggregateIdentifier());
+        // "parentNode" is the node where the $subject should be moved INTO
+        $parentNode = $this->getParentNode();
+        // "subject" is the to-be-moved node
+        $subject = $this->subject;
+        if ($this->canApply() && $parentNode && $subject) {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $subject->getContentStreamIdentifier(),
+                $subject->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $otherParent = $nodeAccessor->findParentNode($subject);
+            $hasEqualParentNode = $otherParent && $otherParent->getNodeAggregateIdentifier()
+                    ->equals($parentNode->getNodeAggregateIdentifier());
 
             // we render content directly as response of this operation, so we need to flush the caches
-            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate(
+                $subject->getContentStreamIdentifier(),
+                $subject->getNodeAggregateIdentifier()
+            );
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
                 new MoveNodeAggregate(
                     $subject->getContentStreamIdentifier(),
@@ -115,13 +103,16 @@ class MoveInto extends AbstractStructuralChange
                     $hasEqualParentNode ? null : $parentNode->getNodeAggregateIdentifier(),
                     null,
                     null,
-                    RelationDistributionStrategy::gatherAll(),
+                    RelationDistributionStrategy::STRATEGY_GATHER_ALL,
                     $this->getInitiatingUserIdentifier()
                 )
             )->blockUntilProjectionsAreUpToDate();
             $doFlushContentCache();
             if (!$hasEqualParentNode) {
-                $this->contentCacheFlusher->flushNodeAggregate($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier());
+                $this->contentCacheFlusher->flushNodeAggregate(
+                    $parentNode->getContentStreamIdentifier(),
+                    $parentNode->getNodeAggregateIdentifier()
+                );
             }
 
             $updateParentNodeInfo = new UpdateNodeInfo();

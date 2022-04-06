@@ -20,7 +20,7 @@ class WorkspaceCommandController extends CommandController
     /**
      * Rebase all outdated content streams
      */
-    public function rebaseOutdatedCommand()
+    public function rebaseOutdatedCommand(): void
     {
         $outdatedWorkspaces = $this->workspaceMaintenanceService->rebaseOutdatedWorkspaces();
 

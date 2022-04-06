@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Create node aggregate with node
 
   As a user of the CR I want to create a new externally referencable node aggregate of a specific type with a node

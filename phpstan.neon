@@ -1,0 +1,10 @@
+parameters:
+    level: 8
+    paths:
+        - Neos.ContentGraph.DoctrineDbalAdapter/Classes
+        - Neos.ContentGraph.PostgreSQLAdapter/Classes
+        - Neos.ContentRepository.BehavioralTests/Classes
+        - Neos.EventSourcedContentRepository/Classes
+        - Neos.EventSourcedContentRepository.LegacyApi/Classes
+        - Neos.EventSourcedContentRepository.Security/Classes
+        - Neos.EventSourcedNeosAdjustments/Classes

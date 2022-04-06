@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,7 +10,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
+
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeAggregateIdentifiers;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
@@ -34,37 +36,37 @@ trait NodeReferencing
     {
         $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                $event->getContentStreamIdentifier(),
-                $event->getSourceOriginDimensionSpacePoint(),
-                $event->getSourceNodeAggregateIdentifier()
+                $event->contentStreamIdentifier,
+                $event->sourceOriginDimensionSpacePoint,
+                $event->sourceNodeAggregateIdentifier
             );
 
             if ($nodeRecord) {
                 $anchorPoint = $this->copyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamIdentifier,
                     $nodeRecord,
                     function (NodeRecord $node) {
                     }
                 );
                 $existingReferenceRelation = $this->getProjectionHypergraph()->findReferenceRelationByOrigin(
                     $anchorPoint,
-                    $event->getReferenceName()
+                    $event->referenceName
                 );
                 if ($existingReferenceRelation) {
                     $existingReferenceRelation->setDestinationNodeAggregateIdentifiers(
-                        NodeAggregateIdentifiers::fromCollection($event->getDestinationNodeAggregateIdentifiers()),
+                        NodeAggregateIdentifiers::fromCollection($event->destinationNodeAggregateIdentifiers),
                         $this->getDatabaseConnection()
                     );
                 } else {
                     $referenceRelation = new ReferenceHyperrelationRecord(
                         $anchorPoint,
-                        $event->getReferenceName(),
-                        NodeAggregateIdentifiers::fromCollection($event->getDestinationNodeAggregateIdentifiers())
+                        $event->referenceName,
+                        NodeAggregateIdentifiers::fromCollection($event->destinationNodeAggregateIdentifiers)
                     );
                     $referenceRelation->addToDatabase($this->getDatabaseConnection());
                 }
             } else {
-                // @todo log
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
         });
     }
@@ -74,7 +76,7 @@ trait NodeReferencing
     /**
      * @throws \Throwable
      */
-    abstract protected function transactional(callable $operations): void;
+    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

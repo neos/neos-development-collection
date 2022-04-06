@@ -42,14 +42,16 @@ final class ContentStream
     public function __construct(ContentStreamIdentifier $identifier, EventStore $eventStore)
     {
         $this->identifier = $identifier;
-        $this->streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($identifier)->getEventStreamName();
+        $this->streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($identifier)
+            ->getEventStreamName();
         $this->eventStore = $eventStore;
     }
 
     public function getVersion(): int
     {
         // TODO !!! PLEASE CHANGE THIS!!!
-        // TODO hack!! The new Event Store does not have a getStreamVersion() method any longer - we should probably use the reconstitution version from an aggregate instead
+        // TODO hack!! The new Event Store does not have a getStreamVersion() method any longer
+        // - we should probably use the reconstitution version from an aggregate instead
         return count(iterator_to_array($this->eventStore->load($this->streamName))) - 1;
     }
 

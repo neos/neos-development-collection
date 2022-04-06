@@ -16,10 +16,16 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 final class DefaultBlockedProjectorFactory
 {
+    /**
+     * @var array<class-string,bool>
+     */
     private array $projectorClassNames;
 
     private ObjectManagerInterface $objectManager;
 
+    /**
+     * @param array<class-string,bool> $projectorClassNames
+     */
     public function __construct(
         array $projectorClassNames,
         ObjectManagerInterface $objectManager
@@ -28,15 +34,23 @@ final class DefaultBlockedProjectorFactory
         $this->objectManager = $objectManager;
     }
 
-    public function create(): array
+    public function create(): ProcessedEventsAwareProjectorCollection
     {
         $projectors = [];
         foreach ($this->projectorClassNames as $projectorClassName => $isToBeBlocked) {
             if ($isToBeBlocked) {
-                $projectors[] = $this->objectManager->get($projectorClassName);
+                $projector = $this->objectManager->get($projectorClassName);
+                if (!$projector instanceof ProcessedEventsAwareProjectorInterface) {
+                    throw new \InvalidArgumentException(
+                        'ProcessedEventsAwareProjectorCollection can only consist of '
+                        . ProcessedEventsAwareProjectorInterface::class . ' objects.',
+                        1616950763
+                    );
+                }
+                $projectors[] = $projector;
             }
         }
 
-        return $projectors;
+        return new ProcessedEventsAwareProjectorCollection($projectors);
     }
 }

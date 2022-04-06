@@ -4,5 +4,8 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadMod
 
 interface ContextInNodeBasedReadModelInterface
 {
+    /**
+     * @return EmulatedLegacyContext
+     */
     public function getContext();
 }

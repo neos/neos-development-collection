@@ -26,71 +26,70 @@ class NodeClipboard
     const MODE_MOVE = 'Move';
 
     /**
-     * @var string
+     * @var array<int,string>
      */
-    protected $serializedNodeAddresses = '';
+    protected array $serializedNodeAddresses = [];
 
     /**
-     * @var string one of the NodeClipboard::MODE_*  constants
+     * one of the NodeClipboard::MODE_*  constants
      */
-    protected $mode = '';
+    protected string $mode = '';
 
     /**
      * Save copied node to clipboard.
      *
-     * @param NodeAddress[] $nodeAddresses
-     * @return void
+     * @param array<int,NodeAddress> $nodeAddresses
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @Flow\Session(autoStart=true)
      */
-    public function copyNodes($nodeAddresses)
+    public function copyNodes(array $nodeAddresses): void
     {
-        $this->serializedNodeAddresses = array_map(fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(), $nodeAddresses);
+        $this->serializedNodeAddresses = array_map(
+            fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(),
+            $nodeAddresses
+        );
         $this->mode = self::MODE_COPY;
     }
 
     /**
      * Save cut node to clipboard.
      *
-     * @param NodeAddress[] $nodeAddresses
-     * @return void
+     * @param array<int,NodeAddress> $nodeAddresses
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @Flow\Session(autoStart=true)
      */
-    public function cutNodes($nodeAddresses)
+    public function cutNodes(array $nodeAddresses): void
     {
-        $this->serializedNodeAddresses = array_map(fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(), $nodeAddresses);
+        $this->serializedNodeAddresses = array_map(
+            fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(),
+            $nodeAddresses
+        );
         $this->mode = self::MODE_MOVE;
     }
 
     /**
      * Reset clipboard.
      *
-     * @return void
      * @Flow\Session(autoStart=true)
      */
-    public function clear()
+    public function clear(): void
     {
         $this->serializedNodeAddresses = [];
         $this->mode = '';
     }
 
     /**
-     * Get clipboard node.
-     *
-     * @return string $nodeContextPath
+     * @return array<int,string>
      */
-    public function getSerializedNodeAddresses()
+    public function getSerializedNodeAddresses(): array
     {
-        return $this->serializedNodeAddresses ? $this->serializedNodeAddresses : [];
+        return $this->serializedNodeAddresses;
     }
 
     /**
      * Get clipboard mode.
-     *
-     * @return string $mode
      */
-    public function getMode()
+    public function getMode(): string
     {
         return $this->mode;
     }

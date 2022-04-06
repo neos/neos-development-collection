@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\ExceptionHandlers;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementWrappingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -27,7 +28,6 @@ use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
  */
 class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 {
-
     /**
      * @Flow\Inject
      * @var ContentElementWrappingService
@@ -47,6 +47,12 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
     protected $privilegeManager;
 
     /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
      * renders the exception to nice html content element to display, edit, remove, ...
      *
      * @param string $fusionPath - path causing the exception
@@ -54,7 +60,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
      * @param integer $referenceCode - might be unset
      * @return string
      */
-    protected function handle($fusionPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode): string
     {
         $handler = new ContextDependentHandler();
         $handler->setRuntime($this->runtime);
@@ -64,12 +70,22 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
         if (isset($currentContext['node'])) {
             /** @var NodeInterface $node */
             $node = $currentContext['node'];
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                $node->getContentStreamIdentifier()
+            );
             $applicationContext = $this->environment->getContext();
-            if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
-                $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
+
+            if ($applicationContext->isProduction()
+                && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+                && !is_null($workspace)
+                && !$workspace->getWorkspaceName()->isLive()
+            ) {
+                $output = '<div class="neos-rendering-exception">
+    <div class="neos-rendering-exception-title">Failed to render element' . $output . '</div>
+</div>';
             }
 
-            return $this->contentElementWrappingService->wrapContentObject($node, $output, $fusionPath);
+            return $this->contentElementWrappingService->wrapContentObject($node, $output, $fusionPath) ?: '';
         }
 
         return $output;
@@ -78,12 +94,8 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
     /**
      * appends the given reference code to the exception's message
      * unless it is unset
-     *
-     * @param \Exception $exception
-     * @param $referenceCode
-     * @return string
      */
-    protected function getMessage(\Exception $exception, $referenceCode)
+    protected function getMessage(\Exception $exception, int|string|null $referenceCode = null): string
     {
         if (isset($referenceCode)) {
             return sprintf('%s (%s)', $exception->getMessage(), $referenceCode);

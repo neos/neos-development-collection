@@ -15,44 +15,31 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @todo what is this?
  */
+#[Flow\Proxy(false)]
 final class NodeReference
 {
     // TODO: actually working??
 
+    private SerializedPropertyValues $values;
 
-    /**
-     * @var array|NodeReference[]
-     */
-    private $values = [];
-
-    /**
-     * @var \ArrayIterator
-     */
-    protected $iterator;
-
-    private function __construct(array $values)
+    private function __construct(SerializedPropertyValues $values)
     {
         $this->values = $values;
-        $this->iterator = new \ArrayIterator($this->values);
     }
 
     /**
-     * @param SerializedPropertyValue[] values
-     *@return array|SerializedPropertyValue[]
+     * @param array<string,mixed> $values
      */
-    public function getValues(): array
+    public static function fromArray(array $values): self
+    {
+        return new self(SerializedPropertyValues::fromArray($values));
+    }
+
+    public function getValues(): SerializedPropertyValues
     {
         return $this->values;
-    }
-
-    /**
-     * @return SerializedPropertyValue[]|\ArrayIterator<SerializedPropertyValue>
-     */
-    public function getIterator(): \ArrayIterator
-    {
-        return new \ArrayIterator($this->values);
     }
 
     public function count(): int
@@ -60,7 +47,7 @@ final class NodeReference
         return count($this->values);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): SerializedPropertyValues
     {
         return $this->values;
     }
