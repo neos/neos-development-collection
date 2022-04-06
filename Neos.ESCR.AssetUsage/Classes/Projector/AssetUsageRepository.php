@@ -58,15 +58,28 @@ final class AssetUsageRepository
         return new AssetUsages(function () use ($queryBuilder) {
             $result = $queryBuilder->execute();
             if (!$result instanceof Result) {
-                throw new \RuntimeException(sprintf('Expected instance of "%s", got: "%s"', Result::class, get_debug_type($result)), 1646320966);
+                throw new \RuntimeException(sprintf(
+                    'Expected instance of "%s", got: "%s"',
+                    Result::class,
+                    get_debug_type($result)
+                ), 1646320966);
             }
             /** @var array{assetidentifier: string, contentstreamidentifier: string, origindimensionspacepointhash: string, nodeaggregateidentifier: string, propertyname: string} $row */
             foreach ($result->iterateAssociative() as $row) {
-                yield new AssetUsage($row['assetidentifier'], ContentStreamIdentifier::fromString($row['contentstreamidentifier']), $row['origindimensionspacepointhash'], NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']), $row['propertyname']);
+                yield new AssetUsage(
+                    $row['assetidentifier'],
+                    ContentStreamIdentifier::fromString($row['contentstreamidentifier']),
+                    $row['origindimensionspacepointhash'],
+                    NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']),
+                    $row['propertyname']
+                );
             }
         }, function () use ($queryBuilder) {
             /** @var string $count */
-            $count = $this->dbal->fetchOne('SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s', $queryBuilder->getParameters());
+            $count = $this->dbal->fetchOne(
+                'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s',
+                $queryBuilder->getParameters()
+            );
             return (int)$count;
         });
     }
@@ -74,23 +87,27 @@ final class AssetUsageRepository
     public function addUsagesForNode(NodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
     {
         if ($assetIdsByProperty->hasPropertiesWithoutAssets()) {
-            $this->dbal->executeStatement('DELETE FROM ' . self::TABLE_NAME . ' WHERE contentStreamIdentifier = :contentStreamIdentifier AND nodeAggregateIdentifier = :nodeAggregateIdentifier AND originDimensionSpacePointHash = :originDimensionSpacePointHash AND propertyName IN (:propertyNames)', [
-                'contentStreamIdentifier' => $nodeAddress->getContentStreamIdentifier(),
-                'nodeAggregateIdentifier' => $nodeAddress->getNodeAggregateIdentifier(),
-                'originDimensionSpacePointHash' => $nodeAddress->getDimensionSpacePoint()->getHash(),
-                'propertyNames' => $assetIdsByProperty->propertyNamesWithoutAsset(),
-            ], [
-                'propertyNames' => Connection::PARAM_STR_ARRAY,
-            ]);
+            $this->dbal->executeStatement('DELETE FROM ' . self::TABLE_NAME
+                . ' WHERE contentStreamIdentifier = :contentStreamIdentifier'
+                . ' AND nodeAggregateIdentifier = :nodeAggregateIdentifier'
+                . ' AND originDimensionSpacePointHash = :originDimensionSpacePointHash'
+                . ' AND propertyName IN (:propertyNames)', [
+                    'contentStreamIdentifier' => $nodeAddress->contentStreamIdentifier,
+                    'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateIdentifier,
+                    'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
+                    'propertyNames' => $assetIdsByProperty->propertyNamesWithoutAsset(),
+                ], [
+                    'propertyNames' => Connection::PARAM_STR_ARRAY,
+                ]);
         }
         foreach ($assetIdsByProperty as $propertyName => $assetIdentifiers) {
             foreach ($assetIdentifiers as $assetIdentifier) {
                 try {
                     $this->dbal->insert(self::TABLE_NAME, [
                         'assetIdentifier' => $assetIdentifier,
-                        'contentStreamIdentifier' => $nodeAddress->getContentStreamIdentifier(),
-                        'nodeAggregateIdentifier' => $nodeAddress->getNodeAggregateIdentifier(),
-                        'originDimensionSpacePointHash' => $nodeAddress->getDimensionSpacePoint()->getHash(),
+                        'contentStreamIdentifier' => $nodeAddress->contentStreamIdentifier,
+                        'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateIdentifier,
+                        'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
                         'propertyName' => $propertyName,
                     ]);
                 } catch (UniqueConstraintViolationException $e) {
@@ -105,21 +122,39 @@ final class AssetUsageRepository
         $this->dbal->delete(self::TABLE_NAME, ['contentStreamIdentifier' => $contentStreamIdentifier]);
     }
 
-    public function copyContentStream(ContentStreamIdentifier $sourceContentStreamIdentifier, ContentStreamIdentifier $targetContentStreamIdentifier): void
-    {
-        $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME . ' SELECT assetidentifier, :targetContentStreamIdentifier contentstreamidentifier, nodeaggregateidentifier, origindimensionspacepointhash, propertyname FROM ' . self::TABLE_NAME . ' WHERE contentStreamIdentifier = :sourceContentStreamIdentifier', [
-            'sourceContentStreamIdentifier' => $sourceContentStreamIdentifier,
-            'targetContentStreamIdentifier' => $targetContentStreamIdentifier,
-        ]);
+    public function copyContentStream(
+        ContentStreamIdentifier $sourceContentStreamIdentifier,
+        ContentStreamIdentifier $targetContentStreamIdentifier
+    ): void {
+        $this->dbal->executeStatement(
+            'INSERT INTO ' . self::TABLE_NAME
+            . ' SELECT assetidentifier, :targetContentStreamIdentifier AS contentstreamidentifier,'
+            . ' nodeaggregateidentifier, origindimensionspacepointhash, propertyname'
+            . ' FROM ' . self::TABLE_NAME
+            . ' WHERE contentStreamIdentifier = :sourceContentStreamIdentifier',
+            [
+                'sourceContentStreamIdentifier' => $sourceContentStreamIdentifier,
+                'targetContentStreamIdentifier' => $targetContentStreamIdentifier,
+            ]
+        );
     }
 
-    public function copyDimensions(OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, OriginDimensionSpacePoint $targetOriginDimensionSpacePoint): void
-    {
+    public function copyDimensions(
+        OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
+        OriginDimensionSpacePoint $targetOriginDimensionSpacePoint
+    ): void {
         try {
-            $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME . ' SELECT assetidentifier, contentstreamidentifier, nodeaggregateidentifier, :targetOriginDimensionSpacePointHash origindimensionspacepointhash, propertyname FROM ' . self::TABLE_NAME . ' WHERE originDimensionSpacePointHash = :sourceOriginDimensionSpacePointHash', [
-                'sourceOriginDimensionSpacePointHash' => $sourceOriginDimensionSpacePoint->getHash(),
-                'targetOriginDimensionSpacePointHash' => $targetOriginDimensionSpacePoint->getHash(),
-            ]);
+            $this->dbal->executeStatement(
+                'INSERT INTO ' . self::TABLE_NAME
+                . ' SELECT assetidentifier, contentstreamidentifier, nodeaggregateidentifier,'
+                . ' :targetOriginDimensionSpacePointHash AS origindimensionspacepointhash, propertyname'
+                . ' FROM ' . self::TABLE_NAME
+                . ' WHERE originDimensionSpacePointHash = :sourceOriginDimensionSpacePointHash',
+                [
+                    'sourceOriginDimensionSpacePointHash' => $sourceOriginDimensionSpacePoint->hash,
+                    'targetOriginDimensionSpacePointHash' => $targetOriginDimensionSpacePoint->hash,
+                ]
+            );
         } catch (UniqueConstraintViolationException $e) {
             // A usage already exists for this node and property -> can be ignored
         }
@@ -143,14 +178,22 @@ final class AssetUsageRepository
         ]);
     }
 
-    public function removeNode(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePoints): void
-    {
-        $this->dbal->executeStatement('DELETE FROM ' . self::TABLE_NAME . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)', [
-            'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-            'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
-        ], [
-            'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
-        ]);
+    public function removeNode(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePointSet $dimensionSpacePoints
+    ): void {
+        $this->dbal->executeStatement(
+            'DELETE FROM ' . self::TABLE_NAME
+            . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier'
+            . ' AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)',
+            [
+                'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
+                'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
+            ],
+            [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+            ]
+        );
     }
 
     /**
@@ -161,7 +204,13 @@ final class AssetUsageRepository
         /** @var AbstractPlatform|null $platform */
         $platform = $this->dbal->getDatabasePlatform();
         if ($platform === null) {
-            throw new \RuntimeException(sprintf('Failed to determine database platform for database "%s"', $this->dbal->getDatabase()), 1645781464);
+            throw new \RuntimeException(
+                sprintf(
+                    'Failed to determine database platform for database "%s"',
+                    $this->dbal->getDatabase()
+                ),
+                1645781464
+            );
         }
         $this->dbal->executeStatement($platform->getTruncateTableSQL(self::TABLE_NAME));
     }

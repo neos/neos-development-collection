@@ -47,18 +47,26 @@ final class AssetUsageCommandController extends CommandController
     public function syncCommand(bool $quiet = false): void
     {
         $usages = $this->assetUsageRepository->findUsages(AssetUsageFilter::create());
-        $quiet || $this->output->progressStart($usages->count());
+        if (!$quiet) {
+            $this->output->progressStart($usages->count());
+        }
         $numberOfRemovedUsages = 0;
         foreach ($usages as $usage) {
             if (!$this->isAssetUsageStillValid($usage)) {
                 $this->assetUsageRepository->remove($usage);
                 $numberOfRemovedUsages ++;
             }
-            $quiet || $this->output->progressAdvance();
+            if (!$quiet) {
+                $this->output->progressAdvance();
+            }
         }
-        $quiet || $this->output->progressFinish();
-        $quiet || $this->outputLine();
-        $quiet || $this->outputLine('Removed %d asset usage%s', [$numberOfRemovedUsages, $numberOfRemovedUsages === 1 ? '' : 's']);
+        if (!$quiet) {
+            $this->output->progressFinish();
+            $this->outputLine();
+            $this->outputLine('Removed %d asset usage%s', [
+                $numberOfRemovedUsages, $numberOfRemovedUsages === 1 ? '' : 's'
+            ]);
+        }
     }
 
     private function isAssetUsageStillValid(AssetUsage $usage): bool
@@ -80,9 +88,6 @@ final class AssetUsageCommandController extends CommandController
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        if ($subGraph === null) {
-            return false;
-        }
         $node = $subGraph->findNodeByNodeAggregateIdentifier($usage->nodeAggregateIdentifier);
         return $node !== null;
     }
@@ -91,7 +96,7 @@ final class AssetUsageCommandController extends CommandController
     {
         if ($this->dimensionSpacePointsByHash === null) {
             foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
-                $this->dimensionSpacePointsByHash[$dimensionSpacePoint->getHash()] = $dimensionSpacePoint;
+                $this->dimensionSpacePointsByHash[$dimensionSpacePoint->hash] = $dimensionSpacePoint;
             }
         }
         return $this->dimensionSpacePointsByHash[$dimensionSpacePointHash] ?? null;

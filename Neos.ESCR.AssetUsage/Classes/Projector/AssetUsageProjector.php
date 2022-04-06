@@ -41,42 +41,76 @@ final class AssetUsageProjector implements ProjectorInterface
         $this->repository->reset();
     }
 
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, RawEvent $rawEvent): void
-    {
+    public function whenNodeAggregateWithNodeWasCreated(
+        NodeAggregateWithNodeWasCreated $event,
+        RawEvent $rawEvent
+    ): void {
         try {
             $assetIdsByProperty = $this->getAssetIdsByProperty($event->getInitialPropertyValues());
         } catch (InvalidTypeException $e) {
-            throw new \RuntimeException(sprintf('Failed to extract asset ids from event "%s": %s', $rawEvent->getIdentifier(), $e->getMessage()), 1646321894, $e);
+            throw new \RuntimeException(
+                sprintf(
+                    'Failed to extract asset ids from event "%s": %s',
+                    $rawEvent->getIdentifier(),
+                    $e->getMessage()
+                ),
+                1646321894,
+                $e
+            );
         }
-        $nodeAddress = new NodeAddress($event->getContentStreamIdentifier(), $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(), $event->getNodeAggregateIdentifier(), null);
+        $nodeAddress = new NodeAddress(
+            $event->getContentStreamIdentifier(),
+            $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+            $event->getNodeAggregateIdentifier(),
+            null
+        );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
 
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, RawEvent $rawEvent): void
     {
         try {
-            $assetIdsByProperty = $this->getAssetIdsByProperty($event->getPropertyValues());
+            $assetIdsByProperty = $this->getAssetIdsByProperty($event->propertyValues);
         } catch (InvalidTypeException $e) {
-            throw new \RuntimeException(sprintf('Failed to extract asset ids from event "%s": %s', $rawEvent->getIdentifier(), $e->getMessage()), 1646321894, $e);
+            throw new \RuntimeException(
+                sprintf(
+                    'Failed to extract asset ids from event "%s": %s',
+                    $rawEvent->getIdentifier(),
+                    $e->getMessage()
+                ),
+                1646321894,
+                $e
+            );
         }
-        $nodeAddress = new NodeAddress($event->getContentStreamIdentifier(), $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(), $event->getNodeAggregateIdentifier(), null);
+        $nodeAddress = new NodeAddress(
+            $event->getContentStreamIdentifier(),
+            $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+            $event->getNodeAggregateIdentifier(),
+            null
+        );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
 
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $this->repository->removeNode($event->getNodeAggregateIdentifier(), $event->getAffectedOccupiedDimensionSpacePoints());
+        $this->repository->removeNode(
+            $event->getNodeAggregateIdentifier(),
+            $event->getAffectedOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
+        );
     }
 
 
     public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        $this->repository->copyDimensions($event->getSourceOrigin(), $event->getPeerOrigin());
+        $this->repository->copyDimensions($event->sourceOrigin, $event->peerOrigin);
     }
 
     public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
-        $this->repository->copyContentStream($event->getSourceContentStreamIdentifier(), $event->getContentStreamIdentifier());
+        $this->repository->copyContentStream(
+            $event->getSourceContentStreamIdentifier(),
+            $event->getContentStreamIdentifier()
+        );
     }
 
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
@@ -121,7 +155,10 @@ final class AssetUsageProjector implements ProjectorInterface
         $assetIdentifiers = [];
         /** @var SerializedPropertyValue $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            $assetIdentifiers[$propertyName] = $this->extractAssetIdentifiers($propertyValue->getType(), $propertyValue->getValue());
+            $assetIdentifiers[$propertyName] = $this->extractAssetIdentifiers(
+                $propertyValue->getType(),
+                $propertyValue->getValue()
+            );
         }
         return new AssetIdsByProperty($assetIdentifiers);
     }
@@ -147,7 +184,11 @@ final class AssetUsageProjector implements ProjectorInterface
         // Collection type?
         /** @var array{type: string, elementType: string|null, nullable: bool} $parsedType */
         $parsedType = TypeHandling::parseType($type);
-        if ($parsedType['elementType'] === null || (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true) && !is_subclass_of($parsedType['elementType'], \Stringable::class, true))) {
+        if ($parsedType['elementType'] === null) {
+            return [];
+        }
+        if (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true)
+            && !is_subclass_of($parsedType['elementType'], \Stringable::class, true)) {
             return [];
         }
         /** @var array<array<string>> $assetIdentifiers */

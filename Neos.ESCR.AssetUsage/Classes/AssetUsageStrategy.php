@@ -20,6 +20,9 @@ use Neos\ESCR\AssetUsage\Dto\AssetUsages;
  */
 final class AssetUsageStrategy implements AssetUsageStrategyInterface
 {
+    /**
+     * @var array<string, AssetUsages>
+     */
     private array $runtimeCache = [];
 
     public function __construct(
@@ -40,12 +43,17 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
 
     public function getUsageReferences(AssetInterface $asset): array
     {
-        return iterator_to_array($this->getUsages($asset)->map(fn(AssetUsage $usage) => new UsageReference($asset)));
+        /** @var \IteratorAggregate<UsageReference> $convertedUsages */
+        $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new UsageReference($asset));
+        return iterator_to_array($convertedUsages);
     }
 
     private function getUsages(AssetInterface $asset): AssetUsages
     {
         $assetId = $this->persistenceManager->getIdentifierByObject($asset);
+        if (!is_string($assetId)) {
+            throw new \InvalidArgumentException('The specified asset has no valid id', 1649236892);
+        }
         if (!isset($this->runtimeCache[$assetId])) {
             $filter = AssetUsageFilter::create()
                 ->withAsset($assetId)

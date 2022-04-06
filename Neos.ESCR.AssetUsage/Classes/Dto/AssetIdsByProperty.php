@@ -17,6 +17,7 @@ final class AssetIdsByProperty implements \IteratorAggregate
      * @var array<string>
      */
     private array $propertyNamesWithoutAssets = [];
+
     /**
      * @var array<string, array<string>>
      */
