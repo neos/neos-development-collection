@@ -19,5 +19,6 @@ final class AssetUsage
         public readonly string $originDimensionSpacePoint,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
         public readonly string $propertyName,
-    ) {}
+    ) {
+    }
 }

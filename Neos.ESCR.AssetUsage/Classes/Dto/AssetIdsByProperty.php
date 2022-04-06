@@ -28,7 +28,9 @@ final class AssetIdsByProperty implements \IteratorAggregate
     public function __construct(array $assetIdentifiers)
     {
         foreach ($assetIdentifiers as $propertyName => $assetIdentifiersForThisProperty) {
-            $assetIdentifiersForThisProperty === [] ? $this->propertyNamesWithoutAssets[] = $propertyName : $this->assetIdentifiers[$propertyName] = $assetIdentifiersForThisProperty;
+            $assetIdentifiersForThisProperty === []
+                ? $this->propertyNamesWithoutAssets[] = $propertyName
+                : $this->assetIdentifiers[$propertyName] = $assetIdentifiersForThisProperty;
         }
     }
 

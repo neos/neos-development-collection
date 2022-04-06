@@ -17,11 +17,11 @@ final class AssetUsageFinder
 {
     public function __construct(
         readonly private AssetUsageRepository $repository
-    ) {}
+    ) {
+    }
 
     public function findByFilter(AssetUsageFilter $filter): AssetUsages
     {
         return $this->repository->findUsages($filter);
     }
-
 }

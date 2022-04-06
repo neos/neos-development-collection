@@ -17,7 +17,8 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     public function __construct(
         private \Closure $generator,
         private \Closure $counter
-    ) {}
+    ) {
+    }
 
     /**
      * @return \Traversable<AssetUsage>

@@ -31,7 +31,8 @@ final class AssetUsageRepository
 
     public function __construct(
         private readonly Connection $dbal
-    ) {}
+    ) {
+    }
 
     public function findUsages(AssetUsageFilter $filter): AssetUsages
     {
@@ -54,7 +55,7 @@ final class AssetUsageRepository
             $queryBuilder->addGroupBy('nodeaggregateidentifier');
             $queryBuilder->addGroupBy('origindimensionspacepointhash');
         }
-        return new AssetUsages(function() use ($queryBuilder) {
+        return new AssetUsages(function () use ($queryBuilder) {
             $result = $queryBuilder->execute();
             if (!$result instanceof Result) {
                 throw new \RuntimeException(sprintf('Expected instance of "%s", got: "%s"', Result::class, get_debug_type($result)), 1646320966);
@@ -63,7 +64,7 @@ final class AssetUsageRepository
             foreach ($result->iterateAssociative() as $row) {
                 yield new AssetUsage($row['assetidentifier'], ContentStreamIdentifier::fromString($row['contentstreamidentifier']), $row['origindimensionspacepointhash'], NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']), $row['propertyname']);
             }
-        }, function() use ($queryBuilder) {
+        }, function () use ($queryBuilder) {
             /** @var string $count */
             $count = $this->dbal->fetchOne('SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s', $queryBuilder->getParameters());
             return (int)$count;

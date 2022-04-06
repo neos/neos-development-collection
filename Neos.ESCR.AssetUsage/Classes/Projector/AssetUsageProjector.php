@@ -33,7 +33,8 @@ final class AssetUsageProjector implements ProjectorInterface
 
     public function __construct(
         private readonly AssetUsageRepository $repository
-    ) {}
+    ) {
+    }
 
     public function reset(): void
     {

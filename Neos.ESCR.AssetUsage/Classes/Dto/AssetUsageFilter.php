@@ -18,7 +18,8 @@ final class AssetUsageFilter
         public readonly ?ContentStreamIdentifier $contentStreamIdentifier,
         public readonly bool $groupByAsset,
         public readonly bool $groupByNode,
-    ) {}
+    ) {
+    }
 
     public static function create(): self
     {

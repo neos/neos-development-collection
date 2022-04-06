@@ -30,8 +30,7 @@ final class AssetUsageCommandController extends CommandController
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly ContentGraphInterface $contentGraph,
         private readonly AssetRepository $assetRepository,
-    )
-    {
+    ) {
         parent::__construct();
     }
 

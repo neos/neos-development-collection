@@ -25,7 +25,8 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
     public function __construct(
         private readonly AssetUsageFinder $assetUsageFinder,
         private readonly PersistenceManagerInterface $persistenceManager
-    ) {}
+    ) {
+    }
 
     public function isInUse(AssetInterface $asset): bool
     {
