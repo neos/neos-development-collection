@@ -1,0 +1,279 @@
+========
+Neos 8.0
+========
+
+This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+Neos 8.0 also increases the minimal required PHP version to **8.0**.
+
+************
+New Features
+************
+
+!!! FEATURE: Rewrite Fusion Parser
+----------------------------------
+
+The fusion parser has been rewritten from a single file to an architecture with separate parser and lexer.
+The architecture is more precise and accessible and will allow to add new features and optimization to fusion in future. The fusion parser tests are generally unchanged, only the removed fusion namespace support required some adjustments.
+
+The existing parser class and interface are unchanged but the inner working is:
+- The Fusion Parser hands the parsing of fusion files to the ObjectTreeParser which returns not an Array but actual Objects representing the parsed fusion
+- The Parser then uses the MergedArrayTreeVisitor to traverse the ObjectTree and convert convert it to the Array structure the Fusion Runtime expects. Closures for handling includes and dsl are allow the visitor to resolve those on the go.
+
+About breakiness:
+- The fusion namespace feature is removed so the new parser only supports fully qualified prototype names
+- The new parser is a bit stricter as the old parser. However only clearly broken fusion-syntax is rejected. Since the parser adds clear error messages that help to fix such issues.
+
+About Performance:
+- In Production the Fusion ObjectTreeArray is cached so as this is unchanged the Performance in Production is unchanged.
+- In Development mode the architecture adds a little to the parsing time for now. However the architecture will eventually allow us to cache the parsed fusion for each fusion file and only parse changed fusion files. This is not part of this pr but a follow up.
+
+Note: The architecture with the old Parser staying in place as a wrapper is an immediate step as is the generation of the old ArrayAst via MergedArrayTreeVisitor. In the end also the runtime should use an object tree directly but this step allowed to adjust the parser separately with high confidence because the testsuite is unchanged. That us also the reason the new ObjectTreeParser is not marked as beeing public api yet.
+
+
+
+
+
+
+Related issue: `#3593 <https://github.com/neos/neos-development-collection/issues/3593>`_
+
+!!! FEATURE: Remove legacy cache tag support
+--------------------------------------------
+
+In Neos 4.1 new Eel helpers were introduced to generate content cache tags in Fusion. Those make sure that the cache tags provided by the integrator are valid.
+Until Neos 4.0 they needed to be written manually as string which was error prone.
+
+But to support old cache tags that were lacking the workspace context the ``ContentCacheFlusher`` still cleared them.
+This change removes that support. So this is breaking and projects need to be adjusted when upgrading and still using those old cache tags.
+
+The advantage of removing them is that the number of cache tags to be flushed during publishing is lower. TODO: Add number.
+
+This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_to be merged first.
+
+Removed the legacy cache tag generation.
+
+The change also include a new code migration version ``20220318111600`` to replace the most commonly used legacy cache tags with matching eel helper calls:
+
+```
+node = ${'Node_' + node.identifier}
+descendants = ${'DescendantOf_' + node.identifier}
+nodeType = 'NodeType_My.Vendor:Content.Foo'
+```
+
+!!! FEATURE: Neos.Media: Extend SupportsTaggingInterface by countByTag
+----------------------------------------------------------------------
+
+Currently classes that implement the SupportsTaggingInterface can only count untagged Assets.
+When using the interface with external Assets, this leads to the MediaBrowser displaying the count of Neos Media Assets for the external Source, not the count of the Assets matching that Tag in the external source.
+I extended the SupportsTaggingInterface so that Classes using this interface can change the count of the Tags that are displayed in the Media Browser, just like they can change the count of untagged Assets.
+
+I added the countByTag method to the SupportsTaggingInterface and implemented it in the Neos MediaBrowser where the count happens.
+Since I am new to Neos I was not sure if countByTags should also pass the active AssetCollection, but I decided against it since the findByTag function also does not pass the active AssetCollection and the count should match the result. This could both be changed.
+Also, this could throw errors with Packages implementing the Interface.
+
+When implementing the SupportsTaggingInterface the method countByTag must be implemented and will change the count of Assets for every tag  displayed in the left sidebar.
+
+
+
+
+FEATURE: Add ParsePartials cache to the fusion parser
+-----------------------------------------------------
+
+
+
+The New Fusion Parser now uses a ``Neos_Fusion_ParsePartials`` cache to store the generated FileAst _*_ for each Fusion File. Those File partials are flushed via file monitor when the source Fusion file was changed.
+The generated merged array Fusion tree for a Fusion DSL is also cached seperately in this cache.
+
+With this cache layer in place, only changed files are reparsed which **speeds up Fusion parsing** in Development mode by **factor of 2 to 8** depending on context. _**_
+
+The ParsePartials cache is disabled in Production mode as this one already uses the ObjectTreeCache.
+
+since we cache mostly AstNode objects its recommended to have the php extension ``igbinary`` installed.
+
+the cache can be turned of by disabling: ``Neos.Fusion.enableParsePartialsCache``
+
+_*_ there are now more representations of the Fusion code - we created a step in between where we create AstNode Objects
+see for more infos the PR of the New Fusion Parser: https://github.com/neos/neos-development-collection/pull/3497
+
+_**_ in my tests, when the cached is warmed _***_, performance boost might not be notable on small projects.
+
+_***_ of course is the cache warmed - as always for the statistics ;)
+
+Related issue: `#3661 <https://github.com/neos/neos-development-collection/issues/3661>`_
+
+FEATURE: Optimise cache tag generation before flushing content cache after publishing
+-------------------------------------------------------------------------------------
+
+The generation of cache tags is quite slow for a large number of published changes as many operations
+are done for each involved node and workspace.
+I improved the performance by skipping repeated operations on the same node with the same context
+and by caching the result of nodetype related calculations.
+
+* Reuse calculated list of implemented nodetypes for each node changed by introducing a variable to store each calculation
+* Stop traversal through a nodes parents if one of the parents was already traversed before to generate ``DescendantOf`` cache tags.
+
+* Tests still run fine
+
+FEATURE: Implement user impersonation
+-------------------------------------
+
+Extending the Neos with endpoints to impersonate a logged-in user and also restoring the user.
+For that, the change will add a new controller ImpersonateController for the backend.
+
+Backend Administrators will get the permission to impersonate users, and everybody is able to restore the origin user if the user is authenticated by the impersonation. The change extends the user management module with a button for each user and the user menu in the to bar to be able to restore the user.
+
+The user menu in the content module needs to be adjusted in the neos-ui.
+
+
+https://user-images.githubusercontent.com/1014126/159288830-23440aea-399b-444a-a0f4-c0f01408977e.mp4
+
+
+
+
+
+Related issue: `#3647 <https://github.com/neos/neos-development-collection/issues/3647>`_
+
+FEATURE: Pass tags to be flushed to content cache backend
+---------------------------------------------------------
+
+Instead of calling the cache backend for each tag to flush
+individually, the list of tags is passed to the backend with
+the newly introduced ``flushByTags`` method in
+https://github.com/neos/flow-development-collection/pull/2718.
+
+This allows each type of backend to optimise the flushing
+of all tags, which can lead to huge performance improvements.
+Especially when content is published to the live workspace
+which leads to large numbers of cache tags that will be flushed.
+
+Also the messages stored with individual content cache tags
+take up a lot of unnecessary memory in production
+context and not are even used there.
+
+With this change the behaviour can be enabled via
+the setting ``Neos.Neos.fusion.contentCacheDebugMode``.
+
+
+
+The ``ContentCacheFlusher`` now calls the ``flushByTags`` method introduced in https://github.com/neos/flow-development-collection/pull/2718.
+
+Only in the newly introduced debug mode the old style of flushing by tag individually is used to provide the individual logged feedback why entries were flushed.
+
+
+Related issue: `#3640 <https://github.com/neos/neos-development-collection/issues/3640>`_
+
+FEATURE: Add external rel attribute to link in ConvertUrisImplementation
+------------------------------------------------------------------------
+
+closes `#3543 <https://github.com/neos/neos-development-collection/issues/3543>`_
+
+I added the posibility of adding 'rel="external"' to external links,  when using the ConvertUrisImplementation
+
+Just like the already existing attribute setNoOpener, I added the option setExternal.
+
+I was wondering about making this more open by allowing a string/array to be set here, since rel-attributes can contain a lot of different attributes. But then again, this could be misused.
+
+When using the ConvertUrisImplementation in fusion, the option setExternal can be used to add rel="external" to a link.
+
+`
+   @class = 'Neos\\\Neos\\\Fusion\\\ConvertUrisImplementation'
+    value = ${value}
+    node = ${node}
+    externalLinkTarget = '_blank'
+    resourceLinkTarget = '_blank'
+    absolute = false
+    forceConversion = false
+    setNoOpener = true
+    setExternal = true
+`
+
+
+********************
+Upgrade Instructions
+********************
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-7-3-8-0.html
+
+.. note::
+
+   Additionally all changes in Flow 8.0 apply, see the release notes to further information.
+   See https://flowframework.readthedocs.org/en/8.0/TheDefinitiveGuide/PartV/ReleaseNotes/800.html
+
+
+****************************
+Potentially breaking changes
+****************************
+
+Neos 8.0 comes with some breaking changes and removes several deprecated
+functionalities, be sure to read the following changes and adjust
+your code respectively. For a full list of changes please refer
+to the change log.
+
+!!! FEATURE: Rewrite Fusion Parser
+----------------------------------
+
+The fusion parser has been rewritten from a single file to an architecture with separate parser and lexer.
+The architecture is more precise and accessible and will allow to add new features and optimization to fusion in future. The fusion parser tests are generally unchanged, only the removed fusion namespace support required some adjustments.
+
+The existing parser class and interface are unchanged but the inner working is:
+- The Fusion Parser hands the parsing of fusion files to the ObjectTreeParser which returns not an Array but actual Objects representing the parsed fusion
+- The Parser then uses the MergedArrayTreeVisitor to traverse the ObjectTree and convert convert it to the Array structure the Fusion Runtime expects. Closures for handling includes and dsl are allow the visitor to resolve those on the go.
+
+About breakiness:
+- The fusion namespace feature is removed so the new parser only supports fully qualified prototype names
+- The new parser is a bit stricter as the old parser. However only clearly broken fusion-syntax is rejected. Since the parser adds clear error messages that help to fix such issues.
+
+About Performance:
+- In Production the Fusion ObjectTreeArray is cached so as this is unchanged the Performance in Production is unchanged.
+- In Development mode the architecture adds a little to the parsing time for now. However the architecture will eventually allow us to cache the parsed fusion for each fusion file and only parse changed fusion files. This is not part of this pr but a follow up.
+
+Note: The architecture with the old Parser staying in place as a wrapper is an immediate step as is the generation of the old ArrayAst via MergedArrayTreeVisitor. In the end also the runtime should use an object tree directly but this step allowed to adjust the parser separately with high confidence because the testsuite is unchanged. That us also the reason the new ObjectTreeParser is not marked as beeing public api yet.
+
+
+
+
+
+
+Related issue: `#3593 <https://github.com/neos/neos-development-collection/issues/3593>`_
+
+!!! FEATURE: Remove legacy cache tag support
+--------------------------------------------
+
+In Neos 4.1 new Eel helpers were introduced to generate content cache tags in Fusion. Those make sure that the cache tags provided by the integrator are valid.
+Until Neos 4.0 they needed to be written manually as string which was error prone.
+
+But to support old cache tags that were lacking the workspace context the ``ContentCacheFlusher`` still cleared them.
+This change removes that support. So this is breaking and projects need to be adjusted when upgrading and still using those old cache tags.
+
+The advantage of removing them is that the number of cache tags to be flushed during publishing is lower. TODO: Add number.
+
+This change requires `#3631 <https://github.com/neos/neos-development-collection/issues/3631>`_to be merged first.
+
+Removed the legacy cache tag generation.
+
+The change also include a new code migration version ``20220318111600`` to replace the most commonly used legacy cache tags with matching eel helper calls:
+
+```
+node = ${'Node_' + node.identifier}
+descendants = ${'DescendantOf_' + node.identifier}
+nodeType = 'NodeType_My.Vendor:Content.Foo'
+```
+
+!!! FEATURE: Neos.Media: Extend SupportsTaggingInterface by countByTag
+----------------------------------------------------------------------
+
+Currently classes that implement the SupportsTaggingInterface can only count untagged Assets.
+When using the interface with external Assets, this leads to the MediaBrowser displaying the count of Neos Media Assets for the external Source, not the count of the Assets matching that Tag in the external source.
+I extended the SupportsTaggingInterface so that Classes using this interface can change the count of the Tags that are displayed in the Media Browser, just like they can change the count of untagged Assets.
+
+I added the countByTag method to the SupportsTaggingInterface and implemented it in the Neos MediaBrowser where the count happens.
+Since I am new to Neos I was not sure if countByTags should also pass the active AssetCollection, but I decided against it since the findByTag function also does not pass the active AssetCollection and the count should match the result. This could both be changed.
+Also, this could throw errors with Packages implementing the Interface.
+
+When implementing the SupportsTaggingInterface the method countByTag must be implemented and will change the count of Assets for every tag  displayed in the left sidebar.
+
+
+
