@@ -26,11 +26,16 @@ enum HypergraphSiblingQueryMode: string
     {
         return match ($this) {
             self::MODE_ALL => '
-    AND sn.relationanchorpoint = ANY(sh.childnodeanchors)',
+        AND childnodeanchor = ANY(sh.childnodeanchors)',
             self::MODE_ONLY_PRECEDING => '
-    AND sn.relationanchorpoint = ANY(sh.childnodeanchors[:(array_position(sh.childnodeanchors, sh.relationanchorpoint))])',
+        AND childnodeanchor = ANY(sh.childnodeanchors[:(array_position(sh.childnodeanchors, n.relationanchorpoint))])',
             self::MODE_ONLY_SUCCEEDING => '
-    AND sn.relationanchorpoint = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])'
+        AND childnodeanchor = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, n.relationanchorpoint)):])'
         };
+    }
+
+    public function isOrderingToBeReversed(): bool
+    {
+        return $this === self::MODE_ONLY_PRECEDING;
     }
 }

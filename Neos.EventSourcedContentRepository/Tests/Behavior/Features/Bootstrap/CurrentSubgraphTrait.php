@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -85,16 +87,11 @@ trait CurrentSubgraphTrait
      */
     public function visibilityConstraintsAreSetTo(string $restrictionType)
     {
-        switch ($restrictionType) {
-            case 'withoutRestrictions':
-                $this->visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-                break;
-            case 'frontend':
-                $this->visibilityConstraints = VisibilityConstraints::frontend();
-                break;
-            default:
-                throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.');
-        }
+        $this->visibilityConstraints = match ($restrictionType) {
+            'withoutRestrictions' => VisibilityConstraints::withoutRestrictions(),
+            'frontend' => VisibilityConstraints::frontend(),
+            default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
+        };
     }
 
     /**

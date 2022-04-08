@@ -315,7 +315,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $nodeTypeConstraints,
             $limit,
             $offset
-        )->reverse();
+        );
     }
 
     private function findAnySiblings(
@@ -341,6 +341,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         if (!is_null($offset)) {
             $query = $query->withOffset($offset);
         }
+        $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
 
         /** @phpstan-ignore-next-line @todo check actual return type */
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();

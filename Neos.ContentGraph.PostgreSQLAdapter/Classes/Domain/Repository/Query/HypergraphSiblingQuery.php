@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,15 +10,17 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class HypergraphSiblingQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
@@ -33,21 +32,16 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
         HypergraphSiblingQueryMode $queryMode
     ): self {
         $query = /** @lang PostgreSQL */
-            'SELECT * FROM neos_contentgraph_node sn,
-    (
-        SELECT n.relationanchorpoint, h.childnodeanchors, h.contentstreamidentifier,
-               h.dimensionspacepointhash, h.dimensionspacepoint
-            FROM neos_contentgraph_node n
-            JOIN neos_contentgraph_hierarchyhyperrelation h ON n.relationanchorpoint = ANY(h.childnodeanchors)
-            WHERE h.contentstreamidentifier = :contentStreamIdentifier
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
-    ) AS sh
-    WHERE sn.nodeaggregateidentifier != :nodeAggregateIdentifier
-      ' . $queryMode->renderCondition();
-
-        //AND sn.relationanchorpoint
-        // = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])';
+            'SELECT sn.*, sh.contentstreamidentifier, sh.dimensionspacepoint, ordinality, childnodeanchor
+    FROM neos_contentgraph_node n
+        JOIN neos_contentgraph_hierarchyhyperrelation sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
+            unnest(sh.childnodeanchors) WITH ORDINALITY childnodeanchor
+        JOIN neos_contentgraph_node sn ON childnodeanchor = sn.relationanchorpoint
+    WHERE sh.contentstreamidentifier = :contentStreamIdentifier
+        AND sh.dimensionspacepointhash = :dimensionSpacePointHash
+        AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+        AND childnodeanchor != n.relationanchorpoint'
+                . $queryMode->renderCondition();
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
@@ -61,6 +55,14 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
         $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 's');
+
+        return new self($query, $this->parameters, $this->types);
+    }
+
+    public function withOrdinalityOrdering(bool $reverse): self
+    {
+        $query = $this->query . '
+    ORDER BY ordinality ' . ($reverse ? 'DESC' : 'ASC');
 
         return new self($query, $this->parameters, $this->types);
     }

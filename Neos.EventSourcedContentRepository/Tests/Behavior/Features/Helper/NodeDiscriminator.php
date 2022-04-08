@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
