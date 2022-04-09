@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
@@ -57,33 +58,18 @@ use Neos\Flow\Annotations as Flow;
  *   - h -> the hierarchy hyperrelation connecting parent and children
  *   - ph -> the hierarchy hyperrelation incoming to the parent (sometimes relevant)
  *
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final class ContentSubhypergraph implements ContentSubgraphInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private DimensionSpacePoint $dimensionSpacePoint;
-
-    private VisibilityConstraints $visibilityConstraints;
-
-    private DbalClient $databaseClient;
-
-    private NodeFactory $nodeFactory;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints,
-        DbalClient $databaseClient,
-        NodeFactory $nodeFactory
+        private ContentStreamIdentifier $contentStreamIdentifier,
+        private DimensionSpacePoint $dimensionSpacePoint,
+        private VisibilityConstraints $visibilityConstraints,
+        private DbalClient $databaseClient,
+        private NodeFactory $nodeFactory
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->visibilityConstraints = $visibilityConstraints;
-        $this->databaseClient = $databaseClient;
-        $this->nodeFactory = $nodeFactory;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier

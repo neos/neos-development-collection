@@ -57,39 +57,12 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
             self::STRATEGY_ALL_VARIANTS => $nodeAggregate->getCoveredDimensionSpacePoints(),
             self::STRATEGY_ALL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
                 ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints()),
-            self::STRATEGY_VIRTUAL_SPECIALIZATIONS => self::resolveAffectedVirtualSpecializationSet(
-                $nodeAggregate,
-                $referenceDimensionSpacePoint,
-                $variationGraph
-            ),
+            self::STRATEGY_VIRTUAL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
+                ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints()->getDifference(
+                    $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
+                )),
             self::STRATEGY_ONLY_GIVEN_VARIANT => new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
         };
-    }
-
-    private static function resolveAffectedVirtualSpecializationSet(
-        ReadableNodeAggregateInterface $nodeAggregate,
-        DimensionSpacePoint $referenceDimensionSpacePoint,
-        InterDimensionalVariationGraph $variationGraph
-    ): DimensionSpacePointSet {
-        $specializationSet = $variationGraph->getSpecializationSet($referenceDimensionSpacePoint);
-        $affectedDimensionSpacePoints = $specializationSet
-            ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints());
-        foreach ($specializationSet as $specializedDimensionSpacePoint) {
-            if ($specializedDimensionSpacePoint->equals($referenceDimensionSpacePoint)) {
-                continue;
-            }
-            if ($nodeAggregate->occupiesDimensionSpacePoint(
-                OriginDimensionSpacePoint::fromDimensionSpacePoint(
-                    $specializedDimensionSpacePoint
-                )
-            )) {
-                $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getIntersection(
-                    $variationGraph->getSpecializationSet($specializedDimensionSpacePoint)
-                );
-            }
-        }
-
-        return $affectedDimensionSpacePoints;
     }
 
     public function resolveAffectedOriginDimensionSpacePoints(
