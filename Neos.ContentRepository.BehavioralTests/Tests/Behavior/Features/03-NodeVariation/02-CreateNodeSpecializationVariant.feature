@@ -151,9 +151,20 @@ Feature: Create node specialization
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to have the following child nodes:
+      | Name           | NodeDiscriminator                                                 |
+      | tethered-node  | cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"} |
+      | child-document | cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}   |
+    And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
+      | Level | NodeAggregateIdentifier |
+      | 0     | sir-david-nodenborough  |
+      | 1     | nodewyn-tetherton       |
+      | 2     | nodimer-tetherton       |
+      | 1     | nody-mc-nodeface        |
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
 
   Scenario: Create specialization of node to dimension space point with further specializations
     When the command CreateNodeVariant is executed with payload:
@@ -406,9 +417,9 @@ Feature: Create node specialization
       | targetOrigin            | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                            |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
-      | sourceOrigin            | {"market":"DE", "language":"en"} |
+      | Key                     | Value                             |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"DE", "language":"en"}  |
       | targetOrigin            | {"market":"DE", "language":"gsw"} |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
