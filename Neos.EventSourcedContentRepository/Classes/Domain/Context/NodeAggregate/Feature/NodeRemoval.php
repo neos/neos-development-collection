@@ -81,10 +81,10 @@ trait NodeRemoval
                                 $this->getInterDimensionalVariationGraph()
                             ),
                             $command->getNodeVariantSelectionStrategy()->resolveAffectedDimensionSpacePoints(
-                                    $command->getCoveredDimensionSpacePoint(),
-                                    $nodeAggregate,
-                                    $this->getInterDimensionalVariationGraph()
-                                ),
+                                $command->getCoveredDimensionSpacePoint(),
+                                $nodeAggregate,
+                                $this->getInterDimensionalVariationGraph()
+                            ),
                             $command->getInitiatingUserIdentifier(),
                             $command->getRemovalAttachmentPoint()
                         ),
