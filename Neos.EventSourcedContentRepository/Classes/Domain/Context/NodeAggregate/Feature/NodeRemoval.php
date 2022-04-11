@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
@@ -54,17 +55,23 @@ trait NodeRemoval
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier()
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
         );
-        $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
-            $command->getCoveredDimensionSpacePoint()
+            $command->coveredDimensionSpacePoint
         );
+        if ($command->removalAttachmentPoint instanceof NodeAggregateIdentifier) {
+            $this->requireProjectedNodeAggregate(
+                $command->contentStreamIdentifier,
+                $command->removalAttachmentPoint
+            );
+        }
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand(
@@ -73,27 +80,27 @@ trait NodeRemoval
                 $events = DomainEvents::withSingleEvent(
                     DecoratedEvent::addIdentifier(
                         new NodeAggregateWasRemoved(
-                            $command->getContentStreamIdentifier(),
-                            $command->getNodeAggregateIdentifier(),
-                            $command->getNodeVariantSelectionStrategy()->resolveAffectedOriginDimensionSpacePoints(
-                                $nodeAggregate->getOccupationByCovered($command->getCoveredDimensionSpacePoint()),
+                            $command->contentStreamIdentifier,
+                            $command->nodeAggregateIdentifier,
+                            $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
+                                $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
                                 $nodeAggregate,
                                 $this->getInterDimensionalVariationGraph()
                             ),
-                            $command->getNodeVariantSelectionStrategy()->resolveAffectedDimensionSpacePoints(
-                                $command->getCoveredDimensionSpacePoint(),
+                            $command->nodeVariantSelectionStrategy->resolveAffectedDimensionSpacePoints(
+                                $command->coveredDimensionSpacePoint,
                                 $nodeAggregate,
                                 $this->getInterDimensionalVariationGraph()
                             ),
-                            $command->getInitiatingUserIdentifier(),
-                            $command->getRemovalAttachmentPoint()
+                            $command->initiatingUserIdentifier,
+                            $command->removalAttachmentPoint
                         ),
                         Uuid::uuid4()->toString()
                     )
                 );
 
                 $this->getNodeAggregateEventPublisher()->publishMany(
-                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                         ->getEventStreamName(),
                     $events
                 );

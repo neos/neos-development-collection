@@ -126,7 +126,7 @@ class ChangeProjector implements ProjectorInterface
     {
         $this->transactional(function () use ($event) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-                $event->getContentStreamIdentifier()
+                $event->contentStreamIdentifier
             );
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
@@ -141,9 +141,9 @@ class ChangeProjector implements ProjectorInterface
                         AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
                     ',
                 [
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                    'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                    'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                    'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints
                         ->getPointHashes()
                 ],
                 [
@@ -151,7 +151,7 @@ class ChangeProjector implements ProjectorInterface
                 ]
             );
 
-            foreach ($event->getAffectedOccupiedDimensionSpacePoints() as $dimensionSpacePoint) {
+            foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
                     'INSERT INTO neos_contentrepository_projection_change
                             (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint,
@@ -168,11 +168,11 @@ class ChangeProjector implements ProjectorInterface
                         )
                     ',
                     [
-                        'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                        'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                        'originDimensionSpacePoint' => json_encode($dimensionSpacePoint),
-                        'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                        'removalAttachmentPoint' => $event->getRemovalAttachmentPoint()?->__toString()
+                        'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                        'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                        'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
+                        'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
+                        'removalAttachmentPoint' => $event->removalAttachmentPoint?->__toString()
                     ]
                 );
             }

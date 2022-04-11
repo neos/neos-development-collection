@@ -355,12 +355,12 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
             $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-                $event->getNodeAggregateIdentifier(),
+                $event->nodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
             if ($node === null) {

@@ -30,15 +30,15 @@ trait NodeRemoval
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getAffectedCoveredDimensionSpacePoints()
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->affectedCoveredDimensionSpacePoints
             );
 
             $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getAffectedCoveredDimensionSpacePoints()
+                $event->contentStreamIdentifier,
+                $event->nodeAggregateIdentifier,
+                $event->affectedCoveredDimensionSpacePoints
             );
             foreach ($ingoingRelations as $ingoingRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation);

@@ -58,12 +58,15 @@ trait NodeRemoval
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
 
-        $command = RemoveNodeAggregate::create(
+        $command = new RemoveNodeAggregate(
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserIdentifier
+            $initiatingUserIdentifier,
+            isset($commandArguments['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($commandArguments['removalAttachmentPoint'])
+                : null
         );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

@@ -84,19 +84,15 @@ class Remove extends AbstractChange
             // otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
-            $command = RemoveNodeAggregate::create(
+            $closestDocumentParentNode = $this->findClosestDocumentNode($subject);
+            $command = new RemoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getNodeAggregateIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS,
-                $this->getInitiatingUserIdentifier()
+                $this->getInitiatingUserIdentifier(),
+                $closestDocumentParentNode?->getNodeAggregateIdentifier()
             );
-            $closestDocumentParentNode = $this->findClosestDocumentNode($subject);
-            if ($closestDocumentParentNode !== null) {
-                $command = $command->withRemovalAttachmentPoint(
-                    $closestDocumentParentNode->getNodeAggregateIdentifier()
-                );
-            }
 
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(
                 $command
