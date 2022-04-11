@@ -58,8 +58,8 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
             self::STRATEGY_ALL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
                 ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints()),
             self::STRATEGY_VIRTUAL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
-                ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints()->getDifference(
-                    $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
+                ->getIntersection($nodeAggregate->getCoverageByOccupant(
+                    $nodeAggregate->getOccupationByCovered($referenceDimensionSpacePoint)
                 )),
             self::STRATEGY_ONLY_GIVEN_VARIANT => new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
         };
