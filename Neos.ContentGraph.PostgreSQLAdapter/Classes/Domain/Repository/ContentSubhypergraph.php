@@ -29,6 +29,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
@@ -341,7 +342,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findSubtrees(
-        array $entryNodeAggregateIdentifiers,
+        NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
@@ -385,7 +386,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ORDER BY level DESC';
 
         $parameters = [
-            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers,
+            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers->toStringArray(),
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $maximumLevels
