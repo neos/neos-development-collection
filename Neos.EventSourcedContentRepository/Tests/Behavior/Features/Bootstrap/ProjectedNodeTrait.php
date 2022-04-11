@@ -133,7 +133,12 @@ trait ProjectedNodeTrait
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
             $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
-            Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $nodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '" and adapter "' . $adapterName . '"');
+            Assert::assertNull(
+                $nodeByAggregateIdentifier,
+                'A node was found by node aggregate identifier "' . $nodeAggregateIdentifier
+                    . '" in content subgraph {' . $this->dimensionSpacePoint . ',' . $this->contentStreamIdentifier
+                    . '} and adapter "' . $adapterName . '"'
+            );
         }
     }
 

@@ -3,8 +3,8 @@ Feature: Remove Nodes
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values          | Generalizations      |
-      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
+      | Identifier | Default | Values           | Generalizations       |
+      | language   | mul     | mul, de, en, gsw | gsw->de->mul, en->mul |
 
     And I have the following NodeTypes configuration:
     """
@@ -36,13 +36,13 @@ Feature: Remove Nodes
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                                      |
-      | contentStreamIdentifier     | "cs-identifier"                                                            |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                   |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
-      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
-      | initiatingUserIdentifier    | "system-user"                                                              |
-      | nodeAggregateClassification | "root"                                                                     |
+      | Key                         | Value                                                                       |
+      | contentStreamIdentifier     | "cs-identifier"                                                             |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                    |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
+      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
+      | initiatingUserIdentifier    | "system-user"                                                               |
+      | nodeAggregateClassification | "root"                                                                      |
     And the graph projection is fully up to date
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -67,7 +67,7 @@ Feature: Remove Nodes
     And the graph projection is fully up to date
 
 
-  Scenario: Remove nodes in a given dimension space point removes the node with all shine-throughs
+  Scenario: Remove nodes in a given dimension space point removes the node with all virtual specializations
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -86,22 +86,21 @@ Feature: Remove Nodes
           -
             type: 'RemoveNode'
     """
-
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in DE and CH (shine-through)
+    # the node was removed inside the new content stream, but only in de and gsw (virtual specialization)
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
@@ -137,7 +136,7 @@ Feature: Remove Nodes
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
@@ -147,7 +146,7 @@ Feature: Remove Nodes
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
@@ -181,7 +180,7 @@ Feature: Remove Nodes
     Then the last command should have thrown an exception of type "InvalidMigrationConfiguration"
 
 
-  Scenario: Remove nodes in a shine-through dimension space point (CH)
+  Scenario: Remove nodes in a virtual specialization (gsw)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -200,24 +199,24 @@ Feature: Remove Nodes
           -
             type: 'RemoveNode'
             settings:
-              overriddenDimensionSpacePoint: {"language": "ch"}
+              overriddenDimensionSpacePoint: {"language": "gsw"}
     """
 
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in CH
+    # the node was removed inside the new content stream, but only in gsw
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
@@ -227,7 +226,7 @@ Feature: Remove Nodes
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
-  Scenario: Remove nodes in a shine-through dimension space point (CH)
+  Scenario: Remove nodes in a shine-through dimension space point (gsw)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -241,24 +240,24 @@ Feature: Remove Nodes
           -
             type: 'RemoveNode'
             settings:
-              overriddenDimensionSpacePoint: {"language": "ch"}
+              overriddenDimensionSpacePoint: {"language": "gsw"}
     """
 
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in CH
+    # the node was removed inside the new content stream, but only in gsw
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
@@ -268,7 +267,7 @@ Feature: Remove Nodes
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
-  Scenario: Remove nodes in a shine-through dimension space point (DE,CH)
+  Scenario: Remove nodes in a shine-through dimension space point (DE,gsw)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -283,7 +282,7 @@ Feature: Remove Nodes
             settings:
               points:
                 - {"language": "de"}
-                - {"language": "ch"}
+                - {"language": "gsw"}
                 - {"language": "en"}
         transformations:
           -
@@ -294,17 +293,17 @@ Feature: Remove Nodes
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in CH
+    # the node was removed inside the new content stream, but only in gsw
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
@@ -313,7 +312,7 @@ Feature: Remove Nodes
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
-  Scenario: Remove nodes in a shine-through dimension space point (DE,CH) - variant 2
+  Scenario: Remove nodes in a shine-through dimension space point (DE,gsw) - variant 2
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -332,17 +331,17 @@ Feature: Remove Nodes
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in CH
+    # the node was removed inside the new content stream, but only in gsw
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}

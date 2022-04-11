@@ -10,7 +10,10 @@ Feature: Disable a node aggregate
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        references:
+          type: references
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:

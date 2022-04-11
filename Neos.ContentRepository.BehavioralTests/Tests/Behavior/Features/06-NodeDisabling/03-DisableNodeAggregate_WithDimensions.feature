@@ -873,7 +873,7 @@ Feature: Disable a node aggregate
       | Key                          | Expected                                                    |
       | contentStreamIdentifier      | "cs-identifier"                                             |
       | nodeAggregateIdentifier      | "sir-david-nodenborough"                                    |
-      | affectedDimensionSpacePoints | [{"language":"mul"}, {"language":"de"}, {"language":"ltz"}, {"language":"gsw"}, {"language":"en"}] |
+      | affectedDimensionSpacePoints | [{"language":"ltz"}, {"language":"mul"}, {"language":"de"}, {"language":"en"}, {"language":"gsw"}] |
       | initiatingUserIdentifier     | "initiating-user-identifier"                                |
 
     When the graph projection is fully up to date

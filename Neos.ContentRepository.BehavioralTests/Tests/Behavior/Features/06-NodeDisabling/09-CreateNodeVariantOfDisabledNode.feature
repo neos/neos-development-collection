@@ -102,7 +102,7 @@ Feature: Variation of hidden nodes
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
-    When I am in dimension space point {"language":"gsw"}
+    When I am in dimension space point {"language":"mul"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"mul"}
 
   Scenario: Generalize a node where the generalization target is disabled
@@ -117,15 +117,15 @@ Feature: Variation of hidden nodes
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "nodingers-cat"    |
-      | coveredDimensionSpacePoint   | {"language":"mul"} |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "nodingers-cat"      |
+      | coveredDimensionSpacePoint   | {"language":"mul"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateIdentifier | "nodingers-cat"    |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"de"}  |
     And the graph projection is fully up to date
@@ -143,7 +143,7 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "onlyGivenVariant" |
     And the graph projection is fully up to date
 
-    When I am in dimension space point {"language":"gsw"}
+    When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "nodingers-cat" and node path "court-pet" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
 
   Scenario: Peer vary a node where the peer target is enabled
@@ -176,7 +176,7 @@ Feature: Variation of hidden nodes
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "nodingers-cat"      |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
