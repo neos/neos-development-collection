@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Exception;
@@ -53,12 +52,6 @@ class NodeTypeManager
      * @var string
      */
     protected $fallbackNodeTypeName;
-
-    /**
-     * @Flow\Inject
-     * @var StringFrontend
-     */
-    protected $fullConfigurationCache;
 
     /**
      * @var array
@@ -184,25 +177,14 @@ class NodeTypeManager
      */
     protected function loadNodeTypes()
     {
-        $this->fullNodeTypeConfigurations = $this->fullConfigurationCache->get('fullNodeTypeConfigurations') ?: null;
-        $fillFullConfigurationCache = !is_array($this->fullNodeTypeConfigurations);
-
         $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
 
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             if (!is_array($completeNodeTypeConfiguration[$nodeTypeName])) {
                 continue;
             }
-            $nodeType = $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration, (isset($this->fullNodeTypeConfigurations[$nodeTypeName]) ? $this->fullNodeTypeConfigurations[$nodeTypeName] : null));
-            if ($fillFullConfigurationCache) {
-                $this->fullNodeTypeConfigurations[$nodeTypeName] = $nodeType->getFullConfiguration();
-            }
+            $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }
-
-        if ($fillFullConfigurationCache) {
-            $this->fullConfigurationCache->set('fullNodeTypeConfigurations', $this->fullNodeTypeConfigurations);
-        }
-        $this->fullNodeTypeConfigurations = null;
     }
 
     /**
@@ -228,13 +210,12 @@ class NodeTypeManager
      *
      * @param string $nodeTypeName
      * @param array $completeNodeTypeConfiguration the full node type configuration for all node types
-     * @param array $fullNodeTypeConfigurationForType
      * @return NodeType
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
      * @throws Exception
      */
-    protected function loadNodeType($nodeTypeName, array &$completeNodeTypeConfiguration, array $fullNodeTypeConfigurationForType = null)
+    protected function loadNodeType($nodeTypeName, array &$completeNodeTypeConfiguration)
     {
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
             return $this->cachedNodeTypes[$nodeTypeName];

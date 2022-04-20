@@ -97,7 +97,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * @param mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return ($this->fusionValue($offset) !== null);
     }
@@ -108,7 +108,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->fusionValue($offset);
     }
@@ -120,7 +120,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         // no op
     }
@@ -131,7 +131,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         // no op
     }

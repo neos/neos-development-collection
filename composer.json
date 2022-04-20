@@ -40,6 +40,7 @@
         "typo3/neos": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
+        "neos/cli-setup": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
@@ -55,8 +56,7 @@
         "neos/nodetypes-html": "self.version",
         "neos/nodetypes-navigation": "self.version",
         "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version",
-        "neos/cli-setup": "self.version"
+        "neos/site-kickstarter": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",

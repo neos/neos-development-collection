@@ -489,17 +489,18 @@ class ParserTest extends UnitTestCase
     /**
      * @test
      */
-    public function testPhpArrayKeys()
+    public function typeConversionOnPhpArrayKeys()
     {
         // as a reminder how php arrays work ^^
-        $asArrayKey = function ($val) {
+        $asArrayKey = static function ($val) {
             return array_key_first([$val => 'something']);
         };
 
         self::assertSame(-123, $asArrayKey(-123), 'negative digits stay');
         self::assertSame(-123, $asArrayKey('-123'), 'negative string digits will be converted to int');
 
-        self::assertSame(123, $asArrayKey(123.456), 'floats will be converted to int');
+        // shut-up operator to suppress PHP 8.1 warning "Deprecated: Implicit conversion from float 123.456 to int loses precision"
+        @self::assertSame(123, $asArrayKey(123.456), 'floats will be converted to int');
         self::assertSame(123, $asArrayKey('123'), 'small string digits will be converted to int');
         self::assertNotSame('123', $asArrayKey('123'), 'small string digits will be converted to int');
         self::assertSame('1321231232123322123322', $asArrayKey('1321231232123322123322'), 'big string digits as array key stay strings');

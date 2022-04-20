@@ -11,12 +11,6 @@ const init = () => {
     window.NeosCMS.Configuration = {};
   }
 
-  // append vie schema
-  const schemaLink = document.querySelector('link[rel="neos-vieschema"]');
-  if (!isNil(schemaLink)) {
-    window.NeosCMS.Configuration.VieSchemaUri = schemaLink.getAttribute("href");
-  }
-
   // append xliff uri
   const xliffLink = document.querySelector('link[rel="neos-xliff"]');
   if (!isNil(xliffLink)) {
