@@ -13,9 +13,33 @@ prototype(Neos.Neos:RawContent) < prototype(Neos.Fusion:Template) {
 			columnContent = Neos.Neos:ContentCollection {
 				nodePath = '.'
 			}
-
 		}
 	}
+
+  prototype(Neos.Neos:ContentCase) {
+    default {
+      condition = Neos.Fusion:CanRender {
+        type = ${q(node).property('_nodeType.name')}
+      }
+    }
+    fallback {
+      @position = 'after default'
+      condition = true
+      type = 'Neos.Neos:RawContentFallbackRenderer'
+    }
+  }
+}
+
+prototype(Neos.Neos:RawContentFallbackRenderer) < prototype(Neos.Neos:ContentComponent) {
+  label = ${node.label}
+  nodeType = ${q(node).property('_nodeType.name')}
+
+  renderer = afx`
+    <div>
+      <strong>{props.label}</strong>
+      <p>Please create a Fusion prototype for <em>{props.nodeType}</em>.</p>
+    </div>
+  `
 }
 
 rawContent = Neos.Neos:Page {
