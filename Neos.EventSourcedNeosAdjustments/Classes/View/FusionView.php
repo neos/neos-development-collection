@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -26,7 +27,6 @@ use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
 use Neos\Neos\View\FusionViewI18nTrait;
 use Psr\Http\Message\ResponseInterface;
-use function GuzzleHttp\Psr7\parse_response;
 
 /**
  * A Fusion view for Neos
@@ -120,7 +120,7 @@ class FusionView extends AbstractView
     protected function parsePotentialRawHttpResponse($output)
     {
         if ($this->isRawHttpResponse($output)) {
-            return parse_response($output);
+            return Message::parseResponse($output);
         }
 
         return $output;
