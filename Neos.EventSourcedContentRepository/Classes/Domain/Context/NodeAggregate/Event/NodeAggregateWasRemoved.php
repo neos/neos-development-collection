@@ -37,7 +37,8 @@ final class NodeAggregateWasRemoved implements
         public readonly UserIdentifier $initiatingUserIdentifier,
         /** {@see RemoveNodeAggregate::$removalAttachmentPoint} for detailed docs what this is used for. */
         public readonly ?NodeAggregateIdentifier $removalAttachmentPoint = null
-    ) {}
+    ) {
+    }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {

@@ -43,11 +43,11 @@ final class RemoveNodeAggregate implements
          * - For this to work, the Neos UI needs to know the identifier of the removed Node, **on the page
          *   where the removal happened** (so that the user can decide to publish a single page INCLUDING the removal
          *   on the page)
-         * - Because this command will *remove* the edge, we cannot know the position in the tree after doing the removal
-         *   anymore.
+         * - Because this command will *remove* the edge,
+         *   we cannot know the position in the tree after doing the removal anymore.
          *
-         * That's why we need this field: For the Neos UI, it stores the document node of the removed node (see Remove.php),
-         * as that is what the UI needs lateron for the change display.
+         * That's why we need this field: For the Neos UI, it stores the document node of the removed node
+         * (see Remove.php), as that is what the UI needs lateron for the change display.
          */
         public readonly ?NodeAggregateIdentifier $removalAttachmentPoint = null
     ) {
