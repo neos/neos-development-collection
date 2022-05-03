@@ -195,7 +195,9 @@ jobs:
 
       - name: Run functional tests
         if: matrix.static-analysis == 'no'
-        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+        run: |
+          ./flow doctrine:migrate
+          bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run behat tests
         if: matrix.static-analysis == 'no'
