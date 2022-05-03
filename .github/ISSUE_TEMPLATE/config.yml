@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Neos Forum
+    url: https://discuss.neos.io/
+    about: The official online forum for questions and discussions around Neos.
+  - name: Neos Slack
+    url: https://slack.neos.io/
+    about: Direct chat of the Neos creators and users.
