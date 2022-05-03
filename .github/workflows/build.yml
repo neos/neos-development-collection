@@ -186,7 +186,7 @@ jobs:
 
       - name: Run Linter
         run: |
-          cd Packages/CR
+          cd Packages/Neos
           composer lint
 
       - name: Run unit tests
