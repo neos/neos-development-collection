@@ -1,0 +1,146 @@
+diff --git a/Neos.Neos/Classes/Domain/Service/FusionService.php b/Neos.Neos/Classes/Domain/Service/FusionService.php
+index f0dc4bd8b..1e831ca3d 100644
+--- a/Neos.Neos/Classes/Domain/Service/FusionService.php
++++ b/Neos.Neos/Classes/Domain/Service/FusionService.php
+@@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Service;
+  * source code.
+  */
+ 
+-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
++use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+ use Neos\Flow\Annotations as Flow;
+ use Neos\Flow\Mvc\Controller\ControllerContext;
+@@ -112,13 +112,13 @@ class FusionService
+     /**
+      * Create a runtime for the given site node
+      *
+-     * @param TraversableNodeInterface $currentSiteNode
++     * @param NodeInterface $currentSiteNode
+      * @param ControllerContext $controllerContext
+      * @return Runtime
+      * @throws \Neos\Fusion\Exception
+      * @throws \Neos\Neos\Domain\Exception
+      */
+-    public function createRuntime(TraversableNodeInterface $currentSiteNode, ControllerContext $controllerContext)
++    public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
+     {
+         $fusionObjectTree = $this->getMergedFusionObjectTree($currentSiteNode);
+         $fusionRuntime = new Runtime($fusionObjectTree, $controllerContext);
+@@ -128,12 +128,12 @@ class FusionService
+     /**
+      * Returns a merged Fusion object tree in the context of the given nodes
+      *
+-     * @param TraversableNodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
++     * @param NodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
+      * @return array The merged object tree as of the given node
+      * @throws \Neos\Neos\Domain\Exception
+      * @throws \Neos\Fusion\Exception
+      */
+-    public function getMergedFusionObjectTree(TraversableNodeInterface $startNode)
++    public function getMergedFusionObjectTree(NodeInterface $startNode)
+     {
+         $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
+ 
+@@ -151,10 +151,10 @@ class FusionService
+     }
+ 
+     /**
+-     * @param TraversableNodeInterface $siteNode
++     * @param NodeInterface $siteNode
+      * @return Site
+      */
+-    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
++    protected function getSiteForSiteNode(NodeInterface $siteNode)
+     {
+         return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
+     }
+diff --git a/Neos.Neos/Classes/Domain/Service/SiteService.php b/Neos.Neos/Classes/Domain/Service/SiteService.php
+index c9ab62afc..ae1bf4d51 100644
+--- a/Neos.Neos/Classes/Domain/Service/SiteService.php
++++ b/Neos.Neos/Classes/Domain/Service/SiteService.php
+@@ -12,7 +12,10 @@ namespace Neos\Neos\Domain\Service;
+  */
+ 
+ use Neos\ContentRepository\Domain\Model\NodeInterface;
++use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
++use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
+ use Neos\Flow\Annotations as Flow;
++use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+ use Neos\Flow\Persistence\PersistenceManagerInterface;
+ use Neos\Media\Domain\Model\Asset;
+ use Neos\Media\Domain\Repository\AssetCollectionRepository;
+@@ -53,6 +56,12 @@ class SiteService
+      */
+     protected $siteRepository;
+ 
++    /**
++     * @Flow\Inject
++     * @var NodeSiteResolvingService
++     */
++    protected $nodeSiteResolvingService;
++
+     /**
+      * @Flow\Inject
+      * @var WorkspaceRepository
+@@ -117,17 +126,17 @@ class SiteService
+      * Note: This is usually triggered by the ContentController::assetUploaded signal
+      *
+      * @param Asset $asset
+-     * @param NodeInterface $node
++     * @param NodeAddress $node
+      * @param string $propertyName
+      * @return void
+      */
+-    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
++    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeAddress $node, string $propertyName)
+     {
+-        $contentContext = $node->getContext();
+-        if (!$contentContext instanceof ContentContext) {
++        $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($node);
++        if ($siteNode === null) {
+             return;
+         }
+-        $site = $contentContext->getCurrentSite();
++        $site = $this->siteRepository->findOneByNodeName($siteNode->getNodeName());
+         if ($site === null) {
+             return;
+         }
+@@ -136,7 +145,11 @@ class SiteService
+             return;
+         }
+         $assetCollection->addAsset($asset);
+-        $this->assetCollectionRepository->update($assetCollection);
++        try {
++            $this->assetCollectionRepository->update($assetCollection);
++        } catch (IllegalObjectTypeException $e) {
++            // 👻
++        }
+     }
+ 
+     /**
+diff --git a/Neos.Neos/Classes/View/FusionView.php b/Neos.Neos/Classes/View/FusionView.php
+index 7af8ad843..190244177 100644
+--- a/Neos.Neos/Classes/View/FusionView.php
++++ b/Neos.Neos/Classes/View/FusionView.php
+@@ -12,6 +12,7 @@ namespace Neos\Neos\View;
+  */
+ 
+ use GuzzleHttp\Psr7\Message;
++use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+ use Neos\Flow\Annotations as Flow;
+ use Neos\Flow\Mvc\View\AbstractView;
+@@ -203,10 +204,10 @@ class FusionView extends AbstractView
+ 
+ 
+     /**
+-     * @param TraversableNodeInterface $currentSiteNode
++     * @param NodeInterface $currentSiteNode
+      * @return \Neos\Fusion\Core\Runtime
+      */
+-    protected function getFusionRuntime(TraversableNodeInterface $currentSiteNode)
++    protected function getFusionRuntime(NodeInterface $currentSiteNode)
+     {
+         if ($this->fusionRuntime === null) {
+             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);

@@ -1,0 +1,21 @@
+{
+    "name": "neos/contentgraph-postgresqladapter",
+    "type": "neos-package",
+    "description": "The PostgreSQL database backend for the Neos content graph",
+    "license": "GPL-3.0+",
+    "require": {
+        "neos/event-sourced-content-repository": "*",
+        "doctrine/dbal": "*",
+        "doctrine/migrations": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentGraph\\PostgreSQLAdapter\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": "Tests"
+        }
+    }
+}

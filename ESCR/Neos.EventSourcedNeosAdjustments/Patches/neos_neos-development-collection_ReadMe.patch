@@ -1,0 +1,13 @@
+diff --git a/Readme.rst b/Readme.rst
+index ea058a6a4..9bb4e8ad0 100644
+--- a/Readme.rst
++++ b/Readme.rst
+@@ -68,3 +68,8 @@ To switch the branch you intend to work on:
+ .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 4.3 currently), or master for new features.
+ 
+ For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
++
++Patched Version
++===============
++
++Note that this development collection was patched by the Event Sourced Neos Adjustments package (see: Packages/CR/Neos.EventSourcedNeosAdjustments/composer.patches.json)

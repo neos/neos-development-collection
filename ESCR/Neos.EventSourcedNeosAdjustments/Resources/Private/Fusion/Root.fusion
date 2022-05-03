@@ -1,0 +1,89 @@
+prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+    workspaceChain = ${Array.join(Array.keys(Neos.EventSourcedNeosAdjustments.Workspace.getWorkspaceChain(subgraph)), ',')}
+    editPreviewMode = ${editPreviewMode}
+    dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
+}
+
+prototype(Neos.Neos:NodeUri) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
+}
+
+prototype(Neos.Neos:DimensionsMenuItems) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuItemsImplementation'
+}
+
+prototype(Neos.Neos:MenuItems) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuItemsImplementation'
+}
+
+prototype(Neos.Neos:ContentCollection) {
+    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath)}
+    // TODO FIX ME HERE!!!
+    @cache.maximumLifetime = ${null}
+}
+
+prototype(Neos.Neos:ContentCollectionRenderer) {
+    @context.nodeAvailable = ${node}
+    @process.appendRemovedContentForBackend = ${value}
+}
+
+prototype(Neos.Neos:ContentElementEditable) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementEditableImplementation'
+}
+
+prototype(Neos.Neos:ContentElementWrapping) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementWrappingImplementation'
+}
+
+prototype(Neos.Neos:ConvertUris) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ConvertUrisImplementation'
+}
+
+// Exception Handler
+prototype(Neos.Neos:Content) {
+    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+}
+prototype(Neos.Neos:ContentCollection) {
+    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+}
+prototype(Neos.Neos:ContentComponent) {
+    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+}
+prototype(Neos.Neos:Shortcut) {
+    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+}
+
+// Last-Visited-Node Script
+prototype(Neos.Neos:Page) {
+    lastVisitedNodeScript.attributes.data-neos-node = ${Neos.EventSourcedNeosAdjustments.Node.nodeAddressToString(node)}
+    neosBackendMetaData = null
+}
+
+
+// Neos UI Backend conditions change
+prototype(Neos.Neos:Page) {
+    head {
+        javascriptBackendInformation {
+            @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+            @cache.entryIdentifier.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+        }
+        guestFrameApplication {
+            @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+        }
+    }
+
+    newNeosBackendWrappingElement.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+    neosBackendNotification.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+
+    // TODO: fix me
+    neosUiNonRenderedNodeMetadata = null
+
+
+}
+
+prototype(Neos.Neos:Editable) {
+  // TODO: add props.node.context.currentRenderingMode.edit
+  renderer.editable.condition = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(props.node)}
+}
+
+

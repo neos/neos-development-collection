@@ -1,0 +1,17 @@
+Neos:
+  ESCR:
+    Export:
+      presets:
+        'default':
+          parameters:
+            sitePackage: []
+          fileSystem:
+            factory: Neos\ESCR\Export\Filesystem\LocalFilesystemFactory
+            options:
+              #location: 'resource://{parameters.sitePackage}/Private/Content2'
+              location: '/Users/bwaidelich/Projekte/Neos/neos-event-sourced/Data/out'
+          middlewares:
+            'asset':
+              className: Neos\ESCR\Export\Middleware\Asset\AssetMiddleware
+#            'events':
+#              className: Neos\ESCR\Export\Middleware\Event\NeosEventMiddleware

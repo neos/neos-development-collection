@@ -1,0 +1,12 @@
+Neos:
+  EventSourcedContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true
+        activeContentGraphs:
+          'DoctrineDBAL': 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
+
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true

@@ -1,0 +1,53 @@
+diff --git a/Classes/Indexer/AbstractNodeIndexer.php b/Classes/Indexer/AbstractNodeIndexer.php
+index 979d546..c950bac 100644
+--- a/Classes/Indexer/AbstractNodeIndexer.php
++++ b/Classes/Indexer/AbstractNodeIndexer.php
+@@ -14,11 +14,11 @@ namespace Neos\ContentRepository\Search\Indexer;
+  */
+ 
+ use Neos\Eel\Utility as EelUtility;
++use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+ use Neos\Flow\Annotations as Flow;
+ use Neos\Flow\Configuration\ConfigurationManager;
+ use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+-use Neos\ContentRepository\Domain\Model\NodeInterface;
+ use Neos\ContentRepository\Search\Exception\IndexingException;
+ 
+ /**
+diff --git a/Classes/Indexer/NodeIndexerInterface.php b/Classes/Indexer/NodeIndexerInterface.php
+index a94dbe7..11fc7e7 100644
+--- a/Classes/Indexer/NodeIndexerInterface.php
++++ b/Classes/Indexer/NodeIndexerInterface.php
+@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Search\Indexer;
+  */
+ 
+ use Neos\Flow\Annotations as Flow;
+-use Neos\ContentRepository\Domain\Model\NodeInterface;
++use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+ 
+ /**
+  * Indexer for Content Repository Nodes.
+diff --git a/Classes/Indexer/NodeIndexingManager.php b/Classes/Indexer/NodeIndexingManager.php
+index e3e9839..ec2078c 100644
+--- a/Classes/Indexer/NodeIndexingManager.php
++++ b/Classes/Indexer/NodeIndexingManager.php
+@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Search\Indexer;
+  * source code.
+  */
+ 
++use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+ use Neos\Flow\Annotations as Flow;
+-use Neos\ContentRepository\Domain\Model\NodeInterface;
+ use Neos\ContentRepository\Domain\Model\Workspace;
+ 
+ /**
+@@ -82,7 +82,7 @@ class NodeIndexingManager
+     public function indexNode(NodeInterface $node, Workspace $targetWorkspace = null)
+     {
+         // if this is triggered via afterNodePublishing, it could be a deletion, check and handle
+-        if ($node->isRemoved() && $targetWorkspace !== null && $targetWorkspace->getBaseWorkspace() === null) {
++        if (/* TODO $node->isRemoved() &&*/ $targetWorkspace !== null && $targetWorkspace->getBaseWorkspace() === null) {
+             $this->removeNode($node, $targetWorkspace);
+         } else {
+             $this->nodesToBeRemoved->detach($node);

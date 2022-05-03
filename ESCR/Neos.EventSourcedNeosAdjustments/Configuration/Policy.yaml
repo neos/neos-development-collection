@@ -1,0 +1,49 @@
+
+privilegeTargets:
+
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\EventSourcedFrontController\EventSourcedNodeController->showAction())'
+
+    'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\EventSourcedFrontController\EventSourcedNodeController->previewAction()) || method(Neos\EventSourcedNeosAdjustments\Ui\Controller\(BackendController|BackendServiceController)->.*()) || method(Neos\EventSourcedNeosAdjustments\ServiceControllers\ServiceNodesController->indexAction())'
+
+
+
+    'Neos.EventSourcedNeosAdjustments:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
+
+    'Neos.EventSourcedNeosAdjustments:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
+
+    'Neos.EventSourcedNeosAdjustments:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
+
+roles:
+
+  'Neos.Flow:Everybody':
+    privileges:
+      -
+        privilegeTarget: 'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess'
+        permission: GRANT
+  'Neos.Neos:AbstractEditor':
+    privileges:
+      -
+        privilegeTarget: 'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+        permission: GRANT
+
+  'Neos.Neos:Administrator':
+    privileges:
+      - privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        permission: GRANT
+
+      - privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+        permission: GRANT

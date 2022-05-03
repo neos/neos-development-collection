@@ -1,0 +1,114 @@
+Flowpack:
+  JobQueue:
+    Common:
+      queues:
+        # By default we use the Fake Queue that doesn't need a background process
+        # For better performance/scale you should consider using a proper job queue backend
+        # See https://github.com/Flowpack/jobqueue-common for more details
+        'neos-contentCacheFlusher':
+          className: 'Flowpack\JobQueue\Common\Queue\FakeQueue'
+          options:
+            async: true
+
+
+Neos:
+  EventSourcedNeosAdjustments:
+    contentCacheFlusher:
+      queueName: 'neos-contentCacheFlusher'
+    contentDimensions:
+      resolution:
+        uriPathSegmentDelimiter: '_'
+
+    # TODO: re-enable cache!!
+    fusion:
+      enableObjectTreeCache: false
+  Flow:
+    http:
+      middlewares:
+        'detectContentSubgraph':
+          position: 'before routing'
+          middleware: 'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
+    error:
+      debugger:
+        ignoredClasses:
+          'Neos\\ContentRepository\\Domain\\Model\\NodeType': true
+          'Neos\\Eel\\CompilingEvaluator': true
+          'Neos\\EventSourcedContentRepository\\Domain\\Projection\\Content\\PropertyCollection': true
+          'Neos\\Fusion\\FusionObjects\\Helpers\\FusionPathProxy': true
+          'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
+          'Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.*': true
+
+  ContentRepository:
+    labelGenerator:
+      eel:
+        defaultContext:
+          Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
+  Fusion:
+    defaultContext:
+      Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
+      # TODO: maybe this helper must be exposed as Neos.Node
+      Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
+      Neos.Link: Neos\EventSourcedNeosAdjustments\Fusion\Helper\LinkHelper
+      Neos.Caching: Neos\EventSourcedNeosAdjustments\Fusion\Helper\CachingHelper
+      Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
+      Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
+  Neos:
+    modules:
+      management:
+        submodules:
+          workspaces:
+            controller: 'Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller\WorkspacesController'
+    fusion:
+      autoInclude:
+        Neos.EventSourcedNeosAdjustments: true
+    Ui:
+
+      configurationDefaultEelContext:
+        Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
+        Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
+        Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
+
+      initialState:
+        cr:
+          nodes:
+            byContextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.defaultNodesForBackend(site, documentNode, controllerContext)}'
+            siteNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(site)}'
+            documentNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
+          contentDimensions:
+            # TODO: re-enable dimensions
+            byName: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.contentDimensionsByName()}'
+            active: '${subgraph.dimensionSpacePoint.toLegacyDimensionArray()}'
+            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
+          workspaces:
+            personalWorkspace: '${Neos.EventSourcedNeosAdjustments.Workspace.getPersonalWorkspace()}'
+        ui:
+          contentCanvas:
+            src: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
+            contextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
+      documentNodeInformation:
+        metaData:
+          documentNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
+          siteNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(site)}'
+
+          previewUrl: '${documentNode == null ? "" : Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.redirectUri(documentNode, controllerContext)}'
+
+          contentDimensions:
+            active: '${documentNode.dimensionSpacePoint.toLegacyDimensionArray()}'
+            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
+          documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
+          url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
+
+      changes:
+        types:
+          'Neos.Neos.Ui:Property': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Property
+          'Neos.Neos.Ui:CreateInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Create
+          'Neos.Neos.Ui:CreateAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateAfter
+          'Neos.Neos.Ui:CreateBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateBefore
+          'Neos.Neos.Ui:RemoveNode': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Remove
+          'Neos.Neos.Ui:MoveInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveInto
+          'Neos.Neos.Ui:MoveAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveAfter
+          'Neos.Neos.Ui:MoveBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveBefore
+          'Neos.Neos.Ui:CopyInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyInto
+          'Neos.Neos.Ui:CopyAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyAfter
+          'Neos.Neos.Ui:CopyBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyBefore
+

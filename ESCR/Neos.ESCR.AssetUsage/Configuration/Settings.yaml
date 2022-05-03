@@ -1,0 +1,7 @@
+Neos:
+  EventSourcing:
+    EventStore:
+      stores:
+        'ContentRepository':
+          listeners:
+            'Neos\ESCR\AssetUsage\.*': true

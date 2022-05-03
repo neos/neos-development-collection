@@ -1,0 +1,12 @@
+# AS SOON AS POSTGRES IS FINISHED, RE-ENABLE THE BELOW CONFIG BY DEFAULT
+Neos:
+  EventSourcedContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+        activeContentGraphs:
+          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
