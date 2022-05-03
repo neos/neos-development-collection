@@ -30,31 +30,26 @@ class UserRepository extends Repository
 
     /**
      * @return QueryResultInterface
+     * @deprecated
      */
     public function findAllOrderedByUsername(): QueryResultInterface
     {
-        return $this->createQuery()
-            ->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])
-            ->execute();
+        return $this->findAllOrdered('accountIdentifier');
     }
 
-    /**
-     * @param bool $sortDescending
-     * @return QueryResultInterface
-     */
-    public function findAllOrderedByLastLoggedInDate(bool $sortDescending): QueryResultInterface
+    public function findAllOrdered(string $fieldName, string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
     {
+        $allowedFieldNames = ['accounts.accountIdentifier', 'accounts.lastSuccessfulAuthenticationDate', 'name.fullName'];
+
+        if (!in_array($fieldName, $allowedFieldNames)) {
+            throw new \InvalidArgumentException(sprintf('The field name "%s" is invalid, must be one of %s', $fieldName, implode(',', $allowedFieldNames)), 1651580413);
+        }
+
         return $this->createQuery()
-            ->setOrderings(['accounts.lastSuccessfulAuthenticationDate' => $sortDescending ? QueryInterface::ORDER_DESCENDING : QueryInterface::ORDER_ASCENDING])
+            ->setOrderings([$fieldName => $sortDirection])
             ->execute();
     }
 
-    /**
-     * @param string $searchTerm
-     * @param string $sortBy Can be SORT_BY_LASTLOGGEDIN or empty
-     * @param string $sortDirection Can be SORT_DIRECTION_DESC or empty
-     * @return QueryResultInterface
-     */
     public function findBySearchTerm(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
         try {
@@ -65,7 +60,7 @@ class UserRepository extends Repository
                     $query->like('name.fullName', '%' . $searchTerm . '%')
                 )
             );
-            return $query->setOrderings([$sortBy === self::SORT_BY_LASTLOGGEDIN ? 'accounts.lastSuccessfulAuthenticationDate' : 'accounts.accountIdentifier' => $sortDirection === self::SORT_DIRECTION_DESC ? QueryInterface::ORDER_DESCENDING : QueryInterface::ORDER_ASCENDING])->execute();
+            return $query->setOrderings([$sortBy => $sortDirection])->execute();
         } catch (\Neos\Flow\Persistence\Exception\InvalidQueryException $e) {
             throw new \RuntimeException($e->getMessage(), 1557767046, $e);
         }

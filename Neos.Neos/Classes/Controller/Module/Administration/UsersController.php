@@ -20,6 +20,7 @@ use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
@@ -112,7 +113,7 @@ class UsersController extends AbstractModuleController
      * @param string $sortDirection
      * @return void
      */
-    public function indexAction(string $searchTerm = '', string $sortBy = '', string $sortDirection = UserRepository::SORT_DIRECTION_DESC): void
+    public function indexAction(string $searchTerm = '', string $sortBy = 'accounts.accountIdentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): void
     {
         if (empty($searchTerm)) {
             $users = $this->userService->getUsers($sortBy, $sortDirection);

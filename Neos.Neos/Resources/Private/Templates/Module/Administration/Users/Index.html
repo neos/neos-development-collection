@@ -24,32 +24,14 @@
 			<table class="neos-table">
 					<thead>
 						<tr>
-							<th><neos:backend.translate id="users.name" source="Modules" package="Neos.Neos"/></th>
-							<th><neos:backend.translate id="users.accountsAndRoles" source="Modules" package="Neos.Neos"/></th>
 							<th>
-								<f:if condition="{sortBy} === 'LastLoggedIn'">
-									<f:then>
-										<f:if condition="{sortDirection} === 'ASC'">
-											<f:then>
-												<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
-													<neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/>
-												</f:link.action>
-												<i class="fas fa-caret-up"></i>
-											</f:then>
-											<f:else>
-												<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
-													<neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/>
-												</f:link.action>
-												<i class="fas fa-caret-down"></i>
-											</f:else>
-										</f:if>
-									</f:then>
-									<f:else>
-										<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'LastLoggedIn'}" addQueryString="TRUE">
-											<neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/>
-										</f:link.action>
-									</f:else>
-								</f:if>
+								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'name.fullName', labelIdentifier:'users.name'}" />
+							</th>
+							<th>
+								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'accounts.accountIdentifier', labelIdentifier:'users.accountsAndRoles'}" />
+							</th>
+							<th>
+								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'accounts.lastSuccessfulAuthenticationDate', labelIdentifier:'users.lastLogin'}" />
 							</th>
 							<th>&nbsp;</th>
 						</tr>
@@ -143,4 +125,30 @@
 	<div class="neos-footer">
 		<f:link.action action="new" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.actions.new.label', source: 'Modules', package: 'Neos.Neos')}"><neos:backend.translate id="users.actions.new.label" source="Modules" package="Neos.Neos"/></f:link.action>
 	</div>
+</f:section>
+
+<f:section name="headerLabel">
+	<f:if condition="{sortBy} === {sortingField}">
+		<f:then>
+			<f:if condition="{sortDirection} === 'ASC'">
+				<f:then>
+					<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC', sortBy: sortingField}" addQueryString="TRUE">
+						<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+					</f:link.action>
+					<i class="fas fa-caret-up"></i>
+				</f:then>
+				<f:else>
+					<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC', sortBy: sortingField}" addQueryString="TRUE">
+						<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+					</f:link.action>
+					<i class="fas fa-caret-down"></i>
+				</f:else>
+			</f:if>
+		</f:then>
+		<f:else>
+			<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: sortingField}" addQueryString="TRUE">
+				<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+			</f:link.action>
+		</f:else>
+	</f:if>
 </f:section>
