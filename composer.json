@@ -11,20 +11,19 @@
         "php": "^8.0",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/flow": "*",
         "neos/cache": "*",
+        "neos/utility-arrays": "*",
+        "neos/flow": "*",
         "neos/eel": "*",
         "neos/fluid-adaptor": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
-        "neos/utility-arrays": "*",
         "doctrine/orm": "^2.6",
         "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "~1.0",
         "neos/event-sourcing": "*",
         "webmozart/assert": "^1.10",
         "neos/neos-ui": "*",
-        "neos/content-repository-dimensionspace": "*",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
@@ -49,6 +48,7 @@
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
+        "neos/content-repository-dimensionspace": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
@@ -91,6 +91,9 @@
             ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
+            ],
+            "Neos\\ContentRepository\\DimensionSpace\\": [
+                "Neos.ContentRepository.DimensionSpace/Classes"
             ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/Classes"
@@ -179,6 +182,9 @@
             ],
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
+            ],
+            "Neos\\ContentRepository\\DimensionSpace\\Tests\\": [
+                "Neos.ContentRepository.DimensionSpace/Tests"
             ],
             "Neos\\ContentRepository\\Tests\\": [
                 "Neos.ContentRepository/Tests"
