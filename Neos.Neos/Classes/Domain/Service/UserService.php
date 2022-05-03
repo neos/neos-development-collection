@@ -841,7 +841,7 @@ class UserService
      * @param bool $keepCurrentSession
      * @throws SessionNotStartedException
      */
-    public function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
+    private function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
     {
         $sessionToKeep = $keepCurrentSession ? $this->sessionManager->getCurrentSession() : null;
 
