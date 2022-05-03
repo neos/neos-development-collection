@@ -28,9 +28,6 @@
 .. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
    :target: https://twitter.com/NeosCMS
    :alt: Twitter
-.. |Pull Reminders| image:: https://pullreminders.com/badge.svg
-   :target: https://pullreminders.com?ref=badge
-   :alt: Pull Reminders
 
 ---------------------------
 Neos development collection
