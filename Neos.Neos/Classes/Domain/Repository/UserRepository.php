@@ -25,8 +25,6 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class UserRepository extends Repository
 {
-    const SORT_BY_LASTLOGGEDIN = 'LastLoggedIn';
-    const SORT_DIRECTION_DESC = 'DESC';
 
     /**
      * @return QueryResultInterface
@@ -34,7 +32,7 @@ class UserRepository extends Repository
      */
     public function findAllOrderedByUsername(): QueryResultInterface
     {
-        return $this->findAllOrdered('accountIdentifier');
+        return $this->findAllOrdered('accounts.accountIdentifier');
     }
 
     public function findAllOrdered(string $fieldName, string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
