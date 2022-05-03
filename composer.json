@@ -9,6 +9,8 @@
         "neos/flow-development-collection": "dev-master",
         "neos/neos-setup": "^1.0",
         "php": "^8.0",
+        "doctrine/dbal": "^2.8",
+        "doctrine/migrations": "*",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -19,18 +21,21 @@
         "doctrine/orm": "^2.6",
         "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "~1.0",
+        "neos/event-sourcing": "*",
+        "webmozart/assert": "^1.10",
+        "neos/neos-ui": "*",
+        "neos/content-repository-dimensionspace": "*",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
-        "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "dev-master"
+        "neos/kickstarter": "*"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -41,8 +46,17 @@
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "neos/cli-setup": "self.version",
+        "neos/contentgraph-doctrinedbaladapter": "self.version",
+        "neos/contentgraph-postgresqladapter": "self.version",
+        "neos/contentrepository-behavioraltests": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
+        "neos/escr-asset-usage": "self.version",
+        "neos/escr-export": "self.version",
+        "neos/eventsourcedcontentrepository-legacyapi": "self.version",
+        "neos/eventsourcedcontentrepository-security": "self.version",
+        "neos/event-sourced-content-repository": "self.version",
+        "neos/event-sourced-neos-adjustments": "self.version",
         "neos/fusion-afx": "self.version",
         "neos/fusion": "self.version",
         "neos/media-browser": "self.version",
@@ -69,11 +83,38 @@
             "Neos\\CliSetup\\": [
                 "Neos.CliSetup/Classes"
             ],
+            "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
+                "Neos.ContentGraph.DoctrineDbalAdapter/Classes"
+            ],
+            "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
+                "Neos.ContentGraph.PostgreSQLAdapter/Classes"
+            ],
+            "Neos\\ContentRepository\\BehavioralTests\\": [
+                "Neos.ContentRepository.BehavioralTests/Classes"
+            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/Classes"
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
+            ],
+            "Neos\\ESCR\\AssetUsage\\": [
+                "Neos.ESCR.AssetUsage/Classes/"
+            ],
+            "Neos\\ESCR\\Export\\": [
+                "Neos.ESCR.Export/Classes/"
+            ],
+            "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
+                "Neos.EventSourcedContentRepository.LegacyApi/Classes"
+            ],
+            "Neos\\EventSourcedContentRepository\\Security\\": [
+                "Neos.EventSourcedContentRepository.Security/Classes"
+            ],
+            "Neos\\EventSourcedContentRepository\\": [
+                "Neos.EventSourcedContentRepository/Classes"
+            ],
+            "Neos\\EventSourcedNeosAdjustments\\": [
+                "Neos.EventSourcedNeosAdjustments/Classes"
             ],
             "Neos\\Fusion\\Afx\\": [
                 "Neos.Fusion.Afx/Classes"
@@ -133,8 +174,20 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
+                "Neos.ContentGraph.PostgreSQLAdapter/Tests"
+            ],
+            "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
+                "Neos.ContentRepository.BehavioralTests/Tests"
+            ],
             "Neos\\ContentRepository\\Tests\\": [
                 "Neos.ContentRepository/Tests"
+            ],
+            "Neos\\EventSourcedContentRepository\\LegacyApi\\Tests\\": [
+                "Neos.EventSourcedContentRepository.LegacyApi/Tests"
+            ],
+            "Neos\\EventSourcedContentRepository\\Tests\\": [
+                "Neos.EventSourcedContentRepository/Tests"
             ],
             "Neos\\Fusion\\Afx\\Tests\\": [
                 "Neos.Fusion.Afx/Tests"
@@ -154,6 +207,8 @@
         }
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.0"
     }
 }
