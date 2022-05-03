@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1']
+        php-versions: ['8.1']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mariadb:
-        image: mariadb:10.2
+        image: mariadb:10.4
         env:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
@@ -54,11 +54,12 @@ jobs:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:9.5-alpine
+        image: postgres:13.2
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
           POSTGRES_DB: flow_functional_testing
+          POSTGRES_ROOT_PASSWORD: neos
         ports:
           - "5432:5432"
         options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
@@ -75,6 +76,7 @@ jobs:
 
     env:
       FLOW_CONTEXT: Testing
+      NEOS_TARGET_VERSION: 9.0
       NEOS_DIST_FOLDER: neos-development-distribution
       NEOS_FOLDER: neos-development-collection
 
@@ -150,6 +152,29 @@ jobs:
               mvc:
                 routes:
                   'Neos.Flow': TRUE
+            ContentGraph:
+              PostgreSQLAdapter:
+                persistence:
+                  backendOptions:
+                    host: '127.0.0.1'
+                    port: 5432
+                    dbname: 'flow_functional_testing'
+                    user: 'neos'
+                    password: 'neos'
+          EOF
+          mkdir Configuration/Testing/Postgres
+          cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  charset: 'UTF8'
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
           ./flow configuration:show
@@ -158,6 +183,11 @@ jobs:
       #- name: Static analysis
       #  if: matrix.static-analysis == 'psalm'
       #  run: composer test-static
+
+      - name: Run Linter
+        run: |
+          cd Packages/CR
+          composer lint
 
       - name: Run unit tests
         if: matrix.static-analysis == 'no'
@@ -176,6 +206,12 @@ jobs:
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
+
+      - name: Run CR Tests
+        run: |
+          FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
+          cd Packages/Neos
+          composer test
 
       - name: Setup Flow configuration (PGSQL)
         run: |
