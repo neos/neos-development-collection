@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Migration\Exception\InvalidMigrationConfiguration;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -31,7 +31,7 @@ class RemoveNode implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    private ?NodeVariantSelectionStrategyIdentifier $strategy = null;
+    private ?NodeVariantSelectionStrategy $strategy = null;
 
     private ?DimensionSpacePoint $overriddenDimensionSpacePoint = null;
 
@@ -42,7 +42,7 @@ class RemoveNode implements NodeBasedTransformationInterface
 
     public function setStrategy(string $strategy): void
     {
-        $this->strategy = NodeVariantSelectionStrategyIdentifier::from($strategy);
+        $this->strategy = NodeVariantSelectionStrategy::from($strategy);
     }
 
     /**
@@ -62,12 +62,12 @@ class RemoveNode implements NodeBasedTransformationInterface
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult {
         if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
-            $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_ONLY_GIVEN_VARIANT;
+            $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ONLY_GIVEN_VARIANT;
         } elseif ($this->strategy === null) {
-            $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS;
+            $this->strategy = NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS;
         }
 
-        if ($this->strategy === NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS) {
+        if ($this->strategy === NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS) {
             throw new InvalidMigrationConfiguration(
                 'For RemoveNode, the strategy allVariants is not supported, as this would lead to nodes'
                     . ' being deleted which might potentially not be matched by this filter.'
@@ -83,7 +83,7 @@ class RemoveNode implements NodeBasedTransformationInterface
             return CommandResult::createEmpty();
         }
 
-        return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(RemoveNodeAggregate::create(
+        return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
             $contentStreamForWriting,
             $node->getNodeAggregateIdentifier(),
             $coveredDimensionSpacePoint,

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -21,45 +23,21 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class NodeAggregateWasRemoved implements
     DomainEventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints;
-
-    private DimensionSpacePointSet $affectedCoveredDimensionSpacePoints;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    /**
-     * {@see RemoveNodeAggregate::$removalAttachmentPoint} for detailed docs what this is used for.
-     *
-     * @var NodeAggregateIdentifier|null
-     */
-    private ?NodeAggregateIdentifier $removalAttachmentPoint;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
-        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
-        UserIdentifier $initiatingUserIdentifier,
-        ?NodeAggregateIdentifier $removalAttachmentPoint = null
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
+        public readonly DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+        /** {@see RemoveNodeAggregate::$removalAttachmentPoint} for detailed docs what this is used for. */
+        public readonly ?NodeAggregateIdentifier $removalAttachmentPoint = null
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->affectedOccupiedDimensionSpacePoints = $affectedOccupiedDimensionSpacePoints;
-        $this->affectedCoveredDimensionSpacePoints = $affectedCoveredDimensionSpacePoints;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->removalAttachmentPoint = $removalAttachmentPoint;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -70,29 +48,6 @@ final class NodeAggregateWasRemoved implements
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
-    }
-
-    public function getAffectedOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet
-    {
-        return $this->affectedOccupiedDimensionSpacePoints;
-    }
-
-    public function getAffectedCoveredDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        return $this->affectedCoveredDimensionSpacePoints;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    /**
-     * @return NodeAggregateIdentifier|null
-     */
-    public function getRemovalAttachmentPoint(): ?NodeAggregateIdentifier
-    {
-        return $this->removalAttachmentPoint;
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self

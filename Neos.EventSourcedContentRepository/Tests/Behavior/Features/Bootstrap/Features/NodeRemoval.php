@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\EventStore\StreamName;
 
@@ -58,12 +58,15 @@ trait NodeRemoval
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
 
-        $command = RemoveNodeAggregate::create(
+        $command = new RemoveNodeAggregate(
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             $coveredDimensionSpacePoint,
-            NodeVariantSelectionStrategyIdentifier::from($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserIdentifier
+            NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
+            $initiatingUserIdentifier,
+            isset($commandArguments['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($commandArguments['removalAttachmentPoint'])
+                : null
         );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

@@ -62,9 +62,9 @@ trait NodeVariation
                     $this->getDatabaseConnection()
                 );
             }
-            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
-                $sourceNode->relationAnchorPoint,
+            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
                 $event->contentStreamIdentifier,
+                $sourceNode->nodeAggregateIdentifier,
                 $event->specializationCoverage
             ) as $hierarchyRelation) {
                 $hierarchyRelation->assignNewParentNode(

@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
@@ -955,13 +956,12 @@ WHERE
     }
 
     /**
-     * @param array<int|string,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findSubtrees(
-        array $entryNodeAggregateIdentifiers,
+        NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
@@ -1026,12 +1026,7 @@ select * from tree
 order by level asc, position asc;')
             ->parameter(
                 'entryNodeAggregateIdentifiers',
-                array_map(
-                    function (NodeAggregateIdentifier $nodeAggregateIdentifier): string {
-                        return (string)$nodeAggregateIdentifier;
-                    },
-                    $entryNodeAggregateIdentifiers
-                ),
+                $entryNodeAggregateIdentifiers->toStringArray(),
                 Connection::PARAM_STR_ARRAY
             )
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)

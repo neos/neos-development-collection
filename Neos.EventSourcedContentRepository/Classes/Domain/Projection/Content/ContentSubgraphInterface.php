@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
@@ -155,14 +156,8 @@ interface ContentSubgraphInterface extends \JsonSerializable
      */
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
-    /**
-     * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers
-     * @param int $maximumLevels
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @return SubtreeInterface
-     */
     public function findSubtrees(
-        array $entryNodeAggregateIdentifiers,
+        NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface;

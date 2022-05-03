@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits;
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
@@ -29,12 +28,8 @@ trait RemoveNodeAggregateTrait
                 new NodeAggregateWasRemoved(
                     $tetheredNodeAggregate->getContentStreamIdentifier(),
                     $tetheredNodeAggregate->getIdentifier(),
-                    AffectedOccupiedDimensionSpacePointSet::allVariants(
-                        $tetheredNodeAggregate
-                    ),
-                    AffectedCoveredDimensionSpacePointSet::allVariants(
-                        $tetheredNodeAggregate
-                    ),
+                    $tetheredNodeAggregate->getOccupiedDimensionSpacePoints(),
+                    $tetheredNodeAggregate->getCoveredDimensionSpacePoints(),
                     UserIdentifier::forSystemUser()
                 ),
                 Uuid::uuid4()->toString()

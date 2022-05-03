@@ -29,7 +29,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 /** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd */
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
@@ -250,7 +250,7 @@ class Property extends AbstractChange
                                     $subject->getContentStreamIdentifier(),
                                     $subject->getNodeAggregateIdentifier(),
                                     $subject->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-                                    NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
+                                    NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS,
                                     $userIdentifier
                                 )
                             );
@@ -261,7 +261,7 @@ class Property extends AbstractChange
                                     $subject->getContentStreamIdentifier(),
                                     $subject->getNodeAggregateIdentifier(),
                                     $subject->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-                                    NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
+                                    NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS,
                                     $userIdentifier
                                 )
                             );

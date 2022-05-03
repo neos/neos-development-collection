@@ -1,97 +1,58 @@
-@fixtures @adapters=DoctrineDBAL
+@fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Enable a node aggregate
 
   As a user of the CR I want to enable a node aggregate and expect its descendants to also be enabled unless otherwise disabled.
 
   These are the test cases without dimensions being involved
 
-  # TODO
   Background:
     Given I have no content dimensions
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        references:
+          type: references
     """
-    And the event RootWorkspaceWasCreated was published with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                  |
-      | contentStreamIdentifier     | "cs-identifier"                        |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
-      | nodeTypeName                | "Neos.ContentRepository:Root"          |
-      | coveredDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification | "root"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "preceding-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      | nodeName                      | "preceding-document"                      |
-      | nodeAggregateClassification   | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "succeeding-nodenborough"                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      | nodeName                      | "succeeding-document"                     |
-      | nodeAggregateClassification   | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
-      | nodeName                      | "child-document"                          |
-      | nodeAggregateClassification   | "regular"                                 |
-    And the event NodeReferencesWereSet was published with payload:
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key                     | Value                         |
+      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName |
+      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document |
+      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
+      | succeeding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
+      | nody-mc-nodeface  | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document |
+    And the command SetNodeReferences is executed with payload:
       | Key                                 | Value                      |
-      | contentStreamIdentifier             | "cs-identifier"            |
       | sourceNodeAggregateIdentifier       | "preceding-nodenborough"   |
-      | sourceOriginDimensionSpacePoint     | {}                         |
       | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
       | referenceName                       | "references"               |
     And the graph projection is fully up to date
 
   Scenario: Enable a previously disabled node with arbitrary strategy since dimensions are not involved
-    Given the event NodeAggregateWasDisabled was published with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | initiatingUserIdentifier     | "user"                   |
 
     Then I expect exactly 9 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
@@ -159,25 +120,21 @@ Feature: Enable a node aggregate
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
 
   Scenario: Enable a previously disabled node with explicitly disabled child nodes with arbitrary strategy since dimensions are not involved
-    Given the event NodeAggregateWasDisabled was published with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-    And the event NodeAggregateWasDisabled was published with payload:
-      | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | affectedDimensionSpacePoints | [{}]               |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+    And the graph projection is fully up to date
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateIdentifier      | "nody-mc-nodeface"       |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | initiatingUserIdentifier     | "user"                   |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected                 |
@@ -240,26 +197,21 @@ Feature: Enable a node aggregate
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
   Scenario: Enable a previously disabled node with explicitly disabled parent node with arbitrary strategy since dimensions are not involved
-    Given the event NodeAggregateWasDisabled was published with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-      | affectedDimensionSpacePoints | [{}]                     |
-    And the event NodeAggregateWasDisabled was published with payload:
-      | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+    And the graph projection is fully up to date
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                    |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | affectedDimensionSpacePoints | [{}]               |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
-      | initiatingUserIdentifier     | "user"             |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected           |

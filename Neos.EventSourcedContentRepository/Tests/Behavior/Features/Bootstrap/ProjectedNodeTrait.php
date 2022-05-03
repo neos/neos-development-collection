@@ -133,7 +133,12 @@ trait ProjectedNodeTrait
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
             $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
-            Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $nodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '" and adapter "' . $adapterName . '"');
+            Assert::assertNull(
+                $nodeByAggregateIdentifier,
+                'A node was found by node aggregate identifier "' . $nodeAggregateIdentifier
+                    . '" in content subgraph {' . $this->dimensionSpacePoint . ',' . $this->contentStreamIdentifier
+                    . '} and adapter "' . $adapterName . '"'
+            );
         }
     }
 
@@ -514,7 +519,7 @@ trait ProjectedNodeTrait
             foreach ($expectedPrecedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                 $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualSiblings[$index]);
-                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findPrecedingSiblings: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findPrecedingSiblings: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
             }
         });
     }
@@ -545,7 +550,7 @@ trait ProjectedNodeTrait
             foreach ($expectedSucceedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                 $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualSiblings[$index]);
-                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findSucceedingSiblings: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findSucceedingSiblings: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
             }
         });
     }

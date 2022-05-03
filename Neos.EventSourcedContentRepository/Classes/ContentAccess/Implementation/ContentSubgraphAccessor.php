@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
@@ -103,9 +104,9 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
-        $entryNodeAggregateIdentifiers = array_map(function (NodeInterface $node) {
+        $entryNodeAggregateIdentifiers = NodeAggregateIdentifiers::fromArray(array_map(function (NodeInterface $node) {
             return $node->getNodeAggregateIdentifier();
-        }, $entryNodes);
+        }, $entryNodes));
         return $this->subgraph->findSubtrees($entryNodeAggregateIdentifiers, $maximumLevels, $nodeTypeConstraints);
     }
 

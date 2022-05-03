@@ -18,6 +18,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -315,7 +316,7 @@ class EventSourcedNodeController extends ActionController
     private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress): void
     {
         $subtree = $subgraph->findSubtrees(
-            [$nodeAddress->nodeAggregateIdentifier],
+            NodeAggregateIdentifiers::fromArray([$nodeAddress->nodeAggregateIdentifier]),
             10,
             $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document')
         );

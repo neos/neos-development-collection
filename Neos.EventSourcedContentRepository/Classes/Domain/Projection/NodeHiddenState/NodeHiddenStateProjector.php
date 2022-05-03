@@ -57,10 +57,10 @@ class NodeHiddenStateProjector implements ProjectorInterface
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
-            foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+            foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 $nodeHiddenState = new NodeHiddenState(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier(),
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
                     $dimensionSpacePoint,
                     true
                 );
@@ -81,9 +81,9 @@ class NodeHiddenStateProjector implements ProjectorInterface
                     AND dimensionspacepointhash IN (:dimensionSpacePointHashes)
             ',
             [
-                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
             ],
             [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY

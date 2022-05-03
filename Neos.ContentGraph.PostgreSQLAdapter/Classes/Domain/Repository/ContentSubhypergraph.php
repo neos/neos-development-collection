@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
@@ -28,6 +29,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
@@ -57,33 +59,18 @@ use Neos\Flow\Annotations as Flow;
  *   - h -> the hierarchy hyperrelation connecting parent and children
  *   - ph -> the hierarchy hyperrelation incoming to the parent (sometimes relevant)
  *
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final class ContentSubhypergraph implements ContentSubgraphInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private DimensionSpacePoint $dimensionSpacePoint;
-
-    private VisibilityConstraints $visibilityConstraints;
-
-    private DbalClient $databaseClient;
-
-    private NodeFactory $nodeFactory;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints,
-        DbalClient $databaseClient,
-        NodeFactory $nodeFactory
+        private ContentStreamIdentifier $contentStreamIdentifier,
+        private DimensionSpacePoint $dimensionSpacePoint,
+        private VisibilityConstraints $visibilityConstraints,
+        private DbalClient $databaseClient,
+        private NodeFactory $nodeFactory
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->visibilityConstraints = $visibilityConstraints;
-        $this->databaseClient = $databaseClient;
-        $this->nodeFactory = $nodeFactory;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -315,7 +302,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $nodeTypeConstraints,
             $limit,
             $offset
-        )->reverse();
+        );
     }
 
     private function findAnySiblings(
@@ -341,6 +328,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         if (!is_null($offset)) {
             $query = $query->withOffset($offset);
         }
+        $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
 
         /** @phpstan-ignore-next-line @todo check actual return type */
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -354,13 +342,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findSubtrees(
-        array $entryNodeAggregateIdentifiers,
+        NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
         $query = /** @lang PostgreSQL */ '-- ContentSubhypergraph::findSubtrees
     WITH RECURSIVE subtree AS (
         SELECT n.*, h.contentstreamidentifier,
+            h.dimensionspacepoint,
             \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
             0 as level
         FROM ' . NodeRecord::TABLE_NAME . ' n
@@ -377,6 +366,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
          -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
          -- --------------------------------
         SELECT cn.*, ch.contentstreamidentifier,
+            ch.dimensionspacepoint,
             p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
      	    p.level + 1 as level
         FROM subtree p
@@ -396,7 +386,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ORDER BY level DESC';
 
         $parameters = [
-            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers,
+            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers->toStringArray(),
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $maximumLevels

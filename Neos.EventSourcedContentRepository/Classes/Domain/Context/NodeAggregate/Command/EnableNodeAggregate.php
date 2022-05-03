@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,15 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -30,37 +32,15 @@ final class EnableNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    /**
-     * Node aggregate identifier of the node the user intends to enable
-     */
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    /**
-     * The covered dimension space points of the node aggregate in which the user intends to enable it
-     */
-    private DimensionSpacePoint $coveredDimensionSpacePoint;
-
-    /**
-     * The strategy the user chose to determine which specialization variants will also be disabled
-     */
-    private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        /** The covered dimension space point of the node aggregate in which the user intends to enable it */
+        public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
+        /** The strategy the user chose to determine which specialization variants will also be disabled */
+        public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
-        $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -72,34 +52,9 @@ final class EnableNodeAggregate implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getCoveredDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->coveredDimensionSpacePoint;
-    }
-
-    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategyIdentifier
-    {
-        return $this->nodeVariantSelectionStrategy;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
     }
 
     /**
@@ -132,7 +87,7 @@ final class EnableNodeAggregate implements
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
-                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->nodeAggregateIdentifier)
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }
