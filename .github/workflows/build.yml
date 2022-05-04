@@ -217,6 +217,7 @@ jobs:
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
       - name: Run ES CR Tests
+        id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
         # we want to reach the Upload Postgres DB dump step.
         # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
@@ -251,6 +252,12 @@ jobs:
         with:
           name: database-dumps
           path: Data/DebugDatabaseDumps
+
+      - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
+        if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
+        # we want to reach the Upload Postgres DB dump step.
+        # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
+        run: exit 1
 
       - name: Setup Flow configuration (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
