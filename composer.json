@@ -162,7 +162,7 @@
             "Neos\\Media\\": [
                 "Neos.Media/Classes"
             ],
-            "Neos\\Neos\\LegacyFusionCompatiblity\\": [
+            "Neos\\Neos\\LegacyFusionCompatibility\\": [
                 "Neos.Neos.LegacyFusionCompatibility/Classes"
             ],
             "Neos\\Neos\\": [
@@ -238,7 +238,7 @@
             "Neos\\Media\\Tests\\": [
                 "Neos.Media/Tests"
             ],
-            "Neos\\Neos\\LegacyFusionCompatiblity\\Tests\\": [
+            "Neos\\Neos\\LegacyFusionCompatibility\\Tests\\": [
                 "Neos.Neos.LegacyFusionCompatibility/Tests"
             ],
             "Neos\\Neos\\Tests\\": [
