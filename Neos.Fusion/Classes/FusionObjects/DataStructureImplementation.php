@@ -96,6 +96,7 @@ class DataStructureImplementation extends AbstractArrayFusionObject
         if (!is_array($property)) {
             return false;
         }
-        return array_intersect_key(array_flip(Parser::$reservedParseTreeKeys), $property) === [];
+        
+        return !isset($property['__objectType']) && !isset($property['__eelExpression']) && !isset($property['__value']);
     }
 }
