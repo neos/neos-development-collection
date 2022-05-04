@@ -11,16 +11,9 @@ If you dare to use it anyways, you can install this package via composer:
 {
     # ...
     "require": {
-        "neos/event-sourced-content-repository": "dev-master"
+        "neos/content-repository": "9.0.x-dev"
         # ...
-    },
-    "repositories": {
-        # ...
-        "event-sourced-content-repository": {
-            "type": "git",
-            "url": "git@github.com:neos/event-sourced-content-repository.git"
-        },
-    },
+    }
 }
 
 ```

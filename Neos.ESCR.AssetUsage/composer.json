@@ -4,7 +4,7 @@
     "name": "neos/escr-asset-usage",
     "require": {
         "php": ">=8.1",
-        "neos/event-sourced-content-repository": "*",
+        "neos/content-repository": "*",
         "neos/media": "*"
     },
     "require-dev": {
