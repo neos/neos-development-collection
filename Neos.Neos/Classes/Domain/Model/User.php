@@ -15,7 +15,6 @@ use Neos\Flow\Security\Account;
 use Neos\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\UserInterface;
 
 /**
  * Domain Model of a User
