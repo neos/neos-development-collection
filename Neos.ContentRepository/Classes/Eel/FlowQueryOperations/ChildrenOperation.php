@@ -55,7 +55,7 @@ class ChildrenOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
+        return is_array($context) && reset($context) instanceof TraversableNodeInterface;
     }
 
     /**
