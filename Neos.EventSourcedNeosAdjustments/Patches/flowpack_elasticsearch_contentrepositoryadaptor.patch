@@ -22,7 +22,7 @@ index b91293e..b121d57 100644
  use Neos\Flow\Cli\CommandController;
  use Neos\Flow\Cli\Exception\StopCommandException;
 @@ -81,9 +83,9 @@ class NodeIndexCommandController extends CommandController
- 
+
      /**
       * @Flow\Inject
 -     * @var WorkspaceRepository
@@ -30,11 +30,11 @@ index b91293e..b121d57 100644
       */
 -    protected $workspaceRepository;
 +    protected $workspaceFinder;
- 
+
      /**
       * @Flow\Inject
 @@ -123,9 +125,9 @@ class NodeIndexCommandController extends CommandController
- 
+
      /**
       * @Flow\Inject
 -     * @var ContentDimensionCombinator
@@ -42,20 +42,20 @@ index b91293e..b121d57 100644
       */
 -    protected $contentDimensionCombinator;
 +    protected $contentDimensionZookeeper;
- 
+
      /**
       * @Flow\Inject
 @@ -189,7 +191,7 @@ class NodeIndexCommandController extends CommandController
          };
- 
+
          $indexInWorkspace = function ($identifier, Workspace $workspace) use ($indexNode) {
 -            $combinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
 +            $combinations = $this->contentDimensionZookeeper->getAllowedCombinations();
- 
+
              $results = [];
- 
+
 @@ -206,11 +208,11 @@ class NodeIndexCommandController extends CommandController
- 
+
          if ($workspace === null) {
              /** @var Workspace $iteratedWorkspace */
 -            foreach ($this->workspaceRepository->findAll() as $iteratedWorkspace) {
@@ -70,17 +70,17 @@ index b91293e..b121d57 100644
                  $this->quit(1);
 @@ -221,7 +223,7 @@ class NodeIndexCommandController extends CommandController
          $this->nodeIndexer->flush();
- 
+
          if ($updateAliases) {
 -            $combinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
 +            $combinations = $this->contentDimensionZookeeper->getAllowedCombinations();
              $combinations = $combinations === [] ? [[]] : $combinations;
- 
+
              foreach ($combinations as $combination) {
 @@ -257,7 +259,7 @@ class NodeIndexCommandController extends CommandController
      {
          $this->logger->info(sprintf('Starting elasticsearch indexing %s sub processes', $this->useSubProcesses ? 'with' : 'without'), LogEnvironment::fromMethodName(__METHOD__));
- 
+
 -        if ($workspace !== null && $this->workspaceRepository->findByIdentifier($workspace) === null) {
 +        if ($workspace !== null && $this->workspaceFinder->findOneByName(new WorkspaceName($workspace)) === null) {
              $this->logger->error('The given workspace (' . $workspace . ') does not exist.', LogEnvironment::fromMethodName(__METHOD__));
@@ -89,7 +89,7 @@ index b91293e..b121d57 100644
 @@ -265,7 +267,7 @@ class NodeIndexCommandController extends CommandController
          $postfix = (string)($postfix ?: time());
          $this->nodeIndexer->setIndexNamePostfix($postfix);
- 
+
 -        $createIndicesAndApplyMapping = function (array $dimensionsValues) use ($update, $postfix) {
 +        $createIndicesAndApplyMapping = function (DimensionSpacePoint $dimensionsValues) use ($update, $postfix) {
              $this->executeInternalCommand('createInternal', [
@@ -98,12 +98,12 @@ index b91293e..b121d57 100644
 @@ -273,18 +275,18 @@ class NodeIndexCommandController extends CommandController
              ]);
          };
- 
+
 -        $buildIndex = function (array $dimensionsValues) use ($workspace, $limit, $postfix) {
 +        $buildIndex = function (DimensionSpacePoint $dimensionsValues) use ($workspace, $limit, $postfix) {
              $this->build($dimensionsValues, $workspace, $postfix, $limit);
          };
- 
+
 -        $refresh = function (array $dimensionsValues) use ($postfix) {
 +        $refresh = function (DimensionSpacePoint $dimensionsValues) use ($postfix) {
              $this->executeInternalCommand('refreshInternal', [
@@ -111,7 +111,7 @@ index b91293e..b121d57 100644
                  'postfix' => $postfix,
              ]);
          };
- 
+
 -        $updateAliases = function (array $dimensionsValues) use ($update, $postfix) {
 +        $updateAliases = function (DimensionSpacePoint $dimensionsValues) use ($update, $postfix) {
              $this->executeInternalCommand('aliasInternal', [
@@ -120,10 +120,10 @@ index b91293e..b121d57 100644
 @@ -292,7 +294,7 @@ class NodeIndexCommandController extends CommandController
              ]);
          };
- 
+
 -        $combinations = new ArrayCollection($this->contentDimensionCombinator->getAllAllowedCombinations());
 +        $combinations = new ArrayCollection($this->contentDimensionZookeeper->getAllowedDimensionSubspace()->getPoints());
- 
+
          $runAndLog = function ($command, string $stepInfo) use ($combinations) {
              $timeStart = microtime(true);
 @@ -344,7 +346,7 @@ class NodeIndexCommandController extends CommandController
@@ -143,11 +143,11 @@ index b91293e..b121d57 100644
 +    private function build(DimensionSpacePoint $dimensionsValues, ?string $workspace = null, ?string $postfix = null, ?int $limit = null): void
      {
          $dimensionsValues = $this->configureNodeIndexer($dimensionsValues, $postfix);
- 
+
 @@ -363,9 +365,9 @@ class NodeIndexCommandController extends CommandController
              $workspace = 'live';
          }
- 
+
 -        $buildWorkspaceCommandOptions = static function ($workspace, array $dimensionsValues, ?int $limit, ?string $postfix) {
 +        $buildWorkspaceCommandOptions = static function ($workspace, DimensionSpacePoint $dimensionsValues, ?int $limit, ?string $postfix) {
              return [
@@ -157,7 +157,7 @@ index b91293e..b121d57 100644
                  'postfix' => $postfix,
                  'limit' => $limit,
 @@ -374,7 +376,7 @@ class NodeIndexCommandController extends CommandController
- 
+
          $output = '';
          if ($workspace === null) {
 -            foreach ($this->workspaceRepository->findAll() as $iteratedWorkspace) {
@@ -180,7 +180,7 @@ index b91293e..b121d57 100644
      {
 -        $dimensionsValuesArray = $this->configureNodeIndexer(json_decode($dimensionsValues, true), $postfix);
 +        $dimensionsValuesArray = $this->configureNodeIndexer(DimensionSpacePoint::fromJsonString($dimensionsValues), $postfix);
- 
+
          $workspaceLogger = function ($workspaceName, $indexedNodes, $dimensions) {
              if ($dimensions === []) {
 @@ -464,7 +466,7 @@ class NodeIndexCommandController extends CommandController
@@ -189,7 +189,7 @@ index b91293e..b121d57 100644
      {
 -        $this->configureNodeIndexer(json_decode($dimensionsValues, true), $postfix);
 +        $this->configureNodeIndexer(DimensionSpacePoint::fromJsonString($dimensionsValues), $postfix);
- 
+
          $this->logger->info(vsprintf('Refreshing index %s', [$this->nodeIndexer->getIndexName()]), LogEnvironment::fromMethodName(__METHOD__));
          $this->nodeIndexer->getIndex()->refresh();
 @@ -487,7 +489,7 @@ class NodeIndexCommandController extends CommandController
@@ -198,7 +198,7 @@ index b91293e..b121d57 100644
          }
 -        $this->configureNodeIndexer(json_decode($dimensionsValues, true), $postfix);
 +        $this->configureNodeIndexer(DimensionSpacePoint::fromJsonString($dimensionsValues), $postfix);
- 
+
          $this->logger->info(vsprintf('Update alias for index %s', [$this->nodeIndexer->getIndexName()]), LogEnvironment::fromMethodName(__METHOD__));
          $this->nodeIndexer->updateIndexAlias();
 @@ -499,7 +501,7 @@ class NodeIndexCommandController extends CommandController
@@ -230,7 +230,7 @@ index a8ce910..11cfffe 100644
 +use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  use Neos\ContentRepository\Domain\Model\NodeInterface;
  use Neos\Flow\Annotations as Flow;
- 
+
 @@ -75,9 +76,9 @@ class ElasticSearchClient extends Client
      /**
       * @param array $dimensionValues
@@ -241,7 +241,7 @@ index a8ce910..11cfffe 100644
 -        $this->dimensionsHash = $this->dimensionsService->hash($dimensionValues);
 +        $this->dimensionsHash = $dimensionValues->getHash();
      }
- 
+
      /**
 diff --git a/Classes/Indexer/NodeIndexer.php b/Classes/Indexer/NodeIndexer.php
 index 2d2283f..78e06cf 100644
@@ -265,7 +265,7 @@ index 2d2283f..78e06cf 100644
 @@ -159,7 +161,13 @@ class NodeIndexer extends AbstractNodeIndexer implements BulkNodeIndexerInterfac
       */
      protected $errorStorage;
- 
+
 -    public function setDimensions(array $dimensionsValues): void
 +    /**
 +     * @Flow\Inject
@@ -285,11 +285,11 @@ index 2d2283f..78e06cf 100644
 +            $this->logger->debug(sprintf('Node "%s" (%s) skipped, Node Type is not allowed in the index.', $node->getNodeAggregateIdentifier(), $node->getNodeType()), LogEnvironment::fromMethodName(__METHOD__));
              return;
          }
- 
+
 @@ -238,7 +246,8 @@ class NodeIndexer extends AbstractNodeIndexer implements BulkNodeIndexerInterfac
                      return;
                  }
- 
+
 -                if ($targetWorkspaceName === null && $node->getContext()->getWorkspaceName() !== 'live') {
 +
 +                if ($targetWorkspaceName === null && !$this->nodeAddressFactory->createFromNode($node)->isInLiveWorkspace()) {
@@ -312,7 +312,7 @@ index 56a8278..91678b1 100644
 @@ -13,11 +13,16 @@ namespace Flowpack\ElasticSearch\ContentRepositoryAdaptor\Indexer;
   * source code.
   */
- 
+
 -use Neos\ContentRepository\Domain\Factory\NodeFactory;
 -use Neos\ContentRepository\Domain\Model\NodeInterface;
 +use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -322,12 +322,12 @@ index 56a8278..91678b1 100644
  use Neos\ContentRepository\Search\Indexer\NodeIndexingManager;
 +use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 +use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
++use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 +use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 +use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 +use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  use Neos\Flow\Annotations as Flow;
- 
+
  /**
 @@ -27,12 +32,6 @@ use Neos\Flow\Annotations as Flow;
   */
@@ -344,7 +344,7 @@ index 56a8278..91678b1 100644
       * @Flow\Inject
 @@ -46,10 +45,22 @@ final class WorkspaceIndexer
      protected $nodeIndexingManager;
- 
+
      /**
 -     * @var NodeFactory
 +     * @var NodeAccessorManager
@@ -364,7 +364,7 @@ index 56a8278..91678b1 100644
 +     * @Flow\Inject
 +     */
 +    protected $contentGraph;
- 
+
      /**
       * @param string $workspaceName
 @@ -79,17 +90,21 @@ final class WorkspaceIndexer
@@ -391,27 +391,27 @@ index 56a8278..91678b1 100644
 +        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($workspace->getCurrentContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
 +        $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);
          $indexedNodes = 0;
- 
+
 -        $traverseNodes = function (NodeInterface $currentNode, &$indexedNodes) use ($limit, &$traverseNodes) {
 +        $traverseNodes = function (NodeInterface $currentNode, &$indexedNodes) use ($limit, &$traverseNodes, $nodeAccessor) {
              if ($limit !== null && $indexedNodes > $limit) {
                  return;
              }
 @@ -99,14 +114,11 @@ final class WorkspaceIndexer
- 
+
              array_map(function (NodeInterface $childNode) use ($traverseNodes, &$indexedNodes) {
                  $traverseNodes($childNode, $indexedNodes);
 -            }, $currentNode->getChildNodes());
 +            }, $nodeAccessor->findChildNodes($currentNode)->getArrayCopy());
          };
- 
+
          $traverseNodes($rootNode, $indexedNodes);
- 
+
 -        $this->nodeFactory->reset();
 -        $context->getFirstLevelNodeCache()->flush();
 -
          $this->nodeIndexingManager->flushQueues();
- 
+
          if ($callback !== null) {
 diff --git a/Classes/Service/DimensionsService.php b/Classes/Service/DimensionsService.php
 index 71be3a6..95802ab 100644
@@ -420,14 +420,14 @@ index 71be3a6..95802ab 100644
 @@ -13,9 +13,10 @@ namespace Flowpack\ElasticSearch\ContentRepositoryAdaptor\Service;
   * source code.
   */
- 
+
 -use Neos\ContentRepository\Domain\Model\NodeInterface;
 +use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
  use Neos\ContentRepository\Utility;
 +use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
  use Neos\Flow\Annotations as Flow;
- 
+
  /**
 @@ -99,19 +100,19 @@ class DimensionsService
       */
@@ -435,7 +435,7 @@ index 71be3a6..95802ab 100644
      {
 -        $dimensionsHash = $this->hash($node->getDimensions());
 +        $dimensionsHash = $node->getDimensionSpacePoint()->getHash();
- 
+
          if (!isset($this->dimensionCombinationsForIndexing[$dimensionsHash])) {
              $this->dimensionCombinationsForIndexing[$dimensionsHash] = $this->reduceDimensionCombinationstoSelfAndFallback(
                  $this->contentDimensionCombinator->getAllAllowedCombinations(),
@@ -443,10 +443,10 @@ index 71be3a6..95802ab 100644
 +                $node->getDimensionSpacePoint()
              );
          }
- 
+
          return $this->dimensionCombinationsForIndexing[$dimensionsHash];
      }
- 
+
 -    protected function reduceDimensionCombinationstoSelfAndFallback(array $dimensionCombinations, array $nodeDimensions): array
 +    protected function reduceDimensionCombinationstoSelfAndFallback(array $dimensionCombinations, DimensionSpacePoint $nodeDimensions): array
      {

@@ -23,9 +23,6 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * The interface to be implemented by content graphs

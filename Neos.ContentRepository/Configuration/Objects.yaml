@@ -45,7 +45,7 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
       object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
 
 
-Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector:
+Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
   arguments:
     2:
       object:
@@ -55,7 +55,7 @@ Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjecto
           1:
             value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
 
-Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector:
+Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
   arguments:
     2:
       object:
@@ -65,7 +65,7 @@ Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStream
           1:
             value: Neos_EventSourcedContentRepository_ProcessedContentStreamEvents
 
-Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler:
+Neos\ContentRepository\Feature\ContentStreamCommandHandler:
   arguments:
     2:
       object:
@@ -74,7 +74,7 @@ Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCom
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpaceCommandHandler:
+Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler:
   arguments:
     1:
       object:
@@ -84,7 +84,7 @@ Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpaceC
             value: 'ContentRepository'
 
 
-Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository:
+Neos\ContentRepository\Feature\ContentStreamRepository:
   arguments:
     1:
       object:
@@ -93,7 +93,7 @@ Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRep
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler:
+Neos\ContentRepository\Feature\WorkspaceCommandHandler:
   arguments:
     1:
       object:
@@ -103,7 +103,7 @@ Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHand
             value: 'ContentRepository'
 
 
-Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher:
+Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher:
   arguments:
     1:
       object:
@@ -112,7 +112,7 @@ Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEve
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
+Neos\ContentRepository\NodeAccess\Command\ContentStreamCommandController:
   arguments:
     1:
       object:
@@ -121,13 +121,13 @@ Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory:
+Neos\ContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory:
   scope: singleton
   arguments:
     1:
       setting: 'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.projection.defaultProjectorsToBeBlocked'
 
-Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
+s\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
   scope: singleton
   arguments:
     1:
@@ -140,14 +140,14 @@ Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
       object:
         factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory
 
-Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter:
+Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
   arguments:
     1:
       object:
         factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConversionSerializerFactory
         factoryMethodName: buildSerializer
 
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNodeAdjustments:
+Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments:
   arguments:
     1:
       object:
@@ -156,7 +156,7 @@ Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNo
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\UnknownNodeTypeAdjustment:
+Neos\ContentRepository\Feature\StructureAdjustment\UnknownNodeTypeAdjustment:
   arguments:
     1:
       object:
@@ -165,7 +165,7 @@ Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\UnknownNod
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\DisallowedChildNodeAdjustment:
+Neos\ContentRepository\Feature\StructureAdjustment\DisallowedChildNodeAdjustment:
   arguments:
     1:
       object:
@@ -174,7 +174,7 @@ Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Disallowed
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\PropertyAdjustment:
+Neos\ContentRepository\Feature\StructureAdjustment\PropertyAdjustment:
   arguments:
     1:
       object:
