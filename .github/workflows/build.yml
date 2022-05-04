@@ -223,9 +223,12 @@ jobs:
         # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
         continue-on-error: true
         run: |
+          echo ${{ github.workspace }}
+          ls ${{ github.workspace }}
+
           pwd
-          mkdir -p Data/DebugDatabaseDumps
-          touch Data/DebugDatabaseDumps/keep
+          mkdir -p ${{ github.workspace }}/Data/DebugDatabaseDumps
+          touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
           FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           cd Packages/Neos
@@ -240,7 +243,7 @@ jobs:
             sudo apt-get install -y postgresql-client
             echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
             chmod 600 ~/.pgpass
-            pg_dump --file=Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+            pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
           fi
           exit $retVal
 
