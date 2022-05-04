@@ -1,4 +1,7 @@
 Neos:
+  ESCR:
+    AssetUsage:
+      enabled: true
   EventSourcing:
     EventStore:
       stores:

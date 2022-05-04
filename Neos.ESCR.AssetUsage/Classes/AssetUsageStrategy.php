@@ -25,6 +25,11 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
      */
     private array $runtimeCache = [];
 
+    /**
+     * @Flow\InjectConfiguration("enabled")
+     */
+    protected bool $enabled = false;
+
     public function __construct(
         private readonly AssetUsageFinder $assetUsageFinder,
         private readonly PersistenceManagerInterface $persistenceManager
@@ -33,16 +38,25 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
 
     public function isInUse(AssetInterface $asset): bool
     {
+        if (!$this->enabled) {
+            return false;
+        }
         return $this->getUsageCount($asset) > 0;
     }
 
     public function getUsageCount(AssetInterface $asset): int
     {
+        if (!$this->enabled) {
+            return 0;
+        }
         return $this->getUsages($asset)->count();
     }
 
     public function getUsageReferences(AssetInterface $asset): array
     {
+        if (!$this->enabled) {
+            return [];
+        }
         /** @var \IteratorAggregate<UsageReference> $convertedUsages */
         $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new UsageReference($asset));
         return iterator_to_array($convertedUsages);
