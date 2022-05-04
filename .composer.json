@@ -11,6 +11,36 @@
   },
   "suggest": {
   },
+  "scripts": {
+    "lint:phpcs": "../../bin/phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategy.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php,*/PropertyScope.php,*/VariantType.php ./Neos.ContentGraph.DoctrineDbalAdapter/Classes ./Neos.ContentGraph.PostgreSQLAdapter/Classes ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/Classes ./Neos.EventSourcedContentRepository/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes",
+    "lint:phpstan": "../../bin/phpstan analyse",
+    "lint": [
+      "@lint:phpcs",
+      "@lint:phpstan"
+    ],
+    "test:unit": [
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.EventSourcedContentRepository/Tests/Unit"
+    ],
+    "test:functional": [
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.EventSourcedContentRepository/Tests/Functional",
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.EventSourcedNeosAdjustments/Tests/Functional"
+    ],
+    "test:behavioral": [
+      "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
+      "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+      "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+    ],
+    "test:behavioral:stop-on-failure": [
+      "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
+      "../../bin/behat --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+      "../../bin/behat --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+    ],
+    "test": [
+      "@test:unit",
+      "@test:functional",
+      "@test:behavioral"
+    ]
+  },
   "autoload": {
   },
   "extra": {

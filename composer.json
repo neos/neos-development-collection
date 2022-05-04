@@ -9,10 +9,12 @@
         "neos/flow-development-collection": "dev-master",
         "neos/neos-setup": "^1.0",
         "php": "^8.1",
+        "neos/event-sourced-content-repository": "*",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
         "neos/cache": "*",
         "neos/utility-arrays": "*",
+        "neos/event-sourcing": "*",
         "neos/flow": "*",
         "neos/eel": "*",
         "neos/fluid-adaptor": "*",
@@ -21,7 +23,6 @@
         "doctrine/orm": "^2.6",
         "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "~1.0",
-        "neos/event-sourcing": "*",
         "webmozart/assert": "^1.10",
         "neos/neos-ui": "*",
         "neos/utility-unicode": "*",
@@ -49,9 +50,8 @@
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/content-repository-dimensionspace": "self.version",
-        "neos/content-repository": "self.version",
         "neos/content-repository-nodeaccess": "self.version",
-        "neos/neos-legacyfusioncompatibility": "self.version",
+        "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
         "neos/escr-export": "self.version",
@@ -62,6 +62,7 @@
         "neos/fusion": "self.version",
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
+        "neos/neos-legacyfusioncompatibility": "self.version",
         "neos/neos": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-basemixins": "self.version",
@@ -98,7 +99,6 @@
             "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
         ],
-
         "test:behavioral:stop-on-failure": [
             "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
             "../../bin/behat --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
@@ -116,10 +116,10 @@
                 "Neos.CliSetup/Classes"
             ],
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
-                "Neos.ContentGraph.DoctrineDbalAdapter/Classes"
+                "Neos.ContentGraph.DoctrineDbalAdapter/src"
             ],
             "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
-                "Neos.ContentGraph.PostgreSQLAdapter/Classes"
+                "Neos.ContentGraph.PostgreSQLAdapter/src"
             ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
@@ -127,8 +127,11 @@
             "Neos\\ContentRepository\\DimensionSpace\\": [
                 "Neos.ContentRepository.DimensionSpace/Classes"
             ],
+            "Neos\\ContentRepository\\NodeAccess\\": [
+                "Neos.ContentRepository.NodeAccess/Classes"
+            ],
             "Neos\\ContentRepository\\": [
-                "Neos.ContentRepository/Classes"
+                "Neos.ContentRepository/src"
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
@@ -145,9 +148,6 @@
             "Neos\\EventSourcedContentRepository\\Security\\": [
                 "Neos.EventSourcedContentRepository.Security/Classes"
             ],
-            "Neos\\EventSourcedContentRepository\\": [
-                "Neos.EventSourcedContentRepository/Classes"
-            ],
             "Neos\\EventSourcedNeosAdjustments\\": [
                 "Neos.EventSourcedNeosAdjustments/Classes"
             ],
@@ -162,6 +162,9 @@
             ],
             "Neos\\Media\\": [
                 "Neos.Media/Classes"
+            ],
+            "Neos\\Neos\\LegacyFusionCompatiblity\\": [
+                "Neos.Neos.LegacyFusionCompatibility/Classes"
             ],
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
@@ -218,14 +221,14 @@
             "Neos\\ContentRepository\\DimensionSpace\\Tests\\": [
                 "Neos.ContentRepository.DimensionSpace/Tests"
             ],
+            "Neos\\ContentRepository\\NodeAccess\\Tests\\": [
+                "Neos.ContentRepository.NodeAccess/Tests"
+            ],
             "Neos\\ContentRepository\\Tests\\": [
                 "Neos.ContentRepository/Tests"
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\Tests\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Tests"
-            ],
-            "Neos\\EventSourcedContentRepository\\Tests\\": [
-                "Neos.EventSourcedContentRepository/Tests"
             ],
             "Neos\\Fusion\\Afx\\Tests\\": [
                 "Neos.Fusion.Afx/Tests"
@@ -235,6 +238,9 @@
             ],
             "Neos\\Media\\Tests\\": [
                 "Neos.Media/Tests"
+            ],
+            "Neos\\Neos\\LegacyFusionCompatiblity\\Tests\\": [
+                "Neos.Neos.LegacyFusionCompatibility/Tests"
             ],
             "Neos\\Neos\\Tests\\": [
                 "Neos.Neos/Tests"

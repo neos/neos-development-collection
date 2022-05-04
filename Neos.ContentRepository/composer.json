@@ -20,6 +20,12 @@
         "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "^1.0"
     },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.5",
+        "squizlabs/php_codesniffer": "^3.6",
+        "phpunit/phpunit": "^9.0"
+    },
     "replace": {
         "typo3/typo3cr": "self.version"
     },
