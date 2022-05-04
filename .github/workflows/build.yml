@@ -281,6 +281,9 @@ jobs:
         if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
           # debugging
+          ls -lisah Configuration/Testing/
+          cat Configuration/Testing/Settings.yaml
+
           FLOW_CONTEXT=Testing/Behat ./flow configuration:show
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
 
