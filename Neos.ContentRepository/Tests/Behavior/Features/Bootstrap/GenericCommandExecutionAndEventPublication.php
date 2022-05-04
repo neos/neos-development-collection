@@ -20,6 +20,7 @@ use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
@@ -296,8 +297,16 @@ trait GenericCommandExecutionAndEventPublication
         $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
-            $actualValue = Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
-            Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+            $key = $assertionTableRow['Key'];
+            $actualValue = Arrays::getValueByPath($actualEventPayload, $key);
+
+            if ($key === 'affectedDimensionSpacePoints') {
+                $expected = DimensionSpacePointSet::fromJsonString($assertionTableRow['Expected']);
+                $actual = DimensionSpacePointSet::fromArray($actualValue);
+                Assert::assertTrue($expected->equals($actual), 'Actual Dimension Space Point set "' . json_encode($actualValue) . '" does not match expected Dimension Space Point set "' . $assertionTableRow['Expected'] . '"');
+            } else {
+                Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+            }
         }
     }
 }

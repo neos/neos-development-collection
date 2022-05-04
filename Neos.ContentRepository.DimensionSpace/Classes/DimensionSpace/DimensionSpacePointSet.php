@@ -141,6 +141,17 @@ final class DimensionSpacePointSet implements
         return count($this->points) === 0;
     }
 
+    public function equals(DimensionSpacePointSet $other): bool
+    {
+        $thisPointHashes = $this->getPointHashes();
+        $otherPointHashes = $other->getPointHashes();
+
+        sort($thisPointHashes);
+        sort($otherPointHashes);
+
+        return $thisPointHashes === $otherPointHashes;
+    }
+
     /**
      * @return \ArrayIterator<string,DimensionSpacePoint>|DimensionSpacePoint[]
      */

@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts  }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -20,24 +20,31 @@ jobs:
         php-versions: ['8.1']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
-        static-analysis: ['no']
+
+        # we want to parallelize quite some parts of the test suite; but these need similar setup steps.
+        # that's why we parallelize via a Matrix; and not via different jobs.
+        # escr-behavioral determines the length of the build (because it is slowest). That's why we run this and
+        # all the other parts in parallel.
+        parallel-parts:
+          - linting-unit-functionaltests
+          - escr-behavioral
         experimental: [false]
         #include:
           #- php-versions: '7.3'
-          #  static-analysis: 'psalm'
+          #  parallel-parts: 'psalm'
           #  experimental: false
           #  dependencies: 'highest'
 
           # Experimental build for PHP nightly
           #- php-versions: 'nightly'
           #  composer-arguments: '--ignore-platform-reqs'
-          #  static-analysis: 'no'
+          #  parallel-parts: 'no'
           #  experimental: true
           #  dependencies: 'highest'
 
           # Build for minimum dependencies. Fails right now, hence deactivated.
           #- php-versions: '7.1'
-          #  static-analysis: 'no'
+          #  parallel-parts: 'no'
           #  experimental: false
           #  dependencies: 'lowest'
 
@@ -117,6 +124,8 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+          # workaround for picking https://github.com/neos/Neos.EventSourcing/commit/a2865c36f676c9c8c77f165a842098cb62188e5b
+          composer require --no-update neos/event-sourcing:"dev-master#a2865c36f676c9c8c77f165a842098cb62188e5b"
 
       - name: Cache Composer packages
         id: composer-cache
@@ -180,28 +189,25 @@ jobs:
           ./flow configuration:show
           ./flow routing:list
 
-      #- name: Static analysis
-      #  if: matrix.static-analysis == 'psalm'
-      #  run: composer test-static
-
       - name: Run Linter
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         run: |
           cd Packages/Neos
           composer lint
 
       - name: Run unit tests
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
 
       - name: Run functional tests
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         run: |
           FLOW_CONTEXT=Testing ./flow doctrine:migrate
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
-      - name: Run behat tests
-        if: matrix.static-analysis == 'no'
-        #if: env.BEHAT == true
+
+      - name: Run behat tests of Neos (without ES CR)
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
@@ -209,11 +215,38 @@ jobs:
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
-      - name: Run CR Tests
+      - name: Run ES CR Tests
+        if: matrix.parallel-parts == 'escr-behavioral'
         run: |
+          mkdir -p Data/DebugDatabaseDumps
+          touch Data/DebugDatabaseDumps/.keep
+
           FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           cd Packages/Neos
-          composer test
+
+          # composer test
+
+          # ALTERNATIVELY, comment in the following lines to dump the DB.
+          composer test:behavioral:stop-on-failure
+          retVal=$?
+          if [ $retVal -ne 0 ]; then
+            cd ../../
+            echo "DUMPING DATABASE (because of error)"
+            sudo apt-get install -y postgresql-client
+            echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
+            chmod 600 ~/.pgpass
+            pg_dump --file=Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+          fi
+          exit $retVal
+
+          # END OF DEBUG SCRIPT
+
+      - name: Upload Postgres DB dump
+        uses: actions/upload-artifact@v2
+        if: matrix.parallel-parts == 'escr-behavioral'
+        with:
+          name: database-dumps
+          path: Data/DebugDatabaseDumps
 
       - name: Setup Flow configuration (PGSQL)
         run: |
@@ -238,15 +271,15 @@ jobs:
           EOF
 
       - name: Run unit tests (PGSQL)
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
 
       - name: Run functional tests (PGSQL)
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run behat tests (PGSQL)
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests'
         #if: env.BEHAT == true
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
