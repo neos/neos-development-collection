@@ -278,17 +278,13 @@ jobs:
           cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
           rm -Rf Data/Temporary
 
-      #- name: Run functional tests (PGSQL)
-      #  if: matrix.parallel-parts == 'functionaltests-postgres'
-      #  run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+      - name: Run functional tests (PGSQL)
+        if: matrix.parallel-parts == 'functionaltests-postgres'
+        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run behat tests (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
-          # debugging
-          ls -lisah Configuration/Testing/
-          cat Configuration/Testing/Settings.yaml
-
           FLOW_CONTEXT=Testing/Behat ./flow configuration:show
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
 
