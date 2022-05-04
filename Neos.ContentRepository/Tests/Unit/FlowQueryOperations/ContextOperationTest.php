@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ContextOperation;
@@ -44,7 +45,7 @@ class ContextOperationTest extends AbstractQueryOperationsTest
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->createMock(NodeInterface::class);
+        $mockNode = $this->createMock(TraversableNodeInterface::class);
 
         $result = $this->operation->canEvaluate([$mockNode]);
         self::assertTrue($result);
