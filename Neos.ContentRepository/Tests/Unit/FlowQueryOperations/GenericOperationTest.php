@@ -20,7 +20,6 @@ use Neos\ContentRepository\Eel\FlowQueryOperations\SiblingsOperation;
 
 class GenericOperationTest extends AbstractQueryOperationsTest
 {
-
     public function contextDataProvider(): array
     {
         $firstNodeInLevel = $this->mockNode('node1');
@@ -87,5 +86,4 @@ class GenericOperationTest extends AbstractQueryOperationsTest
         $operation = new $operationClass();
         self::assertEquals($expected, $operation->canEvaluate($context), 'For Operation ' . $operationClass);
     }
-
 }
