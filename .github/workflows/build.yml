@@ -191,15 +191,15 @@ jobs:
           cd Packages/Neos
           composer lint
 
-      - name: Run unit tests
-        if: matrix.static-analysis == 'no'
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+#      - name: Run unit tests
+#        if: matrix.static-analysis == 'no'
+#        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
 
-      - name: Run functional tests
-        if: matrix.static-analysis == 'no'
-        run: |
-          FLOW_CONTEXT=Testing ./flow doctrine:migrate
-          bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+#      - name: Run functional tests
+#        if: matrix.static-analysis == 'no'
+#        run: |
+#          FLOW_CONTEXT=Testing ./flow doctrine:migrate
+#          bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run behat tests
         if: matrix.static-analysis == 'no'
@@ -208,7 +208,7 @@ jobs:
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
+#          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
       - name: Run CR Tests
