@@ -10,12 +10,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\Neos\\LegacyFusionCompatiblity\\": "Classes"
+            "Neos\\Neos\\LegacyFusionCompatibility\\": "Classes"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\Neos\\LegacyFusionCompatiblity\\Tests\\": "Tests"
+            "Neos\\Neos\\LegacyFusionCompatibility\\Tests\\": "Tests"
         }
     },
     "extra": {
