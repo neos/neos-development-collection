@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -296,8 +297,16 @@ trait GenericCommandExecutionAndEventPublication
         $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
-            $actualValue = Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
-            Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+            $key = $assertionTableRow['Key'];
+            $actualValue = Arrays::getValueByPath($actualEventPayload, $key);
+
+            if ($key === 'affectedDimensionSpacePoints') {
+                $expected = DimensionSpacePointSet::fromJsonString($assertionTableRow['Expected']);
+                $actual = DimensionSpacePointSet::fromArray($actualValue);
+                Assert::assertTrue($expected->equals($actual), 'Actual Dimension Space Point set "' . json_encode($actualValue) . '" does not match expected Dimension Space Point set "' . $assertionTableRow['Expected'] . '"');
+            } else {
+                Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+            }
         }
     }
 }
