@@ -15,6 +15,7 @@ namespace Neos\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
@@ -156,21 +157,25 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers(): QueryResultInterface
+    public function getUsers(string $sortBy = 'accountidentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
     {
-        return $this->userRepository->findAllOrderedByUsername();
+        return $this->userRepository->findAllOrdered($sortBy, $sortDirection);
     }
 
     /**
      * @param string $searchTerm
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return QueryResultInterface
      */
-    public function searchUsers(string $searchTerm): QueryResultInterface
+    public function searchUsers(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
-        return $this->userRepository->findBySearchTerm($searchTerm);
+        return $this->userRepository->findBySearchTerm($searchTerm, $sortBy, $sortDirection);
     }
 
     /**
@@ -897,7 +902,7 @@ class UserService
      * @param Account $account
      * @return User|null
      */
-    private function getNeosUserForAccount(Account $account):? User
+    private function getNeosUserForAccount(Account $account): ?User
     {
         $user = $this->partyService->getAssignedPartyOfAccount($account);
         return ($user instanceof User) ? $user : null;
