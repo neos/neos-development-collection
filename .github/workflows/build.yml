@@ -222,6 +222,7 @@ jobs:
         # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
         continue-on-error: true
         run: |
+          pwd
           mkdir -p Data/DebugDatabaseDumps
           touch Data/DebugDatabaseDumps/keep
 
@@ -231,8 +232,7 @@ jobs:
           # composer test
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
-          composer test:behavioral:stop-on-failure
-          retVal=$?
+          retVal=$(composer test:behavioral:stop-on-failure)
           if [ $retVal -ne 0 ]; then
             cd ../../
             echo "DUMPING DATABASE (because of error)"
