@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * An interface to describe a change

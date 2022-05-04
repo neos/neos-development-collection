@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Node command controller for the Neos.ContentRepository package

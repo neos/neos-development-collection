@@ -23,10 +23,10 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueSpecial
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdge;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;

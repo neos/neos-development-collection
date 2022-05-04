@@ -13,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -13,10 +13,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;

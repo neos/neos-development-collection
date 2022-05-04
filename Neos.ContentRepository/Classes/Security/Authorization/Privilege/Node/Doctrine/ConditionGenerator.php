@@ -22,7 +22,7 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeException;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * A SQL condition generator, supporting special SQL constraints

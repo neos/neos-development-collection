@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Utility\ObjectAccess;
 
 /**

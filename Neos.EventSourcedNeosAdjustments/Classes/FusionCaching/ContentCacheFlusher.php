@@ -12,15 +12,15 @@ namespace Neos\EventSourcedNeosAdjustments\FusionCaching;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Content\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Psr\Log\LoggerInterface;
 

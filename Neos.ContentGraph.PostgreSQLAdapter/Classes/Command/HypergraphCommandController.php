@@ -14,8 +14,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Command;
  */
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Flow\Cli\CommandController;
 
 final class HypergraphCommandController extends CommandController

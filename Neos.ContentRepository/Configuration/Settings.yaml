@@ -64,3 +64,74 @@ Neos:
     #
     #  fallbackNodeType: 'Some.Package:SomeNodeType'
     fallbackNodeType: null
+
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset: {}
+        # DoctrineDbal: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph
+        activeContentGraphs: {}
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
+          'Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
+    nodeAccessorFactories:
+      contentSubgraph:
+        position: end
+        className: Neos\ContentRepository\NodeAccess\Implementation\ContentSubgraphAccessorFactory
+
+    propertyConverters:
+      ScalarNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ScalarNormalizer
+      ArrayNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ArrayNormalizer
+      DateTimeNormalizer:
+        className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        position: 'start'
+      UriNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\UriNormalizer
+      ValueObjectArrayDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
+      ValueObjectBoolDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
+      ValueObjectFloatDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
+      ValueObjectIntDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
+      ValueObjectStringDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
+      DoctrinePersistentObjectNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+      CollectionTypeDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
+      ProxyAwareObjectNormalizer:
+        className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+
+  EventSourcing:
+    EventStore:
+      stores:
+        'ContentRepository':
+          # By default the DoctrineEventStorage adapter is used, but this can be changed with the following setting:
+          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+
+          storageOptions:
+
+            # When using the DoctrineEventStorage adapter events are stored in a table called "neos_eventsourcing_eventstore_events" by default. This can be changed per Event Store:
+            eventTableName: 'neos_contentrepository_events'
+
+          # By default the Flow database connection is reused for the EventEvent store backend, but this can be changed per Event Store. Note: BackendOptions will be merged with the Flow default backend options
+          #            backendOptions:
+          #              driver: pdo_mysql
+          #              host: 127.0.0.1
+          #              dbname: null
+          #              user: null
+          #              password: null
+          #              charset: utf8
+
+          # Custom mapping types can be configured (only useful when using a _different_ database connection for the Event Store)
+          #          mappingTypes:
+          #            'some_custom_type':
+          #              dbType: 'json_array'
+          #              className: 'Some\Type\Implementation'
+
+          listeners:
+            'Neos\ContentRepository\.*': true

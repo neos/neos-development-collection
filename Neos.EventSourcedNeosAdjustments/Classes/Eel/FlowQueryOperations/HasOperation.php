@@ -14,8 +14,8 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

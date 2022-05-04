@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\FusionCaching;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Cache\Frontend\VariableFrontend;

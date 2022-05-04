@@ -7,7 +7,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Psr\Log\LoggerInterface;
 
 /**

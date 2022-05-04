@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;

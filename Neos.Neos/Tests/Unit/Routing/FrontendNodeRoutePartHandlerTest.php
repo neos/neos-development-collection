@@ -26,7 +26,7 @@ use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;

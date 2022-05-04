@@ -46,12 +46,12 @@ require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait as BaseDetectionTrait;
-use Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait as BaseDetectionTrait;
+use Neos\ContentRepository\Tests\Functional\Command\BehatTestHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 
 /**
  * Features context
@@ -59,11 +59,11 @@ use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOpe
 class FeatureContext implements \Behat\Behat\Context\Context
 {
     use FlowContextTrait;
-    use NodeOperationsTrait;
+    use LegacyNodeOperationsTrait;
     use IsolatedBehatStepsTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use BaseDetectionTrait;
-    use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+    use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 

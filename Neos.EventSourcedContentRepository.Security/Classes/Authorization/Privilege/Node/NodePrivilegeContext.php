@@ -12,12 +12,12 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 

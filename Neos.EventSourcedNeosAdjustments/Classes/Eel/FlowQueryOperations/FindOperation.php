@@ -11,19 +11,19 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

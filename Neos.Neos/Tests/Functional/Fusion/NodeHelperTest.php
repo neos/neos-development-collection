@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  */
 
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
 

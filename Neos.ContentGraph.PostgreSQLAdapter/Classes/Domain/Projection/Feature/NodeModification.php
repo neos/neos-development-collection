@@ -17,7 +17,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 
 /**
  * The node modification feature set for the hypergraph projector

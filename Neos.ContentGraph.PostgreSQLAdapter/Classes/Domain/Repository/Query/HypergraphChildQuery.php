@@ -18,12 +18,12 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelation
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**

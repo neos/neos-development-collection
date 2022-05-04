@@ -17,25 +17,25 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginByCoverage;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Node\CoverageByOrigin;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
+use Neos\ContentRepository\Projection\Content\NodeAggregate;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -160,7 +160,7 @@ final class NodeFactory
         /** @var NodeInterface $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
 
-        return new ContentProjection\NodeAggregate(
+        return new \Neos\ContentRepository\Projection\Content\NodeAggregate(
             $primaryNode->getContentStreamIdentifier(),
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
             NodeAggregateClassification::from($rawNodeAggregateClassification),
@@ -178,7 +178,7 @@ final class NodeFactory
 
     /**
      * @param iterable<int,array<string,string>> $nodeRows
-     * @return iterable<int,ContentProjection\NodeAggregate>
+     * @return iterable<int,\Neos\ContentRepository\Projection\Content\NodeAggregate>
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowsToNodeAggregates(
@@ -247,7 +247,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
             /** @var string $rawNodeAggregateIdentifier */
-            yield new ContentProjection\NodeAggregate(
+            yield new \Neos\ContentRepository\Projection\Content\NodeAggregate(
                 // this line is safe because a nodeAggregate only exists if it at least contains one node.
                 current($nodes)->getContentStreamIdentifier(),
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),

@@ -13,8 +13,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]

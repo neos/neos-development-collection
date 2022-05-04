@@ -12,10 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;

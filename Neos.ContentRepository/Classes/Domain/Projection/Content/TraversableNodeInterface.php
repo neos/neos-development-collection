@@ -14,11 +14,11 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 /**
  * This is a NEW interface, introduced in Neos 4.3; and it will become the main interface

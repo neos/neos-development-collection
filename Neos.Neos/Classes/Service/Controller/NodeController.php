@@ -24,7 +24,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\TypeConverter\NodeConverter;
 

@@ -13,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Caching helper to make cache tag generation easier.

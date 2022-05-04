@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;

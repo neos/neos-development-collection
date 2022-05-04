@@ -24,7 +24,7 @@ use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;

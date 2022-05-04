@@ -12,8 +12,8 @@ namespace Neos\Neos\NodeTypePostprocessor;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Utility\Arrays;
 use Neos\Neos\Exception;
 

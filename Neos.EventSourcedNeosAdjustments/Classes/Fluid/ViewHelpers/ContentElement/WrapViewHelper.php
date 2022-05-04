@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementWrappingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
@@ -70,7 +70,7 @@ class WrapViewHelper extends AbstractViewHelper
      * @return string The rendered property with a wrapping tag.
      *                In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function render(): string
     {

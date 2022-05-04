@@ -13,8 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;

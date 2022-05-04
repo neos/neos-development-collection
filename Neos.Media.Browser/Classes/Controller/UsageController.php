@@ -15,7 +15,7 @@ namespace Neos\Media\Browser\Controller;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;

@@ -11,12 +11,12 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
+use Neos\ContentRepository\SharedModel\Node\ArrayPropertyCollection;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeService;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Utility\Algorithms;
 
 /**

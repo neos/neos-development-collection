@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Migration\Filters;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Persistence\Doctrine\Query;
 
 /**

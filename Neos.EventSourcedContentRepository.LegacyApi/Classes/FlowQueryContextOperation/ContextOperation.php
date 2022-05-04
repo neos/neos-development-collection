@@ -6,12 +6,12 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\FlowQueryContextOperation
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;

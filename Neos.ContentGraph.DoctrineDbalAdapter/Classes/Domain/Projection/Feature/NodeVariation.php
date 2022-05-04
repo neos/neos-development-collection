@@ -12,12 +12,12 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Psr\Log\LoggerInterface;
 
 /**

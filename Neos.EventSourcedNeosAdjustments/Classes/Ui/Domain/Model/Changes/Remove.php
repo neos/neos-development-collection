@@ -13,13 +13,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;

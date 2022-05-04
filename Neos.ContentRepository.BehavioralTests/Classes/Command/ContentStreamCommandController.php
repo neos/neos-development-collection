@@ -17,16 +17,16 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Cli\CommandController;
 
 final class ContentStreamCommandController extends CommandController

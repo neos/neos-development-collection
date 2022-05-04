@@ -13,10 +13,10 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
 /** @codingStandardsIgnoreStart */

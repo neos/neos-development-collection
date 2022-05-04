@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**

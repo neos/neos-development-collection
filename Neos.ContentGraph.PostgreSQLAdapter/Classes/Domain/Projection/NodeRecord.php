@@ -15,12 +15,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 
 /**

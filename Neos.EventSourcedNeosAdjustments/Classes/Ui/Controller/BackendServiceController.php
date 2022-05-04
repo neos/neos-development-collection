@@ -13,16 +13,16 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
@@ -395,7 +395,7 @@ class BackendServiceController extends ActionController
      *
      * @param array $nodes
      * @return void
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -426,7 +426,7 @@ class BackendServiceController extends ActionController
      * Persists the clipboard node on cut
      *
      * @param array $nodes
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

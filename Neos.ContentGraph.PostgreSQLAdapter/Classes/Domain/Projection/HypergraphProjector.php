@@ -25,8 +25,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRenaming;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
-use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient as EventStorageDbalClient;
+use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
+use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient as EventStorageDbalClient;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL

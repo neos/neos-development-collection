@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -55,7 +55,7 @@ class NodeConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array<string,mixed> $subProperties
      * @return mixed|\Neos\Error\Messages\Error|string|null
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function convertFrom(
         $source,

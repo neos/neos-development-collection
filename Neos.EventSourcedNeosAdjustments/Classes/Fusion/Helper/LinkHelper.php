@@ -14,13 +14,13 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Fusion\ConvertUrisImplementation;
 use Neos\Flow\Annotations as Flow;

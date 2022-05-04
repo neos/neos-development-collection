@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Caching helper to make cache tag generation easier.

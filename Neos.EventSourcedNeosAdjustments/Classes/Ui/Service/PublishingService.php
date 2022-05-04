@@ -12,11 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Model\User;

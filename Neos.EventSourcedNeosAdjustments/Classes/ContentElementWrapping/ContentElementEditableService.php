@@ -12,10 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
@@ -61,7 +61,7 @@ class ContentElementEditableService
     protected $nodeAddressFactory;
 
     /**
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {

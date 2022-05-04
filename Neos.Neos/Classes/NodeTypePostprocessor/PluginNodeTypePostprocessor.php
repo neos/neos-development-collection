@@ -14,8 +14,8 @@ namespace Neos\Neos\NodeTypePostprocessor;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Neos\Service\PluginService;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
 
 /**
  * This Processor updates the PluginViews NodeType with the existing
@@ -38,7 +38,7 @@ class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface
     /**
      * Returns the processed Configuration
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeType $nodeType (uninitialized) The node type to process
+     * @param \Neos\ContentRepository\SharedModel\NodeType\NodeType $nodeType (uninitialized) The node type to process
      * @param array $configuration input configuration
      * @param array $options The processor options
      * @return void

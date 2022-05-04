@@ -5,9 +5,9 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;

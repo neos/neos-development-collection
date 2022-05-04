@@ -12,11 +12,11 @@ declare(strict_types=1);
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations\FindOperation;
 use PHPUnit\Framework\Assert;
 
@@ -93,7 +93,7 @@ trait FlowQueryTrait
         $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedExpectedNodeAggregateIdentifier);
         $expectationMet = false;
         foreach ($this->currentFlowQuery->getContext() as $node) {
-            /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface $node */
+            /** @var \Neos\ContentRepository\Projection\Content\NodeInterface $node */
             if ($node->getNodeAggregateIdentifier()->equals($expectedNodeAggregateIdentifier)) {
                 $expectationMet = true;
                 break;

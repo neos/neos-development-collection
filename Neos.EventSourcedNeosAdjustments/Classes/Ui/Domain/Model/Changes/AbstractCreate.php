@@ -12,18 +12,18 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;

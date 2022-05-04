@@ -14,7 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Neos\Fusion\Helper\NodeLabelToken;
 
 class AdjustedNodeLabelToken extends NodeLabelToken

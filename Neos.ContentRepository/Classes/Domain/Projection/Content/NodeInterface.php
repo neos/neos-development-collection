@@ -13,14 +13,15 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Cache\CacheAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 
 /**
  * This is a NEW interface, introduced in Neos 4.3.

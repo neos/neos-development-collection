@@ -27,20 +27,20 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\Content\InMemoryCache;
+use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\Content\SearchTerm;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**

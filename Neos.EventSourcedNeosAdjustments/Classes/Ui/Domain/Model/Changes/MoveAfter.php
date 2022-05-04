@@ -15,8 +15,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 
 class MoveAfter extends AbstractStructuralChange

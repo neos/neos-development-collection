@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\EventSourcedNeosAdjustments\Ui\EditorContentStreamZookeeper;
 use Neos\Flow\Core\Bootstrap;

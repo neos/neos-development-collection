@@ -11,15 +11,15 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;

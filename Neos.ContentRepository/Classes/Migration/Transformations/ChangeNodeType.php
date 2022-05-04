@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Migration\Transformations;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Change the node type.

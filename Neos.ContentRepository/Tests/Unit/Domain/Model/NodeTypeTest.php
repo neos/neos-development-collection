@@ -13,8 +13,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Testcase for the "NodeType" domain model

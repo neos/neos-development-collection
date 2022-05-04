@@ -10,25 +10,25 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionShineThroughWasAdded;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
+use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
@@ -99,42 +99,42 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
             $this->insertNode([
                 'uriPath' => '',
-                'nodeAggregateIdentifierPath' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifierPath' => $event->nodeAggregateIdentifier,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifier' => $event->nodeAggregateIdentifier,
             ]);
         }
     }
 
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        if (!$this->isDocumentNodeType($event->getNodeTypeName())) {
+        if (!$this->isDocumentNodeType($event->nodeTypeName)) {
             return;
         }
 
-        $propertyValues = $event->getInitialPropertyValues()->getPlainValues();
+        $propertyValues = $event->initialPropertyValues->getPlainValues();
         $uriPathSegment = $propertyValues['uriPathSegment'] ?? '';
 
         $shortcutTarget = null;
-        if ($this->isShortcutNodeType($event->getNodeTypeName())) {
+        if ($this->isShortcutNodeType($event->nodeTypeName)) {
             $shortcutTarget = [
                 'mode' => $propertyValues['targetMode'] ?? 'firstChildNode',
                 'target' => $propertyValues['target'] ?? null,
             ];
         }
 
-        foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
-            $parentNode = $this->tryGetNode(fn () =>$this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-                $event->getParentNodeAggregateIdentifier(),
+        foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
+            $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+                $event->parentNodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
             if ($parentNode === null) {
@@ -144,7 +144,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             /** @var DocumentNodeInfo|null $precedingNode */
             $precedingNode = null;
 
-            if ($event->getSucceedingNodeAggregateIdentifier() === null) {
+            if ($event->succeedingNodeAggregateIdentifier === null) {
                 $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode(
                     $parentNode->getNodeAggregateIdentifier(),
                     $dimensionSpacePoint->hash
@@ -153,12 +153,12 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                     // make the new node the new succeeding node of the previously last child
                     // (= insert at the end of all children)
                     $this->updateNode($precedingNode, [
-                        'succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()
+                        'succeedingNodeAggregateIdentifier' => $event->nodeAggregateIdentifier
                     ]);
                 }
             } else {
                 $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode(
-                    $event->getSucceedingNodeAggregateIdentifier(),
+                    $event->succeedingNodeAggregateIdentifier,
                     $parentNode->getNodeAggregateIdentifier(),
                     $dimensionSpacePoint->hash
                 ));
@@ -166,21 +166,21 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                     // make the new node the new succeeding node of the previously preceding node
                     // of the specified succeeding node (= re-wire <preceding>-<succeeding> to <preceding>-<new node>)
                     $this->updateNode($precedingNode, [
-                        'succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()
+                        'succeedingNodeAggregateIdentifier' => $event->nodeAggregateIdentifier
                     ]);
                 }
                 $this->updateNodeByIdAndDimensionSpacePointHash(
-                    $event->getSucceedingNodeAggregateIdentifier(),
+                    $event->succeedingNodeAggregateIdentifier,
                     $dimensionSpacePoint->hash,
-                    ['precedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]
+                    ['precedingNodeAggregateIdentifier' => $event->nodeAggregateIdentifier]
                 );
             }
 
             $nodeAggregateIdentifierPath = $parentNode->getNodeAggregateIdentifierPath()
-                . '/' . $event->getNodeAggregateIdentifier();
+                . '/' . $event->nodeAggregateIdentifier;
             if ($parentNode->isRoot()) {
                 $uriPath = '';
-                $siteNodeName = $event->getNodeName();
+                $siteNodeName = $event->nodeName;
             } else {
                 $uriPath = $parentNode->getUriPath() === ''
                     ? $uriPathSegment
@@ -188,15 +188,15 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 $siteNodeName = $parentNode->getSiteNodeName();
             }
             $this->insertNode([
-                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifier' => $event->nodeAggregateIdentifier,
                 'uriPath' => $uriPath,
                 'nodeAggregateIdentifierPath' => $nodeAggregateIdentifierPath,
                 'siteNodeName' => $siteNodeName,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'originDimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
+                'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                 'parentNodeAggregateIdentifier' => $parentNode->getNodeAggregateIdentifier(),
                 'precedingNodeAggregateIdentifier' => $precedingNode?->getNodeAggregateIdentifier(),
-                'succeedingNodeAggregateIdentifier' => $event->getSucceedingNodeAggregateIdentifier(),
+                'succeedingNodeAggregateIdentifier' => $event->succeedingNodeAggregateIdentifier,
                 'shortcutTarget' => $shortcutTarget,
             ]);
         }

@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;

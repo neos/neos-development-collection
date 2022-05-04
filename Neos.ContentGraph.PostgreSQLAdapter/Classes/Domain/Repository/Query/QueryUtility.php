@@ -14,7 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
  */
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**

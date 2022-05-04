@@ -63,9 +63,9 @@ final class WorkspaceName implements \JsonSerializable
         }
     }
 
-    public function toContentRepositoryWorkspaceName(): ContentRepository\ValueObject\WorkspaceName
+    public function toContentRepositoryWorkspaceName(): \Neos\ContentRepository\SharedModel\Workspace\WorkspaceName
     {
-        return ContentRepository\ValueObject\WorkspaceName::fromString($this->name);
+        return \Neos\ContentRepository\SharedModel\Workspace\WorkspaceName::fromString($this->name);
     }
 
     public function jsonSerialize(): string

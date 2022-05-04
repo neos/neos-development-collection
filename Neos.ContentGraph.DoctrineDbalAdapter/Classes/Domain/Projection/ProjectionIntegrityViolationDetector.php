@@ -15,14 +15,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Integrity\ProjectionIntegrityViolationDetectorInterface;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
+use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**

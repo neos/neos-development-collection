@@ -17,14 +17,14 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 
 use Behat\Behat\Context\Context;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\ContentRepository\Tests\Functional\Command\BehatTestHelper;
+use Neos\ContentRepository\Tests\Functional\Command\LegacyBehatTestHelper;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 
 /**
  * Features context
@@ -32,7 +32,7 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait
 class FeatureContext implements Context
 {
     use FlowContextTrait;
-    use NodeOperationsTrait;
+    use LegacyNodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
@@ -40,7 +40,7 @@ class FeatureContext implements Context
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = BehatTestHelper::class;
+    protected $behatTestHelperObjectName = LegacyBehatTestHelper::class;
 
     /**
      * @var Environment

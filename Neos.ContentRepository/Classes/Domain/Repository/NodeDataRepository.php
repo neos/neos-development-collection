@@ -27,7 +27,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception;
 use Psr\Log\LoggerInterface;

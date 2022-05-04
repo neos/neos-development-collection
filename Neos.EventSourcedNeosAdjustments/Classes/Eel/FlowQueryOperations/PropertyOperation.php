@@ -15,9 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\Utility\ObjectAccess;
 
 /**

@@ -23,8 +23,8 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\View\Service\NodeJsonView;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**

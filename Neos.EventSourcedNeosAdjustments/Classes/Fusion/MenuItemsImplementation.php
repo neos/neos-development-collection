@@ -12,13 +12,13 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 

@@ -14,9 +14,9 @@ namespace Neos\EventSourcedNeosAdjustments\View;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;

@@ -22,7 +22,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\ExportException;
 use Psr\Log\LoggerInterface;
 

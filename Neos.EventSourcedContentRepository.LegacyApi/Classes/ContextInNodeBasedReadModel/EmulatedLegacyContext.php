@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;

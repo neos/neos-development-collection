@@ -13,14 +13,14 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Changes\ChangeFinder;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Remove;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\Flow\Annotations as Flow;

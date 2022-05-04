@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;

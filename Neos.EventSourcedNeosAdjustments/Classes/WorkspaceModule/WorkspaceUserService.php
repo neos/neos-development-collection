@@ -14,7 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;

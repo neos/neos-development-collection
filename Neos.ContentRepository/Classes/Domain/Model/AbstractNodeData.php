@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -19,7 +20,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
 
 /**

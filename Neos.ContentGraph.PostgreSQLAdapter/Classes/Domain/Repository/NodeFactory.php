@@ -16,25 +16,25 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CoverageByOrigin;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginByCoverage;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\Node\CoverageByOrigin;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
+use Neos\ContentRepository\Projection\Content\NodeAggregate;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\Content\PropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -218,7 +218,7 @@ final class NodeFactory
 
     /**
      * @param array<string,mixed> $nodeRows
-     * @return iterable<int,ContentProjection\NodeAggregate>
+     * @return iterable<int,\Neos\ContentRepository\Projection\Content\NodeAggregate>
      */
     public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable
     {

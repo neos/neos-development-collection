@@ -13,10 +13,10 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\Flow\Security\Context;

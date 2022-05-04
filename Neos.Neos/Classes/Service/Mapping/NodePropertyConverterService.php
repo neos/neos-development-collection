@@ -22,7 +22,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Psr\Log\LoggerInterface;
 
 /**

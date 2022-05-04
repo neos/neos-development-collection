@@ -12,9 +12,10 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Interface for a Node. This is the central interface for the Neos Content Repository.

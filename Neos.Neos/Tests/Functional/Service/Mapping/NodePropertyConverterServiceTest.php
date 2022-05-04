@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Functional\Service\Mapping;
  */
 
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Domain\Model\Domain;

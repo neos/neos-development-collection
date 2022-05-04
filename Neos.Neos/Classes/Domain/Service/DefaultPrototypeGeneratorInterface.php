@@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Generate a Fusion prototype definition for a given node type

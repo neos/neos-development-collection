@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\Fusion\Cache;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;

@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Flow\Annotations as Flow;

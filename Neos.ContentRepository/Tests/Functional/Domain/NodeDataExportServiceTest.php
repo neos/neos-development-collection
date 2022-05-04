@@ -22,7 +22,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Functional test case for node data export.

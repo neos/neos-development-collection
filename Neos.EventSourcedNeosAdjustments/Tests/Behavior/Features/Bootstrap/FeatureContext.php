@@ -23,8 +23,8 @@ require_once(__DIR__ . '/FlowSubcommandTrait.php');
 require_once(__DIR__ . '/FlowQueryTrait.php');
 
 use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\IntermediaryCommandTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Utility\Environment;
@@ -38,7 +38,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use FlowSubcommandTrait;
     use BrowserTrait;
     use EventSourcedTrait;
-    use NodeOperationsTrait;
+    use LegacyNodeOperationsTrait;
     use FlowQueryTrait;
     use IsolatedBehatStepsTrait;
     use RoutingTrait;

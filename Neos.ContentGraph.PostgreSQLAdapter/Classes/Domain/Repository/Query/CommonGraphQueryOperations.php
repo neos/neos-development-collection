@@ -15,7 +15,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 
 trait CommonGraphQueryOperations
 {

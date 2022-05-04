@@ -17,7 +17,7 @@ use Symfony\Component\Yaml\Parser as YamlParser;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Tests for the TypoFusionService

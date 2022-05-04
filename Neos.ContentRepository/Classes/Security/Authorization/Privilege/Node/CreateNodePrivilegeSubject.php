@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * A create node privilege subject

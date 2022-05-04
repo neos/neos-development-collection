@@ -13,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -29,7 +29,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Psr\Log\LoggerInterface;
 
 /**

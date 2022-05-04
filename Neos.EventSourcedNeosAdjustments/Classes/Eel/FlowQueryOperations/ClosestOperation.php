@@ -14,7 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * "closest" operation working on ContentRepository nodes. For each node in the context,

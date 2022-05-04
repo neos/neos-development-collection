@@ -12,16 +12,16 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
-use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
 use Neos\Flow\Annotations as Flow;
@@ -277,7 +277,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @param NodeInterface $node
      * @param string $nodeTypeFilterString
      * @return array<int,array<string,string>>
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     protected function renderChildrenInformation(NodeInterface $node, string $nodeTypeFilterString): array
     {

@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
@@ -33,7 +33,7 @@ class NodeUriImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
+     * @var \Neos\ContentRepository\SharedModel\NodeAddressFactory
      */
     protected $nodeAddressFactory;
 

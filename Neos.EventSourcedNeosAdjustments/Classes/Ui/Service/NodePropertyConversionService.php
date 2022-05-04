@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;

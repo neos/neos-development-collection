@@ -15,7 +15,7 @@ use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Testcase for the "NodeTypeManager"

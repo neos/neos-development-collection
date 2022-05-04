@@ -17,20 +17,20 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\Content\NodeAggregate;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -63,7 +63,7 @@ final class ContentGraph implements ContentGraphInterface
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
+        \Neos\ContentRepository\SharedModel\VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
         $index = $contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
@@ -141,7 +141,7 @@ final class ContentGraph implements ContentGraphInterface
         /** @var NodeAggregate $nodeAggregate The factory will return a NodeAggregate since the array is not empty */
         $nodeAggregate = $this->nodeFactory->mapNodeRowsToNodeAggregate(
             [$nodeRow],
-            Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions()
+            \Neos\ContentRepository\SharedModel\VisibilityConstraints::withoutRestrictions()
         );
 
         return $nodeAggregate;

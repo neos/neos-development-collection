@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -54,7 +54,7 @@ require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 class FeatureContext extends MinkContext
 {
     use FlowContextTrait;
-    use NodeOperationsTrait;
+    use LegacyNodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;

@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\UnitOfWork;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;

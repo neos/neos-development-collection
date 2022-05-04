@@ -6,7 +6,9 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.0",
+        "neos/event-sourcing": "^2.4",
+        "neos/content-repository-dimensionspace": "*",
+        "php": "^8.1",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -23,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\": "Classes"
+            "Neos\\ContentRepository\\": "src"
         }
     },
     "autoload-dev": {

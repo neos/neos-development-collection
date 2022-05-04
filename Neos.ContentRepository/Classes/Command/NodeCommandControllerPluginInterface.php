@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Command;
  */
 
 use Neos\Flow\Cli\ConsoleOutput;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * An interface for plugins for the NodeCommandController

@@ -12,14 +12,14 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 

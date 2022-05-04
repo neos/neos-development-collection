@@ -11,8 +11,8 @@ namespace Neos\Neos\NodeTypePostprocessor;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;

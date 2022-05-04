@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Migration\Filters\NodeType as NodeTypeFilter;
 
 /**

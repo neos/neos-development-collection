@@ -16,8 +16,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 
 /**
  * The node disabling feature set for the hypergraph projector

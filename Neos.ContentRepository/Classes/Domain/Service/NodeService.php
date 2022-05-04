@@ -11,10 +11,11 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception\NodeExistsException;

@@ -8,7 +8,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppli
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 
 /**
  * The NodeMove projection feature trait

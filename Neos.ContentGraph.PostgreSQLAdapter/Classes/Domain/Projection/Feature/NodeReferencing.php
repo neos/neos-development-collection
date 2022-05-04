@@ -20,7 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeAggregateIdentifie
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 
 /**
  * The node referencing feature set for the hypergraph projector

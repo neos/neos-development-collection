@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * @Flow\Scope("singleton")

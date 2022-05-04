@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
 

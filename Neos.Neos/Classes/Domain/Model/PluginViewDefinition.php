@@ -12,7 +12,7 @@ namespace Neos\Neos\Domain\Model;
  */
 
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * A plugin view definition

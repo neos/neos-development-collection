@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Service;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Provides generic methods to manage and work with Nodes

@@ -17,7 +17,7 @@ use Neos\Fusion\Service\HtmlAugmenter;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Service\ContentElementEditableService;
 

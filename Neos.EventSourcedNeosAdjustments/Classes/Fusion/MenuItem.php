@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * A menu item

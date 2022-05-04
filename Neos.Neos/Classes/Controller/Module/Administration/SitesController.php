@@ -32,7 +32,7 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;

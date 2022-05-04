@@ -14,22 +14,22 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\Content\InMemoryCache;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -90,7 +90,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     protected $dimensionSpacePoint;
 
     /**
-     * @var ContentRepository\Context\Parameters\VisibilityConstraints
+     * @var \Neos\ContentRepository\SharedModel\VisibilityConstraints
      */
     protected $visibilityConstraints;
 
@@ -167,7 +167,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     protected static function addSearchTermConstraintsToQuery(
         SqlQueryBuilder $query,
-        ?ContentRepository\Projection\Content\SearchTerm $searchTerm,
+        ?\Neos\ContentRepository\Projection\Content\SearchTerm $searchTerm,
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
@@ -1100,7 +1100,7 @@ order by level asc, position asc;')
     public function findDescendants(
         array $entryNodeAggregateIdentifiers,
         NodeTypeConstraints $nodeTypeConstraints,
-        ?ContentRepository\Projection\Content\SearchTerm $searchTerm
+        ?\Neos\ContentRepository\Projection\Content\SearchTerm $searchTerm
     ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery('

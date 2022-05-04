@@ -11,12 +11,12 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 
 /**
  * A privilege to restrict editing of node properties.

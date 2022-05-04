@@ -17,10 +17,10 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**

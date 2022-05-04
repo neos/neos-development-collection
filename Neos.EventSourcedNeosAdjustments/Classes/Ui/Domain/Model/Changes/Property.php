@@ -13,33 +13,33 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiers;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeModification\Command\SetNodeProperties;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 /** @codingStandardsIgnoreStart */
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd */
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 
 /**

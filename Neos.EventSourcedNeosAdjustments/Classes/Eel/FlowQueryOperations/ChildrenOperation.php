@@ -11,13 +11,13 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

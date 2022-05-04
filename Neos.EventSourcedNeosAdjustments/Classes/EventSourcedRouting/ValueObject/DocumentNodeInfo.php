@@ -4,9 +4,9 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Psr\Http\Message\UriInterface;

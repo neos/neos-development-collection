@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Tests for the NodeExportService class

@@ -13,16 +13,16 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as AdjustmentsWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -78,9 +78,9 @@ final class EditorContentStreamZookeeper
      *
      * @param Authentication\TokenInterface $token
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
+     * @throws \Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist
      * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void

@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
+use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 
 /**
  * The node disabling feature set for the hypergraph projector
