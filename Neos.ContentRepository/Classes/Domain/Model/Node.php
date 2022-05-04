@@ -23,7 +23,6 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface;
-use Neos\ContentRepository\Domain\Service\NodeMoveIntegrityCheckService;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
