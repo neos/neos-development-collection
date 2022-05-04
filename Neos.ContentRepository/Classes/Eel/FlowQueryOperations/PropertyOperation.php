@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -55,7 +56,7 @@ class PropertyOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
     }
 
     /**

@@ -69,7 +69,7 @@ class CacheLifetimeOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
+        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
     }
 
     /**
