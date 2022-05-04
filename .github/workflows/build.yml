@@ -26,7 +26,8 @@ jobs:
         # escr-behavioral determines the length of the build (because it is slowest). That's why we run this and
         # all the other parts in parallel.
         parallel-parts:
-          - linting-unit-functionaltests
+          - linting-unit-functionaltests-mysql
+          - functionaltests-postgres
           - escr-behavioral
         experimental: [false]
         #include:
@@ -190,24 +191,24 @@ jobs:
           ./flow routing:list
 
       - name: Run Linter
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           cd Packages/Neos
           composer lint
 
       - name: Run unit tests
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
 
       - name: Run functional tests
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           FLOW_CONTEXT=Testing ./flow doctrine:migrate
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
 
       - name: Run behat tests of Neos (without ES CR)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
@@ -219,7 +220,7 @@ jobs:
         if: matrix.parallel-parts == 'escr-behavioral'
         run: |
           mkdir -p Data/DebugDatabaseDumps
-          touch Data/DebugDatabaseDumps/.keep
+          touch Data/DebugDatabaseDumps/keep
 
           FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           cd Packages/Neos
@@ -249,6 +250,7 @@ jobs:
           path: Data/DebugDatabaseDumps
 
       - name: Setup Flow configuration (PGSQL)
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
           rm -f Configuration/Testing/Settings.yaml
           cat <<EOF >> Configuration/Testing/Settings.yaml
@@ -269,22 +271,21 @@ jobs:
                 routes:
                   'Neos.Flow': TRUE
           EOF
-
-      - name: Run unit tests (PGSQL)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+          rm -Rf Data/Temporary
 
       - name: Run functional tests (PGSQL)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run behat tests (PGSQL)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
-        #if: env.BEHAT == true
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
+          # debugging
+          FLOW_CONTEXT=Testing/Behat ./flow configuration:show
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
