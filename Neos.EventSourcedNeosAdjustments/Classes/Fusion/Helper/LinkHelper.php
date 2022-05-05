@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Fusion\ConvertUrisImplementation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;

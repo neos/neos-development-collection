@@ -22,7 +22,7 @@ use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;

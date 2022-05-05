@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;

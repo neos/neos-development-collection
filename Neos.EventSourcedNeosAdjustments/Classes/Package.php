@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments;
  */
 
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\EventSourcedNeosAdjustments\Ui\EditorContentStreamZookeeper;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Routing\RouterCachingService;

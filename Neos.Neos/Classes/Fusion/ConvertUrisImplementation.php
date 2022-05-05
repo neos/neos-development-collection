@@ -14,7 +14,7 @@ namespace Neos\Neos\Fusion;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
