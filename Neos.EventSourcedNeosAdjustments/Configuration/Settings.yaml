@@ -53,11 +53,6 @@ Neos:
       Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
       Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
   Neos:
-    modules:
-      management:
-        submodules:
-          workspaces:
-            controller: 'Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller\WorkspacesController'
     fusion:
       autoInclude:
         Neos.EventSourcedNeosAdjustments: true

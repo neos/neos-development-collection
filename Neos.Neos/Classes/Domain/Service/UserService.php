@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -33,12 +34,10 @@ use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\UserRepository;
-use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
@@ -57,18 +56,6 @@ class UserService
      * @var string
      */
     protected $defaultAuthenticationProviderName = 'Neos.Neos:Backend';
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var PublishingService
-     */
-    protected $publishingService;
 
     /**
      * @Flow\Inject
@@ -314,8 +301,6 @@ class UserService
         $this->partyRepository->add($user);
         $this->accountRepository->add($account);
 
-        $this->createPersonalWorkspace($user, $account);
-
         $this->emitUserCreated($user);
 
         return $user;
@@ -344,10 +329,6 @@ class UserService
     public function deleteUser(User $user)
     {
         foreach ($user->getAccounts() as $account) {
-            $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
-                $this->deletePersonalWorkspace($account->getAccountIdentifier());
-            });
-
             $this->accountRepository->remove($account);
         }
 
@@ -618,22 +599,24 @@ class UserService
         $this->emitUserDeactivated($user);
     }
 
+
     /**
      * Checks if the current user may publish to the given workspace according to one the roles of the user's accounts
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
      *
-     * @param Workspace $workspace The workspace
+     * @param \Neos\ContentRepository\Projection\Workspace\Workspace $workspace The workspace
      * @return boolean
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace)
     {
-        if ($workspace->getName() === 'live') {
+        if ($workspace->getWorkspaceName()->jsonSerialize() === 'live') {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
-        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
+        $ownerIdentifier = $this->persistenceManager->getIdentifierByObject($this->getCurrentUser());
+        if ($workspace->getWorkspaceOwner() === $ownerIdentifier || $workspace->getWorkspaceOwner() === null) {
             return true;
         }
 
@@ -667,41 +650,44 @@ class UserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanManageWorkspace(Workspace $workspace)
+    public function currentUserCanManageWorkspace(\Neos\ContentRepository\Projection\Workspace\Workspace $workspace): bool
     {
         if ($workspace->isPersonalWorkspace()) {
             return false;
         }
 
         if ($workspace->isInternalWorkspace()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+            );
         }
 
+        /** @todo implement me
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted(
+        'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+        );
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted(
+        'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+        );
         }
+         */
 
         return false;
     }
+
 
     /**
      * Checks if the current user may transfer ownership of the given workspace
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace)
+    public function currentUserCanTransferOwnershipOfWorkspace(\Neos\ContentRepository\Projection\Workspace\Workspace $workspace): bool
     {
         if ($workspace->isPersonalWorkspace()) {
             return false;
@@ -710,7 +696,9 @@ class UserService
         // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
         // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
         // ownership back to themselves.
-        return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted(
+            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        );
     }
 
     /**
@@ -815,32 +803,6 @@ class UserService
         return $roles;
     }
 
-
-    /**
-     * Creates a personal workspace for the given user's account if it does not exist already.
-     *
-     * @param User $user The new user to create a workspace for
-     * @param Account $account The user's backend account
-     * @throws IllegalObjectTypeException
-     */
-    protected function createPersonalWorkspace(User $user, Account $account)
-    {
-        $userWorkspaceName = UserUtility::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier());
-        $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
-        if ($userWorkspace === null) {
-            $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
-            if (!($liveWorkspace instanceof Workspace)) {
-                $liveWorkspace = new Workspace('live');
-                $liveWorkspace->setTitle('Live');
-                $this->workspaceRepository->add($liveWorkspace);
-            }
-
-            $userWorkspace = new Workspace($userWorkspaceName, $liveWorkspace, $user);
-            $userWorkspace->setTitle((string)$user->getName());
-            $this->workspaceRepository->add($userWorkspace);
-        }
-    }
-
     /**
      * Removes all personal workspaces of the given user's account if these workspaces exist. Also removes
      * all possibly existing content of these workspaces.
@@ -850,11 +812,7 @@ class UserService
      */
     protected function deletePersonalWorkspace($accountIdentifier)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
-        if ($userWorkspace instanceof Workspace) {
-            $this->publishingService->discardAllNodes($userWorkspace);
-            $this->workspaceRepository->remove($userWorkspace);
-        }
+        // TODO
     }
 
     /**
@@ -865,11 +823,7 @@ class UserService
      */
     protected function removeOwnerFromUsersWorkspaces(User $user)
     {
-        /** @var Workspace $workspace */
-        foreach ($this->workspaceRepository->findByOwner($user) as $workspace) {
-            $workspace->setOwner(null);
-            $this->workspaceRepository->update($workspace);
-        }
+        // TODO
     }
 
     /**
