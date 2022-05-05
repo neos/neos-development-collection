@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,13 +10,15 @@ namespace Neos\ContentRepository\Feature;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\RootNodeCreation\RootNodeCreation;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\NodeCreation\NodeCreation;
@@ -53,7 +53,7 @@ final class NodeAggregateCommandHandler
     use NodeVariation;
     use TetheredNodeInternals;
 
-    private \Neos\ContentRepository\Feature\ContentStreamRepository $contentStreamRepository;
+    private ContentStreamRepository $contentStreamRepository;
 
     /**
      * Used for constraint checks against the current outside configuration state of node types
@@ -92,7 +92,7 @@ final class NodeAggregateCommandHandler
     private RuntimeBlocker $runtimeBlocker;
 
     public function __construct(
-        \Neos\ContentRepository\Feature\ContentStreamRepository $contentStreamRepository,
+        ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         ContentGraphInterface $contentGraph,
@@ -185,8 +185,7 @@ final class NodeAggregateCommandHandler
     /**
      * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
      */
-    protected function checkConstraintsImposedByAncestors(
-        \Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command): void
     {
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),

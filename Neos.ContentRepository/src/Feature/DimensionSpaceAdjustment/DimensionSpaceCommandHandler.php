@@ -19,6 +19,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -69,8 +71,7 @@ final class DimensionSpaceCommandHandler
         $this->runtimeBlocker = $runtimeBlocker;
     }
 
-    public function handleMoveDimensionSpacePoint(
-        \Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint $command): CommandResult
+    public function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
@@ -96,8 +97,7 @@ final class DimensionSpaceCommandHandler
         return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
-    public function handleAddDimensionShineThrough(
-        \Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough $command): CommandResult
+    public function handleAddDimensionShineThrough(AddDimensionShineThrough $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())

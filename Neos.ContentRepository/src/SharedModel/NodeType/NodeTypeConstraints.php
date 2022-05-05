@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,100 +10,62 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /**
  * The list of node type constraints needed for various find() operations on the node tree.
  *
- * Never create an instance of this object by hand; rather use {@see \Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory}
- *
- * @Flow\Proxy(false)
+ * Never create an instance of this object by hand; rather use
+ * {@see \Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory}
  * @api
  */
 final class NodeTypeConstraints
 {
-    /**
-     * @var bool
-     */
-    protected $wildcardAllowed;
+    public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames;
 
-    /**
-     * @var array|NodeTypeName[]
-     */
-    protected $explicitlyAllowedNodeTypeNames;
+    public readonly NodeTypeNames $explicitlyDisallowedNodeTypeNames;
 
-    /**
-     * @var array|NodeTypeName[]
-     */
-    protected $explicitlyDisallowedNodeTypeNames;
-
-    /**
-     * @param bool $wildCardAllowed
-     * @param array|NodeTypeName[] $explicitlyAllowedNodeTypeNames
-     * @param array|NodeTypeName[] $explicitlyDisallowedNodeTypeNames
-     */
-    public function __construct(bool $wildCardAllowed, array $explicitlyAllowedNodeTypeNames = [], array $explicitlyDisallowedNodeTypeNames = [])
-    {
-        $this->wildcardAllowed = $wildCardAllowed;
-        $this->explicitlyAllowedNodeTypeNames = $explicitlyAllowedNodeTypeNames;
-        $this->explicitlyDisallowedNodeTypeNames = $explicitlyDisallowedNodeTypeNames;
+    public function __construct(
+        public readonly bool $isWildCardAllowed,
+        NodeTypeNames $explicitlyAllowedNodeTypeNames = null,
+        NodeTypeNames $explicitlyDisallowedNodeTypeNames = null
+    ) {
+        $this->explicitlyAllowedNodeTypeNames = $explicitlyAllowedNodeTypeNames ?: NodeTypeNames::createEmpty();
+        $this->explicitlyDisallowedNodeTypeNames = $explicitlyDisallowedNodeTypeNames ?: NodeTypeNames::createEmpty();
     }
 
-    /**
-     * @return bool
-     */
-    public function isWildcardAllowed(): bool
+    public function matches(NodeTypeName $nodeTypeName): bool
     {
-        return $this->wildcardAllowed;
-    }
-
-    /**
-     * @return array|NodeTypeName[]
-     */
-    public function getExplicitlyAllowedNodeTypeNames(): array
-    {
-        return $this->explicitlyAllowedNodeTypeNames;
-    }
-
-    /**
-     * @return array|NodeTypeName[]
-     */
-    public function getExplicitlyDisallowedNodeTypeNames(): array
-    {
-        return $this->explicitlyDisallowedNodeTypeNames;
-    }
-
-    public function matches(NodeTypeName $nodeTypeName)
-    {
-        // if $nodeTypeName is explicitely excluded, it is DENIED.
+        // if $nodeTypeName is explicitly excluded, it is DENIED.
         foreach ($this->explicitlyDisallowedNodeTypeNames as $disallowed) {
-            if ((string)$nodeTypeName === (string)$disallowed) {
+            if ($nodeTypeName === $disallowed) {
                 return false;
             }
         }
 
-        // if $nodeTypeName is explicitely ALLOWED.
+        // if $nodeTypeName is explicitly ALLOWED.
         foreach ($this->explicitlyAllowedNodeTypeNames as $allowed) {
-            if ((string)$nodeTypeName === (string)$allowed) {
+            if ($nodeTypeName === $allowed) {
                 return true;
             }
         }
 
         // otherwise, we return $wildcardAllowed.
-        return $this->wildcardAllowed;
+        return $this->isWildCardAllowed;
     }
 
     /**
      * IMMUTABLE, returns a new instance
-     *
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeTypeConstraints
      */
-    public function withExplicitlyDisallowedNodeType(NodeTypeName $nodeTypeName): NodeTypeConstraints
+    public function withExplicitlyDisallowedNodeType(NodeTypeName $nodeTypeName): self
     {
-        $disallowedNodeTypeNames = $this->explicitlyDisallowedNodeTypeNames;
-        $disallowedNodeTypeNames[] = $nodeTypeName;
-        return new NodeTypeConstraints($this->wildcardAllowed, $this->explicitlyAllowedNodeTypeNames, $disallowedNodeTypeNames);
+        return new NodeTypeConstraints(
+            $this->isWildCardAllowed,
+            $this->explicitlyAllowedNodeTypeNames,
+            $this->explicitlyDisallowedNodeTypeNames->withAdditionalNodeTypeName($nodeTypeName)
+        );
     }
 
     /**
@@ -117,7 +76,7 @@ final class NodeTypeConstraints
     {
         $legacyParts = [];
         foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
-            $legacyParts[] = '!' . (string)$nodeTypeName;
+            $legacyParts[] = '!' . $nodeTypeName;
         }
 
         foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {

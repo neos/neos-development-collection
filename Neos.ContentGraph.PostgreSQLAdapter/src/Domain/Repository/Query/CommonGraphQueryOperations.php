@@ -46,14 +46,14 @@ trait CommonGraphQueryOperations
     {
         $query = $this->query;
         $parameters = $this->parameters;
-        $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames();
-        $parameters['disallowedNodeTypeNames'] = $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames();
+        $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames;
+        $parameters['disallowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames;
         $types = $this->types;
         $types['allowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
         $types['disallowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
-        if (!empty($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
-            if (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
-                if ($nodeTypeConstraints->isWildcardAllowed()) {
+        if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
+            if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+                if ($nodeTypeConstraints->isWildCardAllowed) {
                     $query .= '
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)
             OR ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
@@ -63,12 +63,12 @@ trait CommonGraphQueryOperations
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
                 }
             } else {
-                if (!$nodeTypeConstraints->isWildcardAllowed()) {
+                if (!$nodeTypeConstraints->isWildCardAllowed) {
                     $query .= '
             AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
                 }
             }
-        } elseif (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+        } elseif (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
             $query .= '
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
         }

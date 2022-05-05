@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Feature;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
@@ -781,7 +782,7 @@ final class WorkspaceCommandHandler
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handleDiscardWorkspace(\Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace $command): CommandResult
+    public function handleDiscardWorkspace(DiscardWorkspace $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 

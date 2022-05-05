@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,9 +10,14 @@ namespace Neos\ContentRepository\Feature;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature;
+
+use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
+use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
@@ -55,12 +58,9 @@ final class ContentStreamCommandHandler
     }
 
     /**
-     * @param \Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream $command
-     * @return CommandResult
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateContentStream(
-        \Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream $command): CommandResult
+    public function handleCreateContentStream(CreateContentStream $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -82,13 +82,10 @@ final class ContentStreamCommandHandler
     }
 
     /**
-     * @param \Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream $command
-     * @return CommandResult
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
-    public function handleForkContentStream(
-        \Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream $command): CommandResult
+    public function handleForkContentStream(ForkContentStream $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -119,8 +116,7 @@ final class ContentStreamCommandHandler
         return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
-    public function handleRemoveContentStream(
-        \Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream $command): CommandResult
+    public function handleRemoveContentStream(RemoveContentStream $command): CommandResult
     {
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
 

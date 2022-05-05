@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,20 +10,17 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\Flow\Annotations as Flow;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\NodeType;
+
 use Neos\Utility\Arrays;
-use function Neos\ContentRepository\Domain\NodeType\array_merge;
 
 /**
  * Factory to build a NodeTypeConstraints object, which in turn is needed in
  * TraversableNode::findChildNodes().
  *
  * This factory resolves node type inheritance to a flat node type list.
- *
- * @Flow\Scope("singleton")
  */
 class NodeTypeConstraintFactory
 {
@@ -69,9 +63,14 @@ class NodeTypeConstraintFactory
         }
 
         // in case there are no filters, we fall back to allowing every node type.
-        // Furthermore, if there are only negated filters, we also fall back to allowing every node type (when the excludelist does not match)
+        // Furthermore, if there are only negated filters,
+        // we also fall back to allowing every node type (when the excludelist does not match)
         $wildcardAllowed = empty($serializedFilters) || (!empty($serializedFilters) && $onlyNegatedFilters);
 
-        return new NodeTypeConstraints($wildcardAllowed, $explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
+        return new NodeTypeConstraints(
+            $wildcardAllowed,
+            NodeTypeNames::fromArray($explicitlyAllowedNodeTypeNames),
+            NodeTypeNames::fromArray($explicitlyDisallowedNodeTypeNames)
+        );
     }
 }

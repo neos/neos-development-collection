@@ -33,7 +33,11 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
         private string $value
     ) {
         if (!preg_match(self::PATTERN, $value)) {
-            throw new \InvalidArgumentException('Invalid node aggregate identifier "' . $value . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
+            throw new \InvalidArgumentException(
+                'Invalid node aggregate identifier "' . $value
+                . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).',
+                1505840197862
+            );
         }
     }
 

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +10,10 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\NodeType;
+
 use Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator;
 use Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -19,15 +22,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\InvalidNodeTypePostprocessorException;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
 use Neos\ContentRepository\Utility;
-use function Neos\ContentRepository\Domain\Model\array_filter;
-use function Neos\ContentRepository\Domain\Model\array_key_exists;
-use function Neos\ContentRepository\Domain\Model\is_array;
-use function Neos\ContentRepository\Domain\Model\is_string;
-use function Neos\ContentRepository\Domain\Model\sprintf;
 
 /**
  * A Node Type
@@ -78,7 +74,7 @@ class NodeType
     /**
      * node types this node type directly inherits from
      *
-     * @var array<\Neos\ContentRepository\Domain\Model\NodeType>
+     * @var array<NodeType>
      */
     protected $declaredSuperTypes;
 
@@ -120,7 +116,10 @@ class NodeType
 
         foreach ($declaredSuperTypes as $type) {
             if ($type !== null && !$type instanceof NodeType) {
-                throw new \InvalidArgumentException('$declaredSuperTypes must be an array of NodeType objects', 1291300950);
+                throw new \InvalidArgumentException(
+                    '$declaredSuperTypes must be an array of NodeType objects',
+                    1291300950
+                );
             }
         }
         $this->declaredSuperTypes = $declaredSuperTypes;
@@ -164,11 +163,17 @@ class NodeType
         $mergedConfiguration = [];
         $applicableSuperTypes = static::getFlattenedSuperTypes($this);
         foreach ($applicableSuperTypes as $key => $superType) {
-            $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
+            $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule(
+                $mergedConfiguration,
+                $superType->getLocalConfiguration()
+            );
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
-        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== []) {
+        if (isset($this->fullConfiguration['childNodes'])
+            && is_array($this->fullConfiguration['childNodes'])
+            && $this->fullConfiguration['childNodes'] !== []
+        ) {
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
@@ -218,7 +223,10 @@ class NodeType
         foreach ($sortedPostProcessors as $postprocessorConfiguration) {
             $postprocessor = new $postprocessorConfiguration['postprocessor']();
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
-                throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
+                throw new InvalidNodeTypePostprocessorException(sprintf(
+                    'Expected NodeTypePostprocessorInterface but got "%s"',
+                    get_class($postprocessor)
+                ), 1364759955);
             }
             $postprocessorOptions = [];
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
@@ -442,7 +450,10 @@ class NodeType
      */
     public function getPropertyType($propertyName)
     {
-        if (!isset($this->fullConfiguration['properties']) || !isset($this->fullConfiguration['properties'][$propertyName]) || !isset($this->fullConfiguration['properties'][$propertyName]['type'])) {
+        if (!isset($this->fullConfiguration['properties'])
+            || !isset($this->fullConfiguration['properties'][$propertyName])
+            || !isset($this->fullConfiguration['properties'][$propertyName]['type'])
+        ) {
             return 'string';
         }
         return $this->fullConfiguration['properties'][$propertyName]['type'];
@@ -466,14 +477,11 @@ class NodeType
         $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (isset($propertyConfiguration['defaultValue'])) {
-                $type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
-                switch ($type) {
-                    case 'DateTime':
-                        $defaultValues[$propertyName] = new \DateTime($propertyConfiguration['defaultValue']);
-                    break;
-                    default:
-                        $defaultValues[$propertyName] = $propertyConfiguration['defaultValue'];
-                }
+                $type = $propertyConfiguration['type'] ?? '';
+                $defaultValues[$propertyName] = match ($type) {
+                    'DateTime' => new \DateTime($propertyConfiguration['defaultValue']),
+                    default => $propertyConfiguration['defaultValue'],
+                };
             }
         }
 
@@ -496,7 +504,8 @@ class NodeType
         $autoCreatedChildNodes = [];
         foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
             if (isset($childNodeConfiguration['type'])) {
-                $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
+                $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)]
+                    = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
             }
         }
 
@@ -556,7 +565,11 @@ class NodeType
     {
         $autoCreatedChildNodes = $this->getAutoCreatedChildNodes();
         if (!isset($autoCreatedChildNodes[$childNodeName])) {
-            throw new \InvalidArgumentException('The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, given $childNodeName "' . $childNodeName . '" is not auto-created.', 1403858395);
+            throw new \InvalidArgumentException(
+                'The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, '
+                    . 'given $childNodeName "' . $childNodeName . '" is not auto-created.',
+                1403858395
+            );
         }
         $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: [];
 
@@ -564,7 +577,10 @@ class NodeType
         foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
             $childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
         }
-        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: [];
+        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath(
+            $childNodeConfiguration,
+            $childNodeName . '.constraints.nodeTypes'
+        ) ?: [];
 
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
@@ -645,10 +661,14 @@ class NodeType
             if ($nodeType->isOfType($superType)) {
                 $distance = $this->traverseSuperTypes($nodeType, $superType, 0);
 
-                if ($constraint === true && ($constraintDistanceForTrue === null || $constraintDistanceForTrue > $distance)) {
+                if ($constraint === true
+                    && ($constraintDistanceForTrue === null || $constraintDistanceForTrue > $distance)
+                ) {
                     $constraintDistanceForTrue = $distance;
                 }
-                if ($constraint === false && ($constraintDistanceForFalse === null || $constraintDistanceForFalse > $distance)) {
+                if ($constraint === false
+                    && ($constraintDistanceForFalse === null || $constraintDistanceForFalse > $distance)
+                ) {
                     $constraintDistanceForFalse = $distance;
                 }
             }

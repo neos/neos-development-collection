@@ -14,10 +14,10 @@ namespace Neos\ContentRepository\Feature\NodeMove;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
@@ -190,7 +190,7 @@ trait NodeMove
                     )
                 );
 
-                $contentStreamEventStreamName = \Neos\ContentRepository\Feature\ContentStreamEventStreamName::fromContentStreamIdentifier(
+                $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
                     $command->getContentStreamIdentifier()
                 );
                 $this->getNodeAggregateEventPublisher()->publishMany(

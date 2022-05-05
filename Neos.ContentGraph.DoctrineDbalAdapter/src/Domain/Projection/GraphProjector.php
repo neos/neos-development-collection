@@ -24,6 +24,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionR
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -32,7 +34,6 @@ use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasFo
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -170,8 +171,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     /**
      * @throws \Throwable
      */
-    final public function whenNodeAggregateWithNodeWasCreated(
-        \Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated $event): void
+    final public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $this->createNodeWithHierarchy(
@@ -199,8 +199,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     /**
      * @throws \Throwable
      */
-    final public function whenNodeAggregateNameWasChanged(
-        \Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged $event): void
+    final public function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('
