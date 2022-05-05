@@ -14,12 +14,12 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\ExceptionHandlers;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementWrappingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
+use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
  * Provides a nicely formatted html error message

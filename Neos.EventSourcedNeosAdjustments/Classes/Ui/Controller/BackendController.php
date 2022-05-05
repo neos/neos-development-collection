@@ -29,7 +29,6 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -52,12 +51,6 @@ class BackendController extends ActionController
      * @var UserService
      */
     protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject

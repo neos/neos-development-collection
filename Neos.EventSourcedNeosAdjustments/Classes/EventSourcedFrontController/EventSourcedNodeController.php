@@ -97,12 +97,6 @@ class EventSourcedNodeController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
     protected $propertyMapper;

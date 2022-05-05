@@ -12,9 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion;
  * source code.
  */
 
-use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementWrappingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
  * Implementation to return the metadata for non rendered nodes.

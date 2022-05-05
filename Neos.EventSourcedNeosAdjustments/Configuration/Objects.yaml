@@ -67,3 +67,15 @@ Neos\ContentRepository\SharedModel\NodeAddressFactory:
 
 Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
   scope: singleton
+
+Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
+  scope: singleton
+
+Neos\ContentRepository\Feature\NodeAggregateCommandHandler:
+  scope: singleton
+
+Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
+  scope: singleton
+
+Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
+  scope: singleton
