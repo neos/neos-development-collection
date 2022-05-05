@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Projection\Changes;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Projection\Changes;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Changes;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
@@ -27,23 +29,16 @@ use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventSourcing\Projection\ProjectorInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
- *
- * @Flow\Scope("singleton")
  */
 class ChangeProjector implements ProjectorInterface
 {
-    /**
-     * @param DbalClientInterface $client
-     */
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly WorkspaceFinder $workspaceFinder
-    )
-    {
+    ) {
     }
 
     public function isEmpty(): bool

@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
 
 /**
  * This factory creates nodes based on node data. Its main purpose is to

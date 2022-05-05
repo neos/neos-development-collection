@@ -957,7 +957,7 @@ WHERE
 
     /**
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
     public function findSubtrees(

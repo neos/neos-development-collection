@@ -45,7 +45,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
      *
      * @param AssetInterface $asset
      * @return array<\Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties>
-     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeConfigurationException
      */
     public function getUsageReferences(AssetInterface $asset)
     {
