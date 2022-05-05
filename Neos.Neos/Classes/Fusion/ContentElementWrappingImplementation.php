@@ -11,12 +11,11 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Service\ContentElementWrappingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
  * Adds meta data attributes to the processed Content Element
@@ -48,9 +47,9 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     /**
      * Additional attributes to be rendered in the ContentElementWrapping
      *
-     * @return array
+     * @return array<string,string>
      */
-    public function getAdditionalAttributes()
+    public function getAdditionalAttributes(): array
     {
         return $this->fusionValue('additionalAttributes') ?? [];
     }
@@ -64,15 +63,8 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     {
         $content = $this->getValue();
 
-        /** @var $node NodeInterface */
         $node = $this->fusionValue('node');
         if (!$node instanceof NodeInterface) {
-            return $content;
-        }
-
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live') {
             return $content;
         }
 
@@ -80,15 +72,16 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             return $content;
         }
 
-        if ($node->isRemoved()) {
-            $content = '';
-        }
-
         if ($this->fusionValue('renderCurrentDocumentMetadata')) {
-            return $this->contentElementWrappingService->wrapCurrentDocumentMetadata($node, $content, $this->getContentElementFusionPath(), $this->getAdditionalAttributes());
+            return '';
         }
 
-        return $this->contentElementWrappingService->wrapContentObject($node, $content, $this->getContentElementFusionPath(), $this->getAdditionalAttributes());
+        return $this->contentElementWrappingService->wrapContentObject(
+            $node,
+            $content,
+            $this->getContentElementFusionPath(),
+            $this->getAdditionalAttributes()
+        );
     }
 
     /**
@@ -104,8 +97,8 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 2])
             && $fusionPathSegments[$numberOfFusionPathSegments - 2] === 'process') {
-
-            // cut off the SHORT processing syntax "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
+            // cut off the SHORT processing syntax
+            // "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -3));
         }
 
@@ -113,10 +106,11 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             && $fusionPathSegments[$numberOfFusionPathSegments - 4] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 3])
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === 'process') {
-
-            // cut off the LONG processing syntax "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
+            // cut off the LONG processing syntax
+            // "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -4));
         }
         return $this->path;
     }
 }
+
