@@ -25,6 +25,8 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
  */
 class HasOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -38,17 +40,6 @@ class HasOperation extends AbstractOperation
      * @var integer
      */
     protected static $priority = 100;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
-    }
 
     /**
      * {@inheritdoc}

@@ -27,6 +27,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class ChildrenOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -46,17 +48,6 @@ class ChildrenOperation extends AbstractOperation
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && reset($context) instanceof TraversableNodeInterface;
-    }
 
     /**
      * {@inheritdoc}
