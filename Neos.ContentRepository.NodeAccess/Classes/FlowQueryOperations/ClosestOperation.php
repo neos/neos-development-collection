@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -35,7 +35,7 @@ class ClosestOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 110;
+    protected static $priority = 100;
 
     /**
      * {@inheritdoc}

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -39,7 +39,7 @@ class NextUntilOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 500;
+    protected static $priority = 100;
 
     /**
      * @Flow\Inject

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +11,12 @@ namespace Neos\Neos\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Exception\NodeException;
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Neos\Domain\Service\SiteService;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * "parents" operation working on ContentRepository nodes. It iterates over all
@@ -39,38 +40,48 @@ class ParentsOperation extends AbstractOperation
     protected static $priority = 100;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
+     * @param array<int,mixed> $arguments the arguments for this operation
      * @todo Compare to node type Neos.Neos:Site instead of path once it is available
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $parents = [];
-        /* @var TraversableNodeInterface $contextNode */
+        /* @var NodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $node = $contextNode;
             do {
-                try {
-                    $node = $node->findParentNode();
-                } catch (NodeException $exception) {
+                $node = $this->nodeAccessorManager->accessorFor(
+                    $node->getContentStreamIdentifier(),
+                    $node->getDimensionSpacePoint(),
+                    $node->getVisibilityConstraints()
+                )->findParentNode($node);
+                if ($node === null) {
+                    // no parent found
                     break;
                 }
                 // stop at sites
-                if ($node->findNodePath() == SiteService::SITES_ROOT_PATH) {
+                if ($node->getNodeTypeName() === NodeTypeName::fromString('Neos.Neos:Sites')) {
                     break;
                 }
                 $parents[] = $node;

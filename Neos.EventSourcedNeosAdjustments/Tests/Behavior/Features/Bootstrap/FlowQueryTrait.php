@@ -17,7 +17,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations\FindOperation;
+use Neos\ContentRepository\NodeAccess\FlowQueryOperations\FindOperation;
 use PHPUnit\Framework\Assert;
 
 /**

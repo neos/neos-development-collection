@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,31 +14,29 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
- * "next" operation working on ContentRepository nodes. It iterates over all
- * context elements and returns the immediately following sibling.
- * If an optional filter expression is provided, it only returns the node
- * if it matches the given expression.
+ * "siblings" operation working on ContentRepository nodes. It iterates over all
+ * context elements and returns all sibling nodes or only those matching
+ * the filter expression specified as optional argument.
  */
-class NextOperation extends AbstractOperation
+class SiblingsOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    protected static $shortName = 'next';
+    protected static $shortName = 'siblings';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    protected static $priority = 500;
+    protected static $priority = 100;
 
     /**
      * @Flow\Inject
@@ -49,10 +47,10 @@ class NextOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object)  onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
-    public function canEvaluate($context)
+    public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
@@ -62,12 +60,16 @@ class NextOperation extends AbstractOperation
      *
      * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
      * @param array<int,mixed> $arguments the arguments for this operation
-     * @return void
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         $output = [];
-        $outputNodePaths = [];
+        $outputNodeAggregateIdentifiers = [];
+        foreach ($flowQuery->getContext() as $contextNode) {
+            /** @var NodeInterface $contextNode */
+            $outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()] = true;
+        }
+
         foreach ($flowQuery->getContext() as $contextNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $contextNode->getContentStreamIdentifier(),
@@ -75,10 +77,17 @@ class NextOperation extends AbstractOperation
                 $contextNode->getVisibilityConstraints()
             );
 
-            $nextNode = $this->getNextForNode($contextNode, $nodeAccessor);
-            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()])) {
-                $outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()] = true;
-                $output[] = $nextNode;
+            $parentNode = $nodeAccessor->findParentNode($contextNode);
+            if ($parentNode === null) {
+                // no parent found
+                continue;
+            }
+
+            foreach ($nodeAccessor->findChildNodes($parentNode) as $childNode) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
+                    $output[] = $childNode;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
+                }
             }
         }
         $flowQuery->setContext($output);
@@ -86,20 +95,5 @@ class NextOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
         }
-    }
-
-    /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @param NodeAccessorInterface $nodeAccessor
-     * @return NodeInterface|null The following node of $contextNode or NULL
-     */
-    protected function getNextForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): ?NodeInterface
-    {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
-        if ($parentNode === null) {
-            return null;
-        }
-
-        return $nodeAccessor->findChildNodes($parentNode)->next($contextNode);
     }
 }

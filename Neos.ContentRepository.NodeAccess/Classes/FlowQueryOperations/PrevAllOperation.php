@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,34 +11,34 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\Flow\Annotations as Flow;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /**
- * "nextAll" operation working on ContentRepository nodes. It iterates over all
- * context elements and returns each following sibling or only those matching
- * the filter expression specified as optional argument.
+ * "prevAll" operation working on ContentRepository nodes. It iterates over all
+ * context elements and returns each preceding sibling or only those matching
+ * the filter expression specified as optional argument
  */
-class NextAllOperation extends AbstractOperation
+class PrevAllOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    protected static $shortName = 'nextAll';
+    protected static $shortName = 'prevAll';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    protected static $priority = 500;
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -67,18 +67,20 @@ class NextAllOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
-        $outputNodePaths = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $contextNode->getContentStreamIdentifier(),
                 $contextNode->getDimensionSpacePoint(),
                 $contextNode->getVisibilityConstraints()
             );
-
-            foreach ($this->getNextForNode($contextNode, $nodeAccessor) as $nextNode) {
-                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()])) {
-                    $outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()] = true;
-                    $output[] = $nextNode;
+            // @todo: implement NodeAccessor::getPrecedingSiblings
+            foreach ($this->getPrevForNode($contextNode, $nodeAccessor) as $prevNode) {
+                if ($prevNode !== null
+                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])
+                ) {
+                    $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
+                    $output[] = $prevNode;
                 }
             }
         }
@@ -90,17 +92,17 @@ class NextAllOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the next node should be found
+     * @param NodeInterface $contextNode The node for which the preceding node should be found
      * @param NodeAccessorInterface $nodeAccessor
-     * @return Nodes The next nodes of $contextNode
+     * @return Nodes The preceding nodes of $contextNode
      */
-    protected function getNextForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
     {
         $parentNode = $nodeAccessor->findParentNode($contextNode);
         if ($parentNode === null) {
             return Nodes::empty();
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->nextAll($contextNode);
+        return $nodeAccessor->findChildNodes($parentNode)->previousAll($contextNode);
     }
 }

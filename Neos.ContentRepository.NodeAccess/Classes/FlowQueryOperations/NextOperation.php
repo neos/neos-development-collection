@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -19,26 +19,26 @@ use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
- * "prev" operation working on ContentRepository nodes. It iterates over all
- * context elements and returns the immediately preceding sibling.
+ * "next" operation working on ContentRepository nodes. It iterates over all
+ * context elements and returns the immediately following sibling.
  * If an optional filter expression is provided, it only returns the node
  * if it matches the given expression.
  */
-class PrevOperation extends AbstractOperation
+class NextOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    protected static $shortName = 'prev';
+    protected static $shortName = 'next';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    protected static $priority = 500;
+    protected static $priority = 100;
 
     /**
      * @Flow\Inject
@@ -49,7 +49,7 @@ class PrevOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array<int,mixed> $context (or array-like object)  onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -62,8 +62,9 @@ class PrevOperation extends AbstractOperation
      *
      * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
      * @param array<int,mixed> $arguments the arguments for this operation
+     * @return void
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments): void
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
         $outputNodePaths = [];
@@ -74,7 +75,7 @@ class PrevOperation extends AbstractOperation
                 $contextNode->getVisibilityConstraints()
             );
 
-            $nextNode = $this->getPrevForNode($contextNode, $nodeAccessor);
+            $nextNode = $this->getNextForNode($contextNode, $nodeAccessor);
             if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()])) {
                 $outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()] = true;
                 $output[] = $nextNode;
@@ -90,15 +91,15 @@ class PrevOperation extends AbstractOperation
     /**
      * @param NodeInterface $contextNode The node for which the preceding node should be found
      * @param NodeAccessorInterface $nodeAccessor
-     * @return NodeInterface|null The preceeding node of $contextNode or NULL
+     * @return NodeInterface|null The following node of $contextNode or NULL
      */
-    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): ?NodeInterface
+    protected function getNextForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): ?NodeInterface
     {
         $parentNode = $nodeAccessor->findParentNode($contextNode);
         if ($parentNode === null) {
             return null;
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->previous($contextNode);
+        return $nodeAccessor->findChildNodes($parentNode)->next($contextNode);
     }
 }

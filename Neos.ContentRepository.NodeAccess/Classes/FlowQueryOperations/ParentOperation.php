@@ -1,8 +1,8 @@
 <?php
-namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,32 +12,31 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
- * "parents" operation working on ContentRepository nodes. It iterates over all
- * context elements and returns the parent nodes or only those matching
+ * "parent" operation working on ContentRepository nodes. It iterates over all
+ * context elements and returns each direct parent nodes or only those matching
  * the filter expression specified as optional argument.
  */
-class ParentsOperation extends AbstractOperation
+class ParentOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    protected static $shortName = 'parents';
+    protected static $shortName = 'parent';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    protected static $priority = 110;
+    protected static $priority = 100;
 
     /**
      * @Flow\Inject
@@ -61,34 +60,32 @@ class ParentsOperation extends AbstractOperation
      *
      * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
      * @param array<int,mixed> $arguments the arguments for this operation
-     * @todo Compare to node type Neos.Neos:Site instead of path once it is available
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $parents = [];
-        /* @var NodeInterface $contextNode */
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $node = $contextNode;
-            do {
-                $node = $this->nodeAccessorManager->accessorFor(
-                    $node->getContentStreamIdentifier(),
-                    $node->getDimensionSpacePoint(),
-                    $node->getVisibilityConstraints()
-                )->findParentNode($node);
-                if ($node === null) {
-                    // no parent found
-                    break;
-                }
-                // stop at sites
-                if ($node->getNodeTypeName() === NodeTypeName::fromString('Neos.Neos:Sites')) {
-                    break;
-                }
-                $parents[] = $node;
-            } while (true);
+            /* @var $contextNode NodeInterface */
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $contextNode->getContentStreamIdentifier(),
+                $contextNode->getDimensionSpacePoint(),
+                $contextNode->getVisibilityConstraints()
+            );
+
+            $parentNode = $nodeAccessor->findParentNode($contextNode);
+            if ($parentNode === null) {
+                continue;
+            }
+
+            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
+                $output[] = $parentNode;
+                $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
+            }
         }
 
-        $flowQuery->setContext($parents);
+        $flowQuery->setContext($output);
 
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);

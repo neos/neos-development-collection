@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,10 +11,12 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "has" operation working on NodeInterface. Reduce the set of matched elements
@@ -40,21 +42,27 @@ class HasOperation extends AbstractOperation
     protected static $priority = 100;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * {@inheritdoc}
      *
-     * @param array (or array-like object) $context onto which this operation should be applied
+     * @param array<int,mixed> $context (or array-like object) onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery
-     * @param array $arguments
+     * @param FlowQuery<int,mixed> $flowQuery
+     * @param array<int,mixed> $arguments
      * @return void
      * @throws FizzleException
      * @throws \Neos\Eel\Exception
@@ -79,7 +87,7 @@ class HasOperation extends AbstractOperation
             }
         } else {
             if ($subject instanceof FlowQuery) {
-                $elements = $subject->get();
+                $elements = $subject->getContext();
             } elseif ($subject instanceof \Traversable) {
                 $elements = iterator_to_array($subject);
             } elseif (is_object($subject)) {
@@ -90,12 +98,16 @@ class HasOperation extends AbstractOperation
                 throw new FizzleException('supplied argument for has operation not supported', 1332489625);
             }
             foreach ($elements as $element) {
-                if ($element instanceof TraversableNodeInterface) {
-                    $parentsQuery = new FlowQuery([$element]);
-                    foreach ($parentsQuery->parents([])->get() as $parent) {
-                        /** @var TraversableNodeInterface $parent */
+                if ($element instanceof NodeInterface) {
+                    $accessor = $this->nodeAccessorManager->accessorFor(
+                        $element->getContentStreamIdentifier(),
+                        $element->getDimensionSpacePoint(),
+                        $element->getVisibilityConstraints()
+                    );
+                    $parent = $accessor->findParentNode($element);
+                    if (!is_null($parent)) {
                         foreach ($context as $contextElement) {
-                            /** @var TraversableNodeInterface $contextElement */
+                            /** @var NodeInterface $contextElement */
                             if ($contextElement === $parent) {
                                 $filteredContext[] = $contextElement;
                             }
