@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Module\Management;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -29,6 +30,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
@@ -45,12 +47,10 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\ContentRepository\Utility;
 
 
 /**
@@ -103,11 +103,10 @@ class WorkspacesController extends AbstractModuleController
     protected $packageManager;
 
     /**
-     * TODO REMOVE
-     * @var ContentDimensionPresetSourceInterface
+     * @var ContentDimensionSourceInterface
      * @Flow\Inject
      */
-    protected $contentDimensionPresetSource;
+    protected $contentDimensionSource;
 
     /**
      * @Flow\Inject
@@ -199,21 +198,21 @@ class WorkspacesController extends AbstractModuleController
 
     public function showAction(WorkspaceName $workspace): void
     {
-        $workspace = $this->workspaceFinder->findOneByName($workspace);
-        if (is_null($workspace)) {
+        $workspaceObj = $this->workspaceFinder->findOneByName($workspace);
+        if (is_null($workspaceObj)) {
             /** @todo add flash message */
             $this->redirect('index');
         }
         /** @var Workspace $workspace */
         $this->view->assignMultiple([
-            'selectedWorkspace' => $workspace,
-            'selectedWorkspaceLabel' => $workspace->workspaceTitle ?: $workspace->getWorkspaceName(),
-            'baseWorkspaceName' => $workspace->getBaseWorkspaceName(),
-            'baseWorkspaceLabel' => $workspace->getBaseWorkspaceName(), // TODO fallback to title
+            'selectedWorkspace' => $workspaceObj,
+            'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle ?: $workspaceObj->getWorkspaceName(),
+            'baseWorkspaceName' => $workspaceObj->getBaseWorkspaceName(),
+            'baseWorkspaceLabel' => $workspaceObj->getBaseWorkspaceName(), // TODO fallback to title
             // TODO $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'canPublishToBaseWorkspace' => true,
             'siteChanges' => $this->computeSiteChanges($workspace),
-            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets()
+            'contentDimensions' => $this->contentDimensionSource->getContentDimensionsOrderedByPriority()
         ]);
     }
 

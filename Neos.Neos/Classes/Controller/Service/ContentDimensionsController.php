@@ -11,11 +11,11 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\FluidAdaptor\View\TemplateView;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
@@ -42,7 +42,7 @@ class ContentDimensionsController extends ActionController
     ];
 
     /**
-     * @var ContentDimensionPresetSourceInterface
+     * @var ContentDimensionSourceInterface
      * @Flow\Inject
      */
     protected $contentDimensionPresetSource;
