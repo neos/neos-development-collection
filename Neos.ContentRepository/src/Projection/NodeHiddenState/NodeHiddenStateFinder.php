@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Projection\NodeHiddenState;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -26,11 +27,11 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeHiddenStateFinder
 {
-    /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
+
+    public function __construct(private readonly DbalClientInterface $client)
+    {
+    }
+
 
     public function findHiddenState(
         ContentStreamIdentifier $contentStreamIdentifier,

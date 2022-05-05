@@ -1,0 +1,14 @@
+Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
+  scope: singleton
+  arguments:
+    eventStorageDatabaseClient:
+
+    processedEventsCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
+
+

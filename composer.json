@@ -53,6 +53,7 @@
         "neos/content-repository-nodeaccess": "self.version",
         "neos/contentrepository-security": "self.version",
         "neos/content-repository": "self.version",
+        "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
         "neos/escr-export": "self.version",
@@ -138,6 +139,9 @@
             ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/src"
+            ],
+            "Neos\\ContentRepositoryRegistry\\": [
+                "Neos.ContentRepositoryRegistry/Classes"
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"

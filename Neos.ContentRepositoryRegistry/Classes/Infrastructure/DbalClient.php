@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Service\Infrastructure\Service;
+namespace Neos\ContentRepositoryRegistry\Infrastructure;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -17,6 +17,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\SQLLogger;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class DbalClient
+class DbalClient implements DbalClientInterface
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.backendOptions")

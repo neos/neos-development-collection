@@ -18,13 +18,13 @@ use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
+use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
 /**
  * The content element wrapping service adds the necessary markup around

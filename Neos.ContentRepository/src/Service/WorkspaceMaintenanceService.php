@@ -6,11 +6,11 @@ namespace Neos\ContentRepository\Service;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Scope("singleton")]
@@ -27,7 +27,7 @@ class WorkspaceMaintenanceService
     public function __construct(
         WorkspaceFinder $workspaceFinder,
         WorkspaceCommandHandler $workspaceCommandHandler,
-        DbalClient $dbalClient
+        DbalClientInterface $dbalClient
     ) {
         $this->workspaceFinder = $workspaceFinder;
         $this->workspaceCommandHandler = $workspaceCommandHandler;

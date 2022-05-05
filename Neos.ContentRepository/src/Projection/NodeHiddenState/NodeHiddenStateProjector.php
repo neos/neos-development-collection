@@ -15,10 +15,9 @@ namespace Neos\ContentRepository\Projection\NodeHiddenState;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,17 +28,12 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeHiddenStateProjector implements ProjectorInterface
 {
-    /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
 
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
+    public function __construct(
+        private readonly DbalClientInterface $client,
+    )
+    {
+    }
 
     public function isEmpty(): bool
     {
