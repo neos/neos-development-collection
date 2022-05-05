@@ -85,4 +85,3 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
         }
     }
 }
-

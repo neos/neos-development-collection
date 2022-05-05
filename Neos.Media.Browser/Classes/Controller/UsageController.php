@@ -13,8 +13,6 @@ namespace Neos\Media\Browser\Controller;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -23,7 +21,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;

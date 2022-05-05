@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
