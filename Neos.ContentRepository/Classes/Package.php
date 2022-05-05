@@ -11,21 +11,14 @@ namespace Neos\ContentRepository;
  * source code.
  */
 
-use Neos\ContentRepository\Configuration\NodeTypesLoader;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\Source\YamlSource;
-use Neos\Flow\Core\Booting\Sequence;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Package\Package as BasePackage;
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\Utility\Files;
 
 /**
  * The ContentRepository Package
