@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Migration\Domain\Factory;
+namespace Neos\ContentRepository\NodeAccess\Factory;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Migration\Domain\Factory;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Migration\Configuration\ConfigurationInterface;
+use Neos\ContentRepository\NodeAccess\Migration\Configuration\ConfigurationInterface;
 use Neos\ContentRepository\Migration\Domain\Model\Migration;
 
 /**

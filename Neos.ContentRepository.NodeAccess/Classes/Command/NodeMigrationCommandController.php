@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
+use Neos\ContentRepository\NodeAccess\Factory\MigrationFactory;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;

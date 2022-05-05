@@ -1,5 +1,5 @@
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
-  className: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
+  className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
 
 Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
   properties:
@@ -11,14 +11,14 @@ Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
           1:
             value: Neos_Neos_Fusion
 
-Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector:
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
   arguments:
     3:
       object:
         factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
         factoryMethodName: 'getConnection'
 
-Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder:
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
   arguments:
     1:
       object:
@@ -78,4 +78,10 @@ Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
   scope: singleton
 
 Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
+  scope: singleton
+
+Neos\ContentRepository\Feature\Migration\MigrationCommandHandler:
+  scope: singleton
+
+Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService:
   scope: singleton
