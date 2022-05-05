@@ -13,9 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  */
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Service\TransliterationService;
 

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\View;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,8 +10,11 @@ namespace Neos\EventSourcedNeosAdjustments\View;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\View;
+
 use GuzzleHttp\Psr7\Message;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -194,7 +195,7 @@ class FusionView extends AbstractView
      */
     protected function getCurrentSiteNode(): NodeInterface
     {
-        $currentNode = isset($this->variables['site']) ? $this->variables['site'] : null;
+        $currentNode = $this->variables['site'] ?? null;
         if (!$currentNode instanceof NodeInterface) {
             throw new Exception('FusionView needs a variable \'site\' set with a Node object.', 1538996432);
         }
@@ -207,7 +208,7 @@ class FusionView extends AbstractView
      */
     protected function getCurrentNode(): NodeInterface
     {
-        $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
+        $currentNode = $this->variables['value'] ?? null;
         if (!$currentNode instanceof NodeInterface) {
             throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
         }
@@ -221,7 +222,6 @@ class FusionView extends AbstractView
     protected function getFusionRuntime(NodeInterface $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
-            /** @var TraversableNodeInterface $currentSiteNode */
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {

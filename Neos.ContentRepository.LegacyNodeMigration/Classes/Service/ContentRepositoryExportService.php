@@ -551,7 +551,7 @@ class ContentRepositoryExportService
      * @return NodeAggregateIdentifiersByNodePaths
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
      */
     private function findNodeAggregateIdentifiersForTetheredDescendantNodes(
         NodePath $nodePath,

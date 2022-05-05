@@ -19,7 +19,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 
 /**
  * Manager for node types
