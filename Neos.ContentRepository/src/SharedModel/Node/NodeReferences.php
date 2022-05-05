@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\SharedModel\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,18 +10,15 @@ namespace Neos\ContentRepository\SharedModel\Node;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\NodeReference;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\Node;
+
 use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\array_merge;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\count;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\is_array;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\sprintf;
 
 /**
  * @implements \IteratorAggregate<string,NodeReference>
  */
-#[Flow\Proxy(false)]
 final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**

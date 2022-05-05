@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -10,11 +9,14 @@ namespace Neos\ContentRepository\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Exception;
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
 
 /**
  * An "Invalid node type postprocessor" exception
  */
-class InvalidNodeTypePostprocessorException extends Exception
+class InvalidNodeTypePostprocessorException extends \DomainException
 {
 }

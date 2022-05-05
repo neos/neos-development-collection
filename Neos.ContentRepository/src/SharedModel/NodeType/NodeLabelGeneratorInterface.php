@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +10,12 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\NodeType;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+
 /**
  * Interface for rendering a node label string based on some strategy
  *
@@ -20,10 +25,7 @@ interface NodeLabelGeneratorInterface
 {
     /**
      * Render a node label
-     *
-     * @param \Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node
-     * @return string
      * @api
      */
-    public function getLabel(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node): string;
+    public function getLabel(NodeInterface $node): string;
 }

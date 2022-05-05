@@ -14,13 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel;
 
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use function Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\sprintf;
 
 /**
  * A persistent, external "address" of a node; used to link to it.
@@ -33,7 +30,6 @@ use function Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\sprin
  *
  * It is used in Neos Routing to build a URI to a node.
  */
-#[Flow\Proxy(false)]
 final class NodeAddress
 {
     public function __construct(

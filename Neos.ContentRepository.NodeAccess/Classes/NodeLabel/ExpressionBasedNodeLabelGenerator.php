@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeLabel;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeLabelGeneratorInterface;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
@@ -68,12 +69,9 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 
     /**
      * Render a node label
-     *
-     * @param \Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node
-     * @return string
      * @throws \Neos\Eel\Exception
      */
-    public function getLabel(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node): string
+    public function getLabel(NodeInterface $node): string
     {
         return (string)Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
     }

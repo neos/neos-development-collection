@@ -48,7 +48,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface));
+        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
     /**
@@ -135,7 +135,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function evaluateOperator($value, $operator, $operand)
     {
-        if ($operator === 'instanceof' && $value instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
+        if ($operator === 'instanceof' && $value instanceof NodeInterface) {
             if ($this->operandIsSimpleType($operand)) {
                 return $this->handleSimpleTypeOperand($operand, $value);
             } elseif ($operand === NodeInterface::class || $operand === Node::class || $operand === \Neos\ContentRepository\Domain\Model\NodeInterface::class || $operand === TraversableNodeInterface::class) {

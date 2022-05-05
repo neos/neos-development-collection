@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-
 /**
  * The node path is a list of NodeNames. It can be either absolute or relative.
  *
@@ -31,7 +29,7 @@ final class NodePath implements \JsonSerializable, \Stringable
         if ($path !== '/') {
             $pathParts = explode('/', ltrim($path, '/'));
             foreach ($pathParts as $pathPart) {
-                if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $pathPart) !== 1) {
+                if (preg_match(NodeName::PATTERN, $pathPart) !== 1) {
                     throw new \InvalidArgumentException(sprintf(
                         'The path "%s" is no valid NodePath because it contains a segment "%s"'
                             . ' that is no valid NodeName',

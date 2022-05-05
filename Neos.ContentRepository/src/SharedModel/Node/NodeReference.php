@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\SharedModel\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,14 +10,16 @@ namespace Neos\ContentRepository\SharedModel\Node;
  * source code.
  */
 
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\Node;
+
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\count;
 
 /**
  * @todo what is this?
  */
-#[Flow\Proxy(false)]
 final class NodeReference
 {
     // TODO: actually working??
