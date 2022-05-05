@@ -113,4 +113,3 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
         return $this->path;
     }
 }
-

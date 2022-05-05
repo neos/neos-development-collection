@@ -18,7 +18,6 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\View\Service\WorkspaceJsonView;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * REST service for workspaces
