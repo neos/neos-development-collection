@@ -40,7 +40,8 @@ class ImageVariantGarbageCollector
      * Removes unused ImageVariants after a Node property changes to a different ImageVariant.
      * This is triggered via the nodePropertyChanged event.
      *
-     * Note: This method it triggered by the "nodePropertyChanged" signal, @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
+     * Note: This method it triggered by the "nodePropertyChanged" signal,
+     * @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
      *
      * @param NodeInterface $node the affected node
      * @param string $propertyName name of the property that has been changed/added
@@ -56,13 +57,15 @@ class ImageVariantGarbageCollector
         $identifier = $this->persistenceManager->getIdentifierByObject($oldValue);
         $results = $this->nodeDataRepository->findNodesByRelatedEntities([ImageVariant::class => [$identifier]]);
 
-        // This case shouldn't happen as the query will usually find at least the node that triggered this call, still if there is no relation we can remove the ImageVariant.
+        // This case shouldn't happen as the query will usually find at least the node that triggered this call,
+        // still if there is no relation we can remove the ImageVariant.
         if ($results === []) {
             $this->assetRepository->remove($oldValue);
             return;
         }
 
-        // If the result contains exactly the node that got a new ImageVariant assigned then we are safe to remove the asset here.
+        // If the result contains exactly the node that got a new ImageVariant assigned
+        // then we are safe to remove the asset here.
         if ($results === [$node->getNodeData()]) {
             $this->assetRepository->remove($oldValue);
         }

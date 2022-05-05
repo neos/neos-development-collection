@@ -113,7 +113,13 @@ class XliffService
                     foreach ($file->getTranslationUnits() as $key => $value) {
                         $valueToStore = $this->getTranslationUnitValue($value);
                         $valueToStore = count($valueToStore) > 1 ? $valueToStore : array_shift($valueToStore);
-                        $this->setArrayDataValue($labels, str_replace('.', '_', $packageKey) . '.' . str_replace('/', '_', $sourceName) . '.' . str_replace('.', '_', $key), $valueToStore);
+                        $this->setArrayDataValue(
+                            $labels,
+                            str_replace('.', '_', $packageKey)
+                                . '.' . str_replace('/', '_', $sourceName)
+                                . '.' . str_replace('.', '_', $key),
+                            $valueToStore
+                        );
                     }
                 }
             }
@@ -187,7 +193,16 @@ class XliffService
 
             $this->xliffReader->readFiles(
                 $filePath,
-                function (\XMLReader $file, $offset, $version) use ($packageKey, &$sources, $source, $sourcesToBeIncluded) {
+                function (
+                    \XMLReader $file,
+                    $offset,
+                    $version
+                ) use (
+                    $packageKey,
+                    &$sources,
+                    $source,
+                    $sourcesToBeIncluded
+                ) {
                     $targetPackageKey = $packageKey;
                     if ($version === '1.2') {
                         //in xliff v1.2 the packageKey or source can be overwritten via attributes

@@ -69,7 +69,14 @@ class ConfigurationController extends AbstractModuleController
             } catch (SchemaValidationException $exception) {
                 $this->addFlashMessage(
                     htmlspecialchars($exception->getMessage()),
-                    $this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    $this->translator->translateById(
+                        'configuration.anErrorOccurredDuringValidationOfTheConfiguration.title',
+                        [],
+                        null,
+                        null,
+                        'Modules',
+                        'Neos.Neos'
+                    ),
                     Message::SEVERITY_ERROR,
                     [],
                     1412373972
@@ -77,7 +84,14 @@ class ConfigurationController extends AbstractModuleController
             }
         } else {
             $this->addFlashMessage(
-                $this->translator->translateById('configuration.configurationTypeNotFound.body', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById(
+                    'configuration.configurationTypeNotFound.body',
+                    [],
+                    null,
+                    null,
+                    'Modules',
+                    'Neos.Neos'
+                ),
                 '',
                 Message::SEVERITY_ERROR,
                 [],

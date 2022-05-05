@@ -76,7 +76,9 @@ class WorkspaceController extends AbstractServiceController
      */
     public function publishNodeAction(NodeInterface $node, $targetWorkspaceName = null)
     {
-        $targetWorkspace = ($targetWorkspaceName !== null) ? $this->workspaceRepository->findOneByName($targetWorkspaceName) : null;
+        $targetWorkspace = ($targetWorkspaceName !== null)
+            ? $this->workspaceRepository->findOneByName($targetWorkspaceName)
+            : null;
         $this->publishingService->publishNode($node, $targetWorkspace);
 
         $this->throwStatus(204, 'Node published', '');
@@ -89,9 +91,11 @@ class WorkspaceController extends AbstractServiceController
      * @param string $targetWorkspaceName
      * @return void
      */
-    public function publishNodesAction(array $nodes, $targetWorkspaceName  = null)
+    public function publishNodesAction(array $nodes, $targetWorkspaceName = null)
     {
-        $targetWorkspace = ($targetWorkspaceName !== null) ? $this->workspaceRepository->findOneByName($targetWorkspaceName) : null;
+        $targetWorkspace = ($targetWorkspaceName !== null)
+            ? $this->workspaceRepository->findOneByName($targetWorkspaceName)
+            : null;
         $this->publishingService->publishNodes($nodes, $targetWorkspace);
 
         $this->throwStatus(204, 'Nodes published', '');
@@ -140,9 +144,16 @@ class WorkspaceController extends AbstractServiceController
         if ($targetWorkspace === null) {
             $this->throwStatus(400, 'Invalid target workspace');
         }
-        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($sourceWorkspace), $targetWorkspace);
+        $this->publishingService->publishNodes(
+            $this->publishingService->getUnpublishedNodes($sourceWorkspace),
+            $targetWorkspace
+        );
 
-        $this->throwStatus(204, sprintf('All changes in workspace %s have been published to %s', $sourceWorkspaceName, $targetWorkspaceName), '');
+        $this->throwStatus(204, sprintf(
+            'All changes in workspace %s have been published to %s',
+            $sourceWorkspaceName,
+            $targetWorkspaceName
+        ), '');
     }
 
     /**

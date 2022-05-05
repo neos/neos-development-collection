@@ -54,7 +54,6 @@ class UserSettingsController extends AbstractModuleController
      */
     protected $translator;
 
-
     /**
      * @return void
      */
@@ -62,15 +61,35 @@ class UserSettingsController extends AbstractModuleController
     {
         parent::initializeAction();
         $translationHelper = new TranslationHelper();
-        $this->setTitle($translationHelper->translate($this->moduleConfiguration['label']) . ' :: ' . $translationHelper->translate(str_replace('label', 'action.', $this->moduleConfiguration['label']) . $this->request->getControllerActionName()));
+        $this->setTitle(
+            $translationHelper->translate($this->moduleConfiguration['label'])
+                . ' :: ' . $translationHelper->translate(
+                    str_replace('label', 'action.', $this->moduleConfiguration['label'])
+                        . $this->request->getControllerActionName()
+                )
+        );
         if ($this->arguments->hasArgument('user')) {
-            $propertyMappingConfigurationForUser = $this->arguments->getArgument('user')->getPropertyMappingConfiguration();
+            $propertyMappingConfigurationForUser = $this->arguments->getArgument('user')
+                ->getPropertyMappingConfiguration();
             $propertyMappingConfigurationForUserName = $propertyMappingConfigurationForUser->forProperty('user.name');
-            $propertyMappingConfigurationForPrimaryAccount = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
-            $propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, Account::class);
+            $propertyMappingConfigurationForPrimaryAccount
+                = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
+            $propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption(
+                PersistentObjectConverter::class,
+                PersistentObjectConverter::CONFIGURATION_TARGET_TYPE,
+                Account::class
+            );
             /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-            foreach ([$propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount] as $propertyMappingConfiguration) {
-                $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            foreach ([
+                $propertyMappingConfigurationForUser,
+                $propertyMappingConfigurationForUserName,
+                $propertyMappingConfigurationForPrimaryAccount
+            ] as $propertyMappingConfiguration) {
+                $propertyMappingConfiguration->setTypeConverterOption(
+                    PersistentObjectConverter::class,
+                    PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
+                    true
+                );
             }
         }
         $this->currentUser = $this->userService->getCurrentUser();
@@ -127,7 +146,10 @@ class UserSettingsController extends AbstractModuleController
     {
         $this->view->assignMultiple([
             'account' => $account,
-            'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName())
+            'user' => $this->userService->getUser(
+                $account->getAccountIdentifier(),
+                $account->getAuthenticationProviderName()
+            )
         ]);
     }
 
@@ -135,7 +157,9 @@ class UserSettingsController extends AbstractModuleController
      * Update a given account, ie. the password
      *
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @codingStandardsIgnoreStart
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+     * @codingStandardsIgnoreEnd
      * @return void
      */
     public function updateAccountAction(array $password = [])
@@ -145,8 +169,22 @@ class UserSettingsController extends AbstractModuleController
         if (strlen(trim(strval($password))) > 0) {
             $this->userService->setUserPassword($user, $password);
             $this->addFlashMessage(
-                $this->translator->translateById('userSettings.passwordUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('userSettings.passwordUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById(
+                    'userSettings.passwordUpdated.body',
+                    [],
+                    null,
+                    null,
+                    'Modules',
+                    'Neos.Neos'
+                ),
+                $this->translator->translateById(
+                    'userSettings.passwordUpdated.title',
+                    [],
+                    null,
+                    null,
+                    'Modules',
+                    'Neos.Neos'
+                ),
                 Message::SEVERITY_OK
             );
         }
@@ -180,8 +218,25 @@ class UserSettingsController extends AbstractModuleController
         $this->userService->updateUser($user);
 
         $this->addFlashMessage(
-            $this->translator->translateById('userSettings.electronicAddressAdded.body', [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('userSettings.electronicAddressAdded.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById(
+                'userSettings.electronicAddressAdded.body',
+                [
+                    htmlspecialchars($electronicAddress->getIdentifier()),
+                    htmlspecialchars($electronicAddress->getType())
+                ],
+                null,
+                null,
+                'Modules',
+                'Neos.Neos'
+            ),
+            $this->translator->translateById(
+                'userSettings.electronicAddressAdded.title',
+                [],
+                null,
+                null,
+                'Modules',
+                'Neos.Neos'
+            ),
             Message::SEVERITY_OK,
             [],
             1412374814
@@ -202,8 +257,26 @@ class UserSettingsController extends AbstractModuleController
         $this->userService->updateUser($user);
 
         $this->addFlashMessage(
-            $this->translator->translateById('userSettings.electronicAddressRemoved.body', [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('userSettings.electronicAddressRemoved.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById(
+                'userSettings.electronicAddressRemoved.body',
+                [
+                    htmlspecialchars($electronicAddress->getIdentifier()),
+                    htmlspecialchars($electronicAddress->getType()),
+                    htmlspecialchars($user->getName())
+                ],
+                null,
+                null,
+                'Modules',
+                'Neos.Neos'
+            ),
+            $this->translator->translateById(
+                'userSettings.electronicAddressRemoved.title',
+                [],
+                null,
+                null,
+                'Modules',
+                'Neos.Neos'
+            ),
             Message::SEVERITY_NOTICE,
             [],
             1412374678

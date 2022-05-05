@@ -38,15 +38,17 @@ class DataSourceController extends AbstractServiceController
     /**
      * @param string $dataSourceIdentifier
      * @param NodeInterface $node
-     * @return string
      * @throws NeosException
      */
-    public function indexAction($dataSourceIdentifier, NodeInterface $node = null)
+    public function indexAction($dataSourceIdentifier, NodeInterface $node = null): void
     {
         $dataSources = static::getDataSources($this->objectManager);
 
         if (!isset($dataSources[$dataSourceIdentifier])) {
-            throw new NeosException(sprintf('Data source with identifier "%s" does not exist.', $dataSourceIdentifier), 1414088186);
+            throw new NeosException(sprintf(
+                'Data source with identifier "%s" does not exist.',
+                $dataSourceIdentifier
+            ), 1414088186);
         }
 
         /** @var $dataSource DataSourceInterface */
@@ -77,12 +79,18 @@ class DataSourceController extends AbstractServiceController
         $reflectionService = $objectManager->get(ReflectionService::class);
 
         $dataSources = [];
-        $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface(DataSourceInterface::class);
+        $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface(
+            DataSourceInterface::class
+        );
         /** @var $dataSourceClassName DataSourceInterface */
         foreach ($dataSourceClassNames as $dataSourceClassName) {
             $identifier = $dataSourceClassName::getIdentifier();
             if (isset($dataSources[$identifier])) {
-                throw new NeosException(sprintf('Data source with identifier "%s" is already defined in class %s.', $identifier, $dataSourceClassName), 1414088185);
+                throw new NeosException(sprintf(
+                    'Data source with identifier "%s" is already defined in class %s.',
+                    $identifier,
+                    $dataSourceClassName
+                ), 1414088185);
             }
             $dataSources[$identifier] = $dataSourceClassName;
         }

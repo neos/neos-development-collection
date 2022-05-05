@@ -13,7 +13,6 @@ namespace Neos\Neos\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Service\NodePaths;
@@ -28,7 +27,7 @@ trait CreateContentContextTrait
      * @Flow\Inject
      * @var \Neos\Neos\Domain\Repository\SiteRepository
      */
-    protected $_siteRepository;
+    protected $siteRepository;
 
     /**
      * Create a ContentContext based on the given workspace name
@@ -65,7 +64,7 @@ trait CreateContentContextTrait
     {
         $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $nodeData->getPath());
         list($siteNodeName) = explode('/', $nodePath);
-        $site = $this->_siteRepository->findOneByNodeName($siteNodeName);
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
 
         $contextProperties = [
             'workspaceName' => $nodeData->getWorkspace()->getName(),

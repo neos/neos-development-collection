@@ -11,7 +11,6 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use Neos\ContentRepository\Service\FallbackGraphService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
@@ -21,6 +20,7 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 class DimensionController extends AbstractModuleController
 {
     /**
+     * @todo use the DimensionSpace for this <3
      * @param string $type
      * @param string $subgraphIdentifier
      * @return void
@@ -29,7 +29,9 @@ class DimensionController extends AbstractModuleController
     {
         switch ($type) {
             case 'intraDimension':
-                $graph = new \Neos\Neos\Presentation\VisualIntraDimensionalVariationGraph($this->fallbackGraphService->getIntraDimensionalFallbackGraph());
+                $graph = new \Neos\Neos\Presentation\VisualIntraDimensionalVariationGraph(
+                    $this->fallbackGraphService->getIntraDimensionalFallbackGraph()
+                );
                 break;
             case 'interDimension':
                 $graph = new \Neos\Neos\Presentation\VisualInterDimensionalVariationGraph(

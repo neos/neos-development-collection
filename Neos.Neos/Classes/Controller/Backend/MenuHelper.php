@@ -97,7 +97,12 @@ class MenuHelper
                 if ($active) {
                     $uri = $contentModule['uri'];
                 } else {
-                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor(
+                        'switchSite',
+                        ['site' => $site],
+                        'Backend\Backend',
+                        'Neos.Neos'
+                    );
                 }
 
                 $domainsFound = true;
@@ -141,7 +146,9 @@ class MenuHelper
                 continue;
             }
             // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
-            if (isset($moduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])) {
+            if (isset($moduleConfiguration['privilegeTarget'])
+                && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])
+            ) {
                 continue;
             }
             $submodules = [];
@@ -152,14 +159,26 @@ class MenuHelper
                     if (!$this->isModuleEnabled($modulePath)) {
                         continue;
                     }
-                    if (!$this->privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($modulePath))) {
+                    if (!$this->privilegeManager->isGranted(
+                        ModulePrivilege::class,
+                        new ModulePrivilegeSubject($modulePath)
+                    )) {
                         continue;
                     }
                     // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
-                    if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
+                    if (isset($submoduleConfiguration['privilegeTarget'])
+                        && !$this->privilegeManager->isPrivilegeTargetGranted(
+                            $submoduleConfiguration['privilegeTarget']
+                        )
+                    ) {
                         continue;
                     }
-                    $submodules[$submoduleName] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
+                    $submodules[$submoduleName] = $this->collectModuleData(
+                        $controllerContext,
+                        $submoduleName,
+                        $submoduleConfiguration,
+                        $moduleName . '/' . $submoduleName
+                    );
                 }
             }
             $this->moduleListFirstLevelCache[$moduleName] = array_merge(
@@ -183,7 +202,10 @@ class MenuHelper
     public function isModuleEnabled(string $modulePath): bool
     {
         $modulePathSegments = explode('/', $modulePath);
-        $moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modulePathSegments));
+        $moduleConfiguration = Arrays::getValueByPath(
+            $this->settings['modules'],
+            implode('.submodules.', $modulePathSegments)
+        );
         if (isset($moduleConfiguration['enabled']) && $moduleConfiguration['enabled'] !== true) {
             return false;
         }
@@ -205,8 +227,12 @@ class MenuHelper
      * @throws \Neos\Flow\Http\Exception
      * @throws MissingActionNameException
      */
-    protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
-    {
+    protected function collectModuleData(
+        ControllerContext $controllerContext,
+        string $module,
+        array $moduleConfiguration,
+        string $modulePath
+    ): array {
         $moduleUri = $controllerContext->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)

@@ -22,9 +22,10 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
  * Central authority for interactions with plugins.
  * Whenever details about Plugins or PluginViews are needed this service should be used.
  *
- * For some methods the ContentContext has to be specified. This is required in order for the ContentRepository to fetch nodes
- * of the current workspace. The context can be retrieved from any node of the correct workspace & tree. If no node
- * is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
+ * For some methods the ContentContext has to be specified.
+ * This is required in order for the ContentRepository to fetch nodes of the current workspace.
+ * The context can be retrieved from any node of the correct workspace & tree.
+ * If no node is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
  *
  * @Flow\Scope("singleton")
  */
@@ -83,7 +84,11 @@ class PluginService
     {
         $nodes = [];
         $siteNode = $context->getCurrentSiteNode();
-        foreach ($this->nodeDataRepository->findByParentAndNodeTypeRecursively($siteNode->getPath(), implode(',', $nodeTypes), $context->getWorkspace()) as $nodeData) {
+        foreach ($this->nodeDataRepository->findByParentAndNodeTypeRecursively(
+            $siteNode->getPath(),
+            implode(',', $nodeTypes),
+            $context->getWorkspace()
+        ) as $nodeData) {
             $nodes[] = $this->nodeFactory->createFromNodeData($nodeData, $context);
         }
         return $nodes;
@@ -98,7 +103,9 @@ class PluginService
     public function getPluginViewDefinitionsByPluginNodeType(NodeType $pluginNodeType)
     {
         $viewDefinitions = [];
-        foreach ($this->getPluginViewConfigurationsByPluginNodeType($pluginNodeType) as $pluginViewName => $pluginViewConfiguration) {
+        foreach ($this->getPluginViewConfigurationsByPluginNodeType(
+            $pluginNodeType
+        ) as $pluginViewName => $pluginViewConfiguration) {
             $viewDefinitions[] = new PluginViewDefinition($pluginNodeType, $pluginViewName, $pluginViewConfiguration);
         }
         return $viewDefinitions;
@@ -167,7 +174,12 @@ class PluginService
             }
         }
         if (count($matchingPluginViewDefinitions) > 1) {
-            throw new Neos\Exception(sprintf('More than one PluginViewDefinition found for controller "%s", action "%s":%s', $controllerObjectName, $actionName, chr(10) . implode(chr(10), $matchingPluginViewDefinitions)), 1377597671);
+            throw new Neos\Exception(sprintf(
+                'More than one PluginViewDefinition found for controller "%s", action "%s":%s',
+                $controllerObjectName,
+                $actionName,
+                chr(10) . implode(chr(10), $matchingPluginViewDefinitions)
+            ), 1377597671);
         }
 
         return count($matchingPluginViewDefinitions) > 0 ? current($matchingPluginViewDefinitions) : null;

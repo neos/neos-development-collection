@@ -49,8 +49,12 @@ class NodeTypeStringConverter extends AbstractTypeConverter
      * @return string
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         if ($source instanceof NodeType) {
             return $source->getName();
         }

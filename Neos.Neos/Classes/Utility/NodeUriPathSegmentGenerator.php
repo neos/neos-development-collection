@@ -35,7 +35,8 @@ class NodeUriPathSegmentGenerator
     /**
      * Sets the best possible uriPathSegment for the given Node.
      * Will use an already set uriPathSegment or alternatively the node name as base,
-     * then checks if the uriPathSegment already exists on the same level and appends a counter until a unique path segment was found.
+     * then checks if the uriPathSegment already exists on the same level and appends a counter
+     * until a unique path segment was found.
      *
      * @param NodeInterface $node
      * @return void
@@ -44,11 +45,19 @@ class NodeUriPathSegmentGenerator
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             $q = new FlowQuery([$node]);
-            $q = $q->context(['invisibleContentShown' => true, 'removedContentShown' => true, 'inaccessibleContentShown' => true]);
+            $q = $q->context([
+                'invisibleContentShown' => true,
+                'removedContentShown' => true,
+                'inaccessibleContentShown' => true
+            ]);
 
-            $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
+            $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment')
+                ? $node->getName()
+                : $node->getProperty('uriPathSegment');
             $i = 1;
-            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')->count() > 0) {
+            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')
+                    ->count() > 0)
+            {
                 $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
             }
             $node->setProperty('uriPathSegment', $possibleUriPathSegment);

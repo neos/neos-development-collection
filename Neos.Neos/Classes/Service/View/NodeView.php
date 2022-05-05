@@ -62,8 +62,10 @@ class NodeView extends JsonView
      * @param array $propertyNames Optional list of property names to include in the JSON output
      * @return void
      */
-    public function assignNode(NodeInterface $node, array $propertyNames = ['name', 'path', 'identifier', 'properties', 'nodeType'])
-    {
+    public function assignNode(
+        NodeInterface $node,
+        array $propertyNames = ['name', 'path', 'identifier', 'properties', 'nodeType']
+    ) {
         $this->setConfiguration(
             [
                 'value' => [
@@ -94,7 +96,11 @@ class NodeView extends JsonView
                         'documentNodeContextPath' => $closestDocumentNode->getContextPath(),
                     ];
                 } else {
-                    $this->systemLogger->info(sprintf('You have a node that is no longer connected to a parent. Path: %s (Identifier: %s)', $node->getPath(), $node->getIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+                    $this->systemLogger->info(sprintf(
+                        'You have a node that is no longer connected to a parent. Path: %s (Identifier: %s)',
+                        $node->getPath(),
+                        $node->getIdentifier()
+                    ), LogEnvironment::fromMethodName(__METHOD__));
                 }
             }
         }
@@ -109,15 +115,27 @@ class NodeView extends JsonView
      * @param string $nodeTypeFilter Criteria for filtering the child nodes
      * @param integer $outputStyle Either STYLE_TREE or STYLE_list
      * @param integer $depth How many levels of childNodes (0 = unlimited)
-     * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
+     * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode,
+     *                                 no matter what is defined with $depth.
      * @return void
      */
-    public function assignChildNodes(NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0, NodeInterface $untilNode = null)
-    {
+    public function assignChildNodes(
+        NodeInterface $node,
+        $nodeTypeFilter,
+        $outputStyle = self::STYLE_LIST,
+        $depth = 0,
+        NodeInterface $untilNode = null
+    ) {
         $this->outputStyle = $outputStyle;
         $nodes = [];
         if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
-            $this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
+            $this->collectChildNodeData(
+                $nodes,
+                $node,
+                ($nodeTypeFilter === '' ? null : $nodeTypeFilter),
+                $depth,
+                $untilNode
+            );
         }
         $this->setConfiguration(['value' => ['data' => ['_descendAll' => []]]]);
 
@@ -130,16 +148,27 @@ class NodeView extends JsonView
      * @param NodeInterface $node The node to fetch child nodes of
      * @param string $nodeTypeFilter Criteria for filtering the child nodes
      * @param integer $depth How many levels of childNodes (0 = unlimited)
-     * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
+     * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode,
+     *                                 no matter what is defined with $depth.
      * @return void
      */
-    public function assignNodeAndChildNodes(NodeInterface $node, $nodeTypeFilter = '', $depth = 0, NodeInterface $untilNode = null)
-    {
+    public function assignNodeAndChildNodes(
+        NodeInterface $node,
+        $nodeTypeFilter = '',
+        $depth = 0,
+        NodeInterface $untilNode = null
+    ) {
         $this->outputStyle = self::STYLE_TREE;
         $data = [];
         if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
             $childNodes = [];
-            $this->collectChildNodeData($childNodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
+            $this->collectChildNodeData(
+                $childNodes,
+                $node,
+                ($nodeTypeFilter === '' ? null : $nodeTypeFilter),
+                $depth,
+                $untilNode
+            );
             $data = $this->collectTreeNodeData($node, true, $childNodes, $childNodes !== []);
         }
         $this->setConfiguration(['value' => ['data' => ['_descendAll' => []]]]);
@@ -171,12 +200,19 @@ class NodeView extends JsonView
      * @param NodeInterface $node
      * @param string $nodeTypeFilter
      * @param integer $depth levels of child nodes to fetch. 0 = unlimited
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
+     * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode,
+     *                                 no matter what is defined with $depth.
      * @param integer $recursionPointer current recursion level
      * @return void
      */
-    protected function collectChildNodeData(array &$nodes, NodeInterface $node, $nodeTypeFilter, $depth = 0, NodeInterface $untilNode = null, $recursionPointer = 1)
-    {
+    protected function collectChildNodeData(
+        array &$nodes,
+        NodeInterface $node,
+        $nodeTypeFilter,
+        $depth = 0,
+        NodeInterface $untilNode = null,
+        $recursionPointer = 1
+    ) {
         foreach ($node->getChildNodes($nodeTypeFilter) as $childNode) {
             if (!$this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($childNode))) {
                 continue;
@@ -184,8 +220,11 @@ class NodeView extends JsonView
             /** @var NodeInterface $childNode */
             $expand = ($depth === 0 || $recursionPointer < $depth);
 
-            if ($expand === false && $untilNode !== null && strpos($untilNode->getPath(), $childNode->getPath()) === 0 && $childNode !== $untilNode) {
-                // in case $untilNode is set, and the current childNode is on the rootline of $untilNode (and not the node itself), expand the node.
+            if ($expand === false && $untilNode !== null && strpos($untilNode->getPath(), $childNode->getPath()) === 0
+                && $childNode !== $untilNode
+            ) {
+                // in case $untilNode is set, and the current childNode is on the rootline of $untilNode
+                // (and not the node itself), expand the node.
                 $expand = true;
             }
 
@@ -197,17 +236,33 @@ class NodeView extends JsonView
                     $properties['__workspaceName'] = $childNode->getWorkspace()->getName();
                     $properties['__nodeName'] = $childNode->getName();
                     $properties['__nodeType'] = $nodeType;
-                    $properties['__title'] = $nodeType === 'Neos.Neos:Document' ? $childNode->getProperty('title') : $childNode->getLabel();
+                    $properties['__title'] = $nodeType === 'Neos.Neos:Document'
+                        ? $childNode->getProperty('title')
+                        : $childNode->getLabel();
                     array_push($nodes, $properties);
                     if ($expand) {
-                        $this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
+                        $this->collectChildNodeData(
+                            $nodes,
+                            $childNode,
+                            $nodeTypeFilter,
+                            $depth,
+                            $untilNode,
+                            ($recursionPointer + 1)
+                        );
                     }
                     break;
                 case self::STYLE_TREE:
                     $children = [];
                     $hasChildNodes = $childNode->hasChildNodes($nodeTypeFilter) === true;
                     if ($expand && $hasChildNodes) {
-                        $this->collectChildNodeData($children, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
+                        $this->collectChildNodeData(
+                            $children,
+                            $childNode,
+                            $nodeTypeFilter,
+                            $depth,
+                            $untilNode,
+                            ($recursionPointer + 1)
+                        );
                     }
                     array_push($nodes, $this->collectTreeNodeData($childNode, $expand, $children, $hasChildNodes));
             }
@@ -261,7 +316,13 @@ class NodeView extends JsonView
                     $collectTreeNodeData($children, $childNode);
                 }
             }
-            $treeNodes[] = $self->collectTreeNodeData($node['node'], true, $children, $children !== [], isset($node['matched']));
+            $treeNodes[] = $self->collectTreeNodeData(
+                $node['node'],
+                true,
+                $children,
+                $children !== [],
+                isset($node['matched'])
+            );
         };
 
         foreach ($nodeCollection as $firstLevelNode) {
@@ -279,8 +340,13 @@ class NodeView extends JsonView
      * @param boolean $matched
      * @return array
      */
-    public function collectTreeNodeData(NodeInterface $node, $expand = true, array $children = [], $hasChildNodes = false, $matched = false)
-    {
+    public function collectTreeNodeData(
+        NodeInterface $node,
+        $expand = true,
+        array $children = [],
+        $hasChildNodes = false,
+        $matched = false
+    ) {
         $isTimedPage = false;
         $now = new \DateTime();
         $now = $now->getTimestamp();
@@ -312,7 +378,12 @@ class NodeView extends JsonView
         $nodeType = $node->getNodeType();
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor(
+                'show',
+                ['node' => $node],
+                'Frontend\Node',
+                'Neos.Neos'
+            );
         } else {
             $uriForNode = '#';
         }
@@ -323,7 +394,8 @@ class NodeView extends JsonView
             'title' => $label,
             'fullTitle' => $node->getProperty('title'),
             'nodeTypeLabel' => $nodeTypeLabel,
-            'tooltip' => '', // will be filled on the client side, because nodeTypeLabel contains the localization string instead of the localized value
+            'tooltip' => '', // will be filled on the client side, because nodeTypeLabel contains
+                             // the localization string instead of the localized value
             'href' => $uriForNode,
             'isFolder' => $hasChildNodes,
             'isLazy' => ($hasChildNodes && !$expand),
@@ -332,7 +404,9 @@ class NodeView extends JsonView
             'expand' => $expand,
             'addClass' => implode(' ', $classes),
             'name' => $node->getName(),
-            'iconClass' => isset($nodeTypeConfiguration['ui']) && isset($nodeTypeConfiguration['ui']['icon']) ? $nodeTypeConfiguration['ui']['icon'] : '',
+            'iconClass' => isset($nodeTypeConfiguration['ui']) && isset($nodeTypeConfiguration['ui']['icon'])
+                ? $nodeTypeConfiguration['ui']['icon']
+                : '',
             'isHidden' => $node->isHidden()
         ];
         if ($hasChildNodes) {

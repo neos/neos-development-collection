@@ -11,11 +11,13 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * Renders the Node Type Schema in a format the User Interface understands; additionally pre-calculating node constraints
+ * Renders the Node Type Schema in a format the User Interface understands;
+ * additionally pre-calculating node constraints
  *
  * @Flow\Scope("singleton")
  */
@@ -23,7 +25,7 @@ class NodeTypeSchemaBuilder
 {
     /**
      * @Flow\Inject
-     * @var \Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 

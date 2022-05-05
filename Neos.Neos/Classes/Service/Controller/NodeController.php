@@ -86,7 +86,12 @@ class NodeController extends AbstractServiceController
     protected function initializeAction()
     {
         if ($this->arguments->hasArgument('referenceNode')) {
-            $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
+            $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()
+                ->setTypeConverterOption(
+                    NodeConverter::class,
+                    NodeConverter::REMOVED_CONTENT_SHOWN,
+                    true
+                );
         }
         $this->uriBuilder->setRequest($this->request->getMainRequest());
         if (in_array($this->request->getControllerActionName(), ['update', 'updateAndRender'], true)) {
@@ -95,8 +100,16 @@ class NodeController extends AbstractServiceController
             $propertyMappingConfiguration->allowOverrideTargetType();
             $propertyMappingConfiguration->allowAllProperties();
             $propertyMappingConfiguration->skipUnknownProperties();
-            $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
-            $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(
+                PersistentObjectConverter::class,
+                PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
+                true
+            );
+            $propertyMappingConfiguration->setTypeConverterOption(
+                PersistentObjectConverter::class,
+                PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+                true
+            );
         }
     }
 
@@ -128,13 +141,20 @@ class NodeController extends AbstractServiceController
      */
     public function filterChildNodesForTreeAction(Node $node, $term, $nodeType)
     {
-        $nodeTypes = strlen($nodeType) > 0 ? [$nodeType] : array_keys($this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false));
+        $nodeTypes = strlen($nodeType) > 0
+            ? [$nodeType]
+            : array_keys($this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false));
         $context = $node->getContext();
         if ($term !== '') {
             $nodes = $this->nodeSearchService->findByProperties($term, $nodeTypes, $context, $node);
         } else {
             $nodes = [];
-            $nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
+            $nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively(
+                $node->getPath(),
+                implode(',', $nodeTypes),
+                $context->getWorkspace(),
+                $context->getDimensions()
+            );
             foreach ($nodeDataRecords as $nodeData) {
                 $matchedNode = $this->nodeFactory->createFromNodeData($nodeData, $context);
                 if ($matchedNode !== null) {
@@ -151,7 +171,8 @@ class NodeController extends AbstractServiceController
     /**
      * Creates a new node
      *
-     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * We need to call persistAll() in order to return the nextUri.
+     * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be updated at the same time.
      *
      * @param Node $referenceNode
@@ -167,7 +188,7 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $newNode], 'Frontend\Node', 'Neos.Neos');
+        $nextUri = $this->getNodeUri($newNode);
         $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
 
@@ -204,7 +225,8 @@ class NodeController extends AbstractServiceController
     /**
      * Move $node before, into or after $targetNode
      *
-     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * We need to call persistAll() in order to return the nextUri.
+     * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be updated at the same time.
      *
      * @param Node $node The node to be moved
@@ -222,13 +244,14 @@ class NodeController extends AbstractServiceController
 
         $data = ['newNodePath' => $node->getContextPath()];
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            $data['nextUri'] = $this->getNodeUri($node);
         }
         $this->view->assign('value', ['data' => $data, 'success' => true]);
     }
 
     /**
-     * Move the given node before, into or after the target node depending on the given position and renders it's content collection.
+     * Move the given node before, into or after the target node
+     * depending on the given position and renders it's content collection.
      *
      * @param Node $node The node to be moved
      * @param Node $targetNode The target node to be moved "to", see $position
@@ -245,7 +268,8 @@ class NodeController extends AbstractServiceController
     /**
      * Copy $node before, into or after $targetNode
      *
-     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * We need to call persistAll() in order to return the nextUri.
+     * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be updated at the same time.
      *
      * @param Node $node The node to be copied
@@ -267,19 +291,20 @@ class NodeController extends AbstractServiceController
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
         $requestData = [
-            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos'),
+            'nextUri' => $this->getNodeUri($closestDocumentNode),
             'newNodePath' => $copiedNode->getContextPath()
         ];
 
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $copiedNode], 'Frontend\Node', 'Neos.Neos');
+            $requestData['nodeUri'] = $this->getNodeUri($copiedNode);
         }
 
         $this->view->assign('value', ['data' => $requestData, 'success' => true]);
     }
 
     /**
-     * Copies the given node before, into or after the target node depending on the given position and renders it's content collection.
+     * Copies the given node before, into or after the target node depending on the given position
+     * and renders it's content collection.
      *
      * @param Node $node The node to be copied
      * @param Node $targetNode The target node to be copied "to", see $position
@@ -304,7 +329,8 @@ class NodeController extends AbstractServiceController
      *   This is important to handle renames of nodes correctly.
      *
      * Note: We do not call $nodeDataRepository->update() here, as ContentRepository has a stateful API for now.
-     *       We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     *       We need to call persistAll() in order to return the nextUri.
+     *       We can't persist only the nodes in NodeDataRepository
      *       because they might be connected to images / resources which need to be updated at the same time.
      *
      * @param Node $node The node to be updated
@@ -318,7 +344,7 @@ class NodeController extends AbstractServiceController
 
         $q = new FlowQuery([$node]);
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos');
+        $nextUri = $this->getNodeUri($closestDocumentNode);
         $this->view->assign('value', [
             'data' => [
                 'workspaceNameOfNode' => $node->getWorkspace()->getName(),
@@ -344,7 +370,8 @@ class NodeController extends AbstractServiceController
     /**
      * Deletes the specified node and all of its sub nodes
      *
-     * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+     * We need to call persistAll() in order to return the nextUri.
+     * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be removed at the same time.
      *
      * @param Node $node
@@ -359,7 +386,7 @@ class NodeController extends AbstractServiceController
         $q = new FlowQuery([$node]);
         $node->remove();
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos');
+        $nextUri = $this->getNodeUri($closestDocumentNode);
 
         $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
@@ -421,5 +448,15 @@ class NodeController extends AbstractServiceController
         }
 
         return $this->contextFactory->create($contextProperties);
+    }
+
+    private function getNodeUri(NodeInterface $node): string
+    {
+        return $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor(
+            'show',
+            ['node' => $node],
+            'Frontend\Node',
+            'Neos.Neos'
+        );
     }
 }

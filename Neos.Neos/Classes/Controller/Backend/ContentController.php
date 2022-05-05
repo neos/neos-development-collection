@@ -113,8 +113,16 @@ class ContentController extends ActionController
     {
         $propertyMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
-        $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
-        $propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, true);
+        $propertyMappingConfiguration->setTypeConverterOption(
+            PersistentObjectConverter::class,
+            PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+            true
+        );
+        $propertyMappingConfiguration->setTypeConverterOption(
+            AssetInterfaceConverter::class,
+            AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE,
+            true
+        );
         $propertyMappingConfiguration->allowCreationForSubProperty('resource');
     }
 
@@ -168,7 +176,11 @@ class ContentController extends ActionController
         $this->arguments->getArgument('asset')->getPropertyMappingConfiguration()
             ->allowOverrideTargetType()
             ->allowAllProperties()
-            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+            ->setTypeConverterOption(
+                PersistentObjectConverter::class,
+                PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+                true
+            );
     }
 
     /**
@@ -187,7 +199,12 @@ class ContentController extends ActionController
 
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         // This will not be sent as "application/json" as we need the JSON string and not the single variables.
-        return json_encode($this->entityToIdentityConverter->convertFrom($asset, 'array', [], $propertyMappingConfiguration));
+        return json_encode($this->entityToIdentityConverter->convertFrom(
+            $asset,
+            'array',
+            [],
+            $propertyMappingConfiguration
+        ));
     }
 
     /**
@@ -223,7 +240,8 @@ class ContentController extends ActionController
      */
     protected function getImageInterfacePreviewData(ImageInterface $image)
     {
-        // TODO: Now that we try to support all ImageInterface implementations we should use a strategy here to get the image properties for custom implementations
+        // TODO: Now that we try to support all ImageInterface implementations we should use a strategy here
+        // to get the image properties for custom implementations
         if ($image instanceof ImageVariant) {
             $imageProperties = $this->getImageVariantPreviewData($image);
         } else {
@@ -250,7 +268,10 @@ class ContentController extends ActionController
             ],
             'mediaType' => $image->getResource()->getMediaType()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Preview'));
+        $thumbnail = $this->thumbnailService->getThumbnail(
+            $image,
+            $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Preview')
+        );
         if ($thumbnail !== null) {
             $imageProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $imageProperties['previewDimensions'] = [
@@ -281,8 +302,16 @@ class ContentController extends ActionController
     {
         $propertyMappingConfiguration = $this->arguments->getArgument('assets')->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
-        $propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
-        $propertyMappingConfiguration->forProperty('*')->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+        $propertyMappingConfiguration->setTypeConverterOption(
+            AssetInterfaceConverter::class,
+            AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED,
+            true
+        );
+        $propertyMappingConfiguration->forProperty('*')->setTypeConverterOption(
+            AssetInterfaceConverter::class,
+            AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED,
+            true
+        );
     }
 
     /**
@@ -314,7 +343,10 @@ class ContentController extends ActionController
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
             'filename' => $asset->getResource()->getFilename()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Thumbnail'));
+        $thumbnail = $this->thumbnailService->getThumbnail(
+            $asset,
+            $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Thumbnail')
+        );
         if ($thumbnail !== null) {
             $assetProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $assetProperties['previewSize'] = ['w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight()];
@@ -328,7 +360,8 @@ class ContentController extends ActionController
      *
      * @param string $identifier Specifies the node to look up
      * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
+     * @param array $dimensions Optional list of dimensions and their values which should be used
+     *                          for querying the specified node
      * @return string
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
@@ -344,13 +377,18 @@ class ContentController extends ActionController
         $views = [];
         if ($node !== null) {
             /** @var $pluginViewDefinition PluginViewDefinition */
-            $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
+            $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
+                $node->getNodeType()
+            );
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();
 
                 $views[$pluginViewDefinition->getName()] = ['label' => $label];
 
-                $pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin($node, $pluginViewDefinition->getName());
+                $pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin(
+                    $node,
+                    $pluginViewDefinition->getName()
+                );
                 if ($pluginViewNode === null) {
                     continue;
                 }
@@ -376,7 +414,8 @@ class ContentController extends ActionController
      * workspace.
      *
      * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
+     * @param array $dimensions Optional list of dimensions and their values
+     *                          which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
      * @throws \Neos\Eel\Exception
      */
@@ -403,7 +442,10 @@ class ContentController extends ActionController
                 $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
                     'masterPlugins.nodeTypeOnPageLabel',
                     null,
-                    ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
+                    [
+                        'nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()),
+                        'pageLabel' => $page->getLabel()
+                    ],
                     'Main',
                     'Neos.Neos'
                 );

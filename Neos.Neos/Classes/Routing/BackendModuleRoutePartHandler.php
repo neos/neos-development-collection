@@ -84,7 +84,10 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
                 }
             } else {
                 if ($level === count($segments) - 1) {
-                    $moduleMethods = array_change_key_case(array_flip(get_class_methods($moduleController)), CASE_LOWER);
+                    $moduleMethods = array_change_key_case(
+                        array_flip(get_class_methods($moduleController)),
+                        CASE_LOWER
+                    );
                     if (array_key_exists($segment . 'action', $moduleMethods)) {
                         $moduleAction = $segment;
                         break;

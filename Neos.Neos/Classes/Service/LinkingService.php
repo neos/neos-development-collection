@@ -62,7 +62,8 @@ class LinkingService
      *
      * @var string
      */
-    const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
+    const PATTERN_SUPPORTED_URIS
+        = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
 
     /**
      * @Flow\Inject
@@ -154,11 +155,18 @@ class LinkingService
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): ?string
-    {
+    public function resolveNodeUri(
+        string $uri,
+        NodeInterface $contextNode,
+        ControllerContext $controllerContext,
+        bool $absolute = false
+    ): ?string {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
-            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->info(
+                sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
 
             return null;
         }
@@ -176,7 +184,10 @@ class LinkingService
     {
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
-            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->info(
+                sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
 
             return null;
         }
@@ -201,12 +212,15 @@ class LinkingService
             switch ($matches[1]) {
                 case 'node':
                     if ($contextNode === null) {
-                        throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
-                    };
-
+                        throw new \RuntimeException(
+                            'node:// URI conversion requires a context node to be passed',
+                            1409734235
+                        );
+                    }
                     return $contextNode->getContext()->getNodeByIdentifier($matches[2]);
                 case 'asset':
                     return $this->assetRepository->findByIdentifier($matches[2]);
+                default:
             }
         }
 
@@ -217,15 +231,18 @@ class LinkingService
      * Renders the URI to a given node instance or -path.
      *
      * @param ControllerContext $controllerContext
-     * @param mixed $node A node object or a string node path, if a relative path is provided the baseNode argument is required
+     * @param mixed $node A node object or a string node path,
+     *                    if a relative path is provided the baseNode argument is required
      * @param NodeInterface $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
      * @param string $section
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
-     * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated and log a message if set to FALSE
+     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI.
+     *                                                    Only active if $addQueryString = true
+     * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated
+     *                                  and log a message if set to FALSE
      * @return string The rendered URI
      * @throws NeosException if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
@@ -234,14 +251,32 @@ class LinkingService
      * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
-    {
+    public function createNodeUri(
+        ControllerContext $controllerContext,
+        $node = null,
+        NodeInterface $baseNode = null,
+        $format = null,
+        $absolute = false,
+        array $arguments = [],
+        $section = '',
+        $addQueryString = false,
+        array $argumentsToBeExcludedFromQueryString = [],
+        $resolveShortcuts = true
+    ): string {
         $this->lastLinkedNode = null;
         if ($resolveShortcuts === false) {
-            $this->systemLogger->info(sprintf('%s() was called with the "resolveShortCuts" argument set to FALSE. This is no longer supported, the argument was ignored', __METHOD__));
+            $this->systemLogger->info(sprintf(
+                '%s() was called with the "resolveShortCuts" argument set to FALSE.'
+                    . ' This is no longer supported, the argument was ignored',
+                __METHOD__
+            ));
         }
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
-            throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
+            throw new \InvalidArgumentException(
+                'Expected an instance of NodeInterface or a string for the node argument,'
+                    . ' or alternatively a baseNode argument.',
+                1373101025
+            );
         }
 
         if (is_string($node)) {
@@ -254,22 +289,35 @@ class LinkingService
                 $node = $this->propertyMapper->convert($nodeString, NodeInterface::class);
             } else {
                 if ($baseNode === null) {
-                    throw new NeosException('The baseNode argument is required for linking to nodes with a relative path.', 1407879905);
+                    throw new NeosException(
+                        'The baseNode argument is required for linking to nodes with a relative path.',
+                        1407879905
+                    );
                 }
                 /** @var ContentContext $contentContext */
                 $contentContext = $baseNode->getContext();
-                $normalizedPath = $this->nodeService->normalizePath($nodeString, $baseNode->getPath(), $contentContext->getCurrentSiteNode()->getPath());
+                $normalizedPath = $this->nodeService->normalizePath(
+                    $nodeString,
+                    $baseNode->getPath(),
+                    $contentContext->getCurrentSiteNode()->getPath()
+                );
                 $node = $contentContext->getNode($normalizedPath);
             }
             if (!$node instanceof NodeInterface) {
-                throw new NeosException(sprintf('The string "%s" could not be resolved to an existing node.', $nodeString), 1415709674);
+                throw new NeosException(sprintf(
+                    'The string "%s" could not be resolved to an existing node.',
+                    $nodeString
+                ), 1415709674);
             }
         } elseif (!$node instanceof NodeInterface) {
             $node = $baseNode;
         }
 
         if (!$node instanceof NodeInterface) {
-            throw new NeosException(sprintf('Node must be an instance of NodeInterface or string, given "%s".', gettype($node)), 1414772029);
+            throw new NeosException(sprintf(
+                'Node must be an instance of NodeInterface or string, given "%s".',
+                gettype($node)
+            ), 1414772029);
         }
         $this->lastLinkedNode = $node;
 
@@ -299,11 +347,15 @@ class LinkingService
     {
         $primaryDomain = $site->getPrimaryDomain();
         if ($primaryDomain === null) {
-            throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
+            throw new NeosException(sprintf(
+                'Cannot link to a site "%s" since it has no active domains.',
+                $site->getName()
+            ), 1460443524);
         }
         $httpRequest = $controllerContext->getRequest()->getHttpRequest();
         $requestUri = $httpRequest->getUri();
-        // TODO: Should probably directly use \Neos\Flow\Http\Helper\RequestInformationHelper::getRelativeRequestPath() and even that is tricky.
+        // TODO: Should probably directly use \Neos\Flow\Http\Helper\RequestInformationHelper::getRelativeRequestPath()
+        // and even that is tricky.
         $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest);
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
         return sprintf(

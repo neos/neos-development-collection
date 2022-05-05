@@ -21,7 +21,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Simple HTTP middleware that makes the host of the currently active server request available to the routing framework
- * This allows the FrontendRoutePartHandler (and other handlers) to react on the current request when matching/resolving routes
+ * This allows the FrontendRoutePartHandler (and other handlers)
+ * to react on the current request when matching/resolving routes
  */
 final class RequestUriHostMiddleware implements MiddlewareInterface
 {
@@ -33,8 +34,12 @@ final class RequestUriHostMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
-        $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
-        $request = $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters->withParameter('requestUriHost', $request->getUri()->getHost()));
+        $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
+            ?? RouteParameters::createEmpty();
+        $request = $request->withAttribute(
+            ServerRequestAttributes::ROUTING_PARAMETERS,
+            $parameters->withParameter('requestUriHost', $request->getUri()->getHost())
+        );
         return $next->handle($request);
     }
 }

@@ -78,7 +78,9 @@ class PluginViewImplementation extends PluginImplementation
 
         $controllerObjectPairs = [];
         $pluginViewName = $this->pluginViewNode->getProperty('view');
-        foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
+        foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType(
+            $this->node->getNodeType()
+        ) as $pluginViewDefinition) {
             /** @var PluginViewDefinition $pluginViewDefinition */
             if ($pluginViewDefinition->getName() !== $pluginViewName) {
                 continue;
@@ -122,11 +124,14 @@ class PluginViewImplementation extends PluginImplementation
             if ($this->pluginViewNode->getProperty('view')) {
                 $message ='Master View or Plugin View not found';
             }
-            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
+            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment()
+                ? '<p>' . $message . '</p>'
+                : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
 
-        // We need to make sure to not merge content up into the parent ActionResponse because that would break the Fusion HttpResponse.
+        // We need to make sure to not merge content up into the parent ActionResponse
+        // because that would break the Fusion HttpResponse.
         $content = $pluginResponse->getContent();
         $pluginResponse->setContent('');
 

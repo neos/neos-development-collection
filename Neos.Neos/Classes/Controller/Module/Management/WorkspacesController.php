@@ -52,7 +52,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Exception\WorkspaceException;
 
-
 /**
  * The Neos Workspaces module controller
  *
@@ -249,17 +248,15 @@ class WorkspacesController extends AbstractModuleController
         //    $this->redirect('new');
         //}
 
-        $workspaceName = WorkspaceName::fromString(Utility::renderValidNodeName((string)$title) . '-' . substr(
-                base_convert(microtime(false), 10, 36),
-                -5,
-                5
-            ));
+        $workspaceName = WorkspaceName::fromString(
+            Utility::renderValidNodeName((string)$title) . '-'
+                . substr(base_convert(microtime(false), 10, 36), -5, 5)
+        );
         while ($this->workspaceFinder->findOneByName($workspaceName) instanceof Workspace) {
-            $workspaceName = WorkspaceName::fromString(Utility::renderValidNodeName((string)$title) . '-' . substr(
-                    base_convert(microtime(false), 10, 36),
-                    -5,
-                    5
-                ));
+            $workspaceName = WorkspaceName::fromString(
+                Utility::renderValidNodeName((string)$title) . '-'
+                    . substr(base_convert(microtime(false), 10, 36), -5, 5)
+            );
         }
 
         if ($visibility === 'private') {

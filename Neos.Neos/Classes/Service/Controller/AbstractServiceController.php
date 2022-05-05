@@ -49,7 +49,8 @@ abstract class AbstractServiceController extends ActionController
     {
         if ($this->arguments->getValidationResults()->hasErrors()) {
             $errors = [];
-            foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors) {
+            foreach ($this->arguments->getValidationResults()
+                         ->getFlattenedErrors() as $propertyName => $propertyErrors) {
                 foreach ($propertyErrors as $propertyError) {
                     /** @var \Neos\Error\Messages\Error $propertyError */
                     $error = [
@@ -98,7 +99,10 @@ abstract class AbstractServiceController extends ActionController
                 $response->setStatusCode(500);
             }
             $response->setContent(json_encode(['error' => $exceptionData]));
-            $this->logger->error($this->throwableStorage->logThrowable($exception), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->error(
+                $this->throwableStorage->logThrowable($exception),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
         }
     }
 
@@ -110,7 +114,8 @@ abstract class AbstractServiceController extends ActionController
     {
         if ($this->objectManager->getContext()->isProduction()) {
             if ($exception instanceof FlowException) {
-                $exceptionData['message'] = 'When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $exception->getReferenceCode();
+                $exceptionData['message'] = 'When contacting the maintainer of this application please mention'
+                    . ' the following reference code:<br /><br />' . $exception->getReferenceCode();
             }
         } else {
             $exceptionData = [

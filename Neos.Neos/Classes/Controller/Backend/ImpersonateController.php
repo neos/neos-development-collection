@@ -77,23 +77,34 @@ class ImpersonateController extends ActionController
         $controller = $this->settings['redirectOptions'][$actionName]['controller'] ?? '';
         $package = $this->settings['redirectOptions'][$actionName]['package'] ?? '';
 
-        if ($action !== '' && $controller !== '' && $package !== '' && $this->impersonateService->getImpersonation() === null) {
+        if ($action !== '' && $controller !== '' && $package !== ''
+            && $this->impersonateService->getImpersonation() === null
+        ) {
             $this->redirectWithParentRequest($action, $controller, $package);
         }
     }
 
     /**
      * @param string $actionName Name of the action to forward to
-     * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-     * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+     * @param string $controllerName Unqualified object name of the controller to forward to.
+     *                               If not specified, the current controller is used.
+     * @param string $packageKey Key of the package containing the controller to forward to.
+     *                           If not specified, the current package is assumed.
      * @param array $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string $format The format to use for the redirect URI
      * @see redirect()
      */
-    protected function redirectWithParentRequest(string $actionName, string $controllerName = null, string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, string $format = null): void
-    {
+    protected function redirectWithParentRequest(
+        string $actionName,
+        string $controllerName = null,
+        string $packageKey = null,
+        array $arguments = [],
+        int $delay = 0,
+        int $statusCode = 303,
+        string $format = null
+    ): void {
         $request = $this->getControllerContext()->getRequest()->getMainRequest();
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
@@ -109,7 +120,13 @@ class ImpersonateController extends ActionController
             $uriBuilder->setFormat($format);
         }
 
-        $uri = $uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+        $uri = $uriBuilder->setCreateAbsoluteUri(true)->uriFor(
+            $actionName,
+            $arguments,
+            $controllerName,
+            $packageKey,
+            $subpackageKey
+        );
         $this->redirectToUri($uri, $delay, $statusCode);
     }
 

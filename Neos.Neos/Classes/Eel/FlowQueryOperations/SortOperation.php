@@ -13,6 +13,7 @@ namespace Neos\Neos\Eel\FlowQueryOperations;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /**
@@ -54,7 +55,8 @@ class SortOperation extends AbstractOperation
      *  - 'SORT_NATURAL'
      *  - 'SORT_FLAG_CASE' (use as last option with SORT_STRING, SORT_LOCALE_STRING or SORT_NATURAL)
      * A single sort option can be supplied as string. Multiple sort options are supplied as array.
-     * Other than the above listed sort options throw an error. Omitting the third parameter leaves FlowQuery sort() in SORT_REGULAR sort mode.
+     * Other than the above listed sort options throw an error.
+     * Omitting the third parameter leaves FlowQuery sort() in SORT_REGULAR sort mode.
      * Example usages:
      *      sort("title", "ASC", ["SORT_NATURAL", "SORT_FLAG_CASE"])
      *      sort("risk", "DESC", "SORT_NUMERIC")
@@ -62,8 +64,8 @@ class SortOperation extends AbstractOperation
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation.
-     * @throws \Neos\Eel\FlowQuery\FlowQueryException
      * @return void
+     * @throws FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -74,23 +76,28 @@ class SortOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $sortProperty = $arguments[0];
         } else {
-            throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a node property to sort by.', 1467881104);
+            throw new FlowQueryException('Please provide a node property to sort by.', 1467881104);
         }
 
         // Check sort direction
         if (isset($arguments[1]) && !empty($arguments[1]) && in_array(strtoupper($arguments[1]), ['ASC', 'DESC'])) {
             $sortOrder = strtoupper($arguments[1]);
         } else {
-            throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
+            throw new FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
         // Check sort options
         $sortOptions = [];
+        $availableSortingMethods
+            = ['SORT_REGULAR', 'SORT_NUMERIC', 'SORT_STRING', 'SORT_LOCALE_STRING', 'SORT_NATURAL', 'SORT_FLAG_CASE'];
         if (isset($arguments[2]) && !empty($arguments[2])) {
             $args = is_array($arguments[2]) ? $arguments[2] : [$arguments[2]];
             foreach ($args as $arg) {
-                if (!in_array(strtoupper($arg), ['SORT_REGULAR', 'SORT_NUMERIC', 'SORT_STRING', 'SORT_LOCALE_STRING', 'SORT_NATURAL', 'SORT_FLAG_CASE'], true)) {
-                    throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort option (see https://www.php.net/manual/en/function.sort)', 1591107722);
+                if (!in_array(strtoupper($arg), $availableSortingMethods, true)) {
+                    throw new FlowQueryException(
+                        'Please provide a valid sort option (see https://www.php.net/manual/en/function.sort)',
+                        1591107722
+                    );
                 } else {
                     $sortOptions[] = $arg;
                 }

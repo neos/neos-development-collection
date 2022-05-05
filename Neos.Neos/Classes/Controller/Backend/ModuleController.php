@@ -67,7 +67,9 @@ class ModuleController extends ActionController
         if (isset($module['format'])) {
             $moduleRequest->setFormat($module['format']);
         }
-        if ($this->request->hasArgument($moduleRequest->getArgumentNamespace()) === true && is_array($this->request->getArgument($moduleRequest->getArgumentNamespace()))) {
+        if ($this->request->hasArgument($moduleRequest->getArgumentNamespace()) === true
+            && is_array($this->request->getArgument($moduleRequest->getArgumentNamespace()))
+        ) {
             $moduleRequest->setArguments($this->request->getArgument($moduleRequest->getArgumentNamespace()));
         }
         foreach ($this->request->getPluginArguments() as $argumentNamespace => $argument) {
@@ -80,7 +82,10 @@ class ModuleController extends ActionController
         $moduleConfiguration['path'] = $module['module'];
 
         if (!$this->menuHelper->isModuleEnabled($moduleConfiguration['path'])) {
-            throw new DisabledModuleException(sprintf('The module "%s" is disabled. You can enable it with the "enabled" flag in Settings.yaml.', $module['module']), 1437148922);
+            throw new DisabledModuleException(sprintf(
+                'The module "%s" is disabled. You can enable it with the "enabled" flag in Settings.yaml.',
+                $module['module']
+            ), 1437148922);
         }
 
         $moduleBreadcrumb = [];
@@ -113,7 +118,9 @@ class ModuleController extends ActionController
             $this->view->assignMultiple([
                 'moduleClass' => implode('-', $modules),
                 'moduleContents' => $moduleResponse->getContent(),
-                'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
+                'title' => $moduleRequest->hasArgument('title')
+                    ? $moduleRequest->getArgument('title')
+                    : $moduleConfiguration['label'],
                 'rootModule' => array_shift($modules),
                 'submodule' => array_shift($modules),
                 'moduleConfiguration' => $moduleConfiguration,

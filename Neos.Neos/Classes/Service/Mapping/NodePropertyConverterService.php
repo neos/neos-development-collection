@@ -166,8 +166,11 @@ class NodePropertyConverterService
     {
         $parsedType = TypeHandling::parseType($dataType);
 
-        // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects. Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue) && !is_array($propertyValue)) {
+        // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects.
+        // Usually they expect the source to be an object already and break if not.
+        if (!TypeHandling::isSimpleType($parsedType['type'])
+            && !is_object($propertyValue) && !is_array($propertyValue)
+        ) {
             return null;
         }
 
@@ -175,14 +178,23 @@ class NodePropertyConverterService
         if (!TypeHandling::isSimpleType($parsedType['type'])) {
             $conversionTargetType = 'array';
         }
-        // Technically the "string" hardcoded here is irrelevant as the configured type converter wins, but it cannot be the "elementType"
-        // because if the source is of the type $elementType then the PropertyMapper skips the type converter.
+        // Technically the "string" hardcoded here is irrelevant as the configured type converter wins,
+        // but it cannot be the "elementType" because if the source is of the type $elementType
+        // then the PropertyMapper skips the type converter.
         if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
-            $conversionTargetType .= '<' . (TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string') . '>';
+            $conversionTargetType .= '<'
+                . (TypeHandling::isSimpleType($parsedType['elementType'])
+                    ? $parsedType['elementType']
+                    : 'string'
+                ) . '>';
         }
 
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
-        $convertedValue = $this->propertyMapper->convert($propertyValue, $conversionTargetType, $propertyMappingConfiguration);
+        $convertedValue = $this->propertyMapper->convert(
+            $propertyValue,
+            $conversionTargetType,
+            $propertyMappingConfiguration
+        );
         if ($convertedValue instanceof \Neos\Error\Messages\Error) {
             throw new PropertyException($convertedValue->getMessage(), $convertedValue->getCode());
         }
@@ -210,7 +222,8 @@ class NodePropertyConverterService
     }
 
     /**
-     * Create a property mapping configuration for the given dataType to convert a Node property value from the given dataType to a simple type.
+     * Create a property mapping configuration for the given dataType to convert a Node property value
+     * from the given dataType to a simple type.
      *
      * @param string $dataType
      * @return PropertyMappingConfigurationInterface
@@ -250,13 +263,19 @@ class NodePropertyConverterService
      */
     protected function setTypeConverterForType(PropertyMappingConfiguration $propertyMappingConfiguration, $dataType)
     {
-        if (!isset($this->typesConfiguration[$dataType]) || !isset($this->typesConfiguration[$dataType]['typeConverter'])) {
+        if (!isset($this->typesConfiguration[$dataType])
+            || !isset($this->typesConfiguration[$dataType]['typeConverter'])
+        ) {
             return false;
         }
 
         $typeConverter = $this->objectManager->get($this->typesConfiguration[$dataType]['typeConverter']);
         $propertyMappingConfiguration->setTypeConverter($typeConverter);
-        $this->setTypeConverterOptionsForType($propertyMappingConfiguration, $this->typesConfiguration[$dataType]['typeConverter'], $dataType);
+        $this->setTypeConverterOptionsForType(
+            $propertyMappingConfiguration,
+            $this->typesConfiguration[$dataType]['typeConverter'],
+            $dataType
+        );
 
         return true;
     }
@@ -267,9 +286,14 @@ class NodePropertyConverterService
      * @param string $dataType
      * @return void
      */
-    protected function setTypeConverterOptionsForType(PropertyMappingConfiguration $propertyMappingConfiguration, $typeConverterClass, $dataType)
-    {
-        if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions']) || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])) {
+    protected function setTypeConverterOptionsForType(
+        PropertyMappingConfiguration $propertyMappingConfiguration,
+        $typeConverterClass,
+        $dataType
+    ) {
+        if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
+            || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])
+        ) {
             return;
         }
 

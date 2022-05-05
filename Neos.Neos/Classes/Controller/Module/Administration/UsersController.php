@@ -29,6 +29,7 @@ use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
@@ -39,6 +40,8 @@ use Neos\Party\Domain\Model\ElectronicAddress;
  */
 class UsersController extends AbstractModuleController
 {
+    use ModuleTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -88,16 +91,40 @@ class UsersController extends AbstractModuleController
     {
         parent::initializeAction();
         $translationHelper = new TranslationHelper();
-        $this->setTitle($translationHelper->translate($this->moduleConfiguration['label']) . ' :: ' . $translationHelper->translate(str_replace('label', 'action.', $this->moduleConfiguration['label']) . $this->request->getControllerActionName()));
+        $this->setTitle(
+            $translationHelper->translate($this->moduleConfiguration['label']) . ' :: '
+                . $translationHelper->translate(
+                    str_replace('label', 'action.', $this->moduleConfiguration['label'])
+                        . $this->request->getControllerActionName()
+                )
+        );
         if ($this->arguments->hasArgument('user')) {
-            $propertyMappingConfigurationForUser = $this->arguments->getArgument('user')->getPropertyMappingConfiguration();
+            $propertyMappingConfigurationForUser
+                = $this->arguments->getArgument('user')->getPropertyMappingConfiguration();
             $propertyMappingConfigurationForUserName = $propertyMappingConfigurationForUser->forProperty('user.name');
-            $propertyMappingConfigurationForPrimaryAccount = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
-            $propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, Account::class);
+            $propertyMappingConfigurationForPrimaryAccount
+                = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
+            $propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption(
+                PersistentObjectConverter::class,
+                PersistentObjectConverter::CONFIGURATION_TARGET_TYPE,
+                Account::class
+            );
             /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-            foreach ([$propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount] as $propertyMappingConfiguration) {
-                $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
-                $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            foreach ([
+                $propertyMappingConfigurationForUser,
+                $propertyMappingConfigurationForUserName,
+                $propertyMappingConfigurationForPrimaryAccount
+            ] as $propertyMappingConfiguration) {
+                $propertyMappingConfiguration->setTypeConverterOption(
+                    PersistentObjectConverter::class,
+                    PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+                    true
+                );
+                $propertyMappingConfiguration->setTypeConverterOption(
+                    PersistentObjectConverter::class,
+                    PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
+                    true
+                );
             }
         }
         $this->currentUser = $this->userService->getCurrentUser();
@@ -161,7 +188,8 @@ class UsersController extends AbstractModuleController
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
      * @param User $user The user to create
      * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
-     * @param string $authenticationProviderName Optional name of the authentication provider. If not provided the user server uses the default authentication provider
+     * @param string $authenticationProviderName Optional name of the authentication provider.
+     *                                         If not provided the user server uses the default authentication provider
      * @return void
      * @throws NoSuchRoleException
      * @throws StopActionException
@@ -169,25 +197,33 @@ class UsersController extends AbstractModuleController
      *
      * @Flow\Validate(argumentName="username", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
+     * @codingStandardsIgnoreStart
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
+     * @codingStandardsIgnoreEnd
      */
-    public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
-    {
+    public function createAction(
+        string $username,
+        array $password,
+        User $user,
+        array $roleIdentifiers,
+        string $authenticationProviderName = null
+    ): void {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
+        $isCreationAllowed = $this->userService->currentUserIsAdministrator()
+            || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
             $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
             $this->addFlashMessage(
-                $this->translator->translateById('users.userCreated.body', [htmlspecialchars($username)], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userCreated.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.userCreated.body', [htmlspecialchars($username)]),
+                $this->getModuleLabel('users.userCreated.title'),
                 Message::SEVERITY_OK,
                 [],
                 1416225561
             );
         } else {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userCreationDenied.body', [implode(', ', $roleIdentifiers)], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userCreationDenied.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.userCreationDenied.body', [implode(', ', $roleIdentifiers)]),
+                $this->getModuleLabel('users.userCreationDenied.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225562
@@ -206,8 +242,11 @@ class UsersController extends AbstractModuleController
     {
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userEditingDenied.editing.body', [htmlspecialchars($user->getName())], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userEditingDenied.editing.‚title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel(
+                    'users.userEditingDenied.editing.body',
+                    [htmlspecialchars($user->getName()->getFullName())]
+                ),
+                $this->getModuleLabel('users.userEditingDenied.editing.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225563
@@ -235,8 +274,8 @@ class UsersController extends AbstractModuleController
     {
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userEditingDenied.editing.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userEditingDenied.editing.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.userEditingDenied.editing.body', [$user->getName()->getFullName()]),
+                $this->getModuleLabel('users.userEditingDenied.editing.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225563
@@ -245,8 +284,8 @@ class UsersController extends AbstractModuleController
         }
         $this->userService->updateUser($user);
         $this->addFlashMessage(
-            $this->translator->translateById('users.userUpdated.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('users.userUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->getModuleLabel('users.userUpdated.body', [$user->getName()->getFullName()]),
+            $this->getModuleLabel('users.userUpdated.title'),
             Message::SEVERITY_OK,
             [],
             1412374498
@@ -266,8 +305,8 @@ class UsersController extends AbstractModuleController
     {
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userEditingDenied.deletion.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userEditingDenied.deletion.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.userEditingDenied.deletion.body', [$user->getName()->getFullName()]),
+                $this->getModuleLabel('users.userEditingDenied.deletion.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225564
@@ -276,8 +315,8 @@ class UsersController extends AbstractModuleController
         }
         if ($user === $this->currentUser) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.currentUserCannotBeDeleted.body', [], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.currentUserCannotBeDeleted.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.currentUserCannotBeDeleted.body'),
+                $this->getModuleLabel('users.currentUserCannotBeDeleted.title'),
                 Message::SEVERITY_WARNING,
                 [],
                 1412374546
@@ -286,8 +325,8 @@ class UsersController extends AbstractModuleController
         }
         $this->userService->deleteUser($user);
         $this->addFlashMessage(
-            $this->translator->translateById('users.userDeleted.body', [htmlspecialchars($user->getName()->getFullName())], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('users.userDeleted.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->getModuleLabel('users.userDeleted.body', [htmlspecialchars($user->getName()->getFullName())]),
+            $this->getModuleLabel('users.userDeleted.title'),
             Message::SEVERITY_NOTICE,
             [],
             1412374546
@@ -304,11 +343,14 @@ class UsersController extends AbstractModuleController
      */
     public function editAccountAction(Account $account): void
     {
-        $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
+        $user = $this->userService->getUser(
+            $account->getAccountIdentifier(),
+            $account->getAuthenticationProviderName()
+        );
         if (!$user instanceof User || !$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userAccountEditingDenied.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userAccountEditingDenied.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.userAccountEditingDenied.body', [$user->getName()->getFullName()]),
+                $this->getModuleLabel('users.userAccountEditingDenied.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225565
@@ -334,15 +376,20 @@ class UsersController extends AbstractModuleController
      * @throws ForwardException
      * @throws NoSuchRoleException
      * @throws Exception
+     * @codingStandardsIgnoreStart
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+     * @codingStandardsIgnoreEnd
      */
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
     {
-        $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
+        $user = $this->userService->getUser(
+            $account->getAccountIdentifier(),
+            $account->getAuthenticationProviderName()
+        );
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userAccountEditingDenied.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userAccountEditingDenied.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('users.userAccountEditingDenied.body', [$user->getName()->getFullName()]),
+                $this->getModuleLabel('users.userAccountEditingDenied.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225565
@@ -354,10 +401,13 @@ class UsersController extends AbstractModuleController
             foreach ($roleIdentifiers as $roleIdentifier) {
                 $roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
             }
-            if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles($roles, 'Neos.Neos:Backend.Module.Administration.Users')) {
+            if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles(
+                $roles,
+                'Neos.Neos:Backend.Module.Administration.Users'
+            )) {
                 $this->addFlashMessage(
-                    $this->translator->translateById('users.doNotLockYourselfOut.body', [], null, null, 'Modules', 'Neos.Neos'),
-                    $this->translator->translateById('users.doNotLockYourselfOut.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    $this->getModuleLabel('users.doNotLockYourselfOut.body'),
+                    $this->getModuleLabel('users.doNotLockYourselfOut.title'),
                     Message::SEVERITY_WARNING,
                     [],
                     1416501197
@@ -372,8 +422,8 @@ class UsersController extends AbstractModuleController
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
         $this->addFlashMessage(
-            $this->translator->translateById('users.accountUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('users.accountUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->getModuleLabel('users.accountUpdated.body'),
+            $this->getModuleLabel('users.accountUpdated.title'),
             Message::SEVERITY_OK
         );
         $this->redirect('edit', null, null, ['user' => $user]);
@@ -404,8 +454,11 @@ class UsersController extends AbstractModuleController
     {
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userEmailEditingDenied.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userEmailEditingDenied.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel(
+                    'users.userEmailEditingDenied.body',
+                    [$user->getName()->getFullName()]
+                ),
+                $this->getModuleLabel('users.userEmailEditingDenied.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225566
@@ -417,8 +470,14 @@ class UsersController extends AbstractModuleController
         $this->userService->updateUser($user);
 
         $this->addFlashMessage(
-            $this->translator->translateById('users.electronicAddressAdded.body', [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('users.electronicAddressAdded.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->getModuleLabel(
+                'users.electronicAddressAdded.body',
+                [
+                    htmlspecialchars($electronicAddress->getIdentifier()),
+                    htmlspecialchars($electronicAddress->getType())
+                ]
+            ),
+            $this->getModuleLabel('users.electronicAddressAdded.title'),
             Message::SEVERITY_OK,
             [],
             1412374814
@@ -438,8 +497,11 @@ class UsersController extends AbstractModuleController
     {
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userEmailDeletionDenied.body', [$user->getName()->getFullName()], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userEmailDeletionDenied.title', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel(
+                    'users.userEmailDeletionDenied.body',
+                    [$user->getName()->getFullName()]
+                ),
+                $this->getModuleLabel('users.userEmailDeletionDenied.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1416225567
@@ -449,12 +511,18 @@ class UsersController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        /** @var PersonName $personName */
         $personName = $user->getName();
         $name = $personName ? $personName->getFullName() : '';
         $this->addFlashMessage(
-            $this->translator->translateById('users.electronicAddressRemoved.body', [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($name)], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('users.electronicAddressRemoved.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->getModuleLabel(
+                'users.electronicAddressRemoved.body',
+                [
+                    htmlspecialchars($electronicAddress->getIdentifier()),
+                    htmlspecialchars($electronicAddress->getType()),
+                    htmlspecialchars($name)
+                ]
+            ),
+            $this->getModuleLabel('users.electronicAddressRemoved.title'),
             Message::SEVERITY_NOTICE,
             [],
             1412374678
@@ -475,7 +543,13 @@ class UsersController extends AbstractModuleController
         $electronicAddressUsageTypes = [];
         $translationHelper = new TranslationHelper();
         foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
-            $electronicAddressUsageTypes[$type] = $translationHelper->translate('users.electronicAddress.usage.type.' . $type, $type, [], 'Modules', 'Neos.Neos');
+            $electronicAddressUsageTypes[$type] = $translationHelper->translate(
+                'users.electronicAddress.usage.type.' . $type,
+                $type,
+                [],
+                'Modules',
+                'Neos.Neos'
+            );
         }
         array_unshift($electronicAddressUsageTypes, '');
         $this->view->assignMultiple([
@@ -496,7 +570,8 @@ class UsersController extends AbstractModuleController
         $providerNames =[];
         foreach ($providers as $authenticationProviderName) {
             $providerNames[$authenticationProviderName] = [
-                'label' => ($this->authenticationProviderSettings[$authenticationProviderName]['label'] ?? $authenticationProviderName),
+                'label' => $this->authenticationProviderSettings[$authenticationProviderName]['label']
+                    ?? $authenticationProviderName,
                 'identifier' => $authenticationProviderName
             ];
         }
@@ -520,7 +595,9 @@ class UsersController extends AbstractModuleController
             return $role->isAbstract() !== true;
         });
 
-        $roles = $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
+        $roles = $this->userService->currentUserIsAdministrator()
+            ? $this->policyService->getRoles()
+            : $currentUserRoles;
 
         usort($roles, static function (Role $a, Role $b) {
             return strcmp($a->getName(), $b->getName());

@@ -107,7 +107,8 @@ class SiteCommandController extends CommandController
      * This command allows to create a blank site with just a single empty document in the default dimension.
      * The name of the site, the packageKey must be specified.
      *
-     * The node type given with the ``nodeType`` option must already exists and have the superType ``Neos.Neos:Document``.
+     * The node type given with the ``nodeType`` option must already exists
+     * and have the superType ``Neos.Neos:Document``.
      *
      * If no ``nodeName`` option is specified the command will create a unique node-name from the name of the site.
      * If a node name is given it has to be unique for the setup.
@@ -117,7 +118,8 @@ class SiteCommandController extends CommandController
      * @param string $name The name of the site
      * @param string $packageKey The site package
      * @param string $nodeType The node type to use for the site node, e.g. Amce.Com:Page
-     * @param string $nodeName The name of the site node. If no nodeName is given it will be determined from the siteName.
+     * @param string $nodeName The name of the site node.
+     *                         If no nodeName is given it will be determined from the siteName.
      * @param boolean $inactive The new site is not activated immediately (default = false)
      * @return void
      */
@@ -144,7 +146,10 @@ class SiteCommandController extends CommandController
             $this->quit(1);
         }
         if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
-            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'Neos.Neos:Document']);
+            $this->outputLine(
+                '<error>The given node type "%s" is not based on the superType "%s"</error>',
+                [$nodeType, 'Neos.Neos:Document']
+            );
             $this->quit(1);
         }
 
@@ -168,7 +173,10 @@ class SiteCommandController extends CommandController
 
         $this->siteRepository->add($site);
 
-        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
+        $this->outputLine(
+            'Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"',
+            [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
+        );
     }
 
     /**
@@ -208,7 +216,9 @@ class SiteCommandController extends CommandController
         $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
         $this->outputLine('If the import is successful, you will see a message saying "Import of site ... finished".');
         $this->outputLine('If you do not see this message, the import failed, most likely due to insufficient memory.');
-        $this->outputLine('Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.');
+        $this->outputLine(
+            'Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.'
+        );
         $this->outputLine('Starting import...');
         $this->outputLine('---');
 
@@ -220,7 +230,11 @@ class SiteCommandController extends CommandController
             } catch (\Exception $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
                 $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
-                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', [$filename, $exception->getMessage()]);
+                $this->outputLine(
+                    '<error>During the import of the file "%s" an exception occurred: %s,'
+                        . ' see log for further information.</error>',
+                    [$filename, $exception->getMessage()]
+                );
                 $this->quit(1);
             }
         } else {
@@ -229,7 +243,11 @@ class SiteCommandController extends CommandController
             } catch (\Exception $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
                 $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
-                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', [$packageKey, $exception->getMessage()]);
+                $this->outputLine(
+                    '<error>During the import of the "Sites.xml" from the package "%s"'
+                        . ' an exception occurred: %s, see log for further information.</error>',
+                    [$packageKey, $exception->getMessage()]
+                );
                 $this->quit(1);
             }
         }
@@ -252,13 +270,21 @@ class SiteCommandController extends CommandController
      *
      * @param string $siteNode the node name of the site to be exported; if none given will export all sites
      * @param boolean $tidy Whether to export formatted XML. This is defaults to true
-     * @param string $filename relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
-     * @param string $packageKey Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $filename relative path and filename to the XML file to create.
+     *                         Any resource will be stored in a sub folder "Resources".
+     * @param string $packageKey Package to store the XML file in.
+     *                           Any resource will be stored in a sub folder "Resources".
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
-    public function exportCommand($siteNode = null, $tidy = true, $filename = null, $packageKey = null, $nodeTypeFilter = null)
-    {
+    public function exportCommand(
+        $siteNode = null,
+        $tidy = true,
+        $filename = null,
+        $packageKey = null,
+        $nodeTypeFilter = null
+    ) {
         if ($siteNode === null) {
             $sites = $this->siteRepository->findAll()->toArray();
         } else {
@@ -310,7 +336,10 @@ class SiteCommandController extends CommandController
         }
         foreach ($sites as $site) {
             $this->siteService->pruneSite($site);
-            $this->outputLine('Site with root "%s" matched pattern "%s" and has been removed.', [$site->getNodeName(), $siteNode]);
+            $this->outputLine(
+                'Site with root "%s" matched pattern "%s" and has been removed.',
+                [$site->getNodeName(), $siteNode]
+            );
         }
     }
 
@@ -353,10 +382,18 @@ class SiteCommandController extends CommandController
         }
 
         $this->outputLine();
-        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15) . str_pad('Node name', $longestNodeName + 15) . str_pad('Resources package', $longestSiteResource + 15) . 'Status ');
-        $this->outputLine(str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 7 + 15 + 15 + 15 + 2));
+        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15)
+            . str_pad('Node name', $longestNodeName + 15)
+            . str_pad('Resources package', $longestSiteResource + 15)
+            . 'Status ');
+        $this->outputLine(
+            str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 7 + 15 + 15 + 15 + 2)
+        );
         foreach ($availableSites as $site) {
-            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . str_pad($site['siteResourcesPackageKey'], $longestSiteResource + 15) . $site['status']);
+            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15)
+                . str_pad($site['nodeName'], $longestNodeName + 15)
+                . str_pad($site['siteResourcesPackageKey'], $longestSiteResource + 15)
+                . $site['status']);
         }
         $this->outputLine();
     }

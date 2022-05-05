@@ -176,7 +176,10 @@ class BackendRedirectionService
             return null;
         }
         try {
-            $lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
+            $lastVisitedNode = $this->propertyMapper->convert(
+                $this->session->getData('lastVisitedNode'),
+                NodeInterface::class
+            );
             $q = new FlowQuery([$lastVisitedNode]);
             return $q->context(['workspaceName' => $workspaceName])->get(0);
         } catch (\Exception $exception) {

@@ -123,8 +123,14 @@ class LoginController extends AbstractAuthenticationController
     {
         if (is_array($this->request->getInternalArgument('__authentication'))) {
             $authentication = $this->request->getInternalArgument('__authentication');
-            if (isset($authentication['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'])) {
-                $this->request->setArgument('username', $authentication['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username']);
+            if (isset($authentication['Neos']['Flow']['Security']['Authentication']
+                ['Token']['UsernamePassword']['username'])
+            ) {
+                $this->request->setArgument(
+                    'username',
+                    $authentication['Neos']['Flow']['Security']['Authentication']
+                        ['Token']['UsernamePassword']['username']
+                );
             }
         }
     }
@@ -156,7 +162,8 @@ class LoginController extends AbstractAuthenticationController
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite,
-            'flashMessages' => $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush(),
+            'flashMessages' => $this->flashMessageService->getFlashMessageContainerForRequest($this->request)
+                ->getMessagesAndFlush(),
         ]);
     }
 
@@ -187,7 +194,11 @@ class LoginController extends AbstractAuthenticationController
         if ($newSession->isStarted()) {
             $newSession->putData('lastVisitedNode', null);
         } else {
-            $this->logger->error(sprintf('Failed resuming or starting session %s which was referred to in the login token %s.', $newSessionId, $token));
+            $this->logger->error(sprintf(
+                'Failed resuming or starting session %s which was referred to in the login token %s.',
+                $newSessionId,
+                $token
+            ));
         }
 
         $this->replaceSessionCookie($newSessionId);
@@ -218,7 +229,8 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Is called if authentication was successful.
      *
-     * @param ActionRequest|null $originalRequest The request that was intercepted by the security framework, NULL if there was none
+     * @param ActionRequest|null $originalRequest The request that was intercepted by the security framework,
+     *                                            NULL if there was none
      * @return void
      * @throws SessionNotStartedException
      * @throws StopActionException
@@ -227,9 +239,17 @@ class LoginController extends AbstractAuthenticationController
     protected function onAuthenticationSuccess(ActionRequest $originalRequest = null)
     {
         if ($this->view instanceof JsonView) {
-            $this->view->assign('value', ['success' => $this->authenticationManager->isAuthenticated(), 'csrfToken' => $this->securityContext->getCsrfProtectionToken()]);
+            $this->view->assign(
+                'value',
+                [
+                    'success' => $this->authenticationManager->isAuthenticated(),
+                    'csrfToken' => $this->securityContext->getCsrfProtectionToken()
+                ]
+            );
         } else {
-            if ($this->request->hasArgument('lastVisitedNode') && $this->request->getArgument('lastVisitedNode') !== '') {
+            if ($this->request->hasArgument('lastVisitedNode')
+                && $this->request->getArgument('lastVisitedNode') !== ''
+            ) {
                 $this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
             }
             if ($originalRequest !== null) {

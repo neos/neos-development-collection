@@ -17,8 +17,6 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\View\Service\WorkspaceJsonView;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * REST service for workspaces
@@ -27,12 +25,11 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
  */
 class WorkspacesController extends ActionController
 {
-
     /**
      * @Flow\Inject
      * @var WorkspaceFinder
      */
-    protected $workspaceRepository;
+    protected $workspaceFinder;
 
     /**
      * @Flow\Inject
@@ -68,9 +65,7 @@ class WorkspacesController extends ActionController
     {
         $user = $this->userService->getCurrentUser();
         $workspacesArray = [];
-        /** @var Workspace $workspace */
-        foreach ($this->workspaceRepository->findAll() as $workspace) {
-
+        foreach ($this->workspaceFinder->findAll() as $workspace) {
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {
                 continue;
@@ -112,7 +107,7 @@ class WorkspacesController extends ActionController
      */
     public function createAction($workspaceName, Workspace $baseWorkspace, $ownerAccountIdentifier = null)
     {
-        $existingWorkspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        $existingWorkspace = $this->workspaceFinder->findByIdentifier($workspaceName);
         if ($existingWorkspace !== null) {
             $this->throwStatus(409, 'Workspace already exists', '');
         }
@@ -127,7 +122,7 @@ class WorkspacesController extends ActionController
         }
 
         $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
-        $this->workspaceRepository->add($workspace);
+        $this->workspaceFinder->add($workspace);
         $this->throwStatus(201, 'Workspace created', '');
     }
 
@@ -140,7 +135,11 @@ class WorkspacesController extends ActionController
     {
         $propertyMappingConfiguration = $this->arguments->getArgument('workspace')->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowProperties('name', 'baseWorkspace');
-        $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+        $propertyMappingConfiguration->setTypeConverterOption(
+            PersistentObjectConverter::class,
+            PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
+            true
+        );
     }
 
     /**
@@ -151,7 +150,7 @@ class WorkspacesController extends ActionController
      */
     public function updateAction(Workspace $workspace)
     {
-        $this->workspaceRepository->update($workspace);
+        $this->workspaceFinder->update($workspace);
         $this->throwStatus(200, 'Workspace updated', '');
     }
 }
