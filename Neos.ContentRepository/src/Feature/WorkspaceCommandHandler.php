@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Feature;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
@@ -24,9 +25,7 @@ use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
-/** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-/** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
@@ -72,13 +71,11 @@ use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\StreamName;
-use Neos\Flow\Annotations as Flow;
 use Ramsey\Uuid\Uuid;
 
 /**
  * WorkspaceCommandHandler
  */
-#[Flow\Scope("singleton")]
 final class WorkspaceCommandHandler
 {
     protected EventStore $eventStore;
@@ -511,14 +508,12 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeConstraintException
      * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeNameIsAlreadyOccupied
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws DimensionSpacePointNotFound
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function applyCommand(object $command): CommandResult
     {
@@ -683,13 +678,12 @@ final class WorkspaceCommandHandler
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
-     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeConstraintException
      * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function handleDiscardIndividualNodesFromWorkspace(
-        \Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace $command
+        DiscardIndividualNodesFromWorkspace $command
     ): CommandResult {
         $this->readSideMemoryCacheManager->disableCache();
 

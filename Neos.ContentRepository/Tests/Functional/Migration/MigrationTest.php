@@ -241,7 +241,7 @@ class MigrationTest extends AbstractNodeTest
      * @param $expectedAfter
      * @throws \Neos\ContentRepository\Exception\NodeException
      * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
-     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\ContentRepository\Feature\Migration\MigrationException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\RootNodeCreation\RootNodeCreation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;

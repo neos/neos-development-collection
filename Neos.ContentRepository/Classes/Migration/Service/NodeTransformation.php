@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\ContentRepository\Migration\Transformations\TransformationInterface;
 
 /**

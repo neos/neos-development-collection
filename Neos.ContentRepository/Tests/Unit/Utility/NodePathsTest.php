@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Utility;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * Testcase for the NodeService

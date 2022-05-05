@@ -71,7 +71,7 @@ class NodeMigration
     /**
      * Execute all migrations
      *
-     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\ContentRepository\Feature\Migration\MigrationException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function execute()
@@ -87,7 +87,7 @@ class NodeMigration
      *
      * @param array $migrationDescription
      * @return void
-     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\ContentRepository\Feature\Migration\MigrationException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     protected function executeSingle(array $migrationDescription)

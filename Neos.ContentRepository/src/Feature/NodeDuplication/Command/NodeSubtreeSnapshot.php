@@ -1,19 +1,19 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\NodeDuplication\Command;
 
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeReferences;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use function Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\get_class;
 
-#[Flow\Proxy(false)]
 final class NodeSubtreeSnapshot implements \JsonSerializable
 {
     private NodeAggregateIdentifier $nodeAggregateIdentifier;

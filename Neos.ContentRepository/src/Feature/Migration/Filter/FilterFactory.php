@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\ContentRepository\Feature\Migration\Filter\NodeAggregateBasedFilterInterface;
 use Neos\ContentRepository\Feature\Migration\Filter\NodeBasedFilterInterface;
 use Neos\Flow\Annotations as Flow;

@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Migration\Configuration;
  * source code.
  */
 
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 
 /**
  * Abstract Migration Configuration as a base for different configuration sources.

@@ -26,7 +26,6 @@ use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
-use function Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\is_string;
 
 trait NodeReferencing
 {

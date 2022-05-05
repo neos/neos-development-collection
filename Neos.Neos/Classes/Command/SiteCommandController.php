@@ -23,7 +23,7 @@ use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Model\Site;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 use Psr\Log\LoggerInterface;
 
 /**

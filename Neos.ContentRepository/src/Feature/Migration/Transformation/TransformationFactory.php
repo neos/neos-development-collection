@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

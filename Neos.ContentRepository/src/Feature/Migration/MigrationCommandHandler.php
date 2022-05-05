@@ -5,7 +5,7 @@ namespace Neos\ContentRepository\Feature\Migration;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Migration\Filter\InvalidMigrationFilterSpecified;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
 use Neos\ContentRepository\Feature\Migration\Filter\FilterFactory;
 use Neos\ContentRepository\Feature\Migration\Transformation\TransformationFactory;

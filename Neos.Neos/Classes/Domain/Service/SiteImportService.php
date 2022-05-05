@@ -26,7 +26,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 use Neos\Neos\Exception as NeosException;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * The Site Import Service

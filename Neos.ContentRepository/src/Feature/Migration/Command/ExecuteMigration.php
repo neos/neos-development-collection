@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\Migration\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,8 +10,11 @@ namespace Neos\ContentRepository\Feature\Migration\Command;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Command;
+
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**

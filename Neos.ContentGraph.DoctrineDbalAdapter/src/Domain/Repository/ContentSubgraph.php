@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -25,7 +26,6 @@ use Neos\ContentRepository\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -58,7 +58,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 {
     /**
      * @Flow\Inject
-     * @var DbalClient
+     * @var DbalClientInterface
      */
     protected $client;
 

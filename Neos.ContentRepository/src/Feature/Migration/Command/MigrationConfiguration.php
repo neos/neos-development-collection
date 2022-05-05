@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\Migration\Domain\Model;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +10,9 @@ namespace Neos\ContentRepository\Migration\Domain\Model;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Command;
 
 /**
  * Migration configuration for a specific direction.
@@ -28,18 +30,18 @@ class MigrationConfiguration
     protected $warnings;
 
     /**
-     * @var array
+     * @var array<int,mixed>
      */
     protected $migration;
 
     /**
-     * @param array $configuration
+     * @param array<string,mixed> $configuration
      */
     public function __construct(array $configuration = [])
     {
-        $this->comments = isset($configuration['comments']) ? $configuration['comments'] : null;
-        $this->warnings = isset($configuration['warnings']) ? $configuration['warnings'] : null;
-        $this->migration = isset($configuration['migration']) ? $configuration['migration'] : null;
+        $this->comments = $configuration['comments'] ?? null;
+        $this->warnings = $configuration['warnings'] ?? null;
+        $this->migration = $configuration['migration'] ?? null;
     }
 
     /**
@@ -59,9 +61,9 @@ class MigrationConfiguration
     }
 
     /**
-     * @return array
+     * @return array<int,mixed>
      */
-    public function getMigration()
+    public function getMigration(): array
     {
         return $this->migration;
     }

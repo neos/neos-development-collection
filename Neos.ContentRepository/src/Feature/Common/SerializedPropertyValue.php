@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,16 +10,15 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\array_key_exists;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\json_encode;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
 
 /**
  * "Raw" / Serialized property value as saved in the event log // in projections.
  *
  * This means: "value" must be a simple PHP data type (no objects allowed!)
  */
-#[Flow\Proxy(false)]
 final class SerializedPropertyValue implements \JsonSerializable
 {
     /**

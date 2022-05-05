@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Context;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * @Flow\Scope("singleton")

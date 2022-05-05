@@ -15,29 +15,22 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The Doctrine database backend implementation for projection invariant checks
- *
- * @Flow\Scope("singleton")
  */
 final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityViolationDetectorInterface
 {
-    private DbalClient $client;
-
     public function __construct(
-        DbalClient $client
+        private readonly DbalClientInterface $client
     ) {
-        $this->client = $client;
     }
 
     /**

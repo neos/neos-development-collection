@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\Content;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,16 +10,17 @@ namespace Neos\ContentRepository\Projection\Content;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Content;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\CoverageByOrigin;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-/** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
-/** @codingStandardsIgnoreEnd */
-
 use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
@@ -30,9 +28,6 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\array_values;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\is_null;
 
 /**
  * Node aggregate read model

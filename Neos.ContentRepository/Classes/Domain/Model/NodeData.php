@@ -24,7 +24,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Algorithms;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Utility;
 

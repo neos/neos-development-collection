@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Migration\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\ContentRepository\Migration\Filters\FilterInterface;
 use Neos\ContentRepository\Migration\Filters\DoctrineFilterInterface;
 use Neos\Flow\Persistence\Doctrine\Query;

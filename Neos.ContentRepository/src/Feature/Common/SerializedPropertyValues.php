@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,17 +10,11 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
+
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\Feature\Common\PropertyScope;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
-use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\array_filter;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\array_map;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\count;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\is_array;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\is_string;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\json_encode;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\sprintf;
 
 /**
  * "Raw" property values as saved in the event log // in projections.
@@ -34,7 +26,6 @@ use function Neos\EventSourcedContentRepository\Domain\ValueObject\sprintf;
  *
  * @implements \IteratorAggregate<string,?SerializedPropertyValue>
  */
-#[Flow\Proxy(false)]
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**

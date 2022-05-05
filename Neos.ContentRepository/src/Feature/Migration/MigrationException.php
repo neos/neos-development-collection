@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,11 +10,14 @@ namespace Neos\ContentRepository\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\Exception;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration;
 
 /**
- * This exception is thrown if sub-node constraints are violated
+ * An exception thrown when something goes wrong during content
+ * migration.
  */
-class NodeConstraintException extends Exception
+class MigrationException extends \DomainException
 {
 }

@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * A container of properties which can be used as a template for generating new nodes.

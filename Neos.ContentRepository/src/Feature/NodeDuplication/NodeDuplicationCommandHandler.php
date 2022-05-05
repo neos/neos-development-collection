@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Feature\NodeDuplication;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -103,9 +104,7 @@ final class NodeDuplicationCommandHandler
     }
 
     /**
-     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws NodeConstraintException
      */
     public function handleCopyNodesRecursively(CopyNodesRecursively $command): CommandResult
     {

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Projection\NodeHiddenState;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,13 +10,14 @@ namespace Neos\ContentRepository\Projection\NodeHiddenState;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\NodeHiddenState;
+
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use function Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\is_null;
-use function Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\json_encode;
 
 /**
  * Node Hidden State Read Model.
@@ -27,8 +26,6 @@ use function Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenStat
  *
  * It can NOT answer the question whether a Node is hidden because some node above it has been hidden - for that,
  * use the Content Subgraph.
- *
- * @Flow\Proxy(false)
  */
 class NodeHiddenState
 {

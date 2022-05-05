@@ -17,14 +17,10 @@ use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
-use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use function Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\is_null;
 
 /**
  * CopyNodesRecursively command
@@ -33,7 +29,6 @@ use function Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\C
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
  */
-#[Flow\Proxy(false)]
 final class CopyNodesRecursively implements
     \JsonSerializable,
     MatchableWithNodeAddressInterface,
@@ -222,9 +217,9 @@ final class CopyNodesRecursively implements
             $this->getNodeToInsert()->getNodeAggregateIdentifier()
         );
         return (
-            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+            !is_null($targetNodeAggregateIdentifier)
+                && $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->targetDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
-                && !is_null($targetNodeAggregateIdentifier)
                 && $targetNodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }

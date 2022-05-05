@@ -22,7 +22,7 @@ use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
-use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Functional\Command\TableNode;

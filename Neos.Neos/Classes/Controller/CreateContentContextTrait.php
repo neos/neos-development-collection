@@ -16,7 +16,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * A trait to add create a content context

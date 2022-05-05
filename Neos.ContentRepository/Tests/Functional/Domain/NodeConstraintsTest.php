@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * source code.
  */
 
-use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;

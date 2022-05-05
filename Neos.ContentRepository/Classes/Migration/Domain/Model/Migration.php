@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Migration\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\Migration\Command\MigrationConfiguration;
+
 
 /**
  * Migration.

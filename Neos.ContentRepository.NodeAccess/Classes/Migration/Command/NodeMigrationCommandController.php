@@ -16,8 +16,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
 use Neos\Flow\Cli\CommandController;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
-use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
+use Neos\ContentRepository\Feature\Migration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
 
 /**

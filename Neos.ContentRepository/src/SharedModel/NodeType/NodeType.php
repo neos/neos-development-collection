@@ -24,6 +24,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 use Neos\ContentRepository\Feature\Common\InvalidNodeTypePostprocessorException;
+use pq\Exception\InvalidArgumentException;
 
 /**
  * A Node Type
@@ -68,7 +69,7 @@ class NodeType
     /**
      * node types this node type directly inherits from
      *
-     * @var array<string,NodeType>
+     * @var array<string,?NodeType>
      */
     protected array $declaredSuperTypes;
 
@@ -98,7 +99,7 @@ class NodeType
      * Constructs this node type
      *
      * @param string $name Name of the node type
-     * @param array<string,NodeType> $declaredSuperTypes Parent types of this node type
+     * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      */
@@ -394,13 +395,21 @@ class NodeType
         if ($this->nodeLabelGenerator === null) {
             if ($this->hasConfiguration('label.generatorClass')) {
                 $nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
+                if (!$nodeLabelGenerator instanceof NodeLabelGeneratorInterface) {
+                    throw new InvalidArgumentException(
+                        $this->getConfiguration('label.generatorClass')
+                            . 'does not implement the required ' . NodeLabelGeneratorInterface::class,
+                        1651761078
+                    );
+                }
             } elseif ($this->hasConfiguration('label') && is_string($this->getConfiguration('label'))) {
                 $nodeLabelGenerator = $this->objectManager->get(ExpressionBasedNodeLabelGenerator::class);
+                /** @var ExpressionBasedNodeLabelGenerator $nodeLabelGenerator */
                 $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
             } else {
+                /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
                 $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
             }
-
             $this->nodeLabelGenerator = $nodeLabelGenerator;
         }
 
@@ -455,7 +464,7 @@ class NodeType
 
         $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
-            if (isset($propertyConfiguration['defaultValue'])) {
+            if (is_string($propertyName) && isset($propertyConfiguration['defaultValue'])) {
                 $type = $propertyConfiguration['type'] ?? '';
                 $defaultValues[$propertyName] = match ($type) {
                     'DateTime' => new \DateTime($propertyConfiguration['defaultValue']),
@@ -669,8 +678,11 @@ class NodeType
      *
      * Returns null if no NodeType matched
      */
-    protected function traverseSuperTypes(NodeType $currentNodeType, string $constraintNodeTypeName, int $distance): ?int
-    {
+    protected function traverseSuperTypes(
+        NodeType $currentNodeType,
+        string $constraintNodeTypeName,
+        int $distance
+    ): ?int {
         if ($currentNodeType->getName() === $constraintNodeTypeName) {
             return $distance;
         }

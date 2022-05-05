@@ -92,12 +92,10 @@ trait NodeCreation
             $command->parentNodeAggregateIdentifier,
             $command->succeedingSiblingNodeAggregateIdentifier,
             $command->nodeName,
-            $command->initialPropertyValues
-                ? $this->getPropertyConverter()->serializePropertyValues(
-                    $command->initialPropertyValues,
-                    $this->requireNodeType($command->nodeTypeName)
-                )
-                : null,
+            $this->getPropertyConverter()->serializePropertyValues(
+                $command->initialPropertyValues,
+                $this->requireNodeType($command->nodeTypeName)
+            ),
             $command->tetheredDescendantNodeAggregateIdentifiers
         );
 

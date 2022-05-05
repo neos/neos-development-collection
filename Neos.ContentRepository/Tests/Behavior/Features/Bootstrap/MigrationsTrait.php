@@ -17,7 +17,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
-use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
+use Neos\ContentRepository\Feature\Migration\Command\MigrationConfiguration;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;

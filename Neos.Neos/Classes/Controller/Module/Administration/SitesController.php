@@ -29,7 +29,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;

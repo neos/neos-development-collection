@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\Content;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -14,14 +10,9 @@ namespace Neos\ContentRepository\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\array_merge;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\array_reverse;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\array_slice;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\count;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\reset;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Content\sprintf;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Content;
 
 /**
  * An immutable, type-safe collection of NodeInterface objects
@@ -29,7 +20,6 @@ use function Neos\EventSourcedContentRepository\Domain\Projection\Content\sprint
  * @implements \IteratorAggregate<int,NodeInterface>
  * @implements \ArrayAccess<int,NodeInterface>
  */
-#[Flow\Proxy(false)]
 final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**

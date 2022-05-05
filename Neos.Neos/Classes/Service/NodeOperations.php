@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 use Neos\ContentRepository\Exception\NodeException;
 
 /**

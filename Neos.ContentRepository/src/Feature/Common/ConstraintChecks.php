@@ -23,7 +23,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;

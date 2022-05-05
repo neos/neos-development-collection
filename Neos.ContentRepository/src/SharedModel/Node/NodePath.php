@@ -47,6 +47,9 @@ final class NodePath implements \JsonSerializable, \Stringable
         return new self($path);
     }
 
+    /**
+     * @param array<int,string> $pathSegments
+     */
     public static function fromPathSegments(array $pathSegments): self
     {
         if ($pathSegments === []) {

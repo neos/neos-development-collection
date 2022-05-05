@@ -16,7 +16,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -27,7 +26,6 @@ use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
@@ -36,12 +34,9 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
- *
- * @Flow\Scope("singleton")
  */
 final class NodeFactory
 {
@@ -69,11 +64,6 @@ final class NodeFactory
             throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
         }
         if (!is_subclass_of($nodeClassName, NodeInterface::class)) {
-            if (is_subclass_of($nodeClassName, LegacyNodeInterface::class)) {
-                throw NodeImplementationClassNameIsInvalid::becauseTheClassImplementsTheDeprecatedLegacyInterface(
-                    $nodeClassName
-                );
-            }
             throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface(
                 $nodeClassName
             );

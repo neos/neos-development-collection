@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\SharedModel\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,7 +10,13 @@ namespace Neos\ContentRepository\SharedModel\Node;
  * source code.
  */
 
+declare(strict_types=1);
 
+namespace Neos\ContentRepository\SharedModel\Node;
+
+/**
+ * @extends \ArrayObject<string,mixed>
+ */
 class ArrayPropertyCollection extends \ArrayObject implements PropertyCollectionInterface
 {
 }

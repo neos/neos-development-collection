@@ -16,7 +16,7 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files as Files;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 
 /**
  * Migration Configuration using YAML files.

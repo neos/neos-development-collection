@@ -17,11 +17,11 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\NodeAccess\Factory\MigrationFactory;
 use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use Neos\ContentRepository\Migration\Service\NodeMigration;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationStatus;
-use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
+use Neos\ContentRepository\Feature\Migration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
 
 /**
