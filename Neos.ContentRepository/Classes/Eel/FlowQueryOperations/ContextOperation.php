@@ -57,6 +57,17 @@ class ContextOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return $this->checkContextForNodeInterface($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * @param FlowQuery $flowQuery The FlowQuery object
      * @param array $arguments The arguments for this operation
      * @todo reimplement using TraversableNodeInterface / new NodeInterface once subgraphs are available
