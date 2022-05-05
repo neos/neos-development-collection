@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -163,21 +162,6 @@ class NodeTypeManager
             $this->loadNodeTypes();
         }
         return isset($this->cachedNodeTypes[$nodeTypeName]);
-    }
-
-    /**
-     * Creates a new node type
-     *
-     * @param string $nodeTypeName Unique name of the new node type. Example: "Neos.Neos:Page"
-     * @return NodeType
-     * @throws Exception
-     */
-    public function createNodeType($nodeTypeName)
-    {
-        throw new Exception(
-            'Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".',
-            1316449432
-        );
     }
 
     /**

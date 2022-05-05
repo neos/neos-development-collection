@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository;
+namespace Neos\ContentRepositoryRegistry;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,9 +13,12 @@ namespace Neos\ContentRepository;
 
 use Behat\Transliterator\Transliterator;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 
 /**
- * A class holding utility methods
+ * A class holding utility methods.
+ *
+ * TODO REFACTOR // GET RID OF THIS
  *
  * @api
  */
@@ -31,7 +34,7 @@ class Utility
     public static function renderValidNodeName($name)
     {
         // Check if name already match name pattern to prevent unnecessary transliteration
-        if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) === 1) {
+        if (preg_match(NodeName::PATTERN, $name) === 1) {
             return $name;
         }
 

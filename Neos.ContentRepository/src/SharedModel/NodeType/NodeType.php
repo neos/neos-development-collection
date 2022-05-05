@@ -14,16 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator;
-use Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 use Neos\ContentRepository\Exception\InvalidNodeTypePostprocessorException;
-use Neos\ContentRepository\Utility;
 
 /**
  * A Node Type

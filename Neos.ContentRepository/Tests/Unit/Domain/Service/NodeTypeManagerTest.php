@@ -212,15 +212,6 @@ class NodeTypeManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function createNodeTypeAlwaysThrowsAnException()
-    {
-        $this->expectException(Exception::class);
-        $this->nodeTypeManager->createNodeType('Neos.ContentRepository.Testing:ContentObject');
-    }
-
-    /**
-     * @test
-     */
     public function hasNodeTypeReturnsTrueIfTheGivenNodeTypeIsFound()
     {
         self::assertTrue($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:TextWithImage'));
