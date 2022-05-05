@@ -11,10 +11,12 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
@@ -27,7 +29,6 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class ContentElementEditableService
 {
-
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -47,30 +48,43 @@ class ContentElementEditableService
     protected $htmlAugmenter;
 
     /**
-     * Wrap the $content identified by $node with the needed markup for the backend.
-     *
-     * @param NodeInterface $node
-     * @param string $property
-     * @param string $content
-     * @return string
+     * @Flow\Inject
+     * @var WorkspaceFinder
      */
-    public function wrapContentProperty(NodeInterface $node, $property, $content)
+    protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
+     */
+    public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
         }
 
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            return $content;
-        }
+        // TODO: permissions
+        //if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+        //    return $content;
+        //}
 
-        $attributes = [];
-        $attributes['class'] = 'neos-inline-editable';
-        $attributes['property'] = 'typo3:' . $property ;
-        $attributes['data-neos-node-type'] = $node->getNodeType()->getName();
+        $attributes = [
+            'data-__neos-property' => $property,
+            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)
+                ->serializeForUri()
+        ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
+    }
+
+    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
+    {
+        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ?->getWorkspaceName()->isLive() ?: false;
     }
 }
