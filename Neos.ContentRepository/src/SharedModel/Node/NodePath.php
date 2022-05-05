@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\SharedModel\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,31 +10,21 @@ namespace Neos\ContentRepository\SharedModel\Node;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\Node;
+
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\Flow\Annotations as Flow;
-use function Neos\ContentRepository\Domain\ContentSubgraph\array_map;
-use function Neos\ContentRepository\Domain\ContentSubgraph\count;
-use function Neos\ContentRepository\Domain\ContentSubgraph\explode;
-use function Neos\ContentRepository\Domain\ContentSubgraph\implode;
-use function Neos\ContentRepository\Domain\ContentSubgraph\preg_match;
-use function Neos\ContentRepository\Domain\ContentSubgraph\sprintf;
-use function Neos\ContentRepository\Domain\ContentSubgraph\strpos;
 
 /**
  * The node path is a list of NodeNames. It can be either absolute or relative.
  *
  * It describes the hierarchy path of a node to a root node in a subgraph.
- *
- * @Flow\Proxy(false)
  * @api
  */
-final class NodePath implements \JsonSerializable
+final class NodePath implements \JsonSerializable, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $path;
+    private string $path;
 
     private function __construct(string $path)
     {
@@ -45,7 +32,12 @@ final class NodePath implements \JsonSerializable
             $pathParts = explode('/', ltrim($path, '/'));
             foreach ($pathParts as $pathPart) {
                 if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $pathPart) !== 1) {
-                    throw new \InvalidArgumentException(sprintf('The path "%s" is no valid NodePath because it contains a segment "%s" that is no valid NodeName', $path, $pathPart), 1548157108);
+                    throw new \InvalidArgumentException(sprintf(
+                        'The path "%s" is no valid NodePath because it contains a segment "%s"'
+                            . ' that is no valid NodeName',
+                        $path,
+                        $pathPart
+                    ), 1548157108);
                 }
             }
         }
@@ -54,15 +46,15 @@ final class NodePath implements \JsonSerializable
 
     public static function fromString(string $path): self
     {
-        return new static($path);
+        return new self($path);
     }
 
     public static function fromPathSegments(array $pathSegments): self
     {
         if ($pathSegments === []) {
-            return new static('/');
+            return new self('/');
         }
-        return new static('/' . implode('/', $pathSegments));
+        return new self('/' . implode('/', $pathSegments));
     }
 
     public function isRoot(): bool
@@ -77,12 +69,10 @@ final class NodePath implements \JsonSerializable
 
     /**
      * IMMUTABLE function to create a new NodePath by appending a path segment. Returns a NEW NodePath object
-     * @param NodeName $nodeName
-     * @return NodePath
      */
     public function appendPathSegment(NodeName $nodeName): self
     {
-        return new static($this->path . '/' . $nodeName);
+        return new self($this->path . '/' . $nodeName);
     }
 
     /**
@@ -100,7 +90,10 @@ final class NodePath implements \JsonSerializable
     public function getDepth(): int
     {
         if (!$this->isAbsolute()) {
-            throw new \RuntimeException(sprintf('Depth of relative node path "%s" cannot be determined', $this->path), 1548162166);
+            throw new \RuntimeException(sprintf(
+                'Depth of relative node path "%s" cannot be determined',
+                $this->path
+            ), 1548162166);
         }
         return count($this->getParts());
     }
@@ -115,7 +108,7 @@ final class NodePath implements \JsonSerializable
         return $this->path;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->path;
     }

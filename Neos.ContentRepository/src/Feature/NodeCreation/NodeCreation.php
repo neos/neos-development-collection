@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeCreation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -295,7 +296,7 @@ trait NodeCreation
             )
         );
 
-        $contentStreamEventStreamName = \Neos\ContentRepository\Feature\ContentStreamEventStreamName::fromContentStreamIdentifier(
+        $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $command->contentStreamIdentifier
         );
         $this->getNodeAggregateEventPublisher()->publishMany(
@@ -388,7 +389,7 @@ trait NodeCreation
             )
         );
 
-        $contentStreamEventStreamName = \Neos\ContentRepository\Feature\ContentStreamEventStreamName::fromContentStreamIdentifier(
+        $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $command->contentStreamIdentifier
         );
         $this->getNodeAggregateEventPublisher()->publishMany(

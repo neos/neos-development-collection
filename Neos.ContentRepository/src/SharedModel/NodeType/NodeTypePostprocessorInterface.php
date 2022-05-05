@@ -18,7 +18,8 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 interface NodeTypePostprocessorInterface
 {
     /**
-     * Processes the given $nodeType (e.g. changes/adds properties depending on the NodeType configuration and the specified $options)
+     * Processes the given $nodeType
+     * (e.g. changes/adds properties depending on the NodeType configuration and the specified $options)
      *
      * @param NodeType $nodeType (uninitialized) The node type to process
      * @param array $configuration The node type configuration to be processed

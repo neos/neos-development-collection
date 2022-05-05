@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\RootNodeCreation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyExists;
@@ -105,7 +105,7 @@ trait RootNodeCreation
             )
         );
 
-        $contentStreamEventStreamName = \Neos\ContentRepository\Feature\ContentStreamEventStreamName::fromContentStreamIdentifier(
+        $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $command->contentStreamIdentifier
         );
         $this->getNodeAggregateEventPublisher()->publishMany(

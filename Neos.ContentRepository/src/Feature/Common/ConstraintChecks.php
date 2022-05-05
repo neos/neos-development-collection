@@ -209,12 +209,12 @@ trait ConstraintChecks
                 $nodeTypeName,
                 $nodeTypeNameInQuestion
             ) {
-                foreach ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames() as $allowedNodeTypeName) {
+                foreach ($nodeTypeConstraints->explicitlyAllowedNodeTypeNames as $allowedNodeTypeName) {
                     if ($allowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
                         return false;
                     }
                 }
-                foreach ($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames() as $disallowedNodeTypeName) {
+                foreach ($nodeTypeConstraints->explicitlyDisallowedNodeTypeNames as $disallowedNodeTypeName) {
                     if ($disallowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
                         throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
                             $referenceName,

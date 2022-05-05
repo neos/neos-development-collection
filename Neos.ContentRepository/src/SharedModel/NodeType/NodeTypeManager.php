@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +10,10 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\NodeType;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\ContentRepository\Exception;
@@ -20,8 +23,6 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 
 /**
  * Manager for node types
- *
- * @Flow\Scope("singleton")
  * @api
  */
 class NodeTypeManager
@@ -133,11 +134,18 @@ class NodeTypeManager
         }
 
         if ($this->fallbackNodeTypeName === null) {
-            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and no fallback NodeType is configured.', $nodeTypeName), 1316598370);
+            throw new NodeTypeNotFoundException(sprintf(
+                'The node type "%s" is not available and no fallback NodeType is configured.',
+                $nodeTypeName
+            ), 1316598370);
         }
 
         if (!$this->hasNodeType($this->fallbackNodeTypeName)) {
-            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and the configured fallback NodeType "%s" is not available.', $nodeTypeName, $this->fallbackNodeTypeName), 1438166322);
+            throw new NodeTypeNotFoundException(sprintf(
+                'The node type "%s" is not available and the configured fallback NodeType "%s" is not available.',
+                $nodeTypeName,
+                $this->fallbackNodeTypeName
+            ), 1438166322);
         }
         return $this->getNodeType($this->fallbackNodeTypeName);
     }
@@ -166,7 +174,10 @@ class NodeTypeManager
      */
     public function createNodeType($nodeTypeName)
     {
-        throw new Exception('Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".', 1316449432);
+        throw new Exception(
+            'Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".',
+            1316449432
+        );
     }
 
     /**
@@ -226,11 +237,22 @@ class NodeTypeManager
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];
         try {
-            $superTypes = isset($nodeTypeConfiguration['superTypes']) ? $this->evaluateSuperTypesConfiguration($nodeTypeConfiguration['superTypes'], $completeNodeTypeConfiguration) : [];
+            $superTypes = isset($nodeTypeConfiguration['superTypes'])
+                ? $this->evaluateSuperTypesConfiguration(
+                    $nodeTypeConfiguration['superTypes'],
+                    $completeNodeTypeConfiguration
+                )
+                : [];
         } catch (NodeConfigurationException $exception) {
-            throw new NodeConfigurationException('Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.', 1416578395);
+            throw new NodeConfigurationException(
+                'Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.',
+                1416578395
+            );
         } catch (NodeTypeIsFinalException $exception) {
-            throw new NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a super type "' . $exception->getMessage() . '" which is final.', 1316452423);
+            throw new NodeTypeIsFinalException(
+                'Node type "' . $nodeTypeName . '" has a super type "' . $exception->getMessage() . '" which is final.',
+                1316452423
+            );
         }
 
         // Remove unset properties
@@ -264,7 +286,11 @@ class NodeTypeManager
     {
         $superTypes = [];
         foreach ($superTypesConfiguration as $superTypeName => $enabled) {
-            $superTypes[$superTypeName] = $this->evaluateSuperTypeConfiguration($superTypeName, $enabled, $completeNodeTypeConfiguration);
+            $superTypes[$superTypeName] = $this->evaluateSuperTypeConfiguration(
+                $superTypeName,
+                $enabled,
+                $completeNodeTypeConfiguration
+            );
         }
 
         return $superTypes;
@@ -294,7 +320,10 @@ class NodeTypeManager
 
         // when removing super types by setting them to null, only string keys can be overridden
         if ($superTypeName === null) {
-            throw new NodeConfigurationException('Node type sets super type with a non-string key to NULL.', 1444944152);
+            throw new NodeConfigurationException(
+                'Node type sets super type with a non-string key to NULL.',
+                1444944152
+            );
         }
 
         $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);

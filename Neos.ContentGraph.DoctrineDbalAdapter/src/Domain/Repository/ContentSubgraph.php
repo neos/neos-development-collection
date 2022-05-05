@@ -120,23 +120,23 @@ final class ContentSubgraph implements ContentSubgraphInterface
         string $concatenation = 'AND'
     ): void {
         if ($nodeTypeConstraints) {
-            if (!empty($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
+            if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
                 $allowanceQueryPart = ($tableReference ? $tableReference . '.' : '')
                     . 'nodetypename IN (:explicitlyAllowedNodeTypeNames)';
                 $query->parameter(
                     'explicitlyAllowedNodeTypeNames',
-                    $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames(),
+                    $nodeTypeConstraints->explicitlyAllowedNodeTypeNames,
                     Connection::PARAM_STR_ARRAY
                 );
             } else {
                 $allowanceQueryPart = '';
             }
-            if (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+            if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
                 $disAllowanceQueryPart = ($tableReference ? $tableReference . '.' : '')
                     . 'nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
                 $query->parameter(
                     'explicitlyDisallowedNodeTypeNames',
-                    $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames(),
+                    $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames,
                     Connection::PARAM_STR_ARRAY
                 );
             } else {
@@ -146,10 +146,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             if ($allowanceQueryPart && $disAllowanceQueryPart) {
                 $query->addToQuery(
                     ' ' . $concatenation .' (' . $allowanceQueryPart
-                        . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')',
+                        . ($nodeTypeConstraints->isWildCardAllowed ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')',
                     $markerToReplaceInQuery
                 );
-            } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
+            } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildCardAllowed) {
                 $query->addToQuery(
                     ' ' . $concatenation .' ' . $allowanceQueryPart,
                     $markerToReplaceInQuery
