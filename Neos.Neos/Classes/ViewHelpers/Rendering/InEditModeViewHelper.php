@@ -11,8 +11,6 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
  *
@@ -63,25 +61,25 @@ class InEditModeViewHelper extends AbstractRenderingStateViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('node', NodeInterface::class, 'Optional Node to use context from');
-        $this->registerArgument('mode', 'string', 'Optional rendering mode name to check if this specific mode is active');
+        $this->registerArgument(
+            'node',
+            \Neos\ContentRepository\Domain\Model\NodeInterface::class,
+            'Optional Node to use context from'
+        );
+        $this->registerArgument(
+            'mode',
+            'string',
+            'Optional rendering mode name to check if this specific mode is active'
+        );
     }
+
 
     /**
      * @return boolean
-     * @throws \Neos\Neos\Exception
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(): bool
+    public function render()
     {
-        $context = $this->getNodeContext($this->arguments['node']);
-        $renderingMode = $context->getCurrentRenderingMode();
-        if ($this->arguments['mode'] !== null) {
-            $result = ($renderingMode->getName() === $this->arguments['mode']) && $renderingMode->isEdit();
-        } else {
-            $result = $renderingMode->isEdit();
-        }
-
-        return $result;
+        // TODO: implement
+        return false;
     }
 }

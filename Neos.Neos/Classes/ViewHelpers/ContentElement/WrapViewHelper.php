@@ -11,12 +11,12 @@ namespace Neos\Neos\ViewHelpers\ContentElement;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\Neos\Service\ContentElementWrappingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
+use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
  * A view helper for manually wrapping content editables.
@@ -61,23 +61,41 @@ class WrapViewHelper extends AbstractViewHelper
         $this->registerArgument('node', NodeInterface::class, 'Node');
     }
 
+
     /**
      * In live workspace this just renders a the content.
      * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
      *
-     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
+     * @return string The rendered property with a wrapping tag.
+     *                In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function render(): string
     {
         $view = $this->viewHelperVariableContainer->getView();
         if (!$view instanceof FusionAwareViewInterface) {
-            throw new ViewHelperException('This ViewHelper can only be used in a Fusion content element. You have to specify the "node" argument if it cannot be resolved from the Fusion context.', 1385737102);
+            throw new ViewHelperException(
+                'This ViewHelper can only be used in a Fusion content element.'
+                . ' You have to specify the "node" argument if it cannot be resolved from the Fusion context.',
+                1385737102
+            );
         }
         $fusionObject = $view->getFusionObject();
+        if (!method_exists($fusionObject, 'getPath')) {
+            throw new ViewHelperException(
+                'This ViewHelper can only be used in a Fusion view with a path aware Fusion object.',
+                1645650713
+            );
+        }
         $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
         $node = $this->arguments['node'] ?? $currentContext['node'];
-        return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $fusionObject->getPath());
+
+        return $this->contentElementWrappingService->wrapContentObject(
+            $node,
+            $this->renderChildren(),
+            $fusionObject->getPath()
+        ) ?: '';
     }
 }
