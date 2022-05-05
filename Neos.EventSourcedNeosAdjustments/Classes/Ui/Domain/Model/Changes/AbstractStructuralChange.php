@@ -12,9 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;

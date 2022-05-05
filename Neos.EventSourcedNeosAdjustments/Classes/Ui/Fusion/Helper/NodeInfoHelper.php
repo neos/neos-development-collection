@@ -12,9 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;

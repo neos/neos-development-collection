@@ -12,11 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -56,7 +56,7 @@ class UpdateWorkspaceInfo extends AbstractFeedback
      */
     public function setWorkspace(Workspace $workspace)
     {
-        $this->workspaceName = WorkspaceName::fromString($workspace->getName());
+        $this->workspaceName = $workspace->getWorkspaceName();
     }
 
     /**

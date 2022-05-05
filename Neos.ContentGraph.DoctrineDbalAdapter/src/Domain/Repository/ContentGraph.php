@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
@@ -63,7 +64,7 @@ final class ContentGraph implements ContentGraphInterface
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        \Neos\ContentRepository\SharedModel\VisibilityConstraints $visibilityConstraints
+        VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
         $index = $contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
@@ -79,7 +80,7 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @throws DBALException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -141,7 +142,7 @@ final class ContentGraph implements ContentGraphInterface
         /** @var NodeAggregate $nodeAggregate The factory will return a NodeAggregate since the array is not empty */
         $nodeAggregate = $this->nodeFactory->mapNodeRowsToNodeAggregate(
             [$nodeRow],
-            \Neos\ContentRepository\SharedModel\VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::withoutRestrictions()
         );
 
         return $nodeAggregate;
@@ -320,7 +321,7 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @return iterable<NodeAggregate>
-     * @throws DBALException|\Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws DBALException|NodeTypeNotFoundException
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -348,7 +349,7 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @return iterable<NodeAggregate>
-     * @throws DBALException|\Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws DBALException|NodeTypeNotFoundException
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,

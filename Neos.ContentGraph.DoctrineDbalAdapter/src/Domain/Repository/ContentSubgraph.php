@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -25,7 +26,6 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -90,7 +90,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     protected $dimensionSpacePoint;
 
     /**
-     * @var \Neos\ContentRepository\SharedModel\VisibilityConstraints
+     * @var VisibilityConstraints
      */
     protected $visibilityConstraints;
 
@@ -958,7 +958,7 @@ WHERE
     /**
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      */
     public function findSubtrees(
         NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
@@ -1095,7 +1095,7 @@ order by level asc, position asc;')
     /**
      * @param array<int|string,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
      * @throws \Doctrine\DBAL\Exception
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      */
     public function findDescendants(
         array $entryNodeAggregateIdentifiers,

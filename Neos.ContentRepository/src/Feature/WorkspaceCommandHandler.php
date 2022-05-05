@@ -18,8 +18,6 @@ use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
-use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
@@ -514,7 +512,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeNameIsAlreadyOccupied
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -686,7 +684,7 @@ final class WorkspaceCommandHandler
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

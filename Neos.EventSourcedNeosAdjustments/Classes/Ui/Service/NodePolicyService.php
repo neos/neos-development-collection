@@ -17,7 +17,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Policy\PolicyService;
-use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 
 /**
  * @Flow\Scope("singleton")

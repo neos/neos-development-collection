@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\DescriptionAwareCommandControllerInterface;

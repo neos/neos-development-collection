@@ -260,7 +260,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     }
 
     /**
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
      */
     protected function createNodesForNodeSearchTest()
     {

@@ -524,7 +524,7 @@ class NodeType
     /**
      * @param NodeName $nodeName
      * @return NodeType|null
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
      */
     public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
     {

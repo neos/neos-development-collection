@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
 
 /*
  * This file is part of the Neos.EventSourcedNeosAdjustments package.
@@ -12,10 +10,14 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\SearchTerm;

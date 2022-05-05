@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  */
 
 use Neos\ContentRepository\Exception;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;

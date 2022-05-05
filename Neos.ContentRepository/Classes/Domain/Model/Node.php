@@ -25,7 +25,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface;
 use Neos\ContentRepository\Domain\Service\NodeMoveIntegrityCheckService;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
