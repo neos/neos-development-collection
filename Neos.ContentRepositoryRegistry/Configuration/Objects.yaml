@@ -1,8 +1,26 @@
+Neos\ContentRepository\Infrastructure\DbalClientInterface:
+  scope: singleton
+  className: 'Neos\ContentRepositoryRegistry\Infrastructure\DbalClient'
+
+Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
+  scope: singleton
+  arguments:
+    eventStorageDatabaseClient:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+    processedEventsCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_EventSourcedContentRepository_ProcessedContentStreamEvents
+
+
 Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
   scope: singleton
   arguments:
     eventStorageDatabaseClient:
-
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
     processedEventsCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
@@ -12,3 +30,5 @@ Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
             value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
 
 
+Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager:
+  scope: singleton
