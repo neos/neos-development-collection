@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Fusion\Exception;
+namespace Neos\Neos\Fusion\Exception;
 
 use Neos\Flow\Exception;
 

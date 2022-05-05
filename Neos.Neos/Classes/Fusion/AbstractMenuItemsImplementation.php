@@ -11,15 +11,17 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * Base class for MenuItems and DimensionsMenuItems
+ * Base class for Menu and DimensionsMenu
  *
  * Main Options:
- *  - renderHiddenInIndex: if true, hidden-in-index nodes will be shown in the menu. false by default.
+ *  - renderHiddenInIndex: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
  */
 abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
@@ -31,7 +33,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * An internal cache for the built menu items array.
      *
-     * @var array
+     * @var array<int,MenuItem>
      */
     protected $items;
 
@@ -62,6 +64,12 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $currentNodeRootline;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.
      *
      * @return boolean
@@ -78,9 +86,9 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Main API method which sends the to-be-rendered data to Fluid
      *
-     * @return array
+     * @return array<int,MenuItem>
      */
-    public function getItems()
+    public function getItems(): array
     {
         if ($this->items === null) {
             $fusionContext = $this->runtime->getCurrentContext();
@@ -95,7 +103,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Returns the items as result of the fusion object.
      *
-     * @return array
+     * @return array<int,MenuItem>
      */
     public function evaluate()
     {
@@ -109,38 +117,13 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      * Must be overridden in subclasses.
      *
      * @throws FusionException
-     * @return array An array of menu items and further information
+     * @return array<int,mixed> An array of menu items and further information
      */
-    abstract protected function buildItems();
+    abstract protected function buildItems(): array;
 
     /**
-     * Helper Method: Calculates the state of the given menu item (node) depending on the currentNode.
-     *
-     * This method needs to be called inside buildItems() in the subclasses.
-     *
-     * @param NodeInterface $node
-     * @return string
-     */
-    protected function calculateItemState(NodeInterface $node = null)
-    {
-        if ($node === null) {
-            return self::STATE_ABSENT;
-        }
-
-        if ($node === $this->currentNode) {
-            return self::STATE_CURRENT;
-        }
-
-        if ($node !== $this->currentNode->getContext()->getCurrentSiteNode() && in_array($node, $this->getCurrentNodeRootline(), true)) {
-            return self::STATE_ACTIVE;
-        }
-
-        return self::STATE_NORMAL;
-    }
-
-    /**
-     * Return true/false if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
-     * of the Menu Fusion object into account.
+     * Return TRUE/FALSE if the node is currently hidden or not in the menu;
+     * taking the "renderHiddenInIndex" configuration of the Menu Fusion object into account.
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
@@ -149,23 +132,36 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      */
     protected function isNodeHidden(NodeInterface $node)
     {
-        return ($node->isVisible() === false || ($this->getRenderHiddenInIndex() === false && $node->isHiddenInIndex() === true) || $node->isAccessible() === false);
+        if ($this->getRenderHiddenInIndex() === true) {
+            // Please show hiddenInIndex nodes
+            // -> node is *never* hidden!
+            return false;
+        }
+
+        // Node is hidden depending on the _hiddenInIndex property
+        return $node->getProperty('_hiddenInIndex');
     }
 
     /**
      * Get the rootline from the current node up to the site node.
      *
-     * @return array
+     * @return array<int,NodeInterface>
      */
-    protected function getCurrentNodeRootline()
+    protected function getCurrentNodeRootline(): array
     {
         if ($this->currentNodeRootline === null) {
-            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath($this->currentNode->getContext()->getCurrentSiteNode()->getPath(), $this->currentNode->getPath());
+            /** @todo replace this */
+            /*
+            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath(
+                $this->runtime->getCurrentContext()['site']->getPath(),
+                $this->currentNode->getPath()
+            );
             $this->currentNodeRootline = [];
 
             foreach ($nodeRootline as $rootlineElement) {
                 $this->currentNodeRootline[$this->getNodeLevelInSite($rootlineElement)] = $rootlineElement;
-            }
+            }*/
+            $this->currentNodeRootline = [];
         }
 
         return $this->currentNodeRootline;
@@ -174,13 +170,15 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Node Level relative to site root node.
      * 0 = Site root node
-     *
-     * @param NodeInterface $node
-     * @return integer
      */
-    protected function getNodeLevelInSite(NodeInterface $node)
+    protected function getNodeLevelInSite(NodeInterface $node): int
     {
-        $siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
-        return $node->getDepth() - $siteNode->getDepth();
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+
+        return $nodeAccessor->findNodePath($node)->getDepth() - 2; // sites always are depth 2;
     }
 }

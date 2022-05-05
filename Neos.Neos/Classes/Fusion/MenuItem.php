@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Fusion;
+namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
