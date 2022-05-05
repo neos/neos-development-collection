@@ -23,11 +23,6 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  */
 trait CreateContentContextTrait
 {
-    /**
-     * @Flow\Inject
-     * @var \Neos\Neos\Domain\Service\ContentContextFactory
-     */
-    protected $_contextFactory;
 
     /**
      * @Flow\Inject

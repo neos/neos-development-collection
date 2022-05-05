@@ -12,7 +12,6 @@ namespace Neos\Neos\Domain\Strategy;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -29,12 +28,6 @@ use Neos\Utility\TypeHandling;
 class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 {
     use CreateContentContextTrait;
-
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
 
     /**
      * @var array

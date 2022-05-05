@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Presentation\Model\Svg;
+namespace Neos\Neos\Presentation;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Model\IntraDimension;
 /**
  * The IntraDimensionalFallbackGraph presentation model for SVG
  */
-class IntraDimensionalFallbackGraph
+class VisualIntraDimensionalVariationGraph
 {
     /**
      * @var IntraDimension\IntraDimensionalFallbackGraph

@@ -16,14 +16,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\SearchTerm;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 
 /**
@@ -64,7 +62,6 @@ class NodeSearchService implements NodeSearchServiceInterface
     public function findByProperties(
         $term,
         array $searchNodeTypes,
-        Context $context,
         ?NodeInterface $startingPoint = null
     ): array {
         $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));

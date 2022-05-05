@@ -19,14 +19,10 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\NodeOperations;
 use Neos\Neos\Service\View\NodeView;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\ContentRepository\TypeConverter\NodeConverter;
 
 /**
  * Service Controller for managing Nodes
@@ -69,24 +65,6 @@ class NodeController extends AbstractServiceController
      * @var NodeSearchServiceInterface
      */
     protected $nodeSearchService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
 
     /**
      * @Flow\Inject

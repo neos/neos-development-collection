@@ -24,7 +24,7 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
-use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**

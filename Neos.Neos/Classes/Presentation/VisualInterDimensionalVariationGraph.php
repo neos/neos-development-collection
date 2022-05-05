@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Presentation\Model\Svg;
+namespace Neos\Neos\Presentation;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,13 +11,15 @@ namespace Neos\Neos\Presentation\Model\Svg;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Model\InterDimension;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 
 /**
- * The InterDimensionalFallbackGraph presentation model for SVG
+ * The visualization model for the interdimensional variation graph
  */
-class InterDimensionalFallbackGraph
+final class VisualInterDimensionalVariationGraph
 {
     /**
      * @var InterDimension\InterDimensionalFallbackGraph
@@ -65,12 +67,10 @@ class InterDimensionalFallbackGraph
      * @param string|null $rootSubgraphIdentifier
      */
     public function __construct(
-        InterDimension\InterDimensionalFallbackGraph $fallbackGraph,
-        IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
+        private readonly InterDimensionalVariationGraph $variationGraph,
+        private readonly ContentDimensionSourceInterface $dimensionSource,
         string $rootSubgraphIdentifier = null
     ) {
-        $this->fallbackGraph = $fallbackGraph;
-        $this->intraDimensionalFallbackGraph = $intraDimensionalFallbackGraph;
         $this->rootSubgraphIdentifier = $rootSubgraphIdentifier;
     }
 

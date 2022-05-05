@@ -15,13 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Neos;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
@@ -44,27 +38,9 @@ class PluginService
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contentContextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
 
     /**
      * Returns an array of all available plugin nodes

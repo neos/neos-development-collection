@@ -18,7 +18,7 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**

@@ -16,7 +16,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 
 /**
  * Takes care of cleaning up ImageVariants.
@@ -25,12 +24,6 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
  */
 class ImageVariantGarbageCollector
 {
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
     /**
      * @Flow\Inject
      * @var AssetRepository

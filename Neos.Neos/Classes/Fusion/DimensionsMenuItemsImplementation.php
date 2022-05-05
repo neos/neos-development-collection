@@ -24,18 +24,6 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
 
     /**
-     * @Flow\Inject
-     * @var ConfigurationContentDimensionPresetSource
-     */
-    protected $configurationContentDimensionPresetSource;
-
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionCombinator
-     */
-    protected $contentDimensionCombinator;
-
-    /**
      * @return string
      */
     public function getDimension()

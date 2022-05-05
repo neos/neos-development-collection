@@ -12,10 +12,8 @@ namespace Neos\Neos\Tests\Functional\Fusion\Cache;
  */
 
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Neos\Fusion\Helper\CachingHelper;
@@ -29,29 +27,14 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var Context
-     */
-    protected $context;
-
-    /**
      * @var ContentCacheFlusher
      */
     protected $contentCacheFlusher;
 
     /**
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
-
-    /**
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
 
     public function setUp(): void
     {

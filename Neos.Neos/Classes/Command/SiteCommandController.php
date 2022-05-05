@@ -22,9 +22,7 @@ use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Model\Site;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Psr\Log\LoggerInterface;
 
@@ -67,21 +65,9 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $nodeContextFactory;
-
-    /**
-     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeService
-     */
-    protected $nodeService;
 
     /**
      * @Flow\Inject

@@ -11,11 +11,12 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Service\PublishingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -30,13 +31,7 @@ class WorkspaceCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var PublishingService
-     */
-    protected $publishingService;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 
@@ -61,7 +56,7 @@ class WorkspaceCommandController extends CommandController
     public function publishCommand($workspace, $targetWorkspace = null, $verbose = false, $dryRun = false)
     {
         $workspaceName = $workspace;
-        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
+        $workspace = $this->workspaceRepository->findOneByName(WorkspaceName::fromString($workspaceName));
         if (!$workspace instanceof Workspace) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName]);
             $this->quit(1);
@@ -72,7 +67,7 @@ class WorkspaceCommandController extends CommandController
             $targetWorkspaceName = $targetWorkspace->getName();
         } else {
             $targetWorkspaceName = $targetWorkspace;
-            $targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
+            $targetWorkspace = $this->workspaceRepository->findOneByName(WorkspaceName::fromString($targetWorkspaceName));
             if (!$targetWorkspace instanceof Workspace) {
                 $this->outputLine('Target workspace "%s" does not exist', [$targetWorkspaceName]);
                 $this->quit(2);

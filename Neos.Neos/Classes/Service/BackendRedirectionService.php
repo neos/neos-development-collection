@@ -13,6 +13,7 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -27,12 +28,8 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -48,21 +45,9 @@ class BackendRedirectionService
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject

@@ -14,6 +14,7 @@ namespace Neos\Neos\Fusion\Cache;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -27,8 +28,6 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Fusion\Helper\CachingHelper;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -66,7 +65,7 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 
@@ -91,12 +90,6 @@ class ContentCacheFlusher
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject

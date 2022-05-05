@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
@@ -19,8 +20,6 @@ use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
@@ -37,12 +36,6 @@ class SiteService
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
      * @var DomainRepository
      */
     protected $domainRepository;
@@ -55,7 +48,7 @@ class SiteService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 

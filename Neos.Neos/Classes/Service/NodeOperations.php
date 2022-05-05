@@ -14,7 +14,6 @@ namespace Neos\Neos\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception\NodeException;
@@ -31,12 +30,6 @@ class NodeOperations
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeServiceInterface
-     */
-    protected $nodeService;
 
     /**
      * @Flow\Inject

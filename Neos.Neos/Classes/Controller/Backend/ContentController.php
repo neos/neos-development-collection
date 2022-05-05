@@ -48,7 +48,6 @@ use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
-    use CreateContentContextTrait;
 
     /**
      * @Flow\Inject

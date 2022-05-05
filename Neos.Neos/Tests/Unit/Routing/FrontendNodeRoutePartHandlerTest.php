@@ -21,15 +21,11 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Routing\Exception\NoHomepageException;
-use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Service\ContextFactory;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 

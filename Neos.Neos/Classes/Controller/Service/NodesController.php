@@ -17,7 +17,6 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\View\Service\NodeJsonView;
@@ -35,7 +34,6 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 class NodesController extends ActionController
 {
     use BackendUserTranslationTrait;
-    use CreateContentContextTrait;
 
     /**
      * @Flow\Inject

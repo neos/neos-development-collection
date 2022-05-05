@@ -16,7 +16,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Service\ContentElementEditableService;
 

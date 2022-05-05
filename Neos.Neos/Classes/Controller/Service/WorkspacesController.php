@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -29,7 +30,7 @@ class WorkspacesController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 

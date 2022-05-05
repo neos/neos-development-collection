@@ -11,10 +11,9 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\User;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**
@@ -39,7 +38,7 @@ class UserService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 

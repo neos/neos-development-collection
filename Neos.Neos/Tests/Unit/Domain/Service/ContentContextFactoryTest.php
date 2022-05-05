@@ -15,8 +15,6 @@ use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
 
 /**
  * Testcase for the ContentContextFactory

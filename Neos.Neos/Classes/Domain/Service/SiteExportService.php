@@ -16,8 +16,6 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
 
 /**
  * The Site Export Service
@@ -26,18 +24,6 @@ use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
  */
 class SiteExportService
 {
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     *
-     * @var NodeExportService
-     */
-    protected $nodeExportService;
 
     /**
      * @Flow\Inject

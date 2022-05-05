@@ -11,6 +11,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Exception\InvalidPackageStateException;
@@ -25,9 +26,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 use Neos\Neos\Exception as NeosException;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
@@ -52,19 +50,7 @@ class SiteImportService
 
     /**
      * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeImportService
-     */
-    protected $nodeImportService;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 

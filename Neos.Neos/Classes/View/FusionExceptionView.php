@@ -13,6 +13,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\ActionResponse;
@@ -22,8 +23,6 @@ use Neos\Neos\Domain\Service\FusionService;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Service\ContentContextFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Mvc\ActionRequest;
@@ -79,12 +78,6 @@ class FusionExceptionView extends AbstractView
     protected $domainRepository;
 
     /**
-     * @var ContentContextFactory
-     * @Flow\Inject
-     */
-    protected $contentContextFactory;
-
-    /**
      * @return string
      * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      * @throws \Neos\Fusion\Exception
@@ -117,8 +110,12 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(Context::class);
         $securityContext->setRequest($request);
 
-        $contentContext = $this->contentContextFactory->create(['currentSite' => $site]);
-        $currentSiteNode = $contentContext->getCurrentSiteNode();
+        #$contentContext = $this->contentContextFactory->create(['currentSite' => $site]);
+        $domain = $this->domainRepository->findOneByActiveRequest();
+        $site = $domain->getSite();
+
+        /** @todo fetch me from an accessor */
+        $currentSiteNode = null;
 
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 

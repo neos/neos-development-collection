@@ -14,10 +14,7 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * Find nodes based on a fulltext search
@@ -26,18 +23,6 @@ use Neos\ContentRepository\Domain\Service\Context;
  */
 class NodeSearchService implements NodeSearchServiceInterface
 {
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
     /**
      * @Flow\Inject
      * @var PersistenceManagerInterface
@@ -51,11 +36,10 @@ class NodeSearchService implements NodeSearchServiceInterface
      *
      * @param string|array $term search term
      * @param array $searchNodeTypes
-     * @param Context $context
      * @param NodeInterface $startingPoint
      * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
+    public function findByProperties($term, array $searchNodeTypes, NodeInterface $startingPoint = null)
     {
         if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);

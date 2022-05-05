@@ -13,14 +13,12 @@ namespace Neos\Neos\EventLog\Domain\Model;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\UserService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * A specific event which is used for ContentRepository Nodes (i.e. content).
@@ -36,6 +34,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  *      @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"})
  *    }
  * )
+ * @todo implement me as a projection
  */
 class NodeEvent extends Event
 {
@@ -72,12 +71,6 @@ class NodeEvent extends Event
      * @var UserService
      */
     protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject
@@ -148,7 +141,7 @@ class NodeEvent extends Event
             $siteIdentifier = null;
         }
         $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, [
-            'nodeContextPath' => $node->getContextPath(),
+            'nodeContextPath' => $node->get(),
             'nodeLabel' => $node->getLabel(),
             'nodeType' => $node->getNodeType()->getName(),
             'site' => $siteIdentifier

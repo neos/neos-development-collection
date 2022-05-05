@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -112,13 +113,11 @@ class FusionService
     /**
      * Create a runtime for the given site node
      *
-     * @param TraversableNodeInterface $currentSiteNode
-     * @param ControllerContext $controllerContext
      * @return Runtime
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    public function createRuntime(TraversableNodeInterface $currentSiteNode, ControllerContext $controllerContext)
+    public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
     {
         $fusionObjectTree = $this->getMergedFusionObjectTree($currentSiteNode);
         $fusionRuntime = new Runtime($fusionObjectTree, $controllerContext);
@@ -128,12 +127,12 @@ class FusionService
     /**
      * Returns a merged Fusion object tree in the context of the given nodes
      *
-     * @param TraversableNodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
+     * @param NodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
      * @return array The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
      * @throws \Neos\Fusion\Exception
      */
-    public function getMergedFusionObjectTree(TraversableNodeInterface $startNode)
+    public function getMergedFusionObjectTree(NodeInterface $startNode)
     {
         $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
 
@@ -151,10 +150,10 @@ class FusionService
     }
 
     /**
-     * @param TraversableNodeInterface $siteNode
+     * @param NodeInterface $siteNode
      * @return Site
      */
-    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
+    protected function getSiteForSiteNode(NodeInterface $siteNode)
     {
         return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
     }

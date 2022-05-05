@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -33,13 +34,10 @@ use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\UserRepository;
-use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**
@@ -60,15 +58,9 @@ class UserService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var PublishingService
-     */
-    protected $publishingService;
 
     /**
      * @Flow\Inject

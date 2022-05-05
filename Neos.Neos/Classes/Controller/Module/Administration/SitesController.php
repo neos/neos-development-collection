@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
@@ -28,12 +29,8 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
@@ -56,31 +53,13 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $nodeContextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeService
-     */
-    protected $nodeService;
-
-    /**
-     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 

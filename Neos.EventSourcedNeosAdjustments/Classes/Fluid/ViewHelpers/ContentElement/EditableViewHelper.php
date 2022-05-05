@@ -18,7 +18,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
 /**
@@ -42,12 +41,6 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
-     * @var AuthorizationService
-     */
-    protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject

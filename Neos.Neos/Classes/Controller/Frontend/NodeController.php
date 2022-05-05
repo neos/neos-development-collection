@@ -22,10 +22,8 @@ use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\TypeConverter\NodeConverter;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Controller for displaying nodes in the frontend
@@ -34,12 +32,6 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  */
 class NodeController extends ActionController
 {
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
     /**
      * @Flow\Inject
      * @var SessionInterface

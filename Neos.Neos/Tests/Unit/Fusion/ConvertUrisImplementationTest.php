@@ -22,8 +22,6 @@ use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Fusion\Core\Runtime;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -46,16 +44,6 @@ class ConvertUrisImplementationTest extends UnitTestCase
      * @var Runtime
      */
     protected $mockRuntime;
-
-    /**
-     * @var NodeDataRepository
-     */
-    protected $mockNodeDataRepository;
-
-    /**
-     * @var Context
-     */
-    protected $mockContext;
 
     /**
      * @var NodeInterface

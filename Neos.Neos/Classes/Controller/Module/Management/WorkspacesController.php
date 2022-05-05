@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Module\Management;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -27,16 +28,12 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Service\PublishingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\ContentRepository\TypeConverter\NodeConverter;
 use Neos\ContentRepository\Utility;
 use Neos\Neos\Utility\User as UserUtility;
 
@@ -47,16 +44,9 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class WorkspacesController extends AbstractModuleController
 {
-
     /**
      * @Flow\Inject
-     * @var PublishingService
-     */
-    protected $publishingService;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 
@@ -77,12 +67,6 @@ class WorkspacesController extends AbstractModuleController
      * @var Context
      */
     protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject

@@ -23,10 +23,8 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -100,12 +98,6 @@ class LinkingService
      * @var LoggerInterface
      */
     protected $systemLogger;
-
-    /**
-     * @Flow\Inject
-     * @var NeosNodeServiceInterface
-     */
-    protected $nodeService;
 
     /**
      * @Flow\Inject
