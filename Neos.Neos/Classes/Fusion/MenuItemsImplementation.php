@@ -322,4 +322,3 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 }
-
