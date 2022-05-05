@@ -1,5 +1,6 @@
 Neos\ContentRepository\Projection\Content\ContentGraphInterface:
   className: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
+
 Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
   arguments:
     1:
@@ -47,16 +48,6 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
     2:
       object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
 
-
-Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
-  arguments:
-    2:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
 
 Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
   arguments:

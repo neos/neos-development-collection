@@ -13,14 +13,13 @@ namespace Neos\ContentRepository\Projection\Changes;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Projection\Changes\Change;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
@@ -29,9 +28,6 @@ use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Changes\is_null;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Changes\iterator_to_array;
-use function Neos\EventSourcedContentRepository\Domain\Projection\Changes\json_encode;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -41,16 +37,14 @@ use function Neos\EventSourcedContentRepository\Domain\Projection\Changes\json_e
 class ChangeProjector implements ProjectorInterface
 {
     /**
-     * @Flow\Inject
-     * @var DbalClient
+     * @param DbalClientInterface $client
      */
-    protected $client;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
+    public function __construct(
+        private readonly DbalClientInterface $client,
+        private readonly WorkspaceFinder $workspaceFinder
+    )
+    {
+    }
 
     public function isEmpty(): bool
     {

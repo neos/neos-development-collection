@@ -15,7 +15,7 @@ namespace Neos\ContentRepository\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -29,7 +29,6 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPartia
 use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -39,10 +38,10 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_contentstream_v1';
 
-    private DbalClient $databaseClient;
+    private DbalClientInterface $databaseClient;
 
     public function __construct(
-        DbalClient $eventStorageDatabaseClient,
+        DbalClientInterface $eventStorageDatabaseClient,
         VariableFrontend $processedEventsCache
     ) {
         $this->databaseClient = $eventStorageDatabaseClient;

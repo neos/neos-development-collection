@@ -92,18 +92,3 @@ Neos:
             allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
           documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
           url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
-
-      changes:
-        types:
-          'Neos.Neos.Ui:Property': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Property
-          'Neos.Neos.Ui:CreateInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Create
-          'Neos.Neos.Ui:CreateAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateAfter
-          'Neos.Neos.Ui:CreateBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateBefore
-          'Neos.Neos.Ui:RemoveNode': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Remove
-          'Neos.Neos.Ui:MoveInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveInto
-          'Neos.Neos.Ui:MoveAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveAfter
-          'Neos.Neos.Ui:MoveBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveBefore
-          'Neos.Neos.Ui:CopyInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyInto
-          'Neos.Neos.Ui:CopyAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyAfter
-          'Neos.Neos.Ui:CopyBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyBefore
-

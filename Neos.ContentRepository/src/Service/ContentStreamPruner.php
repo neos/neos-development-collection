@@ -5,9 +5,9 @@ namespace Neos\ContentRepository\Service;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
@@ -28,7 +28,7 @@ class ContentStreamPruner
     public function __construct(
         ContentStreamFinder $contentStreamFinder,
         ContentStreamCommandHandler $contentStreamCommandHandler,
-        DbalClient $dbalClient
+        DbalClientInterface $dbalClient
     ) {
         $this->contentStreamFinder = $contentStreamFinder;
         $this->contentStreamCommandHandler = $contentStreamCommandHandler;

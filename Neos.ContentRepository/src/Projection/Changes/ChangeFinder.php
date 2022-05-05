@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Projection\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -25,10 +25,12 @@ use Neos\Flow\Annotations as Flow;
 final class ChangeFinder
 {
     /**
-     * @Flow\Inject
-     * @var DbalClient
+     * @param DbalClientInterface $client
      */
-    protected $client;
+    public function __construct(private readonly DbalClientInterface $client)
+    {
+    }
+
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

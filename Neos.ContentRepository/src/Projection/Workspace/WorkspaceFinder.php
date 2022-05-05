@@ -13,9 +13,9 @@ namespace Neos\ContentRepository\Projection\Workspace;
  * source code.
  */
 
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,11 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class WorkspaceFinder
 {
-    /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
 
     private bool $cacheEnabled = true;
 
@@ -41,6 +36,11 @@ final class WorkspaceFinder
      * @var array<string,Workspace>
      */
     private array $cachedWorkspacesByContentStreamIdentifier = [];
+
+    public function __construct(private readonly DbalClientInterface $client)
+    {
+    }
+
 
     public function disableCache(): void
     {

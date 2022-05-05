@@ -12,9 +12,9 @@ namespace Neos\Neos\ViewHelpers\Node;
  */
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 
 /**
  * ViewHelper to find the closest document node to a given node

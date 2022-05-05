@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Projection\ContentStream;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
@@ -30,11 +31,10 @@ final class ContentStreamFinder
     const STATE_REBASE_ERROR = 'REBASE_ERROR';
     const STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
 
-    /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
+    public function __construct(private readonly DbalClientInterface $client)
+    {
+    }
+
 
     /**
      * @return array<int,ContentStreamIdentifier>

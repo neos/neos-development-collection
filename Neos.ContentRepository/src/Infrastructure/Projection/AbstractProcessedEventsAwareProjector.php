@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Infrastructure\Projection;
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AppliedEventsStorage\DoctrineAppliedEventsStorage;
@@ -22,7 +22,7 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
 
     private VariableFrontend $processedEventsCache;
 
-    public function __construct(DbalClient $client, VariableFrontend $processedEventsCache)
+    public function __construct(DbalClientInterface $client, VariableFrontend $processedEventsCache)
     {
         $this->doctrineAppliedEventsStorage = new DoctrineAppliedEventsStorage(
             $client->getConnection(),
