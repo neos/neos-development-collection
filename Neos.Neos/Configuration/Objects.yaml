@@ -18,14 +18,6 @@ Neos\Neos\Aspects\FusionCachingAspect:
           1:
             value: Neos_Neos_Fusion
 
-'Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
-
-Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
-  properties:
-    configuration:
-      setting: Neos.ContentRepository.contentDimensions
-
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\Routing\FrontendNodeRoutePartHandler
 
