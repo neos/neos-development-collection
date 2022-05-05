@@ -1,14 +1,4 @@
-'Neos\ContentRepository\Domain\Repository\ContentDimensionRepository':
-  properties:
-    dimensionsConfiguration:
-      setting: 'Neos.ContentRepository.contentDimensions'
-'Neos\ContentRepository\Domain\Model\NodeInterface':
-  className: Neos\ContentRepository\Domain\Model\Node
-'Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource':
-  properties:
-    configuration:
-      setting: 'Neos.ContentRepository.contentDimensions'
-'Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface':
+'Neos\ContentRepository\SharedModel\NodeType\NodeLabelGeneratorInterface':
   className: Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator
 
 Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface:
@@ -121,7 +111,7 @@ Neos\ContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory:
     1:
       setting: 'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.projection.defaultProjectorsToBeBlocked'
 
-s\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
+Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
   scope: singleton
   arguments:
     1:

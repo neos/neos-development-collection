@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Model;
+namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
