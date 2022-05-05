@@ -11,13 +11,13 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\ThrowableStorageInterface;
-use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Neos\Service\LinkingService;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Neos\Exception as NeosException;
-use Psr\Log\LoggerInterface;
 
 /**
  * Create a link to a node
@@ -26,42 +26,20 @@ class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
-     * @var LinkingService
+     * @var NodeSiteResolvingService
      */
-    protected $linkingService;
+    protected $nodeSiteResolvingService;
 
     /**
-     * @var LoggerInterface
+     * @Flow\Inject
+     * @var \Neos\ContentRepository\SharedModel\NodeAddressFactory
      */
-    private $logger;
-
-    /**
-     * @var ThrowableStorageInterface
-     */
-    private $throwableStorage;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
-    {
-        $this->throwableStorage = $throwableStorage;
-    }
+    protected $nodeAddressFactory;
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
-     *
-     * @return mixed
      */
-    public function getNode()
+    public function getNode(): NodeInterface|string|null
     {
         return $this->fusionValue('node');
     }
@@ -89,25 +67,25 @@ class NodeUriImplementation extends AbstractFusionObject
     /**
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getAdditionalParams()
+    public function getAdditionalParams(): array
     {
         return array_merge($this->fusionValue('additionalParams'), $this->fusionValue('arguments'));
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = true
+     * Arguments to be removed from the URI. Only active if addQueryString = TRUE
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getArgumentsToBeExcludedFromQueryString()
+    public function getArgumentsToBeExcludedFromQueryString(): array
     {
         return $this->fusionValue('argumentsToBeExcludedFromQueryString');
     }
 
     /**
-     * If true, the current query parameters will be kept in the URI
+     * If TRUE, the current query parameters will be kept in the URI
      *
      * @return boolean
      */
@@ -117,7 +95,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If true, an absolute URI is rendered
+     * If TRUE, an absolute URI is rendered
      *
      * @return boolean
      */
@@ -137,39 +115,52 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * @return ContentSubgraphInterface
+     */
+    public function getSubgraph(): ?ContentSubgraphInterface
+    {
+        return $this->fusionValue('subgraph');
+    }
+
+    /**
      * Render the Uri.
      *
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
-     * @throws NeosException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function evaluate()
     {
-        $baseNode = null;
-        $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
-        $currentContext = $this->runtime->getCurrentContext();
-        if (isset($currentContext[$baseNodeName])) {
-            $baseNode = $currentContext[$baseNodeName];
+        $node = $this->getNode();
+        if ($node instanceof NodeInterface) {
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         } else {
-            throw new NeosException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
-        }
-
-        try {
-            return $this->linkingService->createNodeUri(
-                $this->runtime->getControllerContext(),
-                $this->getNode(),
-                $baseNode,
-                $this->getFormat(),
-                $this->isAbsolute(),
-                $this->getAdditionalParams(),
-                $this->getSection(),
-                $this->getAddQueryString(),
-                $this->getArgumentsToBeExcludedFromQueryString()
-            );
-        } catch (NeosException $exception) {
-            // TODO: Revisit if we actually need to store a stack trace.
-            $logMessage = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             return '';
         }
+        /** @todo implement us
+        elseif ($node === '~') {
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
+        $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier()
+        );
+        } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
+        NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
+        );*/
+        if ($this->getSubgraph()) {
+            $nodeAddress = $nodeAddress->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
+        }
+
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+        $uriBuilder
+            ->setAddQueryString($this->getAddQueryString())
+            ->setArguments($this->getAdditionalParams())
+            ->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString())
+            ->setCreateAbsoluteUri($this->isAbsolute())
+            ->setFormat($this->getFormat())
+            ->setSection($this->getSection());
+
+        return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
     }
 }
