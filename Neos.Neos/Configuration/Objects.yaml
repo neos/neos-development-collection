@@ -8,12 +8,6 @@ Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
           1:
             value: Neos_Neos_Configuration_Version
 
-Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
-  className: Neos\Neos\Domain\Service\ContentContextFactory
-
-Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
-  className: Neos\Neos\Service\PublishingService
-
 Neos\Neos\Aspects\FusionCachingAspect:
   properties:
     fusionCache:
@@ -23,16 +17,6 @@ Neos\Neos\Aspects\FusionCachingAspect:
         arguments:
           1:
             value: Neos_Neos_Fusion
-
-'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
-
-'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
-  className: Neos\Neos\TYPO3CR\NeosNodeService
-
-# This interface extends the Neos\ContentRepository\Domain\Service\NodeServiceInterface
-'Neos\Neos\TYPO3CR\NeosNodeServiceInterface':
-  className: Neos\Neos\TYPO3CR\NeosNodeService
 
 'Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource

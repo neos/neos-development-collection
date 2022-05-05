@@ -13,16 +13,10 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use function Neos\ContentRepository\Domain\Service\array_filter;
-use function Neos\ContentRepository\Domain\Service\array_keys;
-use function Neos\ContentRepository\Domain\Service\is_array;
-use function Neos\ContentRepository\Domain\Service\is_bool;
-use function Neos\ContentRepository\Domain\Service\sprintf;
 
 /**
  * Manager for node types
