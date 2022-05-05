@@ -11,8 +11,6 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use Neos\ContentRepository\Service\FallbackGraphService;
-use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
 /**
