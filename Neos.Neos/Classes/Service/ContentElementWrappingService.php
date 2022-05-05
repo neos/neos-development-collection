@@ -113,8 +113,8 @@ class ContentElementWrappingService
      */
     public function wrapContentObject(
         NodeInterface $node,
-                      $content,
-                      $fusionPath,
+        $content,
+        $fusionPath,
         array $additionalAttributes = []
     ): ?string {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
