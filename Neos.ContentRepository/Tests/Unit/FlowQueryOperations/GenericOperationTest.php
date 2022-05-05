@@ -7,6 +7,7 @@ use Neos\ContentRepository\Eel\FlowQueryOperations\ChildrenOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ClosestOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ContextOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\FilterOperation;
+use Neos\ContentRepository\Eel\FlowQueryOperations\FindOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\HasOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\NextAllOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\NextOperation;
@@ -31,6 +32,7 @@ class GenericOperationTest extends AbstractQueryOperationsTest
             ClosestOperation::class,
             ContextOperation::class,
             FilterOperation::class,
+            FindOperation::class,
             HasOperation::class,
             NextAllOperation::class,
             NextOperation::class,
@@ -54,6 +56,14 @@ class GenericOperationTest extends AbstractQueryOperationsTest
             ],
             'arrayStartsWithIntegerOne' => [
                 'context' => [1 => $secondNodeInLevel],
+                'expected' => true,
+            ],
+            'traversableNoNode' => [
+                'context' => new \ArrayIterator(['noNode']),
+                'expected' => false,
+            ],
+            'traversableNode' => [
+                'context' =>  new \ArrayIterator([$firstNodeInLevel, $secondNodeInLevel]),
                 'expected' => true,
             ],
             'noArray' => [

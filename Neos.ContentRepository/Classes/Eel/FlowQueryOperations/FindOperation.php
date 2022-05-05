@@ -55,6 +55,8 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
  */
 class FindOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -74,26 +76,6 @@ class FindOperation extends AbstractOperation
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        if (count($context) === 0) {
-            return true;
-        }
-
-        foreach ($context as $contextNode) {
-            if (!$contextNode instanceof NodeInterface) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * This operation operates rather on the given Context object than on the given node

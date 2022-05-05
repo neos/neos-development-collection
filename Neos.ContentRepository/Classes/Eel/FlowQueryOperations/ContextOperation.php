@@ -32,6 +32,8 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  */
 class ContextOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -51,17 +53,6 @@ class ContextOperation extends AbstractOperation
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
-    }
 
     /**
      * {@inheritdoc}

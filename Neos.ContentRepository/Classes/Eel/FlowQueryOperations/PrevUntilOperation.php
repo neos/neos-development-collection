@@ -24,6 +24,8 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
  */
 class PrevUntilOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -37,17 +39,6 @@ class PrevUntilOperation extends AbstractOperation
      * @var integer
      */
     protected static $priority = 0;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
-    }
 
     /**
      * {@inheritdoc}
