@@ -29,8 +29,8 @@ use Neos\ContentRepository\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
+use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 
