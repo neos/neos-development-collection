@@ -12,12 +12,6 @@ class WorkspaceCommandController extends CommandController
 {
 
     /**
-     * @Flow\Inject
-     * @var WorkspaceMaintenanceService
-     */
-    protected $workspaceMaintenanceService;
-
-    /**
      * Rebase all outdated content streams
      */
     public function rebaseOutdatedCommand(): void

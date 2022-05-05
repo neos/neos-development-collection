@@ -13,12 +13,12 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Utility;
 use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
 
@@ -42,9 +42,9 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
 
     /**
      * @Flow\Inject
-     * @var ContentDimensionRepository
+     * @var ContentDimensionZookeeper
      */
-    protected $contentDimensionRepository;
+    protected $contentDimensionZookeeper;
 
     /**
      * Generate a site package and fill it with boilerplate data.
@@ -97,7 +97,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
             'packageKey' => $packageKey,
             'siteName' => htmlspecialchars($siteName),
             'siteNodeName' => $this->generateSiteNodeName($packageKey),
-            'dimensions' => $this->contentDimensionRepository->findAll()
+            'dimensions' => 'wat' //$this->contentDimensionZookeeper->getAllowedDimensionSubspace()
         ];
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);

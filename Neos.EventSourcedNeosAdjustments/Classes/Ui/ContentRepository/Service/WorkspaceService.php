@@ -60,12 +60,6 @@ class WorkspaceService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
      * @var UserService
      */
     protected $userService;
@@ -155,7 +149,7 @@ class WorkspaceService
 
         $workspacesArray = [];
         /** @var Workspace $workspace */
-        foreach ($this->workspaceRepository->findAll() as $workspace) {
+        foreach ($this->workspaceFinder->findAll() as $workspace) {
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             // Skip workspace not owned by current user
             if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {

@@ -15,7 +15,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
+use Neos\ContentRepository\NodeAccess\Factory\MigrationFactory;
 use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
