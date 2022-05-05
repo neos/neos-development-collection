@@ -11,10 +11,10 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
@@ -25,35 +25,37 @@ class CachingHelper implements ProtectedContextAwareInterface
     /**
      * Render a caching configuration for array of Nodes
      *
-     * @param mixed $nodes
-     * @param string $prefix
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    protected function convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, $prefix)
+    protected function convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix(mixed $nodes, string $prefix): array
     {
         if ($nodes === null) {
             $nodes = [];
         }
 
-        if (!is_array($nodes) && ($nodes instanceof NodeInterface || $nodes instanceof TraversableNodeInterface)) {
+        if (!is_array($nodes) && ($nodes instanceof NodeInterface)) {
             $nodes = [$nodes];
         }
 
         if (!is_array($nodes) && !$nodes instanceof \Traversable) {
-            throw new Exception(sprintf('FlowQuery result, Array or Traversable expected by this helper, given: "%s".', gettype($nodes)), 1437169992);
+            throw new Exception(sprintf(
+                'FlowQuery result, Array or Traversable expected by this helper, given: "%s".',
+                gettype($nodes)
+            ), 1437169992);
         }
 
         $prefixedNodeIdentifiers = [];
         foreach ($nodes as $node) {
             if ($node instanceof NodeInterface) {
-                /* @var $node NodeInterface */
-                $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode($node->getContext()->getWorkspace()->getName()) . '_' . $node->getIdentifier();
-            } elseif ($node instanceof TraversableNodeInterface) {
-                /* @var $node TraversableNodeInterface */
-                $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode((string)$node->getContentStreamIdentifier()) . '_' . $node->getNodeAggregateIdentifier();
+                $prefixedNodeIdentifiers[] = $prefix . '_'
+                    . $this->renderContentStreamIdentifierTag($node->getContentStreamIdentifier())
+                    . '_' . $node->getNodeAggregateIdentifier();
             } else {
-                throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
+                throw new Exception(sprintf(
+                    'One of the elements in array passed to this helper was not a Node, but of type: "%s".',
+                    gettype($node)
+                ), 1437169991);
             }
         }
         return $prefixedNodeIdentifiers;
@@ -65,10 +67,10 @@ class CachingHelper implements ProtectedContextAwareInterface
      * given nodes (for any variant) is updated.
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    public function nodeTag($nodes)
+    public function nodeTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'Node');
     }
@@ -78,18 +80,19 @@ class CachingHelper implements ProtectedContextAwareInterface
      * entry tag will respect the workspace hash.
      *
      * @param string $identifier
-     * @param NodeInterface|null $contextNode
+     * @param ?NodeInterface $contextNode
      * @return string
-     *
      */
     public function nodeTagForIdentifier(string $identifier, NodeInterface $contextNode = null): string
     {
-        $workspaceTag = '';
+        $contentStreamTag = '';
         if ($contextNode instanceof NodeInterface) {
-            $workspaceTag = $this->renderWorkspaceTagForContextNode($contextNode->getContext()->getWorkspace()->getName()) .'_';
+            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+                    $contextNode->getContentStreamIdentifier()
+                ) .'_';
         }
 
-        return 'Node_' . $workspaceTag . $identifier;
+        return 'Node_' . $contentStreamTag . $identifier;
     }
 
     /**
@@ -102,7 +105,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * @param NodeInterface|null $contextNode
      * @return string|string[]
      */
-    public function nodeTypeTag($nodeType, $contextNode = null)
+    public function nodeTypeTag($nodeType, NodeInterface $contextNode = null)
     {
         if (!is_array($nodeType) && !($nodeType instanceof \Traversable)) {
             return $this->getNodeTypeTagFor($nodeType, $contextNode);
@@ -118,16 +121,18 @@ class CachingHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string|NodeType $nodeType
-     * @param NodeInterface $contextNode|null
+     * @param ?NodeInterface $contextNode
      * @return string
      */
-    protected function getNodeTypeTagFor($nodeType, $contextNode = null)
+    protected function getNodeTypeTagFor($nodeType, NodeInterface $contextNode = null)
     {
         $nodeTypeName = '';
-        $workspaceTag = '';
+        $contentStreamTag = '';
 
         if ($contextNode instanceof NodeInterface) {
-            $workspaceTag = $this->renderWorkspaceTagForContextNode($contextNode->getContext()->getWorkspace()->getName()) .'_';
+            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+                    $contextNode->getContentStreamIdentifier()
+                ) .'_';
         }
 
         if (is_string($nodeType)) {
@@ -141,7 +146,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             return '';
         }
 
-        return 'NodeType_' . $workspaceTag . $nodeTypeName;
+        return 'NodeType_' . $contentStreamTag . $nodeTypeName;
     }
 
     /**
@@ -151,21 +156,21 @@ class CachingHelper implements ProtectedContextAwareInterface
      * the given nodes is updated.
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array
+     * @return array<int,string>
      * @throws Exception
      */
-    public function descendantOfTag($nodes)
+    public function descendantOfTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'DescendantOf');
     }
 
     /**
-     * @param string $workspaceName
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return string
      */
-    public function renderWorkspaceTagForContextNode(string $workspaceName)
+    private function renderContentStreamIdentifierTag(ContentStreamIdentifier $contentStreamIdentifier)
     {
-        return '%' . md5($workspaceName) . '%';
+        return '%' . $contentStreamIdentifier . '%';
     }
 
     /**
