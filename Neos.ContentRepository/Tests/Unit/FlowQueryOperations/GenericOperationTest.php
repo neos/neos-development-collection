@@ -7,7 +7,6 @@ use Neos\ContentRepository\Eel\FlowQueryOperations\ChildrenOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ClosestOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ContextOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\FilterOperation;
-use Neos\ContentRepository\Eel\FlowQueryOperations\FindOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\HasOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\NextAllOperation;
 use Neos\ContentRepository\Eel\FlowQueryOperations\NextOperation;
