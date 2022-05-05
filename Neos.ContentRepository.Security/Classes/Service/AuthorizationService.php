@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Security\Service;
+namespace Neos\ContentRepository\Security\Service;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,14 +12,14 @@ namespace Neos\EventSourcedContentRepository\Security\Service;
  */
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
-use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;

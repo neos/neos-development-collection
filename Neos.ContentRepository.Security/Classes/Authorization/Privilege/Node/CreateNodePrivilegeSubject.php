@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node;
+namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.

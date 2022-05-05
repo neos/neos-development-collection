@@ -18,7 +18,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Helpers\FluidView;

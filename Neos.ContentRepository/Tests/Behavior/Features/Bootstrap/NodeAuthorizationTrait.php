@@ -32,7 +32,7 @@ trait NodeAuthorizationTrait
 {
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Security\Service\AuthorizationService
+     * @var \Neos\ContentRepository\Security\Service\AuthorizationService
      */
     protected $nodeAuthorizationService;
 

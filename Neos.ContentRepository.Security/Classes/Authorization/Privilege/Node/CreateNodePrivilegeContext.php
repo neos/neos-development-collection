@@ -18,24 +18,26 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 class CreateNodePrivilegeContext extends NodePrivilegeContext
 {
     /**
-     * @var string
+     * @var string|array<int,string>
      */
-    protected $creationNodeTypes;
+    protected string|array $creationNodeTypes;
 
     /**
-     * @param string|array $creationNodeTypes either an array of supported node type identifiers or a single node type identifier (for example "Neos.Neos:Document")
+     * @param string|array<int,string> $creationNodeTypes either an array of supported node type identifiers
+     * or a single node type identifier (for example "Neos.Neos:Document")
      * @return boolean Has to return true, to evaluate the eel expression correctly in any case
      */
-    public function createdNodeIsOfType($creationNodeTypes)
+    public function createdNodeIsOfType(string|array $creationNodeTypes): bool
     {
         $this->creationNodeTypes = $creationNodeTypes;
+
         return true;
     }
 
     /**
-     * @return array $creationNodeTypes
+     * @return array<int,string> $creationNodeTypes
      */
-    public function getCreationNodeTypes()
+    public function getCreationNodeTypes(): array
     {
         if (is_array($this->creationNodeTypes)) {
             return $this->creationNodeTypes;

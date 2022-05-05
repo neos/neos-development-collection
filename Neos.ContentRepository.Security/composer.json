@@ -1,5 +1,5 @@
 {
-    "name": "neos/eventsourcedcontentrepository-security",
+    "name": "neos/contentrepository-security",
     "type": "neos-package",
     "description": "Event sourced Site and Workspace for Neos.",
     "license": [
@@ -11,7 +11,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\EventSourcedContentRepository\\Security\\": "Classes"
+            "Neos\\ContentRepository\\Security\\": "Classes"
         }
     },
     "extra": {

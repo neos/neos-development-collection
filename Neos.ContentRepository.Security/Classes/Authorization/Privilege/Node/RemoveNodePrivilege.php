@@ -11,10 +11,11 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A privilege to remove nodes
@@ -28,8 +29,15 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
-        if ($subject instanceof NodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', RemoveNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417017296);
+        if (!$subject instanceof NodePrivilegeSubject && !$subject instanceof MethodPrivilegeSubject) {
+            throw new InvalidPrivilegeTypeException(sprintf(
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
+                RemoveNodePrivilege::class,
+                NodePrivilegeSubject::class,
+                MethodPrivilegeSubject::class,
+                get_class($subject)
+            ), 1417017296);
         }
 
         if ($subject instanceof MethodPrivilegeSubject) {
@@ -50,6 +58,6 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within(' . NodeInterface::class . ') && method(.*->setRemoved(removed == true))';
+        return  'method(' . RemoveNodeAggregate::class . '->__construct())';
     }
 }
