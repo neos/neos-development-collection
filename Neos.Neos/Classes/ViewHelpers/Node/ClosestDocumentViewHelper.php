@@ -11,9 +11,10 @@ namespace Neos\Neos\ViewHelpers\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * ViewHelper to find the closest document node to a given node
@@ -21,24 +22,19 @@ use Neos\Eel\FlowQuery\FlowQuery;
 class ClosestDocumentViewHelper extends AbstractViewHelper
 {
     /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @Flow\Inject
+     * @var NodeService
      */
-    public function initializeArguments()
+    protected $nodeService;
+
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('node', NodeInterface::class, 'Node', true);
     }
 
-    /**
-     * @return NodeInterface
-     * @throws \Neos\Eel\Exception
-     */
-    public function render()
+    public function render(): ?NodeInterface
     {
-        $flowQuery = new FlowQuery([$this->arguments['node']]);
-        return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+        return $this->nodeService->getClosestDocument($this->arguments['node']);
     }
 }

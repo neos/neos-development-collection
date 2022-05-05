@@ -11,54 +11,55 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Render a bread crumb path by using the labels of documents leading to the given node path
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
 
     /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @Flow\Inject
+     * @var NodeAccessorManager
      */
+    protected $nodeAccessorManager;
+
     public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerArgument('node', NodeInterface::class, 'Node', true);
     }
 
-    /**
-     * @return string of document nodes
-     * @throws \Neos\Eel\Exception
-     */
-    public function render(): string
+    public function render(): mixed
     {
         $node = $this->arguments['node'];
-
+        assert($node instanceof NodeInterface);
         $documentNodes = [];
-        $flowQuery = new FlowQuery([$node]);
-        $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());
-        /** @var NodeInterface $node */
-        foreach ($nodes as $documentNode) {
-            $documentNodes[] = $documentNode;
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+        $currentNode = $node;
+        while ($currentNode instanceof NodeInterface) {
+            if ($currentNode->getNodeType()->isOfType('Neos.Neos:Document')) {
+                $documentNodes[] = $currentNode;
+            }
+            $currentNode = $nodeAccessor->findParentNode($currentNode);
         }
-        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $documentNodes[] = $node;
-        }
+        $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove('documentNodes');
+
         return $content;
     }
 }

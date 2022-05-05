@@ -11,12 +11,11 @@ namespace Neos\Neos\ViewHelpers\ContentElement;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Service\ContentElementEditableService;
 
@@ -44,12 +43,6 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var AuthorizationService
-     */
-    protected $nodeAuthorizationService;
-
-    /**
-     * @Flow\Inject
      * @var ContentElementEditableService
      */
     protected $contentElementEditableService;
@@ -62,16 +55,32 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
 
-        $this->registerArgument('property', 'string', 'Name of the property to render. Note: If this tag has child nodes, they overrule this argument!', true);
-        $this->registerArgument('tag', 'string', 'The name of the tag that should be wrapped around the property. By default this is a <div>', false, 'div');
-        $this->registerArgument('node', NodeInterface::class, 'The node of the content element. Optional, will be resolved from the Fusion context by default');
+        $this->registerArgument(
+            'property',
+            'string',
+            'Name of the property to render. Note: If this tag has child nodes, they overrule this argument!',
+            true
+        );
+        $this->registerArgument(
+            'tag',
+            'string',
+            'The name of the tag that should be wrapped around the property. By default this is a <div>',
+            false,
+            'div'
+        );
+        $this->registerArgument(
+            'node',
+            NodeInterface::class,
+            'The node of the content element. Optional, will be resolved from the Fusion context by default'
+        );
     }
 
     /**
      * In live workspace this just renders a tag; for logged in users with access to the Backend this also adds required
      * attributes for the editing.
      *
-     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
+     * @return string The rendered property with a wrapping tag.
+     *                In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
      */
     public function render(): string
@@ -83,13 +92,20 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         $node = $this->arguments['node'] ?? $this->getNodeFromFusionContext();
 
         if ($node === null) {
-            throw new ViewHelperException('A node is required, but one was not supplied and could not be found in the Fusion context.', 1408521638);
+            throw new ViewHelperException(
+                'A node is required, but one was not supplied and could not be found in the Fusion context.',
+                1408521638
+            );
         }
 
         $propertyName = $this->arguments['property'];
         if ($content === null) {
             if (!$this->templateVariableContainer->exists($propertyName)) {
-                throw new ViewHelperException(sprintf('The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial, make sure to pass the node property "%1$s" as an argument.', $propertyName), 1384507046);
+                throw new ViewHelperException(sprintf(
+                    'The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial,'
+                    . ' make sure to pass the node property "%1$s" as an argument.',
+                    $propertyName
+                ), 1384507046);
             }
             $content = $this->templateVariableContainer->get($propertyName);
         }
@@ -106,7 +122,11 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     {
         $node = $this->getContextVariable('node');
         if ($node === null) {
-            throw new ViewHelperException('This ViewHelper can only be used in a Fusion content element. You have to specify the "node" argument if it cannot be resolved from the Fusion context.', 1385737102);
+            throw new ViewHelperException(
+                'This ViewHelper can only be used in a Fusion content element.'
+                . 'You have to specify the "node" argument if it cannot be resolved from the Fusion context.',
+                1385737102
+            );
         }
 
         return $node;
