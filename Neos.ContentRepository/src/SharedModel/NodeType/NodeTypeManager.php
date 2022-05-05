@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
 use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -162,20 +161,6 @@ class NodeTypeManager
     }
 
     /**
-     * Maybe will create a new node type in the future
-     *
-     * @param string $nodeTypeName Unique name of the new node type. Example: "Neos.Neos:Page"
-     * @throws Exception
-     */
-    public function createNodeType(string $nodeTypeName): never
-    {
-        throw new Exception(
-            'Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".',
-            1316449432
-        );
-    }
-
-    /**
      * Loads all node types into memory.
      */
     protected function loadNodeTypes(): void
@@ -213,7 +198,7 @@ class NodeTypeManager
      * @param array<string,mixed> $completeNodeTypeConfiguration the full node type configuration for all node types
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
-     * @throws Exception
+     * @throws NodeTypeNotFoundException
      */
     protected function loadNodeType(string $nodeTypeName, array &$completeNodeTypeConfiguration): NodeType
     {
@@ -222,7 +207,7 @@ class NodeTypeManager
         }
 
         if (!isset($completeNodeTypeConfiguration[$nodeTypeName])) {
-            throw new Exception('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
+            throw new NodeTypeNotFoundException('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
         }
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];

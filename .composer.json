@@ -19,10 +19,11 @@
       "@lint:phpstan"
     ],
     "test:unit": [
-      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.EventSourcedContentRepository/Tests/Unit"
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository/Tests/Unit"
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
     ],
     "test:functional": [
-      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.EventSourcedContentRepository/Tests/Functional",
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository/Tests/Functional",
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.EventSourcedNeosAdjustments/Tests/Functional"
     ],
     "test:behavioral": [

@@ -18,6 +18,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -37,11 +38,11 @@ use Neos\Flow\Annotations as Flow;
  */
 class ProjectionContentGraph
 {
-    /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
+
+    public function __construct(private readonly DbalClientInterface $client)
+    {
+    }
+
 
     /**
      * @return bool

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Unit\Configuration;
+namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\Configuration;
  * source code.
  */
 
-use Neos\ContentRepository\Configuration\NodeTypesLoader;
+use Neos\ContentRepositoryRegistry\Configuration\NodeTypesLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;

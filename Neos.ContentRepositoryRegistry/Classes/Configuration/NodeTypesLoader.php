@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Configuration;
+namespace Neos\ContentRepositoryRegistry\Configuration;
 
 use Neos\Flow\Configuration\Exception as ConfigurationException;
 use Neos\Flow\Configuration\Exception\ParseErrorException;

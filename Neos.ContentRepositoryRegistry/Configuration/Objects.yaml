@@ -5,9 +5,9 @@ Neos\ContentRepository\Infrastructure\DbalClientInterface:
 Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
   scope: singleton
   arguments:
-    eventStorageDatabaseClient:
+    1:
       object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
-    processedEventsCache:
+    2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
@@ -19,9 +19,9 @@ Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
 Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
   scope: singleton
   arguments:
-    eventStorageDatabaseClient:
+    1:
       object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
-    processedEventsCache:
+    2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
@@ -32,3 +32,158 @@ Neos\ContentRepository\Projection\Workspace\WorkspaceProjector:
 
 Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager:
   scope: singleton
+
+
+
+Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface:
+  scope: singleton
+  className: 'Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource'
+  arguments:
+    1:
+      setting: "Neos.EventSourcedContentRepository.contentDimensions"
+
+
+Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph:
+  scope: singleton
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+
+
+Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource:
+  scope: singleton
+  arguments:
+    1:
+      setting: "Neos.EventSourcedContentRepository.contentDimensions"
+
+Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper:
+  scope: singleton
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface'
+Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph:
+  scope: singleton
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface'
+    2:
+      object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
+
+
+Neos\ContentRepository\Feature\ContentStreamCommandHandler:
+  arguments:
+    2:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+
+Neos\ContentRepository\Feature\ContentStreamRepository:
+  arguments:
+    0:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Feature\WorkspaceCommandHandler:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+
+Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\NodeAccess\Command\ContentStreamCommandController:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory:
+  scope: singleton
+  arguments:
+    1:
+      setting: 'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.projection.defaultProjectorsToBeBlocked'
+
+Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
+  scope: singleton
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventPublisher\DefaultEventPublisherFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+    3:
+      object:
+        factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory
+
+Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConversionSerializerFactory
+        factoryMethodName: buildSerializer
+
+Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Feature\StructureAdjustment\UnknownNodeTypeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Feature\StructureAdjustment\DisallowedChildNodeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Feature\StructureAdjustment\PropertyAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
