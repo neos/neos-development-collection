@@ -34,6 +34,8 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class CacheLifetimeOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -60,17 +62,6 @@ class CacheLifetimeOperation extends AbstractOperation
      * @var Now
      */
     protected $now;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
-    }
 
     /**
      * {@inheritdoc}

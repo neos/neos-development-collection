@@ -25,6 +25,8 @@ use Neos\Utility\ObjectAccess;
  */
 class PropertyOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -45,19 +47,6 @@ class PropertyOperation extends AbstractOperation
      * @var boolean
      */
     protected static $final = true;
-
-    /**
-     * {@inheritdoc}
-     *
-     * We can only handle ContentRepository Nodes.
-     *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
-     * @return boolean
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && reset($context) instanceof TraversableNodeInterface;
-    }
 
     /**
      * {@inheritdoc}

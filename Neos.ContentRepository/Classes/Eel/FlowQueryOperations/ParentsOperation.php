@@ -23,6 +23,8 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
  */
 class ParentsOperation extends AbstractOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -36,17 +38,6 @@ class ParentsOperation extends AbstractOperation
      * @var integer
      */
     protected static $priority = 0;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && (count($context) === 0 || reset($context) instanceof TraversableNodeInterface);
-    }
 
     /**
      * {@inheritdoc}

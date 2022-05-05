@@ -33,23 +33,14 @@ use Neos\ContentRepository\Domain\Model\Node;
  */
 class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperation
 {
+    use CanEvaluateNodeContextTrait;
+
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
     protected static $priority = 100;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
-     */
-    public function canEvaluate($context)
-    {
-        return is_array($context) && reset($context) instanceof TraversableNodeInterface;
-    }
 
     /**
      * {@inheritdoc}
