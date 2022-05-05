@@ -26,6 +26,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -43,7 +44,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
@@ -70,12 +70,12 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
     private ThrowableStorageInterface $throwableStorage;
 
-    private DbalClient $databaseClient;
+    private DbalClientInterface $databaseClient;
 
     private bool $doingFullReplayOfProjection = false;
 
     public function __construct(
-        DbalClient $eventStorageDatabaseClient,
+        DbalClientInterface $eventStorageDatabaseClient,
         VariableFrontend $processedEventsCache,
         ProjectionContentGraph $projectionContentGraph,
         ThrowableStorageInterface $throwableStorage

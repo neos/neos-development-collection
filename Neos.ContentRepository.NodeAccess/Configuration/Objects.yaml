@@ -49,16 +49,6 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
       object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
 
 
-Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
-  arguments:
-    2:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_EventSourcedContentRepository_ProcessedContentStreamEvents
-
 Neos\ContentRepository\Feature\ContentStreamCommandHandler:
   arguments:
     2:
@@ -80,7 +70,7 @@ Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHan
 
 Neos\ContentRepository\Feature\ContentStreamRepository:
   arguments:
-    1:
+    0:
       object:
         factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
         arguments:
