@@ -112,8 +112,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 return (int)$order[$menuItemA['node']?->getDimensionSpacePoint()?->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
                 )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
-                        $contentDimensionIdentifierToLimitTo
-                    )];
+                    $contentDimensionIdentifierToLimitTo
+                )];
             });
         }
 
