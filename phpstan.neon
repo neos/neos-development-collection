@@ -7,4 +7,3 @@ parameters:
         - Neos.ContentRepository/src
         - Neos.EventSourcedContentRepository.LegacyApi/Classes
         - Neos.ContentRepository.Security/Classes
-        - Neos.EventSourcedNeosAdjustments/Classes
