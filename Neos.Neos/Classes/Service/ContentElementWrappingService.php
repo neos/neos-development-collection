@@ -11,12 +11,18 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Service\Mapping\NodePropertyConverterService;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
@@ -49,282 +55,184 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
-     * @var NodePropertyConverterService
+     * @var SessionInterface
      */
-    protected $nodePropertyConverterService;
+    protected $session;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var UserLocaleService
+     */
+    protected $userLocaleService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeInfoHelper
+     */
+    protected $nodeInfoHelper;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
+     * All editable nodes rendered in the document
+     *
+     * @var array<string,NodeInterface>
+     */
+    protected array $renderedNodes = [];
+
+    /**
+     * String containing `<script>` tags for non rendered nodes
+     *
+     * @var string
+     */
+    protected $nonRenderedContentNodeMetadata;
 
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
-     * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
-     * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
-     * @return string
+     * @param array<string,string> $additionalAttributes
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentObject(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = [])
-    {
-        if ($this->needsMetadata($node, false) === false) {
+    public function wrapContentObject(
+        NodeInterface $node,
+                      $content,
+                      $fusionPath,
+        array $additionalAttributes = []
+    ): ?string {
+        if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
         }
 
-        $attributes = $additionalAttributes;
-        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
-        $attributes['data-node-__fusion-path'] = $fusionPath;
-        $attributes['tabindex'] = 0;
-        $attributes = $this->addGenericEditingMetadata($attributes, $node);
-        $attributes = $this->addNodePropertyAttributes($attributes, $node);
-        $attributes = $this->addCssClasses($attributes, $node, $this->collectEditingClassNames($node));
+        // TODO: reenable permissions
+        //if ($this->nodeAuthorizationService->isGrantedToEditNode($node) === false) {
+        //    return $content;
+        //}
 
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $attributes = $additionalAttributes;
+        $attributes['data-node-__fusion-path'] = $fusionPath;
+        $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
+
+        $this->renderedNodes[$node->getCacheEntryIdentifier()] = $node;
+
+        $this->userLocaleService->switchToUILocale();
+
+        $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
+
+        $this->userLocaleService->switchToUILocale(true);
+
+        $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
+        $nodeContextPath = $nodeAddress->serializeForUri();
+        /** @codingStandardsIgnoreStart */
+        $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
+        /** @codingStandardsIgnoreEnd */
+
+        return $wrappedContent;
     }
 
     /**
-     * @param NodeInterface $node
-     * @param string $content
-     * @param string $fusionPath
-     * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
-     * @return string
-     */
-    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = [])
-    {
-        if ($this->needsMetadata($node, true) === false) {
-            return $content;
-        }
-
-        $attributes = $additionalAttributes;
-        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
-        $attributes['data-node-__fusion-path'] = $fusionPath;
-        $attributes = $this->addGenericEditingMetadata($attributes, $node);
-        $attributes = $this->addNodePropertyAttributes($attributes, $node);
-        $attributes = $this->addDocumentMetadata($attributes, $node);
-        $attributes = $this->addCssClasses($attributes, $node, []);
-
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
-    }
-
-    /**
-     * Adds node properties to the given $attributes collection and returns the extended array
+     * Concatenate strings containing `<script>` tags for all child nodes not rendered
+     * within the current document node. This way we can show e.g. content collections
+     * within the structure tree which are not actually rendered.
      *
-     * @param array $attributes
-     * @param NodeInterface $node
-     * @return array the merged attributes
+     * @throws \Neos\Eel\Exception
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
-    protected function addNodePropertyAttributes(array $attributes, NodeInterface $node)
+    protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode): void
     {
-        foreach (array_keys($node->getNodeType()->getProperties()) as $propertyName) {
-            if ($propertyName[0] === '_' && $propertyName[1] === '_') {
-                // skip fully-private properties
+        if ($this->isContentStreamOfLiveWorkspace($documentNode->getContentStreamIdentifier())) {
+            return;
+        }
+
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $documentNode->getContentStreamIdentifier(),
+            $documentNode->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+
+        foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
+            if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
-            $attributes = array_merge($attributes, $this->renderNodePropertyAttribute($node, $propertyName));
-        }
 
-        return $attributes;
+            if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
+                $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
+                $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+                /** @codingStandardsIgnoreStart */
+                $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
+                /** @codingStandardsIgnoreEnd */
+            }
+
+            $nestedNodes = $nodeAccessor->findChildNodes($node);
+            $hasChildNodes = false;
+            foreach ($nestedNodes as $nestedNode) {
+                $hasChildNodes = true;
+                break;
+            }
+
+            if ($hasChildNodes) {
+                $this->appendNonRenderedContentNodeMetadata($node);
+            }
+        }
     }
 
     /**
-     * Renders data attributes needed for the given node property.
-     *
-     * @param NodeInterface $node
-     * @param string $propertyName
-     * @return array
+     * Clear rendered nodes helper array to prevent possible side effects.
      */
-    protected function renderNodePropertyAttribute(NodeInterface $node, $propertyName)
+    protected function clearRenderedNodesArray(): void
     {
-        $attributes = [];
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        // skip the node name of the site node - TODO: Why do we need this?
-        if ($propertyName === '_name' && $node === $contentContext->getCurrentSiteNode()) {
-            return $attributes;
-        }
-
-        $dataType = $node->getNodeType()->getPropertyType($propertyName);
-        $dasherizedPropertyName = $this->dasherize($propertyName);
-
-        $propertyValue = $this->nodePropertyConverterService->getProperty($node, $propertyName);
-        $propertyValue = $propertyValue === null ? '' : $propertyValue;
-        $propertyValue = !is_string($propertyValue) ? json_encode($propertyValue) : $propertyValue;
-
-        if ($dataType !== 'string') {
-            $attributes['data-nodedatatype-' . $dasherizedPropertyName] = 'xsd:' . $dataType;
-        }
-
-        $attributes['data-node-' . $dasherizedPropertyName] = $propertyValue;
-
-        return $attributes;
+        $this->renderedNodes = [];
     }
 
     /**
-     * Add required CSS classes to the attributes.
-     *
-     * @param array $attributes
-     * @param NodeInterface $node
-     * @param array $initialClasses
-     * @return array
+     * Clear non rendered content node metadata to prevent possible side effects.
      */
-    protected function addCssClasses(array $attributes, NodeInterface $node, array $initialClasses = [])
+    protected function clearNonRenderedContentNodeMetadata(): void
     {
-        $classNames = $initialClasses;
-        // FIXME: The `dimensionsAreMatchingTargetDimensionValues` method should become part of the NodeInterface if it is used here .
-        if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
-            $classNames[] = 'neos-contentelement-shine-through';
-        }
-
-        if ($classNames !== []) {
-            $attributes['class'] = implode(' ', $classNames);
-        }
-
-        return $attributes;
+        $this->nonRenderedContentNodeMetadata = '';
     }
 
     /**
-     * Collects metadata for the Neos backend specifically for document nodes.
-     *
-     * @param array $attributes
-     * @param NodeInterface $node
-     * @return array
-     */
-    protected function addDocumentMetadata(array $attributes, NodeInterface $node)
-    {
-        /** @var ContentContext $contentContext */
-        $contentContext = $node->getContext();
-        $attributes['data-neos-site-name'] = $contentContext->getCurrentSite()->getName();
-        $attributes['data-neos-site-node-context-path'] = $contentContext->getCurrentSiteNode()->getContextPath();
-        // Add the workspace of the content repository context to the attributes
-        $attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
-        $attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
-
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            $attributes['data-node-__read-only'] = 'true';
-            $attributes['data-nodedatatype-__read-only'] = 'boolean';
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Collects metadata attributes used to allow editing of the node in the Neos backend.
-     *
-     * @param array $attributes
-     * @param NodeInterface $node
-     * @return array
-     */
-    protected function addGenericEditingMetadata(array $attributes, NodeInterface $node)
-    {
-        $attributes['typeof'] = 'typo3:' . $node->getNodeType()->getName();
-        $attributes['about'] = $node->getContextPath();
-        $attributes['data-node-_identifier'] = $node->getIdentifier();
-        $attributes['data-node-__workspace-name'] = $node->getWorkspace()->getName();
-        $attributes['data-node-__label'] = $node->getLabel();
-
-        if ($node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
-            $attributes['rel'] = 'typo3:content-collection';
-        }
-
-        // these properties are needed together with the current NodeType to evaluate Node Type Constraints
-        // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
-        if ($node->getParent()) {
-            $attributes['data-node-__parent-node-type'] = $node->getParent()->getNodeType()->getName();
-        }
-
-        if ($node->isAutoCreated()) {
-            $attributes['data-node-_name'] = $node->getName();
-            $attributes['data-node-_is-autocreated'] = 'true';
-        }
-
-        if ($node->getParent() && $node->getParent()->isAutoCreated()) {
-            $attributes['data-node-_parent-is-autocreated'] = 'true';
-            // we shall only add these properties if the parent is actually auto-created; as the Node-Type-Switcher in the UI relies on that.
-            $attributes['data-node-__parent-node-name'] = $node->getParent()->getName();
-            $attributes['data-node-__grandparent-node-type'] = $node->getParent()->getParent()->getNodeType()->getName();
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Collects CSS class names used for styling editable elements in the Neos backend.
-     *
-     * @param NodeInterface $node
-     * @return array
-     */
-    protected function collectEditingClassNames(NodeInterface $node)
-    {
-        $classNames = [];
-
-        if ($node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
-            // This is needed since the backend relies on this class (should not be necessary)
-            $classNames[] = 'neos-contentcollection';
-        } else {
-            $classNames[] = 'neos-contentelement';
-        }
-
-        if ($node->isRemoved()) {
-            $classNames[] = 'neos-contentelement-removed';
-        }
-
-        if ($node->isHidden()) {
-            $classNames[] = 'neos-contentelement-hidden';
-        }
-
-        if ($this->isInlineEditable($node) === false) {
-            $classNames[] = 'neos-not-inline-editable';
-        }
-
-        return $classNames;
-    }
-
-    /**
-     * Determine if the Node or one of it's properties is inline editable.
-            $parsedType = TypeHandling::parseType($dataType);
-     *
-     * @param NodeInterface $node
-     * @return boolean
-     */
-    protected function isInlineEditable(NodeInterface $node)
-    {
-        $uiConfiguration = $node->getNodeType()->hasConfiguration('ui') ? $node->getNodeType()->getConfiguration('ui') : [];
-        return (
-            (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] === true) ||
-            $this->hasInlineEditableProperties($node)
-        );
-    }
-
-    /**
-     * Checks if the given Node has any properties configured as 'inlineEditable'
-     *
-     * @param NodeInterface $node
-     * @return boolean
-     */
-    protected function hasInlineEditableProperties(NodeInterface $node)
-    {
-        return array_reduce(array_values($node->getNodeType()->getProperties()), function ($hasInlineEditableProperties, $propertyConfiguration) {
-            return ($hasInlineEditableProperties || (isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === true));
-        }, false);
-    }
-
-    /**
-     * @param NodeInterface $node
-     * @param boolean $renderCurrentDocumentMetadata
-     * @return boolean
-     */
-    protected function needsMetadata(NodeInterface $node, $renderCurrentDocumentMetadata)
-    {
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        return ($contentContext->isInBackend() === true && ($renderCurrentDocumentMetadata === true || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true));
-    }
-
-    /**
-     * Converts camelCased strings to lower cased and non-camel-cased strings
-     *
-     * @param string $value
+     * @param NodeInterface $documentNode
      * @return string
+     * @throws \Neos\Eel\Exception
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
-    protected function dasherize($value)
+    public function getNonRenderedContentNodeMetadata(NodeInterface $documentNode)
     {
-        return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value), '-'));
+        $this->userLocaleService->switchToUILocale();
+
+        $this->appendNonRenderedContentNodeMetadata($documentNode);
+        $nonRenderedContentNodeMetadata = $this->nonRenderedContentNodeMetadata;
+        $this->clearNonRenderedContentNodeMetadata();
+        $this->clearRenderedNodesArray();
+
+        $this->userLocaleService->switchToUILocale(true);
+
+        return $nonRenderedContentNodeMetadata;
+    }
+
+    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
+    {
+        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ?->getWorkspaceName()->isLive() ?: false;
     }
 }
