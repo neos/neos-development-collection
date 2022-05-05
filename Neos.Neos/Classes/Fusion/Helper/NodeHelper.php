@@ -173,4 +173,3 @@ class NodeHelper implements ProtectedContextAwareInterface
         return true;
     }
 }
-
