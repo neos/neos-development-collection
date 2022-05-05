@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Neos\Fusion;
 
-
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
@@ -111,8 +110,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $contentDimensionIdentifierToLimitTo
             ) {
                 return (int)$order[$menuItemA['node']?->getDimensionSpacePoint()?->getCoordinate(
-                        $contentDimensionIdentifierToLimitTo
-                    )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
+                    $contentDimensionIdentifierToLimitTo
+                )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
                         $contentDimensionIdentifierToLimitTo
                     )];
             });
@@ -182,7 +181,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 'value' => $dimensionValue,
                 'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)
                     ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
-                'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo()
+                'isPinnedDimension' => (
+                    !$this->getContentDimensionIdentifierToLimitTo()
                     || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo())
                 )
             ];
@@ -248,4 +248,3 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         return $this->fusionValue('values') ?? ($this->fusionValue('presets') ?? []);
     }
 }
-

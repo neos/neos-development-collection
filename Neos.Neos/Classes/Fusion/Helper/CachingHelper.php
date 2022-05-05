@@ -88,8 +88,8 @@ class CachingHelper implements ProtectedContextAwareInterface
         $contentStreamTag = '';
         if ($contextNode instanceof NodeInterface) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag(
-                    $contextNode->getContentStreamIdentifier()
-                ) .'_';
+                $contextNode->getContentStreamIdentifier()
+            ) .'_';
         }
 
         return 'Node_' . $contentStreamTag . $identifier;
@@ -131,8 +131,8 @@ class CachingHelper implements ProtectedContextAwareInterface
 
         if ($contextNode instanceof NodeInterface) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag(
-                    $contextNode->getContentStreamIdentifier()
-                ) .'_';
+                $contextNode->getContentStreamIdentifier()
+            ) .'_';
         }
 
         if (is_string($nodeType)) {
