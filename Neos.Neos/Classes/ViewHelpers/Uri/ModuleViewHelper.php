@@ -53,9 +53,27 @@ class ModuleViewHelper extends AbstractViewHelper
         $this->registerArgument('arguments', 'string', 'Arguments', false, []);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
-        $this->registerArgument('additionalParams', 'string', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
-        $this->registerArgument('addQueryString', 'string', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'string', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+        $this->registerArgument(
+            'additionalParams',
+            'string',
+            'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)',
+            false,
+            []
+        );
+        $this->registerArgument(
+            'addQueryString',
+            'string',
+            'If set, the current query parameters will be kept in the URI',
+            false,
+            false
+        );
+        $this->registerArgument(
+            'argumentsToBeExcludedFromQueryString',
+            'string',
+            'arguments to be removed from the URI. Only active if $addQueryString = true',
+            false,
+            []
+        );
     }
 
     /**
@@ -86,7 +104,11 @@ class ModuleViewHelper extends AbstractViewHelper
                 ->setFormat($this->arguments['format'])
                 ->uriFor('index', $modifiedArguments, 'Backend\Module', 'Neos.Neos');
         } catch (\Neos\Flow\Exception $exception) {
-            throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
+            throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception(
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception
+            );
         }
     }
 

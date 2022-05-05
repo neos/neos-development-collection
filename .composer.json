@@ -19,7 +19,7 @@
       "@lint:phpstan"
     ],
     "test:unit": [
-      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository/Tests/Unit"
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository/Tests/Unit",
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
     ],
     "test:functional": [

@@ -138,14 +138,18 @@ class EventEmittingService
     }
 
     /**
-     * Push the last-generated event onto the context, nesting all further generated events underneath the top-level one.
+     * Push the last-generated event onto the context,
+     * nesting all further generated events underneath the top-level one.
      *
      * @return void
      */
     public function pushContext()
     {
         if ($this->lastGeneratedEvent === null) {
-            throw new \InvalidArgumentException('pushContext() can only be called directly after an invocation of emit().', 1415353980);
+            throw new \InvalidArgumentException(
+                'pushContext() can only be called directly after an invocation of emit().',
+                1415353980
+            );
         }
 
         $this->eventContext[] = $this->lastGeneratedEvent;
@@ -161,7 +165,10 @@ class EventEmittingService
         if (count($this->eventContext) > 0) {
             array_pop($this->eventContext);
         } else {
-            throw new \InvalidArgumentException('popContext() can only be called if the context has been pushed beforehand.', 1415354224);
+            throw new \InvalidArgumentException(
+                'popContext() can only be called if the context has been pushed beforehand.',
+                1415354224
+            );
         }
     }
 

@@ -116,8 +116,14 @@ class VisualIntraDimensionalVariationGraph
      * @param int $parent
      * @return void
      */
-    protected function traverseDimension(string $dimensionName, IntraDimension\ContentDimensionValue $value, int & $counter, int $depth, int & $horizontalOffset, int $parent)
-    {
+    protected function traverseDimension(
+        string $dimensionName,
+        IntraDimension\ContentDimensionValue $value,
+        int &$counter,
+        int $depth,
+        int &$horizontalOffset,
+        int $parent
+    ) {
         $counter++;
         $nodeId = $counter;
         $leftOffset = $horizontalOffset + 42;

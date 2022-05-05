@@ -54,7 +54,9 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  * </output>
  *
  * <code title="Arguments">
- * <neos:backend.translate arguments="{0: 'foo', 1: '99.9'}"><![CDATA[Untranslated {0} and {1,number}]]></neos:backend.translate>
+ * <neos:backend.translate arguments="{0: 'foo', 1: '99.9'}">
+ *      <![CDATA[Untranslated {0} and {1,number}]]>
+ * </neos:backend.translate>
  * </code>
  * <output>
  * translation of the label "Untranslated foo and 99.9"
@@ -82,7 +84,8 @@ class TranslateViewHelper extends FluidTranslateViewHelper
      * translated label.
      *
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
-     * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
+     * @param string $value If $key is not specified or could not be resolved, this value is used.
+     *                      If this argument is not set, child nodes will be used to render the default
      * @param array $arguments Numerically indexed array of values to be inserted into placeholders
      * @param string $source Name of file with translations
      * @param string $package Target package key. If not set, the current package key will be used

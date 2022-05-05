@@ -18,7 +18,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * Monitors Neos.ContentRepository changes
@@ -381,7 +380,11 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
             if (isset($data['oldLabel']) && isset($data['newLabel'])) {
                 if ($data['oldLabel'] !== $data['newLabel']) {
-                    $nodeEvent = $this->eventEmittingService->emit(self::NODE_LABEL_CHANGED, ['oldLabel' => $data['oldLabel'], 'newLabel' => $data['newLabel']], NodeEvent::class);
+                    $nodeEvent = $this->eventEmittingService->emit(
+                        self::NODE_LABEL_CHANGED,
+                        ['oldLabel' => $data['oldLabel'], 'newLabel' => $data['newLabel']],
+                        NodeEvent::class
+                    );
                     $nodeEvent->setNode($node);
                 }
                 unset($data['oldLabel']);
@@ -421,7 +424,8 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
             'documentNode' => $documentNode
         ];
 
-        $this->scheduledNodeEventUpdates[$documentNode->getContextPath()]['nestedNodeIdentifiersWhichArePublished'][] = $node->getIdentifier();
+        $this->scheduledNodeEventUpdates[$documentNode->getContextPath()]['nestedNodeIdentifiersWhichArePublished'][]
+            = $node->getIdentifier();
     }
 
     /**

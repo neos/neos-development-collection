@@ -47,8 +47,8 @@ class EntityIntegrationService extends AbstractIntegrationService
     protected $monitorEntitiesSetting;
 
     /**
-     * Dummy method which is called in a prePersist signal. If we remove that, this object is never instantiated and thus
-     * cannot hook into the Doctrine EntityManager.
+     * Dummy method which is called in a prePersist signal.
+     * If we remove that, this object is never instantiated and thus cannot hook into the Doctrine EntityManager.
      *
      * @return void
      */
@@ -85,10 +85,17 @@ class EntityIntegrationService extends AbstractIntegrationService
                 if (isset($entityMonitoringConfiguration['events']['created'])) {
                     $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
+                        $data[$key] = Utility::evaluateEelExpression(
+                            $eelExpression,
+                            $this->eelEvaluator,
+                            ['entity' => $entity]
+                        );
                     }
 
-                    $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['created'], $data);
+                    $event = $this->eventEmittingService->emit(
+                        $entityMonitoringConfiguration['events']['created'],
+                        $data
+                    );
                     $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
@@ -102,10 +109,17 @@ class EntityIntegrationService extends AbstractIntegrationService
                 if (isset($entityMonitoringConfiguration['events']['deleted'])) {
                     $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
+                        $data[$key] = Utility::evaluateEelExpression(
+                            $eelExpression,
+                            $this->eelEvaluator,
+                            ['entity' => $entity]
+                        );
                     }
 
-                    $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['deleted'], $data);
+                    $event = $this->eventEmittingService->emit(
+                        $entityMonitoringConfiguration['events']['deleted'],
+                        $data
+                    );
                     $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }

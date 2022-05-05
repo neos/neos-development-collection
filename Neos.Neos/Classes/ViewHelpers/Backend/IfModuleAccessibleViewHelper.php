@@ -53,9 +53,16 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
-        return static::renderResult(static::evaluateCondition($arguments, $renderingContext), $arguments, $renderingContext);
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+        return static::renderResult(
+            static::evaluateCondition($arguments, $renderingContext),
+            $arguments,
+            $renderingContext
+        );
     }
 
     /**
@@ -68,7 +75,9 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         if (!$renderingContext instanceof RenderingContext) {
             return false;
         }
-        if (isset($arguments['moduleConfiguration']['enabled']) && $arguments['moduleConfiguration']['enabled'] === false) {
+        if (isset($arguments['moduleConfiguration']['enabled'])
+            && $arguments['moduleConfiguration']['enabled'] === false
+        ) {
             return false;
         }
         $objectManager = $renderingContext->getObjectManager();

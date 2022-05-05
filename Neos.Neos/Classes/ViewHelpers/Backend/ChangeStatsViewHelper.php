@@ -44,8 +44,14 @@ class ChangeStatsViewHelper extends AbstractViewHelper
         $changeCounts = $this->arguments['changeCounts'];
 
         $this->templateVariableContainer->add('newCountRatio', $changeCounts['new'] / $changeCounts['total'] * 100);
-        $this->templateVariableContainer->add('changedCountRatio', $changeCounts['changed'] / $changeCounts['total'] * 100);
-        $this->templateVariableContainer->add('removedCountRatio', $changeCounts['removed'] / $changeCounts['total'] * 100);
+        $this->templateVariableContainer->add(
+            'changedCountRatio',
+            $changeCounts['changed'] / $changeCounts['total'] * 100
+        );
+        $this->templateVariableContainer->add(
+            'removedCountRatio',
+            $changeCounts['removed'] / $changeCounts['total'] * 100
+        );
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove('newCountRatio');
         $this->templateVariableContainer->remove('changedCountRatio');

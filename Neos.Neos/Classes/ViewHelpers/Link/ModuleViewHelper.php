@@ -49,8 +49,16 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
     {
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-        $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
+        $this->registerTagAttribute(
+            'rel',
+            'string',
+            'Specifies the relationship between the current document and the linked document'
+        );
+        $this->registerTagAttribute(
+            'rev',
+            'string',
+            'Specifies the relationship between the linked document and the current document'
+        );
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
 
         $this->registerArgument('path', 'string', 'Target module path', true);
@@ -58,9 +66,27 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('arguments', 'array', 'Arguments', false, []);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"');
-        $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
-        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+        $this->registerArgument(
+            'additionalParams',
+            'array',
+            'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)',
+            false,
+            []
+        );
+        $this->registerArgument(
+            'addQueryString',
+            'boolean',
+            'If set, the current query parameters will be kept in the URI',
+            false,
+            false
+        );
+        $this->registerArgument(
+            'argumentsToBeExcludedFromQueryString',
+            'array',
+            'arguments to be removed from the URI. Only active if $addQueryString = true',
+            false,
+            []
+        );
     }
 
     /**

@@ -48,8 +48,19 @@ class StandaloneViewViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('templatePathAndFilename', 'string', 'Path and filename of the template to render', true);
-        $this->registerArgument('arguments', 'array', 'Arguments to assign to the template before rendering', false, []);
+        $this->registerArgument(
+            'templatePathAndFilename',
+            'string',
+            'Path and filename of the template to render',
+            true
+        );
+        $this->registerArgument(
+            'arguments',
+            'array',
+            'Arguments to assign to the template before rendering',
+            false,
+            []
+        );
     }
 
     /**

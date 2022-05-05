@@ -72,8 +72,12 @@ class EntityToIdentityConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         return [
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),
             '__type' => TypeHandling::getTypeForValue($source)

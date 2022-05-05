@@ -50,24 +50,49 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
         }
         $this->initialized = true;
 
-        $moduleSettings = $this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Neos.modules');
+        $moduleSettings = $this->objectManager->get(ConfigurationManager::class)
+            ->getConfiguration(
+                ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+                'Neos.Neos.modules'
+            );
         $targetModulePath = $this->getParsedMatcher();
         list($moduleName, $subModuleName) = array_pad(explode('/', $targetModulePath, 2), 2, null);
         if (!isset($moduleSettings[$moduleName])) {
-            throw new InvalidPolicyException(sprintf('The module "%s" specified in privilege target "%s" is not configured', $moduleName, $this->getPrivilegeTargetIdentifier()), 1493206188);
+            throw new InvalidPolicyException(sprintf(
+                'The module "%s" specified in privilege target "%s" is not configured',
+                $moduleName,
+                $this->getPrivilegeTargetIdentifier()
+            ), 1493206188);
         }
         if ($subModuleName !== null && !isset($moduleSettings[$moduleName]['submodules'][$subModuleName])) {
-            throw new InvalidPolicyException(sprintf('The module "%s" specified in privilege target "%s" is not configured', $targetModulePath, $this->getPrivilegeTargetIdentifier()), 1493206192);
+            throw new InvalidPolicyException(sprintf(
+                'The module "%s" specified in privilege target "%s" is not configured', $targetModulePath,
+                $this->getPrivilegeTargetIdentifier()
+            ), 1493206192);
         }
-        $targetModuleConfiguration = $subModuleName !== null ? $moduleSettings[$moduleName]['submodules'][$subModuleName] : $moduleSettings[$moduleName];
+        $targetModuleConfiguration = $subModuleName !== null
+            ? $moduleSettings[$moduleName]['submodules'][$subModuleName]
+            : $moduleSettings[$moduleName];
         if (!isset($targetModuleConfiguration['controller'])) {
-            throw new \RuntimeException(sprintf('The module "%s" specified in privilege target "%s" doesn\'t have a "controller" configured', $targetModulePath, $this->getPrivilegeTargetIdentifier()), 1493206825);
+            throw new \RuntimeException(sprintf(
+                'The module "%s" specified in privilege target "%s" doesn\'t have a "controller" configured',
+                $targetModulePath,
+                $this->getPrivilegeTargetIdentifier()
+            ), 1493206825);
         }
 
-        $methodPrivilegeMatcher = 'method(public ' . ltrim($targetModuleConfiguration['controller'], '\\') . '->(?!initialize).*Action())';
-        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
+        $methodPrivilegeMatcher = 'method(public ' . ltrim($targetModuleConfiguration['controller'], '\\')
+            . '->(?!initialize).*Action())';
+        $methodPrivilegeTarget = new PrivilegeTarget(
+            $this->privilegeTarget->getIdentifier() . '__methodPrivilege',
+            MethodPrivilege::class,
+            $methodPrivilegeMatcher
+        );
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
-        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege(
+            $this->getPermission(),
+            $this->getParameters()
+        );
     }
 
     /**
@@ -94,7 +119,8 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
         if (!($subject instanceof ModulePrivilegeSubject) && !($subject instanceof MethodPrivilegeSubject)) {
             throw new InvalidPrivilegeTypeException(
                 sprintf(
-                    'Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".',
+                    'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                        . ' but we got a subject of type: "%s".',
                     self::class,
                     ModulePrivilegeSubject::class,
                     MethodPrivilegeSubject::class,

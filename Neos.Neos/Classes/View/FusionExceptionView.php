@@ -164,8 +164,10 @@ class FusionExceptionView extends AbstractView
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function getFusionRuntime(NodeInterface $currentSiteNode, ControllerContext  $controllerContext): \Neos\Fusion\Core\Runtime
-    {
+    protected function getFusionRuntime(
+        NodeInterface $currentSiteNode,
+        ControllerContext $controllerContext
+    ): FusionRuntime {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $controllerContext);
 

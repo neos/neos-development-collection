@@ -73,24 +73,18 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
                 $this->output .= sprintf('<li class="neos-tree-folder neos-tree-node" title="%s">', $pathEscaped);
                 $this->output .= sprintf('%s&nbsp;(%s)', $keyEscaped, count($value));
                 $this->renderSingleLevel($value, $path);
-                $this->output .= '</li>';
             } else {
                 $this->output .= '<li class="neos-tree-node">';
                 $this->output .= sprintf('<div class="key" title="%s">%s:</div> ', $pathEscaped, $keyEscaped);
                 $this->output .= sprintf('<div class="value" title="%s">', $typeEscaped);
-                switch ($typeEscaped) {
-                            case 'boolean':
-                                $this->output .= ($value ? 'true' : 'false');
-                                break;
-                            case 'NULL':
-                                $this->output .= 'NULL';
-                                break;
-                            default:
-                                $this->output .= htmlspecialchars($value);
-                        }
+                $this->output .= match ($typeEscaped) {
+                    'boolean' => ($value ? 'true' : 'false'),
+                    'NULL' => 'NULL',
+                    default => htmlspecialchars($value),
+                };
                 $this->output .= '</div>';
-                $this->output .= '</li>';
             }
+            $this->output .= '</li>';
         }
         $this->output .= '</ul>';
     }

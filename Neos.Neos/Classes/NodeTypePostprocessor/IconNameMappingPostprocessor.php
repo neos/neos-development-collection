@@ -46,7 +46,10 @@ class IconNameMappingPostprocessor implements NodeTypePostprocessorInterface
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
                     if (isset($inspectorConfiguration[$elementTypeName][$elementName]['icon'])) {
-                        $configuration['ui']['inspector'][$elementTypeName][$elementName]['icon'] = $this->iconNameMappingService->convert($inspectorConfiguration[$elementTypeName][$elementName]['icon']);
+                        $configuration['ui']['inspector'][$elementTypeName][$elementName]['icon']
+                            = $this->iconNameMappingService->convert(
+                                $inspectorConfiguration[$elementTypeName][$elementName]['icon']
+                            );
                     }
                 }
             }

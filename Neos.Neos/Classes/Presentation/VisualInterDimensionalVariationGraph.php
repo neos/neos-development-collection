@@ -175,8 +175,13 @@ final class VisualInterDimensionalVariationGraph
      * @param int $baseOffset
      * @return void
      */
-    protected function traverseDimension(string $dimensionName, IntraDimension\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
-    {
+    protected function traverseDimension(
+        string $dimensionName,
+        IntraDimension\ContentDimensionValue $value,
+        int $depth,
+        int &$horizontalOffset,
+        int $baseOffset
+    ) {
         $leftOffset = $horizontalOffset;
         if ($value->getVariants()) {
             foreach ($value->getVariants() as $variant) {
@@ -266,7 +271,7 @@ final class VisualInterDimensionalVariationGraph
      * @param int $y
      * @return void
      */
-    protected function initializeSubgraphNode(InterDimension\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
+    protected function initializeSubgraphNode(InterDimension\ContentSubgraph $subgraph, int &$horizontalOffset, int &$y)
     {
         $nameComponents = $subgraph->getDimensionValues();
         array_walk($nameComponents, function (IntraDimension\ContentDimensionValue &$value) {
@@ -303,18 +308,23 @@ final class VisualInterDimensionalVariationGraph
     protected function initializeEdges($hideInactive = true)
     {
         $subgraphs = $this->fallbackGraph->getSubgraphs();
-        usort($subgraphs, function (InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
+        usort($subgraphs, function (
+            InterDimension\ContentSubgraph $subgraphA,
+            InterDimension\ContentSubgraph $subgraphB
+        ) {
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
         foreach ($subgraphs as $subgraph) {
             $fallback = $subgraph->getFallback();
-            usort($fallback, function (InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
+            usort($fallback, function (
+                InterDimension\ContentSubgraph $subgraphA,
+                InterDimension\ContentSubgraph $subgraphB
+            ) {
                 return $subgraphA->getWeight() <=> $subgraphB->getWeight();
             });
             $i = 1;
             foreach ($fallback as $fallbackSubgraph) {
-                if (
-                    isset($this->nodes[$fallbackSubgraph->getIdentityHash()])
+                if (isset($this->nodes[$fallbackSubgraph->getIdentityHash()])
                     && isset($this->nodes[$subgraph->getIdentityHash()])
                 ) {
                     $isPrimary = ($fallbackSubgraph === $this->fallbackGraph->getPrimaryFallback($subgraph));

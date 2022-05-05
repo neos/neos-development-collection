@@ -36,7 +36,11 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'enableContentCache' => [null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+        'enableContentCache' => [
+            null,
+            'Flag to enable content caching inside Fusion (overriding the global setting).',
+            'boolean'
+        ]
     ];
 
     /**
@@ -97,7 +101,8 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
+     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface
+     *                                  otherwise the original output.
      */
     protected function parsePotentialRawHttpResponse($output)
     {

@@ -46,7 +46,9 @@ class EventRepository extends Repository
         $query = $this->prepareRelevantEventsQuery();
         $query->getQueryBuilder()->select('DISTINCT e');
         $query->getQueryBuilder()
-            ->andWhere('e NOT INSTANCE OF ' . NodeEvent::class . ' OR e IN (SELECT nodeevent.uid FROM ' . NodeEvent::class . ' nodeevent WHERE nodeevent.workspaceName = :workspaceName AND nodeevent.parentEvent IS NULL)')
+            ->andWhere('e NOT INSTANCE OF ' . NodeEvent::class . ' OR e IN (SELECT nodeevent.uid FROM '
+                . NodeEvent::class
+                . ' nodeevent WHERE nodeevent.workspaceName = :workspaceName AND nodeevent.parentEvent IS NULL)')
             ->setParameter('workspaceName', $workspaceName);
         $query->getQueryBuilder()->setFirstResult($offset);
         $query->getQueryBuilder()->setMaxResults($limit);

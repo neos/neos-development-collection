@@ -58,7 +58,9 @@ class PluginUriAspect
 
         $currentNode = $request->getInternalArgument('__node');
         $controllerObjectName = $this->getControllerObjectName($request, $arguments);
-        $actionName = $arguments['actionName'] !== null ? $arguments['actionName'] : $request->getControllerActionName();
+        $actionName = $arguments['actionName'] !== null
+            ? $arguments['actionName']
+            : $request->getControllerActionName();
 
         $targetNode = $this->pluginService->getPluginNodeByAction($currentNode, $controllerObjectName, $actionName);
 
@@ -81,9 +83,15 @@ class PluginUriAspect
      */
     public function getControllerObjectName($request, array $arguments)
     {
-        $controllerName = $arguments['controllerName'] !== null ? $arguments['controllerName'] : $request->getControllerName();
-        $subPackageKey = $arguments['subPackageKey'] !== null ? $arguments['subPackageKey'] : $request->getControllerSubpackageKey();
-        $packageKey = $arguments['packageKey'] !== null ? $arguments['packageKey'] : $request->getControllerPackageKey();
+        $controllerName = $arguments['controllerName'] !== null
+            ? $arguments['controllerName']
+            : $request->getControllerName();
+        $subPackageKey = $arguments['subPackageKey'] !== null
+            ? $arguments['subPackageKey']
+            : $request->getControllerSubpackageKey();
+        $packageKey = $arguments['packageKey'] !== null
+            ? $arguments['packageKey']
+            : $request->getControllerPackageKey();
 
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
         $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);

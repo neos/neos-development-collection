@@ -46,7 +46,8 @@ class NodeEvent extends Event
     protected $nodeIdentifier;
 
     /**
-     * the document node identifier on which the action took place. is equal to NodeIdentifier if the action happened on documentNodes
+     * the document node identifier on which the action took place.
+     * is equal to NodeIdentifier if the action happened on documentNodes
      *
      * @var string
      */

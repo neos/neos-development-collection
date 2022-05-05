@@ -18,7 +18,8 @@ use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
 /**
- * Node Type post processor that looks for properties flagged with "showInCreationDialog" and sets the "creationDialog" configuration accordingly
+ * Node Type post processor that looks for properties flagged with "showInCreationDialog"
+ * and sets the "creationDialog" configuration accordingly
  *
  * Example NodeTypes.yaml configuration:
  *
@@ -77,17 +78,23 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
         }
         $creationDialogElements = $configuration['ui']['creationDialog']['elements'] ?? [];
         foreach ($configuration['properties'] as $propertyName => $propertyConfiguration) {
-            if (!isset($propertyConfiguration['ui']['showInCreationDialog']) || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
+            if (!isset($propertyConfiguration['ui']['showInCreationDialog'])
+                || $propertyConfiguration['ui']['showInCreationDialog'] !== true
+            ) {
                 continue;
             }
             $creationDialogElement = $this->convertPropertyConfiguration($propertyName, $propertyConfiguration);
             if (isset($configuration['ui']['creationDialog']['elements'][$propertyName])) {
-                $creationDialogElement = Arrays::arrayMergeRecursiveOverrule($creationDialogElement, $configuration['ui']['creationDialog']['elements'][$propertyName]);
+                $creationDialogElement = Arrays::arrayMergeRecursiveOverrule(
+                    $creationDialogElement,
+                    $configuration['ui']['creationDialog']['elements'][$propertyName]
+                );
             }
             $creationDialogElements[$propertyName] = $creationDialogElement;
         }
         if ($creationDialogElements !== []) {
-            $configuration['ui']['creationDialog']['elements'] = (new PositionalArraySorter($creationDialogElements))->toArray();
+            $configuration['ui']['creationDialog']['elements']
+                = (new PositionalArraySorter($creationDialogElements))->toArray();
         }
     }
 
@@ -121,13 +128,21 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
             $convertedConfiguration['position'] = $propertyConfiguration['position'];
         }
 
-        $editor = $propertyConfiguration['ui']['inspector']['editor'] ?? $dataTypeDefaultConfiguration['editor'] ?? 'Neos.Neos/Inspector/Editors/TextFieldEditor';
+        $editor = $propertyConfiguration['ui']['inspector']['editor']
+            ?? $dataTypeDefaultConfiguration['editor']
+            ?? 'Neos.Neos/Inspector/Editors/TextFieldEditor';
         $editorOptions = $propertyConfiguration['ui']['inspector']['editorOptions'] ?? [];
         if (isset($dataTypeDefaultConfiguration['editorOptions'])) {
-            $editorOptions = Arrays::arrayMergeRecursiveOverrule($dataTypeDefaultConfiguration['editorOptions'], $editorOptions);
+            $editorOptions = Arrays::arrayMergeRecursiveOverrule(
+                $dataTypeDefaultConfiguration['editorOptions'],
+                $editorOptions
+            );
         }
         if (isset($this->editorDefaultConfiguration[$editor]['editorOptions'])) {
-            $editorOptions = Arrays::arrayMergeRecursiveOverrule($this->editorDefaultConfiguration[$editor]['editorOptions'], $editorOptions);
+            $editorOptions = Arrays::arrayMergeRecursiveOverrule(
+                $this->editorDefaultConfiguration[$editor]['editorOptions'],
+                $editorOptions
+            );
         }
 
         $convertedConfiguration['ui']['editor'] = $editor;

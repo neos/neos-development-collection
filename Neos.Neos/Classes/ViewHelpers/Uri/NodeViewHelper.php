@@ -308,4 +308,3 @@ class NodeViewHelper extends AbstractViewHelper
         );
     }
 }
-

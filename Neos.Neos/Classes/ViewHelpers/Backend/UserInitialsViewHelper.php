@@ -63,7 +63,10 @@ class UserInitialsViewHelper extends AbstractViewHelper
     public function render(): string
     {
         if (!in_array($this->arguments['format'], ['fullFirstName', 'initials', 'fullName'])) {
-            throw new \InvalidArgumentException(sprintf('Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $format), 1415705861);
+            throw new \InvalidArgumentException(sprintf(
+                'Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".',
+                $this->arguments['format']
+            ), 1415705861);
         }
 
         $username = (string)$this->renderChildren();
@@ -80,13 +83,18 @@ class UserInitialsViewHelper extends AbstractViewHelper
             $you = $translationHelper->translate('you', null, [], 'Main', 'Neos.Neos');
         }
 
-        switch ($this->arguments['format']) {
-            case 'initials':
-                return mb_substr(preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()), 0, 1) . mb_substr(preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()), 0, 1);
-            case 'fullFirstName':
-                return $you ?? trim($requestedUser->getName()->getFirstName() . ' ' . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.'));
-            case 'fullName':
-                return $you ?? $requestedUser->getName()->getFullName();
-        }
+        return match ($this->arguments['format']) {
+            'initials' => mb_substr(
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()), 0, 1
+            ) . mb_substr(
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()), 0, 1
+            ),
+            'fullFirstName' => $you
+                ?? trim($requestedUser->getName()->getFirstName() . ' '
+                    . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.')
+                ),
+            'fullName' => $you ?? $requestedUser->getName()->getFullName(),
+            default => '',
+        };
     }
 }

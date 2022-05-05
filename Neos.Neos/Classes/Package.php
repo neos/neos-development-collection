@@ -25,7 +25,6 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
-use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Fusion\Core\Cache\ContentCache;
 
@@ -52,96 +51,108 @@ class Package extends BasePackage
             $cacheManager->getCache('Neos_Neos_XliffToJsonTranslations')->flush();
         };
 
-        $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', function ($fileMonitorIdentifier, array $changedFiles) use ($flushConfigurationCache, $flushXliffServiceCache) {
-            switch ($fileMonitorIdentifier) {
-                case 'ContentRepository_NodeTypesConfiguration':
-                case 'Flow_ConfigurationFiles':
-                    $flushConfigurationCache();
-                    break;
-                case 'Flow_TranslationFiles':
-                    $flushConfigurationCache();
-                    $flushXliffServiceCache();
+        $dispatcher->connect(
+            FileMonitor::class,
+            'filesHaveChanged', function (
+                $fileMonitorIdentifier,
+                array $changedFiles
+            ) use ($flushConfigurationCache, $flushXliffServiceCache) {
+                switch ($fileMonitorIdentifier) {
+                    case 'ContentRepository_NodeTypesConfiguration':
+                    case 'Flow_ConfigurationFiles':
+                        $flushConfigurationCache();
+                        break;
+                    case 'Flow_TranslationFiles':
+                        $flushConfigurationCache();
+                        $flushXliffServiceCache();
+                }
             }
-        });
+        );
 
-        $dispatcher->connect(Site::class, 'siteChanged', $flushConfigurationCache);
-        $dispatcher->connect(Site::class, 'siteChanged', RouterCachingService::class, 'flushCaches');
+        $dispatcher->connect(
+            Site::class,
+            'siteChanged',
+            $flushConfigurationCache
+        );
+        $dispatcher->connect(
+            Site::class,
+            'siteChanged',
+            RouterCachingService::class,
+            'flushCaches'
+        );
 
-        // Disable signal informations as we don't need them and we also expect as a second argument an optional workspace
-        $dispatcher->connect(Node::class, 'nodeUpdated', ContentCacheFlusher::class, 'registerNodeChange', false);
-        $dispatcher->connect(Node::class, 'nodeAdded', ContentCacheFlusher::class, 'registerNodeChange', false);
-        $dispatcher->connect(Node::class, 'nodeRemoved', ContentCacheFlusher::class, 'registerNodeChange', false);
+        $dispatcher->connect(
+            AssetService::class,
+            'assetUpdated',
+            ContentCacheFlusher::class,
+            'registerAssetChange',
+            false
+        );
 
-        // method signature of emitBeforeNodeMove differs so we need to manually trigger the content cache flusher with correct params
-        $dispatcher->connect(Node::class, 'beforeNodeMove', function (NodeInterface $node) use ($bootstrap) {
-            /** @var ContentCacheFlusher $contentCacheFlusher */
-            $contentCacheFlusher = $bootstrap->getObjectManager()->get(ContentCacheFlusher::class);
-            $contentCacheFlusher->registerNodeChange($node);
-        });
+        $dispatcher->connect(
+            ContentController::class,
+            'assetUploaded',
+            SiteService::class,
+            'assignUploadedAssetToSiteAssetCollection'
+        );
 
-        $dispatcher->connect(AssetService::class, 'assetUpdated', ContentCacheFlusher::class, 'registerAssetChange', false);
+        $dispatcher->connect(
+            PersistenceManager::class,
+            'allObjectsPersisted',
+            RouteCacheFlusher::class,
+            'commit'
+        );
 
-        $dispatcher->connect(ContentController::class, 'assetUploaded', SiteService::class, 'assignUploadedAssetToSiteAssetCollection');
+        $dispatcher->connect(
+            SiteService::class,
+            'sitePruned',
+            ContentCache::class,
+            'flush'
+        );
+        $dispatcher->connect(
+            SiteService::class,
+            'sitePruned',
+            RouterCachingService::class,
+            'flushCaches'
+        );
 
-        $dispatcher->connect(Node::class, 'nodeAdded', NodeUriPathSegmentGenerator::class, '::setUniqueUriPathSegment');
-        $dispatcher->connect(Node::class, 'nodePropertyChanged', Service\ImageVariantGarbageCollector::class, 'removeUnusedImageVariant');
-        $dispatcher->connect(Node::class, 'nodePropertyChanged', function (NodeInterface $node, $propertyName) use ($bootstrap) {
-            if ($propertyName === 'uriPathSegment') {
-                NodeUriPathSegmentGenerator::setUniqueUriPathSegment($node);
-                $bootstrap->getObjectManager()->get(RouteCacheFlusher::class)->registerNodeChange($node);
-            }
-        });
-        $dispatcher->connect(Node::class, 'nodePathChanged', function (NodeInterface $node, $oldPath, $newPath, $recursion) {
-            if (!$recursion) {
-                NodeUriPathSegmentGenerator::setUniqueUriPathSegment($node);
-            }
-        });
+        $dispatcher->connect(
+            SiteImportService::class,
+            'siteImported',
+            ContentCache::class,
+            'flush'
+        );
+        $dispatcher->connect(
+            SiteImportService::class,
+            'siteImported',
+            RouterCachingService::class,
+            'flushCaches'
+        );
 
-        $dispatcher->connect(PublishingService::class, 'nodePublished', ContentCacheFlusher::class, 'registerNodeChange', false);
-        $dispatcher->connect(PublishingService::class, 'nodeDiscarded', ContentCacheFlusher::class, 'registerNodeChange', false);
+        $dispatcher->connect(
+            Workspace::class,
+            'beforeNodePublishing',
+            ContentRepositoryIntegrationService::class,
+            'beforeNodePublishing'
+        );
+        $dispatcher->connect(
+            Workspace::class,
+            'afterNodePublishing',
+            ContentRepositoryIntegrationService::class,
+            'afterNodePublishing'
+        );
+        $dispatcher->connect(
+            Workspace::class,
+            'baseWorkspaceChanged',
+            RouteCacheFlusher::class,
+            'registerBaseWorkspaceChange'
+        );
 
-        $dispatcher->connect(Node::class, 'nodePathChanged', RouteCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(Node::class, 'nodeRemoved', RouteCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(PublishingService::class, 'nodeDiscarded', RouteCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(PublishingService::class, 'nodePublished', RouteCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(PublishingService::class, 'nodePublished', function ($node, $targetWorkspace) use ($bootstrap) {
-            $cacheManager = $bootstrap->getObjectManager()->get(CacheManager::class);
-            if ($cacheManager->hasCache('Flow_Persistence_Doctrine')) {
-                $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
-            }
-        });
-        $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', RouteCacheFlusher::class, 'commit');
-
-        $dispatcher->connect(SiteService::class, 'sitePruned', ContentCache::class, 'flush');
-        $dispatcher->connect(SiteService::class, 'sitePruned', RouterCachingService::class, 'flushCaches');
-
-        $dispatcher->connect(SiteImportService::class, 'siteImported', ContentCache::class, 'flush');
-        $dispatcher->connect(SiteImportService::class, 'siteImported', RouterCachingService::class, 'flushCaches');
-
-        // Eventlog
-        $dispatcher->connect(Node::class, 'beforeNodeCreate', ContentRepositoryIntegrationService::class, 'beforeNodeCreate');
-        $dispatcher->connect(Node::class, 'afterNodeCreate', ContentRepositoryIntegrationService::class, 'afterNodeCreate');
-
-        $dispatcher->connect(Node::class, 'nodeUpdated', ContentRepositoryIntegrationService::class, 'nodeUpdated');
-        $dispatcher->connect(Node::class, 'nodeRemoved', ContentRepositoryIntegrationService::class, 'nodeRemoved');
-
-        $dispatcher->connect(Node::class, 'beforeNodePropertyChange', ContentRepositoryIntegrationService::class, 'beforeNodePropertyChange');
-        $dispatcher->connect(Node::class, 'nodePropertyChanged', ContentRepositoryIntegrationService::class, 'nodePropertyChanged');
-
-        $dispatcher->connect(Node::class, 'beforeNodeCopy', ContentRepositoryIntegrationService::class, 'beforeNodeCopy');
-        $dispatcher->connect(Node::class, 'afterNodeCopy', ContentRepositoryIntegrationService::class, 'afterNodeCopy');
-
-        $dispatcher->connect(Node::class, 'beforeNodeMove', ContentRepositoryIntegrationService::class, 'beforeNodeMove');
-        $dispatcher->connect(Node::class, 'afterNodeMove', ContentRepositoryIntegrationService::class, 'afterNodeMove');
-
-        $dispatcher->connect(Context::class, 'beforeAdoptNode', ContentRepositoryIntegrationService::class, 'beforeAdoptNode');
-        $dispatcher->connect(Context::class, 'afterAdoptNode', ContentRepositoryIntegrationService::class, 'afterAdoptNode');
-
-        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', ContentRepositoryIntegrationService::class, 'beforeNodePublishing');
-        $dispatcher->connect(Workspace::class, 'afterNodePublishing', ContentRepositoryIntegrationService::class, 'afterNodePublishing');
-        $dispatcher->connect(Workspace::class, 'baseWorkspaceChanged', RouteCacheFlusher::class, 'registerBaseWorkspaceChange');
-
-        $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
-        $dispatcher->connect(NodeDataRepository::class, 'repositoryObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
+        $dispatcher->connect(
+            PersistenceManager::class,
+            'allObjectsPersisted',
+            ContentRepositoryIntegrationService::class,
+            'updateEventsAfterPublish'
+        );
     }
 }

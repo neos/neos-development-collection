@@ -25,7 +25,11 @@ class ColorOfStringViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('string', 'string', 'This is hashed (MD%) and then used as base for the resulting color, if not given the children are used');
+        $this->registerArgument(
+            'string',
+            'string',
+            'This is hashed (MD%) and then used as base for the resulting color, if not given the children are used'
+        );
         $this->registerArgument('minimalBrightness', 'integer', 'Brightness, from 0 to 255', false, '50');
     }
 

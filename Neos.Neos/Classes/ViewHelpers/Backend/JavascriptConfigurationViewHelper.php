@@ -108,14 +108,16 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             'window.NeosCMS.Configuration = {};',
             'window.NeosCMS.Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
             'window.NeosCMS.Configuration.nodeTypes = {};',
-            'window.NeosCMS.Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
+            'window.NeosCMS.Configuration.nodeTypes.groups = '
+                . json_encode($this->getNodeTypeGroupsSettings()) . ';',
             'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
             'window.NeosCMS.Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
         ];
 
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
-        $configuration[] = 'window.NeosCMS.Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
+        $configuration[] = 'window.NeosCMS.Configuration.neosJavascriptBasePath = '
+            . json_encode($neosJavaScriptBasePath) . ';';
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
             $configuration[] = 'window.NeosCMS.Configuration.DevelopmentMode = true;';
@@ -191,7 +193,15 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     protected function renderMaximumFileUploadSize()
     {
-        $maximumFileUploadSizeInBytes = min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
-        return sprintf('"%d"; // %s, as configured in php.ini', $maximumFileUploadSizeInBytes, Files::bytesToSizeString($maximumFileUploadSizeInBytes));
+        $maximumFileUploadSizeInBytes = min(
+            Files::sizeStringToBytes(ini_get('post_max_size')),
+            Files::sizeStringToBytes(ini_get('upload_max_filesize'))
+        );
+
+        return sprintf(
+            '"%d"; // %s, as configured in php.ini',
+            $maximumFileUploadSizeInBytes,
+            Files::bytesToSizeString($maximumFileUploadSizeInBytes)
+        );
     }
 }
