@@ -84,16 +84,18 @@ class FindOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        if (is_countable($context) && count($context) === 0) {
+        if (is_iterable($context)) {
+            if (is_countable($context) && count($context) === 0) {
+                return true;
+            }
+            foreach ($context as $contextNode) {
+                if (!$contextNode instanceof NodeInterface) {
+                    return false;
+                }
+            }
             return true;
         }
-
-        foreach ($context as $contextNode) {
-            if (!$contextNode instanceof NodeInterface) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     /**

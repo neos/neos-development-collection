@@ -43,6 +43,17 @@ class NextOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return $this->checkContextForTraversableNodeInterface($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
