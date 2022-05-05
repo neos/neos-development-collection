@@ -32,7 +32,6 @@ class GenericOperationTest extends AbstractQueryOperationsTest
             ClosestOperation::class,
             ContextOperation::class,
             FilterOperation::class,
-            FindOperation::class,
             HasOperation::class,
             NextAllOperation::class,
             NextOperation::class,
