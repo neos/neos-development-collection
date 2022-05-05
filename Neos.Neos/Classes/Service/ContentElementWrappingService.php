@@ -23,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**

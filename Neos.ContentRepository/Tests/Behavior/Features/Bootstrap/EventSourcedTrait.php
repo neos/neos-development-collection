@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;

@@ -13,6 +13,7 @@
         "doctrine/migrations": "*",
         "neos/cache": "*",
         "neos/utility-arrays": "*",
+        "neos/neos-ui": "*",
         "neos/event-sourcing": "*",
         "neos/flow": "*",
         "neos/eel": "*",
@@ -23,7 +24,6 @@
         "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "~1.0",
         "webmozart/assert": "^1.10",
-        "neos/neos-ui": "*",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
@@ -51,12 +51,12 @@
         "neos/content-repository-dimensionspace": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/content-repository-nodeaccess": "self.version",
+        "neos/contentrepository-security": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
         "neos/escr-export": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
-        "neos/eventsourcedcontentrepository-security": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version",
         "neos/fusion-afx": "self.version",
         "neos/fusion": "self.version",
@@ -133,6 +133,9 @@
             "Neos\\ContentRepository\\NodeAccess\\": [
                 "Neos.ContentRepository.NodeAccess/Classes"
             ],
+            "Neos\\ContentRepository\\Security\\": [
+                "Neos.ContentRepository.Security/Classes"
+            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/src"
             ],
@@ -147,9 +150,6 @@
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
-            ],
-            "Neos\\EventSourcedContentRepository\\Security\\": [
-                "Neos.EventSourcedContentRepository.Security/Classes"
             ],
             "Neos\\EventSourcedNeosAdjustments\\": [
                 "Neos.EventSourcedNeosAdjustments/Classes"
