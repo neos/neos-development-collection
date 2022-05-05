@@ -53,7 +53,6 @@ use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Exception\FilesException;
@@ -67,7 +66,6 @@ use Neos\Utility\MediaTypes;
  */
 class AssetController extends ActionController
 {
-    use CreateContentContextTrait;
     use BackendUserTranslationTrait;
     use AddFlashMessageTrait;
 

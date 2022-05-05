@@ -15,6 +15,7 @@ namespace Neos\Media\Browser\Controller;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -36,8 +37,6 @@ use Neos\Neos\Domain\Service\UserService as DomainUserService;
  */
 class UsageController extends ActionController
 {
-    use CreateContentContextTrait;
-
     /**
      * @Flow\Inject
      * @var AssetService
@@ -70,7 +69,7 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 
@@ -112,8 +111,7 @@ class UsageController extends ActionController
             } catch (NodeTypeNotFoundException $e) {
                 $nodeType = null;
             }
-            /** @var Workspace $workspace */
-            $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
+            $workspace = $this->workspaceRepository->findOneByName($usage->getWorkspaceName());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
