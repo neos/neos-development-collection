@@ -236,7 +236,12 @@ jobs:
           # composer test
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
-          retVal=$(composer test:behavioral:stop-on-failure)
+
+          # do not exit the script if the tests break; as we want to
+          set +e
+          composer test:behavioral:stop-on-failure
+          retVal=$?
+          set -e
           if [ $retVal -ne 0 ]; then
             cd ../../
             echo "DUMPING DATABASE (because of error)"
@@ -260,7 +265,9 @@ jobs:
         if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
         # we want to reach the Upload Postgres DB dump step.
         # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
-        run: exit 1
+        run: |
+          echo '${{ toJSON(steps) }}'
+          exit 1
 
       - name: Setup Flow configuration (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
