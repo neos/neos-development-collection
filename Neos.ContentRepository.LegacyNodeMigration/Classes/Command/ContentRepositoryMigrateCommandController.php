@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Command;
+namespace Neos\ContentRepository\LegacyNodeMigration\Command;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.
@@ -26,8 +26,8 @@ use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ClosureEventPublisher;
-use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositoryExportService;
+use Neos\ContentRepository\LegacyNodeMigration\Service\ClosureEventPublisher;
+use Neos\ContentRepository\LegacyNodeMigration\Service\ContentRepositoryExportService;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventStore\EventNormalizer;

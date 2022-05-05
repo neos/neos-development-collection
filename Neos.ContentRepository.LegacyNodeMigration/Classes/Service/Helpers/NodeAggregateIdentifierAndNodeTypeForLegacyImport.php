@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers;
+namespace Neos\ContentRepository\LegacyNodeMigration\Service\Helpers;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.

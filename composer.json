@@ -49,6 +49,7 @@
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/content-repository-dimensionspace": "self.version",
+        "neos/contentrepository-legacynodemigration": "self.version",
         "neos/content-repository-nodeaccess": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
@@ -80,7 +81,7 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategy.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php,*/PropertyScope.php,*/VariantType.php ./Neos.ContentGraph.DoctrineDbalAdapter/Classes ./Neos.ContentGraph.PostgreSQLAdapter/Classes ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/Classes ./Neos.EventSourcedContentRepository/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes",
+        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategy.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php,*/PropertyScope.php,*/VariantType.php ./Neos.ContentGraph.DoctrineDbalAdapter/Classes ./Neos.ContentGraph.PostgreSQLAdapter/Classes ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/Classes ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes",
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpcs",
@@ -125,6 +126,9 @@
             ],
             "Neos\\ContentRepository\\DimensionSpace\\": [
                 "Neos.ContentRepository.DimensionSpace/Classes"
+            ],
+            "Neos\\ContentRepository\\LegacyNodeMigration\\": [
+                "Neos.ContentRepository.LegacyNodeMigration/Classes"
             ],
             "Neos\\ContentRepository\\NodeAccess\\": [
                 "Neos.ContentRepository.NodeAccess/Classes"
@@ -219,6 +223,9 @@
             ],
             "Neos\\ContentRepository\\DimensionSpace\\Tests\\": [
                 "Neos.ContentRepository.DimensionSpace/Tests"
+            ],
+            "Neos\\ContentRepository\\LegacyNodeMigration\\Tests\\": [
+                "Neos.ContentRepository.LegacyNodeMigration/Tests"
             ],
             "Neos\\ContentRepository\\NodeAccess\\Tests\\": [
                 "Neos.ContentRepository.NodeAccess/Tests"
