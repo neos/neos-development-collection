@@ -21,7 +21,6 @@ use Neos\Utility\ObjectAccess;
  */
 class InterDimensionalFallbackGraphTest extends UnitTestCase
 {
-
     public function setUp(): void
     {
         parent::setUp();
