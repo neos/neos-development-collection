@@ -168,6 +168,9 @@ class NodeTypeManager
         $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
 
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
+            if (!is_string($nodeTypeName)) {
+                continue;
+            }
             if (!is_array($completeNodeTypeConfiguration[$nodeTypeName])) {
                 continue;
             }
@@ -188,6 +191,7 @@ class NodeTypeManager
     {
         $this->cachedNodeTypes = [];
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
+            /** @var string $nodeTypeName */
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }
     }
@@ -257,8 +261,10 @@ class NodeTypeManager
      * @param array<string,mixed> $completeNodeTypeConfiguration
      * @return array<string,?NodeType>
      */
-    protected function evaluateSuperTypesConfiguration(array $superTypesConfiguration, array &$completeNodeTypeConfiguration): array
-    {
+    protected function evaluateSuperTypesConfiguration(
+        array $superTypesConfiguration,
+        array &$completeNodeTypeConfiguration
+    ): array {
         $superTypes = [];
         foreach ($superTypesConfiguration as $superTypeName => $enabled) {
             $superTypes[$superTypeName] = $this->evaluateSuperTypeConfiguration(
@@ -278,8 +284,11 @@ class NodeTypeManager
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
      */
-    protected function evaluateSuperTypeConfiguration(?string $superTypeName, ?bool $enabled, array &$completeNodeTypeConfiguration): ?NodeType
-    {
+    protected function evaluateSuperTypeConfiguration(
+        ?string $superTypeName,
+        ?bool $enabled,
+        array &$completeNodeTypeConfiguration
+    ): ?NodeType {
         // Skip unset node types
         if ($enabled === false || $enabled === null) {
             return null;

@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * Filter nodes having the given property and its value not empty.

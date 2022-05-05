@@ -14,14 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\Flow\Annotations as Flow;
-
-#[Flow\Proxy(false)]
 final class NodeTypeConstraintsFactory
 {
     /**
      * @param array<string,bool> $declaration
-     * @return NodeTypeConstraints
      */
     public static function createFromNodeTypeDeclaration(array $declaration): NodeTypeConstraints
     {
@@ -42,8 +38,8 @@ final class NodeTypeConstraintsFactory
 
         return new NodeTypeConstraints(
             $wildCardAllowed,
-            $explicitlyAllowedNodeTypeNames,
-            $explicitlyDisallowedNodeTypeNames
+            NodeTypeNames::fromArray($explicitlyAllowedNodeTypeNames),
+            NodeTypeNames::fromArray($explicitlyDisallowedNodeTypeNames)
         );
     }
 }

@@ -5,9 +5,9 @@ index f0dc4bd8b..1e831ca3d 100644
 @@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Service;
   * source code.
   */
- 
+
 -use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
++use Neos\ContentRepository\Projection\Content\NodeInterface;
  use Neos\ContentRepository\Domain\Service\NodeTypeManager;
  use Neos\Flow\Annotations as Flow;
  use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -41,10 +41,10 @@ index f0dc4bd8b..1e831ca3d 100644
 +    public function getMergedFusionObjectTree(NodeInterface $startNode)
      {
          $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
- 
+
 @@ -151,10 +151,10 @@ class FusionService
      }
- 
+
      /**
 -     * @param TraversableNodeInterface $siteNode
 +     * @param NodeInterface $siteNode
@@ -61,7 +61,7 @@ index c9ab62afc..ae1bf4d51 100644
 +++ b/Neos.Neos/Classes/Domain/Service/SiteService.php
 @@ -12,7 +12,10 @@ namespace Neos\Neos\Domain\Service;
   */
- 
+
  use Neos\ContentRepository\Domain\Model\NodeInterface;
 +use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 +use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -73,7 +73,7 @@ index c9ab62afc..ae1bf4d51 100644
 @@ -53,6 +56,12 @@ class SiteService
       */
      protected $siteRepository;
- 
+
 +    /**
 +     * @Flow\Inject
 +     * @var NodeSiteResolvingService
@@ -117,7 +117,7 @@ index c9ab62afc..ae1bf4d51 100644
 +            // 👻
 +        }
      }
- 
+
      /**
 diff --git a/Neos.Neos/Classes/View/FusionView.php b/Neos.Neos/Classes/View/FusionView.php
 index 7af8ad843..190244177 100644
@@ -125,15 +125,15 @@ index 7af8ad843..190244177 100644
 +++ b/Neos.Neos/Classes/View/FusionView.php
 @@ -12,6 +12,7 @@ namespace Neos\Neos\View;
   */
- 
+
  use GuzzleHttp\Psr7\Message;
-+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
++use Neos\ContentRepository\Projection\Content\NodeInterface;
  use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
  use Neos\Flow\Annotations as Flow;
  use Neos\Flow\Mvc\View\AbstractView;
 @@ -203,10 +204,10 @@ class FusionView extends AbstractView
- 
- 
+
+
      /**
 -     * @param TraversableNodeInterface $currentSiteNode
 +     * @param NodeInterface $currentSiteNode
