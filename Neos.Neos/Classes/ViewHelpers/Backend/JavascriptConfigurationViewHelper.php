@@ -110,7 +110,9 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             'window.NeosCMS.Configuration.nodeTypes = {};',
             'window.NeosCMS.Configuration.nodeTypes.groups = '
                 . json_encode($this->getNodeTypeGroupsSettings()) . ';',
-            'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
+            'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = '
+                . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', ''))
+                . ';',
             'window.NeosCMS.Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
         ];
 

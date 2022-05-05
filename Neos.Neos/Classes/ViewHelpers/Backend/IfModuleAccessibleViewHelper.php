@@ -22,7 +22,8 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 /**
  * Condition ViewHelper that can evaluate whether the currently authenticated user can access a given Backend module
  *
- * Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854 that will be obsolete once the whole Backend module logic is rewritten
+ * Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854
+ * that will be obsolete once the whole Backend module logic is rewritten
  */
 class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
 {
@@ -88,7 +89,10 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         }
         /** @var PrivilegeManagerInterface $privilegeManager */
         $privilegeManager = $objectManager->get(PrivilegeManagerInterface::class);
-        if (!$privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($arguments['modulePath']))) {
+        if (!$privilegeManager->isGranted(
+            ModulePrivilege::class,
+            new ModulePrivilegeSubject($arguments['modulePath'])
+        )) {
             return false;
         }
         if (isset($moduleConfiguration['privilegeTarget'])) {

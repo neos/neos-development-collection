@@ -100,7 +100,14 @@ class VisualIntraDimensionalVariationGraph
                 'edges' => []
             ];
             foreach ($contentDimension->getRootValues() as $rootValue) {
-                $this->traverseDimension($contentDimension->getName(), $rootValue, $counter, 0, $horizontalOffset, $parent);
+                $this->traverseDimension(
+                    $contentDimension->getName(),
+                    $rootValue,
+                    $counter,
+                    0,
+                    $horizontalOffset,
+                    $parent
+                );
                 $horizontalOffset += 30;
             }
             $horizontalOffset += 30;

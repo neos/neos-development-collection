@@ -53,10 +53,14 @@ class Package extends BasePackage
 
         $dispatcher->connect(
             FileMonitor::class,
-            'filesHaveChanged', function (
+            'filesHaveChanged',
+            function (
                 $fileMonitorIdentifier,
                 array $changedFiles
-            ) use ($flushConfigurationCache, $flushXliffServiceCache) {
+            ) use (
+                $flushConfigurationCache,
+                $flushXliffServiceCache
+            ) {
                 switch ($fileMonitorIdentifier) {
                     case 'ContentRepository_NodeTypesConfiguration':
                     case 'Flow_ConfigurationFiles':

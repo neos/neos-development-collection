@@ -51,11 +51,18 @@ class UserInitialsViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('format', 'string', 'Supported are "fullFirstName", "initials" and "fullName"', false, 'initials');
+        $this->registerArgument(
+            'format',
+            'string',
+            'Supported are "fullFirstName", "initials" and "fullName"',
+            false,
+            'initials'
+        );
     }
 
     /**
-     * Render user initials or an abbreviated name for a given username. If the account was deleted, use the username as fallback.
+     * Render user initials or an abbreviated name for a given username.
+     * If the account was deleted, use the username as fallback.
      *
      * @return string
      * @throws \Neos\Neos\Domain\Exception
@@ -64,7 +71,8 @@ class UserInitialsViewHelper extends AbstractViewHelper
     {
         if (!in_array($this->arguments['format'], ['fullFirstName', 'initials', 'fullName'])) {
             throw new \InvalidArgumentException(sprintf(
-                'Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".',
+                'Format "%s" given to backend.userInitials(), only supporting "fullFirstName",'
+                    . ' "initials" and "fullName".',
                 $this->arguments['format']
             ), 1415705861);
         }
@@ -85,14 +93,17 @@ class UserInitialsViewHelper extends AbstractViewHelper
 
         return match ($this->arguments['format']) {
             'initials' => mb_substr(
-                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()), 0, 1
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()),
+                0,
+                1
             ) . mb_substr(
-                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()), 0, 1
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()),
+                0,
+                1
             ),
             'fullFirstName' => $you
                 ?? trim($requestedUser->getName()->getFirstName() . ' '
-                    . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.')
-                ),
+                    . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.')),
             'fullName' => $you ?? $requestedUser->getName()->getFullName(),
             default => '',
         };

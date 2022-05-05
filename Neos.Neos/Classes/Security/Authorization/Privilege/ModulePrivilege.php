@@ -66,7 +66,8 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
         }
         if ($subModuleName !== null && !isset($moduleSettings[$moduleName]['submodules'][$subModuleName])) {
             throw new InvalidPolicyException(sprintf(
-                'The module "%s" specified in privilege target "%s" is not configured', $targetModulePath,
+                'The module "%s" specified in privilege target "%s" is not configured',
+                $targetModulePath,
                 $this->getPrivilegeTargetIdentifier()
             ), 1493206192);
         }

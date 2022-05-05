@@ -129,14 +129,14 @@ class NodeTypeConfigurationEnrichmentAspect
 
             if (isset($propertyConfiguration['ui']['inline']['editorOptions']) && $this->shouldFetchTranslation(
                 $propertyConfiguration['ui']['inline']['editorOptions'],
-                'placeholder')
-            ) {
+                'placeholder'
+            )) {
                 $propertyConfiguration['ui']['inline']['editorOptions']['placeholder']
                     = $this->getPropertyConfigurationTranslationId(
                         $nodeTypeLabelIdPrefix,
                         $propertyName,
                         'ui.inline.editorOptions.placeholder'
-                );
+                    );
             }
 
             if (isset($propertyConfiguration['ui']['help']['message'])
@@ -251,8 +251,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (isset($configuration['ui']['help']['message']) && $this->shouldFetchTranslation(
             $configuration['ui']['help'],
             'message'
-            )
-        ) {
+        )) {
             $configuration['ui']['help']['message'] = $this->getInspectorElementTranslationId(
                 $nodeTypeLabelIdPrefix,
                 'ui',
