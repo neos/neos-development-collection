@@ -12,9 +12,8 @@ trait CanEvaluateNodeContextTrait
      * {@inheritdoc}
      *
      * @param array|\Traversable (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
-    public function checkContextForNodeInterface($context)
+    public function checkContextForNodeInterface($context): bool
     {
         if (is_array($context)) {
             return count($context) > 0 ? reset($context) instanceof NodeInterface : true;
@@ -31,9 +30,8 @@ trait CanEvaluateNodeContextTrait
      * {@inheritdoc}
      *
      * @param array|\Traversable (or array-like object) $context onto which this operation should be applied
-     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
-    public function checkContextForTraversableNodeInterface($context)
+    public function checkContextForTraversableNodeInterface($context): bool
     {
         if (is_array($context)) {
             return count($context) > 0 ? reset($context) instanceof TraversableNodeInterface : true;
