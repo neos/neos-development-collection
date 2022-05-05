@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\NodeAccess\Command;
+namespace Neos\ContentRepository\NodeAccess\Migration\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Command;
  * source code.
  */
 
-use Neos\ContentRepository\NodeAccess\Factory\MigrationFactory;
+use Neos\ContentRepository\NodeAccess\Migration\Factory\MigrationFactory;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
