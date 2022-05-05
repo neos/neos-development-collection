@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
+namespace Neos\ContentRepository\LegacyNodeMigration\Service;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.
@@ -50,7 +50,7 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 /** @codingStandardsIgnoreStart */
-use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
+use Neos\ContentRepository\LegacyNodeMigration\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
 /** @codingStandardsIgnoreEnd */
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
+namespace Neos\ContentRepository\LegacyNodeMigration\Service;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.

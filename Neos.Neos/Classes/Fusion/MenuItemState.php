@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Fusion;
+namespace Neos\Neos\Fusion;
 
 /**
  * The menu item state value object

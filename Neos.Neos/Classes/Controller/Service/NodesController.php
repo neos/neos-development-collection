@@ -11,6 +11,16 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\SearchTerm;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
@@ -18,13 +28,8 @@ use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
-use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\View\Service\NodeJsonView;
-use Neos\Neos\Service\Mapping\NodePropertyConverterService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * Rudimentary REST service for nodes
@@ -55,12 +60,29 @@ class NodesController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodePropertyConverterService
+     * @var NodeAccessorManager
      */
-    protected $nodePropertyConverterService;
+    protected $nodeAccessorManager;
+    /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintFactory
+     */
+    protected $nodeTypeConstraintFactory;
 
     /**
-     * @var array
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @var array<string,string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -70,7 +92,7 @@ class NodesController extends ActionController
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = [
@@ -84,165 +106,63 @@ class NodesController extends ActionController
      * @param string $searchTerm An optional search term used for filtering the list of nodes
      * @param array $nodeIdentifiers An optional list of node identifiers
      * @param string $workspaceName Name of the workspace to search in, "live" by default
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying
-     * @param array $nodeTypes A list of node types the list should be filtered by
-     * @param NodeInterface $contextNode a node to use as context for the search
-     * @return string
+     * @param array $dimensions Optional list of dimensions
+     *                                        and their values which should be used for querying
+     * @param array $nodeTypes A list of node types the list should be filtered by (array(string)
+     * @param string $contextNode a node to use as context for the search
      */
-    public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeInterface $contextNode = null)
-    {
-        $searchableNodeTypeNames = [];
-        foreach ($nodeTypes as $nodeTypeName) {
-            if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-                $this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeTypeName));
+    /* @phpstan-ignore-next-line */
+    public function indexAction(
+        string $searchTerm = '',
+        array $nodeIdentifiers = [],
+        string $workspaceName = 'live',
+        array $dimensions = [],
+        array $nodeTypes = ['Neos.Neos:Document'],
+        string $contextNode = null
+    ): void {
+        $nodeAddress = $contextNode ? $this->nodeAddressFactory->createFromUriString($contextNode) : null;
+        unset($contextNode);
+        if (is_null($nodeAddress)) {
+            $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+            if (is_null($workspace)) {
+                throw new \InvalidArgumentException(
+                    'Could not resolve a node address for the given parameters.',
+                    1645631728
+                );
             }
-
-            $searchableNodeTypeNames[$nodeTypeName] = $nodeTypeName;
-            /** @var NodeType $subNodeType */
-            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeTypeName, false) as $subNodeTypeName => $subNodeType) {
-                $searchableNodeTypeNames[$subNodeTypeName] = $subNodeTypeName;
-            }
-        }
-
-        $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        if ($nodeIdentifiers === []) {
-            $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $workspace->getCurrentContentStreamIdentifier(),
+                DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
+                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+            );
         } else {
-            $nodes = array_filter(
-                array_map(function ($identifier) use ($contentContext) {
-                    return $contentContext->getNodeByIdentifier($identifier);
-                }, $nodeIdentifiers)
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
         }
 
-        $this->view->assign('nodes', $nodes);
-    }
-
-    /**
-     * Shows a specific node
-     *
-     * @param string $identifier Specifies the node to look up
-     * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
-     * @return string
-     */
-    public function showAction($identifier, $workspaceName = 'live', array $dimensions = [])
-    {
-        $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        /** @var $node NodeInterface */
-        $node = $contentContext->getNodeByIdentifier($identifier);
-
-        if ($node === null) {
-            $this->addExistingNodeVariantInformationToResponse($identifier, $contentContext);
-            $this->throwStatus(404);
-        }
-
-        $convertedNodeProperties = $this->nodePropertyConverterService->getPropertiesArray($node);
-        array_walk($convertedNodeProperties, function (&$value) {
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-        });
-
-        $this->view->assignMultiple([
-            'node' => $node,
-            'convertedNodeProperties' => $convertedNodeProperties
-        ]);
-    }
-
-    /**
-     * Create a new node from an existing one
-     *
-     * The "mode" property defines the basic mode of operation. Currently supported modes:
-     *
-     * 'adoptFromAnotherDimension': Adopts the single node from another dimension
-     *   - $identifier, $workspaceName and $sourceDimensions specify the source node
-     *   - $identifier, $workspaceName and $dimensions specify the target node
-     *
-     * @param string $mode
-     * @param string $identifier Specifies the identifier of the node to be created; if source
-     * @param string $workspaceName Name of the workspace where to create the node in
-     * @param array $dimensions Optional list of dimensions and their values in which the node should be created
-     * @param array $sourceDimensions
-     * @return string
-     */
-    public function createAction($mode, $identifier, $workspaceName = 'live', array $dimensions = [], array $sourceDimensions = [])
-    {
-        if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
-            $originalContentContext = $this->createContentContext($workspaceName, $sourceDimensions);
-            $node = $originalContentContext->getNodeByIdentifier($identifier);
-
-            if ($node === null) {
-                $this->throwStatus(404, 'Original node was not found.');
-            }
-
-            $contentContext = $this->createContentContext($workspaceName, $dimensions);
-
-            $this->adoptNodeAndParents($node, $contentContext, $mode === 'adoptFromAnotherDimensionAndCopyContent');
-
-            $this->redirect('show', null, null, [
-                'identifier' => $identifier,
-                'workspaceName' => $workspaceName,
-                'dimensions' => $dimensions
-            ]);
+        if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
+            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+            $nodes = !is_null($entryNode) ? $nodeAccessor->findDescendants(
+                [$entryNode],
+                $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $nodeTypes)),
+                SearchTerm::fulltext($searchTerm)
+            ) : [];
         } else {
-            $this->throwStatus(400, sprintf('The create mode "%s" is not supported.', $mode));
-        }
-    }
+            if (!empty($searchTerm)) {
+                throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
+            }
 
-    /**
-     * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existent
-     *
-     * @param $identifier
-     * @param ContentContext $context
-     * @return void
-     */
-    protected function addExistingNodeVariantInformationToResponse($identifier, ContentContext $context)
-    {
-        $nodeVariants = $context->getNodeVariantsByIdentifier($identifier);
-        if (count($nodeVariants) > 0) {
-            $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', true);
-
-            // If the node exists in another dimension, we want to know how many nodes in the rootline are also missing for the target
-            // dimension. This is needed in the UI to tell the user if nodes will be materialized recursively upwards in the rootline.
-            // To find the node path for the given identifier, we just use the first result. This is a safe assumption at least for
-            // "Document" nodes (aggregate=true), because they are always moved in-sync.
-            $node = reset($nodeVariants);
-            /** @var NodeInterface $node */
-            if ($node->getNodeType()->isAggregate()) {
-                $pathSegmentsToSites = NodePaths::getPathDepth(SiteService::SITES_ROOT_PATH);
-                $pathSegmentsToNodeVariant = NodePaths::getPathDepth($node->getPath());
-                // Segments between the sites root "/sites" and the node variant (minimum 1)
-                $pathSegments = $pathSegmentsToNodeVariant - $pathSegmentsToSites;
-                // Nodes between (and including) the site root node and the node variant (minimum 1)
-                $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $context->getCurrentSite()->getNodeName());
-                $nodes = $context->getNodesOnPath($siteNodePath, $node->getPath());
-                $missingNodesOnRootline = $pathSegments - count($nodes);
-                if ($missingNodesOnRootline > 0) {
-                    $this->response->setHttpHeader('X-Neos-Nodes-Missing-On-Rootline', $missingNodesOnRootline);
+            $nodes = [];
+            foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
+                $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+                if ($node !== null) {
+                    $nodes[] = $node;
                 }
             }
         }
-    }
-
-    /**
-     * Adopt (translate) the given node and parents that are not yet visible to the given context
-     *
-     * @param NodeInterface $node
-     * @param ContentContext $contentContext
-     * @param boolean $copyContent true if the content from the nodes that are translated should be copied
-     * @return void
-     */
-    protected function adoptNodeAndParents(NodeInterface $node, ContentContext $contentContext, $copyContent)
-    {
-        $contentContext->adoptNode($node, $copyContent);
-
-        $parentNode = $node;
-        while ($parentNode = $parentNode->getParent()) {
-            $visibleInContext = $contentContext->getNodeByIdentifier($parentNode->getIdentifier()) !== null;
-            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== SiteService::SITES_ROOT_PATH && !$visibleInContext) {
-                $contentContext->adoptNode($parentNode, $copyContent);
-            }
-        }
+        $this->view->assign('nodes', $nodes);
     }
 }
