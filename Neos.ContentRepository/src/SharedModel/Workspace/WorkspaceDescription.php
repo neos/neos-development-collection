@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\SharedModel\Workspace;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,13 +10,13 @@ namespace Neos\ContentRepository\SharedModel\Workspace;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use function Neos\EventSourcedContentRepository\Domain\ValueObject\preg_match;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\Workspace;
 
 /**
  * Description for a workspace
  */
-#[Flow\Proxy(false)]
 final class WorkspaceDescription implements \JsonSerializable, \Stringable
 {
     protected string $description;

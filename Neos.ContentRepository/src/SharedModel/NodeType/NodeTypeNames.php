@@ -26,11 +26,17 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
      */
     private array $nodeTypeNames;
 
+    /**
+     * @param array<int,NodeTypeName> $nodeTypeNames
+     */
     private function __construct(NodeTypeName ...$nodeTypeNames)
     {
         $this->nodeTypeNames = $nodeTypeNames;
     }
 
+    /**
+     * @param array<int,NodeTypeName> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(...$array);

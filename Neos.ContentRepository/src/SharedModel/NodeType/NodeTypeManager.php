@@ -17,8 +17,8 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\ContentRepository\Exception;
-use Neos\ContentRepository\Exception\NodeConfigurationException;
-use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
+use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 
 /**
@@ -30,16 +30,16 @@ class NodeTypeManager
     /**
      * Node types, indexed by name
      *
-     * @var array
+     * @var array<string,NodeType>
      */
-    protected $cachedNodeTypes = [];
+    protected array $cachedNodeTypes = [];
 
     /**
      * Node types, indexed by supertype (also including abstract node types)
      *
-     * @var array
+     * @var array<string,array<string,NodeType>>
      */
-    protected $cachedSubNodeTypes = [];
+    protected array $cachedSubNodeTypes = [];
 
     /**
      * @Flow\Inject
@@ -54,9 +54,9 @@ class NodeTypeManager
     protected $fallbackNodeTypeName;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $fullNodeTypeConfigurations;
+    protected array $fullNodeTypeConfigurations;
 
     /**
      * Return all registered node types.
@@ -65,7 +65,7 @@ class NodeTypeManager
      * @return array<NodeType> All node types registered in the system, indexed by node type name
      * @api
      */
-    public function getNodeTypes($includeAbstractNodeTypes = true)
+    public function getNodeTypes(bool $includeAbstractNodeTypes = true): array
     {
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
@@ -74,23 +74,20 @@ class NodeTypeManager
             return $this->cachedNodeTypes;
         }
 
-        $nonAbstractNodeTypes = array_filter($this->cachedNodeTypes, function ($nodeType) {
+        return array_filter($this->cachedNodeTypes, function ($nodeType) {
             return !$nodeType->isAbstract();
         });
-
-        return $nonAbstractNodeTypes;
     }
 
     /**
      * Return all non-abstract node types which have a certain $superType, without
      * the $superType itself.
      *
-     * @param string $superTypeName
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<NodeType> Sub node types of the given super type, indexed by node type name
      * @api
      */
-    public function getSubNodeTypes($superTypeName, $includeAbstractNodeTypes = true)
+    public function getSubNodeTypes(string $superTypeName, bool $includeAbstractNodeTypes = true): array
     {
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
@@ -119,12 +116,10 @@ class NodeTypeManager
     /**
      * Returns the specified node type (which could be abstract)
      *
-     * @param string $nodeTypeName
-     * @return NodeType or NULL
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function getNodeType($nodeTypeName)
+    public function getNodeType(string $nodeTypeName): NodeType
     {
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
@@ -147,6 +142,7 @@ class NodeTypeManager
                 $this->fallbackNodeTypeName
             ), 1438166322);
         }
+
         return $this->getNodeType($this->fallbackNodeTypeName);
     }
 
@@ -157,7 +153,7 @@ class NodeTypeManager
      * @return boolean true if it exists, otherwise false
      * @api
      */
-    public function hasNodeType($nodeTypeName)
+    public function hasNodeType(string $nodeTypeName): bool
     {
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
@@ -166,13 +162,12 @@ class NodeTypeManager
     }
 
     /**
-     * Creates a new node type
+     * Maybe will create a new node type in the future
      *
      * @param string $nodeTypeName Unique name of the new node type. Example: "Neos.Neos:Page"
-     * @return NodeType
      * @throws Exception
      */
-    public function createNodeType($nodeTypeName)
+    public function createNodeType(string $nodeTypeName): never
     {
         throw new Exception(
             'Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".',
@@ -182,10 +177,8 @@ class NodeTypeManager
 
     /**
      * Loads all node types into memory.
-     *
-     * @return void
      */
-    protected function loadNodeTypes()
+    protected function loadNodeTypes(): void
     {
         $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
 
@@ -204,10 +197,9 @@ class NodeTypeManager
      * In order to reset the node type override, an empty array can be passed in.
      * In this case, the system-node-types are used again.
      *
-     * @param array $completeNodeTypeConfiguration
-     * @return void
+     * @param array<string,mixed> $completeNodeTypeConfiguration
      */
-    public function overrideNodeTypes(array $completeNodeTypeConfiguration)
+    public function overrideNodeTypes(array $completeNodeTypeConfiguration): void
     {
         $this->cachedNodeTypes = [];
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
@@ -218,14 +210,12 @@ class NodeTypeManager
     /**
      * Load one node type, if it is not loaded yet.
      *
-     * @param string $nodeTypeName
-     * @param array $completeNodeTypeConfiguration the full node type configuration for all node types
-     * @return NodeType
+     * @param array<string,mixed> $completeNodeTypeConfiguration the full node type configuration for all node types
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
      * @throws Exception
      */
-    protected function loadNodeType($nodeTypeName, array &$completeNodeTypeConfiguration)
+    protected function loadNodeType(string $nodeTypeName, array &$completeNodeTypeConfiguration): NodeType
     {
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
             return $this->cachedNodeTypes[$nodeTypeName];
@@ -278,11 +268,11 @@ class NodeTypeManager
     /**
      * Evaluates the given superTypes configuation and returns the array of effective superTypes.
      *
-     * @param array $superTypesConfiguration
-     * @param array $completeNodeTypeConfiguration
-     * @return array
+     * @param array<string,mixed> $superTypesConfiguration
+     * @param array<string,mixed> $completeNodeTypeConfiguration
+     * @return array<string,?NodeType>
      */
-    protected function evaluateSuperTypesConfiguration(array $superTypesConfiguration, &$completeNodeTypeConfiguration)
+    protected function evaluateSuperTypesConfiguration(array $superTypesConfiguration, array &$completeNodeTypeConfiguration): array
     {
         $superTypes = [];
         foreach ($superTypesConfiguration as $superTypeName => $enabled) {
@@ -299,14 +289,11 @@ class NodeTypeManager
     /**
      * Evaluates a single superType configuration and returns the NodeType if enabled.
      *
-     * @param string $superTypeName
-     * @param boolean $enabled
-     * @param array $completeNodeTypeConfiguration
-     * @return NodeType
+     * @param array<string,mixed> $completeNodeTypeConfiguration
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
      */
-    protected function evaluateSuperTypeConfiguration($superTypeName, $enabled, &$completeNodeTypeConfiguration)
+    protected function evaluateSuperTypeConfiguration(?string $superTypeName, ?bool $enabled, array &$completeNodeTypeConfiguration): ?NodeType
     {
         // Skip unset node types
         if ($enabled === false || $enabled === null) {
