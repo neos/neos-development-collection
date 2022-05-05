@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Projection\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Changes\Change;
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;

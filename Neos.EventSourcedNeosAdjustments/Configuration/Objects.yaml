@@ -11,15 +11,6 @@ Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
           1:
             value: Neos_Neos_Fusion
 
-Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositoryExportService:
-  properties:
-    eventStore:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
-
 Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector:
   arguments:
     3:
@@ -60,4 +51,19 @@ Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
   scope: singleton
 
 Neos\ContentRepository\Projection\Workspace\WorkspaceFinder:
+  scope: singleton
+
+Neos\ContentRepository\Projection\Changes\ChangeFinder:
+  scope: singleton
+
+Neos\ContentRepository\Feature\WorkspaceCommandHandler:
+  scope: singleton
+
+Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
+  scope: singleton
+
+Neos\ContentRepository\SharedModel\NodeAddressFactory:
+  scope: singleton
+
+Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
   scope: singleton
