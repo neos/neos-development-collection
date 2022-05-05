@@ -48,7 +48,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return is_array($context) && reset($context) instanceof TraversableNodeInterface;
     }
 
     /**
