@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\NodeAccess\Exception;
+namespace Neos\ContentRepository\NodeAccess\NodeAccessor\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.

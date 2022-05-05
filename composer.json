@@ -7,7 +7,7 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "dev-master",
-        "neos/neos-setup": "^1.0",
+        "neos/neos-setup": "^2.0",
         "php": "^8.1",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",

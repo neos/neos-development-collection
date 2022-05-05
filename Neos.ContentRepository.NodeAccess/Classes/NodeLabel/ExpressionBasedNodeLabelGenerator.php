@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Model;
+namespace Neos\ContentRepository\NodeAccess\NodeLabel;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\SharedModel\NodeType\NodeLabelGeneratorInterface;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;

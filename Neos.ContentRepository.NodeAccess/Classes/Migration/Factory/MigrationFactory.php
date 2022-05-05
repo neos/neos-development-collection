@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\NodeAccess\Factory;
+namespace Neos\ContentRepository\NodeAccess\Migration\Factory;
 
 /*
  * This file is part of the Neos.ContentRepository package.

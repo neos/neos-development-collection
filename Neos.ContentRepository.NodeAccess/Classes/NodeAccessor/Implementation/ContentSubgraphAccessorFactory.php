@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\NodeAccess\Implementation;
+namespace Neos\ContentRepository\NodeAccess\NodeAccessor\Implementation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,12 +13,12 @@ namespace Neos\ContentRepository\NodeAccess\Implementation;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorFactoryInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\NodeAccess\Exception\InvalidAccessorConfiguration;
-use Neos\ContentRepository\NodeAccess\NodeAccessorFactoryInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessor\Exception\InvalidAccessorConfiguration;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 

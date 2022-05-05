@@ -11,7 +11,6 @@ namespace Neos\Neos\Controller\Frontend;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
@@ -99,12 +98,6 @@ class NodeController extends ActionController
      * @var NodeShortcutResolver
      */
     protected $nodeShortcutResolver;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
 
     /**
      * @Flow\Inject
