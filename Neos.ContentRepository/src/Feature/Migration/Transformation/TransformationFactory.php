@@ -19,6 +19,7 @@ class TransformationFactory
 
     public function __construct(ObjectManagerInterface $objectManager)
     {
+        // TODO: decouple from ObjectManager!
         $this->objectManager = $objectManager;
     }
 

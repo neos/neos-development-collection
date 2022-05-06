@@ -13,10 +13,23 @@ Neos\ContentRepository\Feature\ContentStreamRepository:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\CommandHandlerObjectFactory
   factoryMethodName: buildContentStreamRepository
 
-Neos\ContentRepository\Feature\WorkspaceCommandHandler:
+Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\CommandHandlerObjectFactory
-  factoryMethodName: buildWorkspaceCommandHandler
+  factoryMethodName: buildNodeAggregateEventPublisher
+##############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ContentStreamCommandHandlerObjectFactory:
+  scope: singleton
+  arguments:
+    1:
+      object: *eventStoreFactory
+
+Neos\ContentRepository\Feature\ContentStreamCommandHandler:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ContentStreamCommandHandlerObjectFactory
+  factoryMethodName: buildContentStreamCommandHandler
+
+
 ##############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory:
   scope: singleton
@@ -26,6 +39,10 @@ Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
   factoryMethodName: buildProjectionContentGraph
 
+Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
+  factoryMethodName: buildProjectionIntegrityViolationDetector
 
 ##############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactory:
@@ -35,7 +52,7 @@ Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactor
       object:
         factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\DefaultBlockedProjectorFactory
     2:
-     object:
+      object:
         factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\PropertyConversionSerializerFactory
         factoryMethodName: buildSerializer
     3:
@@ -71,8 +88,39 @@ Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager:
   factoryMethodName: buildReadSideMemoryCacheManager
 
 ###############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory:
+  scope: singleton
+
+Neos\ContentRepository\Feature\Migration\MigrationCommandHandler:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildMigrationCommandHandler
+
+###############################
+
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeAggregateCommandHandlerObjectFactory:
+  scope: singleton
 
 
+Neos\ContentRepository\Feature\NodeAggregateCommandHandler:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeAggregateCommandHandlerObjectFactory
+  factoryMethodName: buildNodeAggregateCommandHandler
+
+
+###############################
+
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeDuplicationCommandHandlerObjectFactory:
+  scope: singleton
+
+
+Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeDuplicationCommandHandlerObjectFactory
+  factoryMethodName: buildNodeDuplicationCommandHandler
+
+
+###############################
 
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory:
   scope: singleton
@@ -107,6 +155,13 @@ Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
   factoryMethodName: buildContentStreamProjector
 
+Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
+  factoryMethodName: buildProjectionIntegrityViolationDetectionRunner
+
+
+
 
 ################################
 
@@ -115,12 +170,28 @@ Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\StructureAdjustmentObjectFactory:
   scope: singleton
   arguments:
-    2:
+    1:
       object: *eventStoreFactory
+
+
+Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\StructureAdjustmentObjectFactory
+  factoryMethodName: buildStructureAdjustmentService
 
 
 #########################
 
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\WorkspaceCommandHandlerObjectFactory:
+  scope: singleton
+  arguments:
+    1:
+      object: *eventStoreFactory
+
+Neos\ContentRepository\Feature\WorkspaceCommandHandler:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\WorkspaceCommandHandlerObjectFactory
+  factoryMethodName: buildWorkspaceCommandHandler
 
 
 #########################
@@ -138,12 +209,6 @@ Neos\ContentRepository\Infrastructure\DbalClientInterface:
 
 
 
-Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\StructureAdjustmentObjectFactory
-  factoryMethodName: buildStructureAdjustmentService
-
-
 
 Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
   scope: singleton
@@ -159,21 +224,6 @@ Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
 
 Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
   scope: singleton
-
-Neos\ContentRepository\Feature\NodeAggregateCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Feature\Migration\MigrationCommandHandler:
-  scope: singleton
-
-
-
-
-
-
 
 
 
@@ -212,15 +262,6 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
     2:
       object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
 
-
-Neos\ContentRepository\Feature\ContentStreamCommandHandler:
-  arguments:
-    2:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
 
 Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler:
   arguments:

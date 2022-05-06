@@ -55,20 +55,20 @@ use Neos\Flow\Annotations as Flow;
 class MigrationCommandHandler
 {
     protected WorkspaceFinder $workspaceFinder;
-    protected WorkspaceCommandHandler $contentStreamCommandHandler;
+    protected WorkspaceCommandHandler $workspaceCommandHandler;
     protected ContentGraphInterface $contentGraph;
     protected FilterFactory $filterFactory;
     protected TransformationFactory $transformationFactory;
 
     public function __construct(
-        WorkspaceFinder $workspaceFinder,
-        WorkspaceCommandHandler $contentStreamCommandHandler,
-        ContentGraphInterface $contentGraph,
-        FilterFactory $filterFactory,
-        TransformationFactory $transformationFactory
+        WorkspaceFinder         $workspaceFinder,
+        WorkspaceCommandHandler $workspaceCommandHandler,
+        ContentGraphInterface   $contentGraph,
+        FilterFactory           $filterFactory,
+        TransformationFactory   $transformationFactory
     ) {
         $this->workspaceFinder = $workspaceFinder;
-        $this->contentStreamCommandHandler = $contentStreamCommandHandler;
+        $this->workspaceCommandHandler = $workspaceCommandHandler;
         $this->contentGraph = $contentGraph;
         $this->filterFactory = $filterFactory;
         $this->transformationFactory = $transformationFactory;
@@ -88,7 +88,7 @@ class MigrationCommandHandler
         // TODO: I believe the logic for submigrations is not yet fully working
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
             $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
-            $this->contentStreamCommandHandler->handleCreateWorkspace(
+            $this->workspaceCommandHandler->handleCreateWorkspace(
                 new CreateWorkspace(
                     WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
                     $workspace->getWorkspaceName(),

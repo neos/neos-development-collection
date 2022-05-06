@@ -35,8 +35,8 @@ use Neos\Flow\Annotations as Flow;
 final class StructureAdjustmentObjectFactory
 {
     public function __construct(
-        protected readonly ContentGraphInterface $contentGraph,
         protected readonly EventStore $eventStore,
+        protected readonly ContentGraphInterface $contentGraph,
         protected readonly WorkspaceFinder $workspaceFinder,
         protected readonly NodeTypeManager $nodeTypeManager,
         protected readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,

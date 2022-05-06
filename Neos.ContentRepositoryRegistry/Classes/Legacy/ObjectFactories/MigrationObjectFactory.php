@@ -14,9 +14,13 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
 
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
+use Neos\ContentRepository\Feature\Migration\Filter\FilterFactory;
+use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
+use Neos\ContentRepository\Feature\Migration\Transformation\TransformationFactory;
 use Neos\ContentRepository\Feature\StructureAdjustment\ProjectedNodeIterator;
 use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments;
+use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorCollection;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
@@ -30,38 +34,41 @@ use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvid
 use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * @Flow\Scope("singleton")
  */
-final class ProjectionObjectFactory
+final class MigrationObjectFactory
 {
     public function __construct(
-        private readonly DbalClientInterface $dbalClient,
-        private readonly VariableFrontend $contentStreamProcessedEventsCache,
-        private readonly VariableFrontend $workspaceProcessedEventsCache,
-        private readonly ProjectionIntegrityViolationDetectorInterface $projectionIntegrityViolationDetector
+        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly WorkspaceCommandHandler $workspaceCommandHandler,
+        private readonly ContentGraphInterface $contentGraph,
+        private readonly ObjectManagerInterface $objectManager
     )
     {
     }
 
-    public function buildWorkspaceFinder(): WorkspaceFinder
+    public function buildMigrationCommandHandler(): MigrationCommandHandler
     {
-        return new WorkspaceFinder($this->dbalClient);
+        return new MigrationCommandHandler(
+            $this->workspaceFinder,
+            $this->workspaceCommandHandler,
+            $this->contentGraph,
+            $this->buildFilterFactory(),
+            $this->buildTransformationFactory()
+        );
     }
 
-    public function buildWorkspaceProjector(): WorkspaceProjector
+    private function buildFilterFactory(): FilterFactory
     {
-        return new WorkspaceProjector($this->dbalClient, $this->workspaceProcessedEventsCache);
+        return new FilterFactory($this->objectManager);
     }
 
-    public function buildContentStreamProjector(): ContentStreamProjector
+    private function buildTransformationFactory(): TransformationFactory
     {
-        return new ContentStreamProjector($this->dbalClient, $this->contentStreamProcessedEventsCache);
+        return new TransformationFactory($this->objectManager);
     }
 
-    public function buildProjectionIntegrityViolationDetectionRunner(): ProjectionIntegrityViolationDetectionRunner
-    {
-        return new ProjectionIntegrityViolationDetectionRunner($this->projectionIntegrityViolationDetector);
-    }
 }

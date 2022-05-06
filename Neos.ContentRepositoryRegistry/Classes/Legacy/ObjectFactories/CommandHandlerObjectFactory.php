@@ -13,13 +13,9 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
-use Neos\ContentRepository\Feature\StructureAdjustment\ProjectedNodeIterator;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
-use Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
 
@@ -36,5 +32,12 @@ final class CommandHandlerObjectFactory
     public function buildContentStreamRepository()
     {
         return new ContentStreamRepository($this->eventStore);
+    }
+
+    public function buildNodeAggregateEventPublisher(): NodeAggregateEventPublisher
+    {
+        return new NodeAggregateEventPublisher(
+            $this->eventStore
+        );
     }
 }
