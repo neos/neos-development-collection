@@ -20,7 +20,7 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
 use Neos\Neos\EventSourcedRouting\NodeUriBuilder;

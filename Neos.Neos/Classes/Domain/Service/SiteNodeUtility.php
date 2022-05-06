@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
+namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.

@@ -11,79 +11,84 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\SearchTerm;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * Find nodes based on a fulltext search
+ * Implementation of the NodeSearchServiceInterface for greater backwards compatibility
+ *
+ * Note: This implementation is meant to ease the transition to an event sourced content repository
+ * but since it uses legacy classes (like \Neos\ContentRepository\Domain\Service\Context) it is
+ * advised to use NodeAccessor::findDescendants() directly instead.
  *
  * @Flow\Scope("singleton")
+ * @deprecated see above
  */
 class NodeSearchService implements NodeSearchServiceInterface
 {
     /**
      * @Flow\Inject
-     * @var PersistenceManagerInterface
+     * @var NodeAccessorManager
      */
-    protected $persistenceManager;
+    protected $nodeAccessorManager;
 
     /**
-     * Search all properties for given $term
-     *
-     * TODO: Implement a better search when Flow offer the possibility
-     *
-     * @param string|array $term search term
-     * @param array $searchNodeTypes
-     * @param NodeInterface $startingPoint
-     * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
+     * @Flow\Inject
+     * @var WorkspaceFinder
      */
-    public function findByProperties($term, array $searchNodeTypes, NodeInterface $startingPoint = null)
-    {
-        if (empty($term)) {
-            throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
-        }
-
-        $searchResult = [];
-        $nodeTypeFilter = implode(',', $searchNodeTypes);
-
-        $searchTerm = is_string($term) ? [$term] : $term;
-
-        foreach ($searchTerm as $termvalue) {
-            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $termvalue) !== 0) {
-                $nodeByIdentifier = $context->getNodeByIdentifier($termvalue);
-                if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
-                    $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
-                }
-            }
-        }
-
-        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
-        foreach ($nodeDataRecords as $nodeData) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-            if ($node !== null) {
-                $searchResult[$node->getPath()] = $node;
-            }
-        }
-
-        return $searchResult;
-    }
+    protected $workspaceFinder;
 
     /**
-     * Whether or not the given $node satisfies the specified types
-     *
-     * @param NodeInterface $node
-     * @param array $searchNodeTypes
-     * @return bool
+     * @Flow\Inject
+     * @var NodeTypeConstraintFactory
      */
-    protected function nodeSatisfiesSearchNodeTypes(NodeInterface $node, array $searchNodeTypes): bool
-    {
-        foreach ($searchNodeTypes as $nodeTypeName) {
-            if ($node->getNodeType()->isOfType($nodeTypeName)) {
-                return true;
-            }
+    protected $nodeTypeConstraintFactory;
+
+    /**
+     * @param string $term
+     * @param array<int,string> $searchNodeTypes
+     * @return array<int,NodeInterface>
+     */
+    public function findByProperties(
+        $term,
+        array $searchNodeTypes,
+        ?NodeInterface $startingPoint = null
+    ): array {
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));
+        if ($workspace === null) {
+            return [];
         }
-        return false;
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $workspace->getCurrentContentStreamIdentifier(),
+            DimensionSpacePoint::fromLegacyDimensionArray($context->getDimensions()),
+            $context->isInvisibleContentShown()
+                ? VisibilityConstraints::withoutRestrictions()
+                : VisibilityConstraints::frontend()
+        );
+        if ($startingPoint !== null) {
+            $entryNodeIdentifier = $startingPoint->getNodeAggregateIdentifier();
+        } elseif ($context instanceof ContentContext) {
+            $entryNodeIdentifier = NodeAggregateIdentifier::fromString($context->getCurrentSiteNode()->getIdentifier());
+        } else {
+            $entryNodeIdentifier = NodeAggregateIdentifier::fromString($context->getRootNode()->getIdentifier());
+        }
+        $entryNode = $nodeAccessor->findByIdentifier($entryNodeIdentifier);
+        if (!is_null($entryNode)) {
+            $nodes = $nodeAccessor->findDescendants(
+                [$entryNode],
+                $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $searchNodeTypes)),
+                SearchTerm::fulltext($term)
+            );
+            return iterator_to_array($nodes);
+        }
+        return [];
     }
 }

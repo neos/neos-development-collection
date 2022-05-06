@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
+namespace Neos\Neos\TypeConverter;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,28 +13,27 @@ namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
  */
 
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
- * An Object Converter for content queries which can be used for routing (but also for other
+ * An Object Converter for Node Addresses which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
  *
  * @Flow\Scope("singleton")
  */
-class NodeAddressConverter extends AbstractTypeConverter
+class NodeAddressToStringConverter extends AbstractTypeConverter
 {
     /**
      * @var array<int,string>
      */
-    protected $sourceTypes = ['string'];
+    protected $sourceTypes = [NodeAddress::class];
 
     /**
      * @var string
      */
-    protected $targetType = NodeAddress::class;
+    protected $targetType = 'string';
 
     /**
      * @var int
@@ -42,30 +41,16 @@ class NodeAddressConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    public function canConvertFrom($source, $targetType): bool
-    {
-        return \mb_substr_count($source, '__') === 2 || \mb_strpos($source, '@') !== false;
-    }
-
-    /**
-     * @param string $source
+     * @param NodeAddress $source
      * @param string $targetType
-     * @param array<int,string> $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      */
     public function convertFrom(
         $source,
         $targetType,
         array $convertedChildProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
-    ): NodeAddress {
-        if (\mb_substr_count($source, '__') === 2) {
-            return $this->nodeAddressFactory->createFromUriString($source);
-        }
-        return $this->nodeAddressFactory->createFromContextPath($source);
+    ): string {
+        return $source->serializeForUri();
     }
 }

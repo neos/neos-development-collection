@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
+namespace Neos\Neos\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.

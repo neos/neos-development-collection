@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Testing;
+namespace Neos\Neos\Testing;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.

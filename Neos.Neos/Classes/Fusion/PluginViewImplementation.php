@@ -124,9 +124,10 @@ class PluginViewImplementation extends PluginImplementation
             if ($this->pluginViewNode->getProperty('view')) {
                 $message ='Master View or Plugin View not found';
             }
-            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment()
-                ? '<p>' . $message . '</p>'
-                : '<!-- ' . $message . '-->';
+            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live'
+                || $this->objectManager->getContext()->isDevelopment()
+                    ? '<p>' . $message . '</p>'
+                    : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
 

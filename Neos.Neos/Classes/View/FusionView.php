@@ -12,15 +12,18 @@ namespace Neos\Neos\View;
  */
 
 use GuzzleHttp\Psr7\Message;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
+use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
-use Neos\Flow\Security\Context;
+use Neos\Neos\Domain\Service\FusionService;
+use Neos\Neos\Exception;
+use Neos\Neos\View\FusionViewI18nTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -28,12 +31,55 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FusionView extends AbstractView
 {
+    /**
+     * @Flow\Inject
+     * @var SiteNodeUtility
+     */
+    protected $siteNodeUtility;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
+     * Renders the view
+     *
+     * @return string|ResponseInterface The rendered view
+     * @throws \Exception if no node is given
+     * @api
+     */
+    public function render(): string|ResponseInterface
+    {
+        $currentNode = $this->getCurrentNode();
+
+        $currentSiteNode = $this->siteNodeUtility->findSiteNode($currentNode);
+        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
+
+        $fusionRuntime->pushContextArray([
+            'node' => $currentNode,
+            'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
+            'site' => $currentSiteNode,
+            'editPreviewMode' => $this->variables['editPreviewMode'] ?? null
+        ]);
+        try {
+            $output = $fusionRuntime->render($this->fusionPath);
+            $output = $this->parsePotentialRawHttpResponse($output);
+        } catch (RuntimeException $exception) {
+            throw $exception->getPrevious() ?: $exception;
+        }
+        $fusionRuntime->popContext();
+
+        return $output;
+    }
+
     use FusionViewI18nTrait;
 
     /**
      * This contains the supported options, their default values, descriptions and types.
      *
-     * @var array
+     * @var array<string,array<int,mixed>>
      */
     protected $supportedOptions = [
         'enableContentCache' => [
@@ -56,48 +102,13 @@ class FusionView extends AbstractView
      */
     protected $fusionPath = 'root';
 
-    /**
-     * @var Runtime
-     */
-    protected $fusionRuntime;
+    protected ?Runtime $fusionRuntime;
 
     /**
      * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
-
-    /**
-     * Renders the view
-     *
-     * @return string|ResponseInterface The rendered view
-     * @throws \Exception if no node is given
-     * @api
-     */
-    public function render()
-    {
-        $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $this->getCurrentSiteNode();
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
-
-        $this->setFallbackRuleFromDimension($currentNode);
-
-        $fusionRuntime->pushContextArray([
-            'node' => $currentNode,
-            'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
-            'site' => $currentSiteNode,
-            'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
-        ]);
-        try {
-            $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->parsePotentialRawHttpResponse($output);
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious();
-        }
-        $fusionRuntime->popContext();
-
-        return $output;
-    }
 
     /**
      * @param string $output
@@ -162,56 +173,50 @@ class FusionView extends AbstractView
         return $this->fusionPath;
     }
 
-    /**
-     * @param TraversableNodeInterface $node
-     * @return TraversableNodeInterface
-     */
-    protected function getClosestDocumentNode(TraversableNodeInterface $node)
+    protected function getClosestDocumentNode(NodeInterface $node): ?NodeInterface
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $node = $node->findParentNode();
+            $node = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            )->findParentNode($node);
         }
+
         return $node;
     }
 
     /**
-     * @return TraversableNodeInterface
+     * @return NodeInterface
      * @throws Exception
      */
-    protected function getCurrentSiteNode(): TraversableNodeInterface
+    protected function getCurrentSiteNode(): NodeInterface
     {
-        $currentNode = isset($this->variables['site']) ? $this->variables['site'] : null;
-        if ($currentNode === null && $this->getCurrentNode() instanceof LegacyNodeInterface) {
-            // fallback to Legacy node API
-            /* @var $node LegacyNodeInterface */
-            $node = $this->getCurrentNode();
-            return $node->getContext()->getCurrentSiteNode();
-        }
-        if (!$currentNode instanceof TraversableNodeInterface) {
+        $currentNode = $this->variables['site'] ?? null;
+        if (!$currentNode instanceof NodeInterface) {
             throw new Exception('FusionView needs a variable \'site\' set with a Node object.', 1538996432);
         }
         return $currentNode;
     }
 
     /**
-     * @return TraversableNodeInterface
+     * @return NodeInterface
      * @throws Exception
      */
-    protected function getCurrentNode(): TraversableNodeInterface
+    protected function getCurrentNode(): NodeInterface
     {
-        $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
-        if (!$currentNode instanceof TraversableNodeInterface) {
+        $currentNode = $this->variables['value'] ?? null;
+        if (!$currentNode instanceof NodeInterface) {
             throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
         }
         return $currentNode;
     }
 
-
     /**
-     * @param TraversableNodeInterface $currentSiteNode
+     * @param NodeInterface $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(TraversableNodeInterface $currentSiteNode)
+    protected function getFusionRuntime(NodeInterface $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
@@ -228,11 +233,11 @@ class FusionView extends AbstractView
      *
      * @param string $key
      * @param mixed $value
-     * @return FusionView
      */
-    public function assign($key, $value)
+    public function assign($key, $value): AbstractView
     {
         $this->fusionRuntime = null;
         return parent::assign($key, $value);
     }
 }
+

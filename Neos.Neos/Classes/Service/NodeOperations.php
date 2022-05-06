@@ -56,7 +56,10 @@ class NodeOperations
         }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
 
-        if ($nodeType->isOfType('Neos.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
+        if ($nodeType->isOfType('Neos.Neos:Document')
+            && !isset($nodeData['properties']['uriPathSegment'])
+            && isset($nodeData['properties']['title'])
+        ) {
             $nodeData['properties']['uriPathSegment'] = $this->nodeUriPathSegmentGenerator->generateUriPathSegment(
                 $referenceNode,
                 $nodeData['properties']['title']
