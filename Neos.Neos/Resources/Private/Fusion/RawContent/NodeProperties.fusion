@@ -2,7 +2,7 @@ prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component
     node = null
 
     renderer = afx`
-        <Neos.Fusion:Loop items={props.node.nodeType.fullConfiguration.properties} itemKey="propertyName" itemName="propertyConfiguration">
+        <Neos.Fusion:Loop items={props.node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
             <Neos.Fusion:Fragment @if.isInlineEditable={propertyConfiguration.ui.inlineEditable == true} class="property">
                 <pre>{propertyName}:</pre>
                 <div><Neos.Neos:Editable property={propertyName} /></div>
