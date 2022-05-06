@@ -29,11 +29,24 @@ img {
 .neos-raw-content-contentcollection-container > header {
   font-family: monospace;
   white-space: pre;
-  font-size: 160%;
   color: $textSubtle;
   text-transform: uppercase;
   margin: 60px 0 20px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #bbb;
+}
+
+.neos-raw-content-properties > dt {
+  font-family: monospace;
+  white-space: pre;
+  text-transform: uppercase;
+  color: $textSubtle;
+  border-bottom: 1px solid #bbb;
+  display: inline-block;
+}
+
+.neos-raw-content-properties > dd {
+  margin-inline-start: 0;
+  margin: 10px 0;
 }
 
 a {

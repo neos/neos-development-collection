@@ -1,7 +1,7 @@
 
 prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
     node = ${node}
-    @context.node = ${this.node || node}
+    @context.node = ${this.node}
 
     renderer = Neos.Fusion:Case {
 
@@ -33,12 +33,14 @@ prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
             @position = "300"
             condition = true
             renderer = afx`
-                <div>
+                <div @if={!String.isBlank(this.content)}>
                     <Neos.Neos:RawContent.NodeProperties node={props.node} />
                     <Neos.Neos:RawContent.NodeChildren node={props.node} />
                 </div>
             `
         }
+
+        @process.fallbackToNodeType = ${String.isBlank(value) ? '<div>' + props.node.label + '</div>' : value}
     }
 }
 

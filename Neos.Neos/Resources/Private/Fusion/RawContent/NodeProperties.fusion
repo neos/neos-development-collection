@@ -2,15 +2,17 @@ prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component
     node = null
 
     renderer = afx`
-        <Neos.Fusion:Loop items={props.node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
-            <Neos.Fusion:Fragment @if.isInlineEditable={propertyConfiguration.ui.inlineEditable == true} class="property">
-                <pre>{propertyName}:</pre>
-                <div><Neos.Neos:Editable property={propertyName} /></div>
-            </Neos.Fusion:Fragment>
-            <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(props.node).property(propertyName)}>
-                <pre>{propertyName}:</pre>
-                <div><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumWidth="200" /></div>
-            </Neos.Fusion:Fragment>
-        </Neos.Fusion:Loop>
+        <dl class="neos-raw-content-properties" @if={!String.isBlank(this.content)}>
+            <Neos.Fusion:Loop items={props.node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
+                <Neos.Fusion:Fragment @if.isInlineEditable={propertyConfiguration.ui.inlineEditable == true} class="property">
+                    <dt>{propertyName}:</dt>
+                    <dd><Neos.Neos:Editable property={propertyName} /></dd>
+                </Neos.Fusion:Fragment>
+                <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(props.node).property(propertyName)}>
+                    <dt>{propertyName}:</dt>
+                    <dd><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumWidth="200" /></dd>
+                </Neos.Fusion:Fragment>
+            </Neos.Fusion:Loop>
+        </dl>
     `
 }
