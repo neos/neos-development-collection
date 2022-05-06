@@ -40,6 +40,17 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
         return new self(...$array);
     }
 
+    /**
+     * @param array<int,string> $array
+     */
+    public static function fromStringArray(array $array): self
+    {
+        return new self(... array_map(
+            fn (string $serializedNodeTypeName): NodeTypeName => NodeTypeName::fromString($serializedNodeTypeName),
+            $array
+        ));
+    }
+
     public static function createEmpty(): self
     {
         return new self();

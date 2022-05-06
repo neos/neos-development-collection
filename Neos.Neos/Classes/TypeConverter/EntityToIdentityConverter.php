@@ -70,7 +70,7 @@ class EntityToIdentityConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return array
+     * @return array<string,string>
      */
     public function convertFrom(
         $source,

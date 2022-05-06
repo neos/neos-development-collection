@@ -81,7 +81,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
 
         /* @var ?Person $requestedUser */
         $requestedUser = $this->domainUserService->getUser($username);
-        if ($requestedUser === null || $requestedUser->getName() === null) {
+        if ($requestedUser === null) {
             return $username;
         }
 

@@ -268,7 +268,10 @@ class NodeTypeManager
         $superTypes = [];
         foreach ($superTypesConfiguration as $superTypeName => $enabled) {
             if (!is_string($superTypeName)) {
-                throw new NodeConfigurationException('superTypes must be a dictionary; the array format was deprecated since Neos 2.0', 1651821391);
+                throw new NodeConfigurationException(
+                    'superTypes must be a dictionary; the array format was deprecated since Neos 2.0',
+                    1651821391
+                );
             }
             $superTypes[$superTypeName] = $this->evaluateSuperTypeConfiguration(
                 $superTypeName,

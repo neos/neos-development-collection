@@ -28,11 +28,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     private array $nodes;
 
     /**
-     * @var \ArrayIterator<int,NodeInterface>
-     */
-    private \ArrayIterator $iterator;
-
-    /**
      * @param iterable<int,NodeInterface> $collection
      */
     private function __construct(iterable $collection)
@@ -49,7 +44,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         }
 
         $this->nodes = $nodes;
-        $this->iterator = new \ArrayIterator($nodes);
     }
 
     /**
@@ -71,11 +65,11 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,NodeInterface>
+     * @return \ArrayIterator<int,NodeInterface>|NodeInterface[]
      */
     public function getIterator(): \ArrayIterator
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->nodes);
     }
 
     public function offsetExists(mixed $offset): bool

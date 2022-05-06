@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -113,4 +114,13 @@ interface NodeAccessorInterface
         NodeTypeConstraints $nodeTypeConstraints,
         ?SearchTerm $searchTerm
     ): Nodes;
+
+    /**
+     * Returns a single root node for the given node type name.
+     *
+     * Will throw an exception, if no such node exists
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): NodeInterface;
 }

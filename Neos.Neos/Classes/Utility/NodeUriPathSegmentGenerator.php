@@ -13,7 +13,6 @@ namespace Neos\Neos\Utility;
 
 use Behat\Transliterator\Transliterator;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;
@@ -21,69 +20,34 @@ use Neos\Neos\Service\TransliterationService;
 
 /**
  * Utility to generate a valid, non-conflicting uriPathSegment for nodes.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodeUriPathSegmentGenerator
 {
-    /**
-     * @Flow\Inject
-     * @var TransliterationService
-     */
-    protected $transliterationService;
+    #[Flow\Inject]
+    protected TransliterationService $transliterationService;
 
     /**
-     * Sets the best possible uriPathSegment for the given Node.
-     * Will use an already set uriPathSegment or alternatively the node name as base,
-     * then checks if the uriPathSegment already exists on the same level and appends a counter
-     * until a unique path segment was found.
+     * Generates a URI path segment for a given node taking its language dimension value into account
      *
-     * @param NodeInterface $node
-     * @return void
+     * @param ?NodeInterface $node Optional node to determine language dimension value from
+     * @param ?string $text Optional text
      */
-    public static function setUniqueUriPathSegment(NodeInterface $node)
+    public function generateUriPathSegment(?NodeInterface $node = null, ?string $text = null): string
     {
-        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $q = new FlowQuery([$node]);
-            $q = $q->context([
-                'invisibleContentShown' => true,
-                'removedContentShown' => true,
-                'inaccessibleContentShown' => true
-            ]);
-
-            $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment')
-                ? $node->getName()
-                : $node->getProperty('uriPathSegment');
-            $i = 1;
-            while ($q->siblings(
-                '[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]'
-            )->count() > 0) {
-                $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
-            }
-            $node->setProperty('uriPathSegment', $possibleUriPathSegment);
-        }
-    }
-
-    /**
-     * Generates a URI path segment for a given node taking it's language dimension into account
-     *
-     * @param NodeInterface $node Optional node to determine language dimension
-     * @param string $text Optional text
-     * @return string
-     */
-    public function generateUriPathSegment(NodeInterface $node = null, $text = null)
-    {
+        $language = null;
         if ($node) {
-            $text = $text ?: $node->getLabel() ?: $node->getName();
-            $dimensions = $node->getContext()->getDimensions();
-            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
-                $locale = new Locale($dimensions['language'][0]);
+            $text = $text ?: $node->getLabel() ?: (string)$node->getNodeName();
+            $languageDimensionValue = $node->getOriginDimensionSpacePoint()->coordinates['language'] ?? null;
+            if (!is_null($languageDimensionValue)) {
+                $locale = new Locale($languageDimensionValue);
                 $language = $locale->getLanguage();
             }
-        } elseif (strlen($text) === 0) {
+        } elseif (is_null($text) || empty($text)) {
             throw new Exception('Given text was empty.', 1457591815);
         }
-        $text = $this->transliterationService->transliterate($text, isset($language) ? $language : null);
+        $text = $this->transliterationService->transliterate($text, $language);
+
         return Transliterator::urlize($text);
     }
 }

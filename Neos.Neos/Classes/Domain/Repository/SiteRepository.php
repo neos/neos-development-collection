@@ -94,10 +94,9 @@ class SiteRepository extends Repository
      * If the defaultSiteNodeName-setting is null the first active site is returned
      * If the site is not found or not active an exception is thrown
      *
-     * @return Site
      * @throws NeosException
      */
-    public function findDefault()
+    public function findDefault(): ?Site
     {
         if ($this->defaultSiteNodeName === null) {
             return $this->findOnline()->getFirst();

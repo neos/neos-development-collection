@@ -52,9 +52,9 @@ class NodeReferenceConverter extends AbstractTypeConverter
      *
      * @param NodeInterface|array<NodeInterface> $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string the target type
+     * @return string|array<int,string> the target type
      */
     public function convertFrom(
         $source,
