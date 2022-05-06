@@ -7,9 +7,9 @@ prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component
                 <pre>{propertyName}:</pre>
                 <div><Neos.Neos:Editable property={propertyName} /></div>
             </Neos.Fusion:Fragment>
-            <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(node).property(propertyName)} class="property">
+            <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(props.node).property(propertyName)}>
                 <pre>{propertyName}:</pre>
-                <div><Neos.Neos:ImageTag asset={q(node).property(propertyName)} maximumWidth="200" /></div>
+                <div><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumWidth="200" /></div>
             </Neos.Fusion:Fragment>
         </Neos.Fusion:Loop>
     `

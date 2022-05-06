@@ -1,29 +1,29 @@
 
 prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
     node = null
-    @context.node = ${this.node}
 
     renderer = Neos.Fusion:Case {
 
         custom {
             @position = "100"
             condition = Neos.Fusion:CanRender {
-                type = ${node.nodeType.name + '.Raw'}
+                type = ${props.node.nodeType.name + '.RawContentMode'}
             }
             renderer = Neos.Fusion:Renderer {
                 @context.node = ${props.node}
-                type = ${node.nodeType.name + '.Raw'}
+                type = ${props.node.nodeType.name + '.RawContentMode'}
+                element.node = ${props.node}
             }
         }
 
         defaultContentCollection {
             @position = "200"
-            condition = ${q(props.node).is('[instanceof Neos.Neos:ContentCollection]') || q(props.node).children().is()}
+            condition = ${q(node).is('[instanceof Neos.Neos:ContentCollection]')}
             renderer = afx`
                 <div class="neos-raw-content-contentcollection-container">
-                    <header><pre>{node.label}</pre></header>
-                    <Neos.Neos:RawContent.NodeProperties node={props.node}/>
-                    <Neos.Neos:RawContent.NodeChildren node={props.node}/>
+                    <header><pre>{props.node.label}</pre></header>
+                    <Neos.Neos:RawContent.NodeProperties node={props.node} />
+                    <Neos.Neos:RawContent.NodeChildren node={props.node} />
                 </div>
             `
         }
@@ -33,8 +33,8 @@ prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
             condition = true
             renderer = afx`
                 <div>
-                    <Neos.Neos:RawContent.NodeProperties node={props.node}/>
-                    <Neos.Neos:RawContent.NodeChildren node={props.node}/>
+                    <Neos.Neos:RawContent.NodeProperties node={props.node} />
+                    <Neos.Neos:RawContent.NodeChildren node={props.node} />
                 </div>
             `
         }
