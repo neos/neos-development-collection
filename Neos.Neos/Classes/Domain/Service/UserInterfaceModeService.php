@@ -38,6 +38,7 @@ class UserInterfaceModeService
     /**
      * @Flow\InjectConfiguration(path="userInterface.editPreviewModes", package="Neos.Neos")
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $editPreviewModes;
 
@@ -61,15 +62,12 @@ class UserInterfaceModeService
             return $this->findModeByName('live');
         }
 
-        /** @var \Neos\Neos\Domain\Model\User $user */
         $editPreviewMode = $this->userService->getUserPreference('contentEditing.editPreviewMode');
         if ($editPreviewMode === null) {
             $editPreviewMode = $this->defaultEditPreviewMode;
         }
 
-        $mode = $this->findModeByName($editPreviewMode);
-
-        return $mode;
+        return $this->findModeByName($editPreviewMode);
     }
 
     /**

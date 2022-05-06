@@ -15,7 +15,6 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Security\Account;
@@ -39,7 +38,6 @@ use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
-use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * A service for managing users
@@ -49,7 +47,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class UserService
 {
-
     /**
      * Might be configurable in the future, for now centralising this as a "constant"
      *
@@ -142,7 +139,7 @@ class UserService
     protected $now;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $runtimeUserCache = [];
 
@@ -171,18 +168,20 @@ class UserService
      *
      * @param string $username The username
      * @param string $authenticationProviderName Name of the authentication provider to use, e.g. "Neos.Neos:Backend"
-     * @return User|null The user, or null if the user does not exist
+     * @return ?User The user, or null if the user does not exist
      * @throws Exception
      * @api
      */
-    public function getUser($username, $authenticationProviderName = null)
+    public function getUser($username, $authenticationProviderName = null): ?User
     {
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         $cacheIdentifier = $authenticationProviderName . '~' . $username;
 
         if (array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
             $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
-            return $this->partyRepository->findByIdentifier($userIdentifier);
+            /** @var ?User $user */
+            $user = $this->partyRepository->findByIdentifier($userIdentifier);
+            return $user;
         }
 
         $user = $this->findUserForAccount($username, $authenticationProviderName);
@@ -193,7 +192,9 @@ class UserService
 
         if (isset($userIdentifier) && (string)$userIdentifier !== '') {
             $this->runtimeUserCache[$cacheIdentifier] = $userIdentifier;
-            return $this->partyRepository->findByIdentifier($userIdentifier);
+            /** @var ?User $user */
+            $user = $this->partyRepository->findByIdentifier($userIdentifier);
+            return $user;
         }
 
         return null;
@@ -208,13 +209,12 @@ class UserService
      *
      * @param User $user
      * @param string $authenticationProviderName
-     * @return string The username or null if the given user does not have a backend account
+     * @return ?string The username or null if the given user does not have a backend account
      */
-    public function getUsername(User $user, $authenticationProviderName = null)
+    public function getUsername(User $user, string $authenticationProviderName = null): ?string
     {
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         foreach ($user->getAccounts() as $account) {
-            /** @var Account $account */
             if ($account->getAuthenticationProviderName() === $authenticationProviderName) {
                 return $account->getAccountIdentifier();
             }
@@ -225,10 +225,10 @@ class UserService
     /**
      * Returns the currently logged in user, if any
      *
-     * @return User The currently logged in user, or null
+     * @return ?User The currently logged in user, or null
      * @api
      */
-    public function getCurrentUser()
+    public function getCurrentUser(): ?User
     {
         if ($this->securityContext->canBeInitialized() === false) {
             return null;
@@ -240,6 +240,7 @@ class UserService
                 return $foundUser;
             }
 
+            /** @var ?Account $account */
             $account = $token->getAccount();
             if ($account === null) {
                 return $foundUser;
@@ -265,7 +266,7 @@ class UserService
      * @param string $password Password of the user to be created
      * @param string $firstName First name of the user to be created
      * @param string $lastName Last name of the user to be created
-     * @param array $roleIdentifiers A list of role identifiers to assign
+     * @param array<int,string> $roleIdentifiers A list of role identifiers to assign
      * @param string $authenticationProviderName Name of the authentication provider to use, e.g. "Neos.Neos:Backend"
      * @return User The created user instance
      * @api
@@ -297,7 +298,7 @@ class UserService
      * @param string $username The username of the user to be created.
      * @param string $password Password of the user to be created
      * @param User $user The pre-built user object to start with
-     * @param array $roleIdentifiers A list of role identifiers to assign
+     * @param array<int,string>|null $roleIdentifiers A list of role identifiers to assign
      * @param string $authenticationProviderName Name of the authentication provider to use, e.g. "Neos.Neos:Backend"
      * @return User The same user object
      * @api
@@ -481,7 +482,7 @@ class UserService
      * to properly reflect these changes.
      *
      * @param Account $account The account to assign the roles to
-     * @param array $newRoleIdentifiers A list of fully qualified role identifiers,
+     * @param array<int|string,string> $newRoleIdentifiers A list of fully qualified role identifiers,
      *                                  or role identifiers relative to the Neos.Neos namespace
      * @return void
      * @api
@@ -534,7 +535,7 @@ class UserService
      * Signals that new roles have been assigned to the given account
      *
      * @param Account $account The account
-     * @param array<Role> An array of Role objects which have been added for that account
+     * @param array<Role> $roles An array of Role objects which have been added for that account
      * @return void
      * @Flow\Signal
      * @api
@@ -574,7 +575,7 @@ class UserService
      * Signals that roles have been removed to the given account
      *
      * @param Account $account The account
-     * @param array<Role> An array of Role objects which have been removed
+     * @param array<Role> $roles An array of Role objects which have been removed
      * @return void
      * @Flow\Signal
      * @api
@@ -616,21 +617,21 @@ class UserService
      * Deactivates the given user
      *
      * @param User $user The user to deactivate
-     * @return void
      * @api
      */
-    public function deactivateUser(User $user)
+    public function deactivateUser(User $user): void
     {
-        /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
             $account->setExpirationDate(
-                \DateTime::createFromFormat(\DateTimeInterface::ATOM, $this->now->format(\DateTimeInterface::ATOM))
+                \DateTime::createFromFormat(
+                    \DateTimeInterface::ATOM,
+                    $this->now->format(\DateTimeInterface::ATOM)
+                ) ?: null
             );
             $this->accountRepository->update($account);
         }
         $this->emitUserDeactivated($user);
     }
-
 
     /**
      * Checks if the current user may publish to the given workspace according to one the roles of the user's accounts
@@ -660,23 +661,15 @@ class UserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanReadWorkspace(Workspace $workspace)
+    public function currentUserCanReadWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->getWorkspaceName()->isLive()) {
+        if ($workspace->getWorkspaceName()->isLive() || $workspace->getWorkspaceOwner() === null) {
             return true;
         }
 
-        if ($workspace->getWorkspaceOwner() === $this->persistenceManager->getIdentifierByObject($this->getCurrentUser())
-            || $workspace->getWorkspaceOwner() === null
-        ) {
-            return true;
-        }
-
-        return false;
+        return $workspace->getWorkspaceOwner()
+            === $this->persistenceManager->getIdentifierByObject($this->getCurrentUser());
     }
 
     /**
