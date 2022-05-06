@@ -44,6 +44,7 @@ require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Featu
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
@@ -52,7 +53,6 @@ use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 
 /**
  * Features context
@@ -60,6 +60,7 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperation
 class FeatureContext implements \Behat\Behat\Context\Context
 {
     use FlowContextTrait;
+    use NodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
