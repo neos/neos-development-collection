@@ -1,0 +1,9 @@
+prototype(Neos.Neos:RawContent.NodeChildren) < prototype(Neos.Fusion:Component) {
+    renderer = afx`
+        <ul>
+            <Neos.Fusion:Loop items={q(props.node).children().get()} itemName="childNode">
+                <Neos.Neos:RawContent.Node node={childNode} node={childNode} />
+            </Neos.Fusion:Loop>
+        </ul>
+    `
+}
