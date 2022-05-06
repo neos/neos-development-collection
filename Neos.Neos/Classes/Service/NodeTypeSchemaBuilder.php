@@ -44,7 +44,7 @@ class NodeTypeSchemaBuilder
      *         - nodeTypes:
      *          [child node type name]: true
      *
-     * @return array the node type schema ready to be used by the JavaScript code
+     * @return array<string,mixed> the node type schema ready to be used by the JavaScript code
      */
     public function generateNodeTypeSchema()
     {
@@ -78,7 +78,7 @@ class NodeTypeSchemaBuilder
     /**
      * Generate the list of allowed sub-node-types per parent-node-type and child-node-name.
      *
-     * @return array constraints
+     * @return array<string,mixed> constraints
      */
     protected function generateConstraints()
     {

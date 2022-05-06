@@ -14,16 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Workspace;
 
-use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Utility\Algorithms;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The ContentStreamIdentifier is the identifier for a Content Stream, which is
  * a central concept in the Event-Sourced CR introduced with Neos 5.0.
  */
-#[Flow\Proxy(false)]
-final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface, \Stringable
+final class ContentStreamIdentifier implements \JsonSerializable, \Stringable
 {
     /**
      * @var array<string,self>
@@ -55,7 +52,7 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
         return $this->value;
     }
 
-    public function getCacheEntryIdentifier(): string
+    public function getValue(): string
     {
         return $this->value;
     }

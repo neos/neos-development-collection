@@ -12,6 +12,7 @@ namespace Neos\Neos\Fusion;
  */
 
 use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -19,7 +20,6 @@ use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
 use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 
 /**

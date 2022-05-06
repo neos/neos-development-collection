@@ -13,6 +13,7 @@ namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -38,6 +39,7 @@ class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
      */
     public function render(): string
     {
+        /** @var ?Account $account */
         $account = $this->securityContext->getAccount();
 
         // Get all roles and sort them by identifier
@@ -47,6 +49,7 @@ class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
         // Use the roles combination as cache key to allow multiple users sharing the same configuration version
         $configurationIdentifier = md5(implode('_', $roles));
         $cacheKey = 'ConfigurationVersion_' . $configurationIdentifier;
+        /** @var string|false $version */
         $version = $this->configurationCache->get($cacheKey);
 
         if ($version === false) {

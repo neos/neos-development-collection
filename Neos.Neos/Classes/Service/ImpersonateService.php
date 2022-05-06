@@ -18,6 +18,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 
@@ -82,7 +83,10 @@ class ImpersonateService
     {
         $impersonation = $this->getSessionData('Impersonate');
         if ($impersonation !== null) {
-            return $this->persistenceManager->getObjectByIdentifier($impersonation, Account::class);
+            /** @var ?Account $account */
+            $account = $this->persistenceManager->getObjectByIdentifier($impersonation, Account::class);
+
+            return $account;
         }
         return null;
     }
@@ -112,13 +116,16 @@ class ImpersonateService
     {
         $originalIdentity = $this->getSessionData('OriginalIdentity');
         if ($originalIdentity !== null) {
-            return $this->persistenceManager->getObjectByIdentifier($originalIdentity, Account::class);
+            /** @var ?Account $account */
+            $account = $this->persistenceManager->getObjectByIdentifier($originalIdentity, Account::class);
+            return $account;
         }
+
         return $this->securityContext->getAccount();
     }
 
     /**
-     * @return array
+     * @return array<string,Role>
      * @throws SessionNotStartedException
      */
     public function getOriginalIdentityRoles(): array
@@ -126,7 +133,7 @@ class ImpersonateService
         $originalAccount = $this->getOriginalIdentity();
         $roles = $originalAccount ? $originalAccount->getRoles() : [];
         foreach ($roles as $role) {
-            foreach ($this->policyService->getAllParentRoles($role) as $parentRole) {
+            foreach ($role->getAllParentRoles() as $parentRole) {
                 if (!in_array($parentRole, $roles, true)) {
                     $roles[$parentRole->getIdentifier()] = $parentRole;
                 }

@@ -68,7 +68,7 @@ class EntityToIdentityConverter extends AbstractTypeConverter
      *
      * @param object $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array
      */

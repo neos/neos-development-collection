@@ -49,7 +49,8 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
      *
-     * @param User $user
+     * ViewHelper arguments: @see initializeArguments
+     *
      * @return bool
      * @throws \Neos\Flow\Security\Exception
      * @throws \Neos\Flow\Security\Exception\NoSuchRoleException

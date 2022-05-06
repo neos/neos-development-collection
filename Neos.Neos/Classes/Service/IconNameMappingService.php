@@ -18,7 +18,10 @@ use Neos\Flow\Annotations as Flow;
  */
 class IconNameMappingService
 {
-    protected $backwardsCompatibilityMapping = [
+    /**
+     * @var array<string,string>
+     */
+    protected array $backwardsCompatibilityMapping = [
         'icon-calendar-empty' => 'icon-calendar-o',
         'icon-flag-alt' => 'icon-flag-o',
         'icon-folder-open-alt' => 'icon-folder-open-o',
@@ -26,7 +29,10 @@ class IconNameMappingService
         'icon-upload-alt' => 'icon-upload'
     ];
 
-    protected $iconMapping = [
+    /**
+     * @var array<string,string>
+     */
+    protected array $iconMapping = [
         'address-book-o' => 'far fa-address-book',
         'address-card-o' => 'far fa-address-card',
         'area-chart' => 'fas fa-chart-area',
@@ -313,7 +319,10 @@ class IconNameMappingService
         'copy' => 'far fa-copy',
     ];
 
-    protected $brandIcons = [
+    /**
+     * @var array<int,string>
+     */
+    protected array $brandIcons = [
         '500px',
         'adn',
         'amazon',

@@ -12,8 +12,7 @@ namespace Neos\Neos\Tests\Unit\Aspects;
  */
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Tests\UnitTestCase;
@@ -45,7 +44,7 @@ class FusionCachingAspectTest extends UnitTestCase
     private $mockAdviceChain;
 
     /**
-     * @var TraversableNodeInterface|MockObject
+     * @var NodeInterface|MockObject
      */
     private $mockStartNode;
 
@@ -71,7 +70,7 @@ class FusionCachingAspectTest extends UnitTestCase
         $this->fusionCachingAspect = new FusionCachingAspect();
 
         $this->mockJoinPoint = $this->getMockBuilder(JoinPointInterface::class)->getMock();
-        $this->mockStartNode = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $this->mockStartNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $this->mockJoinPoint->method('getMethodArgument')->with('startNode')->willReturn($this->mockStartNode);
 
         $this->mockAdviceChain = $this->getMockBuilder(AdviceChain::class)->disableOriginalConstructor()->getMock();

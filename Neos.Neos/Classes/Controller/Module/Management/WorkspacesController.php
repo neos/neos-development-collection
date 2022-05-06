@@ -12,6 +12,8 @@ namespace Neos\Neos\Controller\Module\Management;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -48,8 +50,6 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
@@ -202,7 +202,6 @@ class WorkspacesController extends AbstractModuleController
             /** @todo add flash message */
             $this->redirect('index');
         }
-        /** @var Workspace $workspace */
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
             'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle ?: $workspaceObj->getWorkspaceName(),
@@ -297,7 +296,6 @@ class WorkspacesController extends AbstractModuleController
             // @todo add flash message
             $this->redirect('index');
         }
-        /** @var Workspace $workspace */
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($workspace));
         // TODO: $this->view->assign('disableBaseWorkspaceSelector',
@@ -425,12 +423,8 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Rebase the current users personal workspace onto the given $targetWorkspace and then
      * redirects to the $targetNode in the content module.
-     *
-     * @param \Neos\ContentRepository\Projection\Content\NodeInterface $targetNode
-     * @param Workspace $targetWorkspace
-     * @return void
      */
-    public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
+    public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace): void
     {
         $currentAccount = $this->securityContext->getAccount();
         $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())

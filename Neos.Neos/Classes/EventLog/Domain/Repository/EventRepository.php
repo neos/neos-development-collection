@@ -26,7 +26,7 @@ use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 class EventRepository extends Repository
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $defaultOrderings = [
         'uid' => QueryInterface::ORDER_ASCENDING

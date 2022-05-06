@@ -19,7 +19,7 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName as ContentReposit
  * The workspace name value for Neos contexts
  * Directly translatable to CR workspace names
  */
-final class WorkspaceName implements \JsonSerializable
+final class WorkspaceName implements \JsonSerializable, \Stringable
 {
     const PREFIX = 'user-';
     const SUFFIX_DELIMITER = '_';

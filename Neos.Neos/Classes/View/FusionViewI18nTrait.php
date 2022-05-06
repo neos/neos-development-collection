@@ -13,7 +13,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
@@ -33,11 +33,9 @@ trait FusionViewI18nTrait
      * This overrides the fallback order from Neos.Flow.i18n.fallbackRule.order - the strict
      * flag is kept from the settings!
      *
-     * @param TraversableNodeInterface $currentSiteNode
-     * @return void
      * @throws InvalidLocaleIdentifierException
      */
-    protected function setFallbackRuleFromDimension(TraversableNodeInterface $currentSiteNode): void
+    protected function setFallbackRuleFromDimension(NodeInterface $currentSiteNode): void
     {
         $dimensions = $currentSiteNode->getContext()->getDimensions();
         if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {

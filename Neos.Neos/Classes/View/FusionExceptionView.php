@@ -13,9 +13,11 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
@@ -23,7 +25,7 @@ use Neos\Neos\Domain\Service\FusionService;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -36,7 +38,7 @@ class FusionExceptionView extends AbstractView
 
     /**
      * This contains the supported options, their default values, descriptions and types.
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'enableContentCache' => ['defaultValue', true, 'boolean'],
@@ -94,7 +96,10 @@ class FusionExceptionView extends AbstractView
             $site = $this->siteRepository->findDefault();
         }
 
-        $httpRequest = $this->bootstrap->getActiveRequestHandler()->getHttpRequest();
+        $requestHandler = $this->bootstrap->getActiveRequestHandler();
+        $httpRequest = $requestHandler instanceof HttpRequestHandler
+            ? $requestHandler->getHttpRequest()
+            : ServerRequest::fromGlobals();
         $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Neos');
         $request->setFormat('html');
@@ -107,7 +112,8 @@ class FusionExceptionView extends AbstractView
             $uriBuilder
         );
 
-        $securityContext = $this->objectManager->get(Context::class);
+        /** @var SecurityContext $securityContext */
+        $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
         #$contentContext = $this->contentContextFactory->create(['currentSite' => $site]);
@@ -135,7 +141,7 @@ class FusionExceptionView extends AbstractView
             $output = $fusionRuntime->render('error');
             $output = $this->extractBodyFromOutput($output);
         } catch (RuntimeException $exception) {
-            throw $exception->getPrevious();
+            throw $exception->getPrevious() ?: $exception;
         }
         $fusionRuntime->popContext();
 

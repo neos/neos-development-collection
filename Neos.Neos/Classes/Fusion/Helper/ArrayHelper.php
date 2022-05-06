@@ -28,9 +28,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection $set
      * @param string $filterProperty
-     * @return array
+     * @return array<mixed>
      */
     public function filter($set, $filterProperty)
     {
@@ -40,9 +40,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection $set
      * @param string $filterProperty
-     * @return array
+     * @return array<mixed>
      */
     public function filterNegated($set, $filterProperty)
     {
@@ -52,10 +52,10 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Internal method for filtering
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection $set
      * @param string $filterProperty
      * @param boolean $negate
-     * @return array
+     * @return array<mixed>
      */
     protected function filterInternal($set, $filterProperty, $negate)
     {
@@ -77,9 +77,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * The input is assumed to be an array or Collection of objects.
      * Groups this input by the $groupingKey property of each element.
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection $set
      * @param string $groupingKey
-     * @return array
+     * @return array<mixed>
      */
     public function groupBy($set, $groupingKey)
     {

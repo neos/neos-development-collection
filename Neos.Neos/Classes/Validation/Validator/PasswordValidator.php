@@ -21,7 +21,7 @@ use Neos\Flow\Validation\Validator\StringLengthValidator;
 class PasswordValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'allowEmpty' => [false, 'Whether an empty password is allowed or not', 'boolean'],

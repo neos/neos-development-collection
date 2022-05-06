@@ -28,28 +28,19 @@ use Neos\Flow\Annotations as Flow;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionZookeeper
-     */
-    protected $contentDimensionZookeeper;
+    #[Flow\Inject]
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
+
+    #[Flow\Inject]
+    protected ContentDimensionSourceInterface $contentDimensionSource;
+
+    #[Flow\Inject]
+    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
     /**
-     * @Flow\Inject
-     * @var ContentDimensionSourceInterface
+     * @return array<mixed>
      */
-    protected $contentDimensionSource;
-
-    /**
-     * @Flow\Inject
-     * @var InterDimensionalVariationGraph
-     */
-    protected $interDimensionalVariationGraph;
-
-    /**
-     * @return array
-     */
-    public function getDimension()
+    public function getDimension(): array
     {
         return $this->fusionValue('dimension');
     }

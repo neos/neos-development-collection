@@ -23,7 +23,6 @@ use Neos\Flow\I18n\EelHelper\TranslationHelper;
  */
 class NodeLabelToken implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
      * @var TranslationHelper
@@ -61,10 +60,7 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected $postfix = '';
 
-    /**
-     * @var ?NodeInterface
-     */
-    protected $node = null;
+    protected NodeInterface $node;
 
     public function __construct(NodeInterface $node)
     {
@@ -141,10 +137,6 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected function resolveLabelFromNodeType(): void
     {
-        if (is_null($this->node)) {
-            $this->label = '';
-            return;
-        }
         $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel()) ?: '';
         if (empty($this->label)) {
             $this->label = $this->node->getNodeType()->getName();
@@ -157,10 +149,11 @@ class NodeLabelToken implements ProtectedContextAwareInterface
 
     protected function sanitiseLabel(string $label): string
     {
-        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label);
+        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label) ?: '';
         $label = strip_tags($label);
         $label = trim($label);
         $label = $this->stringHelper->cropAtWord($label, $this->length, $this->suffix);
+
         return $label;
     }
 

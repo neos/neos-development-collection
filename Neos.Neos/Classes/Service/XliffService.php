@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\I18n\Xliff\Service\XliffReader;
+use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
@@ -64,6 +65,7 @@ class XliffService
     /**
      * @Flow\InjectConfiguration(path="userInterface.translation.autoInclude", package="Neos.Neos")
      * @var array
+     * @phpstan-var array<string,array<mixed>>
      */
     protected $packagesRegisteredForAutoInclusion = [];
 
@@ -132,8 +134,8 @@ class XliffService
     }
 
     /**
-     * @param array $labelValue
-     * @return array
+     * @param array<string,mixed> $labelValue
+     * @return array<string,string>
      */
     protected function getTranslationUnitValue(array $labelValue)
     {
@@ -170,14 +172,15 @@ class XliffService
      * array-values
      *
      * @param PackageInterface $package
-     * @param array $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
-     * @return array
+     * @param array<int,string> $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
+     * @return array<string>
      */
     protected function collectPackageSources(PackageInterface $package, $sourcesToBeIncluded = null): array
     {
-        $packageKey = $package->getPackageKey();
+        $packageKey = ($package instanceof Package ? $package->getPackageKey() : '');
         $sources = [];
-        $translationPath = $package->getResourcesPath() . $this->xliffBasePath;
+        $translationPath = ($package instanceof Package ? $package->getResourcesPath() : $package->getPackagePath())
+            . $this->xliffBasePath;
 
         if (!is_dir($translationPath)) {
             return [];
@@ -187,9 +190,9 @@ class XliffService
             //remove translation path from path
             $source = trim(str_replace($translationPath, '', $filePath), '/');
             //remove language part from path
-            $source = trim(substr($source, strpos($source, '/')), '/');
+            $source = trim(substr($source, strpos($source, '/') ?: 0), '/');
             //remove file extension
-            $source = substr($source, 0, strrpos($source, '.'));
+            $source = substr($source, 0, strrpos($source, '.') ?: null);
 
             $this->xliffReader->readFiles(
                 $filePath,
@@ -234,7 +237,7 @@ class XliffService
     /**
      * Helper method to create the needed json array from a dotted xliff id
      *
-     * @param array $arrayPointer
+     * @param array<mixed> $arrayPointer
      * @param string $key
      * @param string|array $value
      * @return void

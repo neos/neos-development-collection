@@ -24,7 +24,7 @@ class UserPreferenceController extends AbstractServiceController
      * @Flow\Inject
      * @var UserService
      */
-    protected $userService;
+    protected $domainUserService;
 
     /**
      * @return string json encoded user preferences
@@ -32,7 +32,7 @@ class UserPreferenceController extends AbstractServiceController
     public function indexAction()
     {
         $this->response->setContentType('application/json');
-        return json_encode($this->userService->getCurrentUser()->getPreferences()->getPreferences());
+        return json_encode($this->domainUserService->getCurrentUser()->getPreferences()->getPreferences() ?: '{}');
     }
 
     /**
@@ -52,9 +52,9 @@ class UserPreferenceController extends AbstractServiceController
             $value = true;
         }
 
-        $user = $this->userService->getCurrentUser();
+        $user = $this->domainUserService->getCurrentUser();
         $user->getPreferences()->set($key, $value);
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
         $this->throwStatus(204, 'User preferences have been updated');
     }
 }

@@ -79,7 +79,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
 
         $username = (string)$this->renderChildren();
 
-        /* @var $requestedUser Person */
+        /* @var ?Person $requestedUser */
         $requestedUser = $this->domainUserService->getUser($username);
         if ($requestedUser === null || $requestedUser->getName() === null) {
             return $username;
@@ -93,11 +93,11 @@ class UserInitialsViewHelper extends AbstractViewHelper
 
         return match ($this->arguments['format']) {
             'initials' => mb_substr(
-                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()),
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()) ?: '',
                 0,
                 1
             ) . mb_substr(
-                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()),
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()) ?: '',
                 0,
                 1
             ),

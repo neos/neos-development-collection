@@ -31,7 +31,8 @@ class RenderingHelper implements ProtectedContextAwareInterface
     protected $nodeTypeManager;
 
     /**
-     * @var array
+     * @todo replace with DimensionSpace capabilities
+     * @var array<string,mixed>
      */
     protected $contentDimensionsConfiguration;
 
@@ -50,10 +51,9 @@ class RenderingHelper implements ProtectedContextAwareInterface
     /**
      * Render a human-readable description for the passed $dimensions
      *
-     * @param array $dimensions
-     * @return string
+     * @param array<string,mixed> $dimensions
      */
-    public function renderDimensions(array $dimensions)
+    public function renderDimensions(array $dimensions): string
     {
         $rendered = [];
         foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
@@ -66,11 +66,10 @@ class RenderingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param array $dimensionConfiguration
-     * @param string $dimensionValue
-     * @return array the preset matching $dimensionValue
+     * @param array<string,mixed> $dimensionConfiguration
+     * @return ?array<string,mixed> the preset matching $dimensionValue
      */
-    protected function findPresetInDimension(array $dimensionConfiguration, $dimensionValue)
+    protected function findPresetInDimension(array $dimensionConfiguration, string $dimensionValue): ?array
     {
         foreach ($dimensionConfiguration['presets'] as $preset) {
             if (!isset($preset['values'])) {

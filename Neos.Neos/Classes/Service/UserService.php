@@ -85,10 +85,9 @@ class UserService
      * (even if that might not exist at that time).
      * If no user is logged in this method returns null.
      *
-     * @return string
      * @api
      */
-    public function getPersonalWorkspaceName()
+    public function getPersonalWorkspaceName(): ?string
     {
         $currentUser = $this->userDomainService->getCurrentUser();
 
@@ -107,15 +106,17 @@ class UserService
      * Returns the stored preferences of a user
      *
      * @param string $preference
-     * @return mixed
+     * @return mixed|null
      * @api
      */
     public function getUserPreference($preference)
     {
         $user = $this->getBackendUser();
-        if ($user && $user->getPreferences()) {
+        if ($user) {
             return $user->getPreferences()->get($preference) ?: null;
         }
+
+        return null;
     }
 
     /**

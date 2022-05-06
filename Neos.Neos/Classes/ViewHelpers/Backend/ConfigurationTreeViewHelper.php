@@ -56,7 +56,7 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
     /**
      * Recursive function rendering configuration and adding it to $this->output
      *
-     * @param array $configuration
+     * @param array<string,mixed> $configuration
      * @param string $relativePath the path up-to-now
      * @return void
      */

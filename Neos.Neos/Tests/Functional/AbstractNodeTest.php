@@ -10,12 +10,13 @@ namespace Neos\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Base test case for nodes

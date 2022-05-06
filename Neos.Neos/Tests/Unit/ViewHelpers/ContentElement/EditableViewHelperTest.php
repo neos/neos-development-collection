@@ -11,13 +11,13 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;

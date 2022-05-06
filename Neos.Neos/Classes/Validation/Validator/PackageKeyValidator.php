@@ -20,7 +20,7 @@ use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 class PackageKeyValidator extends RegularExpressionValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'regularExpression' => [

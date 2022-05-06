@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -55,16 +56,15 @@ class NodeSearchService implements NodeSearchServiceInterface
     /**
      * @param string $term
      * @param array<int,string> $searchNodeTypes
-     * @return array<int,NodeInterface>
      */
     public function findByProperties(
         $term,
         array $searchNodeTypes,
         ?NodeInterface $startingPoint = null
-    ): array {
+    ): Nodes {
         $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));
         if ($workspace === null) {
-            return [];
+            return Nodes::empty();
         }
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $workspace->getCurrentContentStreamIdentifier(),
@@ -82,13 +82,12 @@ class NodeSearchService implements NodeSearchServiceInterface
         }
         $entryNode = $nodeAccessor->findByIdentifier($entryNodeIdentifier);
         if (!is_null($entryNode)) {
-            $nodes = $nodeAccessor->findDescendants(
+            return $nodeAccessor->findDescendants(
                 [$entryNode],
                 $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $searchNodeTypes)),
                 SearchTerm::fulltext($term)
             );
-            return iterator_to_array($nodes);
         }
-        return [];
+        return Nodes::empty();
     }
 }

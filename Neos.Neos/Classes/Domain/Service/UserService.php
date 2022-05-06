@@ -666,11 +666,13 @@ class UserService
      */
     public function currentUserCanReadWorkspace(Workspace $workspace)
     {
-        if ($workspace->getName() === 'live') {
+        if ($workspace->getWorkspaceName()->isLive()) {
             return true;
         }
 
-        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
+        if ($workspace->getWorkspaceOwner() === $this->persistenceManager->getIdentifierByObject($this->getCurrentUser())
+            || $workspace->getWorkspaceOwner() === null
+        ) {
             return true;
         }
 
@@ -770,8 +772,8 @@ class UserService
      * Replaces role identifiers not containing a "."
      * into fully qualified role identifiers from the Neos.Neos namespace.
      *
-     * @param array $roleIdentifiers
-     * @return array
+     * @param array<int,string,string> $roleIdentifiers
+     * @return array<int,string,string>
      */
     protected function normalizeRoleIdentifiers(array $roleIdentifiers)
     {
@@ -807,7 +809,7 @@ class UserService
      * "AuthenticatedUser" role, assuming that the user is logged in.
      *
      * @param User $user The user
-     * @return array
+     * @return array<string,Role>
      * @throws NoSuchRoleException
      */
     public function getAllRoles(User $user): array
@@ -820,12 +822,10 @@ class UserService
         /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
             $accountRoles = $account->getRoles();
-            /** @var $currentRole Role */
             foreach ($accountRoles as $currentRole) {
                 if (!in_array($currentRole, $roles)) {
                     $roles[$currentRole->getIdentifier()] = $currentRole;
                 }
-                /** @var $currentParentRole Role */
                 foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
                     if (!in_array($currentParentRole, $roles)) {
                         $roles[$currentParentRole->getIdentifier()] = $currentParentRole;

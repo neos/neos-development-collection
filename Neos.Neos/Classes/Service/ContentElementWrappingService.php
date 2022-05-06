@@ -20,6 +20,7 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
@@ -131,7 +132,7 @@ class ContentElementWrappingService
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
 
-        $this->renderedNodes[$node->getCacheEntryIdentifier()] = $node;
+        $this->renderedNodes[NodeCacheEntryIdentifier::fromNode($node)->getCacheEntryIdentifier()] = $node;
 
         $this->userLocaleService->switchToUILocale();
 

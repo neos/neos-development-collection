@@ -19,7 +19,7 @@ use Neos\Flow\Validation\Validator\AbstractValidator;
 class HostnameValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'ignoredHostnames' => ['', 'Hostnames that are not to be validated', 'string'],

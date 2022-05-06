@@ -14,15 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Utility\Algorithms;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The NodeAggregateIdentifier supersedes the Node Identifier from Neos <= 4.x.
  */
-#[Flow\Proxy(false)]
-final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface, \Stringable
+final class NodeAggregateIdentifier implements \JsonSerializable, \Stringable
 {
     /**
      * A preg pattern to match against node aggregate identifiers
@@ -66,7 +63,7 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
         return $this->value;
     }
 
-    public function getCacheEntryIdentifier(): string
+    public function getValue(): string
     {
         return $this->value;
     }

@@ -12,12 +12,12 @@ namespace Neos\Neos\Utility;
  */
 
 use Behat\Transliterator\Transliterator;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Utility to generate a valid, non-conflicting uriPathSegment for nodes.

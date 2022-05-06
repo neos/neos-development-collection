@@ -11,13 +11,13 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Service\PluginService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A Fusion PluginView.

@@ -11,12 +11,11 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Service\NodePaths;
-use Neos\ContentRepository\Exception\NodeException;
 
 /**
  * Centralizes common operations like moving and copying of Nodes with Neos specific additional handling.

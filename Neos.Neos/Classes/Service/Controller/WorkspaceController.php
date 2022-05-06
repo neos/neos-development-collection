@@ -11,6 +11,7 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
@@ -87,7 +88,7 @@ class WorkspaceController extends AbstractServiceController
     /**
      * Publishes the given nodes to the specified targetWorkspace
      *
-     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
+     * @param array<NodeInterface> $nodes
      * @param string $targetWorkspaceName
      * @return void
      */
@@ -117,7 +118,7 @@ class WorkspaceController extends AbstractServiceController
     /**
      * Discards the given nodes
      *
-     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
+     * @param array<NodeInterface> $nodes
      * @return void
      */
     public function discardNodesAction(array $nodes)
