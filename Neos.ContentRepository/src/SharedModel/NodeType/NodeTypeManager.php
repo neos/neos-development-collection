@@ -267,6 +267,9 @@ class NodeTypeManager
     ): array {
         $superTypes = [];
         foreach ($superTypesConfiguration as $superTypeName => $enabled) {
+            if (!is_string($superTypeName)) {
+                throw new NodeConfigurationException('superTypes must be a dictionary; the array format was deprecated since Neos 2.0', 1651821391);
+            }
             $superTypes[$superTypeName] = $this->evaluateSuperTypeConfiguration(
                 $superTypeName,
                 $enabled,
@@ -285,26 +288,13 @@ class NodeTypeManager
      * @throws NodeTypeIsFinalException
      */
     protected function evaluateSuperTypeConfiguration(
-        ?string $superTypeName,
+        string $superTypeName,
         ?bool $enabled,
         array &$completeNodeTypeConfiguration
     ): ?NodeType {
         // Skip unset node types
         if ($enabled === false || $enabled === null) {
             return null;
-        }
-
-        // Make this setting backwards compatible with old array schema (deprecated since 2.0)
-        if (!is_bool($enabled)) {
-            $superTypeName = $enabled;
-        }
-
-        // when removing super types by setting them to null, only string keys can be overridden
-        if ($superTypeName === null) {
-            throw new NodeConfigurationException(
-                'Node type sets super type with a non-string key to NULL.',
-                1444944152
-            );
         }
 
         $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,13 +15,13 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Eel\FlowQueryOperations\NextAllOperation;
+use Neos\ContentRepository\Eel\FlowQueryOperations\NextOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
- * Testcase for the FlowQuery NextAllOperation
+ * Testcase for the FlowQuery NextOperation
  */
-class NextAllOperationTest extends AbstractQueryOperationsTest
+class NextOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -74,12 +74,12 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
     /**
      * @test
      */
-    public function nextAllWillReturnEmptyResultForLastNodeInLevel()
+    public function nextWillReturnEmptyResultForLastNodeInLevel()
     {
         $context = [$this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
-        $operation = new NextAllOperation();
+        $operation = new NextOperation();
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
@@ -89,42 +89,27 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
     /**
      * @test
      */
-    public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstNodeInLevel()
+    public function nextWillReturnSecondNodeInLevelForFirstNodeInLevel()
     {
         $context = [$this->firstNodeInLevel];
         $q = new FlowQuery($context);
 
-        $operation = new NextAllOperation();
+        $operation = new NextOperation();
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        self::assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
+        self::assertEquals([$this->secondNodeInLevel], $output);
     }
 
     /**
      * @test
      */
-    public function nextAllWillReturnThirdNodeInLevelForSecondNodeInLevel()
-    {
-        $context = [$this->secondNodeInLevel];
-        $q = new FlowQuery($context);
-
-        $operation = new NextAllOperation();
-        $operation->evaluate($q, []);
-
-        $output = $q->getContext();
-        self::assertEquals([$this->thirdNodeInLevel], $output);
-    }
-
-    /**
-     * @test
-     */
-    public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
+    public function nextWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
     {
         $context = [$this->firstNodeInLevel, $this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
-        $operation = new NextAllOperation();
+        $operation = new NextOperation();
         $operation->evaluate($q, []);
 
         $output = $q->getContext();

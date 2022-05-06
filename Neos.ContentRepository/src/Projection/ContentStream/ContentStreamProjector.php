@@ -136,7 +136,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
     }
 
-    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
+        public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(

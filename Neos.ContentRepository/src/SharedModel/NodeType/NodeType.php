@@ -54,7 +54,7 @@ class NodeType
      *
      * @var array<string,mixed>
      */
-    protected array $fullConfiguration;
+    protected array $fullConfiguration = [];
 
     /**
      * Is this node type marked abstract

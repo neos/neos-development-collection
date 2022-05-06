@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,17 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Eel\FlowQueryOperations\PrevAllOperation;
+use Neos\ContentRepository\Eel\FlowQueryOperations\SiblingsOperation;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
- * Testcase for the FlowQuery PrevAllOperation
+ * Testcase for the FlowQuery SiblingsOperation
  */
-class PrevAllOperationTest extends AbstractQueryOperationsTest
+class SiblingsOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -55,11 +55,10 @@ class PrevAllOperationTest extends AbstractQueryOperationsTest
     public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site');
-        $this->firstNodeInLevel = $this->mockNode('node1');
-        $this->secondNodeInLevel = $this->mockNode('node2');
-        $this->thirdNodeInLevel = $this->mockNode('node3');
+        $this->firstNodeInLevel = $this->mockNode('first-node');
+        $this->secondNodeInLevel = $this->mockNode('second-node');
+        $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site')));
         $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
@@ -67,6 +66,7 @@ class PrevAllOperationTest extends AbstractQueryOperationsTest
         ])));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
+        $this->siteNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));
         $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
         $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
         $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
@@ -75,12 +75,12 @@ class PrevAllOperationTest extends AbstractQueryOperationsTest
     /**
      * @test
      */
-    public function prevAllWillReturnEmptyResultForFirstNodeInLevel()
+    public function siblingsWillReturnEmptyResultForAllNodesInLevel()
     {
-        $context = [$this->firstNodeInLevel];
+        $context = [$this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
-        $operation = new PrevAllOperation();
+        $operation = new SiblingsOperation();
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
@@ -90,12 +90,27 @@ class PrevAllOperationTest extends AbstractQueryOperationsTest
     /**
      * @test
      */
-    public function prevAllWillReturnFirstNodeInLevelForSecondNodeInLevel()
+    public function siblingsWillReturnFirstAndThirdNodeInLevelForSecondNodeInLevel()
     {
         $context = [$this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
-        $operation = new PrevAllOperation();
+        $operation = new SiblingsOperation();
+        $operation->evaluate($q, []);
+
+        $output = $q->getContext();
+        self::assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
+    }
+
+    /**
+     * @test
+     */
+    public function siblingsWillReturnFirstNodeForSecondAndThirdNodeInLevel()
+    {
+        $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];
+        $q = new FlowQuery($context);
+
+        $operation = new SiblingsOperation();
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
@@ -105,30 +120,15 @@ class PrevAllOperationTest extends AbstractQueryOperationsTest
     /**
      * @test
      */
-    public function prevAllWillReturnFirstNodeAndSecondNodeInLevelForSecondAndThirdNodeInLevel()
+    public function siblingsWillReturnEmptyArrayForSiteNode()
     {
-        $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];
+        $context = [$this->siteNode];
         $q = new FlowQuery($context);
 
-        $operation = new PrevAllOperation();
+        $operation = new SiblingsOperation();
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        self::assertEquals([$this->firstNodeInLevel, $this->secondNodeInLevel], $output);
-    }
-
-    /**
-     * @test
-     */
-    public function prevAllWillReturnFirstNodeAndSecondNodeInLevelForThirdNodeInLevel()
-    {
-        $context = [$this->thirdNodeInLevel];
-        $q = new FlowQuery($context);
-
-        $operation = new PrevAllOperation();
-        $operation->evaluate($q, []);
-
-        $output = $q->getContext();
-        self::assertEquals([$this->firstNodeInLevel, $this->secondNodeInLevel], $output);
+        self::assertEquals([], $output);
     }
 }

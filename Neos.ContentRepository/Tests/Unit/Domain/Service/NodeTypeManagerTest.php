@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  */
 
 use Neos\ContentRepository\Exception;
+use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
 use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -134,7 +135,7 @@ class NodeTypeManagerTest extends UnitTestCase
         ],
         'Neos.ContentRepository.Testing:DocumentWithSupertypes' => [
             'superTypes' => [
-                0 => 'Neos.ContentRepository.Testing:Document',
+                'Neos.ContentRepository.Testing:Document' => true,
                 'Neos.ContentRepository.Testing:Page' => true,
                 'Neos.ContentRepository.Testing:Page2' => false,
                 'Neos.ContentRepository.Testing:Page3' => null
@@ -343,6 +344,26 @@ class NodeTypeManagerTest extends UnitTestCase
         $this->prepareNodeTypeManager($nodeTypesFixture);
         $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Sub');
     }
+
+    /**
+     * @test
+     */
+    public function arraySupertypesFormatThrowsException()
+    {
+        $this->expectException(NodeConfigurationException::class);
+        $nodeTypesFixture = [
+            'Neos.ContentRepository.Testing:Base' => [
+                'final' => true
+            ],
+            'Neos.ContentRepository.Testing:Sub' => [
+                'superTypes' => [0 => 'Neos.ContentRepository.Testing:Base']
+            ]
+        ];
+
+        $this->prepareNodeTypeManager($nodeTypesFixture);
+        $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Sub');
+    }
+
 
     /**
      * @test

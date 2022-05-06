@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
