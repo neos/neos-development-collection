@@ -27,6 +27,8 @@ img {
 }
 
 .neos-raw-content-contentcollection-container > header {
+  font-family: monospace;
+  white-space: pre;
   font-size: 160%;
   color: $textSubtle;
   text-transform: uppercase;
@@ -36,19 +38,6 @@ img {
 
 a {
   color: $blueDark;
-}
-
-// Inline image alignments
-.typo3-image-alignment-right {
-  float: right;
-  margin-left: 1em;
-  margin-bottom: 0.5em;
-}
-
-.typo3-image-alignment-left {
-  float: left;
-  margin-right: 1em;
-  margin-bottom: 0.5em;
 }
 
 .neos-raw-content-hidden {

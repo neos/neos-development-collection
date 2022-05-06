@@ -1,6 +1,7 @@
 
 prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
-    node = null
+    node = ${node}
+    @context.node = ${this.node || node}
 
     renderer = Neos.Fusion:Case {
 
@@ -21,7 +22,7 @@ prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
             condition = ${q(node).is('[instanceof Neos.Neos:ContentCollection]')}
             renderer = afx`
                 <div class="neos-raw-content-contentcollection-container">
-                    <header><pre>{props.node.label}</pre></header>
+                    <header>{props.node.label}</header>
                     <Neos.Neos:RawContent.NodeProperties node={props.node} />
                     <Neos.Neos:RawContent.NodeChildren node={props.node} />
                 </div>
