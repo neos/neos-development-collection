@@ -44,7 +44,7 @@ trait BrowserTrait
         $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->clearContext();
 
         $this->browser = new \Neos\Flow\Http\Client\Browser();
-        $this->browser->setRequestEngine(new \Neos\EventSourcedNeosAdjustments\Testing\CustomizedInternalRequestEngine());
+        $this->browser->setRequestEngine(new \Neos\Neos\Testing\CustomizedInternalRequestEngine());
         $bootstrap = $this->getObjectManager()->get(\Neos\Flow\Core\Bootstrap::class);
 
         $requestHandler = new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap);

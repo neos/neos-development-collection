@@ -48,7 +48,9 @@ class DomainMatchingStrategy
                 $matchQuality = 0;
                 $domainHostnamePartsReverse = array_reverse(explode('.', $domainHostname));
                 foreach ($domainHostnamePartsReverse as $index => $domainHostnamePart) {
-                    if (isset($hostnameToMatchPartsReverse[$index]) && $domainHostnamePart === $hostnameToMatchPartsReverse[$index]) {
+                    if (isset($hostnameToMatchPartsReverse[$index])
+                        && $domainHostnamePart === $hostnameToMatchPartsReverse[$index]
+                    ) {
                         $matchQuality++;
                     } else {
                         $matchQuality = self::NOMATCH;

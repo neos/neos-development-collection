@@ -43,6 +43,7 @@ class EntityIntegrationService extends AbstractIntegrationService
     /**
      * @Flow\InjectConfiguration("eventLog.monitorEntities")
      * @var array
+     * @phpstan-var array<mixed>
      */
     protected $monitorEntitiesSetting;
 
@@ -127,7 +128,7 @@ class EntityIntegrationService extends AbstractIntegrationService
     }
 
     /**
-     * @param array $monitorEntitiesSetting
+     * @param array<mixed> $monitorEntitiesSetting
      * @return void
      */
     public function setMonitorEntitiesSetting($monitorEntitiesSetting)

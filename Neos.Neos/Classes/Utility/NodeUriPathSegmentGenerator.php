@@ -12,12 +12,12 @@ namespace Neos\Neos\Utility;
  */
 
 use Behat\Transliterator\Transliterator;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Utility to generate a valid, non-conflicting uriPathSegment for nodes.
@@ -55,9 +55,9 @@ class NodeUriPathSegmentGenerator
                 ? $node->getName()
                 : $node->getProperty('uriPathSegment');
             $i = 1;
-            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')
-                    ->count() > 0)
-            {
+            while ($q->siblings(
+                '[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]'
+            )->count() > 0) {
                 $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
             }
             $node->setProperty('uriPathSegment', $possibleUriPathSegment);

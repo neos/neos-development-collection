@@ -68,19 +68,15 @@ class DomainRepository extends Repository
      *
      * @param string $hostname Hostname the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
-     * @return Domain
      * @api
      */
-    public function findOneByHost($hostname, $onlyActive = false)
+    public function findOneByHost($hostname, $onlyActive = false): ?Domain
     {
         $allMatchingDomains = $this->findByHost($hostname, $onlyActive);
         return count($allMatchingDomains) > 0 ? $allMatchingDomains[0] : null;
     }
 
-    /**
-     * @return Domain
-     */
-    public function findOneByActiveRequest()
+    public function findOneByActiveRequest(): ?Domain
     {
         $matchingDomain = null;
         $activeRequestHandler = $this->bootstrap->getActiveRequestHandler();

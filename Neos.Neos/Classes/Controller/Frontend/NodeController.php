@@ -24,14 +24,13 @@ use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
-use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
 use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
-
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Property\PropertyMapper;

@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Neos\Fusion;
 
-
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
@@ -29,28 +28,19 @@ use Neos\Flow\Annotations as Flow;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionZookeeper
-     */
-    protected $contentDimensionZookeeper;
+    #[Flow\Inject]
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
+
+    #[Flow\Inject]
+    protected ContentDimensionSourceInterface $contentDimensionSource;
+
+    #[Flow\Inject]
+    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
     /**
-     * @Flow\Inject
-     * @var ContentDimensionSourceInterface
+     * @return array<mixed>
      */
-    protected $contentDimensionSource;
-
-    /**
-     * @Flow\Inject
-     * @var InterDimensionalVariationGraph
-     */
-    protected $interDimensionalVariationGraph;
-
-    /**
-     * @return array
-     */
-    public function getDimension()
+    public function getDimension(): array
     {
         return $this->fusionValue('dimension');
     }
@@ -111,10 +101,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $contentDimensionIdentifierToLimitTo
             ) {
                 return (int)$order[$menuItemA['node']?->getDimensionSpacePoint()?->getCoordinate(
-                        $contentDimensionIdentifierToLimitTo
-                    )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
-                        $contentDimensionIdentifierToLimitTo
-                    )];
+                    $contentDimensionIdentifierToLimitTo
+                )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
+                    $contentDimensionIdentifierToLimitTo
+                )];
             });
         }
 
@@ -248,4 +238,3 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         return $this->fusionValue('values') ?? ($this->fusionValue('presets') ?? []);
     }
 }
-

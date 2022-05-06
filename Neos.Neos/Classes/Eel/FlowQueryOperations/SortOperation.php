@@ -63,7 +63,7 @@ class SortOperation extends AbstractOperation
      *
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation.
+     * @param array<int,mixed> $arguments the arguments for this operation.
      * @return void
      * @throws FlowQueryException
      */
@@ -120,12 +120,12 @@ class SortOperation extends AbstractOperation
                 $propertyValue = $propertyValue->getTimestamp();
             }
 
-            $sortSequence[$node->getIdentifier()] = $propertyValue;
-            $nodesByIdentifier[$node->getIdentifier()] = $node;
+            $sortSequence[(string)$node->getNodeAggregateIdentifier()] = $propertyValue;
+            $nodesByIdentifier[(string)$node->getNodeAggregateIdentifier()] = $node;
         }
 
         // Create the sort sequence
-        $sortFlags = array_sum(array_map('constant', $sortOptions));
+        $sortFlags = (int)array_sum(array_map('constant', $sortOptions));
         $sortFlags = $sortFlags === 0 ? SORT_REGULAR : $sortFlags;
         if ($sortOrder === 'DESC') {
             arsort($sortSequence, $sortFlags);

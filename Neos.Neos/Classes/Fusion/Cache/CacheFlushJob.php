@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedNeosAdjustments\FusionCaching;
+namespace Neos\Neos\Fusion\Cache;
 
 /*
  * This file is part of the Neos.Neos package.

@@ -11,6 +11,7 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -18,7 +19,6 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\DataSource\DataSourceInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Data Source Controller

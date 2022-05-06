@@ -55,20 +55,22 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      */
     protected $dataTypesDefaultConfiguration;
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
      */
     protected $editorDefaultConfiguration;
 
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
-     * @param array $configuration input configuration
-     * @param array $options The processor options
+     * @param array<string,mixed> $configuration input configuration
+     * @param array<string,mixed> $options The processor options
      * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
@@ -102,8 +104,8 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
      * Converts a NodeType property configuration to the corresponding creationDialog "element" configuration
      *
      * @param string $propertyName
-     * @param array $propertyConfiguration
-     * @return array
+     * @param array<string,mixed> $propertyConfiguration
+     * @return array<string,mixed>
      */
     private function convertPropertyConfiguration(string $propertyName, array $propertyConfiguration): array
     {

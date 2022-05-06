@@ -36,16 +36,14 @@ class EventsOnDate
 
     /**
      * add another event to this group
-     *
-     * @param Event $event
      */
-    public function add(Event $event)
+    public function add(Event $event): void
     {
         $this->events[] = $event;
     }
 
     /**
-     * @return array
+     * @return array<Event>
      */
     public function getEvents()
     {

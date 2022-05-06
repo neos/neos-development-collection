@@ -65,7 +65,7 @@ class ColorOfStringViewHelper extends AbstractViewHelper
 
         $output = '#';
         for ($i = 0; $i < 3; $i++) {
-            $output .= str_pad(dechex($rgbValues[$i]), 2, 0, STR_PAD_LEFT);
+            $output .= str_pad(dechex($rgbValues[$i]), 2, '0', STR_PAD_LEFT);
         }
 
         return $output;

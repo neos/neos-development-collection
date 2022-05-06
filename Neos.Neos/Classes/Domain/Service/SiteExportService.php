@@ -50,7 +50,8 @@ class SiteExportService
      *
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return string
      */
     public function export(array $sites, $tidy = false, $nodeTypeFilter = null)
@@ -70,7 +71,8 @@ class SiteExportService
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
      * @param string $packageKey Package key where the export output should be saved to
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      * @throws NeosException
      */
@@ -99,7 +101,8 @@ class SiteExportService
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
      * @param string $pathAndFilename Path to where the export output should be saved to
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
     public function exportToFile(array $sites, $tidy, $pathAndFilename, $nodeTypeFilter = null)
@@ -160,7 +163,15 @@ class SiteExportService
         $this->xmlWriter->writeAttribute('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
         $this->xmlWriter->writeAttribute('siteNodeName', $siteNode->getName());
 
-        $this->nodeExportService->export($siteNode->getPath(), $contentContext->getWorkspaceName(), $this->xmlWriter, false, false, $this->resourcesPath, $nodeTypeFilter);
+        $this->nodeExportService->export(
+            $siteNode->getPath(),
+            $contentContext->getWorkspaceName(),
+            $this->xmlWriter,
+            false,
+            false,
+            $this->resourcesPath,
+            $nodeTypeFilter
+        );
 
         $this->xmlWriter->endElement();
     }

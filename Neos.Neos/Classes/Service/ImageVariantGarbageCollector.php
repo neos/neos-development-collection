@@ -11,11 +11,11 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Takes care of cleaning up ImageVariants.

@@ -11,6 +11,8 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\Nodes;
+
 /**
  * Interface for the node search service for finding nodes based on a fulltext search
  */
@@ -19,8 +21,6 @@ interface NodeSearchServiceInterface
     /**
      * @param string $term
      * @param array $searchNodeTypes
-     * @param Context $context
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    public function findByProperties($term, array $searchNodeTypes);
+    public function findByProperties($term, array $searchNodeTypes): Nodes;
 }

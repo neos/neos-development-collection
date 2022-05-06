@@ -36,7 +36,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $settings;
 
@@ -84,16 +84,15 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
     }
 
     /**
-     * @param array $settings
-     * @return void
+     * @param array<string,mixed> $settings
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -168,9 +167,9 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return array
+     * @return array<int,array<string,mixed>>
      */
-    protected function getNodeTypeGroupsSettings()
+    protected function getNodeTypeGroupsSettings(): array
     {
         $settings = [];
         $nodeTypeGroupsSettings = new PositionalArraySorter($this->settings['nodeTypes']['groups']);
@@ -181,7 +180,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             $settings[] = [
                 'name' => $nodeTypeGroupName,
                 'label' => $nodeTypeGroupSettings['label'],
-                'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
+                'collapsed' => $nodeTypeGroupSettings['collapsed'] ?? true
             ];
         }
 
@@ -196,8 +195,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected function renderMaximumFileUploadSize()
     {
         $maximumFileUploadSizeInBytes = min(
-            Files::sizeStringToBytes(ini_get('post_max_size')),
-            Files::sizeStringToBytes(ini_get('upload_max_filesize'))
+            Files::sizeStringToBytes(ini_get('post_max_size') ?: ''),
+            Files::sizeStringToBytes(ini_get('upload_max_filesize') ?: '')
         );
 
         return sprintf(

@@ -107,7 +107,10 @@ class SiteRepository extends Repository
          */
         $defaultSite = $this->findOneByNodeName($this->defaultSiteNodeName);
         if (!$defaultSite instanceof Site || $defaultSite->getState() !== Site::STATE_ONLINE) {
-            throw new NeosException(sprintf('DefaultSiteNode %s not found or not active', $this->defaultSiteNodeName), 1476374818);
+            throw new NeosException(sprintf(
+                'DefaultSiteNode %s not found or not active',
+                $this->defaultSiteNodeName
+            ), 1476374818);
         }
         return $defaultSite;
     }

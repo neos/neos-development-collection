@@ -11,10 +11,10 @@ namespace Neos\Neos\Routing\Cache;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * This service flushes Route caches triggered by node changes.
@@ -43,13 +43,14 @@ class RouteCacheFlusher
      */
     public function registerNodeChange(NodeInterface $node)
     {
-        if (in_array($node->getIdentifier(), $this->tagsToFlush)) {
+        $identifier = (string)$node->getNodeAggregateIdentifier();
+        if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return;
         }
-        $this->tagsToFlush[] = $node->getIdentifier();
+        $this->tagsToFlush[] = $identifier;
     }
 
     /**
@@ -68,8 +69,9 @@ class RouteCacheFlusher
         Workspace $oldBaseWorkspace = null,
         Workspace $newBaseWorkspace = null
     ) {
-        if (!in_array($workspace->getName(), $this->tagsToFlush)) {
-            $this->tagsToFlush[] = $workspace->getName();
+        $identifier = (string)$workspace->getWorkspaceName();
+        if (!in_array($identifier, $this->tagsToFlush)) {
+            $this->tagsToFlush[] = $identifier;
         }
     }
 

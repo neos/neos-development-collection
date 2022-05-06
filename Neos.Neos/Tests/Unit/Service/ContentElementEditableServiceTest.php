@@ -11,11 +11,11 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
@@ -88,7 +88,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(\Neos\Fusion\Core\Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockNode = $this->getMockBuilder(\Neos\ContentRepository\Domain\Model\NodeInterface::class)->getMock();
+        $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $this->mockNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContentContext));
         $this->mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue(new NodeType('Acme.Test:Headline', [], [])));
 

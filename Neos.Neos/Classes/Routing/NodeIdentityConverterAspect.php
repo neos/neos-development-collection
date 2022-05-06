@@ -11,9 +11,9 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI

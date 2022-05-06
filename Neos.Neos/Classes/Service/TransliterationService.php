@@ -28,7 +28,8 @@ class TransliterationService
 
     /**
      * @Flow\InjectConfiguration("transliterationRules")
-     * @var boolean
+     * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $transliterationRules;
 

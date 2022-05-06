@@ -28,11 +28,13 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $settings;
 
     /**
      * @param array $settings
+     * @phpstan-param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -128,7 +130,7 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
      * Iterate through the configured modules, find the matching module and set
      * the route path accordingly
      *
-     * @param array $value (contains action, controller and package of the module controller)
+     * @param array<string,mixed>|null|string $value (contains action, controller and package of the module controller)
      * @return boolean
      */
     protected function resolveValue($value)

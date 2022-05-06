@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
+namespace Neos\Neos\TypeConverter;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,27 +13,28 @@ namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
  */
 
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
- * An Object Converter for Node Addresses which can be used for routing (but also for other
+ * An Object Converter for content queries which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
  *
  * @Flow\Scope("singleton")
  */
-class NodeAddressToStringConverter extends AbstractTypeConverter
+class NodeAddressConverter extends AbstractTypeConverter
 {
     /**
      * @var array<int,string>
      */
-    protected $sourceTypes = [NodeAddress::class];
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = 'string';
+    protected $targetType = NodeAddress::class;
 
     /**
      * @var int
@@ -41,16 +42,30 @@ class NodeAddressToStringConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @param NodeAddress $source
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    public function canConvertFrom($source, $targetType): bool
+    {
+        return \mb_substr_count($source, '__') === 2 || \mb_strpos($source, '@') !== false;
+    }
+
+    /**
+     * @param string $source
      * @param string $targetType
-     * @param array<string,mixed> $convertedChildProperties
+     * @param array<int,string> $convertedChildProperties
      */
     public function convertFrom(
         $source,
         $targetType,
         array $convertedChildProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
-    ): string {
-        return $source->serializeForUri();
+    ): NodeAddress {
+        if (\mb_substr_count($source, '__') === 2) {
+            return $this->nodeAddressFactory->createFromUriString($source);
+        }
+        return $this->nodeAddressFactory->createFromContextPath($source);
     }
 }

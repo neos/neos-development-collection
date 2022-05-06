@@ -22,6 +22,7 @@ class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $authenticationProviderSettings;
 

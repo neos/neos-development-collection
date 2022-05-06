@@ -11,13 +11,13 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Service\PluginService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A Fusion PluginView.
@@ -124,9 +124,10 @@ class PluginViewImplementation extends PluginImplementation
             if ($this->pluginViewNode->getProperty('view')) {
                 $message ='Master View or Plugin View not found';
             }
-            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment()
-                ? '<p>' . $message . '</p>'
-                : '<!-- ' . $message . '-->';
+            return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live'
+                || $this->objectManager->getContext()->isDevelopment()
+                    ? '<p>' . $message . '</p>'
+                    : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
 

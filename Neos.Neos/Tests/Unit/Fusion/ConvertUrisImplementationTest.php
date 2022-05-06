@@ -13,6 +13,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -20,7 +21,6 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Fusion\Core\Runtime;
 use Psr\Http\Message\ServerRequestInterface;

@@ -11,8 +11,8 @@ namespace Neos\Neos\Validation\Validator;
  * source code.
  */
 
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Validator for node names
@@ -23,6 +23,10 @@ class NodeNameValidator extends RegularExpressionValidator
      * @var array
      */
     protected $supportedOptions = [
-        'regularExpression' => [NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string']
+        'regularExpression' => [
+            NodeName::PATTERN,
+            'The regular expression to use for validation, used as given',
+            'string'
+        ]
     ];
 }

@@ -12,12 +12,12 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  */
 
 use GuzzleHttp\Psr7\Message;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\FluidAdaptor\View\StandaloneView;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler;
 use Neos\Neos\Service\ContentElementWrappingService;
@@ -48,7 +48,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
     protected $environment;
 
     /**
-     * Handle an exception by displaying an error message inside the Neos backend, if logged in and not displaying the live workspace.
+     * Handle an exception by displaying an error message inside the Neos backend,
+     * if logged in and not displaying the live workspace.
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
@@ -61,25 +62,34 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $handler->setRuntime($this->runtime);
         $output = $handler->handleRenderingException($fusionPath, $exception);
         $currentContext = $this->runtime->getCurrentContext();
-        /** @var NodeInterface $documentNode */
-        $documentNode = isset($currentContext['documentNode']) ? $currentContext['documentNode'] : null;
+        /** @var ?NodeInterface $documentNode */
+        $documentNode = $currentContext['documentNode'] ?? null;
 
-        /** @var NodeInterface $node */
-        $node = isset($currentContext['node']) ? $currentContext['node'] : null;
+        /** @var ?NodeInterface $node */
+        $node = $currentContext['node'] ?? null;
 
         $fluidView = $this->prepareFluidView();
         $isBackend = false;
-        /** @var NodeInterface $siteNode */
-        $siteNode = isset($currentContext['site']) ? $currentContext['site'] : null;
+        /** @var ?NodeInterface $siteNode */
+        $siteNode = $currentContext['site'] ?? null;
 
         if ($documentNode === null) {
             // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
             $documentNode = $siteNode ? $siteNode : $node;
         }
 
-        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live'
+            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+        ) {
             $isBackend = true;
-            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $fusionPath));
+            $fluidView->assign(
+                'metaData',
+                $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
+                    $documentNode,
+                    '<div id="neos-document-metadata"></div>',
+                    $fusionPath
+                )
+            );
         }
 
         $fluidView->assignMultiple([

@@ -49,7 +49,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return mixed
@@ -67,7 +67,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
@@ -95,7 +95,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         )) {
             return false;
         }
-        if (isset($moduleConfiguration['privilegeTarget'])) {
+        if (isset($arguments['moduleConfiguration']['privilegeTarget'])) {
             return $privilegeManager->isPrivilegeTargetGranted($arguments['moduleConfiguration']['privilegeTarget']);
         }
         return true;

@@ -11,6 +11,8 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
  *
@@ -63,7 +65,7 @@ class InEditModeViewHelper extends AbstractRenderingStateViewHelper
         parent::initializeArguments();
         $this->registerArgument(
             'node',
-            \Neos\ContentRepository\Domain\Model\NodeInterface::class,
+            NodeInterface::class,
             'Optional Node to use context from'
         );
         $this->registerArgument(

@@ -43,10 +43,7 @@ class EventEmittingService
      */
     protected $eventContext = [];
 
-    /**
-     * @var string
-     */
-    protected $currentUsername = null;
+    protected ?string $currentUsername = null;
 
     /**
      * @Flow\Inject
@@ -78,7 +75,7 @@ class EventEmittingService
      * Convenience method for generating an event and directly adding it afterwards to persistence.
      *
      * @param string $eventType
-     * @param array $data
+     * @param array<mixed> $data
      * @param string $eventClassName
      * @throws Exception
      * @return Event
@@ -101,7 +98,7 @@ class EventEmittingService
      * Note: Make sure to call add($event) afterwards.
      *
      * @param string $eventType
-     * @param array $data
+     * @param array<mixed> $data
      * @param string $eventClassName
      * @return Event
      * @see emit()
@@ -109,6 +106,7 @@ class EventEmittingService
     public function generate($eventType, array $data, $eventClassName = Event::class)
     {
         $this->initializeCurrentUsername();
+        /** @var Event $event */
         $event = new $eventClassName($eventType, $data, $this->currentUsername, $this->getCurrentContext());
         $this->lastGeneratedEvent = $event;
 
@@ -193,7 +191,7 @@ class EventEmittingService
      */
     protected function initializeCurrentUsername()
     {
-        if (isset($this->currentUsername)) {
+        if (!is_null($this->currentUsername)) {
             return;
         }
 

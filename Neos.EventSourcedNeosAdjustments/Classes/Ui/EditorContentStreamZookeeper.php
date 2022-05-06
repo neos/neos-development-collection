@@ -23,7 +23,7 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as AdjustmentsWorkspaceName;
+use Neos\Neos\Domain\Model\WorkspaceName as AdjustmentsWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;

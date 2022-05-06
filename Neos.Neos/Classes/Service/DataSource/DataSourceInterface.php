@@ -11,7 +11,7 @@ namespace Neos\Neos\Service\DataSource;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * Data source interface for providing generic data

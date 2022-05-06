@@ -77,7 +77,8 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
     public function getRelatedNodes(AssetInterface $asset)
     {
         $relationMap = [];
-        $relationMap[TypeHandling::getTypeForValue($asset)] = [$this->persistenceManager->getIdentifierByObject($asset)];
+        $relationMap[TypeHandling::getTypeForValue($asset)]
+            = [$this->persistenceManager->getIdentifierByObject($asset)];
 
         if ($asset instanceof Image) {
             foreach ($asset->getVariants() as $variant) {
@@ -89,6 +90,9 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
+        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(
+            SiteService::SITES_ROOT_PATH,
+            $relationMap
+        );
     }
 }

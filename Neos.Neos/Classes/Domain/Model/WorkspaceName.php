@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace;
+namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,13 +13,13 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName as ContentRepositoryWorkspaceName;
 
 /**
  * The workspace name value for Neos contexts
  * Directly translatable to CR workspace names
  */
-final class WorkspaceName implements \JsonSerializable
+final class WorkspaceName implements \JsonSerializable, \Stringable
 {
     const PREFIX = 'user-';
     const SUFFIX_DELIMITER = '_';
@@ -63,9 +63,9 @@ final class WorkspaceName implements \JsonSerializable
         }
     }
 
-    public function toContentRepositoryWorkspaceName(): \Neos\ContentRepository\SharedModel\Workspace\WorkspaceName
+    public function toContentRepositoryWorkspaceName(): ContentRepositoryWorkspaceName
     {
-        return \Neos\ContentRepository\SharedModel\Workspace\WorkspaceName::fromString($this->name);
+        return ContentRepositoryWorkspaceName::fromString($this->name);
     }
 
     public function jsonSerialize(): string

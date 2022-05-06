@@ -50,11 +50,12 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
         }
         $this->initialized = true;
 
-        $moduleSettings = $this->objectManager->get(ConfigurationManager::class)
-            ->getConfiguration(
-                ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-                'Neos.Neos.modules'
-            );
+        /** @var ConfigurationManager $configurationManager */
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $moduleSettings = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.Neos.modules'
+        );
         $targetModulePath = $this->getParsedMatcher();
         list($moduleName, $subModuleName) = array_pad(explode('/', $targetModulePath, 2), 2, null);
         if (!isset($moduleSettings[$moduleName])) {
@@ -90,10 +91,12 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
             $methodPrivilegeMatcher
         );
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
-        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege(
+        /** @var MethodPrivilegeInterface $methodPrivilege */
+        $methodPrivilege = $methodPrivilegeTarget->createPrivilege(
             $this->getPermission(),
             $this->getParameters()
         );
+        $this->methodPrivilege = $methodPrivilege;
     }
 
     /**

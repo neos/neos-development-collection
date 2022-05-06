@@ -11,18 +11,22 @@ namespace Neos\Neos;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\EventSourcedNeosAdjustments\Ui\EditorContentStreamZookeeper;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
+use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -33,6 +37,11 @@ use Neos\Fusion\Core\Cache\ContentCache;
  */
 class Package extends BasePackage
 {
+    /**
+     * @var boolean
+     */
+    protected $protected = true;
+
     /**
      * @param Bootstrap $bootstrap The current bootstrap
      * @return void
@@ -157,6 +166,40 @@ class Package extends BasePackage
             'allObjectsPersisted',
             ContentRepositoryIntegrationService::class,
             'updateEventsAfterPublish'
+        );
+
+        $dispatcher->connect(
+            AuthenticationProviderManager::class,
+            'authenticatedToken',
+            EditorContentStreamZookeeper::class,
+            'relayEditorAuthentication'
+        );
+
+        $dispatcher->connect(
+            DocumentUriPathProjector::class,
+            'documentUriPathChanged',
+            function (string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event) use ($bootstrap) {
+                /** @var RouterCachingService $routerCachingService */
+                $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
+                $routerCachingService->flushCachesForUriPath($oldUriPath);
+
+                if (class_exists(RedirectStorageInterface::class)) {
+                    if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
+                        return;
+                    }
+                    /** @var RedirectStorageInterface $redirectStorage */
+                    // @phpstan-ignore-next-line
+                    $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
+                    $redirectStorage->addRedirect(
+                        $oldUriPath,
+                        $newUriPath,
+                        301,
+                        [],
+                        (string)$event->initiatingUserIdentifier,
+                        'via DocumentUriPathProjector'
+                    );
+                }
+            }
         );
     }
 }

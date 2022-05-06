@@ -11,26 +11,11 @@ namespace Neos\Neos\Utility;
  * source code.
  */
 
-
 /**
  * A collection of helper methods for the Neos backend assets
  */
 class BackendAssetsUtility
 {
-    /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
-     * @param array $settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
     /**
      * Returns a shortened md5 of the built CSS file
      *
@@ -38,6 +23,6 @@ class BackendAssetsUtility
      */
     public function getCssBuiltVersion()
     {
-        return substr(md5_file('resource://Neos.Neos/Public/Styles/Lite.css'), 0, 12);
+        return substr(md5_file('resource://Neos.Neos/Public/Styles/Lite.css') ?: '', 0, 12);
     }
 }

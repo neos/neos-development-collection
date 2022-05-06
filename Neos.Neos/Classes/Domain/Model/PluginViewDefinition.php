@@ -113,7 +113,8 @@ class PluginViewDefinition
     public function matchesControllerActionPair($controllerObjectName, $actionName)
     {
         $controllerActionPairs = $this->getControllerActionPairs();
-        return isset($controllerActionPairs[$controllerObjectName]) && in_array($actionName, $controllerActionPairs[$controllerObjectName]);
+        return isset($controllerActionPairs[$controllerObjectName])
+            && in_array($actionName, $controllerActionPairs[$controllerObjectName]);
     }
 
     /**

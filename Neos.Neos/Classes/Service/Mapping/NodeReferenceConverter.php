@@ -11,10 +11,10 @@ namespace Neos\Neos\Service\Mapping;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Converter to convert node references to their identifiers
@@ -66,11 +66,11 @@ class NodeReferenceConverter extends AbstractTypeConverter
             $result = [];
             /** @var NodeInterface $node */
             foreach ($source as $node) {
-                $result[] = $node->getIdentifier();
+                $result[] = (string)$node->getNodeAggregateIdentifier();
             }
         } else {
             if ($source instanceof NodeInterface) {
-                $result = $source->getIdentifier();
+                $result = (string)$source->getNodeAggregateIdentifier();
             } else {
                 $result = '';
             }

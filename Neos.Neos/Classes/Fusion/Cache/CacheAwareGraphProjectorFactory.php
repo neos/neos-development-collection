@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedNeosAdjustments\FusionCaching;
+namespace Neos\Neos\Fusion\Cache;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -19,12 +19,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcing\EventStore\EventEnvelope;
+use Neos\Neos\Fusion\Cache\CacheFlushJob;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 
@@ -57,8 +53,8 @@ class CacheAwareGraphProjectorFactory
     protected $queueName;
 
     public function build(
-        DbalClientInterface             $eventStorageDatabaseClient,
-        VariableFrontend       $processedEventsCache,
+        DbalClientInterface $eventStorageDatabaseClient,
+        VariableFrontend $processedEventsCache,
         ProjectionContentGraph $projectionContentGraph,
         ThrowableStorageInterface $throwableStorageInterface
     ): GraphProjector {

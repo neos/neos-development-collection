@@ -39,8 +39,8 @@ class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface
      * Returns the processed Configuration
      *
      * @param \Neos\ContentRepository\SharedModel\NodeType\NodeType $nodeType (uninitialized) The node type to process
-     * @param array $configuration input configuration
-     * @param array $options The processor options
+     * @param array<string,mixed> $configuration input configuration
+     * @param array<string,mixed> $options The processor options
      * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options)
