@@ -16,6 +16,7 @@ use Flowpack\JobQueue\Common\Job\JobManager;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
@@ -56,7 +57,7 @@ class CacheAwareGraphProjectorFactory
     protected $queueName;
 
     public function build(
-        DbalClient             $eventStorageDatabaseClient,
+        DbalClientInterface             $eventStorageDatabaseClient,
         VariableFrontend       $processedEventsCache,
         ProjectionContentGraph $projectionContentGraph,
         ThrowableStorageInterface $throwableStorageInterface

@@ -27,7 +27,6 @@ use Symfony\Component\Serializer\Serializer;
 /**
  * @internal
  */
-#[Flow\Scope("singleton")]
 final class PropertyConverter
 {
     private Serializer $serializer;

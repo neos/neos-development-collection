@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Infrastructure\Property;
+namespace Neos\ContentRepositoryRegistry\Infrastructure;
 
 /*
  * This file is part of the Neos.ContentRepository package.

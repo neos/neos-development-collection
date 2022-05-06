@@ -40,3 +40,31 @@ Neos:
       projection:
         defaultProjectorsToBeBlocked:
           'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true
+
+  ContentRepositoryRegistry:
+    propertyConverters:
+      ScalarNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ScalarNormalizer
+      ArrayNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ArrayNormalizer
+      DateTimeNormalizer:
+        className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        position: 'start'
+      UriNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\UriNormalizer
+      ValueObjectArrayDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
+      ValueObjectBoolDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
+      ValueObjectFloatDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
+      ValueObjectIntDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
+      ValueObjectStringDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
+      DoctrinePersistentObjectNormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+      CollectionTypeDenormalizer:
+        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
+      ProxyAwareObjectNormalizer:
+        className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer

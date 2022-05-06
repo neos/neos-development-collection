@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Infrastructure\Projection;
+namespace Neos\ContentRepositoryRegistry\Infrastructure;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Infrastructure\Projection;
  * source code.
  */
 
+use Neos\ContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorCollection;
+use Neos\ContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 final class DefaultBlockedProjectorFactory

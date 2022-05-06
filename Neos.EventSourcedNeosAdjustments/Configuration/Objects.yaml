@@ -31,7 +31,7 @@ Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
   factoryMethodName: build
   arguments:
     1:
-      object: 'Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient'
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
     2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
@@ -46,42 +46,3 @@ Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
 
 Neos\Neos\Domain\Service\NodeSearchServiceInterface:
   className: Neos\EventSourcedNeosAdjustments\Domain\Service\NodeSearchService
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
-  scope: singleton
-
-Neos\ContentRepository\Projection\Workspace\WorkspaceFinder:
-  scope: singleton
-
-Neos\ContentRepository\Projection\Changes\ChangeFinder:
-  scope: singleton
-
-Neos\ContentRepository\Feature\WorkspaceCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
-  scope: singleton
-
-Neos\ContentRepository\SharedModel\NodeAddressFactory:
-  scope: singleton
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
-  scope: singleton
-
-Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
-  scope: singleton
-
-Neos\ContentRepository\Feature\NodeAggregateCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
-  scope: singleton
-
-Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Feature\Migration\MigrationCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService:
-  scope: singleton
