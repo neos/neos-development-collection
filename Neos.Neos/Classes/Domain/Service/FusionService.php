@@ -11,7 +11,6 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
