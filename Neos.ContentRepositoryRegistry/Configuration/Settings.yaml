@@ -1,0 +1,42 @@
+Neos:
+  Flow:
+    # Improve debug output for node objects by ignoring large classes
+    error:
+      debugger:
+        ignoredClasses:
+          Neos\\ContentRepository\\SharedModel\\NodeType\\NodeTypeManager: true
+
+  EventSourcing:
+    EventStore:
+      stores:
+        'ContentRepository':
+          # By default the DoctrineEventStorage adapter is used, but this can be changed with the following setting:
+          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+
+          storageOptions:
+
+            # When using the DoctrineEventStorage adapter events are stored in a table called "neos_eventsourcing_eventstore_events" by default. This can be changed per Event Store:
+            eventTableName: 'neos_contentrepository_events'
+
+          eventPublisherFactory: 'Neos\ContentRepositoryRegistry\Legacy\HardcodedEventPublisherFactory'
+
+
+        # !!!! REMOVE!!!!
+        'FAKE_TO_MAKE_THE_DefaultEventToListenerMappingProvider_HAPPY':
+          # By default the DoctrineEventStorage adapter is used, but this can be changed with the following setting:
+          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+
+          listeners:
+            'Neos\Neos\EventSourcedRouting\.*': true
+
+  ContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true
+        activeContentGraphs:
+          'DoctrineDBAL': 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
+
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true

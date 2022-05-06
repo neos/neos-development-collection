@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\SharedModel\NodeType\NodeLabelGeneratorInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -302,6 +303,7 @@ class NodeTypeTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $nodeType = $this->getAccessibleMock(NodeType::class, ['initialize'], [], '', false);
         $nodeType->_set('objectManager', $mockObjectManager);
+        $nodeType->_set('nodeLabelGenerator', $this->createMock(NodeLabelGeneratorInterface::class));
         $nodeType->expects(self::atLeastOnce())->method('initialize');
         $nodeType->$getter();
     }

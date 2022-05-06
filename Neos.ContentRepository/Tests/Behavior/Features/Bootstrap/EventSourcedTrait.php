@@ -137,7 +137,7 @@ trait EventSourcedTrait
 
         $activeContentGraphsConfig = $configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.activeContentGraphs'
+            'Neos.ContentRepository.unstableInternalWillChangeLater.testing.activeContentGraphs'
         );
         $availableContentGraphs = [];
         foreach ($activeContentGraphsConfig as $name => $className) {

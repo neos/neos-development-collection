@@ -1,7 +1,7 @@
-Neos:
-  EventSourcing:
-    EventStore:
-      stores:
-        'ContentRepository':
-          listeners:
-            'Neos\EventSourcedNeosAdjustments\.*': true
+#Neos:
+#  EventSourcing:
+#    EventStore:
+#      stores:
+#        'ContentRepository':
+#          listeners:
+#            'Neos\EventSourcedNeosAdjustments\.*': true
