@@ -54,8 +54,9 @@ function(
 				var that = this;
 				setTimeout(function() {
 					$('li', notifications).each(function(index, notification) {
-						var title = $(notification).data('title');
-						that[$(notification).data('type')](title ? title : $(notification).text(), title ? $(notification).html() : '');
+						var title = $(notification).data('title') || $(notification).text();
+						var message = $(notification).data('title') ? $(notification).text() : '';
+						that[$(notification).data('type')](that._escapeHtml(title), that._escapeHtml(message));
 					});
 				}, 250);
 			}
@@ -142,6 +143,13 @@ function(
 				$(this).parent().toggleClass('expanded');
 				$(this).next('.neos-expand-content').slideToggle();
 			});
+		},
+
+		_escapeHtml: function(html) {
+			var text = document.createTextNode(html);
+			var p = document.createElement('p');
+			p.appendChild(text);
+			return p.innerHTML;
 		}
 	}).create();
 });
