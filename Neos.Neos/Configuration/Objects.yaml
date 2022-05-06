@@ -8,7 +8,7 @@ Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
           1:
             value: Neos_Neos_Configuration_Version
 
-Neos\Neos\Aspects\FusionCachingAspect:
+Neos\Neos\Fusion\Cache\FusionCachingAspect:
   properties:
     fusionCache:
       object:

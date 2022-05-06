@@ -1,16 +1,6 @@
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
 
-Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
-  properties:
-    fusionCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_Neos_Fusion
-
 Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
   arguments:
     3:
@@ -44,5 +34,3 @@ Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
     4:
       object: 'Neos\Flow\Log\ThrowableStorageInterface'
 
-Neos\Neos\Domain\Service\NodeSearchServiceInterface:
-  className: Neos\EventSourcedNeosAdjustments\Domain\Service\NodeSearchService
