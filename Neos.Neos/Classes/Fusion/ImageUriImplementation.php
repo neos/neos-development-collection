@@ -166,7 +166,17 @@ class ImageUriImplementation extends AbstractFusionObject
         if (!empty($preset)) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getAsync(), $this->getQuality(), $this->getFormat());
+            $thumbnailConfiguration = new ThumbnailConfiguration(
+                $this->getWidth(),
+                $this->getMaximumWidth(),
+                $this->getHeight(),
+                $this->getMaximumHeight(),
+                $this->getAllowCropping(),
+                $this->getAllowUpScaling(),
+                $this->getAsync(),
+                $this->getQuality(),
+                $this->getFormat()
+            );
         }
         $request = $this->getRuntime()->getControllerContext()->getRequest();
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $request);

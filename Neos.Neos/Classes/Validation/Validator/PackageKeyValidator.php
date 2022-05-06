@@ -23,6 +23,10 @@ class PackageKeyValidator extends RegularExpressionValidator
      * @var array
      */
     protected $supportedOptions = [
-        'regularExpression' => [PackageInterface::PATTERN_MATCH_PACKAGEKEY, 'The regular expression to use for validation, used as given', 'string']
+        'regularExpression' => [
+            PackageInterface::PATTERN_MATCH_PACKAGEKEY,
+            'The regular expression to use for validation, used as given',
+            'string'
+        ]
     ];
 }

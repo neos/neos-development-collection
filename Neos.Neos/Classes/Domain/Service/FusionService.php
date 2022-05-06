@@ -200,14 +200,21 @@ class FusionService
      */
     protected function generateFusionForNodeType(NodeType $nodeType)
     {
-        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
+        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator')
+            && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null
+        ) {
             $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
             if (!class_exists($generatorClassName)) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+                throw new \Neos\Neos\Domain\Exception(
+                    'Fusion prototype-generator Class ' . $generatorClassName . ' does not exist'
+                );
             }
             $generator = $this->objectManager->get($generatorClassName);
             if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+                throw new \Neos\Neos\Domain\Exception(
+                    'Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface '
+                        . DefaultPrototypeGeneratorInterface::class
+                );
             }
             return $generator->generate($nodeType);
         }
@@ -239,7 +246,9 @@ class FusionService
     {
         $autoIncludeFusion = [];
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
-            if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
+            if (isset($this->autoIncludeConfiguration[$packageKey])
+                && $this->autoIncludeConfiguration[$packageKey] === true
+            ) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);
                 if (is_file($autoIncludeFusionFile)) {
                     $autoIncludeFusion[] = $autoIncludeFusionFile;
@@ -253,7 +262,8 @@ class FusionService
     /**
      * Set the pattern for including the site root Fusion
      *
-     * @param string $siteRootFusionPattern A string for the sprintf format that takes the site package key as a single placeholder
+     * @param string $siteRootFusionPattern A string for the sprintf format
+     *                                      that takes the site package key as a single placeholder
      * @return void
      */
     public function setSiteRootFusionPattern($siteRootFusionPattern)

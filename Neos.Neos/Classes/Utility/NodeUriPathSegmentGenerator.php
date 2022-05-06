@@ -55,9 +55,9 @@ class NodeUriPathSegmentGenerator
                 ? $node->getName()
                 : $node->getProperty('uriPathSegment');
             $i = 1;
-            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')
-                    ->count() > 0)
-            {
+            while ($q->siblings(
+                '[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]'
+            )->count() > 0) {
                 $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
             }
             $node->setProperty('uriPathSegment', $possibleUriPathSegment);

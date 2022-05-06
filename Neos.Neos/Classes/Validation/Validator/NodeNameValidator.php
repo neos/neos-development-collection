@@ -23,6 +23,10 @@ class NodeNameValidator extends RegularExpressionValidator
      * @var array
      */
     protected $supportedOptions = [
-        'regularExpression' => [NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string']
+        'regularExpression' => [
+            NodeInterface::MATCH_PATTERN_NAME,
+            'The regular expression to use for validation, used as given',
+            'string'
+        ]
     ];
 }

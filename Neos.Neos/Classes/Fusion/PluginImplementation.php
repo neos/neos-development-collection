@@ -124,8 +124,10 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
      */
-    protected function resolveDispatchArgumentsForPluginRequest(ActionRequest $pluginRequest, NodeInterface $node = null): ActionRequest
-    {
+    protected function resolveDispatchArgumentsForPluginRequest(
+        ActionRequest $pluginRequest,
+        NodeInterface $node = null
+    ): ActionRequest {
         $packageKey = $this->getPackage();
         $subpackageKey = $this->getSubpackage();
         $controller = $this->getController();
@@ -183,7 +185,8 @@ class PluginImplementation extends AbstractArrayFusionObject
         $pluginResponse = new ActionResponse();
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-        // We need to make sure to not merge content up into the parent ActionResponse because that would break the Fusion HttpResponse.
+        // We need to make sure to not merge content up into the parent ActionResponse
+        // because that would break the Fusion HttpResponse.
         $content = $pluginResponse->getContent();
         $pluginResponse->setContent('');
 
@@ -218,7 +221,11 @@ class PluginImplementation extends AbstractArrayFusionObject
             return $nodeArgumentNamespace;
         }
 
-        $argumentNamespace = str_replace([':', '.', '\\'], ['_', '_', '_'], ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
+        $argumentNamespace = str_replace(
+            [':', '.', '\\'],
+            ['_', '_', '_'],
+            ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController())
+        );
         $argumentNamespace = strtolower($argumentNamespace);
 
         return $argumentNamespace;

@@ -240,4 +240,3 @@ class FusionView extends AbstractView
         return parent::assign($key, $value);
     }
 }
-

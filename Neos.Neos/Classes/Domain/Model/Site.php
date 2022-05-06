@@ -308,7 +308,9 @@ class Site
      */
     public function getPrimaryDomain()
     {
-        return isset($this->primaryDomain) && $this->primaryDomain->getActive() ? $this->primaryDomain : $this->getFirstActiveDomain();
+        return isset($this->primaryDomain) && $this->primaryDomain->getActive()
+            ? $this->primaryDomain
+            : $this->getFirstActiveDomain();
     }
 
     /**

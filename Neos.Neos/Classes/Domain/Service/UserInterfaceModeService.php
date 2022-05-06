@@ -55,7 +55,9 @@ class UserInterfaceModeService
      */
     public function findModeByCurrentUser()
     {
-        if ($this->userService->getBackendUser() === null || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        if ($this->userService->getBackendUser() === null
+            || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+        ) {
             return $this->findModeByName('live');
         }
 
@@ -98,10 +100,18 @@ class UserInterfaceModeService
                 $mode = UserInterfaceMode::createByConfiguration($modeName, $this->editPreviewModes[$modeName]);
                 $this->editPreviewModes[$modeName] = $mode;
             } else {
-                throw new Exception('The requested interface render mode "' . $modeName . '" is not configured correctly. Please make sure it is fully configured.', 1427716331);
+                throw new Exception(
+                    'The requested interface render mode "' . $modeName . '" is not configured correctly.'
+                        . ' Please make sure it is fully configured.',
+                    1427716331
+                );
             }
         } else {
-            throw new Exception('The requested interface render mode "' . $modeName . '" is not configured. Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".', 1427715962);
+            throw new Exception(
+                'The requested interface render mode "' . $modeName . '" is not configured.'
+                    . ' Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".',
+                1427715962
+            );
         }
 
         return $mode;

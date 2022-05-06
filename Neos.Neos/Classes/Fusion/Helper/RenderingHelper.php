@@ -41,7 +41,10 @@ class RenderingHelper implements ProtectedContextAwareInterface
      */
     public function injectConfigurationManager(ConfigurationManager $configurationManager)
     {
-        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
+        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.ContentRepository.contentDimensions'
+        );
     }
 
     /**

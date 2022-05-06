@@ -112,7 +112,9 @@ class SiteImportService
         $this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass(ImageVariant::class);
         array_unshift($this->imageVariantClassNames, ImageVariant::class);
 
-        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetInterface::class);
+        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(
+            AssetInterface::class
+        );
 
         $this->dateTimeClassNames = $this->reflectionService->getAllSubClassNamesForClass('DateTime');
         array_unshift($this->dateTimeClassNames, 'DateTime');
@@ -137,7 +139,10 @@ class SiteImportService
         try {
             return $this->importFromFile($contentPathAndFilename);
         } catch (\Exception $exception) {
-            throw new NeosException(sprintf('Error: During import an exception occurred: "%s".', $exception->getMessage()), 1300360480, $exception);
+            throw new NeosException(sprintf(
+                'Error: During import an exception occurred: "%s".',
+                $exception->getMessage()
+            ), 1300360480, $exception);
         }
     }
 
@@ -177,10 +182,16 @@ class SiteImportService
 
             $siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
             if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-                throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
+                throw new UnknownPackageException(sprintf(
+                    'Package "%s" specified in the XML as site resources package does not exist.',
+                    $siteResourcesPackageKey
+                ), 1303891443);
             }
             if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-                throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
+                throw new InvalidPackageStateException(sprintf(
+                    'Package "%s" specified in the XML as site resources package is not active.',
+                    $siteResourcesPackageKey
+                ), 1303898135);
             }
             $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
@@ -195,7 +206,11 @@ class SiteImportService
                 $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
 
-            $this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
+            $this->nodeImportService->import(
+                $xmlReader,
+                $sitesNode->getPath(),
+                dirname($pathAndFilename) . '/Resources'
+            );
         }
 
         if ($site === null) {

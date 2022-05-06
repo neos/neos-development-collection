@@ -54,8 +54,12 @@ class PasswordValidator extends AbstractValidator
         $repeatPasswordNotEmptyValidator = new NotEmptyValidator;
         $repeatPasswordNotEmptyValidatorResult = $repeatPasswordNotEmptyValidator->validate($repeatPassword);
 
-        if (($passwordNotEmptyValidatorResult->hasErrors() === true) && ($repeatPasswordNotEmptyValidatorResult->hasErrors() === true)) {
-            if (!isset($this->options['allowEmpty']) || isset($this->options['allowEmpty']) && intval($this->options['allowEmpty']) === 0) {
+        if (($passwordNotEmptyValidatorResult->hasErrors() === true)
+            && ($repeatPasswordNotEmptyValidatorResult->hasErrors() === true)
+        ) {
+            if (!isset($this->options['allowEmpty'])
+                || isset($this->options['allowEmpty']) && intval($this->options['allowEmpty']) === 0
+            ) {
                 $this->addError('The given password was empty.', 1324641097);
             }
             return;

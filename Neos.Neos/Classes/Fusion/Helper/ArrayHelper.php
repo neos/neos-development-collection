@@ -74,7 +74,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * The input is assumed to be an array or Collection of objects. Groups this input by the $groupingKey property of each element.
+     * The input is assumed to be an array or Collection of objects.
+     * Groups this input by the $groupingKey property of each element.
      *
      * @param array|Collection $set
      * @param string $groupingKey

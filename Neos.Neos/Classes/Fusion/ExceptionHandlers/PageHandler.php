@@ -48,7 +48,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
     protected $environment;
 
     /**
-     * Handle an exception by displaying an error message inside the Neos backend, if logged in and not displaying the live workspace.
+     * Handle an exception by displaying an error message inside the Neos backend,
+     * if logged in and not displaying the live workspace.
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
@@ -77,9 +78,18 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $documentNode = $siteNode ? $siteNode : $node;
         }
 
-        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live'
+            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+        ) {
             $isBackend = true;
-            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $fusionPath));
+            $fluidView->assign(
+                'metaData',
+                $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
+                    $documentNode,
+                    '<div id="neos-document-metadata"></div>',
+                    $fusionPath
+                )
+            );
         }
 
         $fluidView->assignMultiple([
