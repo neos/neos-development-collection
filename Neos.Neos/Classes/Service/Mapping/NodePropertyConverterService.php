@@ -183,7 +183,8 @@ class NodePropertyConverterService
         // then the PropertyMapper skips the type converter.
         if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
             $conversionTargetType .= '<'
-                . (TypeHandling::isSimpleType($parsedType['elementType'])
+                . (
+                    TypeHandling::isSimpleType($parsedType['elementType'])
                     ? $parsedType['elementType']
                     : 'string'
                 ) . '>';

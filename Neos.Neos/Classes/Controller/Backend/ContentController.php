@@ -34,7 +34,6 @@ use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Service\PluginService;
