@@ -44,6 +44,17 @@ Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorIn
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
   factoryMethodName: buildProjectionIntegrityViolationDetector
 
+Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
+  factoryMethodName: buildContentGraph
+
+Neos\ContentRepository\Projection\Content\ContentGraphInterface:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
+  factoryMethodName: buildContentGraph
+
+
 ##############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactory:
   scope: singleton
@@ -52,10 +63,6 @@ Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactor
       object:
         factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\DefaultBlockedProjectorFactory
     2:
-      object:
-        factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\PropertyConversionSerializerFactory
-        factoryMethodName: buildSerializer
-    3:
       object:
         factoryObjectName: Neos\EventSourcing\EventPublisher\DefaultEventPublisherFactory
         arguments:
@@ -69,12 +76,6 @@ Neos\ContentRepositoryRegistry\Infrastructure\DefaultBlockedProjectorFactory:
     1:
       setting: 'Neos.ContentRepository.unstableInternalWillChangeLater.projection.defaultProjectorsToBeBlocked'
 
-
-
-Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactory
-  factoryMethodName: buildPropertyConverter
 
 Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
   scope: singleton
@@ -164,8 +165,21 @@ Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionR
 
 
 ################################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\PropertyConverterObjectFactory:
+  scope: singleton
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\PropertyConversionSerializerFactory
+        factoryMethodName: buildSerializer
 
 
+Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\PropertyConverterObjectFactory
+  factoryMethodName: buildPropertyConverter
+
+################################
 
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\StructureAdjustmentObjectFactory:
   scope: singleton
@@ -202,7 +216,9 @@ Neos\ContentRepository\Infrastructure\DbalClientInterface:
   className: 'Neos\ContentRepositoryRegistry\Infrastructure\DbalClient'
 
 
-
+Neos\EventSourcing\Event\EventTypeResolverInterface:
+  scope: singleton
+  className: Neos\ContentRepositoryRegistry\Legacy\FullyQualifiedEventTypeResolver
 
 
 

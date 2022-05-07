@@ -67,10 +67,10 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
      * @var EventPublisherInterface[]
      */
     private $eventPublisherInstances;
+    private EventToListenerMappings $mappings;
 
-    public function __construct(DefaultEventToListenerMappingProvider $mappingProvider)
+    public function __construct()
     {
-        $this->mappingProvider = $mappingProvider;
         $this->mappings = EventToListenerMappings::fromArray([
             // ChangeProjector
             EventToListenerMapping::create(NodeAggregateWasMoved::class, ChangeProjector::class, []),
@@ -159,6 +159,14 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             EventToListenerMapping::create(NodeGeneralizationVariantWasCreated::class, HypergraphProjector::class, []),
             EventToListenerMapping::create(NodePeerVariantWasCreated::class, HypergraphProjector::class, []),
         ]);
+    }
+
+    /**
+     * @return EventToListenerMappings
+     */
+    public function getMappings(): EventToListenerMappings
+    {
+        return $this->mappings;
     }
 
     public function create(string $eventStoreIdentifier): EventPublisherInterface
