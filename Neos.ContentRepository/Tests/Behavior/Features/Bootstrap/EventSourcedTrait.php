@@ -54,7 +54,7 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceC
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
@@ -183,7 +183,6 @@ trait EventSourcedTrait
             }
         }
 
-        var_dump($adapterKeys);
         $this->activeContentGraphs = count($adapterKeys) === 0
             ? $this->availableContentGraphs
             : $this->availableContentGraphs->reduceTo($adapterKeys);

@@ -40,7 +40,7 @@ Feature: Change node name
       | initiatingUserIdentifier | "initiating-user-identifier" |
 
     Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateNameWasChanged" with payload:
+    And event at index 2 is of type "NodeAggregateNameWasChanged" with payload:
       | Key                     | Expected           |
       | contentStreamIdentifier | "cs-identifier"    |
       | nodeAggregateIdentifier | "nody-mc-nodeface" |

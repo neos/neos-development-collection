@@ -28,7 +28,7 @@ use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminators;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodesByAdapter;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use PHPUnit\Framework\Assert;
 
 /**

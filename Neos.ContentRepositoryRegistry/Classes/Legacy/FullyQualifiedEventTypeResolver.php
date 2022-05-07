@@ -13,8 +13,6 @@ namespace Neos\ContentRepositoryRegistry\Legacy;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
@@ -41,21 +39,9 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPartia
 use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Projection\Changes\ChangeProjector;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\EventTypeResolverInterface;
-use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
-use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
-use Neos\EventSourcing\EventListener\Mapping\EventToListenerMappings;
-use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
-use Neos\EventSourcing\EventPublisher\EventPublisherFactoryInterface;
-use Neos\EventSourcing\EventPublisher\EventPublisherInterface;
-use Neos\EventSourcing\EventPublisher\JobQueueEventPublisher;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 
 /**
  * Workaround until we have short event names.

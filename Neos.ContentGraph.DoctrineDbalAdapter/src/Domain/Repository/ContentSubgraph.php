@@ -30,7 +30,6 @@ use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
@@ -56,52 +55,20 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
  */
 final class ContentSubgraph implements ContentSubgraphInterface
 {
-    /**
-     * @Flow\Inject
-     * @var DbalClientInterface
-     */
-    protected $client;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeConstraintFactory
-     */
-    protected $nodeTypeConstraintFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
 
     /**
      * @var InMemoryCache
      */
     protected $inMemoryCache;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected $contentStreamIdentifier;
-
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected $dimensionSpacePoint;
-
-    /**
-     * @var VisibilityConstraints
-     */
-    protected $visibilityConstraints;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints
+        private readonly ContentStreamIdentifier $contentStreamIdentifier,
+        private readonly DimensionSpacePoint $dimensionSpacePoint,
+        private readonly VisibilityConstraints $visibilityConstraints,
+        private readonly DbalClientInterface $client,
+        private readonly NodeFactory $nodeFactory
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->visibilityConstraints = $visibilityConstraints;
         $this->inMemoryCache = new InMemoryCache();
     }
 
