@@ -17,9 +17,9 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 /** @codingStandardsIgnoreStart */
 use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
+
 /** @codingStandardsIgnoreEnd */
 
 /**

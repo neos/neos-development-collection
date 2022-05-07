@@ -23,7 +23,6 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
-use Neos\Neos\View\FusionViewI18nTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
