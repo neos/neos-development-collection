@@ -60,10 +60,7 @@ class UsersController extends AbstractModuleController
      */
     protected $userService;
 
-    /**
-     * @var User
-     */
-    protected $currentUser;
+    protected ?User $currentUser;
 
     /**
      * @Flow\Inject
@@ -80,6 +77,7 @@ class UsersController extends AbstractModuleController
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $authenticationProviderSettings;
 
@@ -185,9 +183,9 @@ class UsersController extends AbstractModuleController
      * Create a new user
      *
      * @param string $username The user name (ie. account identifier) of the new user
-     * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param array<int,string> $password Expects an array in the format array('<password>', '<password confirmation>')
      * @param User $user The user to create
-     * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
+     * @param array<int,string> $roleIdentifiers A list of roles (role identifiers) to assign to the new user
      * @param string $authenticationProviderName Optional name of the authentication provider.
      *                                         If not provided the user server uses the default authentication provider
      * @return void
@@ -349,7 +347,7 @@ class UsersController extends AbstractModuleController
         );
         if (!$user instanceof User || !$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->getModuleLabel('users.userAccountEditingDenied.body', [$user->getName()->getFullName()]),
+                $this->getModuleLabel('users.userAccountEditingDenied.body', [$user?->getName()->getFullName()]),
                 $this->getModuleLabel('users.userAccountEditingDenied.title'),
                 Message::SEVERITY_ERROR,
                 [],
@@ -369,8 +367,8 @@ class UsersController extends AbstractModuleController
      * Update a given account
      *
      * @param Account $account The account to update
-     * @param array $roleIdentifiers A possibly updated list of roles for the user's primary account
-     * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param array<int,string> $roleIdentifiers A possibly updated list of roles for the user's primary account
+     * @param array<int,string> $password Expects an array in the format array('<password>', '<password confirmation>')
      * @return void
      * @throws StopActionException
      * @throws ForwardException
@@ -386,6 +384,9 @@ class UsersController extends AbstractModuleController
             $account->getAccountIdentifier(),
             $account->getAuthenticationProviderName()
         );
+        if (!$user instanceof User) {
+            $this->throwStatus(404, 'Could not resolve user for account "' . $account->getAccountIdentifier() . '"');
+        }
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
                 $this->getModuleLabel('users.userAccountEditingDenied.body', [$user->getName()->getFullName()]),
@@ -511,15 +512,13 @@ class UsersController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $personName = $user->getName();
-        $name = $personName ? $personName->getFullName() : '';
         $this->addFlashMessage(
             $this->getModuleLabel(
                 'users.electronicAddressRemoved.body',
                 [
                     htmlspecialchars($electronicAddress->getIdentifier()),
                     htmlspecialchars($electronicAddress->getType()),
-                    htmlspecialchars($name)
+                    htmlspecialchars($user->getName()->getFullName())
                 ]
             ),
             $this->getModuleLabel('users.electronicAddressRemoved.title'),
@@ -561,7 +560,7 @@ class UsersController extends AbstractModuleController
     /**
      * Returns sorted list of auth providers by name.
      *
-     * @return string[]
+     * @return array<string,array<string,mixed>>
      */
     protected function getAuthenticationProviders(): array
     {
@@ -584,7 +583,7 @@ class UsersController extends AbstractModuleController
      * Returns the roles that the current editor is able to assign
      * Administrator can assign any roles, other users can only assign their own roles
      *
-     * @return array
+     * @return array<string,Role>
      * @throws NoSuchRoleException
      * @throws \Neos\Flow\Security\Exception
      */

@@ -35,8 +35,9 @@ class PackagesController extends AbstractModuleController
         $packageGroups = [];
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             /** @var Package $package */
+            /** @phpstan-ignore-next-line FLOW_PATH_PACKAGES is known at this point */
             $packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
-            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
+            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/') ?: null);
             $packageGroups[$packageGroup][$package->getPackageKey()] = [
                 'sanitizedPackageKey' => str_replace('.', '', $package->getPackageKey()),
                 'version' => $package->getInstalledVersion(),

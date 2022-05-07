@@ -50,7 +50,7 @@ class AssetsController extends ActionController
     protected $asyncThumbnails;
 
     /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -60,7 +60,7 @@ class AssetsController extends ActionController
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = [
@@ -81,9 +81,8 @@ class AssetsController extends ActionController
      * Shows a list of assets
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
-     * @return string
      */
-    public function indexAction($searchTerm = '')
+    public function indexAction($searchTerm = ''): void
     {
         $assets = $this->assetRepository->findBySearchTermOrTags(
             $searchTerm,
@@ -97,11 +96,10 @@ class AssetsController extends ActionController
      * Shows a specific asset
      *
      * @param string $identifier Specifies the asset to look up
-     * @return string
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function showAction($identifier)
+    public function showAction($identifier): void
     {
         $asset = $this->assetRepository->findByIdentifier($identifier);
 

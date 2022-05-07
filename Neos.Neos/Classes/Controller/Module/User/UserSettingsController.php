@@ -20,6 +20,7 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\ElectronicAddress;
@@ -31,6 +32,8 @@ use Neos\Party\Domain\Model\ElectronicAddress;
  */
 class UserSettingsController extends AbstractModuleController
 {
+    use ModuleTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -41,12 +44,9 @@ class UserSettingsController extends AbstractModuleController
      * @Flow\Inject
      * @var UserService
      */
-    protected $userService;
+    protected $domainUserService;
 
-    /**
-     * @var User
-     */
-    protected $currentUser;
+    protected ?User $currentUser;
 
     /**
      * @Flow\Inject
@@ -92,7 +92,7 @@ class UserSettingsController extends AbstractModuleController
                 );
             }
         }
-        $this->currentUser = $this->userService->getCurrentUser();
+        $this->currentUser = $this->domainUserService->getCurrentUser();
     }
 
     /**
@@ -127,10 +127,10 @@ class UserSettingsController extends AbstractModuleController
      */
     public function updateAction(User $user)
     {
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
         $this->addFlashMessage(
-            $this->translator->translateById('userSettings.UserUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
-            $this->translator->translateById('userSettings.UserUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->getModuleLabel('userSettings.UserUpdated.body'),
+            $this->getModuleLabel('userSettings.UserUpdated.title'),
             Message::SEVERITY_OK
         );
         $this->redirect('edit');
@@ -146,7 +146,7 @@ class UserSettingsController extends AbstractModuleController
     {
         $this->view->assignMultiple([
             'account' => $account,
-            'user' => $this->userService->getUser(
+            'user' => $this->domainUserService->getUser(
                 $account->getAccountIdentifier(),
                 $account->getAuthenticationProviderName()
             )
@@ -156,7 +156,7 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Update a given account, ie. the password
      *
-     * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param array<int,string> $password Expects an array in the format array('<password>', '<password confirmation>')
      * @codingStandardsIgnoreStart
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @codingStandardsIgnoreEnd
@@ -167,24 +167,10 @@ class UserSettingsController extends AbstractModuleController
         $user = $this->currentUser;
         $password = array_shift($password);
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
+            $this->domainUserService->setUserPassword($user, $password);
             $this->addFlashMessage(
-                $this->translator->translateById(
-                    'userSettings.passwordUpdated.body',
-                    [],
-                    null,
-                    null,
-                    'Modules',
-                    'Neos.Neos'
-                ),
-                $this->translator->translateById(
-                    'userSettings.passwordUpdated.title',
-                    [],
-                    null,
-                    null,
-                    'Modules',
-                    'Neos.Neos'
-                ),
+                $this->getModuleLabel('userSettings.passwordUpdated.body'),
+                $this->getModuleLabel('userSettings.passwordUpdated.title'),
                 Message::SEVERITY_OK
             );
         }
@@ -211,32 +197,20 @@ class UserSettingsController extends AbstractModuleController
      * @param ElectronicAddress $electronicAddress
      * @return void
      */
-    public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
+    public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
     {
-        /** @var User $user */
         $user->addElectronicAddress($electronicAddress);
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
 
         $this->addFlashMessage(
-            $this->translator->translateById(
+            $this->getModuleLabel(
                 'userSettings.electronicAddressAdded.body',
                 [
                     htmlspecialchars($electronicAddress->getIdentifier()),
                     htmlspecialchars($electronicAddress->getType())
-                ],
-                null,
-                null,
-                'Modules',
-                'Neos.Neos'
+                ]
             ),
-            $this->translator->translateById(
-                'userSettings.electronicAddressAdded.title',
-                [],
-                null,
-                null,
-                'Modules',
-                'Neos.Neos'
-            ),
+            $this->getModuleLabel('userSettings.electronicAddressAdded.title'),
             Message::SEVERITY_OK,
             [],
             1412374814
@@ -254,29 +228,18 @@ class UserSettingsController extends AbstractModuleController
     public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
     {
         $user->removeElectronicAddress($electronicAddress);
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
 
         $this->addFlashMessage(
-            $this->translator->translateById(
+            $this->getModuleLabel(
                 'userSettings.electronicAddressRemoved.body',
                 [
                     htmlspecialchars($electronicAddress->getIdentifier()),
                     htmlspecialchars($electronicAddress->getType()),
                     htmlspecialchars($user->getName())
-                ],
-                null,
-                null,
-                'Modules',
-                'Neos.Neos'
+                ]
             ),
-            $this->translator->translateById(
-                'userSettings.electronicAddressRemoved.title',
-                [],
-                null,
-                null,
-                'Modules',
-                'Neos.Neos'
-            ),
+            $this->getModuleLabel('userSettings.electronicAddressRemoved.title'),
             Message::SEVERITY_NOTICE,
             [],
             1412374678

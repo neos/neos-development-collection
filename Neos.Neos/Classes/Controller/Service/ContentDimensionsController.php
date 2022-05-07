@@ -11,7 +11,9 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
@@ -26,7 +28,7 @@ class ContentDimensionsController extends ActionController
     use BackendUserTranslationTrait;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -34,7 +36,7 @@ class ContentDimensionsController extends ActionController
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = [
         'text/html',
@@ -47,6 +49,9 @@ class ContentDimensionsController extends ActionController
      */
     protected $contentDimensionPresetSource;
 
+    #[Flow\Inject]
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
+
     /**
      * Returns the full content dimensions presets as JSON object; see
      * ContentDimensionPresetSourceInterface::getAllPresets() for a format description.
@@ -56,9 +61,9 @@ class ContentDimensionsController extends ActionController
     public function indexAction()
     {
         if ($this->view instanceof JsonView) {
-            $this->view->assign('value', $this->contentDimensionPresetSource->getAllPresets());
+            $this->view->assign('value', $this->contentDimensionZookeeper->getAllowedDimensionSubspace());
         } else {
-            $this->view->assign('contentDimensionsPresets', $this->contentDimensionPresetSource->getAllPresets());
+            $this->view->assign('contentDimensionsPresets', $this->contentDimensionZookeeper->getAllowedDimensionSubspace());
         }
     }
 
@@ -77,20 +82,20 @@ class ContentDimensionsController extends ActionController
      * "language" which are allowed in combination with the country "US".
      *
      * @param string $dimensionName Name of the dimension to return presets for
-     * @param array $chosenDimensionPresets An optional array of dimension names and a single preset per dimension
+     * @param array<mixed> $chosenDimensionPresets An optional array of dimension names and a single preset per dimension
      * @return void
      */
     public function showAction($dimensionName, $chosenDimensionPresets = [])
     {
         if ($chosenDimensionPresets === []) {
-            $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllPresets();
+            $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getContentDimensionsOrderedByPriority();
             if (!isset($contentDimensionsAndPresets[$dimensionName])) {
                 $this->throwStatus(404, sprintf('The dimension %s does not exist.', $dimensionName));
             }
             $contentDimensionsAndPresets = [$dimensionName => $contentDimensionsAndPresets[$dimensionName]];
         } else {
             $contentDimensionsAndPresets = $this->contentDimensionPresetSource
-                ->getAllowedDimensionPresetsAccordingToPreselection($dimensionName, $chosenDimensionPresets);
+                ->getDimension(new ContentDimensionIdentifier($dimensionName));
         }
 
         if ($this->view instanceof JsonView) {
