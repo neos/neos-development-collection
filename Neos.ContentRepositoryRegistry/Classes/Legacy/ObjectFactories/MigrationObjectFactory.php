@@ -12,27 +12,12 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
  * source code.
  */
 
-use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\Migration\Filter\FilterFactory;
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
 use Neos\ContentRepository\Feature\Migration\Transformation\TransformationFactory;
-use Neos\ContentRepository\Feature\StructureAdjustment\ProjectedNodeIterator;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
-use Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorCollection;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner;
-use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
-use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
-use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
-use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 

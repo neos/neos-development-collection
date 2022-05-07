@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeVariation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -86,7 +86,7 @@ trait NodeVariation
         );
 
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $events) {
-            $streamName = \Neos\ContentRepository\Feature\ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
                 $command->contentStreamIdentifier
             );
 

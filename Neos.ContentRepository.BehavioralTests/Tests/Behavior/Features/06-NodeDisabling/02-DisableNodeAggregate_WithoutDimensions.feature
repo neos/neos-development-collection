@@ -48,7 +48,7 @@ Feature: Disable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"                |
 
     Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasDisabled" with payload:
+    And event at index 7 is of type "NodeAggregateWasDisabled" with payload:
       | Key                          | Expected                     |
       | contentStreamIdentifier      | "cs-identifier"              |
       | nodeAggregateIdentifier      | "sir-david-nodenborough"     |

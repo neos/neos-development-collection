@@ -12,14 +12,7 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
  * source code.
  */
 
-use Neos\ContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorCollection;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
-use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
 use Symfony\Component\Serializer\Serializer;
 
 final class PropertyConverterObjectFactory

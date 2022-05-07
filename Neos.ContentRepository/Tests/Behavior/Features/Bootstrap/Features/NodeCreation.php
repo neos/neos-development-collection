@@ -110,7 +110,7 @@ trait NodeCreation
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
         $this->rootNodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
@@ -294,6 +294,6 @@ trait NodeCreation
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 }

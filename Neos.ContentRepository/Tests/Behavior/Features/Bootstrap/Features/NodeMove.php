@@ -14,12 +14,12 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcing\EventStore\StreamName;
 
@@ -115,6 +115,6 @@ trait NodeMove
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasMoved', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeAggregateWasMoved', $streamName->getEventStreamName(), $eventPayload);
     }
 }

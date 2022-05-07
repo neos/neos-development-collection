@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\Node;
 
 /*
- * This file is part of the Neos.EventSourcedContentRepository package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

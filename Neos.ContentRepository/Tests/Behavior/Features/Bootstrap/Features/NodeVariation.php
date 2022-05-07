@@ -96,7 +96,7 @@ trait NodeVariation
             $contentStreamIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeGeneralizationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
@@ -118,7 +118,7 @@ trait NodeVariation
             $contentStreamIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
@@ -140,6 +140,6 @@ trait NodeVariation
             $contentStreamIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 }

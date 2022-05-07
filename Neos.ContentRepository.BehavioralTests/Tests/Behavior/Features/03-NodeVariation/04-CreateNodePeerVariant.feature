@@ -59,21 +59,21 @@ Feature: Create node peer variant
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"CH", "language":"fr"} |
     Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 10 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 10 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
       | nodeAggregateIdentifier | "sir-david-nodenborough"           |
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    And event at index 11 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 11 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
       | nodeAggregateIdentifier | "nodimus-prime"                    |
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    And event at index 12 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 12 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
       | nodeAggregateIdentifier | "nodimus-mediocre"                 |
@@ -254,7 +254,7 @@ Feature: Create node peer variant
     Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
-    And event at index 13 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 13 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
       | contentStreamIdentifier | "cs-identifier"                                                     |
       | nodeAggregateIdentifier | "madame-lanode"                                                     |
@@ -263,7 +263,7 @@ Feature: Create node peer variant
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
-    And event at index 14 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
       | contentStreamIdentifier | "cs-identifier"                                                     |
       | nodeAggregateIdentifier | "nodesis-prime"                                                     |
@@ -272,7 +272,7 @@ Feature: Create node peer variant
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
-    And event at index 15 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 15 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
       | contentStreamIdentifier | "cs-identifier"                                                     |
       | nodeAggregateIdentifier | "nodesis-mediocre"                                                  |
@@ -458,7 +458,7 @@ Feature: Create node peer variant
     Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
-    And event at index 13 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 13 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier | "madame-lanode"                                                                                                                         |
@@ -467,7 +467,7 @@ Feature: Create node peer variant
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
-    And event at index 14 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier | "nodesis-prime"                                                                                                                         |
@@ -476,7 +476,7 @@ Feature: Create node peer variant
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
-    And event at index 15 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 15 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier | "nodesis-mediocre"                                                                                                                      |
@@ -708,7 +708,7 @@ Feature: Create node peer variant
     # Events 11-13 are NodePeerVariantWasCreated for Sir David Nodenborough and tethered children
     # Events 14-16 are NodeSpecializationVariantWasCreated for Sir David Nodenborough and tethered children
     # Event 17 is NodePeerVariantWasCreated for Nody McNodeface
-    And event at index 16 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 16 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
       | contentStreamIdentifier | "cs-identifier"                                                     |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                                                  |

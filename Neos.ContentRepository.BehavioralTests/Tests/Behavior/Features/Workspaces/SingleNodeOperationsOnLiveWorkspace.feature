@@ -48,7 +48,7 @@ Feature: Single Node operations on live workspace
       | initiatingUserIdentifier  | "initiating-user-identifier" |
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
+    And event at index 3 is of type "NodePropertiesWereSet" with payload:
       | Key                       | Expected                     |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |

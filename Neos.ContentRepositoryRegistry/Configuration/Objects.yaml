@@ -62,12 +62,6 @@ Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactor
     1:
       object:
         factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\DefaultBlockedProjectorFactory
-    2:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventPublisher\DefaultEventPublisherFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
 
 
 Neos\ContentRepositoryRegistry\Infrastructure\DefaultBlockedProjectorFactory:
@@ -122,6 +116,16 @@ Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
 
 
 ###############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeTypeManagerObjectFactory:
+  scope: singleton
+
+Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeTypeManagerObjectFactory
+  factoryMethodName: buildNodeTypeManager
+
+
+###############################
 
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory:
   scope: singleton
@@ -155,6 +159,13 @@ Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
   factoryMethodName: buildContentStreamProjector
+
+
+Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
+  factoryMethodName: buildContentStreamFinder
+
 
 Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner:
   scope: singleton
@@ -224,10 +235,6 @@ Neos\EventSourcing\Event\EventTypeResolverInterface:
 
 
 
-
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
-  scope: singleton
 
 Neos\ContentRepository\Projection\Changes\ChangeFinder:
   scope: singleton

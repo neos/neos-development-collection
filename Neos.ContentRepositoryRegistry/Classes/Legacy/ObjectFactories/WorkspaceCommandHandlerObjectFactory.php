@@ -14,14 +14,9 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
  */
 
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\ContentRepository\Feature\StructureAdjustment\ProjectedNodeIterator;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
-use Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;

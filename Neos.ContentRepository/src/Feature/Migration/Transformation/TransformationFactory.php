@@ -77,7 +77,7 @@ class TransformationFactory
      * Tries to resolve the given transformation name into a class name.
      *
      * The name can be a fully qualified class name or a name relative to the
-     * Neos\EventSourcedContentRepository\Domain\Context\NodeMigration\Transformations namespace.
+     * Neos\ContentRepository\Feature\Migration\Transformation namespace.
      *
      * @param string $transformationName
      * @return string
@@ -127,7 +127,7 @@ class TransformationFactory
         }
 
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName(
-            'Neos\EventSourcedContentRepository\Migration\Transformations\\' . $transformationName
+            'Neos\ContentRepository\Feature\Migration\Transformation\\' . $transformationName
         );
         if ($resolvedObjectName !== null) {
             return $resolvedObjectName;

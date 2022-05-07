@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\Content;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 
@@ -32,7 +32,7 @@ interface ContentGraphInterface
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        \Neos\ContentRepository\SharedModel\VisibilityConstraints $visibilityConstraints
+        VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface;
 
     public function findNodeByIdentifiers(

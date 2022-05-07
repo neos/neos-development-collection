@@ -48,7 +48,7 @@ Feature: Create node aggregate with node
       | sir-nodeward-nodington-iii | {"language":"en"}         | esquire    | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
 
     Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
+    And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                                                                        |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                 |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                        |
@@ -59,7 +59,7 @@ Feature: Create node aggregate with node
       | nodeName                      | "node"                                                                                                          |
       | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}, "text": {"value": "initial text", "type": "string"}} |
       | nodeAggregateClassification   | "regular"                                                                                                       |
-    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
+    And event at index 3 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                       |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |
@@ -70,7 +70,7 @@ Feature: Create node aggregate with node
       | nodeName                      | "child-node"                                                   |
       | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}}     |
       | nodeAggregateClassification   | "regular"                                                      |
-    And event at index 4 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
+    And event at index 4 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                       |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |

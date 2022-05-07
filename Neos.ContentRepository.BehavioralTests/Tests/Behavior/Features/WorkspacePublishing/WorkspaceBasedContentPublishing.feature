@@ -64,14 +64,14 @@ Feature: Workspace based content publishing
   Scenario: Basic events are emitted
     # LIVE workspace
     Then I expect exactly 4 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasCreated" with payload:
+    And event at index 0 is of type "ContentStreamWasCreated" with payload:
       | Key                      | Expected                     |
       | contentStreamIdentifier  | "cs-identifier"              |
       | initiatingUserIdentifier | "initiating-user-identifier" |
 
     # Event 1 is the root Node Created event (we can skip this here, it is tested somewhere else); Event 2 is the SetProperty
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:live"
-    And event at index 0 is of type "Neos.EventSourcedContentRepository:RootWorkspaceWasCreated" with payload:
+    And event at index 0 is of type "RootWorkspaceWasCreated" with payload:
       | Key                        | Expected                     |
       | workspaceName              | "live"                       |
       | workspaceTitle             | "Live"                       |
@@ -81,14 +81,14 @@ Feature: Workspace based content publishing
 
     # USER workspace
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:user-cs-identifier"
-    And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasForked" with payload:
+    And event at index 0 is of type "ContentStreamWasForked" with payload:
       | Key                           | Expected                     |
       | contentStreamIdentifier       | "user-cs-identifier"         |
       | sourceContentStreamIdentifier | "cs-identifier"              |
       | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:user-test"
-    And event at index 0 is of type "Neos.EventSourcedContentRepository:WorkspaceWasCreated" with payload:
+    And event at index 0 is of type "WorkspaceWasCreated" with payload:
       | Key                        | Expected                      |
       | workspaceName              | "user-test"                   |
       | baseWorkspaceName          | "live"                        |

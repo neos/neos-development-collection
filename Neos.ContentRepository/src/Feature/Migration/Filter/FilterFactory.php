@@ -110,7 +110,7 @@ class FilterFactory
             );
         }
 
-        $possibleFullFilterName = 'Neos\EventSourcedContentRepository\Migration\Filters\\' . $name;
+        $possibleFullFilterName = 'Neos\ContentRepository\Feature\Migration\Filter\\' . $name;
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleFullFilterName);
         if ($resolvedObjectName !== null) {
             return $resolvedObjectName;

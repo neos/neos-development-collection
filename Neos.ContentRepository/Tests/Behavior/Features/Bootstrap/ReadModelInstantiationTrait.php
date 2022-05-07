@@ -20,7 +20,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 

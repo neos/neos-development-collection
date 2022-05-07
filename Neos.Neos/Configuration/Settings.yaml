@@ -11,6 +11,9 @@
 Neos:
 
   Neos:
+    contentCacheFlusher:
+      queueName: 'neos-contentCacheFlusher'
+
     fusion:
       # if set to true, Fusion is cached on a per-site basis.
       # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.

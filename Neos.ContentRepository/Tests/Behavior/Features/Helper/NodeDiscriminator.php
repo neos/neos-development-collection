@@ -27,8 +27,6 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  * * the content stream the node exists in
  * * the node's aggregate's external identifier
  * * the dimension space point the node originates in within its aggregate
- *
- * @package Neos\EventSourcedContentRepository
  */
 final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
 {

@@ -104,6 +104,6 @@ trait NodeRemoval
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasRemoved', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeAggregateWasRemoved', $streamName->getEventStreamName(), $eventPayload);
     }
 }

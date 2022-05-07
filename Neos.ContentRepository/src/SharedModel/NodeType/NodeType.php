@@ -74,18 +74,6 @@ class NodeType
     protected array $declaredSuperTypes;
 
     /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
      * @var NodeLabelGeneratorInterface
      */
     protected $nodeLabelGenerator;
@@ -103,7 +91,13 @@ class NodeType
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      */
-    public function __construct(string $name, array $declaredSuperTypes, array $configuration)
+    public function __construct(
+        string $name,
+        array $declaredSuperTypes,
+        array $configuration,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ObjectManagerInterface $objectManager
+    )
     {
         $this->name = $name;
 

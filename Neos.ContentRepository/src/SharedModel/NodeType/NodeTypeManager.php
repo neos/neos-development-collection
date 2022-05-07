@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
 use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * Manager for node types
@@ -40,22 +40,18 @@ class NodeTypeManager
      */
     protected array $cachedSubNodeTypes = [];
 
-    /**
-     * @Flow\Inject
-     * @var ConfigurationManager
-     */
-    protected $configurationManager;
-
-    /**
-     * @Flow\InjectConfiguration(path="fallbackNodeType")
-     * @var string
-     */
-    protected $fallbackNodeTypeName;
 
     /**
      * @var array<string,mixed>
      */
     protected array $fullNodeTypeConfigurations;
+
+    public function __construct(
+        private readonly ConfigurationManager $configurationManager,
+        private readonly ObjectManagerInterface $objectManager,
+        private readonly string $fallbackNodeTypeName
+    ) {
+    }
 
     /**
      * Return all registered node types.
@@ -248,7 +244,7 @@ class NodeTypeManager
             unset($nodeTypeConfiguration['properties']);
         }
 
-        $nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration);
+        $nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration, $this, $this->objectManager);
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;
         return $nodeType;

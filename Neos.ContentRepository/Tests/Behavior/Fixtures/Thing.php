@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures;
+namespace Neos\ContentRepository\Tests\Behavior\Fixtures;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
+namespace Neos\ContentRepository\Feature\NodeMove\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.

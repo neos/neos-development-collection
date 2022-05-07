@@ -44,7 +44,6 @@ use Neos\ContentRepository\Projection\Changes\ChangeProjector;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
-use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMappings;
 use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
@@ -52,7 +51,6 @@ use Neos\EventSourcing\EventPublisher\EventPublisherFactoryInterface;
 use Neos\EventSourcing\EventPublisher\EventPublisherInterface;
 use Neos\EventSourcing\EventPublisher\JobQueueEventPublisher;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 
 /**
  *
@@ -169,7 +167,7 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
         return $this->mappings;
     }
 
-    public function create(string $eventStoreIdentifier): EventPublisherInterface
+    public function create(string $eventStoreIdentifier): DeferEventPublisher
     {
         if (!isset($this->eventPublisherInstances[$eventStoreIdentifier])) {
             $this->eventPublisherInstances[$eventStoreIdentifier] = DeferEventPublisher::forPublisher(new JobQueueEventPublisher($eventStoreIdentifier, $this->mappings));

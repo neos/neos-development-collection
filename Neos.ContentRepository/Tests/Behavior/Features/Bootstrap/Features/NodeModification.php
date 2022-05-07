@@ -106,7 +106,7 @@ trait NodeModification
             $contentStreamIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodePropertiesWereSet', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodePropertiesWereSet', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**

@@ -75,7 +75,7 @@ trait WorkspaceCreation
         }
         $newContentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['newContentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($newContentStreamIdentifier);
-        $this->publishEvent('Neos.EventSourcedContentRepository:RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
