@@ -638,17 +638,18 @@ class UserService
      *
      * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
      * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
-     *
-     * @param Workspace $workspace The workspace
-     * @return boolean
      */
-    public function currentUserCanPublishToWorkspace(Workspace $workspace)
+    public function currentUserCanPublishToWorkspace(Workspace $workspace): bool
     {
         if ($workspace->getWorkspaceName()->jsonSerialize() === 'live') {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
-        $ownerIdentifier = $this->persistenceManager->getIdentifierByObject($this->getCurrentUser());
+        $currentUser = $this->getCurrentUser();
+        $ownerIdentifier = $currentUser
+            ? $this->persistenceManager->getIdentifierByObject($this->getCurrentUser())
+            : null;
+
         if ($workspace->getWorkspaceOwner() === $ownerIdentifier || $workspace->getWorkspaceOwner() === null) {
             return true;
         }
@@ -668,8 +669,10 @@ class UserService
             return true;
         }
 
-        return $workspace->getWorkspaceOwner()
-            === $this->persistenceManager->getIdentifierByObject($this->getCurrentUser());
+        $currentUser = $this->getCurrentUser();
+
+        return $currentUser && $workspace->getWorkspaceOwner()
+            === $this->persistenceManager->getIdentifierByObject($currentUser);
     }
 
     /**
@@ -765,8 +768,8 @@ class UserService
      * Replaces role identifiers not containing a "."
      * into fully qualified role identifiers from the Neos.Neos namespace.
      *
-     * @param array<int,string,string> $roleIdentifiers
-     * @return array<int,string,string>
+     * @param array<int|string,string> $roleIdentifiers
+     * @return array<int|string,string>
      */
     protected function normalizeRoleIdentifiers(array $roleIdentifiers)
     {

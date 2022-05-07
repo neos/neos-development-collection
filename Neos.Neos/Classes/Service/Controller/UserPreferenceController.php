@@ -13,7 +13,7 @@ namespace Neos\Neos\Service\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\Model\User;
 
 /**
  * Service Controller for user preferences
@@ -21,18 +21,16 @@ use Neos\Neos\Domain\Service\UserService;
 class UserPreferenceController extends AbstractServiceController
 {
     /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $domainUserService;
-
-    /**
      * @return string json encoded user preferences
      */
-    public function indexAction()
+    public function indexAction(): string
     {
         $this->response->setContentType('application/json');
-        return json_encode($this->domainUserService->getCurrentUser()->getPreferences()->getPreferences() ?: '{}');
+
+        return json_encode(
+            $this->domainUserService->getCurrentUser()->getPreferences()->getPreferences(),
+            JSON_THROW_ON_ERROR
+        );
     }
 
     /**
@@ -53,6 +51,9 @@ class UserPreferenceController extends AbstractServiceController
         }
 
         $user = $this->domainUserService->getCurrentUser();
+        if (!$user instanceof User) {
+            $this->throwStatus(400, 'No current user found');
+        }
         $user->getPreferences()->set($key, $value);
         $this->domainUserService->updateUser($user);
         $this->throwStatus(204, 'User preferences have been updated');

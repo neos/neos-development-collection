@@ -143,17 +143,15 @@ class PluginService
      * returns a plugin node or one of it's view nodes
      * if an view has been configured for that specific
      * controller and action combination
-     *
-     * @param NodeInterface $currentNode
-     * @param string $controllerObjectName
-     * @param string $actionName
-     * @return NodeInterface
      */
-    public function getPluginNodeByAction(NodeInterface $currentNode, $controllerObjectName, $actionName)
-    {
+    public function getPluginNodeByAction(
+        NodeInterface $currentNode,
+        string $controllerObjectName,
+        string $actionName
+    ): ?NodeInterface {
         $viewDefinition = $this->getPluginViewDefinitionByAction($controllerObjectName, $actionName);
 
-        if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView')) {
+        if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView') && $viewDefinition) {
             $masterPluginNode = $this->getPluginViewNodeByMasterPlugin($currentNode, $viewDefinition->getName());
         } else {
             $masterPluginNode = $currentNode;

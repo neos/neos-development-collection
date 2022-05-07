@@ -19,8 +19,7 @@ use Neos\ContentRepository\Projection\Content\Nodes;
 interface NodeSearchServiceInterface
 {
     /**
-     * @param string $term
-     * @param array $searchNodeTypes
+     * @param array<int,string> $searchNodeTypes
      */
-    public function findByProperties($term, array $searchNodeTypes): Nodes;
+    public function findByProperties(string $term, array $searchNodeTypes): Nodes;
 }

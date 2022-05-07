@@ -57,6 +57,7 @@ class Site
 
     /**
      * @var Collection<Domain>
+     * @phpstan-var Collection<int,Domain>
      * @ORM\OneToMany(mappedBy="site")
      * @Flow\Lazy
      */
@@ -64,6 +65,7 @@ class Site
 
     /**
      * @var Domain
+     * @phpstan-var ?Domain
      * @ORM\ManyToOne
      * @ORM\Column(nullable=true)
      */
@@ -85,6 +87,7 @@ class Site
 
     /**
      * @var AssetCollection
+     * @phpstan-var ?AssetCollection
      * @ORM\ManyToOne
      */
     protected $assetCollection;
@@ -222,7 +225,7 @@ class Site
     }
 
     /**
-     * @param Collection<Domain> $domains
+     * @param Collection<int,Domain> $domains
      * @return void
      * @api
      */
@@ -235,7 +238,7 @@ class Site
     }
 
     /**
-     * @return Collection<Domain>
+     * @return Collection<int,Domain>
      * @api
      */
     public function getDomains()
@@ -255,7 +258,7 @@ class Site
     }
 
     /**
-     * @return Collection<Domain>
+     * @return Collection<int,Domain>
      * @api
      */
     public function getActiveDomains()
@@ -303,12 +306,12 @@ class Site
     /**
      * Returns the primary domain, if one has been defined.
      *
-     * @return Domain The primary domain or NULL
+     * @return ?Domain The primary domain or NULL
      * @api
      */
-    public function getPrimaryDomain()
+    public function getPrimaryDomain(): ?Domain
     {
-        return isset($this->primaryDomain) && $this->primaryDomain->getActive()
+        return $this->primaryDomain instanceof Domain && $this->primaryDomain->getActive()
             ? $this->primaryDomain
             : $this->getFirstActiveDomain();
     }

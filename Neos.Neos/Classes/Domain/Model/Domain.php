@@ -36,6 +36,7 @@ class Domain implements CacheAwareInterface
 
     /**
      * @var string
+     * @phpstan-var ?string
      * @Flow\Validate(type="RegularExpression", options={ "regularExpression"="/^(http|https)$/" })
      * @ORM\Column(nullable=true)
      */
@@ -43,6 +44,7 @@ class Domain implements CacheAwareInterface
 
     /**
      * @var integer
+     * @phpstan-var ?int
      * @Flow\Validate(type="NumberRange", options={ "minimum"=0, "maximum"=49151 })
      * @ORM\Column(nullable=true)
      */
@@ -205,20 +207,14 @@ class Domain implements CacheAwareInterface
      */
     public function __toString()
     {
-        $domain = '';
-        $domain .= $this->scheme ? $this->scheme . '://' : '';
+        $domain = $this->scheme ? $this->scheme . '://' : '';
         $domain .= $this->hostname;
         if ($this->port !== null) {
-            switch ($this->scheme) {
-                case 'http':
-                    $domain .= ($this->port !== 80 ? ':' . $this->port : '');
-                    break;
-                case 'https':
-                    $domain .= ($this->port !== 443 ? ':' . $this->port : '');
-                    break;
-                default:
-                    $domain .= (isset($this->port) ? ':' . $this->port : '');
-            }
+            $domain .= match ($this->scheme) {
+                'http' => ($this->port !== 80 ? ':' . $this->port : ''),
+                'https' => ($this->port !== 443 ? ':' . $this->port : ''),
+                default => (':' . $this->port),
+            };
         }
         return $domain;
     }

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\Controller;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,11 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\Controller;
+
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -20,6 +24,7 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Domain\Service\UserService;
 
 /**
  * Abstract Service Controller
@@ -38,6 +43,9 @@ abstract class AbstractServiceController extends ActionController
      * @var ThrowableStorageInterface
      */
     protected $throwableStorage;
+
+    #[Flow\Inject]
+    protected UserService $domainUserService;
 
     /**
      * A preliminary error action for handling validation errors
@@ -145,5 +153,14 @@ abstract class AbstractServiceController extends ActionController
             }
         }
         return $exceptionData;
+    }
+
+    protected function getCurrentUserIdentifier(): ?UserIdentifier
+    {
+        $user = $this->domainUserService->getCurrentUser();
+
+        return $user
+            ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user))
+            : null;
     }
 }

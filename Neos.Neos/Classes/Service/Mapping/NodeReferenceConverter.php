@@ -64,16 +64,11 @@ class NodeReferenceConverter extends AbstractTypeConverter
     ) {
         if (is_array($source)) {
             $result = [];
-            /** @var NodeInterface $node */
             foreach ($source as $node) {
                 $result[] = (string)$node->getNodeAggregateIdentifier();
             }
         } else {
-            if ($source instanceof NodeInterface) {
-                $result = (string)$source->getNodeAggregateIdentifier();
-            } else {
-                $result = '';
-            }
+            $result = (string)$source->getNodeAggregateIdentifier();
         }
 
         return $result;

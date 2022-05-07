@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\ContentStream;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,11 +10,13 @@ namespace Neos\ContentRepository\Projection\ContentStream;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\ContentStream;
+
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -35,6 +34,25 @@ final class ContentStreamFinder
     {
     }
 
+    /**
+     * @return iterable<ContentStreamIdentifier>
+     */
+    public function findAllIdentifiers(): iterable
+    {
+        $connection = $this->client->getConnection();
+        $databaseRows = $connection->executeQuery(
+            '
+            SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+            ',
+        )->fetchAllAssociative();
+
+        return array_map(
+            fn (array $databaseRow): ContentStreamIdentifier => ContentStreamIdentifier::fromString(
+                $databaseRow['contentStreamIdentifier']
+            ),
+            $databaseRows
+        );
+    }
 
     /**
      * @return array<int,ContentStreamIdentifier>

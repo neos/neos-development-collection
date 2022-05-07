@@ -38,13 +38,12 @@ trait FusionViewI18nTrait
     protected function setFallbackRuleFromDimension(NodeInterface $currentSiteNode): void
     {
         $dimensions = $currentSiteNode->getDimensionSpacePoint()->coordinates;
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
-            $currentLocale = new Locale($dimensions['language'][0]);
+        if (array_key_exists('language', $dimensions)) {
+            $currentLocale = new Locale($dimensions['language']);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            array_shift($dimensions['language']);
             $this->i18nService->getConfiguration()->setFallbackRule([
                 'strict' => $this->i18nService->getConfiguration()->getFallbackRule()['strict'],
-                'order' => $dimensions['language']
+                'order' => [$dimensions['language']]
             ]);
         }
     }

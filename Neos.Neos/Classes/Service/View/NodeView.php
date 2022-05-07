@@ -12,6 +12,7 @@ namespace Neos\Neos\Service\View;
  */
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
@@ -95,10 +96,9 @@ class NodeView extends JsonView
     }
 
     /**
-     * @param NodeInterface[] $nodes
      * @throws \Neos\Eel\Exception
      */
-    public function assignNodes(array $nodes): void
+    public function assignNodes(Nodes $nodes): void
     {
         $data = [];
         foreach ($nodes as $node) {
@@ -350,7 +350,7 @@ class NodeView extends JsonView
     /**
      * @param NodeInterface $node
      * @param boolean $expand
-     * @param array $children
+     * @param array<mixed> $children
      * @param boolean $hasChildNodes
      * @param boolean $matched
      * @return array<string,mixed>

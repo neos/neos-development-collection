@@ -28,53 +28,39 @@ class UserPreferences
     /**
      * The actual settings
      *
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $preferences = [];
+    protected array $preferences = [];
 
     /**
      * Get preferences
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getPreferences()
+    public function getPreferences(): array
     {
         return $this->preferences;
     }
 
     /**
-     * @param array $preferences
-     * @return void
+     * @param array<string,mixed> $preferences
      */
-    public function setPreferences(array $preferences)
+    public function setPreferences(array $preferences): void
     {
         $this->preferences = $preferences;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): void
     {
         $this->preferences[$key] = $value;
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key)
+    public function get(string $key): mixed
     {
-        return isset($this->preferences[$key]) ? $this->preferences[$key] : null;
+        return $this->preferences[$key] ?? null;
     }
 
-    /**
-     * @param string $localeIdentifier
-     * @return void
-     */
-    public function setInterfaceLanguage($localeIdentifier)
+    public function setInterfaceLanguage(string $localeIdentifier): void
     {
         $this->set('interfaceLanguage', $localeIdentifier);
     }
@@ -82,7 +68,7 @@ class UserPreferences
     /**
      * @return string the locale identifier
      */
-    public function getInterfaceLanguage()
+    public function getInterfaceLanguage(): ?string
     {
         return $this->get('interfaceLanguage');
     }

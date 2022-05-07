@@ -11,8 +11,19 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
@@ -20,7 +31,6 @@ use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * A service for manipulating sites
@@ -64,21 +74,27 @@ class SiteService
      */
     protected $assetCollectionRepository;
 
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
+    #[Flow\Inject]
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
+
+    #[Flow\Inject]
+    protected ContentStreamFinder $contentStreamFinder;
+
+    #[Flow\Inject]
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
+
+    #[Flow\Inject]
+    protected SiteNodeUtility $siteNodeUtility;
+
     /**
      * Remove given site all nodes for that site and all domains associated.
-     *
-     * @param Site $site
-     * @return void
      */
-    public function pruneSite(Site $site)
+    public function pruneSite(Site $site): void
     {
-        $siteNodePath = NodePaths::addNodePathSegment(static::SITES_ROOT_PATH, $site->getNodeName());
-        $this->nodeDataRepository->removeAllInPath($siteNodePath);
-        $siteNodes = $this->nodeDataRepository->findByPath($siteNodePath);
-        foreach ($siteNodes as $siteNode) {
-            $this->nodeDataRepository->remove($siteNode);
-        }
-
+        $this->removeSiteNode(NodeName::fromString($site->getNodeName()));
         $site->setPrimaryDomain(null);
         $this->siteRepository->update($site);
 
@@ -91,6 +107,47 @@ class SiteService
         $this->siteRepository->remove($site);
 
         $this->emitSitePruned($site);
+    }
+
+    private function removeSiteNode(NodeName $nodeName): void
+    {
+        $dimensionSpacePoints = $this->contentDimensionZookeeper->getAllowedDimensionSubspace()->points;
+        $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints) ?: null;
+        if (!$arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
+            throw new \InvalidArgumentException(
+                'Cannot prune site "' . $nodeName . '" due to the dimension space being empty',
+                1651921482
+            );
+        }
+        foreach ($this->contentStreamFinder->findAllIdentifiers() as $contentStreamIdentifier) {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $contentStreamIdentifier,
+                $arbitraryDimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
+            try {
+                $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
+            } catch (\InvalidArgumentException) {
+                // no sites node, so nothing to do
+                continue;
+            }
+            $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
+                $sitesNode,
+                NodeName::fromString($nodeName)
+            );
+            if (!$siteNode) {
+                // no site node, so nothing to do
+                continue;
+            }
+
+            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
+                $contentStreamIdentifier,
+                $siteNode->getNodeAggregateIdentifier(),
+                $arbitraryDimensionSpacePoint,
+                NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
+                UserIdentifier::forSystemUser()
+            ));
+        }
     }
 
     /**
@@ -116,11 +173,13 @@ class SiteService
      */
     public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
     {
-        $contentContext = $node->getContext();
-        if (!$contentContext instanceof ContentContext) {
+        try {
+            $siteNode = $this->siteNodeUtility->findSiteNode($node);
+        } catch (\InvalidArgumentException $exception) {
             return;
         }
-        $site = $contentContext->getCurrentSite();
+
+        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
         if ($site === null) {
             return;
         }

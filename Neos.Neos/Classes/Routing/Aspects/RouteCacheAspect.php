@@ -11,7 +11,10 @@ namespace Neos\Neos\Routing\Aspects;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Context;
@@ -28,6 +31,12 @@ class RouteCacheAspect
      * @var Context
      */
     protected $securityContext;
+
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
 
     /**
      * Add the current node and all parent identifiers to be used for cache entry tagging
@@ -55,24 +64,23 @@ class RouteCacheAspect
         // Build context explicitly without authorization checks because the security context isn't available yet
         // anyway and any Entity Privilege targeted on Workspace would fail at this point:
         $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values) {
-            $contextPathPieces = NodePaths::explodeContextPath($values['node']);
-            $context = $this->contextFactory->create([
-                'workspaceName' => $contextPathPieces['workspaceName'],
-                'dimensions' => $contextPathPieces['dimensions'],
-                'invisibleContentShown' => true
-            ]);
+            $nodeAddress = $this->nodeAddressFactory->createFromContextPath($values['node']);
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
-            $node = $context->getNode($contextPathPieces['nodePath']);
             if (!$node instanceof NodeInterface) {
                 return;
             }
 
-            $identifier = (string)$node->getNodeAggregateIdentifier();
-            $values['node-identifier'] = $identifier;
-
+            $values['node-identifier'] = (string)$node->getNodeAggregateIdentifier();
             $values['node-parent-identifier'] = [];
-            while ($node = $node->getParent()) {
-                $values['node-parent-identifier'][] = $identifier;
+            $ancestor = $node;
+            while ($ancestor = $nodeAccessor->findParentNode($ancestor)) {
+                $values['node-parent-identifier'][] = (string)$ancestor->getNodeAggregateIdentifier();
             }
             $joinPoint->setMethodArgument('values', $values);
         });

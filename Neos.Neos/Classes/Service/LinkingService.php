@@ -11,7 +11,14 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
@@ -19,6 +26,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
@@ -89,10 +97,7 @@ class LinkingService
      */
     protected $propertyMapper;
 
-    /**
-     * @var NodeInterface
-     */
-    protected $lastLinkedNode;
+    protected ?NodeInterface $lastLinkedNode;
 
     /**
      * @Flow\Inject
@@ -111,6 +116,18 @@ class LinkingService
      * @var BaseUriProvider
      */
     protected $baseUriProvider;
+
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
+
+    #[Flow\Inject]
+    protected NodeHiddenStateFinder $nodeHiddenStateFinder;
+
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
 
     /**
      * @param string|UriInterface $uri
@@ -183,7 +200,7 @@ class LinkingService
     public function resolveAssetUri(string $uri): ?string
     {
         $targetObject = $this->convertUriToObject($uri);
-        if ($targetObject === null) {
+        if (!$targetObject instanceof Asset) {
             $this->systemLogger->info(
                 sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri),
                 LogEnvironment::fromMethodName(__METHOD__)
@@ -192,7 +209,11 @@ class LinkingService
             return null;
         }
 
-        return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
+        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
+
+        return is_string($assetUri)
+            ? $assetUri
+            : null;
     }
 
     /**
@@ -211,15 +232,26 @@ class LinkingService
         if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
             switch ($matches[1]) {
                 case 'node':
-                    if ($contextNode === null) {
+                    if (!$contextNode instanceof NodeInterface) {
                         throw new \RuntimeException(
                             'node:// URI conversion requires a context node to be passed',
                             1409734235
                         );
                     }
-                    return $contextNode->getContext()->getNodeByIdentifier($matches[2]);
+                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                        $contextNode->getContentStreamIdentifier(),
+                        $contextNode->getDimensionSpacePoint(),
+                        $contextNode->getVisibilityConstraints()
+                    );
+
+                    return $nodeAccessor->findByIdentifier(
+                        NodeAggregateIdentifier::fromString($matches[2])
+                    );
                 case 'asset':
-                    return $this->assetRepository->findByIdentifier($matches[2]);
+                    /** @var ?AssetInterface $asset */
+                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
+
+                    return $asset;
                 default:
             }
         }
@@ -236,10 +268,11 @@ class LinkingService
      * @param NodeInterface $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
-     * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
+     * @param array<string,mixed> $arguments Additional arguments to be passed to the UriBuilder
+     *                                       (e.g. pagination parameters)
      * @param string $section
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI.
+     * @param array<int,string> $argumentsToBeExcludedFromQueryString arguments to be removed from the URI.
      *                                                    Only active if $addQueryString = true
      * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated
      *                                  and log a message if set to FALSE
@@ -284,24 +317,33 @@ class LinkingService
             if ($nodeString === '') {
                 throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
             }
-            preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
-            if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
-                $node = $this->propertyMapper->convert($nodeString, NodeInterface::class);
-            } else {
+            try {
+                $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
+                $workspace = $nodeAddress->workspaceName
+                    ? $this->workspaceFinder->findOneByName($nodeAddress->workspaceName)
+                    : null;
+                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                    $nodeAddress->contentStreamIdentifier,
+                    $nodeAddress->dimensionSpacePoint,
+                    $workspace && !$workspace->isPublicWorkspace()
+                        ? VisibilityConstraints::withoutRestrictions()
+                        : VisibilityConstraints::frontend()
+                );
+                $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+            } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(
                         'The baseNode argument is required for linking to nodes with a relative path.',
                         1407879905
                     );
                 }
-                /** @var ContentContext $contentContext */
-                $contentContext = $baseNode->getContext();
-                $normalizedPath = $this->nodeService->normalizePath(
-                    $nodeString,
-                    $baseNode->getPath(),
-                    $contentContext->getCurrentSiteNode()->getPath()
+                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                    $baseNode->getContentStreamIdentifier(),
+                    $baseNode->getDimensionSpacePoint(),
+                    $baseNode->getVisibilityConstraints()
                 );
-                $node = $contentContext->getNode($normalizedPath);
+
+                $node = $nodeAccessor->findNodeByPath(NodePath::fromString($nodeString), $baseNode);
             }
             if (!$node instanceof NodeInterface) {
                 throw new NeosException(sprintf(
@@ -321,10 +363,20 @@ class LinkingService
         }
         $this->lastLinkedNode = $node;
 
+        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $node->getContentStreamIdentifier()
+        );
+        $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getNodeAggregateIdentifier()
+        );
+
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $node->getContext()->getWorkspace()->isPublicWorkspace() && !$node->isHidden() ? 'show' : 'preview';
+        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden() ? 'show' : 'preview';
+
         return $uriBuilder
             ->reset()
             ->setSection($section)

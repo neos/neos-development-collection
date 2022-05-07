@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,11 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
@@ -76,7 +78,10 @@ final class SiteNodeUtility
             );
 
             $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
-            $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($sitesNode, NodeName::fromString($site->getNodeName()));
+            $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
+                $sitesNode,
+                NodeName::fromString($site->getNodeName())
+            );
             if ($siteNode instanceof NodeInterface) {
                 return $siteNode;
             }

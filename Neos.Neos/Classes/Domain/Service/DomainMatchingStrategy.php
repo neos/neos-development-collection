@@ -31,7 +31,7 @@ class DomainMatchingStrategy
      *
      * @param string $hostnameToMatch The hostname to match against (eg. "localhost" or "www.neos.io")
      * @param array<\Neos\Neos\Domain\Model\Domain> $domains The domains to check
-     * @return array The matching domains
+     * @return array<\Neos\Neos\Domain\Model\Domain> The matching domains
      */
     public function getSortedMatches($hostnameToMatch, array $domains)
     {
