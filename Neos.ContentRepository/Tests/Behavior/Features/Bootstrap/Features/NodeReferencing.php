@@ -109,6 +109,6 @@ trait NodeReferencing
             $contentStreamIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
     }
 }

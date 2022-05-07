@@ -28,7 +28,8 @@ class UserPreferences
     /**
      * The actual settings
      *
-     * @var array<string,mixed>
+     * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected array $preferences = [];
 

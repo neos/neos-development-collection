@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Feature;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
@@ -36,7 +37,6 @@ use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterf
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;

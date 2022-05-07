@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
@@ -21,7 +22,6 @@ use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithN
 use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;

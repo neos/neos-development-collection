@@ -150,6 +150,13 @@ Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
   factoryMethodName: buildContentStreamProjector
 
+
+Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
+  factoryMethodName: buildContentStreamFinder
+
+
 Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory

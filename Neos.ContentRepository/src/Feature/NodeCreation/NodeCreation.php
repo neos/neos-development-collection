@@ -22,7 +22,6 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;

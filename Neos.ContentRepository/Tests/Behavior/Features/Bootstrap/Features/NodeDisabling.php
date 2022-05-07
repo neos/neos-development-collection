@@ -102,7 +102,7 @@ trait NodeDisabling
             ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier'])
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**

@@ -16,6 +16,7 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner;
 use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
@@ -48,6 +49,11 @@ final class ProjectionObjectFactory
     public function buildContentStreamProjector(): ContentStreamProjector
     {
         return new ContentStreamProjector($this->dbalClient, $this->contentStreamProcessedEventsCache);
+    }
+
+    public function buildContentStreamFinder(): ContentStreamFinder
+    {
+        return new ContentStreamFinder($this->dbalClient);
     }
 
     public function buildProjectionIntegrityViolationDetectionRunner(): ProjectionIntegrityViolationDetectionRunner

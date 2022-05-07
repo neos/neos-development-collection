@@ -21,11 +21,11 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Command;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
@@ -85,7 +85,7 @@ final class DimensionSpaceCommandHandler
 
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                new \Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved(
+                new DimensionSpacePointWasMoved(
                     $command->getContentStreamIdentifier(),
                     $command->getSource(),
                     $command->getTarget()
@@ -113,7 +113,7 @@ final class DimensionSpaceCommandHandler
 
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                new \Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded(
+                new DimensionShineThroughWasAdded(
                     $command->getContentStreamIdentifier(),
                     $command->getSource(),
                     $command->getTarget()
