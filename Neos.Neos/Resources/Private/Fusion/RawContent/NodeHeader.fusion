@@ -1,0 +1,12 @@
+prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
+    node = null
+
+    renderer = Neos.Fusion:Component {
+        node = ${props.node}
+        labelParts = ${String.split(node.nodeType.label, ':')}
+
+        renderer = afx`
+            <header>{props.node.tethered ? props.node.name : Translation.translate(props.labelParts[2],props.node.nodeType.label,[],props.labelParts[1],props.labelParts[0])}</header>
+        `
+    }
+}

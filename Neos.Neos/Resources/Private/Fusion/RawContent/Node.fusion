@@ -10,37 +10,29 @@ prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
             condition = Neos.Fusion:CanRender {
                 type = ${props.node.nodeType.name + '.RawContentMode'}
             }
-            renderer = Neos.Fusion:Renderer {
-                @context.node = ${props.node}
-                type = ${props.node.nodeType.name + '.RawContentMode'}
-                element.node = ${props.node}
-            }
-        }
-
-        defaultContentCollection {
-            @position = "200"
-            condition = ${q(node).is('[instanceof Neos.Neos:ContentCollection]')}
             renderer = afx`
-                <div class="neos-raw-content-contentcollection-container">
-                    <header>{props.node.label}</header>
-                    <Neos.Neos:RawContent.NodeProperties node={props.node} />
-                    <Neos.Neos:RawContent.NodeChildren node={props.node} />
-                </div>
+                <section class="neos-raw-content-node">
+                    <Neos.Neos:RawContent.NodeHeader node={props.node} />
+                    <Neos.Fusion:Renderer
+                        @context.node={props.node}
+                        type={props.node.nodeType.name + '.RawContentMode'}
+                        element.node={props.node}
+                    />
+                </section>
             `
         }
 
         default {
-            @position = "300"
+            @position = "end"
             condition = true
             renderer = afx`
-                <div @if={!String.isBlank(this.content)}>
+                <section class="neos-raw-content-node">
+                    <Neos.Neos:RawContent.NodeHeader node={props.node} />
                     <Neos.Neos:RawContent.NodeProperties node={props.node} />
                     <Neos.Neos:RawContent.NodeChildren node={props.node} />
-                </div>
+                </section>
             `
         }
-
-        @process.fallbackToNodeType = ${String.isBlank(value) ? '<div>' + props.node.label + '</div>' : value}
     }
 }
 
