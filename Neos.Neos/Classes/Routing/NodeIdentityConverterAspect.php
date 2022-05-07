@@ -12,6 +12,7 @@ namespace Neos\Neos\Routing;
  */
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 
@@ -27,18 +28,22 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class NodeIdentityConverterAspect
 {
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
     /**
      * Convert the object to its context path, if we deal with ContentRepository nodes.
      *
      * @Flow\Around("method(Neos\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
      * @param JoinPointInterface $joinPoint the joinpoint
-     * @return string|array the context path to be used for routing
+     * @return string|array<string,string> the context path to be used for routing
      */
     public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            return ['__contextNodePath' => $objectArgument->getContextPath()];
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($objectArgument);
+            return ['__contextNodePath' => $nodeAddress->serializeForUri()];
         }
 
         return $joinPoint->getAdviceChain()->proceed($joinPoint);

@@ -20,7 +20,7 @@ use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 class NodeNameValidator extends RegularExpressionValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'regularExpression' => [

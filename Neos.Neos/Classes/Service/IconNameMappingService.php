@@ -534,8 +534,8 @@ class IconNameMappingService
             return $this->iconMapping[$iconWithoutPrefix];
         }
 
-        if (isset($this->brandIcons[$iconWithoutPrefix])) {
-            return 'fab fa-' . $this->brandIcons[$iconWithoutPrefix];
+        if (in_array($iconWithoutPrefix, $this->brandIcons)) {
+            return 'fab fa-' . $iconWithoutPrefix;
         }
 
         return 'fas fa-' . $iconWithoutPrefix;

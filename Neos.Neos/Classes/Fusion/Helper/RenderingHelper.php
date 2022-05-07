@@ -32,7 +32,7 @@ class RenderingHelper implements ProtectedContextAwareInterface
 
     /**
      * @todo replace with DimensionSpace capabilities
-     * @var array<string,mixed>
+     * @var array<string,array<string,mixed>>
      */
     protected $contentDimensionsConfiguration;
 

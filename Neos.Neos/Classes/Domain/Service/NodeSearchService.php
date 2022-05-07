@@ -11,16 +11,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\SearchTerm;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -36,58 +27,13 @@ use Neos\Flow\Annotations as Flow;
 class NodeSearchService implements NodeSearchServiceInterface
 {
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeConstraintFactory
-     */
-    protected $nodeTypeConstraintFactory;
-
-    /**
-     * @param string $term
      * @param array<int,string> $searchNodeTypes
      */
     public function findByProperties(
-        $term,
+        string $term,
         array $searchNodeTypes,
         ?NodeInterface $startingPoint = null
-    ): Nodes {
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));
-        if ($workspace === null) {
-            return Nodes::empty();
-        }
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $workspace->getCurrentContentStreamIdentifier(),
-            DimensionSpacePoint::fromLegacyDimensionArray($context->getDimensions()),
-            $context->isInvisibleContentShown()
-                ? VisibilityConstraints::withoutRestrictions()
-                : VisibilityConstraints::frontend()
-        );
-        if ($startingPoint !== null) {
-            $entryNodeIdentifier = $startingPoint->getNodeAggregateIdentifier();
-        } elseif ($context instanceof ContentContext) {
-            $entryNodeIdentifier = NodeAggregateIdentifier::fromString($context->getCurrentSiteNode()->getIdentifier());
-        } else {
-            $entryNodeIdentifier = NodeAggregateIdentifier::fromString($context->getRootNode()->getIdentifier());
-        }
-        $entryNode = $nodeAccessor->findByIdentifier($entryNodeIdentifier);
-        if (!is_null($entryNode)) {
-            return $nodeAccessor->findDescendants(
-                [$entryNode],
-                $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $searchNodeTypes)),
-                SearchTerm::fulltext($term)
-            );
-        }
-        return Nodes::empty();
+    ): never {
+        throw new \InvalidArgumentException('Cannot find nodes with the current set of arguments', 1651923867);
     }
 }

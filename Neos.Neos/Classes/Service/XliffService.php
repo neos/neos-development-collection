@@ -239,7 +239,7 @@ class XliffService
      *
      * @param array<mixed> $arrayPointer
      * @param string $key
-     * @param string|array $value
+     * @param string|array<mixed>|null $value
      * @return void
      */
     protected function setArrayDataValue(array &$arrayPointer, $key, $value)

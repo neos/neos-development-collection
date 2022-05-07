@@ -13,6 +13,7 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -47,6 +48,9 @@ class PageHandler extends AbstractRenderingExceptionHandler
      */
     protected $environment;
 
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
+
     /**
      * Handle an exception by displaying an error message inside the Neos backend,
      * if logged in and not displaying the live workspace.
@@ -75,21 +79,28 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
         if ($documentNode === null) {
             // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
-            $documentNode = $siteNode ? $siteNode : $node;
+            $documentNode = $siteNode ?: $node;
         }
 
-        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live'
-            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
-        ) {
-            $isBackend = true;
-            $fluidView->assign(
-                'metaData',
-                $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
-                    $documentNode,
-                    '<div id="neos-document-metadata"></div>',
-                    $fusionPath
-                )
+        if (!is_null($documentNode)) {
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                $documentNode->getContentStreamIdentifier()
             );
+            if (!$workspace->getWorkspaceName()->isLive()
+                && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+            ) {
+                $isBackend = true;
+                $fluidView->assign(
+                    'metaData',
+                    $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
+                        $documentNode,
+                        '<div id="neos-document-metadata"></div>',
+                        $fusionPath,
+                        [],
+                        $siteNode
+                    )
+                );
+            }
         }
 
         $fluidView->assignMultiple([
@@ -103,12 +114,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
     /**
      * Renders an actual HTTP response including the correct status and cache control header.
-     *
-     * @param \Exception the exception
-     * @param string $bodyContent
-     * @return string
      */
-    protected function wrapHttpResponse(\Exception $exception, $bodyContent)
+    protected function wrapHttpResponse(\Exception $exception, string $bodyContent): string
     {
         /** @var ResponseInterface $response */
         $response = new \GuzzleHttp\Psr7\Response(

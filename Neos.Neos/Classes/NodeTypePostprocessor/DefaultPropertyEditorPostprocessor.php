@@ -25,12 +25,14 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      */
     protected $dataTypesDefaultConfiguration;
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
      */
     protected $editorDefaultConfiguration;

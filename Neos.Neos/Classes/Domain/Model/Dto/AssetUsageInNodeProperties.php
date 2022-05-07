@@ -30,7 +30,7 @@ class AssetUsageInNodeProperties extends UsageReference
     protected $workspaceName;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $dimensionValues;
 
@@ -43,7 +43,7 @@ class AssetUsageInNodeProperties extends UsageReference
      * @param AssetInterface $asset
      * @param string $nodeIdentifier
      * @param string $workspaceName
-     * @param array $dimensionValues
+     * @param array<string,string> $dimensionValues
      * @param string $nodeTypeName
      */
     public function __construct(AssetInterface $asset, $nodeIdentifier, $workspaceName, $dimensionValues, $nodeTypeName)
@@ -72,7 +72,7 @@ class AssetUsageInNodeProperties extends UsageReference
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
     public function getDimensionValues()
     {

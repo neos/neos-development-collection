@@ -136,7 +136,14 @@ class FusionService
      */
     public function getMergedFusionObjectTree(NodeInterface $startNode)
     {
-        $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
+        $site = $this->getSiteForSiteNode($startNode);
+        if (is_null($site)) {
+            throw new \InvalidArgumentException(
+                'Could not resolve site for node "' . $startNode->getLabel() . '"',
+                1651924023
+            );
+        }
+        $siteResourcesPackageKey = $site->getSiteResourcesPackageKey();
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);

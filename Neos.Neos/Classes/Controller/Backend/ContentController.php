@@ -11,8 +11,14 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -34,9 +40,6 @@ use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
-use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Model\PluginViewDefinition;
-use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 
@@ -104,6 +107,15 @@ class ContentController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -370,13 +382,19 @@ class ContentController extends ActionController
     {
         $this->response->setContentType('application/json');
 
-        $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        /** @var $node NodeInterface */
-        $node = $contentContext->getNodeByIdentifier($identifier);
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+        if (is_null($workspace)) {
+            throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
+        }
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $workspace->getCurrentContentStreamIdentifier(),
+            DimensionSpacePoint::fromArray($dimensions),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($identifier));
 
         $views = [];
-        if ($node !== null) {
-            /** @var $pluginViewDefinition PluginViewDefinition */
+        if ($node instanceof NodeInterface) {
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
                 $node->getNodeType()
             );
@@ -392,15 +410,18 @@ class ContentController extends ActionController
                 if ($pluginViewNode === null) {
                     continue;
                 }
-                $q = new FlowQuery([$pluginViewNode]);
-                $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
+                $documentNode = $this->findClosestDocumentNode($pluginViewNode);
+                if ($documentNode === null) {
+                    continue;
+                }
+                $documentAddress = $this->nodeAddressFactory->createFromNode($documentNode);
                 $uri = $this->uriBuilder
                     ->reset()
-                    ->uriFor('show', ['node' => $page], 'Frontend\Node', 'Neos.Neos');
+                    ->uriFor('show', ['node' => $documentAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos');
                 $views[$pluginViewDefinition->getName()] = [
                     'label' => $label,
                     'pageNode' => [
-                        'title' => $page->getLabel(),
+                        'title' => $documentNode->getLabel(),
                         'uri' => $uri
                     ]
                 ];
@@ -419,39 +440,56 @@ class ContentController extends ActionController
      * @return string JSON encoded array of node path => label
      * @throws \Neos\Eel\Exception
      */
-    public function masterPluginsAction($workspaceName = 'live', array $dimensions = [])
+    public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
         $this->response->setContentType('application/json');
 
-        $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);
+        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions(
+            WorkspaceName::fromString($workspaceName),
+            DimensionSpacePoint::fromArray($dimensions)
+        );
 
         $masterPlugins = [];
-        if (is_array($pluginNodes)) {
-            /** @var $pluginNode NodeInterface */
-            foreach ($pluginNodes as $pluginNode) {
-                if ($pluginNode->isRemoved()) {
-                    continue;
-                }
-                $q = new FlowQuery([$pluginNode]);
-                $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-                if ($page === null) {
-                    continue;
-                }
-                $translationHelper = new TranslationHelper();
-                $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
-                    'masterPlugins.nodeTypeOnPageLabel',
-                    null,
-                    [
-                        'nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()),
-                        'pageLabel' => $page->getLabel()
-                    ],
-                    'Main',
-                    'Neos.Neos'
-                );
+        foreach ($pluginNodes as $pluginNode) {
+            $documentNode = $this->findClosestDocumentNode($pluginNode);
+            if ($documentNode === null) {
+                continue;
             }
+            $translationHelper = new TranslationHelper();
+            $masterPlugins[(string)$pluginNode->getNodeAggregateIdentifier()] = $translationHelper->translate(
+                'masterPlugins.nodeTypeOnPageLabel',
+                null,
+                [
+                    'nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()),
+                    'pageLabel' => $documentNode->getLabel()
+                ],
+                'Main',
+                'Neos.Neos'
+            );
         }
+
         return json_encode((object) $masterPlugins);
+    }
+
+    final protected function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    {
+        while ($node instanceof NodeInterface) {
+            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+            $node = $this->findParentNode($node);
+        }
+
+        return null;
+    }
+
+    protected function findParentNode(NodeInterface $node): ?NodeInterface
+    {
+        return $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        )->findParentNode($node);
     }
 
     /**

@@ -11,11 +11,16 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Http\Helper\SecurityHelper;
-use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\NodeOperations;
@@ -78,40 +83,14 @@ class NodeController extends AbstractServiceController
      */
     protected $domainRepository;
 
-    /**
-     * Select special error action
-     *
-     * @return void
-     */
-    protected function initializeAction()
-    {
-        if ($this->arguments->hasArgument('referenceNode')) {
-            $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()
-                ->setTypeConverterOption(
-                    NodeConverter::class,
-                    NodeConverter::REMOVED_CONTENT_SHOWN,
-                    true
-                );
-        }
-        $this->uriBuilder->setRequest($this->request->getMainRequest());
-        if (in_array($this->request->getControllerActionName(), ['update', 'updateAndRender'], true)) {
-            // Set PropertyMappingConfiguration for updating the node (and attached objects)
-            $propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
-            $propertyMappingConfiguration->allowOverrideTargetType();
-            $propertyMappingConfiguration->allowAllProperties();
-            $propertyMappingConfiguration->skipUnknownProperties();
-            $propertyMappingConfiguration->setTypeConverterOption(
-                PersistentObjectConverter::class,
-                PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
-                true
-            );
-            $propertyMappingConfiguration->setTypeConverterOption(
-                PersistentObjectConverter::class,
-                PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-                true
-            );
-        }
-    }
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
+    #[Flow\Inject]
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
     #
     # Actions which are not yet refactored to REST below (see NEOS-199):
@@ -125,10 +104,13 @@ class NodeController extends AbstractServiceController
      * @param integer $depth levels of childNodes (0 = unlimited)
      * @param Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
      * @return void
+     * @todo define how this is to be handled
      */
     public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode)
     {
+        /*
         $this->view->assignChildNodes($node, $nodeTypeFilter, NodeView::STYLE_TREE, $depth, $untilNode);
+        */
     }
 
     /**
@@ -138,9 +120,11 @@ class NodeController extends AbstractServiceController
      * @param string $term
      * @param string $nodeType
      * @return void
+     * @todo define how this is to be handled
      */
     public function filterChildNodesForTreeAction(Node $node, $term, $nodeType)
     {
+        /*
         $nodeTypes = strlen($nodeType) > 0
             ? [$nodeType]
             : array_keys($this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false));
@@ -166,6 +150,7 @@ class NodeController extends AbstractServiceController
             $node,
             $nodes
         );
+        */
     }
 
     /**
@@ -179,9 +164,11 @@ class NodeController extends AbstractServiceController
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return void
+     * @todo define how this is to be handled
      */
     public function createAction(Node $referenceNode, array $nodeData, $position)
     {
+        /*
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
         if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
@@ -190,6 +177,7 @@ class NodeController extends AbstractServiceController
 
         $nextUri = $this->getNodeUri($newNode);
         $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
+        */
     }
 
     /**
@@ -199,12 +187,14 @@ class NodeController extends AbstractServiceController
      * @param string $fusionPath The Fusion path of the collection
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
-     * @return string
+     * @todo define how this is to be handled
      */
-    public function createAndRenderAction(Node $referenceNode, $fusionPath, array $nodeData, $position)
+    public function createAndRenderAction(Node $referenceNode, $fusionPath, array $nodeData, $position): void
     {
+        /*
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
         $this->redirectToRenderNode($newNode, $fusionPath);
+        */
     }
 
     /**
@@ -215,11 +205,14 @@ class NodeController extends AbstractServiceController
      * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
      * @param string $nodeTypeFilter
      * @return void
+     * @todo define how this is to be handled
      */
     public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '')
     {
+        /*
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
         $this->view->assignNodeAndChildNodes($newNode, $nodeTypeFilter);
+        */
     }
 
     /**
@@ -233,9 +226,11 @@ class NodeController extends AbstractServiceController
      * @param Node $targetNode The target node to be moved "to", see $position
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return void
+     * @todo define how this is to be handled
      */
     public function moveAction(Node $node, Node $targetNode, $position)
     {
+        /*
         $node = $this->nodeOperations->move($node, $targetNode, $position);
 
         if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
@@ -247,6 +242,7 @@ class NodeController extends AbstractServiceController
             $data['nextUri'] = $this->getNodeUri($node);
         }
         $this->view->assign('value', ['data' => $data, 'success' => true]);
+        */
     }
 
     /**
@@ -258,11 +254,14 @@ class NodeController extends AbstractServiceController
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $fusionPath The Fusion path of the collection
      * @return void
+     * @todo define how this is to be handled
      */
     public function moveAndRenderAction(Node $node, Node $targetNode, $position, $fusionPath)
     {
+        /*
         $this->nodeOperations->move($node, $targetNode, $position);
         $this->redirectToRenderNode($node, $fusionPath);
+        */
     }
 
     /**
@@ -278,9 +277,11 @@ class NodeController extends AbstractServiceController
      * @param string $nodeName Optional node name (if empty random node name will be generated)
      * @return void
      * @throws NodeException
+     * @todo define how this is to be handled
      */
     public function copyAction(Node $node, Node $targetNode, $position, $nodeName = null)
     {
+        /*
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
 
         if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
@@ -300,6 +301,7 @@ class NodeController extends AbstractServiceController
         }
 
         $this->view->assign('value', ['data' => $requestData, 'success' => true]);
+        */
     }
 
     /**
@@ -312,11 +314,14 @@ class NodeController extends AbstractServiceController
      * @param string $nodeName Optional node name (if empty random node name will be generated)
      * @param string $fusionPath The Fusion path of the collection
      * @return void
+     * @todo define how this is to be handled
      */
     public function copyAndRenderAction(Node $node, Node $targetNode, $position, $fusionPath, $nodeName = null)
     {
+        /*
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
         $this->redirectToRenderNode($copiedNode, $fusionPath);
+        */
     }
 
     /**
@@ -335,9 +340,11 @@ class NodeController extends AbstractServiceController
      *
      * @param Node $node The node to be updated
      * @return void
+     * @todo define how this is to be handled
      */
-    public function updateAction(Node $node)
+    public function updateAction(NodeInterface $node)
     {
+        /*
         if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
@@ -352,62 +359,77 @@ class NodeController extends AbstractServiceController
                 'nextUri' => $nextUri
             ],
             'success' => true
-        ]);
+        ]);*/
     }
 
     /**
      * Updates the specified node and renders it's content collection.
      *
-     * @param Node $node The node to be updated
+     * @param NodeInterface $node The node to be updated
      * @param string $fusionPath The Fusion path of the collection
-     * @return void
      */
-    public function updateAndRenderAction(Node $node, $fusionPath)
+    public function updateAndRenderAction(NodeInterface $node, string $fusionPath): void
     {
         $this->redirectToRenderNode($node, $fusionPath);
     }
 
     /**
-     * Deletes the specified node and all of its sub nodes
-     *
-     * We need to call persistAll() in order to return the nextUri.
-     * We can't persist only the nodes in NodeDataRepository
-     * because they might be connected to images / resources which need to be removed at the same time.
-     *
-     * @param Node $node
-     * @return void
+     * Deletes the specified node and all of its descendants
      */
-    public function deleteAction(Node $node)
+    public function deleteAction(NodeInterface $node): void
     {
+        $userIdentifier = $this->getCurrentUserIdentifier();
+        if (!$userIdentifier instanceof UserIdentifier) {
+            $this->throwStatus(400, 'Missing initiating user');
+        }
+
         if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
 
-        $q = new FlowQuery([$node]);
-        $node->remove();
-        $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->getNodeUri($closestDocumentNode);
+        $closestDocumentNode = $this->findClosestDocumentNode($node);
+
+        $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
+            $node->getContentStreamIdentifier(),
+            $node->getNodeAggregateIdentifier(),
+            $node->getDimensionSpacePoint(),
+            NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS,
+            $userIdentifier
+        ));
+
+        $nextUri = $closestDocumentNode ? $this->getNodeUri($closestDocumentNode) : null;
 
         $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
 
     /**
      * Takes care of creating a redirect to properly render the collection the given node is in.
-     *
-     * @param NodeInterface $node
-     * @param string $fusionPath
-     * @return string
      */
-    protected function redirectToRenderNode(NodeInterface $node, $fusionPath)
+    protected function redirectToRenderNode(NodeInterface $node, string $fusionPath): void
     {
-        $q = new FlowQuery([$node]);
-        $closestContentCollection = $q->closest('[instanceof Neos.Neos:ContentCollection]')->get(0);
-        $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+
+        $ancestor = $node;
+        $closestContentCollection = null;
+        $closestDocumentNode = null;
+        while ($ancestor) {
+            if ($ancestor->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                $closestContentCollection = $ancestor;
+            } elseif ($ancestor->getNodeType()->isOfType('Neos.Neos:Document')) {
+                $closestDocumentNode = $ancestor;
+            }
+            $ancestor = $nodeAccessor->findParentNode($ancestor);
+        }
 
         $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', [
             'node' => $closestDocumentNode,
-            '__nodeContextPath' => $closestContentCollection->getContextPath(),
-            '__affectedNodeContextPath' => $node->getContextPath(),
+            '__nodeContextPath' => $this->nodeAddressFactory->createFromNode($closestContentCollection)
+                ->serializeForUri(),
+            '__affectedNodeContextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
             '__fusionPath' => $fusionPath
         ], 0, 303, 'html');
     }
@@ -417,37 +439,18 @@ class NodeController extends AbstractServiceController
      * link plugins to represent the passed Node instance.
      *
      * @param NodeInterface $node
-     * @return array
+     * @return array<string,mixed>
      */
     protected function processNodeForEditorPlugins(NodeInterface $node)
     {
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+
         return [
-            'id' => $node->getPath(),
+            'id' => $nodeAddress->serializeForUri(),
             'name' => $node->getLabel(),
-            'url' => $this->uriBuilder->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos'),
+            'url' => $this->getNodeUri($node),
             'type' => 'neos/internal-link'
         ];
-    }
-
-    /**
-     * Create a Context for a workspace given by name to be used in this controller.
-     *
-     * @param string $workspaceName Name of the current workspace
-     * @return \Neos\ContentRepository\Domain\Service\Context
-     */
-    protected function createContext($workspaceName)
-    {
-        $contextProperties = [
-            'workspaceName' => $workspaceName
-        ];
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        }
-
-        return $this->contextFactory->create($contextProperties);
     }
 
     private function getNodeUri(NodeInterface $node): string
@@ -458,5 +461,24 @@ class NodeController extends AbstractServiceController
             'Frontend\Node',
             'Neos.Neos'
         );
+    }
+
+    private function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    {
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+
+        $ancestor = $node;
+        while ($ancestor instanceof NodeInterface) {
+            if ($ancestor->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $ancestor;
+            }
+            $ancestor = $nodeAccessor->findParentNode($ancestor);
+        }
+
+        return null;
     }
 }

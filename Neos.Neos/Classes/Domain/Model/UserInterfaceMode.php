@@ -135,27 +135,22 @@ class UserInterfaceMode
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     public function getOptions()
     {
         return $this->options;
     }
 
-    /**
-     * @param string $path
-     * @return mixed
-     */
-    public function getOptionByPath($path)
+    public function getOptionByPath(string $path): mixed
     {
         return ObjectAccess::getPropertyPath($this->options, $path);
     }
 
     /**
-     * @param array $options
-     * @return void
+     * @param array<string,mixed> $options
      */
-    public function setOptions($options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
     }
@@ -164,12 +159,11 @@ class UserInterfaceMode
      * Creates an UserInterfaceMode object by configuration
      *
      * @param string $modeName
-     * @param array $configuration
-     * @return static
+     * @param array<string,mixed> $configuration
      */
-    public static function createByConfiguration($modeName, array $configuration)
+    public static function createByConfiguration($modeName, array $configuration): self
     {
-        $mode = new static();
+        $mode = new self();
         $mode->setName($modeName);
         $mode->setPreview($configuration['isPreviewMode']);
         $mode->setEdit($configuration['isEditingMode']);

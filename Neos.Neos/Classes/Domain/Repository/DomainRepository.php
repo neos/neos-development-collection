@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Service\DomainMatchingStrategy;
@@ -24,6 +25,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  *
  * @Flow\Scope("singleton")
  * @api
+ * @method QueryResultInterface|Domain[] findByActive(bool $active)
  */
 class DomainRepository extends Repository
 {
@@ -40,7 +42,7 @@ class DomainRepository extends Repository
     protected $bootstrap;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $defaultOrderings = [
         'site' => QueryInterface::ORDER_ASCENDING,
@@ -54,12 +56,15 @@ class DomainRepository extends Repository
      *
      * @param string $hostname Hostname the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
-     * @return array An array of matching domains
+     * @return array<Domain> An array of matching domains
      * @api
      */
     public function findByHost($hostname, $onlyActive = false)
     {
-        $domains = $onlyActive === true ? $this->findByActive(true)->toArray() : $this->findAll()->toArray();
+        $domains = $onlyActive === true
+            ? $this->findByActive(true)->toArray()
+            : $this->findAll()->toArray();
+
         return $this->domainMatchingStrategy->getSortedMatches($hostname, $domains);
     }
 

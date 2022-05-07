@@ -12,6 +12,10 @@ namespace Neos\Neos\Service\View;
  */
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -56,6 +60,18 @@ class NodeView extends JsonView
     protected $privilegeManager;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeHiddenStateFinder
+     */
+    protected $nodeHiddenStateFinder;
+
+    /**
      * Assigns a node to the NodeView.
      *
      * @param NodeInterface $node The node to render
@@ -80,10 +96,9 @@ class NodeView extends JsonView
     }
 
     /**
-     * @param NodeInterface[] $nodes
      * @throws \Neos\Eel\Exception
      */
-    public function assignNodes(array $nodes): void
+    public function assignNodes(Nodes $nodes): void
     {
         $data = [];
         foreach ($nodes as $node) {
@@ -335,10 +350,10 @@ class NodeView extends JsonView
     /**
      * @param NodeInterface $node
      * @param boolean $expand
-     * @param array $children
+     * @param array<mixed> $children
      * @param boolean $hasChildNodes
      * @param boolean $matched
-     * @return array
+     * @return array<string,mixed>
      */
     public function collectTreeNodeData(
         NodeInterface $node,
@@ -347,27 +362,18 @@ class NodeView extends JsonView
         $hasChildNodes = false,
         $matched = false
     ) {
-        $isTimedPage = false;
-        $now = new \DateTime();
-        $now = $now->getTimestamp();
-        $hiddenBeforeDateTime = $node->getHiddenBeforeDateTime();
-        $hiddenAfterDateTime = $node->getHiddenAfterDateTime();
-
-        if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime->getTimestamp() > $now) {
-            $isTimedPage = true;
-        }
-        if ($hiddenAfterDateTime !== null) {
-            $isTimedPage = true;
-        }
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
+            $nodeAddress->nodeAggregateIdentifier
+        );
 
         $classes = [];
-        if ($isTimedPage === true && $node->isHidden() === false) {
-            array_push($classes, 'neos-timedVisibility');
-        }
-        if ($node->isHidden() === true) {
+        if ($hiddenState->isHidden() === true) {
             array_push($classes, 'neos-hidden');
         }
-        if ($node->isHiddenInIndex() === true) {
+        if ($node->getProperty('hiddenInIndex') === true) {
             array_push($classes, 'neos-hiddenInIndex');
         }
         if ($matched) {
@@ -380,7 +386,7 @@ class NodeView extends JsonView
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor(
                 'show',
-                ['node' => $node],
+                ['node' => $nodeAddress->serializeForUri()],
                 'Frontend\Node',
                 'Neos.Neos'
             );
@@ -390,7 +396,7 @@ class NodeView extends JsonView
         $label = $node->getLabel();
         $nodeTypeLabel = $node->getNodeType()->getLabel();
         $treeNode = [
-            'key' => $node->getContextPath(),
+            'key' => $nodeAddress->serializeForUri(),
             'title' => $label,
             'fullTitle' => $node->getProperty('title'),
             'nodeTypeLabel' => $nodeTypeLabel,
@@ -400,14 +406,14 @@ class NodeView extends JsonView
             'isFolder' => $hasChildNodes,
             'isLazy' => ($hasChildNodes && !$expand),
             'nodeType' => $nodeType->getName(),
-            'isAutoCreated' => $node->isAutoCreated(),
+            'isAutoCreated' => $node->getClassification() === NodeAggregateClassification::CLASSIFICATION_TETHERED,
             'expand' => $expand,
             'addClass' => implode(' ', $classes),
-            'name' => $node->getName(),
+            'name' => $node->getNodeName(),
             'iconClass' => isset($nodeTypeConfiguration['ui']) && isset($nodeTypeConfiguration['ui']['icon'])
                 ? $nodeTypeConfiguration['ui']['icon']
                 : '',
-            'isHidden' => $node->isHidden()
+            'isHidden' => $hiddenState->isHidden()
         ];
         if ($hasChildNodes) {
             $treeNode['children'] = $children;

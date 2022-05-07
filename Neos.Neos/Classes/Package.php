@@ -29,7 +29,6 @@ use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
@@ -51,11 +50,13 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $flushConfigurationCache = function () use ($bootstrap) {
+            /** @var CacheManager $cacheManager */
             $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
             $cacheManager->getCache('Neos_Neos_Configuration_Version')->flush();
         };
 
         $flushXliffServiceCache = function () use ($bootstrap) {
+            /** @var CacheManager $cacheManager */
             $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
             $cacheManager->getCache('Neos_Neos_XliffToJsonTranslations')->flush();
         };
@@ -140,25 +141,6 @@ class Package extends BasePackage
             'siteImported',
             RouterCachingService::class,
             'flushCaches'
-        );
-
-        $dispatcher->connect(
-            Workspace::class,
-            'beforeNodePublishing',
-            ContentRepositoryIntegrationService::class,
-            'beforeNodePublishing'
-        );
-        $dispatcher->connect(
-            Workspace::class,
-            'afterNodePublishing',
-            ContentRepositoryIntegrationService::class,
-            'afterNodePublishing'
-        );
-        $dispatcher->connect(
-            Workspace::class,
-            'baseWorkspaceChanged',
-            RouteCacheFlusher::class,
-            'registerBaseWorkspaceChange'
         );
 
         $dispatcher->connect(

@@ -30,7 +30,7 @@ class RouteCacheFlusher
     protected $routeCachingService;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $tagsToFlush = [];
 

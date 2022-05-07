@@ -66,7 +66,12 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
             return false;
         }
 
-        $currentUserRoles = $this->userService->getAllRoles($this->userService->getCurrentUser());
+        $currentUser = $this->userService->getCurrentUser();
+        if (!$currentUser instanceof User) {
+            return false;
+        }
+
+        $currentUserRoles = $this->userService->getAllRoles($currentUser);
         $userRoles = $this->userService->getAllRoles($user);
         return count(array_diff($userRoles, $currentUserRoles)) === 0;
     }

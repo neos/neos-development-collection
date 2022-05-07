@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\NodeAccess;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorChainFactory;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;

@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor\Implementation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -30,11 +32,10 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 final class ContentSubgraphAccessor implements NodeAccessorInterface
 {
-    private ContentSubgraphInterface $subgraph;
-
-    public function __construct(ContentSubgraphInterface $subgraph)
-    {
-        $this->subgraph = $subgraph;
+    public function __construct(
+        private readonly ContentSubgraphInterface $subgraph,
+        private readonly ContentGraphInterface $contentGraph
+    ) {
     }
 
     public function findChildNodes(
@@ -119,5 +120,23 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
             return $node->getNodeAggregateIdentifier();
         }, $entryNodes);
         return $this->subgraph->findDescendants($entryNodeAggregateIdentifiers, $nodeTypeConstraints, $searchTerm);
+    }
+
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): NodeInterface
+    {
+        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType(
+            $this->getContentStreamIdentifier(),
+            $nodeTypeName
+        );
+
+        $rootNode = $this->subgraph->findNodeByNodeAggregateIdentifier($rootNodeAggregate->getIdentifier());
+        if (!$rootNode instanceof NodeInterface) {
+            throw new \InvalidArgumentException(
+                'Could not resolve root node of type "' . $nodeTypeName . '"',
+                1651847484
+            );
+        }
+
+        return $rootNode;
     }
 }

@@ -12,6 +12,8 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
@@ -36,6 +38,9 @@ class ImageVariantGarbageCollector
      */
     protected $persistenceManager;
 
+    #[Flow\Inject]
+    protected AssetUsageRepository $assetUsageRepository;
+
     /**
      * Removes unused ImageVariants after a Node property changes to a different ImageVariant.
      * This is triggered via the nodePropertyChanged event.
@@ -55,19 +60,26 @@ class ImageVariantGarbageCollector
             return;
         }
         $identifier = $this->persistenceManager->getIdentifierByObject($oldValue);
-        $results = $this->nodeDataRepository->findNodesByRelatedEntities([ImageVariant::class => [$identifier]]);
+        $usage = $this->assetUsageRepository->findUsages(AssetUsageFilter::create()->withAsset($identifier));
 
         // This case shouldn't happen as the query will usually find at least the node that triggered this call,
         // still if there is no relation we can remove the ImageVariant.
-        if ($results === []) {
+        if ($usage->count() === 0) {
             $this->assetRepository->remove($oldValue);
             return;
         }
 
-        // If the result contains exactly the node that got a new ImageVariant assigned
-        // then we are safe to remove the asset here.
-        if ($results === [$node->getNodeData()]) {
-            $this->assetRepository->remove($oldValue);
+        if ($usage->count() === 1) {
+            foreach ($usage->getIterator() as $usageItem) {
+                // If the result contains exactly the node that got a new ImageVariant assigned
+                // then we are safe to remove the asset here.
+                if ($usageItem->contentStreamIdentifier === $node->getContentStreamIdentifier()
+                    && $usageItem->originDimensionSpacePoint === $node->getOriginDimensionSpacePoint()->hash
+                    && $usageItem->nodeAggregateIdentifier === $node->getNodeAggregateIdentifier()
+                ) {
+                    $this->assetRepository->remove($oldValue);
+                }
+            }
         }
     }
 }

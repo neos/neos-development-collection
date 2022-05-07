@@ -21,7 +21,7 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \Traversable<AssetUsage>
+     * @return \Traversable<AssetUsage>|AssetUsage[]
      */
     public function getIterator(): \Traversable
     {

@@ -52,9 +52,9 @@ class NodeReferenceConverter extends AbstractTypeConverter
      *
      * @param NodeInterface|array<NodeInterface> $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string the target type
+     * @return string|array<int,string> the target type
      */
     public function convertFrom(
         $source,
@@ -64,16 +64,11 @@ class NodeReferenceConverter extends AbstractTypeConverter
     ) {
         if (is_array($source)) {
             $result = [];
-            /** @var NodeInterface $node */
             foreach ($source as $node) {
                 $result[] = (string)$node->getNodeAggregateIdentifier();
             }
         } else {
-            if ($source instanceof NodeInterface) {
-                $result = (string)$source->getNodeAggregateIdentifier();
-            } else {
-                $result = '';
-            }
+            $result = (string)$source->getNodeAggregateIdentifier();
         }
 
         return $result;

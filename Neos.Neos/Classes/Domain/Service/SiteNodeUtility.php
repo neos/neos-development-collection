@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,20 +10,32 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
 
-/**
- * @Flow\Scope("singleton")
- */
-class SiteNodeUtility
+#[Flow\Scope('singleton')]
+final class SiteNodeUtility
 {
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
+    public function __construct(
+        private readonly NodeAccessorManager $nodeAccessorManager,
+        private readonly DomainRepository $domainRepository,
+        private readonly SiteRepository $siteRepository
+    ) {
+    }
 
     public function findSiteNode(NodeInterface $node): NodeInterface
     {
@@ -48,6 +57,36 @@ class SiteNodeUtility
         } while ($node = $nodeAccessor->findParentNode($node));
 
         // no Site node found at rootline
+        throw new \RuntimeException('No site node found!');
+    }
+
+    public function findCurrentSiteNode(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
+    ): NodeInterface {
+        $domain = $this->domainRepository->findOneByActiveRequest();
+        $site = $domain
+            ? $domain->getSite()
+            : $this->siteRepository->findDefault();
+
+        if ($site instanceof Site) {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            );
+
+            $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
+            $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
+                $sitesNode,
+                NodeName::fromString($site->getNodeName())
+            );
+            if ($siteNode instanceof NodeInterface) {
+                return $siteNode;
+            }
+        }
+
         throw new \RuntimeException('No site node found!');
     }
 }

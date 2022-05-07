@@ -39,15 +39,9 @@ class PluginImplementation extends AbstractArrayFusionObject
      */
     protected $dispatcher;
 
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected ?NodeInterface $node;
 
-    /**
-     * @var NodeInterface
-     */
-    protected $documentNode;
+    protected ?NodeInterface $documentNode;
 
     /**
      * @return string
@@ -91,17 +85,9 @@ class PluginImplementation extends AbstractArrayFusionObject
 
     /**
      * Build the pluginRequest object
-     *
-     * @return ActionRequest
-     * @throws InvalidActionNameException
-     * @throws InvalidControllerNameException
-     * @throws NodeException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     protected function buildPluginRequest(): ActionRequest
     {
-        /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
         $pluginRequest = $parentRequest->createSubRequest();
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
@@ -120,7 +106,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @param ActionRequest $pluginRequest
      * @param NodeInterface|null $node
      * @return ActionRequest
-     * @throws NodeException
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
      */
@@ -180,7 +165,6 @@ class PluginImplementation extends AbstractArrayFusionObject
         $currentContext = $this->runtime->getCurrentContext();
         $this->node = $currentContext['node'];
         $this->documentNode = $currentContext['documentNode'];
-        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
         $pluginResponse = new ActionResponse();
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
@@ -200,7 +184,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      * By default this is <plugin_class_name>
      *
      * @return string
-     * @throws NodeException
      */
     protected function getPluginNamespace(): string
     {
@@ -236,11 +219,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      *
      * @param ActionRequest $pluginRequest The plugin request
      * @return void
-     * @throws InvalidActionNameException
-     * @throws InvalidControllerNameException
-     * @throws NodeException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest)
     {
