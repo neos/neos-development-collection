@@ -44,22 +44,20 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentGraph implements ContentGraphInterface
 {
-    /**
-     * @Flow\Inject
-     * @var DbalClientInterface
-     */
-    protected $client;
 
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
 
     /**
      * @var array<string,ContentSubgraphInterface>
      */
     private array $subgraphs = [];
+
+    /**
+     * @param DbalClientInterface $client
+     * @param NodeFactory $nodeFactory
+     */
+    public function __construct(private readonly DbalClientInterface $client, private readonly NodeFactory $nodeFactory)
+    {
+    }
 
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,

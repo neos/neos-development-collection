@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
-use Neos\ContentRepository\Feature\StructureAdjustment\LoadNodeTypeTrait;
 use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
@@ -20,7 +18,6 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
@@ -34,7 +31,6 @@ class PropertyAdjustment
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
     protected RuntimeBlocker $runtimeBlocker;
-    protected ContentGraph $contentGraph;
 
     public function __construct(
         EventStore $eventStore,
@@ -42,14 +38,12 @@ class PropertyAdjustment
         NodeTypeManager $nodeTypeManager,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         RuntimeBlocker $runtimeBlocker,
-        ContentGraph $contentGraph
     ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->runtimeBlocker = $runtimeBlocker;
-        $this->contentGraph = $contentGraph;
     }
 
     /**

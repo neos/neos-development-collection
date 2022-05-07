@@ -1,16 +1,6 @@
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
 
-Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
-  properties:
-    fusionCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_Neos_Fusion
-
 Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
   arguments:
     3:
@@ -26,62 +16,3 @@ Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
         factoryMethodName: 'getConnection'
 
 
-'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector':
-  factoryObjectName: Neos\EventSourcedNeosAdjustments\FusionCaching\CacheAwareGraphProjectorFactory
-  factoryMethodName: build
-  arguments:
-    1:
-      object: 'Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient'
-    2:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents
-    3:
-      object: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph'
-    4:
-      object: 'Neos\Flow\Log\ThrowableStorageInterface'
-
-Neos\Neos\Domain\Service\NodeSearchServiceInterface:
-  className: Neos\EventSourcedNeosAdjustments\Domain\Service\NodeSearchService
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
-  scope: singleton
-
-Neos\ContentRepository\Projection\Workspace\WorkspaceFinder:
-  scope: singleton
-
-Neos\ContentRepository\Projection\Changes\ChangeFinder:
-  scope: singleton
-
-Neos\ContentRepository\Feature\WorkspaceCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker:
-  scope: singleton
-
-Neos\ContentRepository\SharedModel\NodeAddressFactory:
-  scope: singleton
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
-  scope: singleton
-
-Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
-  scope: singleton
-
-Neos\ContentRepository\Feature\NodeAggregateCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Infrastructure\Property\PropertyConverter:
-  scope: singleton
-
-Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Feature\Migration\MigrationCommandHandler:
-  scope: singleton
-
-Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService:
-  scope: singleton

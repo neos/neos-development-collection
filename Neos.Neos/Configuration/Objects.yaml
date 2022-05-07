@@ -8,7 +8,7 @@ Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
           1:
             value: Neos_Neos_Configuration_Version
 
-Neos\Neos\Aspects\FusionCachingAspect:
+Neos\Neos\Fusion\Cache\FusionCachingAspect:
   properties:
     fusionCache:
       object:
@@ -63,3 +63,23 @@ Neos\Neos\Controller\LoginController:
         arguments:
           1:
             value: Neos_Neos_LoginTokenCache
+
+
+'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector':
+  factoryObjectName: Neos\Neos\Fusion\Cache\CacheAwareGraphProjectorFactory
+  factoryMethodName: build
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+    2:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents
+    3:
+      object: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph'
+    4:
+      object: 'Neos\Flow\Log\ThrowableStorageInterface'
+

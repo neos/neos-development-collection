@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Workspace Finder
- * @Flow\Scope("singleton")
  */
 final class WorkspaceFinder
 {

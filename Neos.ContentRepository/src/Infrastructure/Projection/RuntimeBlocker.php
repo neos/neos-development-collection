@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Infrastructure\Projection;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
+use Neos\EventSourcing\EventListener\Mapping\EventToListenerMappings;
 use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
 
 /**
@@ -25,7 +25,7 @@ use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
  */
 final class RuntimeBlocker
 {
-    protected DefaultEventToListenerMappingProvider $eventToListenerMappingProvider;
+    protected EventToListenerMappings $eventToListenerMappings;
 
     protected DeferEventPublisher $eventPublisher;
 
@@ -36,11 +36,11 @@ final class RuntimeBlocker
      */
     public function __construct(
         DeferEventPublisher $eventPublisher,
-        DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
+        EventToListenerMappings $eventToListenerMappings,
         iterable $defaultProjectorsToBeBlocked
     ) {
         $this->eventPublisher = $eventPublisher;
-        $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
+        $this->eventToListenerMappings = $eventToListenerMappings;
         $this->defaultProjectorsToBeBlocked = new ProcessedEventsAwareProjectorCollection(
             $defaultProjectorsToBeBlocked
         );
@@ -65,10 +65,7 @@ final class RuntimeBlocker
         DomainEvents $publishedEvents,
         string $listenerClassName
     ): DomainEvents {
-        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName(
-            $listenerClassName
-        );
-        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)
+        $listenerMappings = $this->eventToListenerMappings
             ->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
                 return $mapping->getListenerClassName() === $listenerClassName;
             });

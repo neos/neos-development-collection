@@ -154,7 +154,7 @@ trait EventSourcedTrait
 
         foreach ($configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.projectorsToBeReset'
+            'Neos.ContentRepository.unstableInternalWillChangeLater.testing.projectorsToBeReset'
         ) ?: [] as $projectorClassName => $toBeReset) {
             if ($toBeReset) {
                 $this->projectorsToBeReset[] = $this->getObjectManager()->get($projectorClassName);
@@ -183,6 +183,7 @@ trait EventSourcedTrait
             }
         }
 
+        var_dump($adapterKeys);
         $this->activeContentGraphs = count($adapterKeys) === 0
             ? $this->availableContentGraphs
             : $this->availableContentGraphs->reduceTo($adapterKeys);
