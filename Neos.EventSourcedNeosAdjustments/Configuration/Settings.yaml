@@ -13,8 +13,6 @@ Flowpack:
 
 Neos:
   EventSourcedNeosAdjustments:
-    contentCacheFlusher:
-      queueName: 'neos-contentCacheFlusher'
     contentDimensions:
       resolution:
         uriPathSegmentDelimiter: '_'

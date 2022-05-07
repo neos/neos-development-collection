@@ -63,7 +63,7 @@ Neos:
       ValueObjectStringDenormalizer:
         className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
       DoctrinePersistentObjectNormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+        className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
       CollectionTypeDenormalizer:
         className: Neos\ContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
       ProxyAwareObjectNormalizer:

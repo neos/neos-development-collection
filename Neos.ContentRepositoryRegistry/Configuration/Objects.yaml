@@ -116,6 +116,16 @@ Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
 
 
 ###############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeTypeManagerObjectFactory:
+  scope: singleton
+
+Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeTypeManagerObjectFactory
+  factoryMethodName: buildNodeTypeManager
+
+
+###############################
 
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory:
   scope: singleton
@@ -225,10 +235,6 @@ Neos\EventSourcing\Event\EventTypeResolverInterface:
 
 
 
-
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager:
-  scope: singleton
 
 Neos\ContentRepository\Projection\Changes\ChangeFinder:
   scope: singleton
