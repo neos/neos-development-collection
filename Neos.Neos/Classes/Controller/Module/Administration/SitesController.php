@@ -14,7 +14,6 @@ namespace Neos\Neos\Controller\Module\Administration;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageInterface;
