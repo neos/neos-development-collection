@@ -66,12 +66,17 @@ final class VisualInterDimensionalVariationGraph
      * @param IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph
      * @param string|null $rootSubgraphIdentifier
      */
-    public function __construct(
+    private function __construct(
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $dimensionSource,
         string $rootSubgraphIdentifier = null
     ) {
         $this->rootSubgraphIdentifier = $rootSubgraphIdentifier;
+    }
+
+    public static function fromInterDimensionalVariationGraph(InterDimensionalVariationGraph $variationGraph): self
+    {
+
     }
 
     /**

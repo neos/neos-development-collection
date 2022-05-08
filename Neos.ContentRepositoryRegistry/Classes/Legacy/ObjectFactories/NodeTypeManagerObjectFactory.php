@@ -40,6 +40,10 @@ final class NodeTypeManagerObjectFactory
 
     public function buildNodeTypeManager(): NodeTypeManager
     {
-        return new NodeTypeManager($this->configurationManager, $this->objectManager, $this->fallbackNodeTypeName);
+        return new NodeTypeManager(
+            $this->configurationManager,
+            $this->objectManager,
+            $this->fallbackNodeTypeName
+        );
     }
 }

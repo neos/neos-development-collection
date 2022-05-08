@@ -11,38 +11,36 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
+use Neos\Neos\Presentation\VisualInterDimensionalVariationGraph;
 
 /**
  * The Neos Dimension module controller
  */
 class DimensionController extends AbstractModuleController
 {
-    /**
-     * @todo use the DimensionSpace for this <3
-     * @param string $type
-     * @param string $subgraphIdentifier
-     * @return void
-     */
-    public function indexAction(string $type = 'intraDimension', string $subgraphIdentifier = null)
+    #[Flow\Inject]
+    protected ContentDimensionSourceInterface $contentDimensionSource;
+
+    #[Flow\Inject]
+    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
+
+    public function indexAction(string $type = 'intraDimension', string $subgraphIdentifier = null): void
     {
-        switch ($type) {
-            case 'intraDimension':
-                $graph = new \Neos\Neos\Presentation\VisualIntraDimensionalVariationGraph(
-                    $this->fallbackGraphService->getIntraDimensionalFallbackGraph()
-                );
-                break;
-            case 'interDimension':
-                $graph = new \Neos\Neos\Presentation\VisualInterDimensionalVariationGraph(
-                    $this->fallbackGraphService->getInterDimensionalFallbackGraph(),
-                    $this->fallbackGraphService->getIntraDimensionalFallbackGraph(),
-                    $subgraphIdentifier
-                );
-                break;
-            default:
-                $graph = null;
-        }
+        $graph = match ($type) {
+            'intraDimension' => VisualIntraDimensionalVariationGraph::fromContentDimensionSource(
+                $this->contentDimensionSource
+            ),
+            'interDimension' => VisualInterDimensionalVariationGraph::fromInterDimensionalVariationGraph(
+                $this->interDimensionalVariationGraph
+            ),
+            default => null,
+        };
+
         $this->view->assignMultiple([
             'availableGraphTypes' => ['intraDimension', 'interDimension'],
             'type' => $type,

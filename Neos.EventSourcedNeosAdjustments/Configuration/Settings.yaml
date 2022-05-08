@@ -13,10 +13,6 @@ Flowpack:
 
 Neos:
   EventSourcedNeosAdjustments:
-    contentDimensions:
-      resolution:
-        uriPathSegmentDelimiter: '_'
-
     # TODO: re-enable cache!!
     fusion:
       enableObjectTreeCache: false
@@ -25,7 +21,7 @@ Neos:
       middlewares:
         'detectContentSubgraph':
           position: 'before routing'
-          middleware: 'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
+          middleware: 'Neos\Neos\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
     error:
       debugger:
         ignoredClasses:
@@ -35,32 +31,11 @@ Neos:
           'Neos\\Fusion\\FusionObjects\\Helpers\\FusionPathProxy': true
           'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
           'Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.*': true
-
-  ContentRepository:
-    labelGenerator:
-      eel:
-        defaultContext:
-          Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
-  Fusion:
-    defaultContext:
-      Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
-      # TODO: maybe this helper must be exposed as Neos.Node
-      Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
-      Neos.Link: Neos\EventSourcedNeosAdjustments\Fusion\Helper\LinkHelper
-      Neos.Caching: Neos\EventSourcedNeosAdjustments\Fusion\Helper\CachingHelper
-      Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
-      Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
   Neos:
     fusion:
       autoInclude:
         Neos.EventSourcedNeosAdjustments: true
     Ui:
-
-      configurationDefaultEelContext:
-        Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
-        Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
-        Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
-
       initialState:
         cr:
           nodes:

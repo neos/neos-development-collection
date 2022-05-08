@@ -49,7 +49,7 @@ class NodeTypeManager
     public function __construct(
         private readonly ConfigurationManager $configurationManager,
         private readonly ObjectManagerInterface $objectManager,
-        private readonly string $fallbackNodeTypeName
+        private readonly ?string $fallbackNodeTypeName
     ) {
     }
 

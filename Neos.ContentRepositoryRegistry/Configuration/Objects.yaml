@@ -270,7 +270,7 @@ Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensi
   scope: singleton
   arguments:
     1:
-      setting: "Neos.EventSourcedContentRepository.contentDimensions"
+      setting: "Neos.ContentRepository.contentDimensions"
 
 Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper:
   scope: singleton

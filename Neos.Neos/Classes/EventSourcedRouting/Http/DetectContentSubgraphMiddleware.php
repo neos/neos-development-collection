@@ -14,6 +14,7 @@ namespace Neos\Neos\EventSourcedRouting\Http;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
 use Neos\Neos\EventSourcedRouting\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
@@ -59,8 +60,12 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
 
         $existingParameters = $request->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS)
             ?? RouteParameters::createEmpty();
+        $dimensionSpacePoint = $this->detectDimensionSpacePoint($request, $uriPathSegmentUsed);
         $parameters = $existingParameters
-            ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($request, $uriPathSegmentUsed))
+            ->withParameter(
+                'dimensionSpacePoint',
+                DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($dimensionSpacePoint)
+            )
             ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0);
         return $next->handle($request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters));
     }
