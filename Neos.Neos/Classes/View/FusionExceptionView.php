@@ -117,8 +117,6 @@ class FusionExceptionView extends AbstractView
         $securityContext->setRequest($request);
 
         #$contentContext = $this->contentContextFactory->create(['currentSite' => $site]);
-        $domain = $this->domainRepository->findOneByActiveRequest();
-        $site = $domain->getSite();
 
         /** @todo fetch me from an accessor */
         $currentSiteNode = null;

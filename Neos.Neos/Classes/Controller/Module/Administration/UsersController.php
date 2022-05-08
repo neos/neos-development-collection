@@ -69,12 +69,6 @@ class UsersController extends AbstractModuleController
     protected $tokenAndProviderFactory;
 
     /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
      * @phpstan-var array<string,mixed>

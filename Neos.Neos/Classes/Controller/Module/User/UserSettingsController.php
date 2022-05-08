@@ -49,12 +49,6 @@ class UserSettingsController extends AbstractModuleController
     protected ?User $currentUser;
 
     /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
      * @return void
      */
     protected function initializeAction()
