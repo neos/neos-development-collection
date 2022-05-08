@@ -13,6 +13,7 @@ namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
@@ -36,10 +37,13 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
+use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
+use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -413,29 +417,9 @@ class SitesController extends AbstractModuleController
      */
     public function createSiteNodeAction($packageKey, $siteName, $nodeType)
     {
-        $siteNodeName = NodeName::fromString($siteName);
-        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
-        if (!$liveWorkspace instanceof Workspace) {
-            throw new \InvalidArgumentException(
-                'Cannot create a site without the live workspace being present.',
-                1651956156
-            );
-        }
         try {
-            $sitesNode = $this->contentGraph->findRootNodeAggregateByType(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
-                NodeTypeName::fromString('Neos.Neos:Sites')
-            );
-        } catch (\Exception $exception) {
-            throw new \InvalidArgumentException(
-                'Cannot create a site without the sites note being present.',
-                1651956364
-            );
-        }
-
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
-
-        if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+            $site = $this->siteService->createSite($packageKey, $siteName, $nodeType);
+        } catch (NodeTypeNotFoundException $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType]),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.title'),
@@ -444,13 +428,12 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        }
-
-        if (!$siteNodeType->isOfType('Neos.Neos:Site')) {
+            return;
+        } catch (SiteNodeTypeIsInvalid $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel(
                     'sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body',
-                    [$nodeType, 'Neos.Neos:Site']
+                    [$nodeType, NodeTypeNameFactory::forSite()]
                 ),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title'),
                 Message::SEVERITY_ERROR,
@@ -458,68 +441,24 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        }
-
-        $nodeNameOccupied = function () use ($siteNodeName) {
+            return;
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite|NodeNameIsAlreadyOccupied $exception) {
             $this->addFlashMessage(
-                $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteNodeName]),
+                $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 1412372375
             );
             $this->redirect('createSiteNode');
-        };
-
-        if ($this->siteRepository->findOneByNodeName($siteNodeName)) {
-            $nodeNameOccupied();
+            return;
         }
-
-        $rootDimensionSpacePoints = $this->variationGraph->getRootGeneralizations();
-        if (empty($rootDimensionSpacePoints)) {
-            throw new \InvalidArgumentException(
-                'Cannot create a site with an empty dimension space point set'.
-                1651957153
-            );
-        }
-        $arbitraryRootDimensionSpacePoint = reset($rootDimensionSpacePoints);
-
-        $currentUser = $this->domainUserService->getCurrentUser();
-        if (is_null($currentUser)) {
-            throw new \InvalidArgumentException(
-                'Cannot create a site without a current user',
-                1651957354
-            );
-        }
-
-        $siteNodeAggregateIdentifier = NodeAggregateIdentifier::create();
-        try {
-            $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
-                $siteNodeAggregateIdentifier,
-                NodeTypeName::fromString($nodeType),
-                OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
-                UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($currentUser)),
-                $sitesNode->getIdentifier(),
-                null,
-                $siteNodeName,
-                PropertyValuesToWrite::fromArray([
-                    'title' => $siteName
-                ])
-            ))->blockUntilProjectionsAreUpToDate();
-        } catch (NodeNameIsAlreadyOccupied $exception) {
-            $nodeNameOccupied();
-        }
-
-        // @todo use node aggregate identifier instead of node name
-        $site = new Site((string)$siteNodeName);
-        $site->setSiteResourcesPackageKey($packageKey);
-        $site->setState(Site::STATE_ONLINE);
-        $site->setName($siteName);
-        $this->siteRepository->add($site);
 
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.successfullyCreatedSite.body', [$siteName, $siteNodeName, $nodeType, $packageKey]),
+            $this->getModuleLabel(
+                'sites.successfullyCreatedSite.body',
+                [$site->getName(), $site->getNodeName(), $nodeType, $packageKey]
+            ),
             '',
             Message::SEVERITY_OK,
             [],
