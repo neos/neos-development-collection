@@ -11,88 +11,67 @@ namespace Neos\Neos\Domain\Strategy;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ESCR\AssetUsage\Dto\AssetUsage;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use Neos\Neos\Domain\Service\SiteService;
-use Neos\Utility\TypeHandling;
 
 /**
  * @Flow\Scope("singleton")
  */
 class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 {
-    use CreateContentContextTrait;
-
     /**
-     * @var array
+     * @var array<string,AssetUsageInNodeProperties>
      */
-    protected $firstlevelCache = [];
+    protected array $firstlevelCache = [];
 
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
+    #[Flow\Inject]
+    protected PersistenceManagerInterface $persistenceManager;
+
+    #[Flow\Inject]
+    protected AssetUsageRepository $assetUsageRepository;
+
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
+
+    #[Flow\Inject]
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
 
     /**
      * Returns an array of usage reference objects.
      *
-     * @param AssetInterface $asset
-     * @return array<\Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties>
+     * @return array<string,AssetUsageInNodeProperties>
      * @throws \Neos\ContentRepository\Feature\Common\NodeConfigurationException
      */
-    public function getUsageReferences(AssetInterface $asset)
+    public function getUsageReferences(AssetInterface $asset): array
     {
-        $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
-        if (isset($this->firstlevelCache[$assetIdentifier])) {
-            return $this->firstlevelCache[$assetIdentifier];
-        }
+        $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
 
-        $relatedNodes = array_map(function (NodeData $relatedNodeData) use ($asset) {
+        $relatedNodes = array_map(function (AssetUsage $assetUsage) use($asset, $dimensionSpacePointSet): AssetUsageInNodeProperties {
+            $dimensionSpacePoint = $dimensionSpacePointSet->points[$assetUsage->originDimensionSpacePoint] ?? null;
             return new AssetUsageInNodeProperties(
                 $asset,
-                $relatedNodeData->getIdentifier(),
-                $relatedNodeData->getWorkspace()->getName(),
-                $relatedNodeData->getDimensionValues(),
-                $relatedNodeData->getNodeType()->getName()
+                (string)$assetUsage->nodeAggregateIdentifier,
+                $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                    $assetUsage->contentStreamIdentifier
+                )->workspaceName,
+                $dimensionSpacePoint->coordinates,
+                ''
             );
-        }, $this->getRelatedNodes($asset));
+        }, iterator_to_array($this->assetUsageRepository->findUsages(AssetUsageFilter::create()->withAsset(
+            $this->persistenceManager->getIdentifierByObject($asset))
+        )->getIterator()));
 
+        $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
         $this->firstlevelCache[$assetIdentifier] = $relatedNodes;
+
         return $this->firstlevelCache[$assetIdentifier];
-    }
-
-    /**
-     * Returns all nodes that use the asset in a node property.
-     *
-     * @param AssetInterface $asset
-     * @return array
-     */
-    public function getRelatedNodes(AssetInterface $asset)
-    {
-        $relationMap = [];
-        $relationMap[TypeHandling::getTypeForValue($asset)]
-            = [$this->persistenceManager->getIdentifierByObject($asset)];
-
-        if ($asset instanceof Image) {
-            foreach ($asset->getVariants() as $variant) {
-                $type = TypeHandling::getTypeForValue($variant);
-                if (!isset($relationMap[$type])) {
-                    $relationMap[$type] = [];
-                }
-                $relationMap[$type][] = $this->persistenceManager->getIdentifierByObject($variant);
-            }
-        }
-
-        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(
-            SiteService::SITES_ROOT_PATH,
-            $relationMap
-        );
     }
 }
