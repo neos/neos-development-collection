@@ -67,8 +67,8 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             );
         }, iterator_to_array($this->assetUsageRepository->findUsages(
             AssetUsageFilter::create()->withAsset(
-            $this->persistenceManager->getIdentifierByObject($asset)
-        )
+                $this->persistenceManager->getIdentifierByObject($asset)
+            )
         )->getIterator()));
 
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
