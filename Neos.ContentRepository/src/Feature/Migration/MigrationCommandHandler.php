@@ -7,8 +7,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Migration\Filter\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\Feature\Migration\MigrationException;
 use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
-use Neos\ContentRepository\Feature\Migration\Filter\FilterFactory;
-use Neos\ContentRepository\Feature\Migration\Transformation\TransformationFactory;
+use Neos\ContentRepository\Feature\Migration\Filter\FiltersFactory;
+use Neos\ContentRepository\Feature\Migration\Transformation\TransformationsFactory;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
@@ -57,15 +57,15 @@ class MigrationCommandHandler
     protected WorkspaceFinder $workspaceFinder;
     protected WorkspaceCommandHandler $workspaceCommandHandler;
     protected ContentGraphInterface $contentGraph;
-    protected FilterFactory $filterFactory;
-    protected TransformationFactory $transformationFactory;
+    protected FiltersFactory $filterFactory;
+    protected TransformationsFactory $transformationFactory;
 
     public function __construct(
         WorkspaceFinder         $workspaceFinder,
         WorkspaceCommandHandler $workspaceCommandHandler,
         ContentGraphInterface   $contentGraph,
-        FilterFactory           $filterFactory,
-        TransformationFactory   $transformationFactory
+        FiltersFactory          $filterFactory,
+        TransformationsFactory  $transformationFactory
     ) {
         $this->workspaceFinder = $workspaceFinder;
         $this->workspaceCommandHandler = $workspaceCommandHandler;

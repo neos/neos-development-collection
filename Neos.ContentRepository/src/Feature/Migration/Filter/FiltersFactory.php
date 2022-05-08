@@ -5,24 +5,18 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
 use Neos\ContentRepository\Feature\Migration\MigrationException;
-use Neos\ContentRepository\Feature\Migration\Filter\NodeAggregateBasedFilterInterface;
-use Neos\ContentRepository\Feature\Migration\Filter\NodeBasedFilterInterface;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Implementation detail of {@see MigrationCommandHandler}
- *
- * @Flow\Scope("singleton")
  */
-class FilterFactory
+class FiltersFactory
 {
-    protected ObjectManagerInterface $objectManager;
 
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct(
+        private readonly ContainerInterface $container
+    )
     {
-        // TODO: decouple from ObjectManager!
-        $this->objectManager = $objectManager;
     }
 
     /**
@@ -41,34 +35,15 @@ class FilterFactory
 
     /**
      * @param array<string,mixed> $filterConfiguration
-     * @throws MigrationException
      */
     protected function constructFilterObject(
         array $filterConfiguration
     ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface {
-        $filterClassName = $this->resolveFilterClass($filterConfiguration['type']);
-        $filter = new $filterClassName;
-        if (!$filter instanceof NodeAggregateBasedFilterInterface && !$filter instanceof NodeBasedFilterInterface) {
-            throw new \InvalidArgumentException(
-                'Given filter ' . $filter
-                    . ' does not implement NodeAggregateBasedFilterInterface or NodeBasedFilterInterface.',
-                1645391476
-            );
-        }
-        foreach ($filterConfiguration['settings'] as $propertyName => $propertyValue) {
-            $setterName = 'set' . ucfirst($propertyName);
-            if (method_exists($filter, $setterName)) {
-                $filter->$setterName($propertyValue);
-            } else {
-                throw new MigrationException(
-                    'Filter "' . $filterClassName . '" does not have a setter for "' . $propertyName
-                        . '", so maybe it is not supported.',
-                    1343199531
-                );
-            }
-        }
+        $filterFactoryClassName = $this->resolveFilterFactoryClass($filterConfiguration['type']);
 
-        return $filter;
+        $filterFactory = $this->container->get($filterFactoryClassName);
+        assert($filterFactory instanceof FilterFactoryInterface);
+        return $filterFactory->build($filterConfiguration['settings'] ?? []);
     }
 
     /**
@@ -78,11 +53,10 @@ class FilterFactory
      *
      * @throws MigrationException
      */
-    protected function resolveFilterClass(string $name): string
+    protected function resolveFilterFactoryClass(string $name): string
     {
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
-        if ($resolvedObjectName !== null) {
-            return $resolvedObjectName;
+        if (class_exists($name)) {
+            return $name;
         }
 
         if ($name === 'DimensionValues') {
@@ -110,15 +84,6 @@ class FilterFactory
             );
         }
 
-        $possibleFullFilterName = 'Neos\ContentRepository\Feature\Migration\Filter\\' . $name;
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleFullFilterName);
-        if ($resolvedObjectName !== null) {
-            return $resolvedObjectName;
-        }
-
-        throw new MigrationException(
-            'A filter with the name "' . $name . '" or "' . $possibleFullFilterName . '" could not be found.',
-            1343199467
-        );
+        return 'Neos\ContentRepository\Feature\Migration\Filter\\' . $name . 'FilterFactory';
     }
 }

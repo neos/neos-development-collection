@@ -9,7 +9,7 @@ Feature: Provide and configure a custom read model
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Intermediary.Testing:NodeWithCustomReadModel':
-      class: 'Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\Thing'
+      class: 'Neos\ContentRepository\Tests\Behavior\Fixtures\Thing'
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                        | Value                                  |
@@ -40,4 +40,4 @@ Feature: Provide and configure a custom read model
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated
-    Then I expect this read model to be an instance of "Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\Thing"
+    Then I expect this read model to be an instance of "Neos\ContentRepository\Tests\Behavior\Fixtures\Thing"
