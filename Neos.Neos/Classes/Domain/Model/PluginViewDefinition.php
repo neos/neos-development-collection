@@ -92,7 +92,10 @@ class PluginViewDefinition
     public function getLabel()
     {
         $translationHelper = new TranslationHelper();
-        return isset($this->configuration['label']) ? ($translationHelper->translate($this->configuration['label']) ?: $this->configuration['label']) : '';
+
+        return isset($this->configuration['label'])
+            ? ($translationHelper->translate($this->configuration['label']) ?: $this->configuration['label'])
+            : '';
     }
 
     /**

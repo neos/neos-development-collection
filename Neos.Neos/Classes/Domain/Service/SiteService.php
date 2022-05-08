@@ -233,8 +233,13 @@ class SiteService
     {
     }
 
-    public function createSite(string $packageKey, string $siteName, string $nodeTypeName, ?string $nodeName = null, bool $inactive = false): Site
-    {
+    public function createSite(
+        string $packageKey,
+        string $siteName,
+        string $nodeTypeName,
+        ?string $nodeName = null,
+        bool $inactive = false
+    ): Site {
         $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
         $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
         if (!$liveWorkspace instanceof Workspace) {
@@ -275,11 +280,10 @@ class SiteService
         }
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
-        $currentUser = $this->domainUserService->getCurrentUser();
-        if (is_null($currentUser)) {
+        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+        if (is_null($currentUserIdentifier)) {
             throw CurrentUserIsMissing::butWasRequested();
         }
-        $currentUserIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($currentUser));
 
         $siteNodeAggregateIdentifier = NodeAggregateIdentifier::create();
         $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(

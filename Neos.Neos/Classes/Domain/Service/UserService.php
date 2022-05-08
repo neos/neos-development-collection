@@ -14,6 +14,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
@@ -255,6 +256,15 @@ class UserService
         }, null);
 
         return $user;
+    }
+
+    public function getCurrentUserIdentifier(): ?UserIdentifier
+    {
+        $currentUser = $this->getCurrentUser();
+
+        return $currentUser
+            ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($currentUser))
+            : null;
     }
 
     /**

@@ -63,7 +63,10 @@ class ContentDimensionsController extends ActionController
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', $this->contentDimensionZookeeper->getAllowedDimensionSubspace());
         } else {
-            $this->view->assign('contentDimensionsPresets', $this->contentDimensionZookeeper->getAllowedDimensionSubspace());
+            $this->view->assign(
+                'contentDimensionsPresets',
+                $this->contentDimensionZookeeper->getAllowedDimensionSubspace()
+            );
         }
     }
 
@@ -82,7 +85,8 @@ class ContentDimensionsController extends ActionController
      * "language" which are allowed in combination with the country "US".
      *
      * @param string $dimensionName Name of the dimension to return presets for
-     * @param array<mixed> $chosenDimensionPresets An optional array of dimension names and a single preset per dimension
+     * @param array<mixed> $chosenDimensionPresets An optional array of dimension names
+     *                                             and a single preset per dimension
      * @return void
      */
     public function showAction($dimensionName, $chosenDimensionPresets = [])

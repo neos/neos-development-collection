@@ -97,8 +97,7 @@ class NodeType
         array $configuration,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->name = $name;
 
         foreach ($declaredSuperTypes as $type) {
