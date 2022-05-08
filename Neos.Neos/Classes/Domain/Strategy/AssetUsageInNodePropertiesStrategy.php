@@ -54,7 +54,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
     {
         $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
 
-        $relatedNodes = array_map(function (AssetUsage $assetUsage) use($asset, $dimensionSpacePointSet): AssetUsageInNodeProperties {
+        $relatedNodes = array_map(function (AssetUsage $assetUsage) use ($asset, $dimensionSpacePointSet): AssetUsageInNodeProperties {
             $dimensionSpacePoint = $dimensionSpacePointSet->points[$assetUsage->originDimensionSpacePoint] ?? null;
             return new AssetUsageInNodeProperties(
                 $asset,
@@ -65,8 +65,10 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
                 $dimensionSpacePoint->coordinates,
                 ''
             );
-        }, iterator_to_array($this->assetUsageRepository->findUsages(AssetUsageFilter::create()->withAsset(
-            $this->persistenceManager->getIdentifierByObject($asset))
+        }, iterator_to_array($this->assetUsageRepository->findUsages(
+            AssetUsageFilter::create()->withAsset(
+            $this->persistenceManager->getIdentifierByObject($asset)
+        )
         )->getIterator()));
 
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
