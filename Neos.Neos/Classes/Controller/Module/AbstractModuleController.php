@@ -24,7 +24,7 @@ abstract class AbstractModuleController extends ActionController
     use BackendUserTranslationTrait;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $moduleConfiguration;
 
@@ -33,7 +33,9 @@ abstract class AbstractModuleController extends ActionController
      */
     protected function initializeAction()
     {
-        $this->moduleConfiguration = $this->request->getInternalArgument('__moduleConfiguration');
+        /** @var array<string,mixed> $moduleConfiguration */
+        $moduleConfiguration = $this->request->getInternalArgument('__moduleConfiguration');
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     /**
@@ -66,7 +68,7 @@ abstract class AbstractModuleController extends ActionController
     /**
      * Display no flash message at all on errors.
      *
-     * @return \Neos\Error\Messages\Message returns false
+     * @return false
      */
     protected function getErrorFlashMessage()
     {

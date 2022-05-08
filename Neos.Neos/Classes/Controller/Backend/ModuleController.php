@@ -55,6 +55,7 @@ class ModuleController extends ActionController
 
     /**
      * @param array $module
+     * @phpstan-param array<string,mixed> $module
      * @return mixed
      * @throws DisabledModuleException
      */
@@ -98,7 +99,7 @@ class ModuleController extends ActionController
 
         $moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
 
-        $moduleResponse = new ActionResponse($this->response);
+        $moduleResponse = new ActionResponse();
 
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 

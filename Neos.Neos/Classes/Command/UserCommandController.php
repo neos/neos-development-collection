@@ -36,6 +36,7 @@ class UserCommandController extends CommandController
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $authenticationProviderSettings;
 
@@ -82,6 +83,7 @@ class UserCommandController extends CommandController
             $this->outputLine('The username "%s" is not in use', [$username]);
             $this->quit(1);
         }
+        /** @var User $user */
 
         $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
         $tableRows = [$this->getTableRowForUser($user)];
@@ -150,8 +152,8 @@ class UserCommandController extends CommandController
             }
 
             $roleIdentifiers = [];
+            /** @var Account $account */
             foreach ($user->getAccounts() as $account) {
-                /** @var Account $account */
                 foreach ($account->getRoles() as $role) {
                     /** @var Role $role */
                     $roleIdentifiers[$role->getIdentifier()] = true;
@@ -300,6 +302,7 @@ class UserCommandController extends CommandController
             $this->outputLine('The user "%s" does not exist.', [$username]);
             $this->quit(1);
         }
+        /** @var User $user */
         $this->userService->setUserPassword($user, $password);
         $this->outputLine('The new password for user "%s" was set.', [$username]);
     }
@@ -397,7 +400,7 @@ class UserCommandController extends CommandController
                 function ($user) use ($usernamePattern, $authenticationProviderName) {
                     return fnmatch(
                         $usernamePattern,
-                        $this->userService->getUsername($user, $authenticationProviderName)
+                        $this->userService->getUsername($user, $authenticationProviderName) ?: ''
                     );
                 }
             );
@@ -414,7 +417,7 @@ class UserCommandController extends CommandController
      * Prepares a table row for output with data of the given User
      *
      * @param User $user The user
-     * @return array
+     * @return array<int,mixed>
      */
     protected function getTableRowForUser(User $user)
     {

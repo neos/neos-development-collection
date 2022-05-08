@@ -43,7 +43,12 @@ class SchemaController extends ActionController
      */
     public function nodeTypeSchemaAction(): string
     {
-        $version = $this->request->hasArgument('version') ? $this->request->getArgument('version') : '';
+        if ($this->request->hasArgument('version')) {
+            /** @var string $version */
+            $version = $this->request->getArgument('version');
+        } else {
+            $version = '';
+        }
         $cacheIdentifier = 'nodeTypeSchema_' . $version;
 
         $this->response->setContentType('application/json');

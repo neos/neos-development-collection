@@ -48,14 +48,14 @@ class ImpersonateController extends ActionController
     protected $defaultViewObjectName = JsonView::class;
 
     /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'json' => JsonView::class
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = [
         'application/json'
@@ -90,7 +90,7 @@ class ImpersonateController extends ActionController
      *                               If not specified, the current controller is used.
      * @param string $packageKey Key of the package containing the controller to forward to.
      *                           If not specified, the current package is assumed.
-     * @param array $arguments Array of arguments for the target action
+     * @param array<mixed> $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string $format The format to use for the redirect URI
@@ -157,9 +157,7 @@ class ImpersonateController extends ActionController
      */
     public function restoreWithResponseAction(): void
     {
-        /** @var Account $originalIdentity */
         $originalIdentity = $this->impersonateService->getOriginalIdentity();
-        /** @var Account $impersonateIdentity */
         $impersonateIdentity = $this->impersonateService->getImpersonation();
 
         $response['status'] = false;
@@ -186,6 +184,9 @@ class ImpersonateController extends ActionController
         $this->view->assign('value', $impersonateStatus);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getImpersonateStatus(): array
     {
         $impersonateStatus = [
@@ -193,6 +194,7 @@ class ImpersonateController extends ActionController
         ];
 
         if ($this->impersonateService->isActive()) {
+            /** @var Account $currentImpersonation */
             $currentImpersonation = $this->impersonateService->getImpersonation();
             $originalIdentity = $this->impersonateService->getOriginalIdentity();
             /** @var User $user */

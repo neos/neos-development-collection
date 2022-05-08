@@ -31,7 +31,7 @@ use Neos\Utility\PositionalArraySorter;
 class MenuHelper
 {
     /**
-     * @var array
+     * @var ?array<string,mixed>
      */
     protected $moduleListFirstLevelCache = null;
 
@@ -48,7 +48,7 @@ class MenuHelper
     protected $privilegeManager;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $settings;
 
@@ -59,9 +59,9 @@ class MenuHelper
     protected $iconMapper;
 
     /**
-     * @param array $settings
+     * @param array<string,mixed> $settings
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -70,7 +70,7 @@ class MenuHelper
      * Build a list of sites
      *
      * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<int,array<string,mixed>>
      */
     public function buildSiteList(ControllerContext $controllerContext): array
     {
@@ -125,7 +125,7 @@ class MenuHelper
 
     /**
      * @param ControllerContext $controllerContext
-     * @return array
+     * @return array<string,mixed>
      * @throws \Neos\Flow\Http\Exception
      * @throws MissingActionNameException
      */
@@ -221,9 +221,9 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @param string $module
-     * @param array $moduleConfiguration
+     * @param array<string,mixed> $moduleConfiguration
      * @param string $modulePath
-     * @return array
+     * @return array<string,mixed>
      * @throws \Neos\Flow\Http\Exception
      * @throws MissingActionNameException
      */
