@@ -11,19 +11,23 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
+use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Model\Site;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Service\NodePaths;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -125,53 +129,26 @@ class SiteCommandController extends CommandController
      */
     public function createCommand($name, $packageKey, $nodeType, $nodeName = null, $inactive = false)
     {
-        if ($nodeName === null) {
-            $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
-        }
-
-        if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
-            $this->quit(1);
-        }
-
         if ($this->packageManager->isPackageAvailable($packageKey) === false) {
             $this->outputLine('<error>Could not find package "%s"</error>', [$packageKey]);
             $this->quit(1);
         }
 
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
-
-        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+        try {
+            $this->siteService->createSite($packageKey, $name, $nodeType, $nodeName, $inactive);
+        } catch (NodeTypeNotFoundException $exception) {
             $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
             $this->quit(1);
-        }
-        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
+        } catch (SiteNodeTypeIsInvalid $exception) {
             $this->outputLine(
                 '<error>The given node type "%s" is not based on the superType "%s"</error>',
-                [$nodeType, 'Neos.Neos:Document']
+                [$nodeType, NodeTypeNameFactory::forSite()]
             );
             $this->quit(1);
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite|NodeNameIsAlreadyOccupied $exception) {
+            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
+            $this->quit(1);
         }
-
-        $rootNode = $this->nodeContextFactory->create()->getRootNode();
-        // We fetch the workspace to be sure it's known to the persistence manager and persist all
-        // so the workspace and site node are persisted before we import any nodes to it.
-        $rootNode->getContext()->getWorkspace();
-        $this->persistenceManager->persistAll();
-        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
-        if ($sitesNode === null) {
-            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-        }
-
-        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
-        $siteNode->setProperty('title', $name);
-
-        $site = new Site($nodeName);
-        $site->setSiteResourcesPackageKey($packageKey);
-        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
-        $site->setName($name);
-
-        $this->siteRepository->add($site);
 
         $this->outputLine(
             'Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"',
@@ -251,7 +228,7 @@ class SiteCommandController extends CommandController
                 $this->quit(1);
             }
         }
-        $this->outputLine('Import of site "%s" finished.', [$site->getName()]);
+        $this->outputLine('Import of site "%s" finished.', [$site?->getName()]);
     }
 
     /**
@@ -290,6 +267,7 @@ class SiteCommandController extends CommandController
         } else {
             $sites = $this->siteRepository->findByNodeName($siteNode)->toArray();
         }
+        /** @var array<int,Site> $sites */
 
         if (count($sites) === 0) {
             $this->outputLine('<error>No site for exporting found</error>');

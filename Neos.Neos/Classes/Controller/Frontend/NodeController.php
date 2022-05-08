@@ -29,7 +29,6 @@ use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
 use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
-use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -38,6 +37,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
+use Neos\Neos\View\FusionView;
 
 /**
  * Event Sourced Node Controller; as Replacement of NodeController

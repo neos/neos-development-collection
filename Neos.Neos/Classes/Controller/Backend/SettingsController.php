@@ -31,6 +31,7 @@ class SettingsController extends ActionController
             $this->settings,
             'userInterface.editPreviewModes'
         ));
-        return json_encode($configuration->toArray());
+
+        return json_encode($configuration->toArray(), JSON_THROW_ON_ERROR);
     }
 }

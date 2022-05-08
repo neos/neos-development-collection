@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Projection\Workspace;
  */
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
@@ -165,6 +166,11 @@ class Workspace
     public function getWorkspaceTitle(): WorkspaceTitle
     {
         return new WorkspaceTitle($this->workspaceTitle);
+    }
+
+    public function getWorkspaceDescription(): WorkspaceDescription
+    {
+        return new WorkspaceDescription($this->workspaceDescription);
     }
 
     /**

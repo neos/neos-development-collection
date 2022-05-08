@@ -23,6 +23,7 @@ use Neos\Neos\Domain\Exception as NeosException;
  *
  * @Flow\Scope("singleton")
  * @api
+ * @method QueryResultInterface findByNodeName(string $nodeName)
  */
 class SiteRepository extends Repository
 {

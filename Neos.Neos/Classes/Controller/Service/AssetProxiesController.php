@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetNotFoundException;
 use Neos\Media\Domain\Model\Dto\AssetConstraints;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetSourceService;
@@ -60,7 +61,7 @@ class AssetProxiesController extends ActionController
     protected $asyncThumbnails;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -70,7 +71,7 @@ class AssetProxiesController extends ActionController
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = [
@@ -144,9 +145,10 @@ class AssetProxiesController extends ActionController
         }
 
         $assetProxyRepository = $assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
-        $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
-        if (!$assetProxy) {
-            $this->throwStatus(404, 'Asset proxy not found');
+        try {
+            $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
+        } catch (NeosAssetNotFoundException $exception) {
+            $this->throwStatus(404, 'Asset not found');
         }
 
         $this->view->assign('assetProxy', $assetProxy);

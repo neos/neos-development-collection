@@ -11,27 +11,38 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
+use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
+use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Service\NodePaths;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
@@ -64,7 +75,7 @@ class SitesController extends AbstractModuleController
      * @Flow\Inject
      * @var WorkspaceFinder
      */
-    protected $workspaceRepository;
+    protected $workspaceFinder;
 
     /**
      * @Flow\Inject
@@ -101,6 +112,15 @@ class SitesController extends AbstractModuleController
      */
     private $throwableStorage;
 
+    #[Flow\Inject]
+    protected UserService $domainUserService;
+
+    #[Flow\Inject]
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
+
+    #[Flow\Inject]
+    protected ContentGraphInterface $contentGraph;
+
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
@@ -119,7 +139,7 @@ class SitesController extends AbstractModuleController
             'available',
             'neos-site'
         ) as $sitePackageKey => $sitePackage) {
-            /** @var PackageInterface $sitePackage */
+            /** @var Package $sitePackage */
             $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = [
                 'package' => $sitePackage,
                 'packageKey' => $sitePackage->getPackageKey()
@@ -166,7 +186,7 @@ class SitesController extends AbstractModuleController
 
         $this->view->assignMultiple([
             'site' => $site,
-            'sitePackage' => isset($sitePackage) ? $sitePackage : [],
+            'sitePackage' => $sitePackage ?? [],
             'domains' => $this->domainRepository->findBySite($site),
             'assetCollections' => $this->assetCollectionRepository->findAll()
         ]);
@@ -186,23 +206,62 @@ class SitesController extends AbstractModuleController
     public function updateSiteAction(Site $site, $newSiteNodeName)
     {
         if ($site->getNodeName() !== $newSiteNodeName) {
-            $oldSiteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName());
-            $newSiteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $newSiteNodeName);
-            /** @var $workspace Workspace */
-            foreach ($this->workspaceRepository->findAll() as $workspace) {
-                $siteNode = $this->nodeDataRepository->findOneByPath($oldSiteNodePath, $workspace);
-                if ($siteNode !== null) {
-                    $siteNode->setPath($newSiteNodePath);
-                }
-            }
-            $site->setNodeName($newSiteNodeName);
-            $this->nodeDataRepository->persistEntities();
+            $this->redirect('index');
         }
+
+        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
+        if (!$liveWorkspace instanceof Workspace) {
+            throw new \InvalidArgumentException(
+                'Cannot update a site without the live workspace being present.',
+                1651958443
+            );
+        }
+
+        try {
+            $sitesNode = $this->contentGraph->findRootNodeAggregateByType(
+                $liveWorkspace->getCurrentContentStreamIdentifier(),
+                NodeTypeName::fromString('Neos.Neos:Sites')
+            );
+        } catch (\Exception $exception) {
+            throw new \InvalidArgumentException(
+                'Cannot update a site without the sites note being present.',
+                1651958452
+            );
+        }
+
+        $currentUser = $this->domainUserService->getCurrentUser();
+        if (is_null($currentUser)) {
+            throw new \InvalidArgumentException(
+                'Cannot update a site without a current user',
+                1651958722
+            );
+        }
+
+        foreach ($this->workspaceFinder->findAll() as $workspace) {
+            // technically, due to the name being the "identifier", there might be more than one :/
+            $siteNodeAggregates = $this->contentGraph->findChildNodeAggregatesByName(
+                $workspace->getCurrentContentStreamIdentifier(),
+                $sitesNode->getIdentifier(),
+                NodeName::fromString($site->getNodeName())
+            );
+
+            foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName(new ChangeNodeAggregateName(
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $siteNodeAggregate->getIdentifier(),
+                    NodeName::fromString($newSiteNodeName),
+                    $this->persistenceManager->getIdentifierByObject($currentUser)
+                ));
+            }
+        }
+
+        $site->setNodeName($newSiteNodeName);
         $this->siteRepository->update($site);
+
         $this->addFlashMessage(
             $this->getModuleLabel('sites.update.body', [htmlspecialchars($site->getName())]),
             $this->getModuleLabel('sites.update.title'),
-            null,
+            Message::SEVERITY_OK,
             [],
             1412371798
         );
@@ -225,7 +284,9 @@ class SitesController extends AbstractModuleController
         $generatorServices = [];
 
         if ($generatorServiceIsAvailable) {
+            /** @var SiteGeneratorCollectingService $siteGeneratorCollectingService */
             $siteGeneratorCollectingService = $this->objectManager->get(SiteGeneratorCollectingService::class);
+            /** @var SitePackageGeneratorNameService $sitePackageGeneratorNameService */
             $sitePackageGeneratorNameService = $this->objectManager->get(SitePackageGeneratorNameService::class);
 
             $generatorClasses = $siteGeneratorCollectingService->getAllGenerators();
@@ -289,6 +350,7 @@ class SitesController extends AbstractModuleController
             $this->redirect('index');
         }
 
+        /** @var SitePackageGeneratorInterface $generatorService */
         $generatorService = $this->objectManager->get($generatorClass);
         $generatorService->generateSitePackage($packageKey, $siteName);
 
@@ -314,7 +376,7 @@ class SitesController extends AbstractModuleController
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.theSiteHasBeenImported.body'),
                 '',
-                null,
+                Message::SEVERITY_OK,
                 [],
                 1412372266
             );
@@ -346,22 +408,9 @@ class SitesController extends AbstractModuleController
      */
     public function createSiteNodeAction($packageKey, $siteName, $nodeType)
     {
-        $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $siteName);
-
-        if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->addFlashMessage(
-                $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$nodeName]),
-                $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),
-                Message::SEVERITY_ERROR,
-                [],
-                1412372375
-            );
-            $this->redirect('createSiteNode');
-        }
-
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
-
-        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+        try {
+            $site = $this->siteService->createSite($packageKey, $siteName, $nodeType);
+        } catch (NodeTypeNotFoundException $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType]),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.title'),
@@ -370,13 +419,12 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        }
-
-        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
+            return;
+        } catch (SiteNodeTypeIsInvalid $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel(
                     'sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body',
-                    [$nodeType, 'Neos.Neos:Document']
+                    [$nodeType, NodeTypeNameFactory::forSite()]
                 ),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title'),
                 Message::SEVERITY_ERROR,
@@ -384,30 +432,26 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
+            return;
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite|NodeNameIsAlreadyOccupied $exception) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
+                $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),
+                Message::SEVERITY_ERROR,
+                [],
+                1412372375
+            );
+            $this->redirect('createSiteNode');
+            return;
         }
-
-        $rootNode = $this->nodeContextFactory->create()->getRootNode();
-
-        // We fetch the workspace to be sure it's known to the persistence manager and persist all
-        // so the workspace and site node are persisted before we import any nodes to it.
-        $rootNode->getContext()->getWorkspace();
-        $this->persistenceManager->persistAll();
-        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
-        if ($sitesNode === null) {
-            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-        }
-        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
-        $siteNode->setProperty('title', $siteName);
-        $site = new Site($nodeName);
-        $site->setSiteResourcesPackageKey($packageKey);
-        $site->setState(Site::STATE_ONLINE);
-        $site->setName($siteName);
-        $this->siteRepository->add($site);
 
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.successfullyCreatedSite.body', [$siteName, $nodeName, $nodeType, $packageKey]),
+            $this->getModuleLabel(
+                'sites.successfullyCreatedSite.body',
+                [$site->getName(), $site->getNodeName(), $nodeType, $packageKey]
+            ),
             '',
-            null,
+            Message::SEVERITY_OK,
             [],
             1412372266
         );
@@ -619,7 +663,7 @@ class SitesController extends AbstractModuleController
  *                                   If not specified, the current controller is used.
      * @param string $packageKey Key of the package containing the controller to forward to.
      *                           If not specified, the current package is assumed.
-     * @param array $arguments Array of arguments for the target action
+     * @param array<string,mixed> $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string $format The format to use for the redirect URI

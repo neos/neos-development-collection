@@ -45,8 +45,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentGraph implements ContentGraphInterface
 {
-
-
     /**
      * @var array<string,ContentSubgraphInterface>
      */
@@ -59,8 +57,7 @@ final class ContentGraph implements ContentGraphInterface
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory
-    )
-    {
+    ) {
     }
 
     final public function getSubgraphByIdentifier(

@@ -19,12 +19,12 @@ use Neos\Flow\I18n\Translator;
  */
 trait ModuleTranslationTrait
 {
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
+    #[Flow\Inject]
+    protected Translator $translator;
 
+    /**
+     * @param array<int|string,mixed> $arguments
+     */
     public function getModuleLabel(string $id, array $arguments = []): string
     {
         return $this->translator->translateById(
