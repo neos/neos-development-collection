@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -33,8 +34,12 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,string> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class(
             $settings['property'],
             $this->nodeAggregateCommandHandler
@@ -45,16 +50,14 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                  */
                 private readonly string $propertyName,
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler,
-            )
-            {
+            ) {
             }
 
             public function execute(
-                NodeInterface           $node,
-                DimensionSpacePointSet  $coveredDimensionSpacePoints,
+                NodeInterface $node,
+                DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult
-            {
+            ): CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->getProperties();

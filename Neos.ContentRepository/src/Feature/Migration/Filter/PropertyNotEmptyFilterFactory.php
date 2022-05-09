@@ -20,7 +20,9 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
  */
 class PropertyNotEmptyFilterFactory implements FilterFactoryInterface
 {
-
+    /**
+     * @param array<string,string> $settings
+     */
     public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $propertyName = $settings['propertyName'];
@@ -31,8 +33,7 @@ class PropertyNotEmptyFilterFactory implements FilterFactoryInterface
                  * The property name to be checked for non-empty value
                  */
                 private readonly string $propertyName
-            )
-            {
+            ) {
             }
 
             public function matches(NodeInterface $node): bool

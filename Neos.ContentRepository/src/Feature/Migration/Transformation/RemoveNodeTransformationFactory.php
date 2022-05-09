@@ -32,8 +32,12 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface/
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,mixed> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $strategy = null;
         if (isset($settings['strategy'])) {
             $strategy = NodeVariantSelectionStrategy::from($settings['strategy']);
@@ -53,19 +57,17 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface/
                 private ?NodeVariantSelectionStrategy $strategy,
                 private readonly ?DimensionSpacePoint $overriddenDimensionSpacePoint,
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
-            )
-            {
+            ) {
             }
 
             /**
              * Remove the property from the given node.
              */
             public function execute(
-                NodeInterface           $node,
-                DimensionSpacePointSet  $coveredDimensionSpacePoints,
+                NodeInterface $node,
+                DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult
-            {
+            ): CommandResult {
                 if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
                     $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ONLY_GIVEN_VARIANT;
                 } elseif ($this->strategy === null) {

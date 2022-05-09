@@ -52,13 +52,11 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
             $includeSpecializations,
             $this->interDimensionalVariationGraph
         ) implements NodeBasedFilterInterface {
-
             public function __construct(
                 private readonly OriginDimensionSpacePointSet $points,
                 private readonly bool $includeSpecializations,
                 private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph
-            )
-            {
+            ) {
             }
 
             public function matches(NodeInterface $node): bool
@@ -69,7 +67,8 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
                             $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                             $point->toDimensionSpacePoint()
                         );
-                        if ($variantType === VariantType::TYPE_SAME || $variantType === VariantType::TYPE_SPECIALIZATION) {
+                        if ($variantType === VariantType::TYPE_SAME
+                            || $variantType === VariantType::TYPE_SPECIALIZATION) {
                             // this is true if the node is a specialization of $point (or if they are equal)
                             return true;
                         }
@@ -79,7 +78,6 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
                     // exact matches on $this->points
                     return $this->points->contains($node->getOriginDimensionSpacePoint());
                 }
-
             }
         };
     }

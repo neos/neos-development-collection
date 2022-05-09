@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration\Transformation;
@@ -14,12 +15,13 @@ class TransformationsFactory
 {
     public function __construct(
         private readonly ContainerInterface $container
-    )
-    {
+    ) {
     }
 
     /**
      * @param array<int|string,array<string,mixed>> $transformationConfigurations
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws MigrationException
      */
     public function buildTransformation(array $transformationConfigurations): Transformations
@@ -36,11 +38,13 @@ class TransformationsFactory
      * Builds a transformation object from the given configuration.
      *
      * @param array<string,mixed> $transformationConfiguration
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws MigrationException
      */
     protected function buildTransformationObject(
         array $transformationConfiguration
-    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $transformationFactoryClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
         $transformationFactory = $this->container->get($transformationFactoryClassName);
         assert($transformationFactory instanceof TransformationFactoryInterface);
@@ -99,6 +103,7 @@ class TransformationsFactory
             );
         }
 
-        return 'Neos\ContentRepository\Feature\Migration\Transformation\\' . $transformationName . 'TransformationFactory';
+        return 'Neos\ContentRepository\Feature\Migration\Transformation\\'
+            . $transformationName . 'TransformationFactory';
     }
 }

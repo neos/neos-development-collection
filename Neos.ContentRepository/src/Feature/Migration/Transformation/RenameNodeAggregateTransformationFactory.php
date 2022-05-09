@@ -21,18 +21,18 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
-/**
- * Change the node type.
- */
 class RenameNodeAggregateTransformationFactory implements TransformationFactoryInterface
 {
-
     public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,string> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $newNodeName = $settings['newNodeName'];
 
         return new class(
@@ -45,15 +45,13 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
                  */
                 private readonly string $newNodeName,
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
-            )
-            {
+            ) {
             }
 
             public function execute(
                 ReadableNodeAggregateInterface $nodeAggregate,
-                ContentStreamIdentifier        $contentStreamForWriting
-            ): CommandResult
-            {
+                ContentStreamIdentifier $contentStreamForWriting
+            ): CommandResult {
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName(new ChangeNodeAggregateName(
                     $contentStreamForWriting,
                     $nodeAggregate->getIdentifier(),

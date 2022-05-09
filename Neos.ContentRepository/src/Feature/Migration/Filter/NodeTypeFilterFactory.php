@@ -26,6 +26,9 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
     {
     }
 
+    /**
+     * @param array<string,mixed> $settings
+     */
     public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $nodeType = NodeTypeName::fromString($settings['nodeType']);
@@ -63,9 +66,9 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
                  * Whether the filter should exclude the given NodeType instead of including only this node type.
                  */
                 private readonly bool $exclude,
-
                 private readonly NodeTypeManager $nodeTypeManager
-            ) {}
+            ) {
+            }
 
             public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool
             {

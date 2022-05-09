@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -29,8 +30,12 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,mixed> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class(
             $settings['newPropertyName'],
             $settings['type'],
@@ -48,12 +53,14 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                  */
                 private readonly mixed $serializedValue,
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler,
-            )
-            {
+            ) {
             }
 
-            public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-            {
+            public function execute(
+                NodeInterface $node,
+                DimensionSpacePointSet $coveredDimensionSpacePoints,
+                ContentStreamIdentifier $contentStreamForWriting
+            ): CommandResult {
                 if (!$node->hasProperty($this->newPropertyName)) {
                     return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
                         new SetSerializedNodeProperties(
@@ -61,7 +68,10 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                             $node->getNodeAggregateIdentifier(),
                             $node->getOriginDimensionSpacePoint(),
                             SerializedPropertyValues::fromArray([
-                                $this->newPropertyName => new SerializedPropertyValue($this->serializedValue, $this->type)
+                                $this->newPropertyName => new SerializedPropertyValue(
+                                    $this->serializedValue,
+                                    $this->type
+                                )
                             ]),
                             UserIdentifier::forSystemUser()
                         )

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Filter;
+
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
 
@@ -21,6 +22,9 @@ use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
  */
 class PropertyValueFilterFactory implements FilterFactoryInterface
 {
+    /**
+     * @param array<string,mixed> $settings
+     */
     public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         return new class($settings['propertyName'], $settings['serializedValue']) implements NodeBasedFilterInterface {
@@ -34,7 +38,8 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
                  * The property value to be checked against
                  */
                 private readonly mixed $serializedValue,
-            ) {}
+            ) {
+            }
 
             public function matches(NodeInterface $node): bool
             {

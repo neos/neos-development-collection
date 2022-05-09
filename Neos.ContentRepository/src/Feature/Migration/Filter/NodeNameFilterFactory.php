@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,11 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Filter;
+
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
 /**
@@ -20,18 +22,20 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
  */
 class NodeNameFilterFactory implements FilterFactoryInterface
 {
+    /**
+     * @param array<string,string> $settings
+     */
     public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
-        $nodeName = \Neos\ContentRepository\SharedModel\Node\NodeName::fromString($settings['nodeName']);
+        $nodeName = NodeName::fromString($settings['nodeName']);
 
         return new class($nodeName) implements NodeAggregateBasedFilterInterface {
             public function __construct(
                 /**
                  * The node name to match on.
                  */
-                private readonly \Neos\ContentRepository\SharedModel\Node\NodeName $nodeName
-            )
-            {
+                private readonly NodeName $nodeName
+            ) {
             }
 
             public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool

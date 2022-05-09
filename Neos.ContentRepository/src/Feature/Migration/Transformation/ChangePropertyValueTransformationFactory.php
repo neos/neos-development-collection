@@ -40,8 +40,12 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,string> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $newSerializedValue = '{current}';
         if (isset($settings['newSerializedValue'])) {
             $newSerializedValue = $settings['newSerializedValue'];
@@ -90,20 +94,20 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                  * Replacement for the search string
                  */
                 private readonly string $replace,
-
                 /**
                  * The value of this option (defaults to "{current}") will be used to include the
                  * current property value into the new value.
                  */
                 private readonly string $currentValuePlaceholder,
-
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
-            )
-            {
+            ) {
             }
 
-            public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-            {
+            public function execute(
+                NodeInterface $node,
+                DimensionSpacePointSet $coveredDimensionSpacePoints,
+                ContentStreamIdentifier $contentStreamForWriting
+            ): CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->getProperties();
@@ -112,7 +116,8 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     $value = $currentProperty->getValue();
                     if (!is_string($value) && !is_array($value)) {
                         throw new \Exception(
-                            'ChangePropertyValue can only be executed on properties with serialized type string or array.',
+                            'ChangePropertyValue can only be executed on properties'
+                                . ' with serialized type string or array.',
                             1645391685
                         );
                     }
@@ -121,7 +126,11 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                         $value,
                         $this->newSerializedValue
                     );
-                    $newValueWithReplacedSearch = str_replace($this->search, $this->replace, $newValueWithReplacedCurrentValue);
+                    $newValueWithReplacedSearch = str_replace(
+                        $this->search,
+                        $this->replace,
+                        $newValueWithReplacedCurrentValue
+                    );
 
                     return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
                         new SetSerializedNodeProperties(

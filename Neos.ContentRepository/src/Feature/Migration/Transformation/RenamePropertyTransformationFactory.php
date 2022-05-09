@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -28,13 +29,16 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  */
 class RenamePropertyTransformationFactory implements TransformationFactoryInterface
 {
-
     public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,string> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class(
             $settings['from'],
             $settings['to'],
@@ -45,21 +49,19 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                  * Property name to change
                  */
                 private readonly string $from,
-
                 /**
                  * New name of property
                  */
                 private readonly string $to,
-
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
-            ) {}
+            ) {
+            }
 
             public function execute(
-                NodeInterface           $node,
-                DimensionSpacePointSet  $coveredDimensionSpacePoints,
+                NodeInterface $node,
+                DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult
-            {
+            ): CommandResult {
                 if ($node->hasProperty($this->from)) {
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->getProperties();

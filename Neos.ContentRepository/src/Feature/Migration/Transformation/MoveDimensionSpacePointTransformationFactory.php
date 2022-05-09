@@ -34,8 +34,12 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,array<string,string>> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $from = DimensionSpacePoint::fromArray($settings['from']);
         $to = DimensionSpacePoint::fromArray($settings['to']);
         return new class(
@@ -48,13 +52,13 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
                 private readonly DimensionSpacePoint $from,
                 private readonly DimensionSpacePoint $to,
                 private readonly DimensionSpaceCommandHandler $dimensionSpaceCommandHandler,
-            ) {}
+            ) {
+            }
 
             public function execute(
                 ContentStreamIdentifier $contentStreamForReading,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult
-            {
+            ): CommandResult {
                 return $this->dimensionSpaceCommandHandler->handleMoveDimensionSpacePoint(
                     new MoveDimensionSpacePointCommand(
                         $contentStreamForWriting,

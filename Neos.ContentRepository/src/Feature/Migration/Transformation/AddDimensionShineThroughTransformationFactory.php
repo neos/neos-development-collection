@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,11 +10,15 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
-use Neos\ContentRepository\Feature\Migration\Transformation\GlobalTransformationInterface;
 
 /**
  * Add a Dimension Space Point Shine-Through;
@@ -28,13 +29,16 @@ use Neos\ContentRepository\Feature\Migration\Transformation\GlobalTransformation
  */
 class AddDimensionShineThroughTransformationFactory implements TransformationFactoryInterface
 {
-
     public function __construct(private readonly DimensionSpaceCommandHandler $dimensionSpaceCommandHandler)
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,array<string,string>> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class(
             DimensionSpacePoint::fromArray($settings['from']),
             DimensionSpacePoint::fromArray($settings['to']),
@@ -44,14 +48,15 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
                 private readonly DimensionSpacePoint $from,
                 private readonly DimensionSpacePoint $to,
                 private readonly DimensionSpaceCommandHandler $dimensionSpaceCommandHandler,
-            )
-            {
+            ) {
             }
 
-            public function execute(ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-            {
+            public function execute(
+                ContentStreamIdentifier $contentStreamForReading,
+                ContentStreamIdentifier $contentStreamForWriting
+            ): CommandResult {
                 return $this->dimensionSpaceCommandHandler->handleAddDimensionShineThrough(
-                    new \Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough(
+                    new AddDimensionShineThrough(
                         $contentStreamForWriting,
                         $this->from,
                         $this->to

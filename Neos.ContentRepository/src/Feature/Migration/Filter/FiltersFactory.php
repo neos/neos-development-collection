@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration\Filter;
@@ -15,8 +16,7 @@ class FiltersFactory
 
     public function __construct(
         private readonly ContainerInterface $container
-    )
-    {
+    ) {
     }
 
     /**

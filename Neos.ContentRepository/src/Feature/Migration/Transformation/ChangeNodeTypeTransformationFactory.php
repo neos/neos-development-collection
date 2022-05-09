@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,21 +10,20 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
+
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-
 /** @codingStandardsIgnoreStart */
-
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-
 /** @codingStandardsIgnoreEnd */
-
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Feature\Migration\Transformation\NodeAggregateBasedTransformationInterface;
 
 /**
  * Change the node type.
@@ -38,13 +34,18 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
     {
     }
 
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
-    {
+    /**
+     * @param array<string,mixed> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         // by default, we won't delete anything.
         $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
             = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
         if (isset($settings['forceDeleteNonMatchingChildren']) && $settings['forceDeleteNonMatchingChildren']) {
-            $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE;
+            $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+                = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE;
         }
 
         return new class(
@@ -52,20 +53,21 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
             $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
             $this->nodeAggregateCommandHandler
         ) implements NodeAggregateBasedTransformationInterface {
-
             public function __construct(
                 /**
                  * The new Node Type to use as a string
                  */
                 private readonly string $newType,
-                private readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
+                private readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+                $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
-            )
-            {
+            ) {
             }
 
-            public function execute(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-            {
+            public function execute(
+                ReadableNodeAggregateInterface $nodeAggregate,
+                ContentStreamIdentifier $contentStreamForWriting
+            ): CommandResult {
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType(new ChangeNodeAggregateType(
                     $contentStreamForWriting,
                     $nodeAggregate->getIdentifier(),

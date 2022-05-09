@@ -1,13 +1,15 @@
 <?php
 
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
+declare(strict_types=1);
 
-use Neos\ContentRepository\Feature\Migration\Transformation\GlobalTransformationInterface;
-use Neos\ContentRepository\Feature\Migration\Transformation\NodeAggregateBasedTransformationInterface;
-use Neos\ContentRepository\Feature\Migration\Transformation\NodeBasedTransformationInterface;
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 interface TransformationFactoryInterface
 {
-
-    public function build(array $settings): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface;
+    /**
+     * @param array<string,mixed> $settings
+     */
+    public function build(
+        array $settings
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface;
 }
