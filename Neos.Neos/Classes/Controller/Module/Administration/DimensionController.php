@@ -12,11 +12,12 @@ namespace Neos\Neos\Controller\Module\Administration;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
-use Neos\Neos\Presentation\VisualInterDimensionalVariationGraph;
+use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
 
 /**
  * The Neos Dimension module controller
@@ -29,15 +30,24 @@ class DimensionController extends AbstractModuleController
     #[Flow\Inject]
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
+    #[Flow\Inject]
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
+
     public function indexAction(string $type = 'intraDimension', string $subgraphIdentifier = null): void
     {
         $graph = match ($type) {
             'intraDimension' => VisualIntraDimensionalVariationGraph::fromContentDimensionSource(
                 $this->contentDimensionSource
             ),
-            'interDimension' => VisualInterDimensionalVariationGraph::fromInterDimensionalVariationGraph(
-                $this->interDimensionalVariationGraph
-            ),
+            'interDimension' => $subgraphIdentifier
+                ? VisualInterDimensionalVariationGraph::forInterDimensionalVariationSubgraph(
+                    $this->interDimensionalVariationGraph,
+                    $this->contentDimensionZookeeper->getAllowedDimensionSubspace()[$subgraphIdentifier]
+                )
+                : VisualInterDimensionalVariationGraph::forInterDimensionalVariationGraph(
+                    $this->interDimensionalVariationGraph,
+                    $this->contentDimensionSource
+                ),
             default => null,
         };
 
