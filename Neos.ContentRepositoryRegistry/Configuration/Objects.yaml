@@ -54,6 +54,17 @@ Neos\ContentRepository\Projection\Content\ContentGraphInterface:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
   factoryMethodName: buildContentGraph
 
+##############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DimensionSpaceCommandHandlerObjectFactory:
+  scope: singleton
+  arguments:
+    1:
+      object: *eventStoreFactory
+
+Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DimensionSpaceCommandHandlerObjectFactory
+  factoryMethodName: buildDimensionSpaceCommandHandler
 
 ##############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactory:
@@ -90,6 +101,76 @@ Neos\ContentRepository\Feature\Migration\MigrationCommandHandler:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
   factoryMethodName: buildMigrationCommandHandler
+
+Neos\ContentRepository\Feature\Migration\Filter\DimensionSpacePointsFilterFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildDimensionSpacePointsFilterFactory
+
+Neos\ContentRepository\Feature\Migration\Filter\NodeNameFilterFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildNodeNameFilterFactory
+
+Neos\ContentRepository\Feature\Migration\Filter\NodeTypeFilterFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildNodeTypeFilterFactory
+
+Neos\ContentRepository\Feature\Migration\Filter\PropertyValueFilterFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildPropertyValueFilterFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\AddDimensionShineThroughTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildAddDimensionShineThroughTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\AddNewPropertyTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildAddNewPropertyTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\ChangeNodeTypeTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildChangeNodeTypeTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\ChangePropertyValueTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildChangePropertyValueTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\MoveDimensionSpacePointTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildMoveDimensionSpacePointTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\RemoveNodeTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildRemoveNodeTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\RemovePropertyTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildRemovePropertyTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\RenameNodeAggregateTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildRenameNodeAggregateTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\RenamePropertyTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildRenamePropertyTransformationFactory
+
+Neos\ContentRepository\Feature\Migration\Transformation\StripTagsOnPropertyTransformationFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\MigrationObjectFactory
+  factoryMethodName: buildStripTagsOnPropertyTransformationFactory
 
 ###############################
 
@@ -285,13 +366,4 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
     2:
       object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
 
-
-Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler:
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
 
