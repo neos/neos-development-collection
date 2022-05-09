@@ -13,6 +13,7 @@ namespace Neos\Neos\Command;
 
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -22,6 +23,7 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
@@ -205,6 +207,17 @@ class WorkspaceCommandController extends CommandController
             }
             $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
         }
+    }
+
+    public function createRootCommand(string $name): void
+    {
+        $this->workspaceCommandHandler->handleCreateRootWorkspace(new CreateRootWorkspace(
+            WorkspaceName::fromString($name),
+            WorkspaceTitle::fromString($name),
+            WorkspaceDescription::fromString($name),
+            UserIdentifier::forSystemUser(),
+            ContentStreamIdentifier::create()
+        ));
     }
 
     /**
