@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -365,7 +366,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     /**
      * @return void
      */
-    public function generateNodeEvents()
+    /*public function generateNodeEvents()
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -378,8 +379,6 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         foreach ($this->changedNodes as $nodePath => $data) {
             $node = $data['node'];
             unset($data['node']);
-            /* @var $nodeEvent NodeEvent */
-
             if (isset($data['oldLabel']) && isset($data['newLabel'])) {
                 if ($data['oldLabel'] !== $data['newLabel']) {
                     $nodeEvent = $this->eventEmittingService->emit(
@@ -400,14 +399,14 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         }
 
         $this->changedNodes = [];
-    }
+    }*/
 
     /**
      * @param NodeInterface $node
      * @param Workspace $targetWorkspace
      * @return void
      */
-    public function afterNodePublishing(NodeInterface $node, \Neos\ContentRepository\Projection\Workspace\Workspace $targetWorkspace)
+    public function afterNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;

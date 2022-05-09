@@ -47,7 +47,7 @@ class RenderingHelper implements ProtectedContextAwareInterface
             $dimension = $this->contentDimensionSource->getDimension(
                 new ContentDimensionIdentifier($dimensionIdentifier)
             );
-            $value = $dimension?->getValue(New ContentDimensionValue($dimensionValue));
+            $value = $dimension?->getValue(new ContentDimensionValue($dimensionValue));
             $rendered[] = $dimension?->getConfigurationValue('label')
                 . ' ' . $value?->getConfigurationValue('label');
         }
