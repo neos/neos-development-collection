@@ -657,7 +657,7 @@ class UserService
 
         $currentUser = $this->getCurrentUser();
         $ownerIdentifier = $currentUser
-            ? $this->persistenceManager->getIdentifierByObject($this->getCurrentUser())
+            ? $this->persistenceManager->getIdentifierByObject($currentUser)
             : null;
 
         if ($workspace->getWorkspaceOwner() === $ownerIdentifier || $workspace->getWorkspaceOwner() === null) {

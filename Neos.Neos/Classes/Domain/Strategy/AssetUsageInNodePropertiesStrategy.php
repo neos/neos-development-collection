@@ -64,14 +64,15 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
                 (string)$assetUsage->nodeAggregateIdentifier,
                 $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
                     $assetUsage->contentStreamIdentifier
-                )->workspaceName,
-                $dimensionSpacePoint->coordinates,
+                )?->workspaceName ?: '',
+                $dimensionSpacePoint?->coordinates ?? [],
                 ''
             );
         }, iterator_to_array($this->assetUsageRepository->findUsages(AssetUsageFilter::create()->withAsset(
             $this->persistenceManager->getIdentifierByObject($asset)
         ))->getIterator()));
 
+        /** @var string $assetIdentifier */
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
         $this->firstlevelCache[$assetIdentifier] = $relatedNodes;
 

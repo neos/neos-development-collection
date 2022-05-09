@@ -45,7 +45,7 @@ class UserInterfaceMode
     protected $title;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $options;
 

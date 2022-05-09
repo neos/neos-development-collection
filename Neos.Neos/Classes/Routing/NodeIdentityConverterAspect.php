@@ -38,7 +38,7 @@ class NodeIdentityConverterAspect
      * @param JoinPointInterface $joinPoint the joinpoint
      * @return string|array<string,string> the context path to be used for routing
      */
-    public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array
+    public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array|string
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {

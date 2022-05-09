@@ -87,7 +87,7 @@ class Event
     /**
      * Child events, of this event
      *
-     * @var ArrayCollection<\Neos\Neos\EventLog\Domain\Model\Event>
+     * @var ArrayCollection<int|string,Event>
      * @codingStandardsIgnoreStart
      * @ORM\OneToMany(targetEntity="\Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade={"persist"})
      * @codingStandardsIgnoreEnd
@@ -148,7 +148,7 @@ class Event
     /**
      * Return the identifier of the account (if any) which triggered this event
      *
-     * @return string
+     * @return ?string
      */
     public function getAccountIdentifier()
     {
@@ -166,7 +166,7 @@ class Event
     /**
      * Return the child events (if any)
      *
-     * @return ArrayCollection<self>
+     * @return ArrayCollection<int|string,self>
      */
     public function getChildEvents(): ArrayCollection
     {

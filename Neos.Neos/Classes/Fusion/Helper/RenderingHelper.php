@@ -11,9 +11,11 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimensionValue;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 
@@ -30,23 +32,8 @@ class RenderingHelper implements ProtectedContextAwareInterface
      */
     protected $nodeTypeManager;
 
-    /**
-     * @todo replace with DimensionSpace capabilities
-     * @var array<string,array<string,mixed>>
-     */
-    protected $contentDimensionsConfiguration;
-
-    /**
-     * @param ConfigurationManager $configurationManager
-     * @return void
-     */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
-    {
-        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepository.contentDimensions'
-        );
-    }
+    #[Flow\Inject]
+    protected ContentDimensionSourceInterface $contentDimensionSource;
 
     /**
      * Render a human-readable description for the passed $dimensions
@@ -57,32 +44,15 @@ class RenderingHelper implements ProtectedContextAwareInterface
     {
         $rendered = [];
         foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
-            $dimensionConfiguration = $this->contentDimensionsConfiguration[$dimensionIdentifier];
-            $preset = $this->findPresetInDimension($dimensionConfiguration, $dimensionValue);
-            $rendered[] = $dimensionConfiguration['label'] . ' ' . $preset['label'];
+            $dimension = $this->contentDimensionSource->getDimension(
+                new ContentDimensionIdentifier($dimensionIdentifier)
+            );
+            $value = $dimension?->getValue(New ContentDimensionValue($dimensionValue));
+            $rendered[] = $dimension?->getConfigurationValue('label')
+                . ' ' . $value?->getConfigurationValue('label');
         }
 
         return implode(', ', $rendered);
-    }
-
-    /**
-     * @param array<string,mixed> $dimensionConfiguration
-     * @return ?array<string,mixed> the preset matching $dimensionValue
-     */
-    protected function findPresetInDimension(array $dimensionConfiguration, string $dimensionValue): ?array
-    {
-        foreach ($dimensionConfiguration['presets'] as $preset) {
-            if (!isset($preset['values'])) {
-                continue;
-            }
-            foreach ($preset['values'] as $value) {
-                if ($value === $dimensionValue) {
-                    return $preset;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

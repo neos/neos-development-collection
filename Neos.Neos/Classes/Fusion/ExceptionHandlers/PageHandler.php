@@ -86,7 +86,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
                 $documentNode->getContentStreamIdentifier()
             );
-            if (!$workspace->getWorkspaceName()->isLive()
+            if ($workspace && !$workspace->getWorkspaceName()->isLive()
                 && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
             ) {
                 $isBackend = true;

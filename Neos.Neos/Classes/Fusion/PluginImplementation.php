@@ -76,7 +76,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getArgumentNamespace()
     {
@@ -150,7 +150,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @return string The rendered content as a string
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
-     * @throws NodeException
      * @throws \Neos\Flow\Configuration\Exception\NoSuchOptionException
      * @throws \Neos\Flow\Mvc\Controller\Exception\InvalidControllerException
      * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException

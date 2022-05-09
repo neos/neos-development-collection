@@ -28,7 +28,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
      *
-     * @param array<mixed>|Collection<mixed> $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $filterProperty
      * @return array<mixed>
      */
@@ -40,7 +40,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
      *
-     * @param array<mixed>|Collection<mixed> $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $filterProperty
      * @return array<mixed>
      */
@@ -52,7 +52,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Internal method for filtering
      *
-     * @param array<mixed>|Collection<mixed> $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $filterProperty
      * @param boolean $negate
      * @return array<mixed>
@@ -77,7 +77,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * The input is assumed to be an array or Collection of objects.
      * Groups this input by the $groupingKey property of each element.
      *
-     * @param array<mixed>|Collection<mixed> $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $groupingKey
      * @return array<mixed>
      */

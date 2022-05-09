@@ -173,7 +173,7 @@ class WorkspaceController extends AbstractServiceController
 
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
-        $this->view->assignNodes(Nodes::fromArray(array_filter(array_map(function (Change $change): NodeInterface {
+        $this->view->assignNodes(Nodes::fromArray(array_filter(array_map(function (Change $change): ?NodeInterface {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $change->contentStreamIdentifier,
                 $change->originDimensionSpacePoint->toDimensionSpacePoint(),

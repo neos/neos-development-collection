@@ -129,7 +129,7 @@ class BackendRedirectionService
 
     /**
      * @param array<mixed> $availableModules
-     * @return array|null
+     * @return array<mixed>|null
      */
     protected function determineStartModule(array $availableModules): ?array
     {
@@ -175,7 +175,7 @@ class BackendRedirectionService
     protected function getLastVisitedNode(string $workspaceName): ?NodeInterface
     {
         $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
-        if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
+        if (!$workspace || !$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;
         }
         try {

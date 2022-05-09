@@ -30,7 +30,7 @@ final class VisualInterDimensionalVariationGraph
     private function __construct(
         /** @var array<string,VisualWeightedDimensionSpacePoint> */
         public readonly array $nodes,
-        /** @var array<string,VisualInterDimensionalEdge> */
+        /** @var array<int,VisualInterDimensionalEdge> */
         public readonly array $edges,
         public readonly int $width,
         public readonly int $height
@@ -123,8 +123,13 @@ final class VisualInterDimensionalVariationGraph
         $dimensionSpacePoints = [$startingPoint->hash => $startingPoint];
         foreach ($variationGraph->getWeightedGeneralizations($startingPoint) as $generalization) {
             $dimensionSpacePoints[$generalization->hash] = $generalization;
+            $weightedGeneralization = $variationGraph
+                ->getWeightedDimensionSpacePointByDimensionSpacePoint($generalization);
+            if (is_null($weightedGeneralization)) {
+                continue;
+            }
             $nodes[$generalization->hash] = VisualWeightedDimensionSpacePoint::fromDimensionSpacePoint(
-                $variationGraph->getWeightedDimensionSpacePointByDimensionSpacePoint($generalization),
+                $weightedGeneralization,
                 $startingPoint,
                 $horizontalOffset,
                 $y,
@@ -132,19 +137,28 @@ final class VisualInterDimensionalVariationGraph
                 $height
             );
         }
-        $nodes[$startingPoint->hash] = VisualWeightedDimensionSpacePoint::fromDimensionSpacePoint(
-            $variationGraph->getWeightedDimensionSpacePointByDimensionSpacePoint($startingPoint),
-            $startingPoint,
-            $horizontalOffset,
-            $y,
-            $width,
-            $height
-        );
+        $weighedStartingPoint = $variationGraph->getWeightedDimensionSpacePointByDimensionSpacePoint($startingPoint);
+        if (!is_null($weighedStartingPoint)) {
+            $nodes[$startingPoint->hash] = VisualWeightedDimensionSpacePoint::fromDimensionSpacePoint(
+                $weighedStartingPoint,
+                $startingPoint,
+                $horizontalOffset,
+                $y,
+                $width,
+                $height
+            );
+        }
+
         foreach ($variationGraph->getWeightedSpecializations($startingPoint) as $weight => $specializations) {
             foreach ($specializations as $specialization) {
                 $dimensionSpacePoints[$specialization->hash] = $specialization;
+                $weightedSpecialization = $variationGraph
+                    ->getWeightedDimensionSpacePointByDimensionSpacePoint($specialization);
+                if (is_null($weightedSpecialization)) {
+                    continue;
+                }
                 $nodes[$specialization->hash] = VisualWeightedDimensionSpacePoint::fromDimensionSpacePoint(
-                    $variationGraph->getWeightedDimensionSpacePointByDimensionSpacePoint($specialization),
+                    $weightedSpecialization,
                     $startingPoint,
                     $horizontalOffset,
                     $y,
@@ -181,6 +195,9 @@ final class VisualInterDimensionalVariationGraph
         );
     }
 
+    /**
+     * @return array<string,int|array<string,int>>
+     */
     private static function resolveOffsets(ContentDimension $contentDimension): array
     {
         $horizontalOffset = 0;
@@ -199,6 +216,9 @@ final class VisualInterDimensionalVariationGraph
         return $offsets;
     }
 
+    /**
+     * @param array<string,int|array<string,int>> $offsets
+     */
     private static function populateOffsets(
         ContentDimension $contentDimension,
         ContentDimensionValue $value,
@@ -206,7 +226,7 @@ final class VisualInterDimensionalVariationGraph
         int &$horizontalOffset,
         int $baseOffset,
         array &$offsets
-    ) {
+    ): void {
         $leftOffset = $horizontalOffset;
         $specializations = $contentDimension->getSpecializations($value);
         if (!empty($specializations)) {

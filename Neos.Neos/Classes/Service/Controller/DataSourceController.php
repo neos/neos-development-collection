@@ -27,9 +27,8 @@ use Neos\Neos\Service\DataSource\DataSourceInterface;
  */
 class DataSourceController extends AbstractServiceController
 {
-
     /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'json' => JsonView::class
@@ -51,8 +50,8 @@ class DataSourceController extends AbstractServiceController
             ), 1414088186);
         }
 
-        /** @var $dataSource DataSourceInterface */
-        $dataSource = new $dataSources[$dataSourceIdentifier];
+        /** @var DataSourceInterface $dataSource */
+        $dataSource = new $dataSources[$dataSourceIdentifier]();
         if (ObjectAccess::isPropertySettable($dataSource, 'controllerContext')) {
             ObjectAccess::setProperty($dataSource, 'controllerContext', $this->controllerContext);
         }
@@ -70,7 +69,7 @@ class DataSourceController extends AbstractServiceController
      * Get available data source implementations
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Data source class names indexed by identifier
+     * @return array<string,class-string> Data source class names indexed by identifier
      * @Flow\CompileStatic
      * @throws NeosException
      */
@@ -82,7 +81,7 @@ class DataSourceController extends AbstractServiceController
         $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface(
             DataSourceInterface::class
         );
-        /** @var $dataSourceClassName DataSourceInterface */
+        /** @var DataSourceInterface $dataSourceClassName */
         foreach ($dataSourceClassNames as $dataSourceClassName) {
             $identifier = $dataSourceClassName::getIdentifier();
             if (isset($dataSources[$identifier])) {

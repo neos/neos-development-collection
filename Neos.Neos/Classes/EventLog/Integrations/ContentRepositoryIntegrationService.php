@@ -13,16 +13,18 @@ namespace Neos\Neos\EventLog\Integrations;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
-use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * Monitors Neos.ContentRepository changes
  *
  * @Flow\Scope("singleton")
+ * @todo rewrite me as a projection
  */
 class ContentRepositoryIntegrationService extends AbstractIntegrationService
 {
@@ -47,6 +49,12 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      */
     protected $persistenceManager;
 
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
     /**
      * @var array
      */
@@ -63,7 +71,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     protected $currentlyCopying = false;
 
     /**
-     * @var boolean
+     * @var integer
      */
     protected $currentlyMoving = 0;
 
@@ -75,34 +83,33 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     /**
      * @var array
      */
-    protected $scheduledNodeEventUpdates = [];
+    #protected $scheduledNodeEventUpdates = [];
 
     /**
      * React on the Doctrine preFlush event and trigger the respective internal node events
      *
      * @return void
      */
-    public function preFlush()
+    /*public function preFlush()
     {
         $this->generateNodeEvents();
-    }
+    }*/
 
     /**
      * Emit a "Node Added" event
      *
      * @return void
      */
-    public function beforeNodeCreate()
+    /*public function beforeNodeCreate()
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
         }
 
-        /* @var $nodeEvent NodeEvent */
         $nodeEvent = $this->eventEmittingService->generate(self::NODE_ADDED, [], NodeEvent::class);
         $this->currentNodeAddEvents[] = $nodeEvent;
         $this->eventEmittingService->pushContext($nodeEvent);
-    }
+    }*/
 
     /**
      * Add the created node to the previously created "Added Node" event
@@ -110,18 +117,17 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param NodeInterface $node
      * @return void
      */
-    public function afterNodeCreate(NodeInterface $node)
+    /*public function afterNodeCreate(NodeInterface $node)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
         }
 
-        /* @var $nodeEvent NodeEvent */
         $nodeEvent = array_pop($this->currentNodeAddEvents);
         $nodeEvent->setNode($node);
         $this->eventEmittingService->popContext();
         $this->eventEmittingService->add($nodeEvent);
-    }
+    }*/
 
     /**
      * Emit a "Node Updated" event
@@ -129,7 +135,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param NodeInterface $node
      * @return void
      */
-    public function nodeUpdated(NodeInterface $node)
+    /*public function nodeUpdated(NodeInterface $node)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -138,7 +144,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         if (!isset($this->changedNodes[$node->getContextPath()])) {
             $this->changedNodes[$node->getContextPath()] = ['node' => $node];
         }
-    }
+    }*/
 
     /**
      * Emit an event when node properties have been changed
@@ -149,7 +155,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param $value
      * @return void
      */
-    public function beforeNodePropertyChange(NodeInterface $node, $propertyName, $oldValue, $value)
+    /*public function beforeNodePropertyChange(NodeInterface $node, $propertyName, $oldValue, $value)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -171,7 +177,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
         $this->changedNodes[$node->getContextPath()]['old'][$propertyName] = $oldValue;
         $this->changedNodes[$node->getContextPath()]['new'][$propertyName] = $value;
-    }
+    }*/
 
     /**
      * Add the new label to a previously created node property changed event
@@ -182,7 +188,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param $value
      * @return void
      */
-    public function nodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $value)
+    /*public function nodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $value)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -194,7 +200,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
         $this->changedNodes[$node->getContextPath()]['newLabel'] = $node->getLabel();
         $this->changedNodes[$node->getContextPath()]['node'] = $node;
-    }
+    }*/
 
     /**
      * Emits a "Node Removed" event
@@ -202,25 +208,24 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param NodeInterface $node
      * @return void
      */
-    public function nodeRemoved(NodeInterface $node)
+    /*public function nodeRemoved(NodeInterface $node)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
         }
 
-        /* @var $nodeEvent NodeEvent */
         $nodeEvent = $this->eventEmittingService->emit(self::NODE_REMOVED, [], NodeEvent::class);
         $nodeEvent->setNode($node);
-    }
+    }*/
 
     /**
      * @param NodeInterface $node
      * @param Workspace $targetWorkspace
      * @return void
      */
-    public function beforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
+    /*public function beforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
     {
-    }
+    }*/
 
     /**
      * Emits a "Node Copy" event
@@ -230,7 +235,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @return void
      * @throws \Exception
      */
-    public function beforeNodeCopy(NodeInterface $sourceNode, NodeInterface $targetParentNode)
+    /*public function beforeNodeCopy(NodeInterface $sourceNode, NodeInterface $targetParentNode)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -242,13 +247,12 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
         $this->currentlyCopying = true;
 
-        /* @var $nodeEvent NodeEvent */
         $nodeEvent = $this->eventEmittingService->emit(self::NODE_COPY, [
             'copiedInto' => $targetParentNode->getContextPath()
         ], NodeEvent::class);
         $nodeEvent->setNode($sourceNode);
         $this->eventEmittingService->pushContext();
-    }
+    }*/
 
     /**
      * @param NodeInterface $copiedNode
@@ -256,7 +260,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @return void
      * @throws \Exception
      */
-    public function afterNodeCopy(NodeInterface $copiedNode, NodeInterface $targetParentNode)
+    /*public function afterNodeCopy(NodeInterface $copiedNode, NodeInterface $targetParentNode)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -267,7 +271,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         }
         $this->currentlyCopying = false;
         $this->eventEmittingService->popContext();
-    }
+    }*/
 
     /**
      * Emits a "Node Move" event
@@ -276,7 +280,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param NodeInterface $referenceNode
      * @param integer $moveOperation
      */
-    public function beforeNodeMove(NodeInterface $movedNode, NodeInterface $referenceNode, $moveOperation)
+    /*public function beforeNodeMove(NodeInterface $movedNode, NodeInterface $referenceNode, $moveOperation)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -284,14 +288,13 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
         $this->currentlyMoving += 1;
 
-        /* @var $nodeEvent NodeEvent */
         $nodeEvent = $this->eventEmittingService->emit(self::NODE_MOVE, [
             'referenceNode' => $referenceNode->getContextPath(),
             'moveOperation' => $moveOperation
         ], NodeEvent::class);
         $nodeEvent->setNode($movedNode);
         $this->eventEmittingService->pushContext();
-    }
+    }*/
 
     /**
      * @param NodeInterface $movedNode
@@ -300,7 +303,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @return void
      * @throws \Exception
      */
-    public function afterNodeMove(NodeInterface $movedNode, NodeInterface $referenceNode, $moveOperation)
+    /*public function afterNodeMove(NodeInterface $movedNode, NodeInterface $referenceNode, $moveOperation)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -312,7 +315,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
         $this->currentlyMoving -= 1;
         $this->eventEmittingService->popContext();
-    }
+    }*/
 
     /**
      * Emits a "Node Adopt" event
@@ -322,14 +325,13 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param $recursive
      * @return void
      */
-    public function beforeAdoptNode(NodeInterface $node, Context $context, $recursive)
+    /*public function beforeAdoptNode(NodeInterface $node, Context $context, $recursive)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
         }
 
         if ($this->currentlyAdopting === 0) {
-            /* @var $nodeEvent NodeEvent */
             $nodeEvent = $this->eventEmittingService->emit(self::NODE_ADOPT, [
                 'targetWorkspace' => $context->getWorkspaceName(),
                 'targetDimensions' => $context->getTargetDimensions(),
@@ -340,7 +342,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         }
 
         $this->currentlyAdopting++;
-    }
+    }*/
 
     /**
      * @param NodeInterface $node
@@ -348,7 +350,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param $recursive
      * @return void
      */
-    public function afterAdoptNode(NodeInterface $node, Context $context, $recursive)
+    /*public function afterAdoptNode(NodeInterface $node, Context $context, $recursive)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
@@ -358,7 +360,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         if ($this->currentlyAdopting === 0) {
             $this->eventEmittingService->popContext();
         }
-    }
+    }*/
 
     /**
      * @return void
@@ -405,27 +407,38 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @param Workspace $targetWorkspace
      * @return void
      */
-    public function afterNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
+    public function afterNodePublishing(NodeInterface $node, \Neos\ContentRepository\Projection\Workspace\Workspace $targetWorkspace)
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
         }
 
-        $documentNode = NodeEvent::getClosestAggregateNode($node);
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+        $documentNode = $node;
+        while ($documentNode !== null && !$documentNode->getNodeType()->isAggregate()) {
+            $documentNode = $nodeAccessor->findParentNode($documentNode);
+        }
 
         if ($documentNode === null) {
             return;
         }
 
-        $this->scheduledNodeEventUpdates[$documentNode->getContextPath()] = [
-            'workspaceName' => $node->getContext()->getWorkspaceName(),
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $documentNodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+
+        $this->scheduledNodeEventUpdates[$documentNodeAddress->serializeForUri()] = [
+            'workspaceName' => $nodeAddress->workspaceName,
             'nestedNodeIdentifiersWhichArePublished' => [],
             'targetWorkspace' => $targetWorkspace->getName(),
             'documentNode' => $documentNode
         ];
 
-        $this->scheduledNodeEventUpdates[$documentNode->getContextPath()]['nestedNodeIdentifiersWhichArePublished'][]
-            = $node->getIdentifier();
+        $this->scheduledNodeEventUpdates[$documentNodeAddress->serializeForUri()]
+            ['nestedNodeIdentifiersWhichArePublished'][] = $node->getNodeAggregateIdentifier();
     }
 
     /**
@@ -439,11 +452,11 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
             return;
         }
 
-        /** @var $entityManager EntityManager */
+        /** @var EntityManager $entityManager */
         $entityManager = $this->entityManager;
 
         foreach ($this->scheduledNodeEventUpdates as $documentPublish) {
-            /* @var $nodeEvent NodeEvent */
+            /* @var NodeEvent $nodeEvent  */
             $nodeEvent = $this->eventEmittingService->emit(self::DOCUMENT_PUBLISHED, [], NodeEvent::class);
             $nodeEvent->setNode($documentPublish['documentNode']);
             $nodeEvent->setWorkspaceName($documentPublish['targetWorkspace']);
@@ -476,8 +489,8 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     {
         $this->changedNodes = [];
         $this->scheduledNodeEventUpdates = [];
-        $this->currentlyAdopting = false;
-        $this->currentlyCopying = false;
+        $this->currentlyAdopting = 0;
+        $this->currentlyCopying = 0;
         $this->currentNodeAddEvents = [];
     }
 }

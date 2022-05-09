@@ -25,7 +25,6 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\NodeOperations;
 use Neos\Neos\Service\View\NodeView;
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
 
@@ -44,7 +43,7 @@ class NodeController extends AbstractServiceController
     protected $view;
 
     /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => NodeView::class,
@@ -52,7 +51,7 @@ class NodeController extends AbstractServiceController
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = [
         'text/html',
@@ -99,14 +98,14 @@ class NodeController extends AbstractServiceController
     /**
      * Return child nodes of specified node for usage in a TreeLoader
      *
-     * @param Node $node The node to find child nodes for
+     * @param NodeInterface $node The node to find child nodes for
      * @param string $nodeTypeFilter A node type filter
      * @param integer $depth levels of childNodes (0 = unlimited)
-     * @param Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
+     * @param NodeInterface $untilNode expand the child nodes until $untilNode is reached, independent of $depth
      * @return void
      * @todo define how this is to be handled
      */
-    public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode)
+    public function getChildNodesForTreeAction(NodeInterface $node, $nodeTypeFilter, $depth, NodeInterface $untilNode)
     {
         /*
         $this->view->assignChildNodes($node, $nodeTypeFilter, NodeView::STYLE_TREE, $depth, $untilNode);
@@ -116,13 +115,13 @@ class NodeController extends AbstractServiceController
     /**
      * Return child nodes of specified node for usage in a TreeLoader based on filter
      *
-     * @param Node $node The node to find child nodes for
+     * @param NodeInterface $node The node to find child nodes for
      * @param string $term
      * @param string $nodeType
      * @return void
      * @todo define how this is to be handled
      */
-    public function filterChildNodesForTreeAction(Node $node, $term, $nodeType)
+    public function filterChildNodesForTreeAction(NodeInterface $node, $term, $nodeType)
     {
         /*
         $nodeTypes = strlen($nodeType) > 0
@@ -160,13 +159,13 @@ class NodeController extends AbstractServiceController
      * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be updated at the same time.
      *
-     * @param Node $referenceNode
-     * @param array $nodeData
+     * @param NodeInterface $referenceNode
+     * @param array<mixed> $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return void
      * @todo define how this is to be handled
      */
-    public function createAction(Node $referenceNode, array $nodeData, $position)
+    public function createAction(NodeInterface $referenceNode, array $nodeData, $position)
     {
         /*
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
@@ -183,13 +182,13 @@ class NodeController extends AbstractServiceController
     /**
      * Creates a new node and renders the node inside the containing content collection.
      *
-     * @param Node $referenceNode
+     * @param NodeInterface $referenceNode
      * @param string $fusionPath The Fusion path of the collection
-     * @param array $nodeData
+     * @param array<mixed> $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @todo define how this is to be handled
      */
-    public function createAndRenderAction(Node $referenceNode, $fusionPath, array $nodeData, $position): void
+    public function createAndRenderAction(NodeInterface $referenceNode, $fusionPath, array $nodeData, $position): void
     {
         /*
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
@@ -200,15 +199,19 @@ class NodeController extends AbstractServiceController
     /**
      * Creates a new node and returns tree structure
      *
-     * @param Node $referenceNode
-     * @param array $nodeData
+     * @param NodeInterface $referenceNode
+     * @param array<mixed> $nodeData
      * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
      * @param string $nodeTypeFilter
      * @return void
      * @todo define how this is to be handled
      */
-    public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position, $nodeTypeFilter = '')
-    {
+    public function createNodeForTheTreeAction(
+        NodeInterface $referenceNode,
+        array $nodeData,
+        $position,
+        $nodeTypeFilter = ''
+    ) {
         /*
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
         $this->view->assignNodeAndChildNodes($newNode, $nodeTypeFilter);
@@ -222,13 +225,13 @@ class NodeController extends AbstractServiceController
      * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be updated at the same time.
      *
-     * @param Node $node The node to be moved
-     * @param Node $targetNode The target node to be moved "to", see $position
+     * @param NodeInterface $node The node to be moved
+     * @param NodeInterface $targetNode The target node to be moved "to", see $position
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return void
      * @todo define how this is to be handled
      */
-    public function moveAction(Node $node, Node $targetNode, $position)
+    public function moveAction(NodeInterface $node, NodeInterface $targetNode, $position)
     {
         /*
         $node = $this->nodeOperations->move($node, $targetNode, $position);
@@ -249,14 +252,14 @@ class NodeController extends AbstractServiceController
      * Move the given node before, into or after the target node
      * depending on the given position and renders it's content collection.
      *
-     * @param Node $node The node to be moved
-     * @param Node $targetNode The target node to be moved "to", see $position
+     * @param NodeInterface $node The node to be moved
+     * @param NodeInterface $targetNode The target node to be moved "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $fusionPath The Fusion path of the collection
      * @return void
      * @todo define how this is to be handled
      */
-    public function moveAndRenderAction(Node $node, Node $targetNode, $position, $fusionPath)
+    public function moveAndRenderAction(NodeInterface $node, NodeInterface $targetNode, $position, $fusionPath)
     {
         /*
         $this->nodeOperations->move($node, $targetNode, $position);
@@ -271,15 +274,15 @@ class NodeController extends AbstractServiceController
      * We can't persist only the nodes in NodeDataRepository
      * because they might be connected to images / resources which need to be updated at the same time.
      *
-     * @param Node $node The node to be copied
-     * @param Node $targetNode The target node to be copied "to", see $position
+     * @param NodeInterface $node The node to be copied
+     * @param NodeInterface $targetNode The target node to be copied "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $nodeName Optional node name (if empty random node name will be generated)
      * @return void
      * @throws NodeException
      * @todo define how this is to be handled
      */
-    public function copyAction(Node $node, Node $targetNode, $position, $nodeName = null)
+    public function copyAction(NodeInterface $node, NodeInterface $targetNode, $position, $nodeName = null)
     {
         /*
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
@@ -308,16 +311,21 @@ class NodeController extends AbstractServiceController
      * Copies the given node before, into or after the target node depending on the given position
      * and renders it's content collection.
      *
-     * @param Node $node The node to be copied
-     * @param Node $targetNode The target node to be copied "to", see $position
+     * @param NodeInterface $node The node to be copied
+     * @param NodeInterface $targetNode The target node to be copied "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $nodeName Optional node name (if empty random node name will be generated)
      * @param string $fusionPath The Fusion path of the collection
      * @return void
      * @todo define how this is to be handled
      */
-    public function copyAndRenderAction(Node $node, Node $targetNode, $position, $fusionPath, $nodeName = null)
-    {
+    public function copyAndRenderAction(
+        NodeInterface $node,
+        NodeInterface $targetNode,
+        $position,
+        $fusionPath,
+        $nodeName = null
+    ) {
         /*
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
         $this->redirectToRenderNode($copiedNode, $fusionPath);
@@ -338,7 +346,7 @@ class NodeController extends AbstractServiceController
      *       We can't persist only the nodes in NodeDataRepository
      *       because they might be connected to images / resources which need to be updated at the same time.
      *
-     * @param Node $node The node to be updated
+     * @param NodeInterface $node The node to be updated
      * @return void
      * @todo define how this is to be handled
      */
@@ -427,8 +435,9 @@ class NodeController extends AbstractServiceController
 
         $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', [
             'node' => $closestDocumentNode,
-            '__nodeContextPath' => $this->nodeAddressFactory->createFromNode($closestContentCollection)
-                ->serializeForUri(),
+            '__nodeContextPath' => $closestContentCollection
+                ? $this->nodeAddressFactory->createFromNode($closestContentCollection)->serializeForUri()
+                : null,
             '__affectedNodeContextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
             '__fusionPath' => $fusionPath
         ], 0, 303, 'html');

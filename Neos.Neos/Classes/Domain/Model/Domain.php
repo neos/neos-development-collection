@@ -102,7 +102,7 @@ class Domain implements CacheAwareInterface
     /**
      * Returns the scheme for this domain
      *
-     * @return string The scheme
+     * @return ?string The scheme
      * @api
      */
     public function getScheme()
@@ -125,7 +125,7 @@ class Domain implements CacheAwareInterface
     /**
      * Returns the port for this domain
      *
-     * @return integer The port
+     * @return ?integer The port
      * @api
      */
     public function getPort()

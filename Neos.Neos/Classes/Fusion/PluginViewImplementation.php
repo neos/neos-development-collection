@@ -11,7 +11,9 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -35,6 +37,9 @@ class PluginViewImplementation extends PluginImplementation
      */
     protected $pluginViewNode;
 
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
     /**
      * Build the proper pluginRequest to render the PluginView
      * of some configured Master Plugin
@@ -43,7 +48,6 @@ class PluginViewImplementation extends PluginImplementation
      */
     protected function buildPluginRequest(): ActionRequest
     {
-        /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
         $pluginRequest = $parentRequest->createSubRequest();
 
@@ -63,12 +67,18 @@ class PluginViewImplementation extends PluginImplementation
         }
 
         // Set the node to render this to the master plugin node
-        $this->node = $this->pluginViewNode->getContext()->getNodeByIdentifier($pluginNodeIdentifier);
-        if ($this->node === null) {
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $this->pluginViewNode->getContentStreamIdentifier(),
+            $this->pluginViewNode->getDimensionSpacePoint(),
+            $this->pluginViewNode->getVisibilityConstraints()
+        );
+        $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($pluginNodeIdentifier));
+        $this->node = $node;
+        if ($node === null) {
             return $pluginRequest;
         }
 
-        $pluginRequest->setArgument('__node', $this->node);
+        $pluginRequest->setArgument('__node', $node);
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
         $this->passArgumentsToPluginRequest($pluginRequest);
 
@@ -79,7 +89,7 @@ class PluginViewImplementation extends PluginImplementation
         $controllerObjectPairs = [];
         $pluginViewName = $this->pluginViewNode->getProperty('view');
         foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-            $this->node->getNodeType()
+            $node->getNodeType()
         ) as $pluginViewDefinition) {
             /** @var PluginViewDefinition $pluginViewDefinition */
             if ($pluginViewDefinition->getName() !== $pluginViewName) {
@@ -111,7 +121,6 @@ class PluginViewImplementation extends PluginImplementation
     {
         $currentContext = $this->runtime->getCurrentContext();
         $this->pluginViewNode = $currentContext['node'];
-        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
         $pluginResponse = new ActionResponse();
 

@@ -11,10 +11,18 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\View\Service\WorkspaceJsonView;
 
@@ -37,8 +45,11 @@ class WorkspacesController extends ActionController
      */
     protected $userService;
 
+    #[Flow\Inject]
+    protected WorkspaceCommandHandler $workspaceCommandHandler;
+
     /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -48,7 +59,7 @@ class WorkspacesController extends ActionController
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = [
@@ -58,10 +69,8 @@ class WorkspacesController extends ActionController
 
     /**
      * Shows a list of existing workspaces
-     *
-     * @return string
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $user = $this->userService->getCurrentUser();
         $workspacesArray = [];
@@ -90,9 +99,8 @@ class WorkspacesController extends ActionController
      * Shows details of the given workspace
      *
      * @param Workspace $workspace
-     * @return string
      */
-    public function showAction(Workspace $workspace)
+    public function showAction(Workspace $workspace): void
     {
         $this->view->assign('workspace', $workspace);
     }
@@ -101,17 +109,11 @@ class WorkspacesController extends ActionController
      * Create a workspace
      *
      * @param string $workspaceName
-     * @param Workspace $baseWorkspace
+     * @param string $baseWorkspace
      * @param string $ownerAccountIdentifier
-     * @return string
      */
-    public function createAction($workspaceName, Workspace $baseWorkspace, $ownerAccountIdentifier = null)
+    public function createAction($workspaceName, string $baseWorkspace, $ownerAccountIdentifier = null): void
     {
-        $existingWorkspace = $this->workspaceFinder->findByIdentifier($workspaceName);
-        if ($existingWorkspace !== null) {
-            $this->throwStatus(409, 'Workspace already exists', '');
-        }
-
         if ($ownerAccountIdentifier !== null) {
             $owner = $this->userService->getUser($ownerAccountIdentifier);
             if ($owner === null) {
@@ -121,36 +123,41 @@ class WorkspacesController extends ActionController
             $owner = null;
         }
 
-        $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
-        $this->workspaceFinder->add($workspace);
-        $this->throwStatus(201, 'Workspace created', '');
-    }
+        $initiatingUserIdentifier = $this->userService->getCurrentUserIdentifier();
+        if (is_null($initiatingUserIdentifier)) {
+            $this->throwStatus(422, 'Initiating user is missing', '');
+        }
 
-    /**
-     * Configure property mapping for the updateAction
-     *
-     * @return void
-     */
-    public function initializeUpdateAction()
-    {
-        $propertyMappingConfiguration = $this->arguments->getArgument('workspace')->getPropertyMappingConfiguration();
-        $propertyMappingConfiguration->allowProperties('name', 'baseWorkspace');
-        $propertyMappingConfiguration->setTypeConverterOption(
-            PersistentObjectConverter::class,
-            PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
-            true
-        );
+        try {
+            $this->workspaceCommandHandler->handleCreateWorkspace(new CreateWorkspace(
+                WorkspaceName::fromString($workspaceName),
+                WorkspaceName::fromString($baseWorkspace),
+                WorkspaceTitle::fromString($workspaceName),
+                WorkspaceDescription::fromString($workspaceName),
+                $initiatingUserIdentifier,
+                ContentStreamIdentifier::create(),
+                $owner
+                    ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($owner))
+                    : null
+            ));
+        } catch (WorkspaceAlreadyExists $exception) {
+            $this->throwStatus(409, 'Workspace already exists', '');
+        }
+
+        $this->throwStatus(201, 'Workspace created', '');
     }
 
     /**
      * Updates a workspace
      *
-     * @param Workspace $workspace The updated workspace
+     * @param array<mixed> $workspace The updated workspace
      * @return void
      */
-    public function updateAction(Workspace $workspace)
+    public function updateAction(array $workspace)
     {
+        $this->throwStatus(404, 'Workspace update not supported yet');
+        /*
         $this->workspaceFinder->update($workspace);
-        $this->throwStatus(200, 'Workspace updated', '');
+        $this->throwStatus(200, 'Workspace updated', '');*/
     }
 }

@@ -305,8 +305,8 @@ class SiteService
             $this->nodeAggregateCommandHandler->handleCreateNodeVariant(new CreateNodeVariant(
                 $liveWorkspace->getCurrentContentStreamIdentifier(),
                 $siteNodeAggregateIdentifier,
-                $arbitraryRootDimensionSpacePoint,
-                $rootDimensionSpacePoint,
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),
                 $currentUserIdentifier
             ));
         }

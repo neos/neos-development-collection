@@ -91,7 +91,7 @@ class RouteCacheAspect
      *
      * @Flow\Around("method(Neos\Flow\Mvc\Routing\RouterCachingService->generateRouteTags())")
      * @param JoinPointInterface $joinPoint The current join point
-     * @return array
+     * @return array<int,string>
      */
     public function addWorkspaceName(JoinPointInterface $joinPoint)
     {

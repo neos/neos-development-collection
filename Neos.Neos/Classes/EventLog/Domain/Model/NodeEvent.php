@@ -129,7 +129,7 @@ class NodeEvent extends Event
      * @param NodeInterface $node
      * @return void
      */
-    public function setNode(NodeInterface $node)
+    /*public function setNode(NodeInterface $node)
     {
         $this->nodeIdentifier = $node->getIdentifier();
         $this->workspaceName = $node->getContext()->getWorkspaceName();
@@ -158,7 +158,7 @@ class NodeEvent extends Event
                 'documentNodeType' => $node->getNodeType()->getName()
             ]);
         }
-    }
+    }*/
 
     /**
      * Override the workspace name. *MUST* be called after setNode(), else it won't have an effect.
@@ -177,13 +177,13 @@ class NodeEvent extends Event
      * @param NodeInterface $node
      * @return NodeInterface
      */
-    public static function getClosestAggregateNode(NodeInterface $node)
+    /*public static function getClosestAggregateNode(NodeInterface $node)
     {
         while ($node !== null && !$node->getNodeType()->isAggregate()) {
             $node = $node->getParent();
         }
         return $node;
-    }
+    }*/
 
     /**
      * Returns the closest document node, if it can be resolved.
@@ -194,7 +194,7 @@ class NodeEvent extends Event
      *
      * @return NodeInterface
      */
-    public function getDocumentNode()
+    /*public function getDocumentNode()
     {
         try {
             $context = $this->contextFactory->create([
@@ -207,7 +207,7 @@ class NodeEvent extends Event
         } catch (EntityNotFoundException $e) {
             return null;
         }
-    }
+    }*/
 
     /**
      * Returns the node this even refers to, if it can be resolved.
@@ -218,7 +218,7 @@ class NodeEvent extends Event
      *
      * @return NodeInterface
      */
-    public function getNode()
+    /*public function getNode()
     {
         try {
             $context = $this->contextFactory->create([
@@ -231,7 +231,7 @@ class NodeEvent extends Event
         } catch (EntityNotFoundException $e) {
             return null;
         }
-    }
+    }*/
 
     /**
      * Prevents invalid calls to the site repository in case the site data property is not available.

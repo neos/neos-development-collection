@@ -296,7 +296,7 @@ class ContentElementWrappingService
             $siteNodeAddress = $this->nodeAddressFactory->createFromNode($siteNode);
         }
         $attributes['data-neos-site-name'] = $siteNode?->getNodeName();
-        $attributes['data-neos-site-node-context-path'] = $siteNodeAddress->serializeForUri();
+        $attributes['data-neos-site-node-context-path'] = $siteNodeAddress?->serializeForUri();
         // Add the workspace of the content repository context to the attributes
         $attributes['data-neos-context-workspace-name'] = $nodeAddress->workspaceName;
         $attributes['data-neos-context-dimensions'] = json_encode($nodeAddress->dimensionSpacePoint);
@@ -415,7 +415,7 @@ class ContentElementWrappingService
      */
     protected function dasherize(string $value): string
     {
-        return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value), '-'));
+        return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value) ?: '', '-'));
     }
 
     protected function needsMetadata(NodeInterface $node, bool $renderCurrentDocumentMetadata): bool

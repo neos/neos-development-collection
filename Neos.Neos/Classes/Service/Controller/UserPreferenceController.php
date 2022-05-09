@@ -28,7 +28,7 @@ class UserPreferenceController extends AbstractServiceController
         $this->response->setContentType('application/json');
 
         return json_encode(
-            $this->domainUserService->getCurrentUser()->getPreferences()->getPreferences(),
+            $this->domainUserService->getCurrentUser()?->getPreferences()->getPreferences(),
             JSON_THROW_ON_ERROR
         );
     }

@@ -232,7 +232,7 @@ class Site
     public function setDomains($domains)
     {
         $this->domains = $domains;
-        if (!$this->domains->contains($this->primaryDomain)) {
+        if (!$this->primaryDomain || !$this->domains->contains($this->primaryDomain)) {
             $this->primaryDomain = $this->getFirstActiveDomain();
         }
     }
@@ -270,13 +270,13 @@ class Site
     }
 
     /**
-     * @return Domain|null
+     * @return ?Domain
      * @api
      */
     public function getFirstActiveDomain()
     {
         $activeDomains = $this->getActiveDomains();
-        return count($activeDomains) > 0 ? $this->getActiveDomains()->first() : null;
+        return count($activeDomains) > 0 ? ($activeDomains->first() ?: null) : null;
     }
 
     /**
@@ -317,7 +317,7 @@ class Site
     }
 
     /**
-     * @return AssetCollection
+     * @return ?AssetCollection
      */
     public function getAssetCollection()
     {

@@ -18,6 +18,7 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
@@ -26,6 +27,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  * @Flow\Scope("singleton")
  * @api
  * @method QueryResultInterface|Domain[] findByActive(bool $active)
+ * @method QueryResultInterface|Domain[] findBySite(Site $site)
  */
 class DomainRepository extends Repository
 {
