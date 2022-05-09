@@ -13,36 +13,42 @@ body {
 }
 
 #neos-raw-content-container {
-  padding: 1px 10%;
+  max-width: 1200px;
+  margin: 20px auto;
 }
 
 .neos-raw-content-node {
-  margin: 0 auto;
-  max-width: 720px;
+  box-shadow: 0 0 5px #ccc;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: white;
+  position: relative;
 }
 
 .neos-raw-content-node > header {
   font-family: monospace;
-  white-space: pre;
-  color: $textSubtle;
+  color: white;
   text-transform: uppercase;
-  margin: 40px 0 20px;
   hyphens: auto;
-  border-bottom: 1px solid #bbb;
-  font-size: 1.3em;
+  background-color: lightgrey;
+  display: inline-block;
+  position: relative;
+  padding: 3px 15px;
+  left: -20px;
+  top: -21px;
+  color: white;
+
 }
 
 .neos-raw-content-properties {
-  margin-left: 20px;
 }
 
 .neos-raw-content-properties > dt {
   font-family: monospace;
   white-space: pre;
   text-transform: uppercase;
-  color: $textSubtle;
-  border-bottom: 1px solid #bbb;
-  display: inline-block;
+  color: lightgrey;
+  border-bottom: 1px solid lightgrey;
 }
 
 .neos-raw-content-properties > dd {

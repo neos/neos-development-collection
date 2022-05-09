@@ -6,7 +6,7 @@ prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
         labelParts = ${String.split(node.nodeType.label, ':')}
 
         renderer = afx`
-            <header>{props.node.tethered ? props.node.name : Translation.translate(props.labelParts[2],props.node.nodeType.label,[],props.labelParts[1],props.labelParts[0])}</header>
+            <header>{(props.node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? props.node.label : Translation.translate(props.labelParts[2],props.node.nodeType.label,[],props.labelParts[1],props.labelParts[0])}</header>
         `
     }
 }
