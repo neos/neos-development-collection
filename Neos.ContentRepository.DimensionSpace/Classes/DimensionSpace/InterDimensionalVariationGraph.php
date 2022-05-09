@@ -81,6 +81,11 @@ class InterDimensionalVariationGraph
         }
     }
 
+    public function getDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
+    }
+
     /**
      * @return array<string,WeightedDimensionSpacePoint>
      * @api

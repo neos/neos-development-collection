@@ -13,6 +13,7 @@
 declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
+
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]

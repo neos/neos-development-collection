@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Presentation\Dimensions;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,15 +10,21 @@ namespace Neos\Neos\Presentation\Dimensions;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Presentation\Dimensions;
+
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The visualization model for the interdimensional variation graph
  */
+#[Flow\Proxy(false)]
 final class VisualInterDimensionalVariationGraph
 {
     private function __construct(
@@ -47,8 +52,9 @@ final class VisualInterDimensionalVariationGraph
             $offsets[$identifier] = self::resolveOffsets($contentDimension);
         }
 
-        $weightedDimensionSpacePoints = $variationGraph->getWeightedDimensionSpacePoints();
-        foreach ($weightedDimensionSpacePoints as $dimensionSpacePoint) {
+        $dimensionSpacePoints = [];
+        foreach ($variationGraph->getWeightedDimensionSpacePoints() as $dimensionSpacePoint) {
+            $dimensionSpacePoints[$dimensionSpacePoint->getIdentityHash()] = $dimensionSpacePoint->dimensionSpacePoint;
             $x = 0;
             $y = 0;
 
@@ -72,25 +78,24 @@ final class VisualInterDimensionalVariationGraph
                 implode(', ', $nameComponents),
                 $x + 42,
                 $y + 42,
-                '#00B5FF'
+                '#3F3F3F'
             );
 
             $width = max($width, $x + 110);
             $height = max($height, $y + 110);
         }
 
-        foreach ($weightedDimensionSpacePoints as $weightedDimensionSpacePoint) {
-            $generalizations = $variationGraph->getWeightedGeneralizations(
-                $weightedDimensionSpacePoint->dimensionSpacePoint
-            );
+        foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
+            $generalizations = $variationGraph->getWeightedGeneralizations($dimensionSpacePoint);
             $i = 1;
             foreach ($generalizations as $generalization) {
+                $isPrimary = ($generalization === $variationGraph->getPrimaryGeneralization($dimensionSpacePoint));
                 $edges[] = VisualInterDimensionalEdge::forVisualDimensionSpacePoints(
-                    $nodes[$weightedDimensionSpacePoint->getIdentityHash()],
+                    $nodes[$dimensionSpacePoint->hash],
                     $nodes[$generalization->hash],
-                    '#00B5FF',
+                    $isPrimary ? '#00B5FF' : '#FFFFFF',
                     round(($i / count($generalizations)), 2),
-                    false
+                    !$isPrimary
                 );
                 $i++;
             }
@@ -153,13 +158,16 @@ final class VisualInterDimensionalVariationGraph
             $generalizations = $variationGraph->getWeightedGeneralizations($dimensionSpacePoint);
             $i = 1;
             foreach ($generalizations as $generalization) {
-                $isPrimary = ($generalization === $variationGraph->getPrimaryGeneralization($startingPoint));
+                if (!isset($nodes[$generalization->hash])) {
+                    continue;
+                }
+                $isPrimary = ($generalization === $variationGraph->getPrimaryGeneralization($dimensionSpacePoint));
                 $edges[] = VisualInterDimensionalEdge::forVisualDimensionSpacePoints(
                     $nodes[$dimensionSpacePoint->hash],
                     $nodes[$generalization->hash],
                     $isPrimary ? '#00B5FF' : '#FFFFFF',
                     round(($i / count($generalizations)), 2),
-                    !$isPrimary
+                    false
                 );
                 $i++;
             }
@@ -216,7 +224,7 @@ final class VisualInterDimensionalVariationGraph
         }
         $rightOffset = $horizontalOffset;
 
-        $x = $baseOffset + $leftOffset + ($rightOffset - $leftOffset) / 2;
+        $x = (int)($baseOffset + $leftOffset + ($rightOffset - $leftOffset) / 2);
         $y = $depth;
 
         $offsets['_width'] = max($offsets['_width'] ?? 0, $x + 1);

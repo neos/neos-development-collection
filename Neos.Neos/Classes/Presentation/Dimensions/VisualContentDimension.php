@@ -16,10 +16,12 @@ namespace Neos\Neos\Presentation\Dimensions;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The visualization model for the interdimensional variation graph
  */
+#[Flow\Proxy(false)]
 final class VisualContentDimension
 {
     /**
@@ -102,19 +104,22 @@ final class VisualContentDimension
         $counter++;
         $nodeId = $counter;
         $leftOffset = $horizontalOffset + 42;
-        foreach ($contentDimension->specializations[$value->value] ?? [] as $specialization) {
-            self::traverseDimension(
-                $contentDimension,
-                $specialization,
-                $counter,
-                $depth + 1,
-                $horizontalOffset,
-                $width,
-                $height,
-                $nodeId,
-                $nodes,
-                $edges
-            );
+        $specializations = $contentDimension->specializations[$value->value] ?? null;
+        if ($specializations) {
+            foreach ($specializations as $specialization) {
+                self::traverseDimension(
+                    $contentDimension,
+                    $specialization,
+                    $counter,
+                    $depth + 1,
+                    $horizontalOffset,
+                    $width,
+                    $height,
+                    $nodeId,
+                    $nodes,
+                    $edges
+                );
+            }
             $horizontalOffset -= 110;
         }
 

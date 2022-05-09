@@ -11,13 +11,16 @@
  */
 
 declare(strict_types=1);
+
 namespace Neos\Neos\Presentation\Dimensions;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The IntraDimensionalFallbackGraph presentation model for SVG
  */
+#[Flow\Proxy(false)]
 final class VisualIntraDimensionalVariationGraph
 {
     private function __construct(

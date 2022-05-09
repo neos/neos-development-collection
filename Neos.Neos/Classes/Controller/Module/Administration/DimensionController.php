@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,8 +10,11 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
+
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
@@ -30,19 +32,16 @@ class DimensionController extends AbstractModuleController
     #[Flow\Inject]
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
-    #[Flow\Inject]
-    protected ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    public function indexAction(string $type = 'intraDimension', string $subgraphIdentifier = null): void
+    public function indexAction(string $type = 'intraDimension', string $dimensionSpacePointHash = null): void
     {
         $graph = match ($type) {
             'intraDimension' => VisualIntraDimensionalVariationGraph::fromContentDimensionSource(
                 $this->contentDimensionSource
             ),
-            'interDimension' => $subgraphIdentifier
+            'interDimension' => $dimensionSpacePointHash
                 ? VisualInterDimensionalVariationGraph::forInterDimensionalVariationSubgraph(
                     $this->interDimensionalVariationGraph,
-                    $this->contentDimensionZookeeper->getAllowedDimensionSubspace()[$subgraphIdentifier]
+                    $this->interDimensionalVariationGraph->getDimensionSpacePoints()[$dimensionSpacePointHash]
                 )
                 : VisualInterDimensionalVariationGraph::forInterDimensionalVariationGraph(
                     $this->interDimensionalVariationGraph,
@@ -54,7 +53,7 @@ class DimensionController extends AbstractModuleController
         $this->view->assignMultiple([
             'availableGraphTypes' => ['intraDimension', 'interDimension'],
             'type' => $type,
-            'selectedSubgraphIdentifier' => $subgraphIdentifier,
+            'selectedDimensionSpacePointHash' => $dimensionSpacePointHash,
             'graph' => $graph
         ]);
     }
