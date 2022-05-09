@@ -11,7 +11,6 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\User;
 
