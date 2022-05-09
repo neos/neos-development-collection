@@ -39,7 +39,8 @@ final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
     /**
      * @param iterable<string,ContentGraphInterface> $iterable
      */
-    public function __construct(iterable $iterable) {
+    public function __construct(iterable $iterable)
+    {
         $contentGraphs = [];
         foreach ($iterable as $adapterName => $item) {
             if (!is_string($adapterName) || empty($adapterName)) {
