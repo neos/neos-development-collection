@@ -40,5 +40,4 @@ class DbalContentGraphObjectFactory
         $nodeFactory = new NodeFactory($this->nodeTypeManager, $this->propertyConverter);
         return new ContentGraph($this->dbalClient, $nodeFactory);
     }
-
 }

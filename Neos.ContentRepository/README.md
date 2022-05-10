@@ -18,10 +18,3 @@ If you dare to use it anyways, you can install this package via composer:
 
 ```
 
-
-Contribute
-----------
-
-If you want to contribute to the Event Sourced Content Repository, please have a look at
-https://github.com/neos/contentrepository-development-collection - it is the repository
-used for development and all pull requests should go into it.

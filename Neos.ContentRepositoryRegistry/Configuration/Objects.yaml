@@ -44,11 +44,6 @@ Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorIn
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
   factoryMethodName: buildProjectionIntegrityViolationDetector
 
-Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
-  factoryMethodName: buildContentGraph
-
 Neos\ContentRepository\Projection\Content\ContentGraphInterface:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
@@ -358,7 +353,7 @@ Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface:
   className: 'Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource'
   arguments:
     1:
-      setting: "Neos.EventSourcedContentRepository.contentDimensions"
+      setting: "Neos.ContentRepository.contentDimensions"
 
 
 

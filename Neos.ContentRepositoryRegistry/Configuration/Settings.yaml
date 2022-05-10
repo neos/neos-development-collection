@@ -35,7 +35,10 @@ Neos:
         projectorsToBeReset:
           'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true
         activeContentGraphs:
-          'DoctrineDBAL': 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
+          # TODO: right now this is a workaround to match the INTERFACE and not the implementation;
+          # as otherwise we have two instances of DoctrineDBAL ContentGraph floating around, leading to wrong behavior
+          # because caches are not correctly cleared.
+          'DoctrineDBAL': 'Neos\ContentRepository\Projection\Content\ContentGraphInterface'
 
       projection:
         defaultProjectorsToBeBlocked:

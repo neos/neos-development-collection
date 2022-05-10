@@ -68,3 +68,13 @@ To switch the branch you intend to work on:
 .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
 
 For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
+
+
+--------------------------------------
+New (Event Sourced) Content Repository
+--------------------------------------
+
+Running the Tests
+=================
+
+see ./Neos.ContentRepository.BehavioralTests/README.md for explanation.

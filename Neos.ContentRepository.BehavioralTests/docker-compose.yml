@@ -1,0 +1,28 @@
+# This Docker-Compose file eases running testcases, because it starts Mysql and Postgres in a way that you can copy/paste Settings.yaml reliably.
+version: '3.5'
+services:
+  mysql:
+    image: mariadb:10.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 'db'
+      MYSQL_DATABASE: 'neos-behat'
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - 13306:3306
+#  postgres:
+#    image: mariadb:10.7
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 'db'
+#      MYSQL_DATABASE: 'neos-behat'
+#    volumes:
+#      - mysql:/var/lib/mysql
+#    ports:
+#      - 13306:3306
+
+
+
+volumes:
+  mysql:
+
+

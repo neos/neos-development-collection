@@ -55,11 +55,11 @@ final class NodeDuplicationCommandHandler
 
     protected NodeAggregateEventPublisher $nodeAggregateEventPublisher;
 
-    protected DimensionSpacePointSet $allowedDimensionSubspace;
-
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
     protected RuntimeBlocker $runtimeBlocker;
+
+    private ContentDimensionZookeeper $contentDimensionZookeeper;
 
     public function __construct(
         NodeAggregateCommandHandler $nodeAggregateCommandHandler,
@@ -78,7 +78,7 @@ final class NodeDuplicationCommandHandler
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->nodeAggregateEventPublisher = $nodeAggregateEventPublisher;
-        $this->allowedDimensionSubspace = $contentDimensionZookeeper->getAllowedDimensionSubspace();
+        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->runtimeBlocker = $runtimeBlocker;
     }
@@ -100,7 +100,7 @@ final class NodeDuplicationCommandHandler
 
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
     {
-        return $this->allowedDimensionSubspace;
+        return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
     }
 
     /**
