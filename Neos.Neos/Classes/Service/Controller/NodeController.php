@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
-use Neos\Neos\Service\NodeOperations;
 use Neos\Neos\Service\View\NodeView;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
@@ -69,12 +68,6 @@ class NodeController extends AbstractServiceController
      * @var NodeSearchServiceInterface
      */
     protected $nodeSearchService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeOperations
-     */
-    protected $nodeOperations;
 
     /**
      * @Flow\Inject
