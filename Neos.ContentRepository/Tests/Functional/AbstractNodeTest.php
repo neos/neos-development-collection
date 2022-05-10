@@ -73,6 +73,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
 
     public function setUp(): void
     {
+        $this->markTestSkipped('Skipped for now with ES CR. It might make sense to rebuild these testcases.');
         $this->fixtureFileName = __DIR__ . '/Fixtures/NodeStructure.xml';
         parent::setUp();
 
