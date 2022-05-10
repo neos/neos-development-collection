@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Migration\Domain\Model;
 
 use Neos\ContentRepository\Feature\Migration\Command\MigrationConfiguration;
 
-
 /**
  * Migration.
  *

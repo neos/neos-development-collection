@@ -51,7 +51,6 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
  * The Neos Workspaces module controller
