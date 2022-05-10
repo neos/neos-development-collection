@@ -13,6 +13,7 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -135,8 +136,10 @@ class ImpersonateController extends ActionController
      */
     public function impersonateUserWithResponseAction(User $user): void
     {
+        /** @var Collection<int,Account> $accounts */
+        $accounts = $user->getAccounts();
         /** @var Account $account */
-        $account = $user->getAccounts()->first();
+        $account = $accounts->first();
         $this->impersonateService->impersonate($account);
         $impersonateStatus = $this->getImpersonateStatus();
         $this->view->assign('value', $impersonateStatus);
