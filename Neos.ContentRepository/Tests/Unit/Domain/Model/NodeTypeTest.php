@@ -165,7 +165,9 @@ class NodeTypeTest extends UnitTestCase
                 'Neos.ContentRepository:Base' => $baseType,
                 'Neos.ContentRepository.Testing:TimeableContent' => $timeableNodeType,
             ],
-            [], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+            [],
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
         );
 
         $hideableNodeType = new NodeType('Neos.ContentRepository.Testing:HideableContent', [], [], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
@@ -176,7 +178,9 @@ class NodeTypeTest extends UnitTestCase
                 'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
                 'Neos.ContentRepository.Testing:TimeableContent' => null,
             ],
-            [], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+            [],
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
         );
 
         self::assertEquals(

@@ -177,7 +177,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 'value' => $dimensionValue,
                 'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)
                     ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
-                'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo()
+                'isPinnedDimension' => (
+                    !$this->getContentDimensionIdentifierToLimitTo()
                     || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo())
                 )
             ];
