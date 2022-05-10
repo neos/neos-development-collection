@@ -76,8 +76,8 @@ final class VisualInterDimensionalVariationGraph
             $nodes[$dimensionSpacePoint->getIdentityHash()] = new VisualWeightedDimensionSpacePoint(
                 $dimensionSpacePoint->getIdentityHash(),
                 implode(', ', $nameComponents),
-                $x + 42,
-                $y + 42,
+                (int)$x + 42,
+                (int)$y + 42,
                 '#3F3F3F'
             );
 
@@ -104,8 +104,8 @@ final class VisualInterDimensionalVariationGraph
         return new self(
             $nodes,
             $edges,
-            $width,
-            $height
+            (int)$width,
+            (int)$height
         );
     }
 
@@ -196,7 +196,7 @@ final class VisualInterDimensionalVariationGraph
     }
 
     /**
-     * @return array<string,int|array<string,int>>
+     * @return array<string,mixed>
      */
     private static function resolveOffsets(ContentDimension $contentDimension): array
     {

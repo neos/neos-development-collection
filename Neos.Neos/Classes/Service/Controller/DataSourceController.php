@@ -75,15 +75,17 @@ class DataSourceController extends AbstractServiceController
      */
     public static function getDataSources($objectManager)
     {
+        /** @var ReflectionService $reflectionService */
         $reflectionService = $objectManager->get(ReflectionService::class);
 
         $dataSources = [];
         $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface(
             DataSourceInterface::class
         );
-        /** @var DataSourceInterface $dataSourceClassName */
         foreach ($dataSourceClassNames as $dataSourceClassName) {
+            /** @var DataSourceInterface $dataSourceClassName */
             $identifier = $dataSourceClassName::getIdentifier();
+            /** @var class-string $dataSourceClassName */
             if (isset($dataSources[$identifier])) {
                 throw new NeosException(sprintf(
                     'Data source with identifier "%s" is already defined in class %s.',

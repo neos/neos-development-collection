@@ -160,7 +160,7 @@ class UserSettingsController extends AbstractModuleController
     {
         $user = $this->currentUser;
         $password = array_shift($password);
-        if (strlen(trim(strval($password))) > 0) {
+        if ($user instanceof User && is_string($password) && strlen(trim(strval($password))) > 0) {
             $this->domainUserService->setUserPassword($user, $password);
             $this->addFlashMessage(
                 $this->getModuleLabel('userSettings.passwordUpdated.body'),

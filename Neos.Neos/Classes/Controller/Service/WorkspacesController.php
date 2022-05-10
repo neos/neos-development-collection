@@ -72,21 +72,25 @@ class WorkspacesController extends ActionController
      */
     public function indexAction(): void
     {
-        $user = $this->userService->getCurrentUser();
+        $currentUserIdentifier = $this->userService->getCurrentUserIdentifier();
+        if (is_null($currentUserIdentifier)) {
+            throw new \InvalidArgumentException('No user found', 1652158967);
+        }
         $workspacesArray = [];
         foreach ($this->workspaceFinder->findAll() as $workspace) {
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            if ($workspace->getOwner() !== null && $workspace->getOwner() !== $user) {
+            if ($workspace->getWorkspaceOwner() !== null
+                && $workspace->getWorkspaceOwner() !== $currentUserIdentifier->value) {
                 continue;
             }
 
             $workspaceArray = [
-                'name' => $workspace->getName(),
-                'title' => $workspace->getTitle(),
-                'description' => $workspace->getDescription(),
-                'baseWorkspace' => $workspace->getBaseWorkspace()
+                'name' => $workspace->getWorkspaceName(),
+                'title' => $workspace->getWorkspaceTitle(),
+                'description' => $workspace->getWorkspaceDescription(),
+                'baseWorkspace' => $workspace->getBaseWorkspaceName()
             ];
-            if ($user !== null) {
+            if ($currentUserIdentifier !== null) {
                 $workspaceArray['readonly'] = !$this->userService->currentUserCanPublishToWorkspace($workspace);
             }
             $workspacesArray[] = $workspaceArray;

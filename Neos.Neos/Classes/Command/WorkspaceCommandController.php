@@ -169,17 +169,16 @@ class WorkspaceCommandController extends CommandController
      */
     public function discardCommand($workspace, $verbose = false, $dryRun = false)
     {
+        /* @todo how do we check this?
         try {
-            /** @todo how do we check this? */
-            //$nodes = $this->publishingService->getUnpublishedNodes($workspace);
-            $nodes = [];
+            $nodes = $this->publishingService->getUnpublishedNodes($workspace);
         } catch (\Exception $exception) {
             $this->outputLine(
                 'An error occurred while fetching unpublished nodes from workspace %s, discard aborted.',
                 [$workspace]
             );
             $this->quit(1);
-        }
+        }*/
 
         #$this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspace, count($nodes)]);
 
@@ -237,14 +236,11 @@ class WorkspaceCommandController extends CommandController
         if ($owner === '') {
             $workspaceOwner = null;
         } else {
-            $owningUser = $this->userService->getUser($owner);
-            if ($owningUser === null) {
+            $workspaceOwner = $this->userService->getCurrentUserIdentifier();
+            if ($workspaceOwner === null) {
                 $this->outputLine('The user "%s" specified as owner does not exist', [$owner]);
                 $this->quit(3);
             }
-            $workspaceOwner = UserIdentifier::fromString(
-                $this->persistenceManager->getObjectByIdentifier($owningUser)
-            );
         }
 
         try {

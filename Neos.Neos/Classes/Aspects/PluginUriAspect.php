@@ -11,14 +11,16 @@ namespace Neos\Neos\Aspects;
  * source code.
  */
 
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Service\PluginService;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * @Flow\Scope("singleton")
@@ -40,6 +42,12 @@ class PluginUriAspect
      */
     protected $pluginService;
 
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
     /**
      * @Flow\Around("method(Neos\Flow\Mvc\Routing\UriBuilder->uriFor())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint The current join point
@@ -47,38 +55,52 @@ class PluginUriAspect
      */
     public function rewritePluginViewUris(JoinPointInterface $joinPoint)
     {
-        /** @var ActionRequest $request */
-        $request = $joinPoint->getProxy()->getRequest();
+        /** @var UriBuilder $uriBuilder */
+        $uriBuilder = $joinPoint->getProxy();
+        $request = $uriBuilder->getRequest();
         $arguments = $joinPoint->getMethodArguments();
 
         $currentNode = $request->getInternalArgument('__node');
-        if (!$request->getMainRequest()->hasArgument('node') || !$currentNode instanceof Node) {
+        if (!$request->getMainRequest()->hasArgument('node') || !$currentNode instanceof NodeInterface) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         }
 
-        $currentNode = $request->getInternalArgument('__node');
         $controllerObjectName = $this->getControllerObjectName($request, $arguments);
         $actionName = $arguments['actionName'] !== null
             ? $arguments['actionName']
             : $request->getControllerActionName();
 
-        $targetNode = $this->pluginService->getPluginNodeByAction($currentNode, $controllerObjectName, $actionName);
+        $targetNode = $this->pluginService->getPluginNodeByAction(
+            $currentNode,
+            $controllerObjectName,
+            $actionName
+        );
 
-        // TODO override namespace
+        $documentNode = null;
+        if ($targetNode) {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $targetNode->getContentStreamIdentifier(),
+                $targetNode->getDimensionSpacePoint(),
+                $targetNode->getVisibilityConstraints()
+            );
+            $documentNode = $targetNode;
+            while ($documentNode instanceof NodeInterface) {
+                if ($documentNode->getNodeTypeName()->equals(NodeTypeNameFactory::forDocument())) {
+                    break;
+                }
+                $documentNode = $nodeAccessor->findParentNode($documentNode);
+            }
+        }
 
-        $q = new FlowQuery([$targetNode]);
-        $pageNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $result = $this->generateUriForNode($request, $joinPoint, $pageNode);
-
-        return $result;
+        return $documentNode ? $this->generateUriForNode($request, $joinPoint, $documentNode) : '';
     }
 
     /**
      * Merge the default plugin arguments of the Plugin with the arguments in the request
      * and generate a controllerObjectName
      *
-     * @param object $request
-     * @param array $arguments
+     * @param ActionRequest $request
+     * @param array<string,mixed> $arguments
      * @return string $controllerObjectName
      */
     public function getControllerObjectName($request, array $arguments)
@@ -116,9 +138,10 @@ class PluginUriAspect
     {
         // store original node path to restore it after generating the uri
         $originalNodePath = $request->getMainRequest()->getArgument('node');
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
 
         // generate the uri for the given node
-        $request->getMainRequest()->setArgument('node', $node->getContextPath());
+        $request->getMainRequest()->setArgument('node', $nodeAddress->serializeForUri());
         $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
         // restore the original node path

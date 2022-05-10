@@ -28,6 +28,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  * @api
  * @method QueryResultInterface|Domain[] findByActive(bool $active)
  * @method QueryResultInterface|Domain[] findBySite(Site $site)
+ * @method QueryResultInterface|Domain[] findByHostname(string $hostname)
  */
 class DomainRepository extends Repository
 {

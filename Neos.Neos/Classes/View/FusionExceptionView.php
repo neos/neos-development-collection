@@ -128,29 +128,35 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
+        if ($currentSiteNode) {
+            $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
-        $this->setFallbackRuleFromDimension($currentSiteNode);
+            if ($dimensionSpacePoint) {
+                $this->setFallbackRuleFromDimension($dimensionSpacePoint);
+            }
 
-        $fusionRuntime->pushContextArray(array_merge(
-            $this->variables,
-            [
-                'node' => $currentSiteNode,
-                'documentNode' => $currentSiteNode,
-                'site' => $currentSiteNode,
-                'editPreviewMode' => null
-            ]
-        ));
+            $fusionRuntime->pushContextArray(array_merge(
+                $this->variables,
+                [
+                    'node' => $currentSiteNode,
+                    'documentNode' => $currentSiteNode,
+                    'site' => $currentSiteNode,
+                    'editPreviewMode' => null
+                ]
+            ));
 
-        try {
-            $output = $fusionRuntime->render('error');
-            $output = $this->extractBodyFromOutput($output);
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious() ?: $exception;
+            try {
+                $output = $fusionRuntime->render('error');
+                $output = $this->extractBodyFromOutput($output);
+            } catch (RuntimeException $exception) {
+                throw $exception->getPrevious() ?: $exception;
+            }
+            $fusionRuntime->popContext();
+
+            return $output;
         }
-        $fusionRuntime->popContext();
 
-        return $output;
+        return '';
     }
 
     /**

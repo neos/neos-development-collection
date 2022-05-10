@@ -11,6 +11,7 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\Error\Messages\Error;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
@@ -60,6 +61,7 @@ class DomainCommandController extends CommandController
             $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
             $this->quit(1);
         }
+        /** @var Site $site */
 
         $domains = $this->domainRepository->findByHostname($hostname);
         if ($domains->count() > 0) {
@@ -81,6 +83,7 @@ class DomainCommandController extends CommandController
         $result = $domainValidator->validate($domain);
         if ($result->hasErrors()) {
             foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
+                /** @var array<Error> $errors */
                 $firstError = array_pop($errors);
                 $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
                 $this->quit(1);

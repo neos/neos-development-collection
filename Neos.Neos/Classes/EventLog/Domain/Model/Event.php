@@ -71,7 +71,7 @@ class Event
      *
      * @ORM\Column(type="flow_json_array")
      * @var array
-     * @phpstan-var array<mixed>
+     * @phpstan-var array<?mixed>
      */
     protected $data = [];
 

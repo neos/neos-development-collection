@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\InvalidFlashMessageConfigurationException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -31,6 +30,7 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Fusion\View\FusionView;
+use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;
@@ -40,6 +40,7 @@ use Neos\Neos\Service\BackendRedirectionService;
  */
 class LoginController extends AbstractAuthenticationController
 {
+    use ModuleTranslationTrait;
 
     /**
      * @var string
@@ -95,13 +96,7 @@ class LoginController extends AbstractAuthenticationController
     protected $flashMessageService;
 
     /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => FusionView::class,
@@ -109,7 +104,7 @@ class LoginController extends AbstractAuthenticationController
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = [
         'text/html',
@@ -121,14 +116,15 @@ class LoginController extends AbstractAuthenticationController
      */
     public function initializeIndexAction(): void
     {
-        if (is_array($this->request->getInternalArgument('__authentication'))) {
-            $authentication = $this->request->getInternalArgument('__authentication');
-            if (isset($authentication['Neos']['Flow']['Security']['Authentication']
+        /** @var array<string,mixed>|string|object|null $authenticationArgument */
+        $authenticationArgument = $this->request->getInternalArgument('__authentication');
+        if (is_array($authenticationArgument)) {
+            if (isset($authenticationArgument['Neos']['Flow']['Security']['Authentication']
                 ['Token']['UsernamePassword']['username'])
             ) {
                 $this->request->setArgument(
                     'username',
-                    $authentication['Neos']['Flow']['Security']['Authentication']
+                    $authenticationArgument['Neos']['Flow']['Security']['Authentication']
                         ['Token']['UsernamePassword']['username']
                 );
             }
@@ -177,12 +173,14 @@ class LoginController extends AbstractAuthenticationController
      */
     public function tokenLoginAction(string $token): void
     {
+        /** @var string|false $newSessionId */
         $newSessionId = $this->loginTokenCache->get($token);
         $this->loginTokenCache->remove($token);
 
         if ($newSessionId === false) {
             $this->logger->warning(sprintf('Token-based login failed, non-existing or expired token %s', $token));
             $this->redirect('index');
+            return;
         }
 
         $this->logger->debug(sprintf('Token-based login succeeded, token %s', $token));
@@ -217,8 +215,8 @@ class LoginController extends AbstractAuthenticationController
             $this->view->assign('value', ['success' => false]);
         } else {
             $this->addFlashMessage(
-                $this->translator->translateById('login.wrongCredentials.body', [], null, null, 'Main', 'Neos.Neos'),
-                $this->translator->translateById('login.wrongCredentials.title', [], null, null, 'Main', 'Neos.Neos'),
+                $this->getModuleLabel('login.wrongCredentials.body'),
+                $this->getModuleLabel('login.wrongCredentials.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 $exception === null ? 1347016771 : $exception->getCode()
@@ -231,6 +229,7 @@ class LoginController extends AbstractAuthenticationController
      *
      * @param ActionRequest|null $originalRequest The request that was intercepted by the security framework,
      *                                            NULL if there was none
+     * @phpstan-ignore-next-line Flow does not properly declare its return type here
      * @return void
      * @throws SessionNotStartedException
      * @throws StopActionException
@@ -283,8 +282,8 @@ class LoginController extends AbstractAuthenticationController
                     $this->redirectToUri($possibleRedirectionUri);
                 }
                 $this->addFlashMessage(
-                    $this->translator->translateById('login.loggedOut.body', [], null, null, 'Main', 'Neos.Neos'),
-                    $this->translator->translateById('login.loggedOut.title', [], null, null, 'Main', 'Neos.Neos'),
+                    $this->getModuleLabel('login.loggedOut.body'),
+                    $this->getModuleLabel('login.loggedOut.title'),
                     Message::SEVERITY_NOTICE,
                     [],
                     1318421560
@@ -296,7 +295,9 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Disable the default error flash message
      *
-     * @return bool
+     *
+     * @phpstan-ignore-next-line Flow does not properly declare its types here
+     * @return false
      */
     protected function getErrorFlashMessage()
     {

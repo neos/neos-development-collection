@@ -25,7 +25,6 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\View\NodeView;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeException;
 
 /**
  * Service Controller for managing Nodes
@@ -272,7 +271,6 @@ class NodeController extends AbstractServiceController
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $nodeName Optional node name (if empty random node name will be generated)
      * @return void
-     * @throws NodeException
      * @todo define how this is to be handled
      */
     public function copyAction(NodeInterface $node, NodeInterface $targetNode, $position, $nodeName = null)

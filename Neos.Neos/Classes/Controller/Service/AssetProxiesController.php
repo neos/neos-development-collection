@@ -97,8 +97,13 @@ class AssetProxiesController extends ActionController
      */
     public function indexAction(string $searchTerm = '', int $limit = 10): void
     {
-        $assetConstraints = $this->request->hasArgument('constraints')
-            ? AssetConstraints::fromArray($this->request->getArgument('constraints'))
+        $serializedAssetConstraints = $this->request->hasArgument('constraints')
+            ? $this->request->getArgument('constraints')
+            : null;
+        $assetConstraints = $serializedAssetConstraints
+            ? AssetConstraints::fromArray(is_array($serializedAssetConstraints)
+                ? $serializedAssetConstraints
+                : [$serializedAssetConstraints])
             : AssetConstraints::create();
         $assetSources = $assetConstraints->applyToAssetSources($this->assetSourceService->getAssetSources());
 

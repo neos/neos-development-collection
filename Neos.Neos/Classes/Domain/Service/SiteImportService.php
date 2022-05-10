@@ -33,6 +33,7 @@ use Neos\ContentRepository\Service\NodePaths;
  *
  * @Flow\Scope("singleton")
  * @api
+ * @todo import me event-sourced
  */
 class SiteImportService
 {
@@ -127,7 +128,7 @@ class SiteImportService
      * @return Site the imported site
      * @throws NeosException
      */
-    public function importFromPackage($packageKey)
+    /*public function importFromPackage($packageKey)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1384192950);
@@ -144,7 +145,7 @@ class SiteImportService
                 $exception->getMessage()
             ), 1300360480, $exception);
         }
-    }
+    }*/
 
     /**
      * Imports one or multiple sites from the XML file at $pathAndFilename
@@ -153,13 +154,12 @@ class SiteImportService
      * @return Site The imported site
      * @throws UnknownPackageException|InvalidPackageStateException|NeosException
      */
-    public function importFromFile($pathAndFilename)
+    /*public function importFromFile($pathAndFilename)
     {
         if (!file_exists($pathAndFilename)) {
             throw new NeosException(sprintf('Error: File "%s" does not exist.', $pathAndFilename), 1540934412);
         }
 
-        /** @var Site $importedSite */
         $site = null;
         $xmlReader = new \XMLReader();
         if ($xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE) === false) {
@@ -218,7 +218,7 @@ class SiteImportService
         }
         $this->emitSiteImported($site);
         return $site;
-    }
+    }*/
 
     /**
      * Updates or creates a site with the given $siteNodeName

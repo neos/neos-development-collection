@@ -38,6 +38,9 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
     {
     }
 
+    /**
+     * @param array<string,mixed> $settings
+     */
     public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $points = OriginDimensionSpacePointSet::fromArray($settings['points']);

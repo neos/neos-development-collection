@@ -120,7 +120,8 @@ class NodeView extends JsonView
                     ];
                 } else {
                     $this->systemLogger->info(sprintf(
-                        'You have a node that is no longer connected to a document node ancestor. Name: %s (Identifier: %s)',
+                        'You have a node that is no longer connected to a document node ancestor.'
+                            . ' Name: %s (Identifier: %s)',
                         $node->getNodeName(),
                         $node->getNodeAggregateIdentifier()
                     ), LogEnvironment::fromMethodName(__METHOD__));
@@ -172,8 +173,8 @@ class NodeView extends JsonView
         $nodes = [];
         if ($this->privilegeManager->isGranted(
             NodeTreePrivilege::class,
-            new NodePrivilegeSubject($node))
-        ) {
+            new NodePrivilegeSubject($node)
+        )) {
             $this->collectChildNodeData(
                 $nodes,
                 $node,
@@ -207,8 +208,8 @@ class NodeView extends JsonView
         $data = [];
         if ($this->privilegeManager->isGranted(
             NodeTreePrivilege::class,
-            new NodePrivilegeSubject($node))
-        ) {
+            new NodePrivilegeSubject($node)
+        )) {
             $childNodes = [];
             $this->collectChildNodeData(
                 $childNodes,
@@ -246,7 +247,7 @@ class NodeView extends JsonView
      *
      * @param array<mixed> &$nodes
      * @param NodeInterface $node
-     * @param string $nodeTypeFilter
+     * @param ?string $nodeTypeFilter
      * @param integer $depth levels of child nodes to fetch. 0 = unlimited
      * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode,
      *                                 no matter what is defined with $depth.
@@ -266,10 +267,10 @@ class NodeView extends JsonView
             $node->getDimensionSpacePoint(),
             $node->getVisibilityConstraints()
         );
-        foreach ($nodeAccessor->findChildNodes(
-            $node,
-            $this->nodeTypeConstraintsFactory->parseFilterString($nodeTypeFilter)
-        ) as $childNode) {
+        $nodeTypeConstraints = $nodeTypeFilter
+            ? $this->nodeTypeConstraintsFactory->parseFilterString($nodeTypeFilter)
+            : null;
+        foreach ($nodeAccessor->findChildNodes($node, $nodeTypeConstraints) as $childNode) {
             if (!$this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($childNode))) {
                 continue;
             }
@@ -310,7 +311,8 @@ class NodeView extends JsonView
                     break;
                 case self::STYLE_TREE:
                     $children = [];
-                    $hasChildNodes = $childNode->hasChildNodes($nodeTypeFilter) === true;
+                    $grandChildNodes = $nodeAccessor->findChildNodes($childNode, $nodeTypeConstraints);
+                    $hasChildNodes = $grandChildNodes->count() > 0;
                     if ($expand && $hasChildNodes) {
                         $this->collectChildNodeData(
                             $children,
@@ -395,6 +397,7 @@ class NodeView extends JsonView
             );
         };
 
+        /** @var iterable<mixed> $nodeCollection */
         foreach ($nodeCollection as $firstLevelNode) {
             $collectTreeNodeData($treeNodes, $firstLevelNode);
         }
@@ -402,6 +405,10 @@ class NodeView extends JsonView
         return $treeNodes;
     }
 
+    /**
+     * @param array<mixed> $children
+     * @return array<string,mixed>
+     */
     public function collectTreeNodeData(
         NodeInterface $node,
         bool $expand = true,

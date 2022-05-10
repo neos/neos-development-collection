@@ -1,15 +1,17 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\NodeAccess\Command;
 
 use Neos\ContentRepository\Service\WorkspaceMaintenanceService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
-/**
- *
- */
 class WorkspaceCommandController extends CommandController
 {
+    #[Flow\Inject]
+    protected WorkspaceMaintenanceService $workspaceMaintenanceService;
 
     /**
      * Rebase all outdated content streams

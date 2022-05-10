@@ -34,14 +34,17 @@ class DimensionController extends AbstractModuleController
 
     public function indexAction(string $type = 'intraDimension', string $dimensionSpacePointHash = null): void
     {
+        $dimensionSpacePoint = $dimensionSpacePointHash
+            ? $this->interDimensionalVariationGraph->getDimensionSpacePoints()[$dimensionSpacePointHash]
+            : null;
         $graph = match ($type) {
             'intraDimension' => VisualIntraDimensionalVariationGraph::fromContentDimensionSource(
                 $this->contentDimensionSource
             ),
-            'interDimension' => $dimensionSpacePointHash
+            'interDimension' => $dimensionSpacePoint
                 ? VisualInterDimensionalVariationGraph::forInterDimensionalVariationSubgraph(
                     $this->interDimensionalVariationGraph,
-                    $this->interDimensionalVariationGraph->getDimensionSpacePoints()[$dimensionSpacePointHash]
+                    $dimensionSpacePoint
                 )
                 : VisualInterDimensionalVariationGraph::forInterDimensionalVariationGraph(
                     $this->interDimensionalVariationGraph,

@@ -68,6 +68,7 @@ abstract class AbstractModuleController extends ActionController
     /**
      * Display no flash message at all on errors.
      *
+     * @phpstan-ignore-next-line Flow does not properly declare its types here
      * @return false
      */
     protected function getErrorFlashMessage()

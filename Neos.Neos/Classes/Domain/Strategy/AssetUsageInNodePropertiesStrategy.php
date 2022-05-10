@@ -28,7 +28,7 @@ use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 {
     /**
-     * @var array<string,AssetUsageInNodeProperties>
+     * @var array<string,array<AssetUsageInNodeProperties>>
      */
     protected array $firstlevelCache = [];
 

@@ -13,6 +13,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
@@ -35,9 +36,9 @@ trait FusionViewI18nTrait
      *
      * @throws InvalidLocaleIdentifierException
      */
-    protected function setFallbackRuleFromDimension(NodeInterface $currentSiteNode): void
+    protected function setFallbackRuleFromDimension(DimensionSpacePoint $dimensionSpacePoint): void
     {
-        $dimensions = $currentSiteNode->getDimensionSpacePoint()->coordinates;
+        $dimensions = $dimensionSpacePoint->coordinates;
         if (array_key_exists('language', $dimensions)) {
             $currentLocale = new Locale($dimensions['language']);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);

@@ -23,15 +23,16 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
  */
 class NodeTypeConfigurationEnrichmentAspect
 {
-
     /**
      * @var array
+     * @phpstan-var array<mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      */
     protected $dataTypesDefaultConfiguration;
 
     /**
      * @var array
+     * @phpstan-var array<mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
      */
     protected $editorDefaultConfiguration;
@@ -67,8 +68,8 @@ class NodeTypeConfigurationEnrichmentAspect
 
     /**
      * @param string $nodeTypeName
-     * @param array $configuration
-     * @param array $declaredSuperTypes
+     * @param array<string,mixed> $configuration
+     * @param array<string,NodeType> $declaredSuperTypes
      * @return void
      */
     protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration, array $declaredSuperTypes)
@@ -83,9 +84,9 @@ class NodeTypeConfigurationEnrichmentAspect
     }
 
     /**
-     * @param string $nodeTypeLabelIdPrefix
-     * @param array $configuration
-     * @param array $declaredSuperTypes
+     * @param string $nodeTypeName
+     * @param array<string,mixed> $configuration
+     * @param array<string,NodeType> $declaredSuperTypes
      * @return void
      */
     protected function setPropertyLabels($nodeTypeName, array &$configuration, array $declaredSuperTypes)
@@ -160,31 +161,30 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)
     {
-        if ($nodeTypeName !== null) {
-            $thumbnailUrl = '';
-            if (isset($configurationThumbnail)) {
-                $thumbnailUrl = $configurationThumbnail;
-                if (strpos($thumbnailUrl, 'resource://') === 0) {
-                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
-                }
-            } else {
-                # look in well know location
-                $splitPrefix = $this->splitIdentifier($nodeTypeName);
-                $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
-                $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
-                if (file_exists($resourcePath)) {
-                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
-                }
+        $thumbnailUrl = '';
+        if (!empty($configurationThumbnail)) {
+            $thumbnailUrl = $configurationThumbnail;
+            if (strpos($thumbnailUrl, 'resource://') === 0) {
+                $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
             }
-            return $thumbnailUrl;
+        } else {
+            # look in well know location
+            $splitPrefix = $this->splitIdentifier($nodeTypeName);
+            $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
+            $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+            if (file_exists($resourcePath)) {
+                $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
+            }
         }
+
+        return $thumbnailUrl;
     }
 
     /**
      * @param string $nodeTypeLabelIdPrefix
      * @param string $propertyName
      * @param string $editorName
-     * @param array $editorOptions
+     * @param array<string,mixed> $editorOptions
      * @param callable $translationIdGenerator
      * @return void
      */
@@ -197,7 +197,7 @@ class NodeTypeConfigurationEnrichmentAspect
     ) {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('selectBoxEditor.placeholder');
                 }
 
@@ -219,12 +219,12 @@ class NodeTypeConfigurationEnrichmentAspect
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextFieldEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('textFieldEditor.placeholder');
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextAreaEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('textAreaEditor.placeholder');
                 }
                 break;
@@ -234,8 +234,8 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * Sets labels for global NodeType elements like tabs and groups and the general label.
      *
-     * @param string $nodeTypeLabelIdPrefix
-     * @param array $configuration
+     * @param string $nodeTypeName
+     * @param array<string,mixed> $configuration
      * @return void
      */
     protected function setGlobalUiElementLabels($nodeTypeName, array &$configuration)
@@ -321,7 +321,7 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * Should a label be generated for the given field or is there something configured?
      *
-     * @param array $parentConfiguration
+     * @param array<string,mixed> $parentConfiguration
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
@@ -392,7 +392,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * id, source and packageKey.
      *
      * @param string $id translation id with possible package and source parts
-     * @return array
+     * @return array<string,string>
      */
     protected function splitIdentifier($id)
     {

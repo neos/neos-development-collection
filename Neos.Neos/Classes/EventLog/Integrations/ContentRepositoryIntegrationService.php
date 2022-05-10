@@ -57,12 +57,12 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     protected NodeAccessorManager $nodeAccessorManager;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $changedNodes = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $currentNodeAddEvents = [];
 
@@ -82,9 +82,9 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     protected $currentlyAdopting = 0;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
-    #protected $scheduledNodeEventUpdates = [];
+    protected $scheduledNodeEventUpdates = [];
 
     /**
      * React on the Doctrine preFlush event and trigger the respective internal node events
@@ -432,7 +432,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         $this->scheduledNodeEventUpdates[$documentNodeAddress->serializeForUri()] = [
             'workspaceName' => $nodeAddress->workspaceName,
             'nestedNodeIdentifiersWhichArePublished' => [],
-            'targetWorkspace' => $targetWorkspace->getName(),
+            'targetWorkspace' => $targetWorkspace->getWorkspaceName(),
             'documentNode' => $documentNode
         ];
 
@@ -445,17 +445,15 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      *
      * @return void
      */
-    public function updateEventsAfterPublish()
+    /*public function updateEventsAfterPublish()
     {
         if (!$this->eventEmittingService->isEnabled()) {
             return;
         }
 
-        /** @var EntityManager $entityManager */
         $entityManager = $this->entityManager;
 
         foreach ($this->scheduledNodeEventUpdates as $documentPublish) {
-            /* @var NodeEvent $nodeEvent  */
             $nodeEvent = $this->eventEmittingService->emit(self::DOCUMENT_PUBLISHED, [], NodeEvent::class);
             $nodeEvent->setNode($documentPublish['documentNode']);
             $nodeEvent->setWorkspaceName($documentPublish['targetWorkspace']);
@@ -479,7 +477,8 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         }
 
         $this->scheduledNodeEventUpdates = [];
-    }
+
+    }*/
 
     /**
      * @return void
@@ -489,7 +488,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         $this->changedNodes = [];
         $this->scheduledNodeEventUpdates = [];
         $this->currentlyAdopting = 0;
-        $this->currentlyCopying = 0;
+        $this->currentlyCopying = false;
         $this->currentNodeAddEvents = [];
     }
 }

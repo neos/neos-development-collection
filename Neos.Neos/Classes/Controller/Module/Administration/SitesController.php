@@ -107,11 +107,6 @@ class SitesController extends AbstractModuleController
      */
     protected $session;
 
-    /**
-     * @var ThrowableStorageInterface
-     */
-    private $throwableStorage;
-
     #[Flow\Inject]
     protected UserService $domainUserService;
 
@@ -120,14 +115,6 @@ class SitesController extends AbstractModuleController
 
     #[Flow\Inject]
     protected ContentGraphInterface $contentGraph;
-
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
-    {
-        $this->throwableStorage = $throwableStorage;
-    }
 
     /**
      * @return void
@@ -369,7 +356,7 @@ class SitesController extends AbstractModuleController
      * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
-    public function importSiteAction($packageKey)
+    /*public function importSiteAction($packageKey)
     {
         try {
             $this->siteImportService->importFromPackage($packageKey);
@@ -395,7 +382,7 @@ class SitesController extends AbstractModuleController
             );
         }
         $this->unsetLastVisitedNodeAndRedirect('index');
-    }
+    }*/
 
     /**
      * Create a new empty site.

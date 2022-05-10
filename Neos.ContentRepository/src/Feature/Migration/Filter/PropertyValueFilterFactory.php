@@ -33,7 +33,7 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
                 /**
                  * The property name to be checked
                  */
-                private readonly string $propertyName,
+                private readonly ?string $propertyName,
                 /**
                  * The property value to be checked against
                  */

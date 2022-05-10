@@ -63,7 +63,7 @@ class NodeEvent extends Event
     /**
      * the dimension values for that event
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $dimension;
 
@@ -240,7 +240,7 @@ class NodeEvent extends Event
      */
     protected function getCurrentSite()
     {
-        if (!isset($this->data['site']) || $this->data['site'] === null) {
+        if (!isset($this->data['site'])) {
             return null;
         }
 

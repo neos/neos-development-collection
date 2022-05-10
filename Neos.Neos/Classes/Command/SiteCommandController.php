@@ -79,31 +79,25 @@ class SiteCommandController extends CommandController
      */
     protected $persistenceManager;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    #private LoggerInterface $logger;
 
-    /**
-     * @var ThrowableStorageInterface
-     */
-    private $throwableStorage;
+    #private ThrowableStorageInterface $throwableStorage;
 
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    /*public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
-    }
+    }*/
 
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    /*public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
-    }
+    }*/
 
     /**
      * Create a new site
@@ -172,7 +166,7 @@ class SiteCommandController extends CommandController
      * @param string $filename relative path and filename to the XML file containing the sites content
      * @return void
      */
-    public function importCommand($packageKey = null, $filename = null)
+    /*public function importCommand($packageKey = null, $filename = null)
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (isset($exceedingArguments[0]) && $packageKey === null && $filename === null) {
@@ -229,7 +223,7 @@ class SiteCommandController extends CommandController
             }
         }
         $this->outputLine('Import of site "%s" finished.', [$site?->getName()]);
-    }
+    }*/
 
     /**
      * Export sites content (e.g. site:export --package-key "Neos.Demo")
@@ -255,7 +249,7 @@ class SiteCommandController extends CommandController
      *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
-    public function exportCommand(
+    /*public function exportCommand(
         $siteNode = null,
         $tidy = true,
         $filename = null,
@@ -267,8 +261,6 @@ class SiteCommandController extends CommandController
         } else {
             $sites = $this->siteRepository->findByNodeName($siteNode)->toArray();
         }
-        /** @var array<int,Site> $sites */
-
         if (count($sites) === 0) {
             $this->outputLine('<error>No site for exporting found</error>');
             $this->quit(1);
@@ -291,7 +283,7 @@ class SiteCommandController extends CommandController
         } else {
             $this->output($this->siteExportService->export($sites, $tidy, $nodeTypeFilter));
         }
-    }
+    }*/
 
     /**
      * Remove site with content and related data (with globbing)

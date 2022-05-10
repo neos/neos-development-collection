@@ -12,6 +12,7 @@ namespace Neos\Neos\Controller\Module\Management;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
@@ -35,10 +36,10 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
+use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Neos\Domain\Model\WorkspaceName as NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
@@ -59,6 +60,8 @@ use Neos\ContentRepository\Exception\WorkspaceException;
  */
 class WorkspacesController extends AbstractModuleController
 {
+    use ModuleTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var WorkspaceFinder
@@ -87,13 +90,7 @@ class WorkspacesController extends AbstractModuleController
      * @Flow\Inject
      * @var UserService
      */
-    protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
+    protected $domainUserService;
 
     /**
      * @var PackageManager
@@ -176,15 +173,15 @@ class WorkspacesController extends AbstractModuleController
         foreach ($this->workspaceFinder->findAll() as $workspace) {
             /** @var \Neos\ContentRepository\Projection\Workspace\Workspace $workspace */
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            // TODO $this->userService->currentUserCanManageWorkspace($workspace)
+            // TODO $this->domainUserService->currentUserCanManageWorkspace($workspace)
             if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace())) {
                 $workspaceName = (string)$workspace->getWorkspaceName();
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspaceName]['changesCounts'] = $this->computeChangesCount($workspace);
                 $workspacesAndCounts[$workspaceName]['canPublish']
-                    = $this->userService->currentUserCanPublishToWorkspace($workspace);
+                    = $this->domainUserService->currentUserCanPublishToWorkspace($workspace);
                 $workspacesAndCounts[$workspaceName]['canManage']
-                    = $this->userService->currentUserCanManageWorkspace($workspace);
+                    = $this->domainUserService->currentUserCanManageWorkspace($workspace);
                 $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount']
                     = count($this->workspaceFinder->findByBaseWorkspace($workspace->getWorkspaceName()));
             }
@@ -201,15 +198,16 @@ class WorkspacesController extends AbstractModuleController
         if (is_null($workspaceObj)) {
             /** @todo add flash message */
             $this->redirect('index');
+            return;
         }
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
             'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle ?: $workspaceObj->getWorkspaceName(),
             'baseWorkspaceName' => $workspaceObj->getBaseWorkspaceName(),
             'baseWorkspaceLabel' => $workspaceObj->getBaseWorkspaceName(), // TODO fallback to title
-            // TODO $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
+            // TODO $this->domainUserService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'canPublishToBaseWorkspace' => true,
-            'siteChanges' => $this->computeSiteChanges($workspace),
+            'siteChanges' => $this->computeSiteChanges($workspaceObj),
             'contentDimensions' => $this->contentDimensionSource->getContentDimensionsOrderedByPriority()
         ]);
     }
@@ -239,14 +237,6 @@ class WorkspacesController extends AbstractModuleController
         string $visibility,
         WorkspaceDescription $description
     ) {
-        // TODO
-        //$workspace = $this->workspaceFinder->findOneByWorkspaceTitle($title);
-        //if ($workspace instanceof Workspace) {
-        //    $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists',
-        // [], null, null, 'Modules', 'Neos.Neos'), '', Message::SEVERITY_WARNING);
-        //    $this->redirect('new');
-        //}
-
         $workspaceName = WorkspaceName::fromString(
             Utility::renderValidNodeName((string)$title) . '-'
                 . substr(base_convert(microtime(false), 10, 36), -5, 5)
@@ -258,27 +248,31 @@ class WorkspacesController extends AbstractModuleController
             );
         }
 
-        if ($visibility === 'private') {
-            $owner = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject(
-                $this->userService->getCurrentUser()
-            ));
-        } else {
-            $owner = null;
+        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+        if (is_null($currentUserIdentifier)) {
+            throw new \InvalidArgumentException('Cannot create workspace without a current user', 1652155039);
         }
 
-        $this->workspaceCommandHandler->handleCreateWorkspace(
-            new CreateWorkspace(
-                $workspaceName,
-                $baseWorkspace,
-                $title,
-                $description,
-                UserIdentifier::fromString(
-                    $this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser())
-                ),
-                ContentStreamIdentifier::create(),
-                $owner
-            )
-        )->blockUntilProjectionsAreUpToDate();
+        try {
+            $this->workspaceCommandHandler->handleCreateWorkspace(
+                new CreateWorkspace(
+                    $workspaceName,
+                    $baseWorkspace,
+                    $title,
+                    $description,
+                    $currentUserIdentifier,
+                    ContentStreamIdentifier::create(),
+                    $visibility === 'private' ? $currentUserIdentifier : null
+                )
+            )->blockUntilProjectionsAreUpToDate();
+        } catch (WorkspaceAlreadyExists $exception) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
+                '',
+                Message::SEVERITY_WARNING
+            );
+            $this->redirect('new');
+        }
 
         $this->redirect('index');
     }
@@ -295,6 +289,7 @@ class WorkspacesController extends AbstractModuleController
         if (is_null($workspace)) {
             // @todo add flash message
             $this->redirect('index');
+            return;
         }
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($workspace));
@@ -302,7 +297,7 @@ class WorkspacesController extends AbstractModuleController
         // $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
         $this->view->assign(
             'showOwnerSelector',
-            $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace)
+            $this->domainUserService->currentUserCanTransferOwnershipOfWorkspace($workspace)
         );
         $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
     }
@@ -511,7 +506,6 @@ class WorkspacesController extends AbstractModuleController
      *
      * @param NodeAddress $node
      * @param WorkspaceName $selectedWorkspace
-     * @throws WorkspaceException
      */
     public function discardNodeAction(NodeAddress $node, WorkspaceName $selectedWorkspace): void
     {
@@ -602,10 +596,14 @@ class WorkspacesController extends AbstractModuleController
      */
     public function publishWorkspaceAction(WorkspaceName $workspace): void
     {
+        $initiatingUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+        if (is_null($initiatingUserIdentifier)) {
+            throw new \InvalidArgumentException('Cannot publish workspace without an initiating user', 1652154772);
+        }
         $this->workspaceCommandHandler->handlePublishWorkspace(
             new PublishWorkspace(
                 $workspace,
-                $this->getCurrentUserIdentifier()
+                $initiatingUserIdentifier
             )
         )->blockUntilProjectionsAreUpToDate();
         $workspace = $this->workspaceFinder->findOneByName($workspace);
@@ -633,10 +631,14 @@ class WorkspacesController extends AbstractModuleController
      */
     public function discardWorkspaceAction(WorkspaceName $workspace): void
     {
+        $initiatingUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+        if (is_null($initiatingUserIdentifier)) {
+            throw new \InvalidArgumentException('Cannot discard workspace without an initiating user', 1652154743);
+        }
         $this->workspaceCommandHandler->handleDiscardWorkspace(
             DiscardWorkspace::create(
                 $workspace,
-                $this->getCurrentUserIdentifier()
+                $initiatingUserIdentifier
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -983,7 +985,7 @@ class WorkspacesController extends AbstractModuleController
                 && $workspace !== $excludedWorkspace
                 && ($workspace->isPublicWorkspace()
                     || $workspace->isInternalWorkspace()
-                    || $this->userService->currentUserCanManageWorkspace($workspace))
+                    || $this->domainUserService->currentUserCanManageWorkspace($workspace))
             ) {
                 $baseWorkspaceOptions[(string)$workspace->getWorkspaceName()] = (string)$workspace->getWorkspaceTitle();
             }
@@ -1000,19 +1002,12 @@ class WorkspacesController extends AbstractModuleController
     protected function prepareOwnerOptions(): array
     {
         $ownerOptions = ['' => '-'];
-        foreach ($this->userService->getUsers() as $user) {
+        foreach ($this->domainUserService->getUsers() as $user) {
             /** @var User $user */
             $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getLabel();
         }
 
         return $ownerOptions;
-    }
-
-    private function getCurrentUserIdentifier(): UserIdentifier
-    {
-        return UserIdentifier::fromString(
-            $this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser())
-        );
     }
 
     private function getBaseWorkspaceWhenSureItExists(Workspace $workspace): Workspace

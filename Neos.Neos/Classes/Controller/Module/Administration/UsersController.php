@@ -58,7 +58,7 @@ class UsersController extends AbstractModuleController
      * @Flow\Inject
      * @var UserService
      */
-    protected $userService;
+    protected $domainUserService;
 
     protected ?User $currentUser;
 
@@ -119,7 +119,7 @@ class UsersController extends AbstractModuleController
                 );
             }
         }
-        $this->currentUser = $this->userService->getCurrentUser();
+        $this->currentUser = $this->domainUserService->getCurrentUser();
     }
 
     /**
@@ -131,9 +131,9 @@ class UsersController extends AbstractModuleController
     public function indexAction(string $searchTerm = ''): void
     {
         if (empty($searchTerm)) {
-            $users = $this->userService->getUsers();
+            $users = $this->domainUserService->getUsers();
         } else {
-            $users = $this->userService->searchUsers($searchTerm);
+            $users = $this->domainUserService->searchUsers($searchTerm);
         }
 
         $this->view->assignMultiple([
@@ -200,11 +200,17 @@ class UsersController extends AbstractModuleController
         array $roleIdentifiers,
         string $authenticationProviderName = null
     ): void {
-        $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        $isCreationAllowed = $this->userService->currentUserIsAdministrator()
+        $currentUserRoles = $this->currentUser ? $this->domainUserService->getAllRoles($this->currentUser) : [];
+        $isCreationAllowed = $this->domainUserService->currentUserIsAdministrator()
             || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
-            $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
+            $this->domainUserService->addUser(
+                $username,
+                $password[0],
+                $user,
+                $roleIdentifiers,
+                $authenticationProviderName
+            );
             $this->addFlashMessage(
                 $this->getModuleLabel('users.userCreated.body', [htmlspecialchars($username)]),
                 $this->getModuleLabel('users.userCreated.title'),
@@ -274,7 +280,7 @@ class UsersController extends AbstractModuleController
             );
             $this->redirect('index');
         }
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
         $this->addFlashMessage(
             $this->getModuleLabel('users.userUpdated.body', [$user->getName()->getFullName()]),
             $this->getModuleLabel('users.userUpdated.title'),
@@ -315,7 +321,7 @@ class UsersController extends AbstractModuleController
             );
             $this->redirect('index');
         }
-        $this->userService->deleteUser($user);
+        $this->domainUserService->deleteUser($user);
         $this->addFlashMessage(
             $this->getModuleLabel('users.userDeleted.body', [htmlspecialchars($user->getName()->getFullName())]),
             $this->getModuleLabel('users.userDeleted.title'),
@@ -335,7 +341,7 @@ class UsersController extends AbstractModuleController
      */
     public function editAccountAction(Account $account): void
     {
-        $user = $this->userService->getUser(
+        $user = $this->domainUserService->getUser(
             $account->getAccountIdentifier(),
             $account->getAuthenticationProviderName()
         );
@@ -374,7 +380,7 @@ class UsersController extends AbstractModuleController
      */
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
     {
-        $user = $this->userService->getUser(
+        $user = $this->domainUserService->getUser(
             $account->getAccountIdentifier(),
             $account->getAuthenticationProviderName()
         );
@@ -397,6 +403,7 @@ class UsersController extends AbstractModuleController
                 $roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
             }
             if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles(
+                /** @phpstan-ignore-next-line Flow does not properly declare its type here */
                 $roles,
                 'Neos.Neos:Backend.Module.Administration.Users'
             )) {
@@ -410,12 +417,12 @@ class UsersController extends AbstractModuleController
                 $this->forward('edit', null, null, ['user' => $this->currentUser]);
             }
         }
-        $password = array_shift($password);
+        $password = array_shift($password) ?: '';
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
+            $this->domainUserService->setUserPassword($user, $password);
         }
 
-        $this->userService->setRolesForAccount($account, $roleIdentifiers);
+        $this->domainUserService->setRolesForAccount($account, $roleIdentifiers);
         $this->addFlashMessage(
             $this->getModuleLabel('users.accountUpdated.body'),
             $this->getModuleLabel('users.accountUpdated.title'),
@@ -462,7 +469,7 @@ class UsersController extends AbstractModuleController
         }
         /** @var User $user */
         $user->addElectronicAddress($electronicAddress);
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
 
         $this->addFlashMessage(
             $this->getModuleLabel(
@@ -504,7 +511,7 @@ class UsersController extends AbstractModuleController
             $this->redirect('index');
         }
         $user->removeElectronicAddress($electronicAddress);
-        $this->userService->updateUser($user);
+        $this->domainUserService->updateUser($user);
 
         $this->addFlashMessage(
             $this->getModuleLabel(
@@ -583,12 +590,12 @@ class UsersController extends AbstractModuleController
      */
     protected function getAllowedRoles(): array
     {
-        $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
+        $currentUserRoles = $this->currentUser ? $this->domainUserService->getAllRoles($this->currentUser) : [];
         $currentUserRoles = array_filter($currentUserRoles, static function (Role $role) {
             return $role->isAbstract() !== true;
         });
 
-        $roles = $this->userService->currentUserIsAdministrator()
+        $roles = $this->domainUserService->currentUserIsAdministrator()
             ? $this->policyService->getRoles()
             : $currentUserRoles;
 
@@ -607,12 +614,12 @@ class UsersController extends AbstractModuleController
      */
     protected function isEditingAllowed(User $user): bool
     {
-        if ($this->userService->currentUserIsAdministrator()) {
+        if ($this->domainUserService->currentUserIsAdministrator()) {
             return true;
         }
 
-        $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        $userRoles = $this->userService->getAllRoles($user);
+        $currentUserRoles = $this->currentUser ? $this->domainUserService->getAllRoles($this->currentUser) : [];
+        $userRoles = $this->domainUserService->getAllRoles($user);
         return count(array_diff($userRoles, $currentUserRoles)) === 0;
     }
 }
