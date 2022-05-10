@@ -11,9 +11,7 @@ use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Scope("singleton")]
 class WorkspaceMaintenanceService
 {
     protected WorkspaceFinder $workspaceFinder;

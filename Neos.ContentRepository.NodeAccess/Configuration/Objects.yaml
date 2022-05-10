@@ -18,3 +18,12 @@ Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
 
 'Neos\ContentRepository\SharedModel\NodeType\NodeLabelGeneratorInterface':
   className: Neos\ContentRepository\NodeAccess\NodeLabel\ExpressionBasedNodeLabelGenerator
+
+Neos\ContentRepository\NodeAccess\Command\ContentStreamCommandController:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'

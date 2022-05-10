@@ -144,13 +144,6 @@ class Package extends BasePackage
         );
 
         $dispatcher->connect(
-            PersistenceManager::class,
-            'allObjectsPersisted',
-            ContentRepositoryIntegrationService::class,
-            'updateEventsAfterPublish'
-        );
-
-        $dispatcher->connect(
             AuthenticationProviderManager::class,
             'authenticatedToken',
             EditorContentStreamZookeeper::class,

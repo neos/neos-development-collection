@@ -40,6 +40,12 @@ class ContentStreamCommandController extends CommandController
      */
     protected $workspaceCommandHandler;
 
+    /**
+     * @Flow\Inject
+     * @var ContentStreamPruner
+     */
+    protected $contentStreamPruner;
+
 
     public function __construct(EventStore $contentRepositoryEventStore)
     {

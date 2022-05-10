@@ -87,7 +87,8 @@ class Event
     /**
      * Child events, of this event
      *
-     * @var ArrayCollection<int|string,Event>
+     * @var ArrayCollection<\Neos\Neos\EventLog\Domain\Model\Event>
+     * @phpstan-var ArrayCollection<int|string,Event>
      * @codingStandardsIgnoreStart
      * @ORM\OneToMany(targetEntity="\Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade={"persist"})
      * @codingStandardsIgnoreEnd

@@ -469,10 +469,6 @@ Neos:
             events:
               - onFlush
             listener: Neos\Neos\EventLog\Integrations\EntityIntegrationService
-          Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService:
-            events:
-              - preFlush
-            listener: Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService
 
     error:
       exceptionHandler:

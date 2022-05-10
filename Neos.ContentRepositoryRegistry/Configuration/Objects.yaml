@@ -299,6 +299,21 @@ Neos\ContentRepository\Feature\WorkspaceCommandHandler:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\WorkspaceCommandHandlerObjectFactory
   factoryMethodName: buildWorkspaceCommandHandler
 
+#########################
+
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\WorkspaceMaintenanceServiceObjectFactory:
+  scope: singleton
+
+Neos\ContentRepository\Service\WorkspaceMaintenanceService:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\WorkspaceMaintenanceServiceObjectFactory
+  factoryMethodName: buildWorkspaceMaintenanceService
+
+Neos\ContentRepository\Service\ContentStreamPruner:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\WorkspaceMaintenanceServiceObjectFactory
+  factoryMethodName: buildContentStreamPruner
+
 
 #########################
 

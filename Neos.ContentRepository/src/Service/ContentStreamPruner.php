@@ -8,13 +8,11 @@ use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 
-#[Flow\Scope("singleton")]
 class ContentStreamPruner
 {
     protected ContentStreamFinder $contentStreamFinder;
