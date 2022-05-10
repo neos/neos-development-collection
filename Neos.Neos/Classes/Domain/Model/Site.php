@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,8 +31,8 @@ class Site
     /**
      * Site states
      */
-    const STATE_ONLINE = 1;
-    const STATE_OFFLINE = 2;
+    public const STATE_ONLINE = 1;
+    public const STATE_OFFLINE = 2;
 
     /**
      * Name of the site

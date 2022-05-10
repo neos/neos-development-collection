@@ -24,7 +24,7 @@ abstract class NodePaths
      * Regex pattern which matches a "context path", ie. a node path possibly containing context information such as the
      * workspace name. This pattern is used at least in the route part handler.
      */
-    const MATCH_PATTERN_CONTEXTPATH = '/^   # A Context Path consists of...
+    public const MATCH_PATTERN_CONTEXTPATH = '/^   # A Context Path consists of...
 		(?>(?P<NodePath>                       # 1) a NODE PATH
 			(?>
 			\/ [a-z0-9\-]+ |                # Which either starts with a slash followed by a node name

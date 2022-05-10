@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -47,8 +49,10 @@ class ContentTitleNodeCreationHandler implements NodeCreationHandlerInterface
      */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
-        if (!$this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue())
-            ->isOfType('Neos.Neos:Content')) {
+        if (
+            !$this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue())
+                ->isOfType('Neos.Neos:Content')
+        ) {
             return $command;
         }
 

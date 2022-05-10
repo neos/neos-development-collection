@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\Testing;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.
@@ -11,6 +9,10 @@ namespace Neos\Neos\Testing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Testing;
 
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Client\InternalRequestEngine;

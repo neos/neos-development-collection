@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\Workspace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Projection\Workspace;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Workspace;
+
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
@@ -23,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class WorkspaceFinder
 {
-
     private bool $cacheEnabled = true;
 
     /**
@@ -88,8 +88,10 @@ final class WorkspaceFinder
     public function findOneByCurrentContentStreamIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier
     ): ?Workspace {
-        if ($this->cacheEnabled
-            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+        if (
+            $this->cacheEnabled
+            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])
+        ) {
             return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
         }
 

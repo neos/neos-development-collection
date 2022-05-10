@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -70,7 +73,7 @@ class LinkingService
      *
      * @var string
      */
-    const PATTERN_SUPPORTED_URIS
+    public const PATTERN_SUPPORTED_URIS
         = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
 
     /**

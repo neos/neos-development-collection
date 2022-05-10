@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;

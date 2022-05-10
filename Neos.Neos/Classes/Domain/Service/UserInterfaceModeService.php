@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
@@ -56,7 +59,8 @@ class UserInterfaceModeService
      */
     public function findModeByCurrentUser()
     {
-        if ($this->userService->getBackendUser() === null
+        if (
+            $this->userService->getBackendUser() === null
             || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
         ) {
             return $this->findModeByName('live');

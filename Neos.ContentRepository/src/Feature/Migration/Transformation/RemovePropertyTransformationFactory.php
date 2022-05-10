@@ -39,7 +39,7 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
         array $settings
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $propertyName = $settings['property'];
-        return new class(
+        return new class (
             $propertyName,
             $this->nodeAggregateCommandHandler
         ) implements NodeBasedTransformationInterface {

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 use Behat\Transliterator\Transliterator;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
@@ -51,8 +53,10 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
      */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
-        if (!$this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue())
-            ->isOfType('Neos.Neos:Document')) {
+        if (
+            !$this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue())
+                ->isOfType('Neos.Neos:Document')
+        ) {
             return $command;
         }
         $propertyValues = $command->initialPropertyValues;

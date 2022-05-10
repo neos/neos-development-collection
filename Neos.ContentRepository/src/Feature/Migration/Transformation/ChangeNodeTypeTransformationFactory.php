@@ -18,8 +18,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-/** @codingStandardsIgnoreStart */
-use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreStart */ use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
@@ -48,7 +47,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE;
         }
 
-        return new class(
+        return new class (
             $settings['newType'],
             $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
             $this->nodeAggregateCommandHandler

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\ContentStream;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Projection\ContentStream;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module\User;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,13 @@ namespace Neos\Neos\Controller\Module\User;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\User;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
@@ -74,11 +76,13 @@ class UserSettingsController extends AbstractModuleController
                 Account::class
             );
             /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-            foreach ([
-                $propertyMappingConfigurationForUser,
-                $propertyMappingConfigurationForUserName,
-                $propertyMappingConfigurationForPrimaryAccount
-            ] as $propertyMappingConfiguration) {
+            foreach (
+                [
+                    $propertyMappingConfigurationForUser,
+                    $propertyMappingConfigurationForUserName,
+                    $propertyMappingConfigurationForPrimaryAccount
+                ] as $propertyMappingConfiguration
+            ) {
                 $propertyMappingConfiguration->setTypeConverterOption(
                     PersistentObjectConverter::class,
                     PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,

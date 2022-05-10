@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddress;
@@ -25,7 +26,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeSiteResolvingService
 {
-
     /**
      * @Flow\Inject
      * @var WorkspaceFinder

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Link;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Link;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Link;
 
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -304,8 +307,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-        } catch (NodeAddressCannotBeSerializedException | HttpException
-        | NoMatchingRouteException | MissingActionNameException $e) {
+        } catch (
+            NodeAddressCannotBeSerializedException
+            | HttpException
+            | NoMatchingRouteException
+            | MissingActionNameException $e
+        ) {
             throw new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
                 $nodeAddress,

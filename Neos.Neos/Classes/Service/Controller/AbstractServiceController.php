@@ -56,8 +56,9 @@ abstract class AbstractServiceController extends ActionController
     {
         if ($this->arguments->getValidationResults()->hasErrors()) {
             $errors = [];
-            foreach ($this->arguments->getValidationResults()
-                         ->getFlattenedErrors() as $propertyName => $propertyErrors) {
+            foreach (
+                $this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors
+            ) {
                 /** @var array<\Neos\Error\Messages\Error> $propertyErrors */
                 foreach ($propertyErrors as $propertyError) {
                     $error = [

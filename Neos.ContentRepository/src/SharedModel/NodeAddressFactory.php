@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\SharedModel;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\SharedModel;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel;
 
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Service\NodePaths;

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Integrations;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\EventLog\Integrations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Integrations;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,14 +32,14 @@ use Neos\Neos\EventLog\Domain\Model\NodeEvent;
  */
 class ContentRepositoryIntegrationService extends AbstractIntegrationService
 {
-    const NODE_ADDED = 'Node.Added';
-    const NODE_UPDATED = 'Node.Updated';
-    const NODE_LABEL_CHANGED = 'Node.LabelChanged';
-    const NODE_REMOVED = 'Node.Removed';
-    const DOCUMENT_PUBLISHED = 'Node.Published';
-    const NODE_COPY = 'Node.Copy';
-    const NODE_MOVE = 'Node.Move';
-    const NODE_ADOPT = 'Node.Adopt';
+    public const NODE_ADDED = 'Node.Added';
+    public const NODE_UPDATED = 'Node.Updated';
+    public const NODE_LABEL_CHANGED = 'Node.LabelChanged';
+    public const NODE_REMOVED = 'Node.Removed';
+    public const DOCUMENT_PUBLISHED = 'Node.Published';
+    public const NODE_COPY = 'Node.Copy';
+    public const NODE_MOVE = 'Node.Move';
+    public const NODE_ADOPT = 'Node.Adopt';
 
     /**
      * @Flow\Inject

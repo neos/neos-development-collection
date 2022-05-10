@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -88,9 +91,11 @@ class PluginViewImplementation extends PluginImplementation
 
         $controllerObjectPairs = [];
         $pluginViewName = $this->pluginViewNode->getProperty('view');
-        foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-            $node->getNodeType()
-        ) as $pluginViewDefinition) {
+        foreach (
+            $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
+                $node->getNodeType()
+            ) as $pluginViewDefinition
+        ) {
             /** @var PluginViewDefinition $pluginViewDefinition */
             if ($pluginViewDefinition->getName() !== $pluginViewName) {
                 continue;
@@ -131,7 +136,7 @@ class PluginViewImplementation extends PluginImplementation
                 $message = 'Plugin View not selected';
             }
             if ($this->pluginViewNode->getProperty('view')) {
-                $message ='Master View or Plugin View not found';
+                $message = 'Master View or Plugin View not found';
             }
             return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live'
                 || $this->objectManager->getContext()->isDevelopment()

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\Neos\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\TypeConverter;
 
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\Projection\Content\NodeInterface;

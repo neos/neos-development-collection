@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Infrastructure\Projection;
 
 /*
  * This file is part of the Neos.ContentRepositoryMigration package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Infrastructure\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Infrastructure\Projection;
 
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;

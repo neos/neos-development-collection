@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,18 +10,23 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
+
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
+use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
+use Neos\Neos\View\FusionView;
 use Psr\Http\Message\ResponseInterface;
 
 class ReloadContentOutOfBand extends AbstractFeedback

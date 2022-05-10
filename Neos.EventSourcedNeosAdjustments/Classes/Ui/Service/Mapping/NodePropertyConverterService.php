@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -229,8 +230,10 @@ class NodePropertyConverterService
 
         // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects.
         // Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue)
-            && !is_array($propertyValue)) {
+        if (
+            !TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue)
+            && !is_array($propertyValue)
+        ) {
             return null;
         }
 
@@ -348,8 +351,10 @@ class NodePropertyConverterService
         string $typeConverterClass,
         string $dataType
     ): void {
-        if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
-            || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])) {
+        if (
+            !isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
+            || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])
+        ) {
             return;
         }
 

@@ -1,15 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\ValueObject;
-
-use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Routing\Dto\RouteTags;
-use Psr\Http\Message\UriInterface;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -20,6 +9,19 @@ use Psr\Http\Message\UriInterface;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting\ValueObject;
+
+use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @Flow\Proxy(false)

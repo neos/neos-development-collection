@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\View;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Service\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\View;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -41,8 +44,8 @@ class NodeView extends JsonView
     /**
      * @var integer
      */
-    const STYLE_LIST = 1;
-    const STYLE_TREE = 2;
+    public const STYLE_LIST = 1;
+    public const STYLE_TREE = 2;
 
     /**
      * @var integer
@@ -171,10 +174,12 @@ class NodeView extends JsonView
     ) {
         $this->outputStyle = $outputStyle;
         $nodes = [];
-        if ($this->privilegeManager->isGranted(
-            NodeTreePrivilege::class,
-            new NodePrivilegeSubject($node)
-        )) {
+        if (
+            $this->privilegeManager->isGranted(
+                NodeTreePrivilege::class,
+                new NodePrivilegeSubject($node)
+            )
+        ) {
             $this->collectChildNodeData(
                 $nodes,
                 $node,
@@ -206,10 +211,12 @@ class NodeView extends JsonView
     ) {
         $this->outputStyle = self::STYLE_TREE;
         $data = [];
-        if ($this->privilegeManager->isGranted(
-            NodeTreePrivilege::class,
-            new NodePrivilegeSubject($node)
-        )) {
+        if (
+            $this->privilegeManager->isGranted(
+                NodeTreePrivilege::class,
+                new NodePrivilegeSubject($node)
+            )
+        ) {
             $childNodes = [];
             $this->collectChildNodeData(
                 $childNodes,
@@ -277,10 +284,15 @@ class NodeView extends JsonView
             $expand = ($depth === 0 || $recursionPointer < $depth);
 
             /** @todo traverse up in this case to avoid path checks */
-            if ($expand === false && $untilNode !== null && strpos(
-                (string)$nodeAccessor->findNodePath($untilNode),
-                (string)$nodeAccessor->findNodePath($childNode),
-            ) === 0 && $childNode !== $untilNode) {
+            if (
+                $expand === false
+                && $untilNode !== null
+                && strpos(
+                    (string)$nodeAccessor->findNodePath($untilNode),
+                    (string)$nodeAccessor->findNodePath($childNode),
+                ) === 0
+                && $childNode !== $untilNode
+            ) {
                 // in case $untilNode is set, and the current childNode is on the rootline of $untilNode
                 // (and not the node itself), expand the node.
                 $expand = true;

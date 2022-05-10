@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller\Module\Administration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -122,10 +125,12 @@ class SitesController extends AbstractModuleController
     public function indexAction()
     {
         $sitePackagesAndSites = [];
-        foreach ($this->packageManager->getFilteredPackages(
-            'available',
-            'neos-site'
-        ) as $sitePackageKey => $sitePackage) {
+        foreach (
+            $this->packageManager->getFilteredPackages(
+                'available',
+                'neos-site'
+            ) as $sitePackageKey => $sitePackage
+        ) {
             /** @var Package $sitePackage */
             $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = [
                 'package' => $sitePackage,
@@ -302,7 +307,7 @@ class SitesController extends AbstractModuleController
      * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
-    public function createSitePackageAction(string $packageKey, string $generatorClass, string $siteName) : void
+    public function createSitePackageAction(string $packageKey, string $generatorClass, string $siteName): void
     {
         if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter') === false) {
             $this->addFlashMessage(
@@ -420,7 +425,7 @@ class SitesController extends AbstractModuleController
             );
             $this->redirect('createSiteNode');
             return;
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite|NodeNameIsAlreadyOccupied $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),

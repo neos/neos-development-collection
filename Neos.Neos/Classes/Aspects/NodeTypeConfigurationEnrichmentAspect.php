@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Aspects;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Aspects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Aspects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
@@ -128,10 +131,13 @@ class NodeTypeConfigurationEnrichmentAspect
                 );
             }
 
-            if (isset($propertyConfiguration['ui']['inline']['editorOptions']) && $this->shouldFetchTranslation(
-                $propertyConfiguration['ui']['inline']['editorOptions'],
-                'placeholder'
-            )) {
+            if (
+                isset($propertyConfiguration['ui']['inline']['editorOptions'])
+                && $this->shouldFetchTranslation(
+                    $propertyConfiguration['ui']['inline']['editorOptions'],
+                    'placeholder'
+                )
+            ) {
                 $propertyConfiguration['ui']['inline']['editorOptions']['placeholder']
                     = $this->getPropertyConfigurationTranslationId(
                         $nodeTypeLabelIdPrefix,
@@ -140,7 +146,8 @@ class NodeTypeConfigurationEnrichmentAspect
                     );
             }
 
-            if (isset($propertyConfiguration['ui']['help']['message'])
+            if (
+                isset($propertyConfiguration['ui']['help']['message'])
                 && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')
             ) {
                 $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId(
@@ -248,10 +255,13 @@ class NodeTypeConfigurationEnrichmentAspect
                 'label'
             );
         }
-        if (isset($configuration['ui']['help']['message']) && $this->shouldFetchTranslation(
-            $configuration['ui']['help'],
-            'message'
-        )) {
+        if (
+            isset($configuration['ui']['help']['message'])
+            && $this->shouldFetchTranslation(
+                $configuration['ui']['help'],
+                'message'
+            )
+        ) {
             $configuration['ui']['help']['message'] = $this->getInspectorElementTranslationId(
                 $nodeTypeLabelIdPrefix,
                 'ui',
@@ -288,7 +298,8 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($creationDialogConfiguration)) {
             $creationDialogConfiguration = &$configuration['ui']['creationDialog']['elements'];
             foreach ($creationDialogConfiguration as $elementName => &$elementConfiguration) {
-                if (isset($elementConfiguration['ui']['editor'])
+                if (
+                    isset($elementConfiguration['ui']['editor'])
                     && isset($elementConfiguration['ui']['editorOptions'])
                 ) {
                     $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $elementName) {

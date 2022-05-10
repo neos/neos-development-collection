@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
@@ -93,19 +96,23 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     {
         $fusionPathSegments = explode('/', $this->path);
         $numberOfFusionPathSegments = count($fusionPathSegments);
-        if (isset($fusionPathSegments[$numberOfFusionPathSegments - 3])
+        if (
+            isset($fusionPathSegments[$numberOfFusionPathSegments - 3])
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 2])
-            && $fusionPathSegments[$numberOfFusionPathSegments - 2] === 'process') {
+            && $fusionPathSegments[$numberOfFusionPathSegments - 2] === 'process'
+        ) {
             // cut off the SHORT processing syntax
             // "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -3));
         }
 
-        if (isset($fusionPathSegments[$numberOfFusionPathSegments - 4])
+        if (
+            isset($fusionPathSegments[$numberOfFusionPathSegments - 4])
             && $fusionPathSegments[$numberOfFusionPathSegments - 4] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 3])
-            && $fusionPathSegments[$numberOfFusionPathSegments - 3] === 'process') {
+            && $fusionPathSegments[$numberOfFusionPathSegments - 3] === 'process'
+        ) {
             // cut off the LONG processing syntax
             // "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -4));

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Utility;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Utility;
 
 /**
  * A collection of helper methods for the Neos backend assets

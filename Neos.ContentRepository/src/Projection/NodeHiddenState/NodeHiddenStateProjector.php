@@ -27,7 +27,6 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
  */
 class NodeHiddenStateProjector implements ProjectorInterface
 {
-
     public function __construct(
         private readonly DbalClientInterface $client,
     ) {

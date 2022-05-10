@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration\Transformation;
@@ -6,9 +7,6 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Feature\Migration\Transformation\GlobalTransformationInterface;
-use Neos\ContentRepository\Feature\Migration\Transformation\NodeAggregateBasedTransformationInterface;
-use Neos\ContentRepository\Feature\Migration\Transformation\NodeBasedTransformationInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration;
@@ -61,11 +62,11 @@ class MigrationCommandHandler
     protected TransformationsFactory $transformationFactory;
 
     public function __construct(
-        WorkspaceFinder         $workspaceFinder,
+        WorkspaceFinder $workspaceFinder,
         WorkspaceCommandHandler $workspaceCommandHandler,
-        ContentGraphInterface   $contentGraph,
-        FiltersFactory          $filterFactory,
-        TransformationsFactory  $transformationFactory
+        ContentGraphInterface $contentGraph,
+        FiltersFactory $filterFactory,
+        TransformationsFactory $transformationFactory
     ) {
         $this->workspaceFinder = $workspaceFinder;
         $this->workspaceCommandHandler = $workspaceCommandHandler;
@@ -130,8 +131,10 @@ class MigrationCommandHandler
             throw new InvalidMigrationFilterSpecified('more than one transformation type', 1617389468);
         }
 
-        if ($transformations->containsGlobal()
-            && ($filters->containsNodeAggregateBased() || $filters->containsNodeBased())) {
+        if (
+            $transformations->containsGlobal()
+            && ($filters->containsNodeAggregateBased() || $filters->containsNodeBased())
+        ) {
             throw new InvalidMigrationFilterSpecified(
                 'Global transformations are only supported without any filters',
                 1617389474
@@ -150,10 +153,12 @@ class MigrationCommandHandler
             $commandResult = $transformations->executeGlobal($contentStreamForReading, $contentStreamForWriting);
         } elseif ($transformations->containsNodeAggregateBased()) {
             foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
-                foreach ($this->contentGraph->findNodeAggregatesByType(
-                    $contentStreamForReading,
-                    $nodeTypeName
-                ) as $nodeAggregate) {
+                foreach (
+                    $this->contentGraph->findNodeAggregatesByType(
+                        $contentStreamForReading,
+                        $nodeTypeName
+                    ) as $nodeAggregate
+                ) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
                         $commandResult = $commandResult->merge(
                             $transformations->executeNodeAggregateBased($nodeAggregate, $contentStreamForWriting)
@@ -163,10 +168,12 @@ class MigrationCommandHandler
             }
         } elseif ($transformations->containsNodeBased()) {
             foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
-                foreach ($this->contentGraph->findNodeAggregatesByType(
-                    $contentStreamForReading,
-                    $nodeTypeName
-                ) as $nodeAggregate) {
+                foreach (
+                    $this->contentGraph->findNodeAggregatesByType(
+                        $contentStreamForReading,
+                        $nodeTypeName
+                    ) as $nodeAggregate
+                ) {
                     // we *also* apply the node-aggregate-based filters on the node based transformations,
                     // so that you can filter Nodes e.g. based on node type
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {

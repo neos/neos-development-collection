@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeTypeName implements \JsonSerializable, \Stringable
 {
-    const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
+    public const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
 
     /**
      * @var array<string,self>

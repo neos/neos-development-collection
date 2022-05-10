@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,10 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -20,8 +23,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class DomainMatchingStrategy
 {
-    const EXACTMATCH = 300;
-    const NOMATCH = -300;
+    public const EXACTMATCH = 300;
+    public const NOMATCH = -300;
 
     /**
      * Returns those of the given domains which match the specified hostname.
@@ -48,7 +51,8 @@ class DomainMatchingStrategy
                 $matchQuality = 0;
                 $domainHostnamePartsReverse = array_reverse(explode('.', $domainHostname));
                 foreach ($domainHostnamePartsReverse as $index => $domainHostnamePart) {
-                    if (isset($hostnameToMatchPartsReverse[$index])
+                    if (
+                        isset($hostnameToMatchPartsReverse[$index])
                         && $domainHostnamePart === $hostnameToMatchPartsReverse[$index]
                     ) {
                         $matchQuality++;

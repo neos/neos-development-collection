@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Rendering;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Rendering;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 

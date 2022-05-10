@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Validation\Validator;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,11 @@ namespace Neos\Neos\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Validation\Validator;
+
 use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 use Neos\Flow\Validation\Validator\NotEmptyValidator;
@@ -49,15 +53,17 @@ class PasswordValidator extends AbstractValidator
         $password = trim(strval(array_shift($value)));
         $repeatPassword = trim(strval(array_shift($value)));
 
-        $passwordNotEmptyValidator = new NotEmptyValidator;
+        $passwordNotEmptyValidator = new NotEmptyValidator();
         $passwordNotEmptyValidatorResult = $passwordNotEmptyValidator->validate($password);
-        $repeatPasswordNotEmptyValidator = new NotEmptyValidator;
+        $repeatPasswordNotEmptyValidator = new NotEmptyValidator();
         $repeatPasswordNotEmptyValidatorResult = $repeatPasswordNotEmptyValidator->validate($repeatPassword);
 
-        if (($passwordNotEmptyValidatorResult->hasErrors() === true)
+        if (
+            ($passwordNotEmptyValidatorResult->hasErrors() === true)
             && ($repeatPasswordNotEmptyValidatorResult->hasErrors() === true)
         ) {
-            if (!isset($this->options['allowEmpty'])
+            if (
+                !isset($this->options['allowEmpty'])
                 || isset($this->options['allowEmpty']) && intval($this->options['allowEmpty']) === 0
             ) {
                 $this->addError('The given password was empty.', 1324641097);

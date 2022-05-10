@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Command;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Command;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Command;
 
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -139,7 +142,7 @@ class SiteCommandController extends CommandController
                 [$nodeType, NodeTypeNameFactory::forSite()]
             );
             $this->quit(1);
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite|NodeNameIsAlreadyOccupied $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
             $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
             $this->quit(1);
         }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
@@ -143,8 +146,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
-            if ($generalization->getCoordinate($contentDimensionIdentifier)
-                === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)) {
+            if (
+                $generalization->getCoordinate($contentDimensionIdentifier)
+                === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)
+            ) {
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                     $this->currentNode->getContentStreamIdentifier(),
                     $generalization,

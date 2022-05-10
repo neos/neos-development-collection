@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\View;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
@@ -23,7 +26,6 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
-use Neos\Neos\View\FusionViewI18nTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -31,6 +33,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FusionView extends AbstractView
 {
+    use FusionViewI18nTrait;
+
     /**
      * @Flow\Inject
      * @var SiteNodeUtility
@@ -73,8 +77,6 @@ class FusionView extends AbstractView
 
         return $output;
     }
-
-    use FusionViewI18nTrait;
 
     /**
      * This contains the supported options, their default values, descriptions and types.

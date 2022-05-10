@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\View;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;

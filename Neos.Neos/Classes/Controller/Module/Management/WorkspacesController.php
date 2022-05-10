@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module\Management;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller\Module\Management;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Management;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -51,7 +54,6 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
  * The Neos Workspaces module controller
@@ -824,9 +826,13 @@ class WorkspacesController extends AbstractModuleController
 
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->getProperties() as $propertyName => $changedPropertyValue) {
-            if ($originalNode === null && empty($changedPropertyValue)
-                || (isset($changeNodePropertiesDefaults[$propertyName])
-                    && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName])) {
+            if (
+                $originalNode === null && empty($changedPropertyValue)
+                || (
+                    isset($changeNodePropertiesDefaults[$propertyName])
+                    && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName]
+                )
+            ) {
                 continue;
             }
 
@@ -861,7 +867,8 @@ class WorkspacesController extends AbstractModuleController
                 }
                 // The && in belows condition is on purpose as creating a thumbnail for comparison only works
                 // if actually BOTH are ImageInterface (or NULL).
-            } elseif (($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
+            } elseif (
+                ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
                 && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)
             ) {
                 $contentChanges[$propertyName] = [
@@ -870,8 +877,10 @@ class WorkspacesController extends AbstractModuleController
                     'original' => $originalPropertyValue,
                     'changed' => $changedPropertyValue
                 ];
-            } elseif ($originalPropertyValue instanceof AssetInterface
-                || $changedPropertyValue instanceof AssetInterface) {
+            } elseif (
+                $originalPropertyValue instanceof AssetInterface
+                || $changedPropertyValue instanceof AssetInterface
+            ) {
                 $contentChanges[$propertyName] = [
                     'type' => 'asset',
                     'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
@@ -931,8 +940,9 @@ class WorkspacesController extends AbstractModuleController
     protected function getPropertyLabel($propertyName, NodeInterface $changedNode)
     {
         $properties = $changedNode->getNodeType()->getProperties();
-        if (!isset($properties[$propertyName]) ||
-            !isset($properties[$propertyName]['ui']['label'])
+        if (
+            !isset($properties[$propertyName])
+            || !isset($properties[$propertyName]['ui']['label'])
         ) {
             return $propertyName;
         }
@@ -981,7 +991,8 @@ class WorkspacesController extends AbstractModuleController
         $baseWorkspaceOptions = [];
         foreach ($this->workspaceFinder->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (!$workspace->isPersonalWorkspace()
+            if (
+                !$workspace->isPersonalWorkspace()
                 && $workspace !== $excludedWorkspace
                 && ($workspace->isPublicWorkspace()
                     || $workspace->isInternalWorkspace()

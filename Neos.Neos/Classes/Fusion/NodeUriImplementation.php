@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -91,7 +94,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getAddQueryString()
     {
-        return (boolean)$this->fusionValue('addQueryString');
+        return (bool)$this->fusionValue('addQueryString');
     }
 
     /**
@@ -101,7 +104,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function isAbsolute()
     {
-        return (boolean)$this->fusionValue('absolute');
+        return (bool)$this->fusionValue('absolute');
     }
 
     /**

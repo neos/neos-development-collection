@@ -24,7 +24,7 @@ final class NodeAggregateIdentifier implements \JsonSerializable, \Stringable
     /**
      * A preg pattern to match against node aggregate identifiers
      */
-    const PATTERN = '/^([a-z0-9\-]{1,255})$/';
+    public const PATTERN = '/^([a-z0-9\-]{1,255})$/';
 
     private function __construct(
         private string $value

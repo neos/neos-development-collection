@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionResponse;
@@ -68,7 +71,8 @@ class ModuleController extends ActionController
         if (isset($module['format'])) {
             $moduleRequest->setFormat($module['format']);
         }
-        if ($this->request->hasArgument($moduleRequest->getArgumentNamespace()) === true
+        if (
+            $this->request->hasArgument($moduleRequest->getArgumentNamespace()) === true
             && is_array($this->request->getArgument($moduleRequest->getArgumentNamespace()))
         ) {
             $moduleRequest->setArguments($this->request->getArgument($moduleRequest->getArgumentNamespace()));

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,6 +10,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
+
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 
@@ -22,8 +24,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeClipboard
 {
-    const MODE_COPY = 'Copy';
-    const MODE_MOVE = 'Move';
+    public const MODE_COPY = 'Copy';
+    public const MODE_MOVE = 'Move';
 
     /**
      * @var array<int,string>

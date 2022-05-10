@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
+
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -19,11 +22,11 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  */
 class ChangeStatsViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
+
     /**
      * @return void
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception

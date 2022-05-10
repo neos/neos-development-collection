@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;

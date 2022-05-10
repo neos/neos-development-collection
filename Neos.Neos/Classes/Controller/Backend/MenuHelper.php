@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -146,7 +149,8 @@ class MenuHelper
                 continue;
             }
             // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
-            if (isset($moduleConfiguration['privilegeTarget'])
+            if (
+                isset($moduleConfiguration['privilegeTarget'])
                 && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])
             ) {
                 continue;
@@ -159,14 +163,17 @@ class MenuHelper
                     if (!$this->isModuleEnabled($modulePath)) {
                         continue;
                     }
-                    if (!$this->privilegeManager->isGranted(
-                        ModulePrivilege::class,
-                        new ModulePrivilegeSubject($modulePath)
-                    )) {
+                    if (
+                        !$this->privilegeManager->isGranted(
+                            ModulePrivilege::class,
+                            new ModulePrivilegeSubject($modulePath)
+                        )
+                    ) {
                         continue;
                     }
                     // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
-                    if (isset($submoduleConfiguration['privilegeTarget'])
+                    if (
+                        isset($submoduleConfiguration['privilegeTarget'])
                         && !$this->privilegeManager->isPrivilegeTargetGranted(
                             $submoduleConfiguration['privilegeTarget']
                         )

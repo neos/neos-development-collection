@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -48,7 +49,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface/
             $overriddenDimensionSpacePoint = DimensionSpacePoint::fromArray($settings['overriddenDimensionSpacePoint']);
         }
 
-        return new class(
+        return new class (
             $strategy,
             $overriddenDimensionSpacePoint,
             $this->nodeAggregateCommandHandler

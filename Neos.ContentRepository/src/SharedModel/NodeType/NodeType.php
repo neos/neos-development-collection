@@ -143,7 +143,7 @@ class NodeType
      *
      * @return array<string,mixed>
      */
-    protected function buildFullConfiguration() : array
+    protected function buildFullConfiguration(): array
     {
         $mergedConfiguration = [];
         $applicableSuperTypes = static::getFlattenedSuperTypes($this);
@@ -155,7 +155,8 @@ class NodeType
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
-        if (isset($this->fullConfiguration['childNodes'])
+        if (
+            isset($this->fullConfiguration['childNodes'])
             && is_array($this->fullConfiguration['childNodes'])
             && $this->fullConfiguration['childNodes'] !== []
         ) {
@@ -431,7 +432,8 @@ class NodeType
      */
     public function getPropertyType(string $propertyName): string
     {
-        if (!isset($this->fullConfiguration['properties'])
+        if (
+            !isset($this->fullConfiguration['properties'])
             || !isset($this->fullConfiguration['properties'][$propertyName])
             || !isset($this->fullConfiguration['properties'][$propertyName]['type'])
         ) {
@@ -536,7 +538,7 @@ class NodeType
      *
      * @param string $childNodeName The name of a configured childNode of this NodeType
      * @param NodeType $nodeType The NodeType to check constraints for.
-     * @return boolean true if the $nodeType is allowed as grandchild node, false otherwise.
+     * @return bool true if the $nodeType is allowed as grandchild node, false otherwise.
      * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
      */
     public function allowsGrandchildNodeType(string $childNodeName, NodeType $nodeType): bool
@@ -591,7 +593,7 @@ class NodeType
         }
 
         if (isset($constraints['*'])) {
-            return (boolean)$constraints['*'];
+            return (bool)$constraints['*'];
         }
 
         return false;
@@ -635,12 +637,14 @@ class NodeType
             if ($nodeType->isOfType($superType)) {
                 $distance = $this->traverseSuperTypes($nodeType, $superType, 0);
 
-                if ($constraint === true
+                if (
+                    $constraint === true
                     && ($constraintDistanceForTrue === null || $constraintDistanceForTrue > $distance)
                 ) {
                     $constraintDistanceForTrue = $distance;
                 }
-                if ($constraint === false
+                if (
+                    $constraint === false
                     && ($constraintDistanceForFalse === null || $constraintDistanceForFalse > $distance)
                 ) {
                     $constraintDistanceForFalse = $distance;
