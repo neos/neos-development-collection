@@ -11,9 +11,12 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Media\Domain\Model\Document;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * A system-generated preview version of a Document (PDF, AI and EPS)
@@ -27,6 +30,12 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
      * @api
      */
     protected static $priority = 5;
+
+    /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @param Thumbnail $thumbnail
@@ -60,7 +69,14 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
 
             $im = new \Imagick();
             $im->setResolution($this->getOption('resolution'), $this->getOption('resolution'));
-            $im->readImage($documentFile);
+            $wasRead = $im->readImage($documentFile);
+            if ($wasRead === false) {
+                $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
+                $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();
+                $this->logger->notice(sprintf('Could not read image (filename: %s, SHA1: %s) for thumbnail generation. Maybe the ImageMagick security policy denies reading the format?', $filename, $sha1), LogEnvironment::fromMethodName(__METHOD__));
+
+                return;
+            }
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);
