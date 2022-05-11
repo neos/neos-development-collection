@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\EventSourcedRouting\Http;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
