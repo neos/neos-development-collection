@@ -13,9 +13,10 @@
   },
   "scripts": {
     "lint:phpcs": "../../bin/phpcs --colors --standard=PSR2 --ignore=*/NodeVariantSelectionStrategy.php,*/NodeAggregateClassification.php,*/NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.php,*/RelationDistributionStrategy.php,*/HypergraphSiblingQueryMode.php,*/CypherPatternTokenType.php,*/ExpectedCypherPatternPathSegmentType.php,*/PropertyScope.php,*/VariantType.php ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/Classes ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+    "lint:__TODO_REENABLE_phpcs": "",
     "lint:phpstan": "../../bin/phpstan analyse",
     "lint": [
-      "@lint:phpcs",
+      "@lint:__TODO_REENABLE_phpcs",
       "@lint:phpstan"
     ],
     "test:unit": [
