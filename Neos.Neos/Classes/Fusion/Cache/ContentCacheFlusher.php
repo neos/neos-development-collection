@@ -23,7 +23,11 @@ use Neos\ContentRepository\Projection\Content\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -286,4 +290,53 @@ class ContentCacheFlusher
         $types = array_unique($types);
         return $types;
     }
+
+
+    /**
+     * Fetches possible usages of the asset and registers nodes that use the asset as changed.
+     *
+     * @throws NodeTypeNotFoundException
+     */
+    public function registerAssetChange(AssetInterface $asset): void
+    {
+        // In Nodes only assets are referenced, never asset variants directly. When an asset
+        // variant is updated, it is passed as $asset, but since it is never "used" by any node
+        // no flushing of corresponding entries happens. Thus we instead us the original asset
+        // of the variant.
+        if ($asset instanceof AssetVariantInterface) {
+            $asset = $asset->getOriginalAsset();
+        }
+
+        if (!$asset->isInUse()) {
+            return;
+        }
+
+        // TODO: re-implement this based on the code below
+
+        /*$cachingHelper = $this->getCachingHelper();
+
+        foreach ($this->assetService->getUsageReferences($asset) as $reference) {
+            if (!$reference instanceof AssetUsageInNodeProperties) {
+                continue;
+            }
+
+            $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
+            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
+                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            });
+
+            if (!$node instanceof NodeInterface) {
+                $this->systemLogger->warning(sprintf('Found a node reference from node with identifier %s in workspace %s to asset %s, but the node could not be fetched.', $reference->getNodeIdentifier(), $reference->getWorkspaceName(), $this->persistenceManager->getIdentifierByObject($asset)), LogEnvironment::fromMethodName(__METHOD__));
+                continue;
+            }
+
+            $this->registerNodeChange($node);
+
+            $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
+            // @see RuntimeContentCache.addTag
+            $tagName = 'AssetDynamicTag_' . $workspaceHash . '_' . $assetIdentifier;
+            $this->addTagToFlush($tagName, sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier));
+        }*/
+    }
+
 }

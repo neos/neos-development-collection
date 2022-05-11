@@ -38,6 +38,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
 
     public function setUp(): void
     {
+        $this->markTestSkipped('re-implement with Neos 9.0');
         parent::setUp();
 
         $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);

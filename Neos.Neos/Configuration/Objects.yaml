@@ -19,7 +19,22 @@ Neos\Neos\Fusion\Cache\FusionCachingAspect:
             value: Neos_Neos_Fusion
 
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
-  className: Neos\Neos\Routing\FrontendNodeRoutePartHandler
+  className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
+
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
+  arguments:
+    3:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
+
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
+  arguments:
+    1:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
+
 
 Neos\Neos\Domain\Service\NodeSearchServiceInterface:
   className: Neos\Neos\Domain\Service\NodeSearchService

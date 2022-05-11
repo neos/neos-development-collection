@@ -46,6 +46,7 @@ class SortOperationTest extends FunctionalTestCase
      */
     public function setUp(): void
     {
+        $this->markTestSkipped('Needs to be rewritten with ES CR');
         parent::setUp();
         $workspaceRepository = $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
         $workspaceRepository->add(new Workspace('live'));
