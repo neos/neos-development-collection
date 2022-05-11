@@ -20,15 +20,6 @@ Neos:
 
           eventPublisherFactory: 'Neos\ContentRepositoryRegistry\Legacy\HardcodedEventPublisherFactory'
 
-
-        # !!!! REMOVE!!!!
-        'FAKE_TO_MAKE_THE_DefaultEventToListenerMappingProvider_HAPPY':
-          # By default the DoctrineEventStorage adapter is used, but this can be changed with the following setting:
-          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
-
-          listeners:
-            'Neos\Neos\EventSourcedRouting\.*': true
-
   ContentRepository:
     unstableInternalWillChangeLater:
       testing:
