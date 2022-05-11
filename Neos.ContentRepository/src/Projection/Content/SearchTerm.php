@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\Content;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Projection\Content;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Content;
+
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,18 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class SearchTerm
 {
-
-    /**
-     * Create a new Fulltext search term (i.e. search across all properties)
-     *
-     * @param string $term
-     * @return SearchTerm
-     */
-    public static function fulltext(string $term): self
-    {
-        return new SearchTerm($term);
-    }
-
     /**
      * @var string
      */
@@ -43,6 +32,13 @@ final class SearchTerm
     private function __construct(string $term)
     {
         $this->term = $term;
+    }
+    /**
+     * Create a new Fulltext search term (i.e. search across all properties)
+     */
+    public static function fulltext(string $term): self
+    {
+        return new self($term);
     }
 
     /**

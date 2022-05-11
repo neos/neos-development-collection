@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\Http;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,15 +10,19 @@ namespace Neos\Neos\EventSourcedRouting\Http;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting\Http;
+
 /**
  * The basic content dimension resolution mode value object
  */
 final class BasicContentDimensionResolutionMode implements \JsonSerializable
 {
-    const RESOLUTION_MODE_HOSTPREFIX = 'hostPrefix';
-    const RESOLUTION_MODE_HOSTSUFFIX = 'hostSuffix';
-    const RESOLUTION_MODE_URIPATHSEGMENT = 'uriPathSegment';
-    const RESOLUTION_MODE_NULL = 'null';
+    public const RESOLUTION_MODE_HOSTPREFIX = 'hostPrefix';
+    public const RESOLUTION_MODE_HOSTSUFFIX = 'hostSuffix';
+    public const RESOLUTION_MODE_URIPATHSEGMENT = 'uriPathSegment';
+    public const RESOLUTION_MODE_NULL = 'null';
 
     /**
      * @var string
@@ -32,7 +34,8 @@ final class BasicContentDimensionResolutionMode implements \JsonSerializable
      */
     public function __construct(string $mode)
     {
-        if ($mode !== self::RESOLUTION_MODE_HOSTPREFIX
+        if (
+            $mode !== self::RESOLUTION_MODE_HOSTPREFIX
             && $mode !== self::RESOLUTION_MODE_HOSTSUFFIX
             && $mode !== self::RESOLUTION_MODE_URIPATHSEGMENT
             && $mode !== self::RESOLUTION_MODE_NULL

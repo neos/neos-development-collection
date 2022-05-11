@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Infrastructure;
 
 use Doctrine\DBAL\Connection;

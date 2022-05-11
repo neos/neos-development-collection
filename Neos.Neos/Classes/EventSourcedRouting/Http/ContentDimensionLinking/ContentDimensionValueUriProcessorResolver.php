@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +9,10 @@ namespace Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Annotations as Flow;

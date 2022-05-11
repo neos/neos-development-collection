@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -93,7 +96,7 @@ class NodeShortcutResolver
     {
         $shortcutRecursionLevel = 0;
         while ($documentNodeInfo->isShortcut()) {
-            if (++ $shortcutRecursionLevel > 50) {
+            if (++$shortcutRecursionLevel > 50) {
                 throw new InvalidShortcutException(sprintf(
                     'Shortcut recursion level reached after %d levels',
                     $shortcutRecursionLevel

@@ -20,7 +20,7 @@ use Neos\Flow\Utility\Algorithms;
 #[Flow\Proxy(false)]
 final class UserIdentifier implements \JsonSerializable, \Stringable
 {
-    const SYSTEM_USER_IDENTIFIER = 'system';
+    public const SYSTEM_USER_IDENTIFIER = 'system';
 
     /**
      * @var array<string,self>

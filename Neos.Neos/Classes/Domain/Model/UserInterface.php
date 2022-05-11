@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +10,9 @@ namespace Neos\Neos\Domain\Model;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model;
 
 /**
  * Interface for a user of the content repository. Users can be owners of workspaces.

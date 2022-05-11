@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Neos\Routing;
 
 /*
@@ -22,9 +25,9 @@ use Neos\Utility\Arrays;
  */
 class BackendModuleRoutePartHandler extends DynamicRoutePart
 {
-    const MATCHRESULT_FOUND = true;
-    const MATCHRESULT_NOSUCHMODULE = -1;
-    const MATCHRESULT_NOCONTROLLER = -2;
+    public const MATCHRESULT_FOUND = true;
+    public const MATCHRESULT_NOSUCHMODULE = -1;
+    public const MATCHRESULT_NOCONTROLLER = -2;
 
     /**
      * @var array

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Repository;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
@@ -44,8 +47,8 @@ class UserRepository extends Repository
             $query = $this->createQuery();
             $query->matching(
                 $query->logicalOr(
-                    $query->like('accounts.accountIdentifier', '%'.$searchTerm.'%'),
-                    $query->like('name.fullName', '%'.$searchTerm.'%')
+                    $query->like('accounts.accountIdentifier', '%' . $searchTerm . '%'),
+                    $query->like('name.fullName', '%' . $searchTerm . '%')
                 )
             );
             return $query->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])->execute();

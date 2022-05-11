@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\Controller\Module\Administration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
@@ -102,11 +103,13 @@ class UsersController extends AbstractModuleController
                 Account::class
             );
             /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-            foreach ([
-                $propertyMappingConfigurationForUser,
-                $propertyMappingConfigurationForUserName,
-                $propertyMappingConfigurationForPrimaryAccount
-            ] as $propertyMappingConfiguration) {
+            foreach (
+                [
+                    $propertyMappingConfigurationForUser,
+                    $propertyMappingConfigurationForUserName,
+                    $propertyMappingConfigurationForPrimaryAccount
+                ] as $propertyMappingConfiguration
+            ) {
                 $propertyMappingConfiguration->setTypeConverterOption(
                     PersistentObjectConverter::class,
                     PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
@@ -402,11 +405,13 @@ class UsersController extends AbstractModuleController
             foreach ($roleIdentifiers as $roleIdentifier) {
                 $roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
             }
-            if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles(
-                /** @phpstan-ignore-next-line Flow does not properly declare its type here */
-                $roles,
-                'Neos.Neos:Backend.Module.Administration.Users'
-            )) {
+            if (
+                !$this->privilegeManager->isPrivilegeTargetGrantedForRoles(
+                    /** @phpstan-ignore-next-line Flow does not properly declare its type here */
+                    $roles,
+                    'Neos.Neos:Backend.Module.Administration.Users'
+                )
+            ) {
                 $this->addFlashMessage(
                     $this->getModuleLabel('users.doNotLockYourselfOut.body'),
                     $this->getModuleLabel('users.doNotLockYourselfOut.title'),
@@ -567,7 +572,7 @@ class UsersController extends AbstractModuleController
     {
         $providers = array_keys($this->tokenAndProviderFactory->getProviders());
 
-        $providerNames =[];
+        $providerNames = [];
         foreach ($providers as $authenticationProviderName) {
             $providerNames[$authenticationProviderName] = [
                 'label' => $this->authenticationProviderSettings[$authenticationProviderName]['label']

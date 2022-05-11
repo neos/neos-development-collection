@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \Stringable
 {
-    const WORKSPACE_NAME_LIVE = 'live';
+    public const WORKSPACE_NAME_LIVE = 'live';
 
     /**
      * @var array<string,self>

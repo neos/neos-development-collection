@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Projection\Changes;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Projection\Changes;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Changes;
 
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -30,7 +32,6 @@ final class ChangeFinder
     public function __construct(private readonly DbalClientInterface $client)
     {
     }
-
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

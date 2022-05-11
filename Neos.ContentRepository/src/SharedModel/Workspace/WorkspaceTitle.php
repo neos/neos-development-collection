@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\SharedModel\Workspace;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\SharedModel\Workspace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\Workspace;
 
 use Neos\Flow\Annotations as Flow;
 

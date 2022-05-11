@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\Http;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,15 +10,15 @@ namespace Neos\Neos\EventSourcedRouting\Http;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting\Http;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-/** @codingStandardsIgnoreStart */
 use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
-/** @codingStandardsIgnoreEnd */
 
 /**
  * The default content subgraph URI processor
@@ -76,8 +74,11 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                 $linkProcessor = $this->contentDimensionValueUriProcessorResolver
                     ->resolveContentDimensionValueUriProcessor($contentDimension);
                 if (!is_null($contentDimensionValue)) {
-                    if ($resolutionMode !== null && $resolutionMode->getMode()
-                        === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                    if (
+                        $resolutionMode !== null
+                        && $resolutionMode->getMode()
+                            === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
+                    ) {
                         if (!isset($resolutionOptions['offset'])) {
                             $resolutionOptions['offset'] = $uriPathSegmentOffset;
                         }
@@ -102,8 +103,10 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                 }
             }
 
-            if ((!$this->supportEmptySegmentForDimensions || !$allUriPathSegmentDetectableDimensionPresetsAreDefault)
-                && $uriPathSegmentOffset > 0) {
+            if (
+                (!$this->supportEmptySegmentForDimensions || !$allUriPathSegmentDetectableDimensionPresetsAreDefault)
+                && $uriPathSegmentOffset > 0
+            ) {
                 $uriPathSegmentConstraints = $uriPathSegmentConstraints->withPathPrefix('/', true);
                 $uriConstraints = $uriConstraints->merge($uriPathSegmentConstraints);
             }

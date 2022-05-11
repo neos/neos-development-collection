@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\Workspace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Projection\Workspace;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Workspace;
+
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
@@ -23,7 +24,6 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
  */
 class Workspace
 {
-
     /**
      * @var string
      */
@@ -74,7 +74,7 @@ class Workspace
      *
      * By definition, a base workspace (like "live") is ALWAYS UP_TO_DATE.
      */
-    const STATUS_UP_TO_DATE = 'UP_TO_DATE';
+    public const STATUS_UP_TO_DATE = 'UP_TO_DATE';
 
     /**
      * A workspace can be OUTDATED because of two reasons:
@@ -98,7 +98,7 @@ class Workspace
      *     has events applied to it *AFTER* the fork-point (when "Content Stream B" is created), the workspace
      *     will also be marked as "outdated".
      */
-    const STATUS_OUTDATED = 'OUTDATED';
+    public const STATUS_OUTDATED = 'OUTDATED';
 
     /**
      * CONFLICT Example:
@@ -110,7 +110,7 @@ class Workspace
      *      Content Stream A2 (current)  <-- Content Stream B2 (rebasing)  |
      *                                                        Content Stream B1
      */
-    const STATUS_OUTDATED_CONFLICT = 'OUTDATED_CONFLICT';
+    public const STATUS_OUTDATED_CONFLICT = 'OUTDATED_CONFLICT';
 
     /**
      * Checks if this workspace is shared across all editors

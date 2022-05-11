@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\EventLog\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\User;
@@ -59,7 +62,7 @@ class EventEmittingService
 
     /**
      * @Flow\InjectConfiguration("eventLog.enabled")
-     * @var boolean
+     * @var bool
      */
     protected $enabled;
 
@@ -68,7 +71,7 @@ class EventEmittingService
      */
     public function isEnabled()
     {
-        return (boolean)$this->enabled;
+        return (bool)$this->enabled;
     }
 
     /**

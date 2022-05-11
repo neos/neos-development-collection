@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos;
 
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\EventSourcedNeosAdjustments\Ui\EditorContentStreamZookeeper;

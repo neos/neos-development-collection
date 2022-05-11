@@ -36,7 +36,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
     public function build(
         array $settings
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class(
+        return new class (
             $settings['newPropertyName'],
             $settings['type'],
             $settings['serializedValue'],

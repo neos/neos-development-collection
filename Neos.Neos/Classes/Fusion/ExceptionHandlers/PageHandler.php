@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -86,7 +89,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
                 $documentNode->getContentStreamIdentifier()
             );
-            if ($workspace && !$workspace->getWorkspaceName()->isLive()
+            if (
+                $workspace && !$workspace->getWorkspaceName()->isLive()
                 && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
             ) {
                 $isBackend = true;

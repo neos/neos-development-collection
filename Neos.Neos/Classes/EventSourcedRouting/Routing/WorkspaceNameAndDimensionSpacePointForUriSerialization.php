@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\EventSourcedRouting\Routing;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,6 +10,10 @@ namespace Neos\Neos\EventSourcedRouting\Routing;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting\Routing;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -22,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class WorkspaceNameAndDimensionSpacePointForUriSerialization
 {
-    const FROM_BACKEND_URI_PATTERN = '/
+    public const FROM_BACKEND_URI_PATTERN = '/
         ^                       # we start at the first character
         .*
         @                       # an "@" character

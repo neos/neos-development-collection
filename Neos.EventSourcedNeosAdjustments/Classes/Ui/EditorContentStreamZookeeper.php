@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedNeosAdjustments\Ui;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui;
 
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Projection\Content;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,12 +10,15 @@ namespace Neos\ContentRepository\Projection\Content;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\Content;
+
 use Neos\ContentRepository\Projection\Content\InMemoryCache\AllChildNodesByNodeIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NodePathCache;
-/** @codingStandardsIgnoreStart */
-use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
+/** @codingStandardsIgnoreStart */ use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 /** @codingStandardsIgnoreEnd */
 
 /**

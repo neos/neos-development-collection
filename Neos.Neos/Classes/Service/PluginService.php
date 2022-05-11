@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
@@ -121,9 +124,11 @@ class PluginService
     public function getPluginViewDefinitionsByPluginNodeType(NodeType $pluginNodeType)
     {
         $viewDefinitions = [];
-        foreach ($this->getPluginViewConfigurationsByPluginNodeType(
-            $pluginNodeType
-        ) as $pluginViewName => $pluginViewConfiguration) {
+        foreach (
+            $this->getPluginViewConfigurationsByPluginNodeType(
+                $pluginNodeType
+            ) as $pluginViewName => $pluginViewConfiguration
+        ) {
             $viewDefinitions[] = new PluginViewDefinition($pluginNodeType, $pluginViewName, $pluginViewConfiguration);
         }
         return $viewDefinitions;
@@ -206,10 +211,13 @@ class PluginService
     public function getPluginViewNodeByMasterPlugin(NodeInterface $node, string $viewName): ?NodeInterface
     {
         $siteNode = $this->siteNodeUtility->findSiteNode($node);
-        foreach ($this->getNodes($siteNode, NodeTypeNames::fromArray([
-            NodeTypeName::fromString('Neos.Neos:PluginView')
-        ])) as $pluginViewNode) {
-            if ($pluginViewNode->getProperty('plugin') === (string)$node->getNodeAggregateIdentifier()
+        foreach (
+            $this->getNodes($siteNode, NodeTypeNames::fromArray([
+                NodeTypeName::fromString('Neos.Neos:PluginView')
+            ])) as $pluginViewNode
+        ) {
+            if (
+                $pluginViewNode->getProperty('plugin') === (string)$node->getNodeAggregateIdentifier()
                 && $pluginViewNode->getProperty('view') === $viewName
             ) {
                 return $pluginViewNode;

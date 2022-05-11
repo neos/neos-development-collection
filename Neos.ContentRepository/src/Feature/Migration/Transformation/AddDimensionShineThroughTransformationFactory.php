@@ -39,7 +39,7 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
     public function build(
         array $settings
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class(
+        return new class (
             DimensionSpacePoint::fromArray($settings['from']),
             DimensionSpacePoint::fromArray($settings['to']),
             $this->dimensionSpaceCommandHandler

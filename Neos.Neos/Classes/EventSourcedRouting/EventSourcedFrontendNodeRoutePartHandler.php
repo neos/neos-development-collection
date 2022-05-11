@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +10,10 @@ namespace Neos\Neos\EventSourcedRouting;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
@@ -19,8 +21,7 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-/** @codingStandardsIgnoreStart */
-use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
+/** @codingStandardsIgnoreStart */ use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 /** @codingStandardsIgnoreEnd */
 use Neos\Neos\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;

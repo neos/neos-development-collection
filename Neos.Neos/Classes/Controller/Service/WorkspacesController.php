@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Service;
 
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -79,8 +82,10 @@ class WorkspacesController extends ActionController
         $workspacesArray = [];
         foreach ($this->workspaceFinder->findAll() as $workspace) {
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            if ($workspace->getWorkspaceOwner() !== null
-                && $workspace->getWorkspaceOwner() !== $currentUserIdentifier->value) {
+            if (
+                $workspace->getWorkspaceOwner() !== null
+                && $workspace->getWorkspaceOwner() !== $currentUserIdentifier->value
+            ) {
                 continue;
             }
 

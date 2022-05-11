@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -114,8 +117,12 @@ class LinkHelper implements ProtectedContextAwareInterface
         try {
             $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
                 ->uriFor($targetNodeAddress);
-        } catch (NodeAddressCannotBeSerializedException | HttpException
-        | NoMatchingRouteException | MissingActionNameException $e) {
+        } catch (
+            NodeAddressCannotBeSerializedException
+            | HttpException
+            | NoMatchingRouteException
+            | MissingActionNameException $e
+        ) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',
                 $targetNode->getNodeAggregateIdentifier(),

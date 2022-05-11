@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
@@ -76,7 +79,8 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         if (!$renderingContext instanceof RenderingContext) {
             return false;
         }
-        if (isset($arguments['moduleConfiguration']['enabled'])
+        if (
+            isset($arguments['moduleConfiguration']['enabled'])
             && $arguments['moduleConfiguration']['enabled'] === false
         ) {
             return false;
@@ -89,10 +93,14 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         }
         /** @var PrivilegeManagerInterface $privilegeManager */
         $privilegeManager = $objectManager->get(PrivilegeManagerInterface::class);
-        if (!$privilegeManager->isGranted(
-            ModulePrivilege::class,
-            new ModulePrivilegeSubject($arguments['modulePath'])
-        )) {
+        if (
+            !$privilegeManager->isGranted(
+                ModulePrivilege::class,
+                new ModulePrivilegeSubject(
+                    $arguments['modulePath']
+                )
+            )
+        ) {
             return false;
         }
         if (isset($arguments['moduleConfiguration']['privilegeTarget'])) {

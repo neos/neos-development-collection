@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\EventLog\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Domain\Model;
 
 /**
  * Helper Model which groups a number of events on a given day. Used especially in the view.

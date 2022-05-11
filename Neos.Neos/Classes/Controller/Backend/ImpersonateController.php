@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\Controller\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
 
 use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
@@ -78,7 +79,10 @@ class ImpersonateController extends ActionController
         $controller = $this->settings['redirectOptions'][$actionName]['controller'] ?? '';
         $package = $this->settings['redirectOptions'][$actionName]['package'] ?? '';
 
-        if ($action !== '' && $controller !== '' && $package !== ''
+        if (
+            $action !== ''
+            && $controller !== ''
+            && $package !== ''
             && $this->impersonateService->getImpersonation() === null
         ) {
             $this->redirectWithParentRequest($action, $controller, $package);

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\NodeTypePostprocessor;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\NodeTypePostprocessor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\NodeTypePostprocessor;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
@@ -52,7 +55,6 @@ use Neos\Utility\PositionalArraySorter;
  */
 class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
      * @phpstan-var array<string,mixed>
@@ -80,7 +82,8 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
         }
         $creationDialogElements = $configuration['ui']['creationDialog']['elements'] ?? [];
         foreach ($configuration['properties'] as $propertyName => $propertyConfiguration) {
-            if (!isset($propertyConfiguration['ui']['showInCreationDialog'])
+            if (
+                !isset($propertyConfiguration['ui']['showInCreationDialog'])
                 || $propertyConfiguration['ui']['showInCreationDialog'] !== true
             ) {
                 continue;

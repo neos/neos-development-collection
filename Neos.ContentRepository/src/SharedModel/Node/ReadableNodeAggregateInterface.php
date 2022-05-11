@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\SharedModel\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,12 +10,14 @@ namespace Neos\ContentRepository\SharedModel\Node;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\SharedModel\Node;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**

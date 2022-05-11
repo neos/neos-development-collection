@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\Infrastructure\Property;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.
@@ -10,6 +9,10 @@ namespace Neos\ContentRepository\Infrastructure\Property;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Infrastructure\Property;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -26,14 +29,14 @@ use Psr\Http\Message\UriInterface;
 #[Flow\Proxy(false)]
 final class PropertyType
 {
-    const TYPE_BOOL = 'boolean';
-    const TYPE_INT = 'integer';
-    const TYPE_FLOAT = 'float';
-    const TYPE_STRING = 'string';
-    const TYPE_ARRAY = 'array';
-    const TYPE_DATE = 'DateTimeImmutable';
+    public const TYPE_BOOL = 'boolean';
+    public const TYPE_INT = 'integer';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_STRING = 'string';
+    public const TYPE_ARRAY = 'array';
+    public const TYPE_DATE = 'DateTimeImmutable';
 
-    const PATTERN_ARRAY_OF = '/array<[^>]+>/';
+    public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
     private string $value;
 
@@ -68,14 +71,16 @@ final class PropertyType
         if ($declaration === 'float' || $declaration === 'double') {
             return self::float($isNullable);
         }
-        if (in_array($declaration, [
-            'DateTime',
-            '\DateTime',
-            'DateTimeImmutable',
-            '\DateTimeImmutable',
-            'DateTimeInterface',
-            '\DateTimeInterface'
-        ])) {
+        if (
+            in_array($declaration, [
+                'DateTime',
+                '\DateTime',
+                'DateTimeImmutable',
+                '\DateTimeImmutable',
+                'DateTimeInterface',
+                '\DateTimeInterface'
+            ])
+        ) {
             return self::date($isNullable);
         }
         if ($declaration === 'Uri' || $declaration === Uri::class || $declaration === UriInterface::class) {
@@ -84,12 +89,14 @@ final class PropertyType
         $className = $declaration[0] != '\\'
             ? '\\' . $declaration
             : $declaration;
-        if ($declaration !== self::TYPE_FLOAT
+        if (
+            $declaration !== self::TYPE_FLOAT
             && $declaration !== self::TYPE_STRING
             && $declaration !== self::TYPE_ARRAY
             && !class_exists($className)
             && !interface_exists($className)
-            && !preg_match(self::PATTERN_ARRAY_OF, $declaration)) {
+            && !preg_match(self::PATTERN_ARRAY_OF, $declaration)
+        ) {
             throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
         }
 

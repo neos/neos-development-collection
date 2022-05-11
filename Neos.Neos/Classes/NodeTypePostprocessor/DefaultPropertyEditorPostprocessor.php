@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\NodeTypePostprocessor;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\NodeTypePostprocessor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\NodeTypePostprocessor;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
@@ -22,7 +25,6 @@ use Neos\Neos\Exception;
  */
 class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
      * @phpstan-var array<string,mixed>
@@ -92,7 +94,8 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
             }
         }
         unset($propertyConfiguration);
-        if (isset($configuration['ui']['creationDialog']['elements'])
+        if (
+            isset($configuration['ui']['creationDialog']['elements'])
             && is_array($configuration['ui']['creationDialog']['elements'])
         ) {
             foreach ($configuration['ui']['creationDialog']['elements'] as &$elementConfiguration) {

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Neos\Fusion;
 
 /**
@@ -7,10 +9,10 @@ namespace Neos\Neos\Fusion;
  */
 final class MenuItemState
 {
-    const STATE_NORMAL = 'normal';
-    const STATE_CURRENT = 'current';
-    const STATE_ACTIVE = 'active';
-    const STATE_ABSENT = 'absent';
+    public const STATE_NORMAL = 'normal';
+    public const STATE_CURRENT = 'current';
+    public const STATE_ACTIVE = 'active';
+    public const STATE_ABSENT = 'absent';
 
     /**
      * @var string
@@ -23,10 +25,12 @@ final class MenuItemState
      */
     public function __construct(string $state)
     {
-        if ($state !== self::STATE_NORMAL
+        if (
+            $state !== self::STATE_NORMAL
             && $state !== self::STATE_CURRENT
             && $state !== self::STATE_ACTIVE
-            && $state !== self::STATE_ABSENT) {
+            && $state !== self::STATE_ABSENT
+        ) {
             throw new Exception\InvalidMenuItemStateException(
                 '"' . $state . '" is no valid menu item state',
                 1519668881

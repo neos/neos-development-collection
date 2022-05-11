@@ -24,11 +24,11 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentStreamFinder
 {
-    const STATE_CREATED = 'CREATED';
-    const STATE_IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
-    const STATE_REBASING = 'REBASING';
-    const STATE_REBASE_ERROR = 'REBASE_ERROR';
-    const STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
+    public const STATE_CREATED = 'CREATED';
+    public const STATE_IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
+    public const STATE_REBASING = 'REBASING';
+    public const STATE_REBASE_ERROR = 'REBASE_ERROR';
+    public const STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
 
     public function __construct(private readonly DbalClientInterface $client)
     {

@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\Neos\Domain\Service;
-
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -11,6 +9,10 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
@@ -407,7 +409,8 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             $authenticationProviderName = $account->getAuthenticationProviderName();
-            if (isset($indexedTokens[$authenticationProviderName])
+            if (
+                isset($indexedTokens[$authenticationProviderName])
                 && $indexedTokens[$authenticationProviderName] instanceof UsernamePassword
             ) {
                 $account->setCredentialsSource($this->hashService->hashPassword($password));
@@ -899,7 +902,7 @@ class UserService
      * @param Account $account
      * @return User|null
      */
-    private function getNeosUserForAccount(Account $account):? User
+    private function getNeosUserForAccount(Account $account): ?User
     {
         $user = $this->partyService->getAssignedPartyOfAccount($account);
         return ($user instanceof User) ? $user : null;

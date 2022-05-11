@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Projection\NodeHiddenState;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,10 +10,13 @@ namespace Neos\ContentRepository\Projection\NodeHiddenState;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Projection\NodeHiddenState;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -27,11 +28,9 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeHiddenStateFinder
 {
-
     public function __construct(private readonly DbalClientInterface $client)
     {
     }
-
 
     public function findHiddenState(
         ContentStreamIdentifier $contentStreamIdentifier,

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Transformation;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,15 +10,13 @@ namespace Neos\ContentRepository\Feature\Migration\Transformation;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Transformation;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-
-/** @codingStandardsIgnoreStart */
-
-use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint as MoveDimensionSpacePointCommand;
-
-/** @codingStandardsIgnoreEnd */
-
+use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 
@@ -42,12 +37,11 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $from = DimensionSpacePoint::fromArray($settings['from']);
         $to = DimensionSpacePoint::fromArray($settings['to']);
-        return new class(
+        return new class (
             $from,
             $to,
             $this->dimensionSpaceCommandHandler
         ) implements GlobalTransformationInterface {
-
             public function __construct(
                 private readonly DimensionSpacePoint $from,
                 private readonly DimensionSpacePoint $to,
@@ -60,7 +54,7 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
                 ContentStreamIdentifier $contentStreamForWriting
             ): CommandResult {
                 return $this->dimensionSpaceCommandHandler->handleMoveDimensionSpacePoint(
-                    new MoveDimensionSpacePointCommand(
+                    new MoveDimensionSpacePoint(
                         $contentStreamForWriting,
                         $this->from,
                         $this->to

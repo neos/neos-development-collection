@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,10 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
@@ -205,7 +207,8 @@ class FusionService
      */
     protected function generateFusionForNodeType(NodeType $nodeType)
     {
-        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator')
+        if (
+            $nodeType->hasConfiguration('options.fusion.prototypeGenerator')
             && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null
         ) {
             $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
@@ -251,7 +254,8 @@ class FusionService
     {
         $autoIncludeFusion = [];
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
-            if (isset($this->autoIncludeConfiguration[$packageKey])
+            if (
+                isset($this->autoIncludeConfiguration[$packageKey])
                 && $this->autoIncludeConfiguration[$packageKey] === true
             ) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);

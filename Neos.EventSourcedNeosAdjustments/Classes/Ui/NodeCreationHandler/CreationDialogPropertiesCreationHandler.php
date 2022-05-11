@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -11,6 +9,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
@@ -39,8 +41,10 @@ class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInte
         $nodeType = $this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue());
         $propertyValues = $command->initialPropertyValues;
         foreach ($nodeType->getConfiguration('properties') as $propertyName => $propertyConfiguration) {
-            if (!isset($propertyConfiguration['ui']['showInCreationDialog'])
-                || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
+            if (
+                !isset($propertyConfiguration['ui']['showInCreationDialog'])
+                || $propertyConfiguration['ui']['showInCreationDialog'] !== true
+            ) {
                 continue;
             }
             $propertyType = TypeHandling::normalizeType($propertyConfiguration['type'] ?? 'string');

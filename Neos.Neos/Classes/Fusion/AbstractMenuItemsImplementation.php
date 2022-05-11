@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -25,10 +28,10 @@ use Neos\Flow\Annotations as Flow;
  */
 abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
-    const STATE_NORMAL = 'normal';
-    const STATE_CURRENT = 'current';
-    const STATE_ACTIVE = 'active';
-    const STATE_ABSENT = 'absent';
+    public const STATE_NORMAL = 'normal';
+    public const STATE_CURRENT = 'current';
+    public const STATE_ACTIVE = 'active';
+    public const STATE_ABSENT = 'absent';
 
     /**
      * An internal cache for the built menu items array.
@@ -77,7 +80,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     public function getRenderHiddenInIndex()
     {
         if ($this->renderHiddenInIndex === null) {
-            $this->renderHiddenInIndex = (boolean)$this->fusionValue('renderHiddenInIndex');
+            $this->renderHiddenInIndex = (bool)$this->fusionValue('renderHiddenInIndex');
         }
 
         return $this->renderHiddenInIndex;

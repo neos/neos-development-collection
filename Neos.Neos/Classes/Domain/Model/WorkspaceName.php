@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,6 +10,10 @@ namespace Neos\Neos\Domain\Model;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model;
+
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName as ContentRepositoryWorkspaceName;
 
 /**
@@ -21,8 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName as ContentReposit
  */
 final class WorkspaceName implements \JsonSerializable, \Stringable
 {
-    const PREFIX = 'user-';
-    const SUFFIX_DELIMITER = '_';
+    public const PREFIX = 'user-';
+    public const SUFFIX_DELIMITER = '_';
 
     protected string $name;
 

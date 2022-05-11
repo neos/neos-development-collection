@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\Http;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +9,10 @@ namespace Neos\Neos\EventSourcedRouting\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventSourcedRouting\Http;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -134,7 +136,8 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
                 $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
                     || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
                         && $this->supportEmptySegmentForDimensions;
-                if ($allowEmptyValue
+                if (
+                    $allowEmptyValue
                     || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
                         && $path === '/'
                 ) {

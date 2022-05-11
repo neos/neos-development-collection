@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Cache;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -122,10 +125,12 @@ class ContentCacheFlusher
         );
 
         $parentNodeAggregates = [];
-        foreach ($this->contentGraph->findParentNodeAggregates(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
-        ) as $parentNodeAggregate) {
+        foreach (
+            $this->contentGraph->findParentNodeAggregates(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier
+            ) as $parentNodeAggregate
+        ) {
             $parentNodeAggregates[] = $parentNodeAggregate;
         }
         // we do not need these variables anymore here
@@ -149,10 +154,12 @@ class ContentCacheFlusher
                 $nodeAggregate->getIdentifier()
             );
 
-            foreach ($this->contentGraph->findParentNodeAggregates(
-                $nodeAggregate->getContentStreamIdentifier(),
-                $nodeAggregate->getIdentifier()
-            ) as $parentNodeAggregate) {
+            foreach (
+                $this->contentGraph->findParentNodeAggregates(
+                    $nodeAggregate->getContentStreamIdentifier(),
+                    $nodeAggregate->getIdentifier()
+                ) as $parentNodeAggregate
+            ) {
                 $parentNodeAggregates[] = $parentNodeAggregate;
             }
         }

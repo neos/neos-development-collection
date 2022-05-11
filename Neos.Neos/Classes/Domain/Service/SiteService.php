@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -58,7 +61,7 @@ class SiteService
     /**
      * This is the node path of the root for all sites in neos.
      */
-    const SITES_ROOT_PATH = '/sites';
+    public const SITES_ROOT_PATH = '/sites';
 
     /**
      * @Flow\Inject
@@ -274,7 +277,7 @@ class SiteService
         $rootDimensionSpacePoints = $this->variationGraph->getRootGeneralizations();
         if (empty($rootDimensionSpacePoints)) {
             throw new \InvalidArgumentException(
-                'The dimension space is empty, please check your configuration.'.
+                'The dimension space is empty, please check your configuration.',
                 1651957153
             );
         }
