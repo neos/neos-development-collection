@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Controller;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\User;
 
