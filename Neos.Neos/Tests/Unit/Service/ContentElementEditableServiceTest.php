@@ -73,6 +73,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
 
     public function setUp(): void
     {
+        $this->markTestSkipped('Re-enable with Neos 9.0');
         parent::setUp();
         $this->contentElementEditableService = new ContentElementEditableService();
 

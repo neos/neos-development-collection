@@ -54,6 +54,8 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
      */
     public function setUp(): void
     {
+        $this->markTestSkipped('fix and re-enable for Neos 9.0');
+
         $this->siteNode = $this->mockNode('site');
         $this->firstNodeInLevel = $this->mockNode('first-node');
         $this->secondNodeInLevel = $this->mockNode('second-node');

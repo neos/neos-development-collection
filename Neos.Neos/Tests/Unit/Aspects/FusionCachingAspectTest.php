@@ -16,10 +16,10 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Aspects\FusionCachingAspect;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Fusion\Cache\FusionCachingAspect;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
