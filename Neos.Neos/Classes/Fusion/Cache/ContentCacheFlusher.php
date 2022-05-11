@@ -307,13 +307,14 @@ class ContentCacheFlusher
             $asset = $asset->getOriginalAsset();
         }
 
+        // TODO: re-implement this based on the code below
+
+        /*
         if (!$asset->isInUse()) {
             return;
         }
 
-        // TODO: re-implement this based on the code below
-
-        /*$cachingHelper = $this->getCachingHelper();
+        $cachingHelper = $this->getCachingHelper();
 
         foreach ($this->assetService->getUsageReferences($asset) as $reference) {
             if (!$reference instanceof AssetUsageInNodeProperties) {

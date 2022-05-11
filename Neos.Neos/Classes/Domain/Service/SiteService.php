@@ -167,7 +167,7 @@ class SiteService
             }
             $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
                 $sitesNode,
-                NodeName::fromString($nodeName)
+                $nodeName
             );
             if (!$siteNode) {
                 // no site node, so nothing to do
@@ -270,7 +270,7 @@ class SiteService
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        if ($this->siteRepository->findOneByNodeName($siteNodeName)) {
+        if ($this->siteRepository->findOneByNodeName($siteNodeName->jsonSerialize())) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
         }
 

@@ -234,7 +234,7 @@ class UserSettingsController extends AbstractModuleController
                 [
                     htmlspecialchars($electronicAddress->getIdentifier()),
                     htmlspecialchars($electronicAddress->getType()),
-                    htmlspecialchars($user->getName())
+                    htmlspecialchars($user->getName()->__toString())
                 ]
             ),
             $this->getModuleLabel('userSettings.electronicAddressRemoved.title'),

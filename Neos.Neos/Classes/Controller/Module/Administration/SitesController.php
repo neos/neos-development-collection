@@ -535,7 +535,7 @@ class SitesController extends AbstractModuleController
     {
         $this->domainRepository->update($domain);
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.domainUpdated.body', [htmlspecialchars($domain)]),
+            $this->getModuleLabel('sites.domainUpdated.body', [htmlspecialchars($domain->__toString())]),
             $this->getModuleLabel('sites.domainUpdated.title'),
             Message::SEVERITY_OK,
             [],
@@ -572,7 +572,7 @@ class SitesController extends AbstractModuleController
     {
         $this->domainRepository->add($domain);
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.domainCreated.body', [htmlspecialchars($domain)]),
+            $this->getModuleLabel('sites.domainCreated.body', [htmlspecialchars($domain->__toString())]),
             $this->getModuleLabel('sites.domainCreated.title'),
             Message::SEVERITY_OK,
             [],
@@ -597,7 +597,7 @@ class SitesController extends AbstractModuleController
         }
         $this->domainRepository->remove($domain);
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.domainDeleted.body', [htmlspecialchars($domain)]),
+            $this->getModuleLabel('sites.domainDeleted.body', [htmlspecialchars($domain->__toString())]),
             $this->getModuleLabel('sites.domainDeleted.title'),
             Message::SEVERITY_OK,
             [],
@@ -618,7 +618,7 @@ class SitesController extends AbstractModuleController
         $domain->setActive(true);
         $this->domainRepository->update($domain);
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.domainActivated.body', [htmlspecialchars($domain)]),
+            $this->getModuleLabel('sites.domainActivated.body', [htmlspecialchars($domain->__toString())]),
             $this->getModuleLabel('sites.domainActivated.title'),
             Message::SEVERITY_OK,
             [],
@@ -639,7 +639,7 @@ class SitesController extends AbstractModuleController
         $domain->setActive(false);
         $this->domainRepository->update($domain);
         $this->addFlashMessage(
-            $this->getModuleLabel('sites.domainDeactivated.body', [htmlspecialchars($domain)]),
+            $this->getModuleLabel('sites.domainDeactivated.body', [htmlspecialchars($domain->__toString())]),
             $this->getModuleLabel('sites.domainDeactivated.title'),
             Message::SEVERITY_OK,
             [],
