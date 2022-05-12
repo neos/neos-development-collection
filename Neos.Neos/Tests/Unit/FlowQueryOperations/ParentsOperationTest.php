@@ -30,6 +30,8 @@ class ParentsOperationTest extends UnitTestCase
      */
     public function parentsWillReturnTheSiteNodeAsRootLevelParent()
     {
+        $this->markTestSkipped('TODO - Update with Neos 9.0');
+
         $rootNode = $this->createMock(TraversableNodeInterface::class);
         $sitesNode = $this->createMock(TraversableNodeInterface::class);
         $siteNode = $this->createMock(TraversableNodeInterface::class);

@@ -14,6 +14,7 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidSubjectException;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
 
@@ -58,7 +59,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
         $mockUserService = $this->createMock(UserService::class);
         $this->inject($validator, 'userService', $mockUserService);
 
-        $mockUser = $this->createMock(Account::class);
+        $mockUser = $this->createMock(User::class);
 
         $mockUserService
             ->expects(self::atLeastOnce())
