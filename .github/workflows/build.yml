@@ -231,13 +231,14 @@ jobs:
           touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
           FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
+          ./flow package:list --loading-order
+          ./flow configuration:show --type NodeTypes
           cd Packages/Neos
 
           # composer test
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
-
-          # do not exit the script if the tests break; as we want to
+          # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
           composer test:behavioral:stop-on-failure
           retVal=$?
