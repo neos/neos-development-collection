@@ -214,7 +214,6 @@ jobs:
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
           # TODO: RE-ENABLE AFTER FIXING
           # bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
       - name: Run ES CR Tests
         if: matrix.parallel-parts == 'escr-behavioral'
@@ -288,7 +287,6 @@ jobs:
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
           # TODO: RE-ENABLE AFTER FIXING
           #bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
