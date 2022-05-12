@@ -104,7 +104,7 @@
         ],
         "test:behavioral:stop-on-failure": [
             "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
-            "../../bin/behat --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist Neos.ContentRepository.BehavioralTests/Tests/Behavior/Features/EventSourced/Migration/NodeTypeAdjustment_Dimensions.feature",
+            "../../bin/behat --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
         ],
         "test": [

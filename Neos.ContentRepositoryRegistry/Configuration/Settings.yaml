@@ -34,7 +34,12 @@ Neos:
       projection:
         defaultProjectorsToBeBlocked:
           'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true
-
+    # the fallback NodeType can be used as a replacement for unknown NodeTypes
+    #
+    # Example
+    #
+    #  fallbackNodeType: 'Some.Package:SomeNodeType'
+    #fallbackNodeType: null
   ContentRepositoryRegistry:
     propertyConverters:
       ScalarNormalizer:

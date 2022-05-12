@@ -13,6 +13,7 @@
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/content-repository": "*",
+        "neos/contentrepositoryregistry": "*",
         "neos/fusion": "*",
         "neos/fusion-afx": "*",
         "neos/fusion-form": "^1.0 || ^2.0",

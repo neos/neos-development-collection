@@ -37,13 +37,6 @@ Neos:
           I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
           q: Neos\Eel\FlowQuery\FlowQuery::q
 
-    # the fallback NodeType can be used as a replacement for unknown NodeTypes
-    #
-    # Example
-    #
-    #  fallbackNodeType: 'Some.Package:SomeNodeType'
-    fallbackNodeType: null
-
     unstableInternalWillChangeLater:
       testing:
         projectorsToBeReset: {}

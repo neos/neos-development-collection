@@ -19,8 +19,8 @@ use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\TestingNodeAggregateIdentifier;
+use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
 use Neos\Flow\Utility\Algorithms;
 
 /**
