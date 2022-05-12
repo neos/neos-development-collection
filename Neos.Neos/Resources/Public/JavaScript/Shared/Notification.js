@@ -56,7 +56,7 @@ function(
 					$('li', notifications).each(function(index, notification) {
 						var title = $(notification).data('title') || $(notification).text();
 						var message = $(notification).data('title') ? $(notification).text() : '';
-						that[$(notification).data('type')](that._escapeHtml(title), that._escapeHtml(message));
+						that[$(notification).data('type')](that._sanitizeHtml(title), that._sanitizeHtml(message));
 					});
 				}, 250);
 			}
@@ -145,9 +145,17 @@ function(
 			});
 		},
 
-		_escapeHtml: function(html) {
+		/**
+		 * Ensure the provided string retains HTML escaping as provided by the backend,
+		 * as in some cases JS could actually unescape it.
+		 *
+		 * @param string html
+		 * @returns {string}
+		 * @private
+		 */
+		_sanitizeHtml: function(html) {
 			var text = document.createTextNode(html);
-			var p = document.createElement('p');
+			var p = document.createElement('div');
 			p.appendChild(text);
 			return p.innerHTML;
 		}
