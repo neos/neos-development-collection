@@ -26,7 +26,8 @@ jobs:
         # escr-behavioral determines the length of the build (because it is slowest). That's why we run this and
         # all the other parts in parallel.
         parallel-parts:
-          - linting-unit-functionaltests
+          - linting-unit-functionaltests-mysql
+          - functionaltests-postgres
           - escr-behavioral
         experimental: [false]
         #include:
@@ -190,24 +191,24 @@ jobs:
           ./flow routing:list
 
       - name: Run Linter
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           cd Packages/Neos
           composer lint
 
       - name: Run unit tests
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
 
       - name: Run functional tests
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           FLOW_CONTEXT=Testing ./flow doctrine:migrate
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
 
       - name: Run behat tests of Neos (without ES CR)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
@@ -216,10 +217,18 @@ jobs:
           # bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
 
       - name: Run ES CR Tests
+        id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
+        # we want to reach the Upload Postgres DB dump step.
+        # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
+        continue-on-error: true
         run: |
-          mkdir -p Data/DebugDatabaseDumps
-          touch Data/DebugDatabaseDumps/.keep
+          echo ${{ github.workspace }}
+          ls ${{ github.workspace }}
+
+          pwd
+          mkdir -p ${{ github.workspace }}/Data/DebugDatabaseDumps
+          touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
           FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           cd Packages/Neos
@@ -227,18 +236,24 @@ jobs:
           # composer test
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
+
+          # do not exit the script if the tests break; as we want to
+          set +e
           composer test:behavioral:stop-on-failure
           retVal=$?
+          set -e
           if [ $retVal -ne 0 ]; then
             cd ../../
             echo "DUMPING DATABASE (because of error)"
             sudo apt-get install -y postgresql-client
-            echo "writing PW"
-            sudo touch ~/.pgpass
-            sudo chmod 600 ~/.pgpass
+            echo "writing PW file"
+            touch ~/.pgpass
             echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
+            chmod 600 ~/.pgpass
+
             echo "starting pg_dump"
-            pg_dump --file=Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+            pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+            echo "pg_dump finished - ALL DONE NOW"
           fi
           exit $retVal
 
@@ -251,7 +266,16 @@ jobs:
           name: database-dumps
           path: Data/DebugDatabaseDumps
 
+      - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
+        if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
+        # we want to reach the Upload Postgres DB dump step.
+        # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
+        run: |
+          echo '${{ toJSON(steps) }}'
+          exit 1
+
       - name: Setup Flow configuration (PGSQL)
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
           rm -f Configuration/Testing/Settings.yaml
           cat <<EOF >> Configuration/Testing/Settings.yaml
@@ -272,19 +296,20 @@ jobs:
                 routes:
                   'Neos.Flow': TRUE
           EOF
-
-      - name: Run unit tests (PGSQL)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+          mkdir Configuration/Testing/Behat
+          cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
+          rm -Rf Data/Temporary
 
       - name: Run functional tests (PGSQL)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run behat tests (PGSQL)
-        if: matrix.parallel-parts == 'linting-unit-functionaltests'
-        #if: env.BEHAT == true
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
+          FLOW_CONTEXT=Testing/Behat ./flow configuration:show
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
+
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
