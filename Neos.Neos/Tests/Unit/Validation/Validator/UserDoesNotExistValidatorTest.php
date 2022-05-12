@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Neos\Domain\Model\User;

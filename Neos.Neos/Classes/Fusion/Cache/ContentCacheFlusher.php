@@ -339,5 +339,4 @@ class ContentCacheFlusher
             $this->addTagToFlush($tagName, sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier));
         }*/
     }
-
 }
