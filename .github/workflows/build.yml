@@ -168,6 +168,7 @@ jobs:
                   backendOptions:
                     host: '127.0.0.1'
                     port: 5432
+                    driver: pdo_pgsql
                     dbname: 'flow_functional_testing'
                     user: 'neos'
                     password: 'neos'
