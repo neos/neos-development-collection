@@ -10,15 +10,14 @@ services:
       - mysql:/var/lib/mysql
     ports:
       - 13306:3306
-#  postgres:
-#    image: mariadb:10.7
-#    environment:
-#      MYSQL_ROOT_PASSWORD: 'db'
-#      MYSQL_DATABASE: 'neos-behat'
-#    volumes:
-#      - mysql:/var/lib/mysql
-#    ports:
-#      - 13306:3306
+  postgres:
+    image: postgres:14.2
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 'db'
+      POSTGRES_DB: 'neos-behat'
+    ports:
+      - 15432:5432
 
 
 

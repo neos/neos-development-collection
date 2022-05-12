@@ -92,8 +92,7 @@ final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
             if (isset($this->contentGraphs[$identifier])) {
                 $reduction[$identifier] = $this->contentGraphs[$identifier];
             } else {
-                // TODO: we want to skip the postgres adapter for now.
-                //throw new \InvalidArgumentException('Unknown adapter "' . $identifier . '"', 1648406324);
+                throw new \InvalidArgumentException('Unknown adapter "' . $identifier . '"', 1648406324);
             }
         }
 

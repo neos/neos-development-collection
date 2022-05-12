@@ -60,6 +60,33 @@ Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHan
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DimensionSpaceCommandHandlerObjectFactory
   factoryMethodName: buildDimensionSpaceCommandHandler
+##############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\HypergraphObjectFactory:
+  scope: singleton
+  arguments:
+    5: # $processedEventsCache
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_ContentGraph_PostgreSQLAdapter_ProcessedEvents
+
+
+Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\HypergraphObjectFactory
+  factoryMethodName: buildContentHypergraph
+
+Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface:
+  scope: singleton
+  className: Neos\ContentRepositoryRegistry\Infrastructure\PostgresDbalClient
+
+Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\HypergraphObjectFactory
+  factoryMethodName: buildHypergraphProjector
+
 
 ##############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\InfrastructureObjectFactory:

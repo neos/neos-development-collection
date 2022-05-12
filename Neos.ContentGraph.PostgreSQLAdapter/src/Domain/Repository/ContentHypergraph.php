@@ -20,7 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
+use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -33,7 +33,6 @@ use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The PostgreSQL adapter content hypergraph
@@ -42,10 +41,9 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-#[Flow\Scope("singleton")]
 final class ContentHypergraph implements ContentGraphInterface
 {
-    private DbalClient $databaseClient;
+    private PostgresDbalClientInterface $databaseClient;
 
     private NodeFactory $nodeFactory;
 
@@ -54,7 +52,7 @@ final class ContentHypergraph implements ContentGraphInterface
      */
     private array $subhypergraphs;
 
-    public function __construct(DbalClient $databaseClient, NodeFactory $nodeFactory)
+    public function __construct(PostgresDbalClientInterface $databaseClient, NodeFactory $nodeFactory)
     {
         $this->databaseClient = $databaseClient;
         $this->nodeFactory = $nodeFactory;

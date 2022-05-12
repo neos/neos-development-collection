@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\PostgreSQLAdapter\Infrastructure;
+namespace Neos\ContentRepositoryRegistry\Infrastructure;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -17,6 +17,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\SQLLogger;
+use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,10 +25,10 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class DbalClient
+class PostgresDbalClient implements PostgresDbalClientInterface
 {
     /**
-     * @Flow\InjectConfiguration(path="persistence.backendOptions")
+     * @Flow\InjectConfiguration(path="postgres.persistence.backendOptions")
      * @var array<string,mixed>
      */
     protected array $backendOptions = [];

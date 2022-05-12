@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHypergraphQuery;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
+use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -31,12 +31,9 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ProjectionHypergraph
 {
-    private DbalClient $databaseClient;
-
     public function __construct(
-        DbalClient $databaseClient
+        private readonly PostgresDbalClientInterface $databaseClient
     ) {
-        $this->databaseClient = $databaseClient;
     }
 
     /**

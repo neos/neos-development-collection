@@ -162,8 +162,8 @@ jobs:
               mvc:
                 routes:
                   'Neos.Flow': TRUE
-            ContentGraph:
-              PostgreSQLAdapter:
+            ContentRepositoryRegistry:
+              postgres:
                 persistence:
                   backendOptions:
                     host: '127.0.0.1'
@@ -171,6 +171,7 @@ jobs:
                     dbname: 'flow_functional_testing'
                     user: 'neos'
                     password: 'neos'
+                    charset: 'UTF8'
           EOF
           mkdir Configuration/Testing/Postgres
           cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml

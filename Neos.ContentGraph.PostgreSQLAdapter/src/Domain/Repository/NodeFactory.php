@@ -32,7 +32,6 @@ use Neos\ContentRepository\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\Projection\Content\PropertyCollection;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
