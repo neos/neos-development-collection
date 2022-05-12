@@ -233,8 +233,11 @@ jobs:
             cd ../../
             echo "DUMPING DATABASE (because of error)"
             sudo apt-get install -y postgresql-client
+            echo "writing PW"
+            sudo touch ~/.pgpass
+            sudo chmod 600 ~/.pgpass
             echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
-            chmod 600 ~/.pgpass
+            echo "starting pg_dump"
             pg_dump --file=Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
           fi
           exit $retVal
