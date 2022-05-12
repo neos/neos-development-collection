@@ -155,9 +155,9 @@ function(
 		 */
 		_sanitizeHtml: function(html) {
 			var text = document.createTextNode(html);
-			var p = document.createElement('div');
-			p.appendChild(text);
-			return p.innerHTML;
+			var div = document.createElement('div');
+			div.appendChild(text);
+			return div.innerHTML;
 		}
 	}).create();
 });
