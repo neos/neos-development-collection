@@ -19,6 +19,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
 /** @codingStandardsIgnoreStart */ use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
@@ -116,8 +117,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         /** @var int $uriPathSegmentOffset */
         $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSegmentOffset);
-        /** @var DimensionSpacePoint $dimensionSpacePoint */
-        $dimensionSpacePoint = $parameters->getValue('dimensionSpacePoint');
+        $dimensionSpacePointCacheEntryIdentifier = $parameters->getValue('dimensionSpacePointCacheEntryIdentifier');
+        assert($dimensionSpacePointCacheEntryIdentifier instanceof DimensionSpacePointCacheEntryIdentifier);
+        $dimensionSpacePoint = $dimensionSpacePointCacheEntryIdentifier->dimensionSpacePoint;
 
         try {
             $matchResult = $this->matchUriPath(
