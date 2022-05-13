@@ -351,11 +351,16 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         SELECT n.*, h.contentstreamidentifier,
             h.dimensionspacepoint,
             \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
-            0 as level
+            0 as level,
+            h.ordinality
         FROM ' . NodeRecord::TABLE_NAME . ' n
             INNER JOIN (
-                SELECT *, unnest(childnodeanchors) AS childnodeanchor
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                SELECT *
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ',
+                     -- this creates a new generated column "ordinality" which contains the sorting
+                     -- order of the childnodeanchor entries. We use this on the top level query to
+                     -- ensure that we preserve sorting of child nodes.
+                     unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
             ) h ON n.relationanchorpoint = h.childnodeanchor
         WHERE n.nodeaggregateidentifier IN (:entryNodeAggregateIdentifiers)
             AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -368,11 +373,16 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         SELECT cn.*, ch.contentstreamidentifier,
             ch.dimensionspacepoint,
             p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
-     	    p.level + 1 as level
+            p.level + 1 as level,
+            ch.ordinality
         FROM subtree p
             INNER JOIN (
-                SELECT *, unnest(childnodeanchors) AS childnodeanchor
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                SELECT *
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ',
+                     -- this creates a new generated column "ordinality" which contains the sorting
+                     -- order of the childnodeanchor entries. We use this on the top level query to
+                     -- ensure that we preserve sorting of child nodes.
+                     unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
             ) ch ON ch.parentnodeanchor = p.relationanchorpoint
             INNER JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
 	    WHERE
@@ -383,7 +393,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 		    -- @todo node type constraints
     )
     SELECT * FROM subtree
-    ORDER BY level DESC';
+    -- NOTE: it is crucially important that *inside* a single level, we
+    -- additionally order by ordinality (i.e. sort order of the childnodeanchor list)
+    -- to preserve node ordering when fetching subtrees.
+    ORDER BY level DESC, ordinality ASC';
 
         $parameters = [
             'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers->toStringArray(),

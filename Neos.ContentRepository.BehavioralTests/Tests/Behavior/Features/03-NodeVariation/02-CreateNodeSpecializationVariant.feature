@@ -45,6 +45,15 @@ Feature: Create node specialization
     # Node /document/child-document
       | nody-mc-nodeface        | child-document | sir-david-nodenborough        | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
 
+  Scenario: check the tree state before the specialization
+    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
+      | Level | NodeAggregateIdentifier |
+      | 0     | sir-david-nodenborough  |
+      | 1     | nodewyn-tetherton       |
+      | 2     | nodimer-tetherton       |
+      | 1     | nody-mc-nodeface        |
+
   Scenario: Create specialization of node to dimension space point without further specializations
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value                             |
