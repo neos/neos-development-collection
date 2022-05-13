@@ -1,12 +1,13 @@
 {
     "name": "neos/content-repository",
-    "type": "neos-package",
     "description": "Content repository based on Flow, specifically made for Neos.",
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.0",
+        "neos/event-sourcing": "^2.4",
+        "neos/content-repository-dimensionspace": "*",
+        "php": "^8.1",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -18,12 +19,18 @@
         "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "^1.0"
     },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.5",
+        "squizlabs/php_codesniffer": "^3.6",
+        "phpunit/phpunit": "^9.0"
+    },
     "replace": {
         "typo3/typo3cr": "self.version"
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\": "Classes"
+            "Neos\\ContentRepository\\": "src"
         }
     },
     "autoload-dev": {

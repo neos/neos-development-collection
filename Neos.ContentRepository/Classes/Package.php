@@ -58,43 +58,5 @@ class Package extends BasePackage
                 $contextInstance->getFirstLevelNodeCache()->flush();
             }
         });
-
-        $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) {
-            $configurationManager->registerConfigurationType('NodeTypes', new NodeTypesLoader(new YamlSource()));
-        });
-
-        if ($bootstrap->getContext()->isProduction()) {
-            return;
-        }
-        $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap) {
-            if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
-                $nodeTypeConfigurationFileMonitor = FileMonitor::createFileMonitorAtBoot('ContentRepository_NodeTypesConfiguration', $bootstrap);
-                /** @var PackageManager $packageManager */
-                $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
-                foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
-                    if ($packageManager->isPackageFrozen($packageKey)) {
-                        continue;
-                    }
-                    if (file_exists($package->getConfigurationPath())) {
-                        $nodeTypeConfigurationFileMonitor->monitorDirectory($package->getConfigurationPath(), 'NodeTypes(\..+)\.yaml');
-                    }
-
-                    $nodeTypesConfigurationDirectory = Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes']);
-                    if (\is_dir($nodeTypesConfigurationDirectory)) {
-                        $nodeTypeConfigurationFileMonitor->monitorDirectory($nodeTypesConfigurationDirectory, '(.+)\.yaml');
-                    }
-                }
-
-                $nodeTypeConfigurationFileMonitor->monitorDirectory(FLOW_PATH_CONFIGURATION, 'NodeTypes(\..+)\.yaml');
-
-                $nodeTypeConfigurationFileMonitor->detectChanges();
-                $nodeTypeConfigurationFileMonitor->shutdownObject();
-            }
-        });
-        $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', static function (string $fileMonitorIdentifier) use ($bootstrap) {
-            if ($fileMonitorIdentifier === 'ContentRepository_NodeTypesConfiguration') {
-                $bootstrap->getObjectManager()->get(ConfigurationManager::class)->refreshConfiguration();
-            }
-        });
     }
 }

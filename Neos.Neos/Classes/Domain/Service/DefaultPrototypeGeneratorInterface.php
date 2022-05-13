@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,11 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Generate a Fusion prototype definition for a given node type

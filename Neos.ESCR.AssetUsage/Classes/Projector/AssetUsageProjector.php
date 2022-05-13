@@ -4,20 +4,20 @@ declare(strict_types=1);
 namespace Neos\ESCR\AssetUsage\Projector;
 
 use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasDiscarded;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyDiscarded;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyPublished;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPublished;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Feature\WorkspaceDiscarding\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Feature\WorkspaceDiscarding\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
+use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
@@ -46,7 +46,7 @@ final class AssetUsageProjector implements ProjectorInterface
         RawEvent $rawEvent
     ): void {
         try {
-            $assetIdsByProperty = $this->getAssetIdsByProperty($event->getInitialPropertyValues());
+            $assetIdsByProperty = $this->getAssetIdsByProperty($event->initialPropertyValues);
         } catch (InvalidTypeException $e) {
             throw new \RuntimeException(
                 sprintf(
@@ -59,9 +59,9 @@ final class AssetUsageProjector implements ProjectorInterface
             );
         }
         $nodeAddress = new NodeAddress(
-            $event->getContentStreamIdentifier(),
-            $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-            $event->getNodeAggregateIdentifier(),
+            $event->contentStreamIdentifier,
+            $event->originDimensionSpacePoint->toDimensionSpacePoint(),
+            $event->nodeAggregateIdentifier,
             null
         );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);

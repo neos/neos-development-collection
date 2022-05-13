@@ -27,7 +27,7 @@ trait BrowserTrait
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     abstract protected function getObjectManager();
-    abstract protected function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+    abstract protected function getCurrentNodeAddress(string $alias = null): \Neos\ContentRepository\SharedModel\NodeAddress;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
@@ -44,7 +44,7 @@ trait BrowserTrait
         $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->clearContext();
 
         $this->browser = new \Neos\Flow\Http\Client\Browser();
-        $this->browser->setRequestEngine(new \Neos\EventSourcedNeosAdjustments\Testing\CustomizedInternalRequestEngine());
+        $this->browser->setRequestEngine(new \Neos\Neos\Testing\CustomizedInternalRequestEngine());
         $bootstrap = $this->getObjectManager()->get(\Neos\Flow\Core\Bootstrap::class);
 
         $requestHandler = new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap);
@@ -136,7 +136,7 @@ trait BrowserTrait
     {
         $nodeAddresses = $this->getCurrentNodeAddresses();
         foreach ($nodeAddresses as $alias => $nodeAddress) {
-            /* @var $nodeAddress \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress */
+            /* @var $nodeAddress \Neos\ContentRepository\SharedModel\NodeAddress */
             $nodeAddressString = str_replace($alias, $nodeAddress->serializeForUri(), $nodeAddressString);
         }
 

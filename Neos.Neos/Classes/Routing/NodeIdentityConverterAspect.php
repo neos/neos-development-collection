@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Routing;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,9 +10,14 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Routing;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI
@@ -27,18 +31,22 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class NodeIdentityConverterAspect
 {
+    #[Flow\Inject]
+    protected NodeAddressFactory $nodeAddressFactory;
+
     /**
      * Convert the object to its context path, if we deal with ContentRepository nodes.
      *
      * @Flow\Around("method(Neos\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
      * @param JoinPointInterface $joinPoint the joinpoint
-     * @return string|array the context path to be used for routing
+     * @return string|array<string,string> the context path to be used for routing
      */
-    public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array
+    public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array|string
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            return ['__contextNodePath' => $objectArgument->getContextPath()];
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($objectArgument);
+            return ['__contextNodePath' => $nodeAddress->serializeForUri()];
         }
 
         return $joinPoint->getAdviceChain()->proceed($joinPoint);

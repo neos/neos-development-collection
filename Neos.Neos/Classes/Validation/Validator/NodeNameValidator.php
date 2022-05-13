@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Validation\Validator;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,8 +10,12 @@ namespace Neos\Neos\Validation\Validator;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Validation\Validator;
+
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Validator for node names
@@ -20,9 +23,13 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 class NodeNameValidator extends RegularExpressionValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
-        'regularExpression' => [NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string']
+        'regularExpression' => [
+            NodeName::PATTERN,
+            'The regular expression to use for validation, used as given',
+            'string'
+        ]
     ];
 }

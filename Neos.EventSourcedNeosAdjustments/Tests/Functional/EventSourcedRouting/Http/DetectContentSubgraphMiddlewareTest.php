@@ -18,12 +18,13 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
+use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
+use Neos\Neos\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware;
+use Neos\Neos\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
+use Neos\Neos\EventSourcedRouting\Http\DetectContentSubgraphMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -196,8 +197,9 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'channel' => 'channelA',
             'language' => 'de'
         ]);
+        $expectedCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($expectedDimensionSpacePoint);
         self::assertEquals(
-            $expectedDimensionSpacePoint,
+            $expectedCacheEntryIdentifier,
             $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }
@@ -223,8 +225,9 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'channel' => 'channelA',
             'language' => 'de'
         ]);
+        $expectedCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($expectedDimensionSpacePoint);
         self::assertEquals(
-            $expectedDimensionSpacePoint,
+            $expectedCacheEntryIdentifier,
             $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }
@@ -249,8 +252,9 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'channel' => 'default',
             'language' => 'en'
         ]);
+        $expectedCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($expectedDimensionSpacePoint);
         self::assertEquals(
-            $expectedDimensionSpacePoint,
+            $expectedCacheEntryIdentifier,
             $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }

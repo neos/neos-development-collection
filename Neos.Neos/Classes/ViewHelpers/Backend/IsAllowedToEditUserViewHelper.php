@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
@@ -49,7 +50,8 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
      *
-     * @param User $user
+     * ViewHelper arguments: @see initializeArguments
+     *
      * @return bool
      * @throws \Neos\Flow\Security\Exception
      * @throws \Neos\Flow\Security\Exception\NoSuchRoleException
@@ -65,7 +67,12 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
             return false;
         }
 
-        $currentUserRoles = $this->userService->getAllRoles($this->userService->getCurrentUser());
+        $currentUser = $this->userService->getCurrentUser();
+        if (!$currentUser instanceof User) {
+            return false;
+        }
+
+        $currentUserRoles = $this->userService->getAllRoles($currentUser);
         $userRoles = $this->userService->getAllRoles($user);
         return count(array_diff($userRoles, $currentUserRoles)) === 0;
     }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Neos\Routing;
 
 /*
@@ -22,17 +25,19 @@ use Neos\Utility\Arrays;
  */
 class BackendModuleRoutePartHandler extends DynamicRoutePart
 {
-    const MATCHRESULT_FOUND = true;
-    const MATCHRESULT_NOSUCHMODULE = -1;
-    const MATCHRESULT_NOCONTROLLER = -2;
+    public const MATCHRESULT_FOUND = true;
+    public const MATCHRESULT_NOSUCHMODULE = -1;
+    public const MATCHRESULT_NOCONTROLLER = -2;
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $settings;
 
     /**
      * @param array $settings
+     * @phpstan-param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -84,7 +89,10 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
                 }
             } else {
                 if ($level === count($segments) - 1) {
-                    $moduleMethods = array_change_key_case(array_flip(get_class_methods($moduleController)), CASE_LOWER);
+                    $moduleMethods = array_change_key_case(
+                        array_flip(get_class_methods($moduleController)),
+                        CASE_LOWER
+                    );
                     if (array_key_exists($segment . 'action', $moduleMethods)) {
                         $moduleAction = $segment;
                         break;
@@ -125,7 +133,7 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
      * Iterate through the configured modules, find the matching module and set
      * the route path accordingly
      *
-     * @param array $value (contains action, controller and package of the module controller)
+     * @param array<string,mixed>|null|string $value (contains action, controller and package of the module controller)
      * @return boolean
      */
     protected function resolveValue($value)

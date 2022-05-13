@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\View;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,7 +10,11 @@ namespace Neos\Neos\View;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\View;
+
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
@@ -33,20 +34,17 @@ trait FusionViewI18nTrait
      * This overrides the fallback order from Neos.Flow.i18n.fallbackRule.order - the strict
      * flag is kept from the settings!
      *
-     * @param TraversableNodeInterface $currentSiteNode
-     * @return void
      * @throws InvalidLocaleIdentifierException
      */
-    protected function setFallbackRuleFromDimension(TraversableNodeInterface $currentSiteNode): void
+    protected function setFallbackRuleFromDimension(DimensionSpacePoint $dimensionSpacePoint): void
     {
-        $dimensions = $currentSiteNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
-            $currentLocale = new Locale($dimensions['language'][0]);
+        $dimensions = $dimensionSpacePoint->coordinates;
+        if (array_key_exists('language', $dimensions)) {
+            $currentLocale = new Locale($dimensions['language']);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            array_shift($dimensions['language']);
             $this->i18nService->getConfiguration()->setFallbackRule([
                 'strict' => $this->i18nService->getConfiguration()->getFallbackRule()['strict'],
-                'order' => $dimensions['language']
+                'order' => [$dimensions['language']]
             ]);
         }
     }

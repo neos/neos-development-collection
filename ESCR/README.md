@@ -159,7 +159,7 @@ To activate Postgres, right now, the following steps are needed **in your distri
 ```yaml
 # Configuration/Objects.yaml
 
-Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+Neos\ContentRepository\Projection\Content\ContentGraphInterface:
   className: 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
 ```
 

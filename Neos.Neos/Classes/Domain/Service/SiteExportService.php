@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,13 +10,15 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
 
 /**
  * The Site Export Service
@@ -26,19 +27,6 @@ use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
  */
 class SiteExportService
 {
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     *
-     * @var NodeExportService
-     */
-    protected $nodeExportService;
-
     /**
      * @Flow\Inject
      * @var PackageManager
@@ -64,10 +52,11 @@ class SiteExportService
      *
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return string
      */
-    public function export(array $sites, $tidy = false, $nodeTypeFilter = null)
+    /*public function export(array $sites, $tidy = false, $nodeTypeFilter = null)
     {
         $this->xmlWriter = new \XMLWriter();
         $this->xmlWriter->openMemory();
@@ -76,7 +65,7 @@ class SiteExportService
         $this->exportSites($sites, $nodeTypeFilter);
 
         return $this->xmlWriter->outputMemory(true);
-    }
+    }*/
 
     /**
      * Fetches the site with the given name and exports it into XML in the given package.
@@ -84,11 +73,12 @@ class SiteExportService
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
      * @param string $packageKey Package key where the export output should be saved to
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      * @throws NeosException
      */
-    public function exportToPackage(array $sites, $tidy, $packageKey, $nodeTypeFilter = null)
+    /*public function exportToPackage(array $sites, $tidy, $packageKey, $nodeTypeFilter = null)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1404375719);
@@ -105,7 +95,7 @@ class SiteExportService
         $this->exportSites($sites, $nodeTypeFilter);
 
         $this->xmlWriter->flush();
-    }
+    }*/
 
     /**
      * Fetches the site with the given name and exports it as XML into the given file.
@@ -113,10 +103,11 @@ class SiteExportService
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
      * @param string $pathAndFilename Path to where the export output should be saved to
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions
+     *                               (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
-    public function exportToFile(array $sites, $tidy, $pathAndFilename, $nodeTypeFilter = null)
+    /*public function exportToFile(array $sites, $tidy, $pathAndFilename, $nodeTypeFilter = null)
     {
         $this->resourcesPath = Files::concatenatePaths([dirname($pathAndFilename), 'Resources']);
         Files::createDirectoryRecursively($this->resourcesPath);
@@ -128,7 +119,7 @@ class SiteExportService
         $this->exportSites($sites, $nodeTypeFilter);
 
         $this->xmlWriter->flush();
-    }
+    }*/
 
     /**
      * Exports the given sites to the XMLWriter
@@ -137,7 +128,7 @@ class SiteExportService
      * @param string $nodeTypeFilter
      * @return void
      */
-    protected function exportSites(array $sites, $nodeTypeFilter)
+    /*protected function exportSites(array $sites, $nodeTypeFilter)
     {
         $this->xmlWriter->startDocument('1.0', 'UTF-8');
         $this->xmlWriter->startElement('root');
@@ -148,7 +139,7 @@ class SiteExportService
 
         $this->xmlWriter->endElement();
         $this->xmlWriter->endDocument();
-    }
+    }*/
 
     /**
      * Export the given $site to the XMLWriter
@@ -157,9 +148,8 @@ class SiteExportService
      * @param string $nodeTypeFilter
      * @return void
      */
-    protected function exportSite(Site $site, $nodeTypeFilter)
+    /*protected function exportSite(Site $site, $nodeTypeFilter)
     {
-        /** @var ContentContext $contentContext */
         $contentContext = $this->contextFactory->create([
             'currentSite' => $site,
             'invisibleContentShown' => true,
@@ -174,8 +164,16 @@ class SiteExportService
         $this->xmlWriter->writeAttribute('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
         $this->xmlWriter->writeAttribute('siteNodeName', $siteNode->getName());
 
-        $this->nodeExportService->export($siteNode->getPath(), $contentContext->getWorkspaceName(), $this->xmlWriter, false, false, $this->resourcesPath, $nodeTypeFilter);
+        $this->nodeExportService->export(
+            $siteNode->getPath(),
+            $contentContext->getWorkspaceName(),
+            $this->xmlWriter,
+            false,
+            false,
+            $this->resourcesPath,
+            $nodeTypeFilter
+        );
 
         $this->xmlWriter->endElement();
-    }
+    }*/
 }

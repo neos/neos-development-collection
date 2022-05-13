@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
@@ -38,6 +41,7 @@ class UserInterfaceModeService
     /**
      * @Flow\InjectConfiguration(path="userInterface.editPreviewModes", package="Neos.Neos")
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $editPreviewModes;
 
@@ -55,19 +59,19 @@ class UserInterfaceModeService
      */
     public function findModeByCurrentUser()
     {
-        if ($this->userService->getBackendUser() === null || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        if (
+            $this->userService->getBackendUser() === null
+            || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+        ) {
             return $this->findModeByName('live');
         }
 
-        /** @var \Neos\Neos\Domain\Model\User $user */
         $editPreviewMode = $this->userService->getUserPreference('contentEditing.editPreviewMode');
         if ($editPreviewMode === null) {
             $editPreviewMode = $this->defaultEditPreviewMode;
         }
 
-        $mode = $this->findModeByName($editPreviewMode);
-
-        return $mode;
+        return $this->findModeByName($editPreviewMode);
     }
 
     /**
@@ -98,10 +102,18 @@ class UserInterfaceModeService
                 $mode = UserInterfaceMode::createByConfiguration($modeName, $this->editPreviewModes[$modeName]);
                 $this->editPreviewModes[$modeName] = $mode;
             } else {
-                throw new Exception('The requested interface render mode "' . $modeName . '" is not configured correctly. Please make sure it is fully configured.', 1427716331);
+                throw new Exception(
+                    'The requested interface render mode "' . $modeName . '" is not configured correctly.'
+                        . ' Please make sure it is fully configured.',
+                    1427716331
+                );
             }
         } else {
-            throw new Exception('The requested interface render mode "' . $modeName . '" is not configured. Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".', 1427715962);
+            throw new Exception(
+                'The requested interface render mode "' . $modeName . '" is not configured.'
+                    . ' Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".',
+                1427715962
+            );
         }
 
         return $mode;

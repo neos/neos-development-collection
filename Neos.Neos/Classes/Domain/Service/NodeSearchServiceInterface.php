@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,11 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Service\Context;
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\Projection\Content\Nodes;
 
 /**
  * Interface for the node search service for finding nodes based on a fulltext search
@@ -19,10 +22,7 @@ use Neos\ContentRepository\Domain\Service\Context;
 interface NodeSearchServiceInterface
 {
     /**
-     * @param string $term
-     * @param array $searchNodeTypes
-     * @param Context $context
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
+     * @param array<int,string> $searchNodeTypes
      */
-    public function findByProperties($term, array $searchNodeTypes, Context $context);
+    public function findByProperties(string $term, array $searchNodeTypes): Nodes;
 }

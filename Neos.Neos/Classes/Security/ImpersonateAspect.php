@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Security;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,8 +10,13 @@ namespace Neos\Neos\Security;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Security;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Neos\Service\ImpersonateService;
 
@@ -52,11 +54,14 @@ class ImpersonateAspect
             $this->alreadyLoggedAuthenticateCall = true;
             return;
         }
-        if ($proxy->getSecurityContext()->getAccount() === null) {
+        /** @var ?Account $account */
+        $account = $proxy->getSecurityContext()->getAccount();
+        if ($account === null) {
             $this->alreadyLoggedAuthenticateCall = true;
             return;
         }
 
+        /** @phpstan-ignore-next-line might still be null in strange Flow DI cases */
         if ($this->impersonateService && $this->impersonateService->isActive()) {
             $impersonation = $this->impersonateService->getImpersonation();
             foreach ($proxy->getSecurityContext()->getAuthenticationTokens() as $token) {

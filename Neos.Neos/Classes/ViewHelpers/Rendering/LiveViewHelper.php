@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Rendering;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,11 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Rendering;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering the live website.
@@ -51,14 +54,12 @@ class LiveViewHelper extends AbstractRenderingStateViewHelper
     }
 
     /**
-     * @return boolean
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function render(): bool
     {
-        $context = $this->getNodeContext($this->arguments['node']);
+        $nodeAddress = $this->getNodeAddressOfContextNode($this->arguments['node']);
 
-        return $context->isLive();
+        return $nodeAddress->isInLiveWorkspace();
     }
 }

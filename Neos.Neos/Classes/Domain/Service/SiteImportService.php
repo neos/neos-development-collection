@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,11 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Exception\InvalidPackageStateException;
@@ -25,16 +29,14 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 use Neos\Neos\Exception as NeosException;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * The Site Import Service
  *
  * @Flow\Scope("singleton")
  * @api
+ * @todo import me event-sourced
  */
 class SiteImportService
 {
@@ -52,19 +54,7 @@ class SiteImportService
 
     /**
      * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeImportService
-     */
-    protected $nodeImportService;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 
@@ -126,7 +116,9 @@ class SiteImportService
         $this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass(ImageVariant::class);
         array_unshift($this->imageVariantClassNames, ImageVariant::class);
 
-        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetInterface::class);
+        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(
+            AssetInterface::class
+        );
 
         $this->dateTimeClassNames = $this->reflectionService->getAllSubClassNamesForClass('DateTime');
         array_unshift($this->dateTimeClassNames, 'DateTime');
@@ -139,7 +131,7 @@ class SiteImportService
      * @return Site the imported site
      * @throws NeosException
      */
-    public function importFromPackage($packageKey)
+    /*public function importFromPackage($packageKey)
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1384192950);
@@ -151,9 +143,12 @@ class SiteImportService
         try {
             return $this->importFromFile($contentPathAndFilename);
         } catch (\Exception $exception) {
-            throw new NeosException(sprintf('Error: During import an exception occurred: "%s".', $exception->getMessage()), 1300360480, $exception);
+            throw new NeosException(sprintf(
+                'Error: During import an exception occurred: "%s".',
+                $exception->getMessage()
+            ), 1300360480, $exception);
         }
-    }
+    }*/
 
     /**
      * Imports one or multiple sites from the XML file at $pathAndFilename
@@ -162,13 +157,12 @@ class SiteImportService
      * @return Site The imported site
      * @throws UnknownPackageException|InvalidPackageStateException|NeosException
      */
-    public function importFromFile($pathAndFilename)
+    /*public function importFromFile($pathAndFilename)
     {
         if (!file_exists($pathAndFilename)) {
             throw new NeosException(sprintf('Error: File "%s" does not exist.', $pathAndFilename), 1540934412);
         }
 
-        /** @var Site $importedSite */
         $site = null;
         $xmlReader = new \XMLReader();
         if ($xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE) === false) {
@@ -191,10 +185,16 @@ class SiteImportService
 
             $siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
             if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-                throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
+                throw new UnknownPackageException(sprintf(
+                    'Package "%s" specified in the XML as site resources package does not exist.',
+                    $siteResourcesPackageKey
+                ), 1303891443);
             }
             if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-                throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
+                throw new InvalidPackageStateException(sprintf(
+                    'Package "%s" specified in the XML as site resources package is not active.',
+                    $siteResourcesPackageKey
+                ), 1303898135);
             }
             $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
@@ -209,7 +209,11 @@ class SiteImportService
                 $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
 
-            $this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
+            $this->nodeImportService->import(
+                $xmlReader,
+                $sitesNode->getPath(),
+                dirname($pathAndFilename) . '/Resources'
+            );
         }
 
         if ($site === null) {
@@ -217,7 +221,7 @@ class SiteImportService
         }
         $this->emitSiteImported($site);
         return $site;
-    }
+    }*/
 
     /**
      * Updates or creates a site with the given $siteNodeName

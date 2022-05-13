@@ -6,13 +6,13 @@
         "php": ">=8.1",
         "neos/neos": "*",
         "neos/event-sourcing": "*",
-        "neos/event-sourced-content-repository": "*",
+        "neos/content-repository": "*",
         "neos/escr-asset-usage": "*",
         "webmozart/assert": "^1.10"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.4"
+        "phpstan/phpstan": "^1.5"
     },
     "autoload": {
         "psr-4": {

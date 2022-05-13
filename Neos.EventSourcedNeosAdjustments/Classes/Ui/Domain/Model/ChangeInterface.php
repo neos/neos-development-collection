@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,7 +10,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * An interface to describe a change

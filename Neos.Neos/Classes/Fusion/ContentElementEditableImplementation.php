@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,12 +10,15 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Service\ContentElementEditableService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Service\ContentElementEditableService;
 
 /**
  * Adds meta data attributes to the processed Property to enable in place editing
@@ -54,28 +56,18 @@ class ContentElementEditableImplementation extends AbstractFusionObject
     {
         $content = $this->getValue();
 
-        /** @var $node NodeInterface */
         $node = $this->fusionValue('node');
         if (!$node instanceof NodeInterface) {
             return $content;
         }
 
-        /** @var $property string */
+        /** @var string $property */
         $property = $this->fusionValue('property');
-
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live') {
-            return $content;
-        }
 
         if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             return $content;
         }
 
-        if ($node->isRemoved()) {
-            $content = '';
-        }
         return $this->contentElementEditableService->wrapContentProperty($node, $property, $content);
     }
 }

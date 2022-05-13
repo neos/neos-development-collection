@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\ContentRepository\Exception\WorkspaceException;
+use Neos\Neos\Domain\Model\UserInterface;
 
 /**
  * A Workspace

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,11 +10,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
+
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -29,7 +30,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -229,8 +230,10 @@ class NodePropertyConverterService
 
         // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects.
         // Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue)
-            && !is_array($propertyValue)) {
+        if (
+            !TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue)
+            && !is_array($propertyValue)
+        ) {
             return null;
         }
 
@@ -348,8 +351,10 @@ class NodePropertyConverterService
         string $typeConverterClass,
         string $dataType
     ): void {
-        if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
-            || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])) {
+        if (
+            !isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
+            || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])
+        ) {
             return;
         }
 

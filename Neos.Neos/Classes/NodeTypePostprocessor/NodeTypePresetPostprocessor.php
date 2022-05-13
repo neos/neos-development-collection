@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\NodeTypePostprocessor;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,9 +10,13 @@ namespace Neos\Neos\NodeTypePostprocessor;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\NodeTypePostprocessor;
+
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Utility\Arrays;
 
 /**
@@ -21,23 +24,24 @@ use Neos\Utility\Arrays;
  */
 class NodeTypePresetPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.properties")
      */
     protected $propertyPresetConfiguration;
 
     /**
      * @var array
+     * @phpstan-var array<string,mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.childNodes")
      */
     protected $childNodePresetConfiguration;
 
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
-     * @param array $configuration input configuration
-     * @param array $options The processor options
+     * @param array<string,mixed> $configuration input configuration
+     * @param array<string,mixed> $options The processor options
      * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void

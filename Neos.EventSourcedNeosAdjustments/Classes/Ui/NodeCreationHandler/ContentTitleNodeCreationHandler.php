@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,10 +10,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
+
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Service\TransliterationService;
 
@@ -48,12 +49,14 @@ class ContentTitleNodeCreationHandler implements NodeCreationHandlerInterface
      */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
-        if (!$this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue())
-            ->isOfType('Neos.Neos:Content')) {
+        if (
+            !$this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue())
+                ->isOfType('Neos.Neos:Content')
+        ) {
             return $command;
         }
 
-        $propertyValues = $command->getInitialPropertyValues() ?: PropertyValuesToWrite::fromArray([]);
+        $propertyValues = $command->initialPropertyValues;
         if (isset($data['title'])) {
             $propertyValues = $propertyValues->withValue('title', $data['title']);
         }

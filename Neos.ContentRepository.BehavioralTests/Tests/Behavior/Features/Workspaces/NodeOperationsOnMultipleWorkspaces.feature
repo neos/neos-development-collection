@@ -72,7 +72,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | initiatingUserIdentifier  | "initiating-user-identifier" |
 
     Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:user-cs-identifier"
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
+    And event at index 1 is of type "NodePropertiesWereSet" with payload:
       | Key                       | Expected                     |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |

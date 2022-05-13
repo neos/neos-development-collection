@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,9 +10,12 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
+
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Exception;
 use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -54,7 +56,9 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  * </output>
  *
  * <code title="Arguments">
- * <neos:backend.translate arguments="{0: 'foo', 1: '99.9'}"><![CDATA[Untranslated {0} and {1,number}]]></neos:backend.translate>
+ * <neos:backend.translate arguments="{0: 'foo', 1: '99.9'}">
+ *      <![CDATA[Untranslated {0} and {1,number}]]>
+ * </neos:backend.translate>
  * </code>
  * <output>
  * translation of the label "Untranslated foo and 99.9"
@@ -81,15 +85,9 @@ class TranslateViewHelper extends FluidTranslateViewHelper
      * Replaces all placeholders with corresponding values if they exist in the
      * translated label.
      *
-     * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
-     * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
-     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
-     * @param string $source Name of file with translations
-     * @param string $package Target package key. If not set, the current package key will be used
-     * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-     * @param string $locale An identifier of a language to use (NULL for using the default language)
-     * @return string Translated label or source label / ID key
+     * ViewHelper arguments: @return string Translated label or source label / ID key
      * @throws ViewHelper\Exception
+     * @see FluidTranslateViewHelper::initializeArguments
      */
     public function render()
     {
@@ -109,17 +107,12 @@ class TranslateViewHelper extends FluidTranslateViewHelper
             $this->arguments['locale'] = $this->userService->getInterfaceLanguage();
         }
 
-        // Catch exception in case the translation file doesn't exist, should be fixed in Flow 3.1
-        try {
+        $translation = parent::render();
+        // Fallback to english label if label was not available in specific language
+        if ($translation === $id && $locale !== 'en') {
+            $this->arguments['locale'] = 'en';
             $translation = parent::render();
-            // Fallback to english label if label was not available in specific language
-            if ($translation === $id && $locale !== 'en') {
-                $this->arguments['locale'] = 'en';
-                $translation = parent::render();
-            }
-            return $translation;
-        } catch (Exception $exception) {
-            return $value ?: $id;
         }
+        return $translation;
     }
 }

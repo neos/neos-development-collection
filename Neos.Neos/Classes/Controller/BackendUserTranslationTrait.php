@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
@@ -23,13 +26,13 @@ trait BackendUserTranslationTrait
      * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
-    protected $_localizationService;
+    protected $localizationService;
 
     /**
      * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
-    protected $_userService;
+    protected $userService;
 
     /**
      * Set the locale according to the user settings
@@ -38,6 +41,8 @@ trait BackendUserTranslationTrait
      */
     protected function initializeObject()
     {
-        $this->_localizationService->getConfiguration()->setCurrentLocale(new Locale($this->_userService->getInterfaceLanguage()));
+        $this->localizationService->getConfiguration()->setCurrentLocale(
+            new Locale($this->userService->getInterfaceLanguage())
+        );
     }
 }

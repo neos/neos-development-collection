@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\EventLog\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -61,6 +64,7 @@ class Event
      * The identifier of the account that triggered this event. Optional.
      *
      * @var string
+     * @phpstan-var ?string
      * @ORM\Column(nullable=true)
      */
     protected $accountIdentifier;
@@ -70,6 +74,7 @@ class Event
      *
      * @ORM\Column(type="flow_json_array")
      * @var array
+     * @phpstan-var array<?mixed>
      */
     protected $data = [];
 
@@ -77,6 +82,7 @@ class Event
      * The parent event, if exists. E.g. if a "move node" operation triggered a bunch of other events, or a "publish"
      *
      * @var Event
+     * @phpstan-var ?self
      * @ORM\ManyToOne(inversedBy="childEvents")
      */
     protected $parentEvent;
@@ -84,8 +90,11 @@ class Event
     /**
      * Child events, of this event
      *
-     * @var ArrayCollection<Neos\Neos\EventLog\Domain\Model\Event>
-     * @ORM\OneToMany(targetEntity="Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade={"persist"})
+     * @var ArrayCollection<\Neos\Neos\EventLog\Domain\Model\Event>
+     * @phpstan-var ArrayCollection<int|string,Event>
+     * @codingStandardsIgnoreStart
+     * @ORM\OneToMany(targetEntity="\Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade={"persist"})
+     * @codingStandardsIgnoreEnd
      */
     protected $childEvents;
 
@@ -93,7 +102,7 @@ class Event
      * Create a new event
      *
      * @param string $eventType
-     * @param array $data
+     * @param array<mixed> $data
      * @param string $user
      * @param Event $parentEvent
      */
@@ -107,9 +116,7 @@ class Event
 
         $this->childEvents = new ArrayCollection();
 
-        if ($this->parentEvent !== null) {
-            $parentEvent->addChildEvent($this);
-        }
+        $this->parentEvent?->addChildEvent($this);
     }
 
     /**
@@ -135,9 +142,9 @@ class Event
     /**
      * Return the payload of this event
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -145,7 +152,7 @@ class Event
     /**
      * Return the identifier of the account (if any) which triggered this event
      *
-     * @return string
+     * @return ?string
      */
     public function getAccountIdentifier()
     {
@@ -154,10 +161,8 @@ class Event
 
     /**
      * Return the parent event (if any)
-     *
-     * @return Event
      */
-    public function getParentEvent()
+    public function getParentEvent(): ?Event
     {
         return $this->parentEvent;
     }
@@ -165,9 +170,9 @@ class Event
     /**
      * Return the child events (if any)
      *
-     * @return array
+     * @return ArrayCollection<int|string,self>
      */
-    public function getChildEvents()
+    public function getChildEvents(): ArrayCollection
     {
         return $this->childEvents;
     }

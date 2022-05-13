@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\DataSource;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,11 @@ namespace Neos\Neos\Service\DataSource;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\DataSource;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * Data source interface for providing generic data
@@ -34,7 +37,7 @@ interface DataSourceInterface
      * The return value must be JSON serializable data structure.
      *
      * @param NodeInterface $node The node that is currently edited (optional)
-     * @param array $arguments Additional arguments (key / value)
+     * @param array<mixed> $arguments Additional arguments (key / value)
      * @return mixed JSON serializable data
      * @api
      */

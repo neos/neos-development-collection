@@ -1,16 +1,15 @@
 {
   "name": "neos/contentgraph-doctrinedbaladapter",
-  "type": "neos-package",
   "description": "The Doctrine DBAL database backend for the Neos content graph",
   "license": "GPL-3.0+",
   "require": {
-    "neos/event-sourced-content-repository": "*",
+    "neos/content-repository": "*",
     "doctrine/dbal": "*",
     "doctrine/migrations": "*"
   },
   "autoload": {
     "psr-4": {
-      "Neos\\ContentGraph\\DoctrineDbalAdapter\\": "Classes"
+      "Neos\\ContentGraph\\DoctrineDbalAdapter\\": "src"
     }
   }
 }

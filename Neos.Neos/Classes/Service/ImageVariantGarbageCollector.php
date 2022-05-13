@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,12 +10,17 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 
 /**
  * Takes care of cleaning up ImageVariants.
@@ -25,12 +29,6 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
  */
 class ImageVariantGarbageCollector
 {
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
     /**
      * @Flow\Inject
      * @var AssetRepository
@@ -43,11 +41,15 @@ class ImageVariantGarbageCollector
      */
     protected $persistenceManager;
 
+    #[Flow\Inject]
+    protected AssetUsageRepository $assetUsageRepository;
+
     /**
      * Removes unused ImageVariants after a Node property changes to a different ImageVariant.
      * This is triggered via the nodePropertyChanged event.
      *
-     * Note: This method it triggered by the "nodePropertyChanged" signal, @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
+     * Note: This method it triggered by the "nodePropertyChanged" signal,
+     * @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
      *
      * @param NodeInterface $node the affected node
      * @param string $propertyName name of the property that has been changed/added
@@ -61,17 +63,27 @@ class ImageVariantGarbageCollector
             return;
         }
         $identifier = $this->persistenceManager->getIdentifierByObject($oldValue);
-        $results = $this->nodeDataRepository->findNodesByRelatedEntities([ImageVariant::class => [$identifier]]);
+        $usage = $this->assetUsageRepository->findUsages(AssetUsageFilter::create()->withAsset($identifier));
 
-        // This case shouldn't happen as the query will usually find at least the node that triggered this call, still if there is no relation we can remove the ImageVariant.
-        if ($results === []) {
+        // This case shouldn't happen as the query will usually find at least the node that triggered this call,
+        // still if there is no relation we can remove the ImageVariant.
+        if ($usage->count() === 0) {
             $this->assetRepository->remove($oldValue);
             return;
         }
 
-        // If the result contains exactly the node that got a new ImageVariant assigned then we are safe to remove the asset here.
-        if ($results === [$node->getNodeData()]) {
-            $this->assetRepository->remove($oldValue);
+        if ($usage->count() === 1) {
+            foreach ($usage->getIterator() as $usageItem) {
+                // If the result contains exactly the node that got a new ImageVariant assigned
+                // then we are safe to remove the asset here.
+                if (
+                    $usageItem->contentStreamIdentifier === $node->getContentStreamIdentifier()
+                    && $usageItem->originDimensionSpacePoint === $node->getOriginDimensionSpacePoint()->hash
+                    && $usageItem->nodeAggregateIdentifier === $node->getNodeAggregateIdentifier()
+                ) {
+                    $this->assetRepository->remove($oldValue);
+                }
+            }
         }
     }
 }

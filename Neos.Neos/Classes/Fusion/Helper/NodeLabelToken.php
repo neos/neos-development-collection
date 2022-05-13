@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,11 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Helper;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -23,7 +26,6 @@ use Neos\Flow\I18n\EelHelper\TranslationHelper;
  */
 class NodeLabelToken implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
      * @var TranslationHelper
@@ -61,10 +63,7 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected $postfix = '';
 
-    /**
-     * @var NodeInterface
-     */
-    protected $node = null;
+    protected NodeInterface $node;
 
     public function __construct(NodeInterface $node)
     {
@@ -141,21 +140,23 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected function resolveLabelFromNodeType(): void
     {
-        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel());
+        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel()) ?: '';
         if (empty($this->label)) {
             $this->label = $this->node->getNodeType()->getName();
         }
-        if (empty($this->postfix) && $this->node->isAutoCreated()) {
-            $this->postfix =  ' (' . $this->node->getName() . ')';
+
+        if (empty($this->postfix) && $this->node->isTethered()) {
+            $this->postfix =  ' (' . $this->node->getNodeName() . ')';
         }
     }
 
     protected function sanitiseLabel(string $label): string
     {
-        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label);
+        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label) ?: '';
         $label = strip_tags($label);
         $label = trim($label);
         $label = $this->stringHelper->cropAtWord($label, $this->length, $this->suffix);
+
         return $label;
     }
 

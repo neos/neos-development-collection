@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Utility;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,9 @@ namespace Neos\Neos\Utility;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Utility;
 
 /**
  * A collection of helper methods for the Neos backend assets
@@ -18,26 +20,12 @@ namespace Neos\Neos\Utility;
 class BackendAssetsUtility
 {
     /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
-     * @param array $settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Returns a shortened md5 of the built CSS file
      *
      * @return string
      */
     public function getCssBuiltVersion()
     {
-        return substr(md5_file('resource://Neos.Neos/Public/Styles/Lite.css'), 0, 12);
+        return substr(md5_file('resource://Neos.Neos/Public/Styles/Lite.css') ?: '', 0, 12);
     }
 }

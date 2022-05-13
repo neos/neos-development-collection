@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Routing\Cache;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,14 @@ namespace Neos\Neos\Routing\Cache;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Routing\Cache;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * This service flushes Route caches triggered by node changes.
@@ -30,7 +33,7 @@ class RouteCacheFlusher
     protected $routeCachingService;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $tagsToFlush = [];
 
@@ -43,13 +46,14 @@ class RouteCacheFlusher
      */
     public function registerNodeChange(NodeInterface $node)
     {
-        if (in_array($node->getIdentifier(), $this->tagsToFlush)) {
+        $identifier = (string)$node->getNodeAggregateIdentifier();
+        if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return;
         }
-        $this->tagsToFlush[] = $node->getIdentifier();
+        $this->tagsToFlush[] = $identifier;
     }
 
     /**
@@ -63,10 +67,14 @@ class RouteCacheFlusher
      * @param Workspace|null $newBaseWorkspace
      * @return void
      */
-    public function registerBaseWorkspaceChange(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
-    {
-        if (!in_array($workspace->getName(), $this->tagsToFlush)) {
-            $this->tagsToFlush[] = $workspace->getName();
+    public function registerBaseWorkspaceChange(
+        Workspace $workspace,
+        Workspace $oldBaseWorkspace = null,
+        Workspace $newBaseWorkspace = null
+    ) {
+        $identifier = (string)$workspace->getWorkspaceName();
+        if (!in_array($identifier, $this->tagsToFlush)) {
+            $this->tagsToFlush[] = $identifier;
         }
     }
 

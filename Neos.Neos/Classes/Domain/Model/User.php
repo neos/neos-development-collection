@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,14 @@ namespace Neos\Neos\Domain\Model;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model;
+
 use Neos\Flow\Security\Account;
 use Neos\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\UserInterface;
 
 /**
  * Domain Model of a User

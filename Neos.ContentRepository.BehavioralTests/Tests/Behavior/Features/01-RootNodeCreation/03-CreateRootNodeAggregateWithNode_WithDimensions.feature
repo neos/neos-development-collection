@@ -31,7 +31,7 @@ Feature: Create a root node aggregate
       | nodeTypeName            | "Neos.ContentRepository:Root" |
 
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated" with payload:
+    And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                                                    |
       | contentStreamIdentifier     | "cs-identifier"                                                             |
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                    |
@@ -93,7 +93,7 @@ Feature: Create a root node aggregate
       | nodeTypeName            | "Neos.ContentRepository:Root" |
 
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated" with payload:
+    And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                                                    |
       | contentStreamIdentifier     | "cs-identifier"                                                             |
       | nodeAggregateIdentifier     | "nody-mc-nodeface"                                                          |

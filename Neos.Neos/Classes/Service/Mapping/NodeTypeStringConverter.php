@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\Mapping;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,14 @@ namespace Neos\Neos\Service\Mapping;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\Mapping;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * Convert a boolean to a JavaScript compatible string representation.
@@ -44,13 +47,17 @@ class NodeTypeStringConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         if ($source instanceof NodeType) {
             return $source->getName();
         }

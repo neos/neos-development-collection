@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,7 +10,11 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Exception\NodeException;
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -19,7 +22,6 @@ use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
 use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 
 /**
@@ -39,15 +41,9 @@ class PluginImplementation extends AbstractArrayFusionObject
      */
     protected $dispatcher;
 
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected ?NodeInterface $node;
 
-    /**
-     * @var NodeInterface
-     */
-    protected $documentNode;
+    protected ?NodeInterface $documentNode;
 
     /**
      * @return string
@@ -82,7 +78,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getArgumentNamespace()
     {
@@ -91,17 +87,9 @@ class PluginImplementation extends AbstractArrayFusionObject
 
     /**
      * Build the pluginRequest object
-     *
-     * @return ActionRequest
-     * @throws InvalidActionNameException
-     * @throws InvalidControllerNameException
-     * @throws NodeException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     protected function buildPluginRequest(): ActionRequest
     {
-        /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
         $pluginRequest = $parentRequest->createSubRequest();
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
@@ -120,12 +108,13 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @param ActionRequest $pluginRequest
      * @param NodeInterface|null $node
      * @return ActionRequest
-     * @throws NodeException
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
      */
-    protected function resolveDispatchArgumentsForPluginRequest(ActionRequest $pluginRequest, NodeInterface $node = null): ActionRequest
-    {
+    protected function resolveDispatchArgumentsForPluginRequest(
+        ActionRequest $pluginRequest,
+        NodeInterface $node = null
+    ): ActionRequest {
         $packageKey = $this->getPackage();
         $subpackageKey = $this->getSubpackage();
         $controller = $this->getController();
@@ -163,7 +152,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @return string The rendered content as a string
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
-     * @throws NodeException
      * @throws \Neos\Flow\Configuration\Exception\NoSuchOptionException
      * @throws \Neos\Flow\Mvc\Controller\Exception\InvalidControllerException
      * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
@@ -178,12 +166,12 @@ class PluginImplementation extends AbstractArrayFusionObject
         $currentContext = $this->runtime->getCurrentContext();
         $this->node = $currentContext['node'];
         $this->documentNode = $currentContext['documentNode'];
-        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
         $pluginResponse = new ActionResponse();
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-        // We need to make sure to not merge content up into the parent ActionResponse because that would break the Fusion HttpResponse.
+        // We need to make sure to not merge content up into the parent ActionResponse
+        // because that would break the Fusion HttpResponse.
         $content = $pluginResponse->getContent();
         $pluginResponse->setContent('');
 
@@ -197,7 +185,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      * By default this is <plugin_class_name>
      *
      * @return string
-     * @throws NodeException
      */
     protected function getPluginNamespace(): string
     {
@@ -218,7 +205,11 @@ class PluginImplementation extends AbstractArrayFusionObject
             return $nodeArgumentNamespace;
         }
 
-        $argumentNamespace = str_replace([':', '.', '\\'], ['_', '_', '_'], ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
+        $argumentNamespace = str_replace(
+            [':', '.', '\\'],
+            ['_', '_', '_'],
+            ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController())
+        );
         $argumentNamespace = strtolower($argumentNamespace);
 
         return $argumentNamespace;
@@ -229,11 +220,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      *
      * @param ActionRequest $pluginRequest The plugin request
      * @return void
-     * @throws InvalidActionNameException
-     * @throws InvalidControllerNameException
-     * @throws NodeException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
-     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest)
     {

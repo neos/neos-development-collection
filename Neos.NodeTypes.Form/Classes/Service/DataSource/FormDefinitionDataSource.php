@@ -11,8 +11,8 @@ namespace Neos\NodeTypes\Form\Service\DataSource;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 class FormDefinitionDataSource extends AbstractDataSource

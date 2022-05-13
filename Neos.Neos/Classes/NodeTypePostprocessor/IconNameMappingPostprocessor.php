@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\NodeTypePostprocessor;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,9 +10,13 @@ namespace Neos\Neos\NodeTypePostprocessor;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\NodeTypePostprocessor;
+
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 
@@ -31,8 +34,8 @@ class IconNameMappingPostprocessor implements NodeTypePostprocessorInterface
 
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
-     * @param array $configuration input configuration
-     * @param array $options The processor options
+     * @param array<string,mixed> $configuration input configuration
+     * @param array<string,mixed> $options The processor options
      * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
@@ -46,7 +49,10 @@ class IconNameMappingPostprocessor implements NodeTypePostprocessorInterface
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
                     if (isset($inspectorConfiguration[$elementTypeName][$elementName]['icon'])) {
-                        $configuration['ui']['inspector'][$elementTypeName][$elementName]['icon'] = $this->iconNameMappingService->convert($inspectorConfiguration[$elementTypeName][$elementName]['icon']);
+                        $configuration['ui']['inspector'][$elementTypeName][$elementName]['icon']
+                            = $this->iconNameMappingService->convert(
+                                $inspectorConfiguration[$elementTypeName][$elementName]['icon']
+                            );
                     }
                 }
             }

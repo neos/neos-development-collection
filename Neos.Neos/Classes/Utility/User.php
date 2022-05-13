@@ -2,7 +2,7 @@
 
 namespace Neos\Neos\Utility;
 
-use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Neos\Domain\Model\WorkspaceName;
 
 /**
  * Utility functions for dealing with users in the Content Repository.
@@ -17,7 +17,7 @@ class User
      */
     public static function getPersonalWorkspaceNameForUsername($username): string
     {
-        return Workspace::PERSONAL_WORKSPACE_PREFIX . static::slugifyUsername($username);
+        return (string)WorkspaceName::fromAccountIdentifier($username);
     }
 
     /**
@@ -28,6 +28,6 @@ class User
      */
     public static function slugifyUsername($username): string
     {
-        return preg_replace('/[^a-z0-9]/i', '', $username);
+        return preg_replace('/[^a-z0-9]/i', '', $username) ?: '';
     }
 }

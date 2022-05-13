@@ -12,20 +12,18 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 
@@ -36,8 +34,6 @@ use Neos\Neos\Domain\Service\UserService as DomainUserService;
  */
 class UsageController extends ActionController
 {
-    use CreateContentContextTrait;
-
     /**
      * @Flow\Inject
      * @var AssetService
@@ -46,9 +42,9 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var ContentDimensionPresetSourceInterface
+     * @var ContentDimensionSourceInterface
      */
-    protected $contentDimensionPresetSource;
+    protected $contentDimensionSource;
 
     /**
      * @Flow\Inject
@@ -70,7 +66,7 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
 
@@ -112,8 +108,7 @@ class UsageController extends ActionController
             } catch (NodeTypeNotFoundException $e) {
                 $nodeType = null;
             }
-            /** @var Workspace $workspace */
-            $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
+            $workspace = $this->workspaceRepository->findOneByName($usage->getWorkspaceName());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
@@ -164,7 +159,7 @@ class UsageController extends ActionController
             'asset' => $asset,
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
-            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
+            'contentDimensions' => $this->contentDimensionSource->getContentDimensionsOrderedByPriority(),
             'userWorkspace' => $userWorkspace
         ]);
     }

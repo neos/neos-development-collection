@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Integrations;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\EventLog\Integrations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Integrations;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -43,12 +46,13 @@ class EntityIntegrationService extends AbstractIntegrationService
     /**
      * @Flow\InjectConfiguration("eventLog.monitorEntities")
      * @var array
+     * @phpstan-var array<mixed>
      */
     protected $monitorEntitiesSetting;
 
     /**
-     * Dummy method which is called in a prePersist signal. If we remove that, this object is never instantiated and thus
-     * cannot hook into the Doctrine EntityManager.
+     * Dummy method which is called in a prePersist signal.
+     * If we remove that, this object is never instantiated and thus cannot hook into the Doctrine EntityManager.
      *
      * @return void
      */
@@ -85,10 +89,17 @@ class EntityIntegrationService extends AbstractIntegrationService
                 if (isset($entityMonitoringConfiguration['events']['created'])) {
                     $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
+                        $data[$key] = Utility::evaluateEelExpression(
+                            $eelExpression,
+                            $this->eelEvaluator,
+                            ['entity' => $entity]
+                        );
                     }
 
-                    $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['created'], $data);
+                    $event = $this->eventEmittingService->emit(
+                        $entityMonitoringConfiguration['events']['created'],
+                        $data
+                    );
                     $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
@@ -102,10 +113,17 @@ class EntityIntegrationService extends AbstractIntegrationService
                 if (isset($entityMonitoringConfiguration['events']['deleted'])) {
                     $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
+                        $data[$key] = Utility::evaluateEelExpression(
+                            $eelExpression,
+                            $this->eelEvaluator,
+                            ['entity' => $entity]
+                        );
                     }
 
-                    $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['deleted'], $data);
+                    $event = $this->eventEmittingService->emit(
+                        $entityMonitoringConfiguration['events']['deleted'],
+                        $data
+                    );
                     $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
@@ -113,7 +131,7 @@ class EntityIntegrationService extends AbstractIntegrationService
     }
 
     /**
-     * @param array $monitorEntitiesSetting
+     * @param array<mixed> $monitorEntitiesSetting
      * @return void
      */
     public function setMonitorEntitiesSetting($monitorEntitiesSetting)

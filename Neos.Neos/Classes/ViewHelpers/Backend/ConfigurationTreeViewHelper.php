@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -56,7 +59,7 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
     /**
      * Recursive function rendering configuration and adding it to $this->output
      *
-     * @param array $configuration
+     * @param array<string,mixed> $configuration
      * @param string $relativePath the path up-to-now
      * @return void
      */
@@ -73,24 +76,18 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
                 $this->output .= sprintf('<li class="neos-tree-folder neos-tree-node" title="%s">', $pathEscaped);
                 $this->output .= sprintf('%s&nbsp;(%s)', $keyEscaped, count($value));
                 $this->renderSingleLevel($value, $path);
-                $this->output .= '</li>';
             } else {
                 $this->output .= '<li class="neos-tree-node">';
                 $this->output .= sprintf('<div class="key" title="%s">%s:</div> ', $pathEscaped, $keyEscaped);
                 $this->output .= sprintf('<div class="value" title="%s">', $typeEscaped);
-                switch ($typeEscaped) {
-                            case 'boolean':
-                                $this->output .= ($value ? 'true' : 'false');
-                                break;
-                            case 'NULL':
-                                $this->output .= 'NULL';
-                                break;
-                            default:
-                                $this->output .= htmlspecialchars($value);
-                        }
+                $this->output .= match ($typeEscaped) {
+                    'boolean' => ($value ? 'true' : 'false'),
+                    'NULL' => 'NULL',
+                    default => htmlspecialchars($value),
+                };
                 $this->output .= '</div>';
-                $this->output .= '</li>';
             }
+            $this->output .= '</li>';
         }
         $this->output .= '</ul>';
     }

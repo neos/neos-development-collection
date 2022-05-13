@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,7 +10,15 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -27,12 +32,6 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -48,21 +47,9 @@ class BackendRedirectionService
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
     protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject
@@ -112,6 +99,12 @@ class BackendRedirectionService
      */
     protected $preferedStartModules;
 
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
+
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
+
     /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
      *
@@ -131,15 +124,12 @@ class BackendRedirectionService
         $availableModules = $this->menuHelper->buildModuleList($controllerContext);
         $startModule = $this->determineStartModule($availableModules);
 
-        $workspaceName = $this->userService->getPersonalWorkspaceName();
-        $this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
-
-        return $startModule['uri'];
+        return $startModule['uri'] ?? null;
     }
 
     /**
-     * @param array $availableModules
-     * @return array|null
+     * @param array<mixed> $availableModules
+     * @return array<mixed>|null
      */
     protected function determineStartModule(array $availableModules): ?array
     {
@@ -178,70 +168,30 @@ class BackendRedirectionService
         $uriBuilder->setRequest($actionRequest);
         $uriBuilder->setFormat('html');
         $uriBuilder->setCreateAbsoluteUri(true);
+
         return $uriBuilder->uriFor('show', ['node' => $lastVisitedNode], 'Frontend\\Node', 'Neos.Neos');
     }
 
-    /**
-     * @param string $workspaceName
-     * @return NodeInterface
-     */
     protected function getLastVisitedNode(string $workspaceName): ?NodeInterface
     {
-        if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+        if (!$workspace || !$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;
         }
         try {
-            $lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
-            $q = new FlowQuery([$lastVisitedNode]);
-            return $q->context(['workspaceName' => $workspaceName])->get(0);
+            /** @var NodeInterface $lastVisitedNode */
+            $lastVisitedNode = $this->propertyMapper->convert(
+                $this->session->getData('lastVisitedNode'),
+                NodeInterface::class
+            );
+
+            return $this->nodeAccessorManager->accessorFor(
+                $workspace->getCurrentContentStreamIdentifier(),
+                $lastVisitedNode->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            )->findByIdentifier($lastVisitedNode->getNodeAggregateIdentifier());
         } catch (\Exception $exception) {
             return null;
         }
-    }
-
-    /**
-     * Create a ContentContext to be used for the backend redirects.
-     *
-     * @param string $workspaceName
-     * @return ContentContext
-     */
-    protected function createContext(string $workspaceName): ContentContext
-    {
-        $contextProperties = [
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => true,
-            'inaccessibleContentShown' => true
-        ];
-
-        return $this->contextFactory->create($contextProperties);
-    }
-
-    /**
-     * If the specified workspace or its root node does not exist yet, the workspace and root node will be created.
-     *
-     * This method is basically a safeguard for legacy and potentially broken websites where users might not have
-     * their own workspace yet. In a normal setup, the Domain User Service is responsible for creating and deleting
-     * user workspaces.
-     *
-     * @param string $workspaceName Name of the workspace
-     * @return void
-     * @throws IllegalObjectTypeException
-     */
-    protected function createWorkspaceAndRootNodeIfNecessary(string $workspaceName): void
-    {
-        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
-        if ($workspace === null) {
-            $liveWorkspace = $this->workspaceRepository->findOneByName('live');
-            $owner = $this->userService->getBackendUser();
-            $workspace = new Workspace($workspaceName, $liveWorkspace, $owner);
-            $this->workspaceRepository->add($workspace);
-            $this->persistenceManager->allowObject($workspace);
-        }
-
-        $contentContext = $this->createContext($workspaceName);
-        $rootNode = $contentContext->getRootNode();
-        $this->persistenceManager->allowObject($rootNode);
-        $this->persistenceManager->allowObject($rootNode->getNodeData());
-        $this->persistenceManager->persistAll(true);
     }
 }

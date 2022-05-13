@@ -158,7 +158,7 @@ Feature: Move a node without content dimensions
       | initiatingUserIdentifier         | "user"                       |
 
     Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
+    And event at index 6 is of type "NodeAggregateWasMoved" with payload:
       | Key                     | Expected                                                                                                                                                                                                          |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                                   |
       | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                                                          |
@@ -206,7 +206,7 @@ Feature: Move a node without content dimensions
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
       | initiatingUserIdentifier                    | "user"                       |
     Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 5 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
+    And event at index 5 is of type "NodeAggregateWasMoved" with payload:
       | Key                     | Expected                                                                                                                                                                                                                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                                                                                                                                                         |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                      |

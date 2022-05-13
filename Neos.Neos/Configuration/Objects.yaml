@@ -8,13 +8,7 @@ Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
           1:
             value: Neos_Neos_Configuration_Version
 
-Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
-  className: Neos\Neos\Domain\Service\ContentContextFactory
-
-Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
-  className: Neos\Neos\Service\PublishingService
-
-Neos\Neos\Aspects\FusionCachingAspect:
+Neos\Neos\Fusion\Cache\FusionCachingAspect:
   properties:
     fusionCache:
       object:
@@ -24,26 +18,23 @@ Neos\Neos\Aspects\FusionCachingAspect:
           1:
             value: Neos_Neos_Fusion
 
-'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
-
-'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
-  className: Neos\Neos\TYPO3CR\NeosNodeService
-
-# This interface extends the Neos\ContentRepository\Domain\Service\NodeServiceInterface
-'Neos\Neos\TYPO3CR\NeosNodeServiceInterface':
-  className: Neos\Neos\TYPO3CR\NeosNodeService
-
-'Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
-
-Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
-  properties:
-    configuration:
-      setting: Neos.ContentRepository.contentDimensions
-
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
-  className: Neos\Neos\Routing\FrontendNodeRoutePartHandler
+  className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
+
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
+  arguments:
+    3:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
+
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
+  arguments:
+    1:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
+
 
 Neos\Neos\Domain\Service\NodeSearchServiceInterface:
   className: Neos\Neos\Domain\Service\NodeSearchService
@@ -87,3 +78,23 @@ Neos\Neos\Controller\LoginController:
         arguments:
           1:
             value: Neos_Neos_LoginTokenCache
+
+
+'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector':
+  factoryObjectName: Neos\Neos\Fusion\Cache\CacheAwareGraphProjectorFactory
+  factoryMethodName: build
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+    2:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents
+    3:
+      object: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph'
+    4:
+      object: 'Neos\Flow\Log\ThrowableStorageInterface'
+

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,26 +10,36 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Neos;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
 
 /**
  * Central authority for interactions with plugins.
  * Whenever details about Plugins or PluginViews are needed this service should be used.
  *
- * For some methods the ContentContext has to be specified. This is required in order for the ContentRepository to fetch nodes
- * of the current workspace. The context can be retrieved from any node of the correct workspace & tree. If no node
- * is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
+ * For some methods the ContentContext has to be specified.
+ * This is required in order for the ContentRepository to fetch nodes of the current workspace.
+ * The context can be retrieved from any node of the correct workspace & tree.
+ * If no node is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
  *
  * @Flow\Scope("singleton")
  */
@@ -44,73 +53,66 @@ class PluginService
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
 
-    /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contentContextFactory;
+    #[Flow\Inject]
+    protected NodeAccessorManager $nodeAccessorManager;
 
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
+    #[Flow\Inject]
+    protected SiteNodeUtility $siteNodeUtility;
 
-    /**
-     * Returns an array of all available plugin nodes
-     *
-     * @param ContentContext $context current content context, see class doc comment for details
-     * @return array<NodeInterface> all plugin nodes in the current $context
-     */
-    public function getPluginNodes(ContentContext $context)
-    {
-        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
-        return $this->getNodes(array_keys($pluginNodeTypes), $context);
-    }
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
 
     /**
      * Returns an array of all plugin nodes with View Definitions
      *
-     * @param ContentContext $context
-     * @return array<NodeInterface> all plugin nodes with View Definitions in the current $context
+     * @return Nodes all plugin nodes with View Definitions in the current site
      */
-    public function getPluginNodesWithViewDefinitions(ContentContext $context)
-    {
-        $pluginNodes = [];
-        foreach ($this->getPluginNodes($context) as $pluginNode) {
-            /** @var NodeInterface $pluginNode */
-            if ($this->getPluginViewDefinitionsByPluginNodeType($pluginNode->getNodeType()) !== []) {
-                $pluginNodes[] = $pluginNode;
-            }
+    public function getPluginNodesWithViewDefinitions(
+        WorkspaceName $workspaceName,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): Nodes {
+        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        if (is_null($workspace)) {
+            throw new \InvalidArgumentException('Could not find workspace "' . $workspaceName . '"');
         }
-        return $pluginNodes;
+
+        $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
+            $workspace->getCurrentContentStreamIdentifier(),
+            $dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+
+        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
+
+        return $this->getNodes(
+            $siteNode,
+            NodeTypeNames::fromStringArray(array_keys($pluginNodeTypes))
+        );
     }
 
     /**
      * Find all nodes of a specific node type
      *
-     * @param array $nodeTypes
-     * @param ContentContext $context current content context, see class doc comment for details
-     * @return array<NodeInterface> all nodes of type $nodeType in the current $context
+     * @param NodeInterface $siteNode The site node to fetch the nodes beneath
+     * @return Nodes All nodes matching the node type names in the given site
      */
-    protected function getNodes(array $nodeTypes, ContentContext $context)
+    protected function getNodes(NodeInterface $siteNode, NodeTypeNames $nodeTypeNames): Nodes
     {
-        $nodes = [];
-        $siteNode = $context->getCurrentSiteNode();
-        foreach ($this->nodeDataRepository->findByParentAndNodeTypeRecursively($siteNode->getPath(), implode(',', $nodeTypes), $context->getWorkspace()) as $nodeData) {
-            $nodes[] = $this->nodeFactory->createFromNodeData($nodeData, $context);
-        }
-        return $nodes;
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $siteNode->getContentStreamIdentifier(),
+            $siteNode->getDimensionSpacePoint(),
+            $siteNode->getVisibilityConstraints()
+        );
+
+        return $nodeAccessor->findDescendants(
+            [$siteNode],
+            new NodeTypeConstraints(false, $nodeTypeNames),
+            null
+        );
     }
 
     /**
@@ -122,7 +124,11 @@ class PluginService
     public function getPluginViewDefinitionsByPluginNodeType(NodeType $pluginNodeType)
     {
         $viewDefinitions = [];
-        foreach ($this->getPluginViewConfigurationsByPluginNodeType($pluginNodeType) as $pluginViewName => $pluginViewConfiguration) {
+        foreach (
+            $this->getPluginViewConfigurationsByPluginNodeType(
+                $pluginNodeType
+            ) as $pluginViewName => $pluginViewConfiguration
+        ) {
             $viewDefinitions[] = new PluginViewDefinition($pluginNodeType, $pluginViewName, $pluginViewConfiguration);
         }
         return $viewDefinitions;
@@ -130,29 +136,27 @@ class PluginService
 
     /**
      * @param NodeType $pluginNodeType
-     * @return array
+     * @return array<string,mixed>
      */
     protected function getPluginViewConfigurationsByPluginNodeType(NodeType $pluginNodeType)
     {
         $pluginNodeTypeOptions = $pluginNodeType->getOptions();
-        return isset($pluginNodeTypeOptions['pluginViews']) ? $pluginNodeTypeOptions['pluginViews'] : [];
+        return $pluginNodeTypeOptions['pluginViews'] ?? [];
     }
 
     /**
      * returns a plugin node or one of it's view nodes
      * if an view has been configured for that specific
      * controller and action combination
-     *
-     * @param NodeInterface $currentNode
-     * @param string $controllerObjectName
-     * @param string $actionName
-     * @return NodeInterface
      */
-    public function getPluginNodeByAction(NodeInterface $currentNode, $controllerObjectName, $actionName)
-    {
+    public function getPluginNodeByAction(
+        NodeInterface $currentNode,
+        string $controllerObjectName,
+        string $actionName
+    ): ?NodeInterface {
         $viewDefinition = $this->getPluginViewDefinitionByAction($controllerObjectName, $actionName);
 
-        if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView')) {
+        if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView') && $viewDefinition) {
             $masterPluginNode = $this->getPluginViewNodeByMasterPlugin($currentNode, $viewDefinition->getName());
         } else {
             $masterPluginNode = $currentNode;
@@ -160,7 +164,7 @@ class PluginService
 
         if ($viewDefinition !== null) {
             $viewNode = $this->getPluginViewNodeByMasterPlugin($currentNode, $viewDefinition->getName());
-            if ($viewNode instanceof Node) {
+            if ($viewNode instanceof NodeInterface) {
                 return $viewNode;
             }
         }
@@ -173,16 +177,14 @@ class PluginService
      *
      * @param string $controllerObjectName
      * @param string $actionName
-     * @return PluginViewDefinition
      * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
      */
-    public function getPluginViewDefinitionByAction($controllerObjectName, $actionName)
+    public function getPluginViewDefinitionByAction($controllerObjectName, $actionName): ?PluginViewDefinition
     {
         $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
 
         $matchingPluginViewDefinitions = [];
         foreach ($pluginNodeTypes as $pluginNodeType) {
-            /** @var $pluginViewDefinition PluginViewDefinition */
             foreach ($this->getPluginViewDefinitionsByPluginNodeType($pluginNodeType) as $pluginViewDefinition) {
                 if ($pluginViewDefinition->matchesControllerActionPair($controllerObjectName, $actionName) !== true) {
                     continue;
@@ -191,7 +193,12 @@ class PluginService
             }
         }
         if (count($matchingPluginViewDefinitions) > 1) {
-            throw new Neos\Exception(sprintf('More than one PluginViewDefinition found for controller "%s", action "%s":%s', $controllerObjectName, $actionName, chr(10) . implode(chr(10), $matchingPluginViewDefinitions)), 1377597671);
+            throw new Neos\Exception(sprintf(
+                'More than one PluginViewDefinition found for controller "%s", action "%s":%s',
+                $controllerObjectName,
+                $actionName,
+                chr(10) . implode(chr(10), $matchingPluginViewDefinitions)
+            ), 1377597671);
         }
 
         return count($matchingPluginViewDefinitions) > 0 ? current($matchingPluginViewDefinitions) : null;
@@ -200,22 +207,19 @@ class PluginService
     /**
      * returns a specific view node of an master plugin
      * or NULL if it does not exist
-     *
-     * @param NodeInterface $node
-     * @param string $viewName
-     * @return NodeInterface
      */
-    public function getPluginViewNodeByMasterPlugin(NodeInterface $node, $viewName)
+    public function getPluginViewNodeByMasterPlugin(NodeInterface $node, string $viewName): ?NodeInterface
     {
-        /** @var $context ContentContext */
-        $context = $node->getContext();
-        foreach ($this->getNodes(['Neos.Neos:PluginView'], $context) as $pluginViewNode) {
-            /** @var NodeInterface $pluginViewNode */
-            if ($pluginViewNode === null || $pluginViewNode->isRemoved()) {
-                continue;
-            }
-            if ($pluginViewNode->getProperty('plugin') === $node->getIdentifier()
-                && $pluginViewNode->getProperty('view') === $viewName) {
+        $siteNode = $this->siteNodeUtility->findSiteNode($node);
+        foreach (
+            $this->getNodes($siteNode, NodeTypeNames::fromArray([
+                NodeTypeName::fromString('Neos.Neos:PluginView')
+            ])) as $pluginViewNode
+        ) {
+            if (
+                $pluginViewNode->getProperty('plugin') === (string)$node->getNodeAggregateIdentifier()
+                && $pluginViewNode->getProperty('view') === $viewName
+            ) {
                 return $pluginViewNode;
             }
         }

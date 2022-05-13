@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Tests\Unit;
  * source code.
  */
 
+use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Utility;
 
 /**
  */

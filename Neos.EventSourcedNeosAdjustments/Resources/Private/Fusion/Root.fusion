@@ -8,14 +8,6 @@ prototype(Neos.Neos:NodeUri) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
 }
 
-prototype(Neos.Neos:DimensionsMenuItems) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuItemsImplementation'
-}
-
-prototype(Neos.Neos:MenuItems) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuItemsImplementation'
-}
-
 prototype(Neos.Neos:ContentCollection) {
     @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath)}
     // TODO FIX ME HERE!!!

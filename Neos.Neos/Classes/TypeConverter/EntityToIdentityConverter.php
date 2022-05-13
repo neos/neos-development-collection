@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\TypeConverter;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\TypeConverter;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -68,12 +71,16 @@ class EntityToIdentityConverter extends AbstractTypeConverter
      *
      * @param object $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return array
+     * @return array<string,string>
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         return [
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),
             '__type' => TypeHandling::getTypeForValue($source)

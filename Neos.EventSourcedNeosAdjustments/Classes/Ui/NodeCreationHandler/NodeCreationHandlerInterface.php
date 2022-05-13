@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,7 +10,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
+
+use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 
 /**
  * Contract for Node Creation handler that allow to hook into the process just before a node is being added

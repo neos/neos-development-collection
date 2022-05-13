@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,15 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
+use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\User;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**
@@ -30,7 +34,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class UserService
 {
-
     /**
      * @Flow\Inject
      * @var \Neos\Neos\Domain\Service\UserService
@@ -39,9 +42,9 @@ class UserService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
-    protected $workspaceRepository;
+    protected $workspaceFinder;
 
     /**
      * @Flow\InjectConfiguration("userInterface.defaultLanguage")
@@ -68,26 +71,26 @@ class UserService
 
     /**
      * Returns the current user's personal workspace or null if no user is logged in
-     *
-     * @return Workspace
      * @api
      */
-    public function getPersonalWorkspace()
+    public function getPersonalWorkspace(): ?Workspace
     {
         $workspaceName = $this->getPersonalWorkspaceName();
         if ($workspaceName !== null) {
-            return $this->workspaceRepository->findOneByName($workspaceName);
+            return $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
         }
+
+        return null;
     }
 
     /**
-     * Returns the name of the currently logged in user's personal workspace (even if that might not exist at that time).
+     * Returns the name of the currently logged in user's personal workspace
+     * (even if that might not exist at that time).
      * If no user is logged in this method returns null.
      *
-     * @return string
      * @api
      */
-    public function getPersonalWorkspaceName()
+    public function getPersonalWorkspaceName(): ?string
     {
         $currentUser = $this->userDomainService->getCurrentUser();
 
@@ -106,15 +109,17 @@ class UserService
      * Returns the stored preferences of a user
      *
      * @param string $preference
-     * @return mixed
+     * @return mixed|null
      * @api
      */
     public function getUserPreference($preference)
     {
         $user = $this->getBackendUser();
-        if ($user && $user->getPreferences()) {
+        if ($user) {
             return $user->getPreferences()->get($preference) ?: null;
         }
+
+        return null;
     }
 
     /**

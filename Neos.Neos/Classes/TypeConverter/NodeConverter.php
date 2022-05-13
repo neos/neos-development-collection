@@ -1,8 +1,7 @@
 <?php
-namespace Neos\Neos\TypeConverter;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,32 +10,61 @@ namespace Neos\Neos\TypeConverter;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\TypeConverter;
+
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
- * An Object Converter for nodes which can be used for routing (but also for other
- * purposes) as a plugin for the Property Mapper.
+ * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
+ * and deserialize the context.
+ * {@see ContentCache::serializeContext()}
  *
  * @Flow\Scope("singleton")
+ * @deprecated
  */
-class NodeConverter extends \Neos\ContentRepository\TypeConverter\NodeConverter
+class NodeConverter extends AbstractTypeConverter
 {
     /**
      * @Flow\Inject
-     * @var DomainRepository
+     * @var NodeAddressFactory
      */
-    protected $domainRepository;
+    protected $nodeAddressFactory;
 
     /**
-     * @Flow\Inject
-     * @var SiteRepository
+     * @var array<int,string>
      */
-    protected $siteRepository;
+    protected $sourceTypes = [NodeInterface::class];
+
+    /**
+     * @var string
+     */
+    protected $targetType = 'string';
 
     /**
      * @var integer
      */
-    protected $priority = 3;
+    protected $priority = 1;
+
+    /**
+     * @param NodeInterface $source
+     * @param string $targetType
+     * @param array<string,mixed> $subProperties
+     * @return mixed|\Neos\Error\Messages\Error|string|null
+     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
+     */
+    public function convertFrom(
+        $source,
+        $targetType = null,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
+        return $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
+    }
 }

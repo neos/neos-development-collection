@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Neos\Routing;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +10,10 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Routing;
+
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Psr\Http\Message\ResponseInterface;
@@ -21,11 +23,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Simple HTTP middleware that makes the host of the currently active server request available to the routing framework
- * This allows the FrontendRoutePartHandler (and other handlers) to react on the current request when matching/resolving routes
+ * This allows the FrontendRoutePartHandler (and other handlers)
+ * to react on the current request when matching/resolving routes
  */
 final class RequestUriHostMiddleware implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $next
@@ -33,8 +35,12 @@ final class RequestUriHostMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
-        $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
-        $request = $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters->withParameter('requestUriHost', $request->getUri()->getHost()));
+        $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
+            ?? RouteParameters::createEmpty();
+        $request = $request->withAttribute(
+            ServerRequestAttributes::ROUTING_PARAMETERS,
+            $parameters->withParameter('requestUriHost', $request->getUri()->getHost())
+        );
         return $next->handle($request);
     }
 }

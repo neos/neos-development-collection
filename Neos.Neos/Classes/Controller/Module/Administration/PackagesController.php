@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Controller\Module\Administration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package;
@@ -35,8 +38,9 @@ class PackagesController extends AbstractModuleController
         $packageGroups = [];
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             /** @var Package $package */
+            /** @phpstan-ignore-next-line FLOW_PATH_PACKAGES is known at this point */
             $packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
-            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
+            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/') ?: null);
             $packageGroups[$packageGroup][$package->getPackageKey()] = [
                 'sanitizedPackageKey' => str_replace('.', '', $package->getPackageKey()),
                 'version' => $package->getInstalledVersion(),

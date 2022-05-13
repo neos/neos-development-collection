@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,11 +10,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
+
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
@@ -92,13 +94,12 @@ class NodeCreated extends AbstractFeedback
      */
     public function serializePayload(ControllerContext $controllerContext)
     {
-        $nodeService = new NodeService();
         $node = $this->getNode();
 
         return [
             'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
             'identifier' => (string)$node->getNodeAggregateIdentifier(),
-            'isDocument' => $nodeService->isDocument($node)
+            'isDocument' => $node->getNodeType()->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)
         ];
     }
 }

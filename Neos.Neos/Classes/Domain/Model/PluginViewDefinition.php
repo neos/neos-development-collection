@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,8 +10,12 @@ namespace Neos\Neos\Domain\Model;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model;
+
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * A plugin view definition
@@ -36,14 +39,14 @@ class PluginViewDefinition
     /**
      * Configuration for this node type, can be an arbitrarily nested array.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration;
 
     /**
      * @param NodeType $pluginNodeType
      * @param string $name Name of the view
-     * @param array $configuration the configuration for this node type which is defined in the schema
+     * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      */
     public function __construct(NodeType $pluginNodeType, $name, array $configuration)
     {
@@ -76,7 +79,7 @@ class PluginViewDefinition
      *
      * Instead, use the get* / has* methods which exist for every configuration property.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function getConfiguration()
     {
@@ -92,28 +95,28 @@ class PluginViewDefinition
     public function getLabel()
     {
         $translationHelper = new TranslationHelper();
-        return isset($this->configuration['label']) ? $translationHelper->translate($this->configuration['label']) : '';
+
+        return isset($this->configuration['label'])
+            ? ($translationHelper->translate($this->configuration['label']) ?: $this->configuration['label'])
+            : '';
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getControllerActionPairs()
     {
-        return isset($this->configuration['controllerActions']) ? $this->configuration['controllerActions'] : [];
+        return $this->configuration['controllerActions'] ?? [];
     }
 
     /**
      * Whether or not the current PluginView is configured to handle the specified controller/action pair
-     *
-     * @param $controllerObjectName
-     * @param $actionName
-     * @return boolean
      */
-    public function matchesControllerActionPair($controllerObjectName, $actionName)
+    public function matchesControllerActionPair(string $controllerObjectName, string $actionName): bool
     {
         $controllerActionPairs = $this->getControllerActionPairs();
-        return isset($controllerActionPairs[$controllerObjectName]) && in_array($actionName, $controllerActionPairs[$controllerObjectName]);
+        return isset($controllerActionPairs[$controllerObjectName])
+            && in_array($actionName, $controllerActionPairs[$controllerObjectName]);
     }
 
     /**

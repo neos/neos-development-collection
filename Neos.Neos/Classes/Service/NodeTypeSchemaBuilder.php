@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,17 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
- * Renders the Node Type Schema in a format the User Interface understands; additionally pre-calculating node constraints
+ * Renders the Node Type Schema in a format the User Interface understands;
+ * additionally pre-calculating node constraints
  *
  * @Flow\Scope("singleton")
  */
@@ -23,7 +28,7 @@ class NodeTypeSchemaBuilder
 {
     /**
      * @Flow\Inject
-     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -42,7 +47,7 @@ class NodeTypeSchemaBuilder
      *         - nodeTypes:
      *          [child node type name]: true
      *
-     * @return array the node type schema ready to be used by the JavaScript code
+     * @return array<string,mixed> the node type schema ready to be used by the JavaScript code
      */
     public function generateNodeTypeSchema()
     {
@@ -76,7 +81,7 @@ class NodeTypeSchemaBuilder
     /**
      * Generate the list of allowed sub-node-types per parent-node-type and child-node-name.
      *
-     * @return array constraints
+     * @return array<string,mixed> constraints
      */
     protected function generateConstraints()
     {

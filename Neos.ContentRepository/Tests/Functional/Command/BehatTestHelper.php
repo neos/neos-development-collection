@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\ContentRepository\Tests\Functional\Command;
 
 /*
@@ -22,7 +23,7 @@ if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
 }
 
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Annotations as Flow;
@@ -46,7 +47,7 @@ class BehatTestHelper
 {
     use IsolatedBehatStepsTrait;
     use SecurityOperationsTrait;
-    use NodeOperationsTrait;
+    use LegacyNodeOperationsTrait;
     use NodeAuthorizationTrait;
 
     /**
@@ -107,7 +108,7 @@ class BehatTestHelper
     }
 
     /**
-     * @return ObjectManagerInterface
+     * @return mixed
      */
     protected function getObjectManager(): ObjectManagerInterface
     {

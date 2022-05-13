@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\View;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,23 +10,33 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\View;
+
+use GuzzleHttp\Psr7\ServerRequest;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
-use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Service\ContentContextFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
 
 class FusionExceptionView extends AbstractView
 {
@@ -37,7 +44,7 @@ class FusionExceptionView extends AbstractView
 
     /**
      * This contains the supported options, their default values, descriptions and types.
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'enableContentCache' => ['defaultValue', true, 'boolean'],
@@ -66,23 +73,11 @@ class FusionExceptionView extends AbstractView
      */
     protected $fusionRuntime;
 
-    /**
-     * @var SiteRepository
-     * @Flow\Inject
-     */
-    protected $siteRepository;
+    #[Flow\Inject]
+    protected SiteNodeUtility $siteNodeUtility;
 
-    /**
-     * @var DomainRepository
-     * @Flow\Inject
-     */
-    protected $domainRepository;
-
-    /**
-     * @var ContentContextFactory
-     * @Flow\Inject
-     */
-    protected $contentContextFactory;
+    #[Flow\Inject]
+    protected WorkspaceFinder $workspaceFinder;
 
     /**
      * @return string
@@ -93,15 +88,28 @@ class FusionExceptionView extends AbstractView
      */
     public function render()
     {
-        $domain = $this->domainRepository->findOneByActiveRequest();
+        $requestHandler = $this->bootstrap->getActiveRequestHandler();
+        $httpRequest = $requestHandler instanceof HttpRequestHandler
+            ? $requestHandler->getHttpRequest()
+            : ServerRequest::fromGlobals();
 
-        if ($domain) {
-            $site = $domain->getSite();
-        } else {
-            $site = $this->siteRepository->findDefault();
+        $routingParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
+        $dimensionSpacePoint = $routingParameters['dimensionSpacePoint'] ?? null;
+
+        $currentSiteNode = null;
+        if ($dimensionSpacePoint instanceof DimensionSpacePoint) {
+            $contentStreamIdentifier = $this->workspaceFinder->findOneByName(WorkspaceName::forLive())
+                ?->getCurrentContentStreamIdentifier();
+
+            if ($contentStreamIdentifier instanceof ContentStreamIdentifier) {
+                $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
+                    $contentStreamIdentifier,
+                    $dimensionSpacePoint,
+                    VisibilityConstraints::frontend()
+                );
+            }
         }
 
-        $httpRequest = $this->bootstrap->getActiveRequestHandler()->getHttpRequest();
         $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Neos');
         $request->setFormat('html');
@@ -114,35 +122,39 @@ class FusionExceptionView extends AbstractView
             $uriBuilder
         );
 
-        $securityContext = $this->objectManager->get(Context::class);
+        /** @var SecurityContext $securityContext */
+        $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
-        $contentContext = $this->contentContextFactory->create(['currentSite' => $site]);
-        $currentSiteNode = $contentContext->getCurrentSiteNode();
+        if ($currentSiteNode) {
+            $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
+            if ($dimensionSpacePoint) {
+                $this->setFallbackRuleFromDimension($dimensionSpacePoint);
+            }
 
-        $this->setFallbackRuleFromDimension($currentSiteNode);
+            $fusionRuntime->pushContextArray(array_merge(
+                $this->variables,
+                [
+                    'node' => $currentSiteNode,
+                    'documentNode' => $currentSiteNode,
+                    'site' => $currentSiteNode,
+                    'editPreviewMode' => null
+                ]
+            ));
 
-        $fusionRuntime->pushContextArray(array_merge(
-            $this->variables,
-            [
-                'node' => $currentSiteNode,
-                'documentNode' => $currentSiteNode,
-                'site' => $currentSiteNode,
-                'editPreviewMode' => null
-            ]
-        ));
+            try {
+                $output = $fusionRuntime->render('error');
+                $output = $this->extractBodyFromOutput($output);
+            } catch (RuntimeException $exception) {
+                throw $exception->getPrevious() ?: $exception;
+            }
+            $fusionRuntime->popContext();
 
-        try {
-            $output = $fusionRuntime->render('error');
-            $output = $this->extractBodyFromOutput($output);
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious();
+            return $output;
         }
-        $fusionRuntime->popContext();
 
-        return $output;
+        return '';
     }
 
     /**
@@ -167,8 +179,10 @@ class FusionExceptionView extends AbstractView
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function getFusionRuntime(NodeInterface $currentSiteNode, ControllerContext  $controllerContext): \Neos\Fusion\Core\Runtime
-    {
+    protected function getFusionRuntime(
+        NodeInterface $currentSiteNode,
+        ControllerContext $controllerContext
+    ): FusionRuntime {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $controllerContext);
 

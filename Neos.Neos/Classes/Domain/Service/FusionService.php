@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,15 +10,19 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 
@@ -73,9 +76,9 @@ class FusionService
      *         'resources://SomeVendor.OtherPackage/Private/Fusion/Root.fusion'
      *     )
      *
-     * @var array
+     * @var array<int,string>
      */
-    protected $prependFusionIncludes = [];
+    protected array $prependFusionIncludes = [];
 
     /**
      * Array of Fusion files to include after the site Fusion
@@ -87,13 +90,15 @@ class FusionService
      *         'resources://SomeVendor.OtherPackage/Private/Fusion/Root.fusion'
      *     )
      *
-     * @var array
+     * @var array<int,string>
      */
-    protected $appendFusionIncludes = [];
+    protected array $appendFusionIncludes = [];
 
     /**
+     * Declaration of package inclusions as packageKey:included, e.g. "Acme.Site": true
      * @Flow\InjectConfiguration("fusion.autoInclude")
      * @var array
+     * @phpstan-var array<string,bool>
      */
     protected $autoIncludeConfiguration = [];
 
@@ -112,13 +117,11 @@ class FusionService
     /**
      * Create a runtime for the given site node
      *
-     * @param TraversableNodeInterface $currentSiteNode
-     * @param ControllerContext $controllerContext
      * @return Runtime
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    public function createRuntime(TraversableNodeInterface $currentSiteNode, ControllerContext $controllerContext)
+    public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
     {
         $fusionObjectTree = $this->getMergedFusionObjectTree($currentSiteNode);
         $fusionRuntime = new Runtime($fusionObjectTree, $controllerContext);
@@ -128,14 +131,21 @@ class FusionService
     /**
      * Returns a merged Fusion object tree in the context of the given nodes
      *
-     * @param TraversableNodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
-     * @return array The merged object tree as of the given node
+     * @param NodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
+     * @return array<mixed> The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
      * @throws \Neos\Fusion\Exception
      */
-    public function getMergedFusionObjectTree(TraversableNodeInterface $startNode)
+    public function getMergedFusionObjectTree(NodeInterface $startNode)
     {
-        $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
+        $site = $this->getSiteForSiteNode($startNode);
+        if (is_null($site)) {
+            throw new \InvalidArgumentException(
+                'Could not resolve site for node "' . $startNode->getLabel() . '"',
+                1651924023
+            );
+        }
+        $siteResourcesPackageKey = $site->getSiteResourcesPackageKey();
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
@@ -150,11 +160,7 @@ class FusionService
         return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
     }
 
-    /**
-     * @param TraversableNodeInterface $siteNode
-     * @return Site
-     */
-    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
+    protected function getSiteForSiteNode(NodeInterface $siteNode): ?Site
     {
         return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
     }
@@ -201,14 +207,22 @@ class FusionService
      */
     protected function generateFusionForNodeType(NodeType $nodeType)
     {
-        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
+        if (
+            $nodeType->hasConfiguration('options.fusion.prototypeGenerator')
+            && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null
+        ) {
             $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
             if (!class_exists($generatorClassName)) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+                throw new \Neos\Neos\Domain\Exception(
+                    'Fusion prototype-generator Class ' . $generatorClassName . ' does not exist'
+                );
             }
             $generator = $this->objectManager->get($generatorClassName);
             if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+                throw new \Neos\Neos\Domain\Exception(
+                    'Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface '
+                        . DefaultPrototypeGeneratorInterface::class
+                );
             }
             return $generator->generate($nodeType);
         }
@@ -218,14 +232,14 @@ class FusionService
     /**
      * Concatenate the given Fusion resources with include statements
      *
-     * @param array $fusionResources An array of Fusion resource URIs
+     * @param array<int,string> $fusionResources An array of Fusion resource URIs
      * @return string A string of include statements for all resources
      */
     protected function getFusionIncludes(array $fusionResources)
     {
         $code = chr(10);
         foreach ($fusionResources as $fusionResource) {
-            $code .= 'include: ' . (string)$fusionResource . chr(10);
+            $code .= 'include: ' . $fusionResource . chr(10);
         }
         $code .= chr(10);
         return $code;
@@ -234,13 +248,16 @@ class FusionService
     /**
      * Prepares an array with Fusion paths to auto include before the Site Fusion.
      *
-     * @return array
+     * @return array<int,string>
      */
     protected function prepareAutoIncludeFusion()
     {
         $autoIncludeFusion = [];
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
-            if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
+            if (
+                isset($this->autoIncludeConfiguration[$packageKey])
+                && $this->autoIncludeConfiguration[$packageKey] === true
+            ) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);
                 if (is_file($autoIncludeFusionFile)) {
                     $autoIncludeFusion[] = $autoIncludeFusionFile;
@@ -254,7 +271,8 @@ class FusionService
     /**
      * Set the pattern for including the site root Fusion
      *
-     * @param string $siteRootFusionPattern A string for the sprintf format that takes the site package key as a single placeholder
+     * @param string $siteRootFusionPattern A string for the sprintf format
+     *                                      that takes the site package key as a single placeholder
      * @return void
      */
     public function setSiteRootFusionPattern($siteRootFusionPattern)
@@ -265,9 +283,9 @@ class FusionService
     /**
      * Get the Fusion resources that are included before the site Fusion.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getPrependFusionIncludes()
+    public function getPrependFusionIncludes(): array
     {
         return $this->prependFusionIncludes;
     }
@@ -276,7 +294,7 @@ class FusionService
      * Set Fusion resources that should be prepended before the site Fusion,
      * it defaults to the Neos Root.fusion Fusion.
      *
-     * @param array $prependFusionIncludes
+     * @param array<int,string> $prependFusionIncludes
      * @return void
      */
     public function setPrependFusionIncludes(array $prependFusionIncludes)
@@ -287,9 +305,9 @@ class FusionService
     /**
      * Get Fusion resources that will be appended after the site Fusion.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getAppendFusionIncludes()
+    public function getAppendFusionIncludes(): array
     {
         return $this->appendFusionIncludes;
     }
@@ -298,7 +316,7 @@ class FusionService
      * Set Fusion resources that should be appended after the site Fusion,
      * this defaults to an empty array.
      *
-     * @param array $appendFusionIncludes An array of Fusion resource URIs
+     * @param array<int,string> $appendFusionIncludes An array of Fusion resource URIs
      * @return void
      */
     public function setAppendFusionIncludes(array $appendFusionIncludes)

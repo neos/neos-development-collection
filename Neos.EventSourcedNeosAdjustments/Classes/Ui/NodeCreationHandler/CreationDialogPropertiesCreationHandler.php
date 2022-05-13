@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 /*
  * This file is part of the Neos.Neos.Ui package.
@@ -12,9 +10,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
+
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\TypeHandling;
 
@@ -36,11 +38,13 @@ class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInte
      */
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue());
-        $propertyValues = $command->getInitialPropertyValues() ?: PropertyValuesToWrite::fromArray([]);
+        $nodeType = $this->nodeTypeManager->getNodeType($command->nodeTypeName->getValue());
+        $propertyValues = $command->initialPropertyValues;
         foreach ($nodeType->getConfiguration('properties') as $propertyName => $propertyConfiguration) {
-            if (!isset($propertyConfiguration['ui']['showInCreationDialog'])
-                || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
+            if (
+                !isset($propertyConfiguration['ui']['showInCreationDialog'])
+                || $propertyConfiguration['ui']['showInCreationDialog'] !== true
+            ) {
                 continue;
             }
             $propertyType = TypeHandling::normalizeType($propertyConfiguration['type'] ?? 'string');

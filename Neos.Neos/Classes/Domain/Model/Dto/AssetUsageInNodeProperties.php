@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Model\Dto;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Model\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model\Dto;
 
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Dto\UsageReference;
@@ -30,7 +33,7 @@ class AssetUsageInNodeProperties extends UsageReference
     protected $workspaceName;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $dimensionValues;
 
@@ -43,7 +46,7 @@ class AssetUsageInNodeProperties extends UsageReference
      * @param AssetInterface $asset
      * @param string $nodeIdentifier
      * @param string $workspaceName
-     * @param array $dimensionValues
+     * @param array<string,string> $dimensionValues
      * @param string $nodeTypeName
      */
     public function __construct(AssetInterface $asset, $nodeIdentifier, $workspaceName, $dimensionValues, $nodeTypeName)
@@ -72,7 +75,7 @@ class AssetUsageInNodeProperties extends UsageReference
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
     public function getDimensionValues()
     {

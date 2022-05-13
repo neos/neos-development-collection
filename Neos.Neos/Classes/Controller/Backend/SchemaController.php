@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,6 +10,10 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
+
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -23,7 +24,6 @@ use Neos\Neos\Service\NodeTypeSchemaBuilder;
  */
 class SchemaController extends ActionController
 {
-
     /**
      * @var NodeTypeSchemaBuilder
      * @Flow\Inject
@@ -43,7 +43,12 @@ class SchemaController extends ActionController
      */
     public function nodeTypeSchemaAction(): string
     {
-        $version = $this->request->hasArgument('version') ? $this->request->getArgument('version') : '';
+        if ($this->request->hasArgument('version')) {
+            /** @var string $version */
+            $version = $this->request->getArgument('version');
+        } else {
+            $version = '';
+        }
         $cacheIdentifier = 'nodeTypeSchema_' . $version;
 
         $this->response->setContentType('application/json');

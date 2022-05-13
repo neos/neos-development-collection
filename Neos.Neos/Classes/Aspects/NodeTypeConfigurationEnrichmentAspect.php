@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Aspects;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,15 @@ namespace Neos\Neos\Aspects;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Aspects;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
  * @Flow\Scope("singleton")
@@ -23,15 +26,16 @@ use Neos\ContentRepository\Domain\Model\NodeType;
  */
 class NodeTypeConfigurationEnrichmentAspect
 {
-
     /**
      * @var array
+     * @phpstan-var array<mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      */
     protected $dataTypesDefaultConfiguration;
 
     /**
      * @var array
+     * @phpstan-var array<mixed>
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
      */
     protected $editorDefaultConfiguration;
@@ -67,8 +71,8 @@ class NodeTypeConfigurationEnrichmentAspect
 
     /**
      * @param string $nodeTypeName
-     * @param array $configuration
-     * @param array $declaredSuperTypes
+     * @param array<string,mixed> $configuration
+     * @param array<string,NodeType> $declaredSuperTypes
      * @return void
      */
     protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration, array $declaredSuperTypes)
@@ -83,9 +87,9 @@ class NodeTypeConfigurationEnrichmentAspect
     }
 
     /**
-     * @param string $nodeTypeLabelIdPrefix
-     * @param array $configuration
-     * @param array $declaredSuperTypes
+     * @param string $nodeTypeName
+     * @param array<string,mixed> $configuration
+     * @param array<string,NodeType> $declaredSuperTypes
      * @return void
      */
     protected function setPropertyLabels($nodeTypeName, array &$configuration, array $declaredSuperTypes)
@@ -97,7 +101,10 @@ class NodeTypeConfigurationEnrichmentAspect
             }
 
             if ($this->shouldFetchTranslation($propertyConfiguration['ui'])) {
-                $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
+                $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId(
+                    $nodeTypeLabelIdPrefix,
+                    $propertyName
+                );
             }
 
             $editorName = $propertyConfiguration['ui']['inspector']['editor']
@@ -115,15 +122,39 @@ class NodeTypeConfigurationEnrichmentAspect
                 $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName) {
                     return $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path);
                 };
-                $this->applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $editorName, $propertyConfiguration['ui']['inspector']['editorOptions'], $translationIdGenerator);
+                $this->applyEditorLabels(
+                    $nodeTypeLabelIdPrefix,
+                    $propertyName,
+                    $editorName,
+                    $propertyConfiguration['ui']['inspector']['editorOptions'],
+                    $translationIdGenerator
+                );
             }
 
-            if (isset($propertyConfiguration['ui']['inline']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inline']['editorOptions'], 'placeholder')) {
-                $propertyConfiguration['ui']['inline']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.inline.editorOptions.placeholder');
+            if (
+                isset($propertyConfiguration['ui']['inline']['editorOptions'])
+                && $this->shouldFetchTranslation(
+                    $propertyConfiguration['ui']['inline']['editorOptions'],
+                    'placeholder'
+                )
+            ) {
+                $propertyConfiguration['ui']['inline']['editorOptions']['placeholder']
+                    = $this->getPropertyConfigurationTranslationId(
+                        $nodeTypeLabelIdPrefix,
+                        $propertyName,
+                        'ui.inline.editorOptions.placeholder'
+                    );
             }
 
-            if (isset($propertyConfiguration['ui']['help']['message']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')) {
-                $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.help.message');
+            if (
+                isset($propertyConfiguration['ui']['help']['message'])
+                && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')
+            ) {
+                $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId(
+                    $nodeTypeLabelIdPrefix,
+                    $propertyName,
+                    'ui.help.message'
+                );
             }
         }
     }
@@ -137,39 +168,43 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)
     {
-        if ($nodeTypeName !== null) {
-            $thumbnailUrl = '';
-            if (isset($configurationThumbnail)) {
-                $thumbnailUrl = $configurationThumbnail;
-                if (strpos($thumbnailUrl, 'resource://') === 0) {
-                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
-                }
-            } else {
-                # look in well know location
-                $splitPrefix = $this->splitIdentifier($nodeTypeName);
-                $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
-                $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
-                if (file_exists($resourcePath)) {
-                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
-                }
+        $thumbnailUrl = '';
+        if (!empty($configurationThumbnail)) {
+            $thumbnailUrl = $configurationThumbnail;
+            if (strpos($thumbnailUrl, 'resource://') === 0) {
+                $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
             }
-            return $thumbnailUrl;
+        } else {
+            # look in well know location
+            $splitPrefix = $this->splitIdentifier($nodeTypeName);
+            $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
+            $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+            if (file_exists($resourcePath)) {
+                $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
+            }
         }
+
+        return $thumbnailUrl;
     }
 
     /**
      * @param string $nodeTypeLabelIdPrefix
      * @param string $propertyName
      * @param string $editorName
-     * @param array $editorOptions
+     * @param array<string,mixed> $editorOptions
      * @param callable $translationIdGenerator
      * @return void
      */
-    protected function applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $editorName, array &$editorOptions, $translationIdGenerator)
-    {
+    protected function applyEditorLabels(
+        $nodeTypeLabelIdPrefix,
+        $propertyName,
+        $editorName,
+        array &$editorOptions,
+        $translationIdGenerator
+    ) {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('selectBoxEditor.placeholder');
                 }
 
@@ -191,12 +226,12 @@ class NodeTypeConfigurationEnrichmentAspect
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextFieldEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('textFieldEditor.placeholder');
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextAreaEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('textAreaEditor.placeholder');
                 }
                 break;
@@ -206,21 +241,35 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * Sets labels for global NodeType elements like tabs and groups and the general label.
      *
-     * @param string $nodeTypeLabelIdPrefix
-     * @param array $configuration
+     * @param string $nodeTypeName
+     * @param array<string,mixed> $configuration
      * @return void
      */
     protected function setGlobalUiElementLabels($nodeTypeName, array &$configuration)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         if ($this->shouldFetchTranslation($configuration['ui'])) {
-            $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
+            $configuration['ui']['label'] = $this->getInspectorElementTranslationId(
+                $nodeTypeLabelIdPrefix,
+                'ui',
+                'label'
+            );
         }
-        if (isset($configuration['ui']['help']['message']) && $this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
-            $configuration['ui']['help']['message'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'help.message');
+        if (
+            isset($configuration['ui']['help']['message'])
+            && $this->shouldFetchTranslation(
+                $configuration['ui']['help'],
+                'message'
+            )
+        ) {
+            $configuration['ui']['help']['message'] = $this->getInspectorElementTranslationId(
+                $nodeTypeLabelIdPrefix,
+                'ui',
+                'help.message'
+            );
         }
         if (isset($configuration['ui']['help'])) {
-            $configurationThumbnail = isset($configuration['ui']['help']['thumbnail']) ? $configuration['ui']['help']['thumbnail'] : null;
+            $configurationThumbnail = $configuration['ui']['help']['thumbnail'] ?? null;
             $thumbnailUrl = $this->resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail);
             if ($thumbnailUrl !== '') {
                 $configuration['ui']['help']['thumbnail'] = $thumbnailUrl;
@@ -235,7 +284,11 @@ class NodeTypeConfigurationEnrichmentAspect
                         continue;
                     }
 
-                    $translationLabelId = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, $elementTypeName, $elementName);
+                    $translationLabelId = $this->getInspectorElementTranslationId(
+                        $nodeTypeLabelIdPrefix,
+                        $elementTypeName,
+                        $elementName
+                    );
                     $configuration['ui']['inspector'][$elementTypeName][$elementName]['label'] = $translationLabelId;
                 }
             }
@@ -245,16 +298,33 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($creationDialogConfiguration)) {
             $creationDialogConfiguration = &$configuration['ui']['creationDialog']['elements'];
             foreach ($creationDialogConfiguration as $elementName => &$elementConfiguration) {
-                if (isset($elementConfiguration['ui']['editor']) && isset($elementConfiguration['ui']['editorOptions'])) {
+                if (
+                    isset($elementConfiguration['ui']['editor'])
+                    && isset($elementConfiguration['ui']['editorOptions'])
+                ) {
                     $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $elementName) {
-                        return $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName . '.' . $path);
+                        return $this->getInspectorElementTranslationId(
+                            $nodeTypeLabelIdPrefix,
+                            'creationDialog',
+                            $elementName . '.' . $path
+                        );
                     };
-                    $this->applyEditorLabels($nodeTypeLabelIdPrefix, $elementName, $elementConfiguration['ui']['editor'], $elementConfiguration['ui']['editorOptions'], $translationIdGenerator);
+                    $this->applyEditorLabels(
+                        $nodeTypeLabelIdPrefix,
+                        $elementName,
+                        $elementConfiguration['ui']['editor'],
+                        $elementConfiguration['ui']['editorOptions'],
+                        $translationIdGenerator
+                    );
                 }
                 if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration['ui'])) {
                     continue;
                 }
-                $elementConfiguration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName);
+                $elementConfiguration['ui']['label'] = $this->getInspectorElementTranslationId(
+                    $nodeTypeLabelIdPrefix,
+                    'creationDialog',
+                    $elementName
+                );
             }
         }
     }
@@ -262,7 +332,7 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * Should a label be generated for the given field or is there something configured?
      *
-     * @param array $parentConfiguration
+     * @param array<string,mixed> $parentConfiguration
      * @param string $fieldName Name of the possibly existing subfield
      * @return boolean
      */
@@ -320,7 +390,8 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function generateNodeTypeLabelIdPrefix($nodeTypeName)
     {
         $nodeTypeNameParts = explode(':', $nodeTypeName, 2);
-        // in case the NodeType has just one section we default to 'Neos.Neos' as package as we don't have any further information.
+        // in case the NodeType has just one section we default to 'Neos.Neos' as package
+        // as we don't have any further information.
         $packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'Neos.Neos';
         $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
 
@@ -332,7 +403,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * id, source and packageKey.
      *
      * @param string $id translation id with possible package and source parts
-     * @return array
+     * @return array<string,string>
      */
     protected function splitIdentifier($id)
     {

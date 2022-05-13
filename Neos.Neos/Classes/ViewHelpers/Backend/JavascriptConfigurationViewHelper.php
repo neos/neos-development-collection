@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -36,7 +39,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $settings;
 
@@ -84,16 +87,15 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
     }
 
     /**
-     * @param array $settings
-     * @return void
+     * @param array<string,mixed> $settings
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -108,14 +110,18 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             'window.NeosCMS.Configuration = {};',
             'window.NeosCMS.Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
             'window.NeosCMS.Configuration.nodeTypes = {};',
-            'window.NeosCMS.Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
-            'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
+            'window.NeosCMS.Configuration.nodeTypes.groups = '
+                . json_encode($this->getNodeTypeGroupsSettings()) . ';',
+            'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = '
+                . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', ''))
+                . ';',
             'window.NeosCMS.Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
         ];
 
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
-        $configuration[] = 'window.NeosCMS.Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
+        $configuration[] = 'window.NeosCMS.Configuration.neosJavascriptBasePath = '
+            . json_encode($neosJavaScriptBasePath) . ';';
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
             $configuration[] = 'window.NeosCMS.Configuration.DevelopmentMode = true;';
@@ -164,9 +170,9 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return array
+     * @return array<int,array<string,mixed>>
      */
-    protected function getNodeTypeGroupsSettings()
+    protected function getNodeTypeGroupsSettings(): array
     {
         $settings = [];
         $nodeTypeGroupsSettings = new PositionalArraySorter($this->settings['nodeTypes']['groups']);
@@ -177,7 +183,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             $settings[] = [
                 'name' => $nodeTypeGroupName,
                 'label' => $nodeTypeGroupSettings['label'],
-                'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
+                'collapsed' => $nodeTypeGroupSettings['collapsed'] ?? true
             ];
         }
 
@@ -191,7 +197,15 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     protected function renderMaximumFileUploadSize()
     {
-        $maximumFileUploadSizeInBytes = min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
-        return sprintf('"%d"; // %s, as configured in php.ini', $maximumFileUploadSizeInBytes, Files::bytesToSizeString($maximumFileUploadSizeInBytes));
+        $maximumFileUploadSizeInBytes = min(
+            Files::sizeStringToBytes(ini_get('post_max_size') ?: ''),
+            Files::sizeStringToBytes(ini_get('upload_max_filesize') ?: '')
+        );
+
+        return sprintf(
+            '"%d"; // %s, as configured in php.ini',
+            $maximumFileUploadSizeInBytes,
+            Files::bytesToSizeString($maximumFileUploadSizeInBytes)
+        );
     }
 }

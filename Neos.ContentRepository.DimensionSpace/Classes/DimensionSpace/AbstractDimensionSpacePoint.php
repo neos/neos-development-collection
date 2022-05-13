@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
@@ -29,7 +28,6 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 abstract class AbstractDimensionSpacePoint implements
     \JsonSerializable,
     \Stringable,
-    CacheAwareInterface,
     ProtectedContextAwareInterface
 {
     protected function __construct(
@@ -151,11 +149,6 @@ abstract class AbstractDimensionSpacePoint implements
     final public function jsonSerialize(): array
     {
         return $this->coordinates;
-    }
-
-    final public function getCacheEntryIdentifier(): string
-    {
-        return $this->hash;
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,16 +10,18 @@ namespace Neos\Neos\EventLog\Domain\Model;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Domain\Model;
+
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\UserService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * A specific event which is used for ContentRepository Nodes (i.e. content).
@@ -36,6 +37,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  *      @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"})
  *    }
  * )
+ * @todo implement me as a projection
  */
 class NodeEvent extends Event
 {
@@ -47,7 +49,8 @@ class NodeEvent extends Event
     protected $nodeIdentifier;
 
     /**
-     * the document node identifier on which the action took place. is equal to NodeIdentifier if the action happened on documentNodes
+     * the document node identifier on which the action took place.
+     * is equal to NodeIdentifier if the action happened on documentNodes
      *
      * @var string
      */
@@ -63,7 +66,7 @@ class NodeEvent extends Event
     /**
      * the dimension values for that event
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $dimension;
 
@@ -72,12 +75,6 @@ class NodeEvent extends Event
      * @var UserService
      */
     protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
 
     /**
      * @Flow\Inject
@@ -135,7 +132,7 @@ class NodeEvent extends Event
      * @param NodeInterface $node
      * @return void
      */
-    public function setNode(NodeInterface $node)
+    /*public function setNode(NodeInterface $node)
     {
         $this->nodeIdentifier = $node->getIdentifier();
         $this->workspaceName = $node->getContext()->getWorkspaceName();
@@ -148,7 +145,7 @@ class NodeEvent extends Event
             $siteIdentifier = null;
         }
         $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, [
-            'nodeContextPath' => $node->getContextPath(),
+            'nodeContextPath' => $node->get(),
             'nodeLabel' => $node->getLabel(),
             'nodeType' => $node->getNodeType()->getName(),
             'site' => $siteIdentifier
@@ -164,7 +161,7 @@ class NodeEvent extends Event
                 'documentNodeType' => $node->getNodeType()->getName()
             ]);
         }
-    }
+    }*/
 
     /**
      * Override the workspace name. *MUST* be called after setNode(), else it won't have an effect.
@@ -183,13 +180,13 @@ class NodeEvent extends Event
      * @param NodeInterface $node
      * @return NodeInterface
      */
-    public static function getClosestAggregateNode(NodeInterface $node)
+    /*public static function getClosestAggregateNode(NodeInterface $node)
     {
         while ($node !== null && !$node->getNodeType()->isAggregate()) {
             $node = $node->getParent();
         }
         return $node;
-    }
+    }*/
 
     /**
      * Returns the closest document node, if it can be resolved.
@@ -200,7 +197,7 @@ class NodeEvent extends Event
      *
      * @return NodeInterface
      */
-    public function getDocumentNode()
+    /*public function getDocumentNode()
     {
         try {
             $context = $this->contextFactory->create([
@@ -213,7 +210,7 @@ class NodeEvent extends Event
         } catch (EntityNotFoundException $e) {
             return null;
         }
-    }
+    }*/
 
     /**
      * Returns the node this even refers to, if it can be resolved.
@@ -224,7 +221,7 @@ class NodeEvent extends Event
      *
      * @return NodeInterface
      */
-    public function getNode()
+    /*public function getNode()
     {
         try {
             $context = $this->contextFactory->create([
@@ -237,7 +234,7 @@ class NodeEvent extends Event
         } catch (EntityNotFoundException $e) {
             return null;
         }
-    }
+    }*/
 
     /**
      * Prevents invalid calls to the site repository in case the site data property is not available.
@@ -246,7 +243,7 @@ class NodeEvent extends Event
      */
     protected function getCurrentSite()
     {
-        if (!isset($this->data['site']) || $this->data['site'] === null) {
+        if (!isset($this->data['site'])) {
             return null;
         }
 

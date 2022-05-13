@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
@@ -22,7 +25,8 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 /**
  * Condition ViewHelper that can evaluate whether the currently authenticated user can access a given Backend module
  *
- * Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854 that will be obsolete once the whole Backend module logic is rewritten
+ * Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854
+ * that will be obsolete once the whole Backend module logic is rewritten
  */
 class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
 {
@@ -48,18 +52,25 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
-        return static::renderResult(static::evaluateCondition($arguments, $renderingContext), $arguments, $renderingContext);
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+        return static::renderResult(
+            static::evaluateCondition($arguments, $renderingContext),
+            $arguments,
+            $renderingContext
+        );
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
@@ -68,7 +79,10 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         if (!$renderingContext instanceof RenderingContext) {
             return false;
         }
-        if (isset($arguments['moduleConfiguration']['enabled']) && $arguments['moduleConfiguration']['enabled'] === false) {
+        if (
+            isset($arguments['moduleConfiguration']['enabled'])
+            && $arguments['moduleConfiguration']['enabled'] === false
+        ) {
             return false;
         }
         $objectManager = $renderingContext->getObjectManager();
@@ -79,10 +93,17 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         }
         /** @var PrivilegeManagerInterface $privilegeManager */
         $privilegeManager = $objectManager->get(PrivilegeManagerInterface::class);
-        if (!$privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($arguments['modulePath']))) {
+        if (
+            !$privilegeManager->isGranted(
+                ModulePrivilege::class,
+                new ModulePrivilegeSubject(
+                    $arguments['modulePath']
+                )
+            )
+        ) {
             return false;
         }
-        if (isset($moduleConfiguration['privilegeTarget'])) {
+        if (isset($arguments['moduleConfiguration']['privilegeTarget'])) {
             return $privilegeManager->isPrivilegeTargetGranted($arguments['moduleConfiguration']['privilegeTarget']);
         }
         return true;

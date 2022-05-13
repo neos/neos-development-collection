@@ -40,7 +40,7 @@ Feature: ForkContentStream Without Dimensions
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
       | nodeAggregateClassification   | "regular"                                |
-    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
+    And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
       | Key                       | Value                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
@@ -65,7 +65,7 @@ Feature: ForkContentStream Without Dimensions
       | contentStreamIdentifier       | "user-cs-identifier"         |
       | sourceContentStreamIdentifier | "cs-identifier"              |
       | initiatingUserIdentifier      | "initiating-user-identifier" |
-    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:user-cs-identifier" with payload:
+    And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:user-cs-identifier" with payload:
       | Key                       | Value                                                   |
       | contentStreamIdentifier   | "user-cs-identifier"                                    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
@@ -95,7 +95,7 @@ Feature: ForkContentStream Without Dimensions
       | contentStreamIdentifier       | "user-cs-identifier"         |
       | sourceContentStreamIdentifier | "cs-identifier"              |
       | initiatingUserIdentifier      | "initiating-user-identifier" |
-    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
+    And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
       | Key                       | Value                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |

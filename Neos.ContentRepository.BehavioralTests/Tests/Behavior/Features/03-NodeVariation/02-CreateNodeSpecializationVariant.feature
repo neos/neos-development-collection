@@ -45,6 +45,15 @@ Feature: Create node specialization
     # Node /document/child-document
       | nody-mc-nodeface        | child-document | sir-david-nodenborough        | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
 
+  Scenario: check the tree state before the specialization
+    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
+      | Level | NodeAggregateIdentifier |
+      | 0     | sir-david-nodenborough  |
+      | 1     | nodewyn-tetherton       |
+      | 2     | nodimer-tetherton       |
+      | 1     | nody-mc-nodeface        |
+
   Scenario: Create specialization of node to dimension space point without further specializations
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value                             |
@@ -53,7 +62,7 @@ Feature: Create node specialization
       | targetOrigin            | {"market":"CH", "language":"gsw"} |
     Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 6 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamIdentifier | "cs-identifier"                     |
       | nodeAggregateIdentifier | "sir-david-nodenborough"            |
@@ -62,7 +71,7 @@ Feature: Create node specialization
       | specializationCoverage  | [{"market":"CH", "language":"gsw"}] |
 
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 7 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamIdentifier | "cs-identifier"                     |
       | nodeAggregateIdentifier | "nodewyn-tetherton"                 |
@@ -71,7 +80,7 @@ Feature: Create node specialization
       | specializationCoverage  | [{"market":"CH", "language":"gsw"}] |
 
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamIdentifier | "cs-identifier"                     |
       | nodeAggregateIdentifier | "nodimer-tetherton"                 |
@@ -171,21 +180,21 @@ Feature: Create node specialization
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"de"} |
     Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 6 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
       | sourceOrigin            | {"market":"DE", "language":"en"}                                                                                                        |
       | specializationOrigin    | {"market":"DE", "language":"de"}                                                                                                        |
       | specializationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 7 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                                                     |
       | sourceOrigin            | {"market":"DE", "language":"en"}                                                                                                        |
       | specializationOrigin    | {"market":"DE", "language":"de"}                                                                                                        |
       | specializationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                                                     |
@@ -300,7 +309,7 @@ Feature: Create node specialization
     Then I expect exactly 12 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
-    And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 9 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
       | nodeAggregateIdentifier | "sir-david-nodenborough"           |
@@ -309,7 +318,7 @@ Feature: Create node specialization
       | specializationCoverage  | [{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
-    And event at index 10 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 10 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
       | nodeAggregateIdentifier | "nodewyn-tetherton"                |
@@ -318,7 +327,7 @@ Feature: Create node specialization
       | specializationCoverage  | [{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
-    And event at index 11 is of type "Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated" with payload:
+    And event at index 11 is of type "NodeSpecializationVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
       | nodeAggregateIdentifier | "nodimer-tetherton"                |

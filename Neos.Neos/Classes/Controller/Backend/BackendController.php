@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\Controller\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
 
 use Neos\Cache\Exception\InvalidDataException;
 use Neos\Flow\Annotations as Flow;
@@ -39,7 +40,6 @@ use Neos\Neos\Service\XliffService;
  */
 class BackendController extends ActionController
 {
-
     /**
      * @Flow\Inject
      * @var BackendRedirectionService

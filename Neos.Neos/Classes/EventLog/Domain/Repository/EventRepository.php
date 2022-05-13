@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\EventLog\Domain\Repository;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\EventLog\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
@@ -26,7 +29,7 @@ use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 class EventRepository extends Repository
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $defaultOrderings = [
         'uid' => QueryInterface::ORDER_ASCENDING
@@ -46,7 +49,9 @@ class EventRepository extends Repository
         $query = $this->prepareRelevantEventsQuery();
         $query->getQueryBuilder()->select('DISTINCT e');
         $query->getQueryBuilder()
-            ->andWhere('e NOT INSTANCE OF ' . NodeEvent::class . ' OR e IN (SELECT nodeevent.uid FROM ' . NodeEvent::class . ' nodeevent WHERE nodeevent.workspaceName = :workspaceName AND nodeevent.parentEvent IS NULL)')
+            ->andWhere('e NOT INSTANCE OF ' . NodeEvent::class . ' OR e IN (SELECT nodeevent.uid FROM '
+                . NodeEvent::class
+                . ' nodeevent WHERE nodeevent.workspaceName = :workspaceName AND nodeevent.parentEvent IS NULL)')
             ->setParameter('workspaceName', $workspaceName);
         $query->getQueryBuilder()->setFirstResult($offset);
         $query->getQueryBuilder()->setMaxResults($limit);

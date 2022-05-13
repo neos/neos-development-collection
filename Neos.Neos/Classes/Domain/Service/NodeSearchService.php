@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,95 +10,33 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\Context;
 
 /**
- * Find nodes based on a fulltext search
+ * Implementation of the NodeSearchServiceInterface for greater backwards compatibility
+ *
+ * Note: This implementation is meant to ease the transition to an event sourced content repository
+ * but since it uses legacy classes (like \Neos\ContentRepository\Domain\Service\Context) it is
+ * advised to use NodeAccessor::findDescendants() directly instead.
  *
  * @Flow\Scope("singleton")
+ * @deprecated see above
  */
 class NodeSearchService implements NodeSearchServiceInterface
 {
     /**
-     * @Flow\Inject
-     * @var NodeDataRepository
+     * @param array<int,string> $searchNodeTypes
      */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
-    /**
-     * Search all properties for given $term
-     *
-     * TODO: Implement a better search when Flow offer the possibility
-     *
-     * @param string|array $term search term
-     * @param array $searchNodeTypes
-     * @param Context $context
-     * @param NodeInterface $startingPoint
-     * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
-     */
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
-    {
-        if (empty($term)) {
-            throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
-        }
-
-        $searchResult = [];
-        $nodeTypeFilter = implode(',', $searchNodeTypes);
-
-        $searchTerm = is_string($term) ? [$term] : $term;
-
-        foreach ($searchTerm as $termvalue) {
-            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $termvalue) !== 0) {
-                $nodeByIdentifier = $context->getNodeByIdentifier($termvalue);
-                if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
-                    $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
-                }
-            }
-        }
-
-        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
-        foreach ($nodeDataRecords as $nodeData) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-            if ($node !== null) {
-                $searchResult[$node->getPath()] = $node;
-            }
-        }
-
-        return $searchResult;
-    }
-
-    /**
-     * Whether or not the given $node satisfies the specified types
-     *
-     * @param NodeInterface $node
-     * @param array $searchNodeTypes
-     * @return bool
-     */
-    protected function nodeSatisfiesSearchNodeTypes(NodeInterface $node, array $searchNodeTypes): bool
-    {
-        foreach ($searchNodeTypes as $nodeTypeName) {
-            if ($node->getNodeType()->isOfType($nodeTypeName)) {
-                return true;
-            }
-        }
-        return false;
+    public function findByProperties(
+        string $term,
+        array $searchNodeTypes,
+        ?NodeInterface $startingPoint = null
+    ): never {
+        throw new \InvalidArgumentException('Cannot find nodes with the current set of arguments', 1651923867);
     }
 }

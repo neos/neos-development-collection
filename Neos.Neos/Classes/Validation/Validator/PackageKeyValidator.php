@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Validation\Validator;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,10 @@ namespace Neos\Neos\Validation\Validator;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Validation\Validator;
+
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 
@@ -20,9 +23,13 @@ use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 class PackageKeyValidator extends RegularExpressionValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
-        'regularExpression' => [PackageInterface::PATTERN_MATCH_PACKAGEKEY, 'The regular expression to use for validation, used as given', 'string']
+        'regularExpression' => [
+            PackageInterface::PATTERN_MATCH_PACKAGEKEY,
+            'The regular expression to use for validation, used as given',
+            'string'
+        ]
     ];
 }
