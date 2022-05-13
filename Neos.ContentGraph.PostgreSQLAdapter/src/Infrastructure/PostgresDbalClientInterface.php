@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Infrastructure;
 
+use Doctrine\DBAL\Connection;
+
 interface PostgresDbalClientInterface
 {
 
-    public function getConnection();
+    public function getConnection(): Connection;
 }
 
