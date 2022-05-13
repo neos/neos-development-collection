@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\AbstractDimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
 /**
  * The cache entry identifier data transfer object for dimension space points
@@ -23,17 +23,17 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\AbstractDimensionSpaceP
 final class DimensionSpacePointCacheEntryIdentifier implements CacheAwareInterface
 {
     private function __construct(
-        private readonly string $value
+        public readonly DimensionSpacePoint $dimensionSpacePoint
     ) {
     }
 
-    public static function fromDimensionSpacePoint(AbstractDimensionSpacePoint $dimensionSpacePoint): self
+    public static function fromDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new self($dimensionSpacePoint->hash);
+        return new self($dimensionSpacePoint);
     }
 
     public function getCacheEntryIdentifier(): string
     {
-        return $this->value;
+        return $this->dimensionSpacePoint->hash;
     }
 }

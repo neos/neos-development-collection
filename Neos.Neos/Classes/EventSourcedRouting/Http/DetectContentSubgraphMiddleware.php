@@ -65,7 +65,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
         $dimensionSpacePoint = $this->detectDimensionSpacePoint($request, $uriPathSegmentUsed);
         $parameters = $existingParameters
             ->withParameter(
-                'dimensionSpacePoint',
+                'dimensionSpacePointCacheEntryIdentifier',
                 DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($dimensionSpacePoint)
             )
             ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0);

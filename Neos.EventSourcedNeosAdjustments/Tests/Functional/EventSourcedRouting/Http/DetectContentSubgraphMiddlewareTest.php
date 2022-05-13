@@ -200,7 +200,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         $expectedCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($expectedDimensionSpacePoint);
         self::assertEquals(
             $expectedCacheEntryIdentifier,
-            $this->routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePointCacheEntryIdentifier')
         );
     }
 
@@ -228,7 +228,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         $expectedCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($expectedDimensionSpacePoint);
         self::assertEquals(
             $expectedCacheEntryIdentifier,
-            $this->routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePointCacheEntryIdentifier')
         );
     }
 
@@ -255,7 +255,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         $expectedCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($expectedDimensionSpacePoint);
         self::assertEquals(
             $expectedCacheEntryIdentifier,
-            $this->routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePointCacheEntryIdentifier')
         );
     }
 }
