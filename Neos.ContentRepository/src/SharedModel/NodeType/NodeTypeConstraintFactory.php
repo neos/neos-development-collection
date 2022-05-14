@@ -21,14 +21,16 @@ use Neos\Utility\Arrays;
  * TraversableNode::findChildNodes().
  *
  * This factory resolves node type inheritance to a flat node type list.
+ *
+ * TODO: what is the difference between NodeTypeConstraintFactory and NodeTypeConstraintsFactory
  */
 class NodeTypeConstraintFactory
 {
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
+    public function __construct(
+        private readonly NodeTypeManager $nodeTypeManager
+    )
+    {
+    }
 
     /**
      * @param string $serializedFilters
@@ -69,8 +71,8 @@ class NodeTypeConstraintFactory
 
         return new NodeTypeConstraints(
             $wildcardAllowed,
-            NodeTypeNames::fromArray($explicitlyAllowedNodeTypeNames),
-            NodeTypeNames::fromArray($explicitlyDisallowedNodeTypeNames)
+            NodeTypeNames::fromStringArray($explicitlyAllowedNodeTypeNames),
+            NodeTypeNames::fromStringArray($explicitlyDisallowedNodeTypeNames)
         );
     }
 }

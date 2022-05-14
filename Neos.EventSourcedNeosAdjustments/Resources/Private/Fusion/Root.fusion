@@ -1,5 +1,5 @@
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-    workspaceChain = ${Array.join(Array.keys(Neos.EventSourcedNeosAdjustments.Workspace.getWorkspaceChain(subgraph)), ',')}
+    workspaceChain = ${Array.join(Array.keys(Neos.Ui.Workspace.getWorkspaceChain(subgraph)), ',')}
     editPreviewMode = ${editPreviewMode}
     dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
 }
@@ -17,32 +17,6 @@ prototype(Neos.Neos:ContentCollection) {
 prototype(Neos.Neos:ContentCollectionRenderer) {
     @context.nodeAvailable = ${node}
     @process.appendRemovedContentForBackend = ${value}
-}
-
-prototype(Neos.Neos:ContentElementEditable) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementEditableImplementation'
-}
-
-prototype(Neos.Neos:ContentElementWrapping) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementWrappingImplementation'
-}
-
-prototype(Neos.Neos:ConvertUris) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ConvertUrisImplementation'
-}
-
-// Exception Handler
-prototype(Neos.Neos:Content) {
-    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
-}
-prototype(Neos.Neos:ContentCollection) {
-    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
-}
-prototype(Neos.Neos:ContentComponent) {
-    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
-}
-prototype(Neos.Neos:Shortcut) {
-    @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
 // Last-Visited-Node Script

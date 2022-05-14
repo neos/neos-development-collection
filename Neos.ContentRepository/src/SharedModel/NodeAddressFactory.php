@@ -23,22 +23,15 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Scope("singleton")]
 class NodeAddressFactory
 {
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
+    public function __construct(
+        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly ContentGraphInterface $contentGraph
+    )
+    {
+    }
 
     public function createFromNode(NodeInterface $node): NodeAddress
     {

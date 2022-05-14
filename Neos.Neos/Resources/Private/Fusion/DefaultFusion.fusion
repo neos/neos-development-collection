@@ -48,7 +48,7 @@ root {
     mode = 'cached'
 
     entryIdentifier {
-      node = ${node}
+      node = ${Neos.Caching.entryIdentifierForNode(node)}
     }
     entryTags {
       # Whenever the node changes the matched condition could change

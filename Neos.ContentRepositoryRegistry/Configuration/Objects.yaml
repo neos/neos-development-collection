@@ -203,6 +203,14 @@ Neos\ContentRepository\Feature\Migration\Transformation\StripTagsOnPropertyTrans
   factoryMethodName: buildStripTagsOnPropertyTransformationFactory
 
 ###############################
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeAddressFactoryObjectFactory:
+  scope: singleton
+
+Neos\ContentRepository\SharedModel\NodeAddressFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeAddressFactoryObjectFactory
+  factoryMethodName: buildNodeAddressFactory
+###############################
 
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeAggregateCommandHandlerObjectFactory:
   scope: singleton
@@ -225,6 +233,12 @@ Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeDuplicationCommandHandlerObjectFactory
   factoryMethodName: buildNodeDuplicationCommandHandler
 
+###############################
+
+Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeTypeConstraintObjectFactory
+  factoryMethodName: buildNodeTypeConstraintFactory
 
 ###############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\NodeTypeManagerObjectFactory:
@@ -370,11 +384,6 @@ Neos\EventSourcing\Event\EventTypeResolverInterface:
 Neos\ContentRepository\Projection\Changes\ChangeFinder:
   scope: singleton
 
-Neos\ContentRepository\SharedModel\NodeAddressFactory:
-  scope: singleton
-
-Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory:
-  scope: singleton
 
 Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
   scope: singleton

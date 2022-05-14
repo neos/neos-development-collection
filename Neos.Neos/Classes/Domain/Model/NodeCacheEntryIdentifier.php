@@ -14,11 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
 /**
  * The cache entry identifier data transfer object for nodes
+ *
+ * @Flow\Proxy(false)
  */
 final class NodeCacheEntryIdentifier implements CacheAwareInterface
 {
