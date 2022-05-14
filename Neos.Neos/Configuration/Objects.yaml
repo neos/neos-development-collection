@@ -81,6 +81,7 @@ Neos\Neos\Controller\LoginController:
 
 
 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector':
+  scope: singleton
   factoryObjectName: Neos\Neos\Fusion\Cache\CacheAwareGraphProjectorFactory
   factoryMethodName: build
   arguments:

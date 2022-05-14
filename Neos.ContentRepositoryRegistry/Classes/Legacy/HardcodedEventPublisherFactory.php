@@ -51,6 +51,7 @@ use Neos\EventSourcing\EventPublisher\EventPublisherFactoryInterface;
 use Neos\EventSourcing\EventPublisher\EventPublisherInterface;
 use Neos\EventSourcing\EventPublisher\JobQueueEventPublisher;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 
 /**
  *
@@ -156,6 +157,22 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             EventToListenerMapping::create(NodeSpecializationVariantWasCreated::class, HypergraphProjector::class, []),
             EventToListenerMapping::create(NodeGeneralizationVariantWasCreated::class, HypergraphProjector::class, []),
             EventToListenerMapping::create(NodePeerVariantWasCreated::class, HypergraphProjector::class, []),
+
+            // DocumentUriPathProjector
+            EventToListenerMapping::create(RootWorkspaceWasCreated::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(RootNodeAggregateWithNodeWasCreated::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateWithNodeWasCreated::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateTypeWasChanged::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodePeerVariantWasCreated::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeGeneralizationVariantWasCreated::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeSpecializationVariantWasCreated::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateWasDisabled::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateWasEnabled::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateWasRemoved::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodePropertiesWereSet::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateWasMoved::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(DimensionSpacePointWasMoved::class, DocumentUriPathProjector::class, []),
+            EventToListenerMapping::create(DimensionShineThroughWasAdded::class, DocumentUriPathProjector::class, []),
         ]);
     }
 

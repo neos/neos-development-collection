@@ -1,7 +1,8 @@
-#Neos:
-#  EventSourcing:
-#    EventStore:
-#      stores:
-#        'ContentRepository':
-#          listeners:
-#            'Neos\EventSourcedNeosAdjustments\.*': true
+Neos:
+  EventSourcing:
+    EventStore:
+      stores:
+        'ContentRepository_FOO':
+          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+          listeners:
+            'Neos\Neos\.*': true

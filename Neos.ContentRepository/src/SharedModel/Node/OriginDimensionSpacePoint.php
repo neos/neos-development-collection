@@ -73,6 +73,7 @@ final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
      * ['language' => ['es'], 'country' => ['ar']]
      *
      * @param array<string,array<int,string>> $legacyDimensionValues
+     * @deprecated should be only used for conversion from Neos <= 8.x to 9.x upwards. never use this in "modern" code.
      */
     final public static function fromLegacyDimensionArray(array $legacyDimensionValues): self
     {

@@ -18,9 +18,9 @@ use Neos\Flow\Annotations as Flow;
 class DbalContentGraphObjectFactory
 {
     public function __construct(
-        protected readonly DbalClientInterface $dbalClient,
-        protected readonly NodeTypeManager $nodeTypeManager,
-        protected readonly PropertyConverter $propertyConverter
+        private readonly DbalClientInterface $dbalClient,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly PropertyConverter $propertyConverter
     )
     {
     }
