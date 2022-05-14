@@ -1,3 +1,11 @@
+Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ChangeProjectorObjectFactory:
+  scope: singleton
+
+Neos\ContentRepository\Projection\Changes\ChangeProjector:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ChangeProjectorObjectFactory
+  factoryMethodName: buildChangeProjector
+#############################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\CommandHandlerObjectFactory:
   scope: singleton
   arguments:
@@ -274,6 +282,11 @@ Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionR
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
   factoryMethodName: buildProjectionIntegrityViolationDetectionRunner
+
+Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
+  factoryMethodName: buildNodeHiddenStateProjector
 
 
 

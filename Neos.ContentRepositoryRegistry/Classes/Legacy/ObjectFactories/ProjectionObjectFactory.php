@@ -18,6 +18,7 @@ use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetect
 use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
 use Neos\Flow\Annotations as Flow;
@@ -59,5 +60,10 @@ final class ProjectionObjectFactory
     public function buildProjectionIntegrityViolationDetectionRunner(): ProjectionIntegrityViolationDetectionRunner
     {
         return new ProjectionIntegrityViolationDetectionRunner($this->projectionIntegrityViolationDetector);
+    }
+
+    public function buildNodeHiddenStateProjector(): NodeHiddenStateProjector
+    {
+        return new NodeHiddenStateProjector($this->dbalClient);
     }
 }

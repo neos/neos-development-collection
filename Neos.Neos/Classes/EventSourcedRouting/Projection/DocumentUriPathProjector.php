@@ -37,7 +37,9 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
-#[Flow\Scope("singleton")]
+// NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider in
+// Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.
+// See Neos.ContentRepositoryRegistry/Configuration/Settings.hacks.yaml for further details.
 final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
 {
     public const TABLE_NAME_DOCUMENT_URIS = 'neos_neos_projection_document_uri';
