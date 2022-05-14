@@ -21,12 +21,6 @@ Neos\Neos\Fusion\Cache\FusionCachingAspect:
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
 
-Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
-  arguments:
-    3:
-      object:
-        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
-        factoryMethodName: 'getConnection'
 
 Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
   arguments:
@@ -99,3 +93,16 @@ Neos\Neos\Controller\LoginController:
     4:
       object: 'Neos\Flow\Log\ThrowableStorageInterface'
 
+
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjectorFactory:
+  arguments:
+    3:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
+
+
+Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
+  scope: singleton
+  factoryObjectName: Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjectorFactory
+  factoryMethodName: build
