@@ -1,0 +1,9 @@
+Neos:
+  Flow:
+    # WORKAROUND FOR: Invalid listener in Neos\ESCR\AssetUsage\Projector\AssetUsageProjector::whenNodeAggregateWithNodeWasCreated the method signature is wrong, the first parameter should be an implementation of EventInterface but it expects an instance of "Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated"
+    # TODO: when the new repository
+    object:
+      includeClasses:
+        # skip the AssetUsageProjector from reflection. We manually wire this class.
+        'Neos.ESCR.AssetUsage': [ '^(?!Neos\\ESCR\\AssetUsage\\Projector\\AssetUsageProjector).*$' ]
+        'Neos.Neos': [ '^(?!Neos\\Neos\\EventSourcedRouting\\Projection\\DocumentUriPathProjector).*$' ]
