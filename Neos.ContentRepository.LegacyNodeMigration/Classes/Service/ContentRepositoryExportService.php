@@ -193,6 +193,7 @@ class ContentRepositoryExportService
             $this->dbal->executeUpdate('TRUNCATE neos_contentgraph_restrictionrelation');
             $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_projection_change');
             $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_projection_nodehiddenstate');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_projection_contentstream_v1');
             $this->dbal->executeUpdate('TRUNCATE neos_neos_projection_domain_v1');
             $this->dbal->executeUpdate('TRUNCATE neos_neos_projection_site_v1');
         } finally {

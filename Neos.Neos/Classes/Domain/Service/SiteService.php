@@ -42,10 +42,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
-use Neos\Neos\Domain\Exception\CurrentUserIsMissing;
 use Neos\Neos\Domain\Exception\LiveWorkspaceIsMissing;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
-use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Exception\SitesNodeIsMissing;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -266,10 +264,6 @@ class SiteService
             );
         }
 
-        if (!$siteNodeType->isOfType('Neos.Neos:Site')) {
-            throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
-        }
-
         if ($this->siteRepository->findOneByNodeName($siteNodeName->jsonSerialize())) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
         }
@@ -285,7 +279,7 @@ class SiteService
 
         $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
         if (is_null($currentUserIdentifier)) {
-            throw CurrentUserIsMissing::butWasRequested();
+            $currentUserIdentifier = UserIdentifier::forSystemUser();
         }
 
         $siteNodeAggregateIdentifier = NodeAggregateIdentifier::create();

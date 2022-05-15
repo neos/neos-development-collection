@@ -17,6 +17,7 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
@@ -76,6 +77,11 @@ class CachingHelper implements ProtectedContextAwareInterface
     public function nodeTag(mixed $nodes): array
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'Node');
+    }
+
+    public function entryIdentifierForNode(NodeInterface $node): NodeCacheEntryIdentifier
+    {
+        return NodeCacheEntryIdentifier::fromNode($node);
     }
 
     /**

@@ -46,8 +46,11 @@ Neos:
         defaultProjectorsToBeBlocked:
           'Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector': true
           'Neos\ContentRepository\Projection\Workspace\WorkspaceProjector': true
-    nodeAccessorFactories:
-      contentSubgraph:
-        position: end
-        className: Neos\ContentRepository\NodeAccess\Implementation\ContentSubgraphAccessorFactory
+
+
+    NodeAccess:
+      nodeAccessorFactories:
+        contentSubgraph:
+          position: end
+          className: Neos\ContentRepository\NodeAccess\NodeAccessor\Implementation\ContentSubgraphAccessorFactory
 

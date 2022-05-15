@@ -63,7 +63,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Runtime cache for the node type constraints to be applied
      */
-    protected ?NodeTypeConstraints $nodeTypeConstraints;
+    protected ?NodeTypeConstraints $nodeTypeConstraints = null;
 
     /**
      * The last navigation level which should be rendered.

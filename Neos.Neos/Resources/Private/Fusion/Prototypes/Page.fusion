@@ -103,7 +103,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
   @cache {
     mode = 'cached'
     entryIdentifier {
-      documentNode = ${node}
+      documentNode = ${Neos.Caching.entryIdentifierForNode(node)}
     }
     entryTags {
       1 = ${Neos.Caching.nodeTag(node)}

@@ -108,7 +108,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!is_string($requestPath)) {
             return false;
         }
-        if (!$parameters->has('dimensionSpacePoint') || !$parameters->has('requestUriHost')) {
+        if (!$parameters->has('dimensionSpacePointCacheEntryIdentifier') || !$parameters->has('requestUriHost')) {
             return false;
         }
         /** @var string $requestUriHost */

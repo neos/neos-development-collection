@@ -46,7 +46,7 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
     public static function fromStringArray(array $array): self
     {
         return new self(... array_map(
-            fn (string $serializedNodeTypeName): NodeTypeName => NodeTypeName::fromString($serializedNodeTypeName),
+            fn(string $serializedNodeTypeName): NodeTypeName => NodeTypeName::fromString($serializedNodeTypeName),
             $array
         ));
     }
@@ -81,6 +81,14 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->nodeTypeNames;
+    }
+
+    /**
+     * @return array<int,string>
+     */
+    public function toStringArray(): array
+    {
+        return array_map(fn(NodeTypeName $nodeTypeName) => $nodeTypeName->getValue(), $this->nodeTypeNames);
     }
 
     public function isEmpty(): bool

@@ -92,7 +92,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                     . 'nodetypename IN (:explicitlyAllowedNodeTypeNames)';
                 $query->parameter(
                     'explicitlyAllowedNodeTypeNames',
-                    $nodeTypeConstraints->explicitlyAllowedNodeTypeNames,
+                    $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->toStringArray(),
                     Connection::PARAM_STR_ARRAY
                 );
             } else {
@@ -103,7 +103,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                     . 'nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
                 $query->parameter(
                     'explicitlyDisallowedNodeTypeNames',
-                    $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames,
+                    $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->toStringArray(),
                     Connection::PARAM_STR_ARRAY
                 );
             } else {

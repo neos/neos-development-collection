@@ -14,11 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
 /**
  * The cache entry identifier data transfer object for dimension space points
+ *
+ * @Flow\Proxy(false)
  */
 final class DimensionSpacePointCacheEntryIdentifier implements CacheAwareInterface
 {
