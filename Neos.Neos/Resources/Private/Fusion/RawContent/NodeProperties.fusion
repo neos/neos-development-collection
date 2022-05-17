@@ -5,11 +5,11 @@ prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component
         <dl class="neos-raw-content-properties" @if={!String.isBlank(this.content)}>
             <Neos.Fusion:Loop items={props.node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
                 <Neos.Fusion:Fragment @if.isInlineEditable={propertyConfiguration.ui.inlineEditable == true} class="property">
-                    <dt>{propertyConfiguration.ui.label || propertyName}:</dt>
+                    <dt><Neos.Neos:RawContent.PropertyName name={propertyConfiguration.ui.label || propertyName} />:</dt>
                     <dd><Neos.Neos:Editable property={propertyName} /></dd>
                 </Neos.Fusion:Fragment>
                 <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(props.node).property(propertyName)}>
-                    <dt>{propertyConfiguration.ui.label || propertyName}:</dt>
+                    <dt><Neos.Neos:RawContent.PropertyName name={propertyConfiguration.ui.label || propertyName} />:</dt>
                     <dd><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumHeight={200} maximumWidth={200} /></dd>
                 </Neos.Fusion:Fragment>
             </Neos.Fusion:Loop>

@@ -45,15 +45,18 @@ body {
 
 .neos-raw-content-properties > dt {
   font-family: monospace;
-  white-space: pre;
   text-transform: uppercase;
+  hyphens: auto;
   color: lightgrey;
-  border-bottom: 1px solid lightgrey;
 }
 
 .neos-raw-content-properties > dd {
   margin-inline-start: 0;
   margin: 10px 0;
+}
+
+.neos-raw-content-properties > dd:not(:last-child) {
+  border-bottom: 1px solid lightgrey;
 }
 
 a {

@@ -4,9 +4,12 @@ prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
     renderer = Neos.Fusion:Component {
         node = ${props.node}
         labelParts = ${String.split(node.nodeType.label, ':')}
+        icon = ${node.nodeType.fullConfiguration.ui.icon}
 
         renderer = afx`
-            <header>{(props.node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? props.node.label : Translation.translate(props.labelParts[2],props.node.nodeType.label,[],props.labelParts[1],props.labelParts[0])}</header>
+            <header>
+              <i class={'fas fa-' + props.icon + ' ' + props.icon} @if={props.icon}></i> {(props.node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? props.node.label : Translation.translate(props.labelParts[2],props.node.nodeType.label,[],props.labelParts[1],props.labelParts[0])}
+            </header>
         `
     }
 }

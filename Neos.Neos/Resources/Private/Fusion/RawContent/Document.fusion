@@ -3,6 +3,7 @@ prototype(Neos.Neos:RawContent.Document) < prototype(Neos.Fusion:Component) {
     renderer = Neos.Neos:Page {
         head {
             stylesheets = afx`
+                <link rel="stylesheet" type="text/css" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css')} />
                 <link rel="stylesheet" type="text/css" href={StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css')} />
             `
         }
