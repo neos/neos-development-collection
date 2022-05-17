@@ -1,0 +1,19 @@
+{
+  "name": "neos-helpers",
+  "version": "0.0.1",
+  "repository": [],
+  "peerDependencies": {
+    "grunt-cli": "~0.1.13"
+  },
+  "dependencies": {
+    "grunt": "^0.4.5",
+    "grunt-bg-shell": "~2.0.1",
+    "grunt-contrib-compass": "~0.9.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-qunit": "~0.5.2",
+    "grunt-contrib-requirejs": "~0.4.4",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-trimtrailingspaces": "~0.4.0",
+    "matchdep": "^0.3.0"
+  }
+}

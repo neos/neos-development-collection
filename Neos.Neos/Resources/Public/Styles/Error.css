@@ -4413,6 +4413,45 @@ readers do not read off random characters that represent icons */
   position: static;
   width: auto; }
 
+/*!
+ * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: auto;
+  src: url(../Fonts/fa-solid-900.eot);
+  src: url(../Fonts/fa-solid-900.eot?#iefix) format("embedded-opentype"), url(../Fonts/fa-solid-900.woff2) format("woff2"), url(../Fonts/fa-solid-900.woff) format("woff"), url(../Fonts/fa-solid-900.ttf) format("truetype"), url(../Fonts/fa-solid-900.svg#fontawesome) format("svg"); }
+
+.fa,
+.fas {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900; }
+
+.neos [class^="fa-"],
+.neos [class*=" fa-"] {
+  vertical-align: baseline; }
+  .neos [class^="fa-"].fa-review,
+  .neos [class*=" fa-"].fa-review {
+    position: relative;
+    padding-right: 4px; }
+    .neos [class^="fa-"].fa-review:before,
+    .neos [class*=" fa-"].fa-review:before {
+      content: "\f15c";
+      font-weight: 400; }
+    .neos [class^="fa-"].fa-review:after,
+    .neos [class*=" fa-"].fa-review:after {
+      content: "\f058";
+      text-decoration: inherit;
+      display: inline-block;
+      speak: none;
+      position: absolute;
+      font-size: 12px;
+      top: 8px;
+      left: 7px; }
+
 body {
   background: #141414;
   margin: 0; }
