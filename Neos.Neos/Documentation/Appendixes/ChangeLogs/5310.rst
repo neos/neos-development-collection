@@ -1,0 +1,33 @@
+`5.3.10 (2022-05-17) <https://github.com/neos/neos-development-collection/releases/tag/5.3.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Destroy user sessions on certain actions <https://github.com/neos/neos-development-collection/pull/3707>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This adds a new method
+
+    UserService::destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
+
+and calls the method when a user is deactivated, removed or when the password is changed.
+
+* Packages: ``Neos``
+
+`TASK: Add missing exclamation-triangle icon to error message <https://github.com/neos/neos-development-collection/pull/3673>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+When you see this error message style (`resource://Neos.Neos/Private/Templates/Error/Index.html`), an icon is missing.  
+ 
+ Before:  
+!`screenshot-logopak localhost-2022 03 26-19_01_22 <https://user-images.githubusercontent.com/1208133/160251760-a96f989b-0491-4f24-8c7b-a50cb4c07351.png>`_
+
+After:  
+!`screenshot-logopak localhost-2022 03 26-19_03_15 <https://user-images.githubusercontent.com/1208133/160251805-7bc2c476-af00-44b7-a202-b2fa07081708.png>`_
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.3.9...5.3.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
