@@ -30,6 +30,9 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
@@ -136,6 +139,12 @@ class UserService
      * @var HashService
      */
     protected $hashService;
+
+    /**
+     * @Flow\Inject
+     * @var SessionManager
+     */
+    protected $sessionManager;
 
     /**
      * @Flow\Inject
@@ -343,11 +352,15 @@ class UserService
      *
      * @param User $user The user to delete
      * @return void
-     * @throws Exception
+     * @throws IllegalObjectTypeException
+     * @throws SessionNotStartedException
+     * @throws \Exception
      * @api
      */
     public function deleteUser(User $user)
     {
+        $this->destroyActiveSessionsForUser($user);
+
         foreach ($user->getAccounts() as $account) {
             $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
                 $this->deletePersonalWorkspace($account->getAccountIdentifier());
@@ -383,6 +396,8 @@ class UserService
      * @param User $user The user to set the password for
      * @param string $password A new password
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws SessionNotStartedException
      * @api
      */
     public function setUserPassword(User $user, $password)
@@ -393,6 +408,8 @@ class UserService
             /** @var TokenInterface $token */
             $indexedTokens[$token->getAuthenticationProviderName()] = $token;
         }
+
+        $this->destroyActiveSessionsForUser($user, true);
 
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
@@ -609,10 +626,14 @@ class UserService
      *
      * @param User $user The user to deactivate
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws SessionNotStartedException
      * @api
      */
     public function deactivateUser(User $user)
     {
+        $this->destroyActiveSessionsForUser($user);
+
         /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
             $account->setExpirationDate(
@@ -820,6 +841,26 @@ class UserService
         return $roles;
     }
 
+    /**
+     * @param User $user
+     * @param bool $keepCurrentSession
+     * @throws SessionNotStartedException
+     */
+    private function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
+    {
+        $sessionToKeep = $keepCurrentSession ? $this->sessionManager->getCurrentSession() : null;
+
+        foreach ($user->getAccounts() as $account) {
+            $activeSessions = $this->sessionManager->getSessionsByTag($this->securityContext->getSessionTagForAccount($account));
+            foreach ($activeSessions as $activeSession) {
+                /** @var SessionInterface $activeSession */
+                if ($sessionToKeep instanceof SessionInterface && $activeSession->getId() === $sessionToKeep->getId()) {
+                    continue;
+                }
+                $activeSession->destroy('Requested to remove alle sessions for user ' . $account->getAccountIdentifier());
+            }
+        }
+    }
 
     /**
      * Creates a personal workspace for the given user's account if it does not exist already.
