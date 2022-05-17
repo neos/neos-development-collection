@@ -1,0 +1,59 @@
+`8.0.2 (2022-05-17) <https://github.com/neos/neos-development-collection/releases/tag/8.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Adjust issue and pr templates <https://github.com/neos/neos-development-collection/pull/3708>`_
+------------------------------------------------------------------------------------------------------
+
+The templates now mention that the texts are used in change logs and explain the informations we need during review
+
+Should be merged together with:
+- https://github.com/neos/BuildEssentials/pull/61
+- https://github.com/neos/flow-development-collection/pull/2837
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Destroy user sessions on certain actions <https://github.com/neos/neos-development-collection/pull/3707>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This adds a new method
+
+    UserService::destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
+
+and calls the method when a user is deactivated, removed or when the password is changed.
+
+* Packages: ``Neos``
+
+`TASK: Remove defaultInlineEditor setting <https://github.com/neos/neos-development-collection/pull/3697>`_
+-----------------------------------------------------------------------------------------------------------
+
+In version 8.0 the CKEditor 4 has been removed, and it is not possible to define a default editor anymore.
+
+* Packages: ``Neos``
+
+`TASK: Add missing exclamation-triangle icon to error message <https://github.com/neos/neos-development-collection/pull/3673>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+When you see this error message style (``resource://Neos.Neos/Private/Templates/Error/Index.html``), an icon is missing.  
+ 
+ Before:  
+!`screenshot-logopak localhost-2022 03 26-19_01_22 <https://user-images.githubusercontent.com/1208133/160251760-a96f989b-0491-4f24-8c7b-a50cb4c07351.png>`_
+
+After:  
+!`screenshot-logopak localhost-2022 03 26-19_03_15 <https://user-images.githubusercontent.com/1208133/160251805-7bc2c476-af00-44b7-a202-b2fa07081708.png>`_
+
+
+
+* Packages: ``Neos``
+
+`TASK: Add release notes <https://github.com/neos/neos-development-collection/pull/3698>`_
+------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.1...8.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
