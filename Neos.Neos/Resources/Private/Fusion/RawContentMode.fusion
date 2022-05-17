@@ -33,7 +33,7 @@ prototype(Neos.Neos:RawContent) < prototype(Neos.Fusion:Template) {
 prototype(Neos.Neos:RawContentFallbackRenderer) < prototype(Neos.Neos:ContentComponent) {
   node = ${node}
   label = ${node.label}
-  nodeType = ${q(node).property('_nodeType.name')}
+  nodeType = ${node.nodeType.name}
 
   renderer = afx`
     <div>
