@@ -10,7 +10,7 @@ prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component
                 </Neos.Fusion:Fragment>
                 <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(props.node).property(propertyName)}>
                     <dt>{propertyConfiguration.ui.label || propertyName}:</dt>
-                    <dd><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumWidth="200" /></dd>
+                    <dd><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumHeight={200} maximumWidth={200} /></dd>
                 </Neos.Fusion:Fragment>
             </Neos.Fusion:Loop>
         </dl>
