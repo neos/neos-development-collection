@@ -46,7 +46,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
     mode = 'cached'
 
     entryIdentifier {
-      collection = ${node}
+      collection = ${Neos.Caching.entryIdentifierForNode(node)}
     }
 
     entryTags {

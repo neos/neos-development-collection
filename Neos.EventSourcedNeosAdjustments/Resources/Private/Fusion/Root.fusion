@@ -4,12 +4,8 @@ prototype(Neos.Fusion:GlobalCacheIdentifiers) {
     dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
 }
 
-prototype(Neos.Neos:NodeUri) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
-}
 
 prototype(Neos.Neos:ContentCollection) {
-    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath)}
     // TODO FIX ME HERE!!!
     @cache.maximumLifetime = ${null}
 }
