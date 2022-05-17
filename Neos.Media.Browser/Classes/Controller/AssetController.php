@@ -258,7 +258,8 @@ class AssetController extends ActionController
         try {
             foreach ($this->assetCollectionRepository->findAll()->toArray() as $retrievedAssetCollection) {
                 assert($retrievedAssetCollection instanceof AssetCollection);
-                $assetCollections[] = ['object' => $retrievedAssetCollection, 'count' => $this->assetRepository->countByAssetCollection($retrievedAssetCollection)];
+                $assetCollectionCount = ($assetProxyRepository instanceof SupportsCollectionsInterface ? $assetProxyRepository->countByAssetCollection($retrievedAssetCollection) : $this->assetRepository->countByAssetCollection($retrievedAssetCollection));
+                $assetCollections[] = ['object' => $retrievedAssetCollection, 'count' => $assetCollectionCount];
             }
 
             foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $retrievedTag) {
