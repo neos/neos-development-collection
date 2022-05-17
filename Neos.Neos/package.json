@@ -9,7 +9,7 @@
     "build:production": "NODE_ENV=production yarn build:js --mode production && NODE_ENV=production yarn build:styles --mode production",
     "build:js": "webpack -p --env=js",
     "build:styles": "webpack -d --env=styles",
-    "build:legacy-js": "cd Scripts && npx grunt build-js"
+    "build:legacy-js": "cd Scripts && yarn install && npx grunt build-js"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
