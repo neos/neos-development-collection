@@ -23,7 +23,7 @@ jobs:
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         include:
           # Build for minimum dependencies.
-          - flow-versions: 'master'
+          - neos-versions: 'master'
             php-versions: '8.0'
             postgresql-versions: '10-alpine'
             dependencies: 'lowest'
