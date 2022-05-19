@@ -24,10 +24,40 @@ prototype(Neos.NodeTypes.ColumnLayouts:MultiColumnItem) < prototype(Neos.Neos:Co
 prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) >
 prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
 
+prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
+  renderer = afx`
+    <div style="display:grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column0').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column1').get(0)} /></div>
+    </div>
+  `
+}
+
 # Three Column Fusion Object
 prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) >
 prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
 
+prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
+  renderer = afx`
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 20px;">
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column0').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column1').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column2').get(0)} /></div>
+    </div>
+  `
+}
+
 # Four Column Fusion Object
 prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) >
 prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
+
+prototype(Neos.NodeTypes.ColumnLayouts:FourColumn.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
+  renderer = afx`
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 20px;">
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column0').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column1').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column2').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column3').get(0)} /></div>
+    </div>
+  `
+}
