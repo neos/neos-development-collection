@@ -39,6 +39,15 @@ jobs:
         image: memcached:alpine
         ports:
           - "11211:11211"
+      postgres:
+        image: postgres:${{ matrix.postgresql-versions }}
+        env:
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+          POSTGRES_DB: flow_functional_testing
+        ports:
+          - "5432:5432"
+        options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
 
     env:
       FLOW_CONTEXT: Testing
@@ -66,14 +75,6 @@ jobs:
           extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
           coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
-
-      - name: Setup PostgreSQL
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: ${{ matrix.postgresql-versions }}
-          postgresql db: flow_functional_testing
-          postgresql user: neos
-          postgresql password: neos
 
       - name: Checkout development distribution
         uses: actions/checkout@v2
