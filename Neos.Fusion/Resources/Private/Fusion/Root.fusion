@@ -1,15 +1,32 @@
 include: *.fusion
-
-prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
-prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
-prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\FusionObjects\\CaseImplementation'
-prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\FusionObjects\\MatcherImplementation'
 prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
-prototype(Neos.Fusion:Component).@class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+prototype(Neos.Fusion:Case) {
+  @class = 'Neos\\Fusion\\FusionObjects\\CaseImplementation'
+  @sortProperties = true
+}
+prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\FusionObjects\\MatcherImplementation'
+prototype(Neos.Fusion:Array) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+  @sortProperties = true
+}
+prototype(Neos.Fusion:RawArray) {
+  @class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+  @sortProperties = true
+}
+prototype(Neos.Fusion:Join) {
+  @class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
+  @sortProperties = true
+}
+prototype(Neos.Fusion:DataStructure) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
+  @sortProperties = true
+}
+prototype(Neos.Fusion:Component) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+  @sortProperties = false
+}
 prototype(Neos.Fusion:CanRender).@class = 'Neos\\Fusion\\FusionObjects\\CanRenderImplementation'
 prototype(Neos.Fusion:DebugDump) {
   @class = 'Neos\\Fusion\\FusionObjects\\DebugDumpImplementation'
@@ -57,7 +74,9 @@ prototype(Neos.Fusion:Reduce) {
 #
 prototype(Neos.Fusion:Http.ResponseHead) {
   @class = 'Neos\\Fusion\\FusionObjects\\Http\\ResponseHeadImplementation'
-  headers = Neos.Fusion:DataStructure
+  headers = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
 }
 
 # Render an HTTP message (response)
@@ -75,6 +94,7 @@ prototype(Neos.Fusion:Http.ResponseHead) {
 #
 prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Join) {
   @class = 'Neos\\Fusion\\FusionObjects\\HttpResponseImplementation'
+  @sortProperties = true
   httpResponseHead = Neos.Fusion:Http.ResponseHead
   httpResponseHead.@position = 'start 1000'
 }
@@ -106,7 +126,9 @@ prototype(Neos.Fusion:Attributes) {
 #
 prototype(Neos.Fusion:Tag) {
   @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-  attributes = Neos.Fusion:DataStructure
+  attributes = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
   omitClosingTag = false
   selfClosingTag = false
 }
@@ -122,8 +144,12 @@ prototype(Neos.Fusion:Tag) {
 #
 prototype(Neos.Fusion:UriBuilder) {
   @class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
-  additionalParams = Neos.Fusion:DataStructure
-  arguments = Neos.Fusion:DataStructure
+  additionalParams = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
+  arguments = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
   argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
 
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
@@ -145,6 +171,7 @@ prototype(Neos.Fusion:UriBuilder) {
 #
 prototype(Neos.Fusion:Augmenter) {
   @class = 'Neos\\Fusion\\FusionObjects\\AugmenterImplementation'
+  @sortProperties = false
 
   # If more than one tag is found the content is wrapped in the fallback tag before augmentation
   fallbackTagName = 'div'

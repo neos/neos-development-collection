@@ -39,14 +39,14 @@ class DataStructureImplementation extends AbstractArrayFusionObject
      *
      * This will ignore all properties defined in "@ignoreProperties" in Fusion
      *
-     * @see PositionalArraySorter
-     *
      * @return array an ordered list of key value pairs
      * @throws FusionException if the positional string has an unsupported format
-     * @deprecated since 8.0 can be removed with 9.0 use {@see \Neos\Fusion\FusionObjects\AbstractArrayFusionObject::sortNestedProperties}
+     * @see PositionalArraySorter
+     *
+     * @deprecated since 8.0 can be removed with 9.0 use {@see \Neos\Fusion\FusionObjects\AbstractArrayFusionObject::preparePropertyKeys}
      */
     protected function sortNestedFusionKeys()
     {
-        return $this->sortNestedProperties();
+        return $this->preparePropertyKeys($this->properties);
     }
 }

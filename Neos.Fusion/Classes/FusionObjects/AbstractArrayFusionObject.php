@@ -51,6 +51,22 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
+     * Checks wether this Array fusion object should have sorted properties (according to __meta.position) or not
+     *
+     * @return bool
+     * @see applyPositionalArraySorterToProperties
+     */
+    public function shouldSortProperties(): bool
+    {
+        $sortProperties = $this->fusionValue('__meta/sortProperties');
+        if ($sortProperties === null) {
+            return true;
+        } else {
+            return (boolean)$sortProperties;
+        }
+    }
+
+    /**
      * @param mixed $offset
      * @return boolean
      */
@@ -97,7 +113,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      */
     protected function evaluateNestedProperties(?string $defaultFusionPrototypeName = null): array
     {
-        $sortedChildFusionKeys = $this->sortNestedProperties();
+        $sortedChildFusionKeys = $this->preparePropertyKeys($this->properties);
 
         if (count($sortedChildFusionKeys) === 0) {
             return [];
@@ -130,27 +146,65 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      *
      * This will ignore all properties defined in "@ignoreProperties" in Fusion
      *
-     * @see PositionalArraySorter
-     *
      * @return array an ordered list of key value pairs
      * @throws FusionException if the positional string has an unsupported format
+     * @see PositionalArraySorter
+     *
+     * @deprecated
+     * @see preparePropertyKeys()
      */
     protected function sortNestedProperties(): array
     {
-        $arraySorter = new PositionalArraySorter($this->properties, '__meta.position');
+        return $this->preparePropertyKeys($this->properties);
+    }
+
+    /**
+     * @param array $properties
+     * @return array<string> Fusion keys in this Array fusion object
+     * @throws FusionException
+     */
+    protected function preparePropertyKeys(array $properties): array
+    {
+        $maybeSortedFusionKeys = $this->shouldSortProperties() ? $this->applyPositionalArraySorterToProperties($properties) : array_keys($properties);
+        return $this->filterIgnoredProperties($maybeSortedFusionKeys);
+    }
+
+    /**
+     * @param array $properties
+     * @return array
+     * @throws FusionException
+     */
+    protected function applyPositionalArraySorterToProperties(array $properties): array
+    {
+        $arraySorter = new PositionalArraySorter($properties, '__meta.position');
         try {
             $sortedFusionKeys = $arraySorter->getSortedKeys();
         } catch (InvalidPositionException $exception) {
             throw new FusionException('Invalid position string', 1345126502, $exception);
         }
 
+        return $sortedFusionKeys;
+    }
+
+    /**
+     * Filters propertyKeys by ignoredProperties
+     *
+     * Note: array_filter over propertyKeys might be more elegant but ignoredProperties will usually be the smaller set,
+     * probably resulting in less iteration overall.
+     *
+     * @param array $propertyKeys
+     * @return array
+     */
+    protected function filterIgnoredProperties(array $propertyKeys): array
+    {
         foreach ($this->ignoreProperties as $ignoredPropertyName) {
-            $key = array_search($ignoredPropertyName, $sortedFusionKeys);
+            $key = array_search($ignoredPropertyName, $propertyKeys);
             if ($key !== false) {
-                unset($sortedFusionKeys[$key]);
+                unset($propertyKeys[$key]);
             }
         }
-        return $sortedFusionKeys;
+
+        return $propertyKeys;
     }
 
     /**
