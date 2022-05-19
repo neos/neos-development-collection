@@ -134,7 +134,7 @@ class ChangePropertyValue extends AbstractTransformation
     {
         $currentPropertyValue = $node->getProperty($this->propertyName);
 
-        if (!is_string($this->propertyName) || !is_string($this->newValue)) {
+        if (!is_string($currentPropertyValue) || !is_string($this->newValue)) {
             $node->setProperty($this->propertyName, $this->newValue);
             return;
         }
