@@ -84,7 +84,12 @@ jobs:
           path: ${{ env.NEOS_DIST_FOLDER }}
 
       - name: Set alias branch name
-        run: if [ "${NEOS_TARGET_VERSION}" == "master" ]; then echo "NEOS_BRANCH_ALIAS=dev-master"; else echo "NEOS_BRANCH_ALIAS=${NEOS_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
+        run: |
+            if [ "${{ env.NEOS_TARGET_VERSION }}" == "master" ]; then
+                echo "NEOS_BRANCH_ALIAS=dev-master";
+            else
+                echo "NEOS_BRANCH_ALIAS=${{ env.NEOS_TARGET_VERSION }}.x-dev";
+            fi >> $GITHUB_ENV
 
       - name: Update composer.json
         run: |
