@@ -66,7 +66,7 @@ class ComponentImplementation extends AbstractArrayFusionObject
      */
     protected function getProps(array $context): \ArrayAccess
     {
-        $sortedChildFusionKeys = $this->preparePropertyKeys($this->properties);
+        $sortedChildFusionKeys = $this->preparePropertyKeys($this->properties, $this->ignoreProperties);
         $props = new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $context);
         return $props;
     }

@@ -40,7 +40,7 @@ class CaseImplementation extends AbstractArrayFusionObject
      */
     public function evaluate()
     {
-        $matcherKeys = $this->preparePropertyKeys($this->properties);
+        $matcherKeys = $this->preparePropertyKeys($this->properties, $this->ignoreProperties);
 
         foreach ($matcherKeys as $matcherName) {
             $renderedMatcher = $this->renderMatcher($matcherName);
