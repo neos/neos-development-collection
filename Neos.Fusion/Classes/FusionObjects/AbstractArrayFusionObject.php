@@ -39,7 +39,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      *
      * @var array
      */
-    protected $ignoreProperties = ['__meta'];
+    protected $ignoreProperties = [];
 
     /**
      * @param array $ignoreProperties
