@@ -69,11 +69,16 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
 
             $im = new \Imagick();
             $im->setResolution($this->getOption('resolution'), $this->getOption('resolution'));
-            $wasRead = $im->readImage($documentFile);
-            if ($wasRead === false) {
+            try {
+                $readResult = $im->readImage($documentFile);
+            } catch (\ImagickException $e) {
+                $readResult = $e;
+            }
+            if ($readResult !== true) {
                 $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
                 $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();
-                $this->logger->notice(sprintf('Could not read image (filename: %s, SHA1: %s) for thumbnail generation. Maybe the ImageMagick security policy denies reading the format?', $filename, $sha1), LogEnvironment::fromMethodName(__METHOD__));
+                $message = $readResult instanceof \ImagickException ? $readResult->getMessage() : 'unknown';
+                $this->logger->notice(sprintf('Could not read image (filename: %s, SHA1: %s) for thumbnail generation. Maybe the ImageMagick security policy denies reading the format? Error: %s', $filename, $sha1, $message), LogEnvironment::fromMethodName(__METHOD__));
 
                 return;
             }
