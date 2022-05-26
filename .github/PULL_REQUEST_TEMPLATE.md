@@ -33,4 +33,4 @@
 - [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
 - [ ] Reviewer - PR Title is brief but complete and starts with `FEATURE|TASK|BUGFIX`
 - [ ] Reviewer - The first section explains the change briefly for change-logs
-- [ ] Reviewer - Breaking Changes are marked wit `!!!` and have upgrade-instructions
+- [ ] Reviewer - Breaking Changes are marked with `!!!` and have upgrade-instructions
