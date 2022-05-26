@@ -30,7 +30,8 @@
         }
     },
     "suggest": {
-        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime"
+        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
+        "ext-igbinary": "The igbinary extension is a replacement for the standard php serializer",
     },
     "extra": {
         "applied-flow-migrations": [
