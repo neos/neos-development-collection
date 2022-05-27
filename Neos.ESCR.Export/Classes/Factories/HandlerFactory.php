@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ESCR\Export;
+namespace Neos\ESCR\Export\Factories;
 
 use Neos\ESCR\Export\Filesystem\FilesystemFactoryInterface;
+use Neos\ESCR\Export\Handler;
 use Neos\ESCR\Export\Middleware\Context;
 use Neos\ESCR\Export\Middleware\MiddlewareInterface;
 use Neos\ESCR\Export\ValueObject\ParameterDefinitions;
@@ -12,9 +13,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\PositionalArraySorter;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 final class HandlerFactory
 {
     /**

@@ -102,7 +102,7 @@ final class NeosEventMiddleware implements MiddlewareInterface
         }
 
         $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $workspaceName->getName());
+        $workspaceStreamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $workspaceName->name);
         $events = DomainEvents::withSingleEvent(
             new RootWorkspaceWasCreated(
                 $workspaceName,

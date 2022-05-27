@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\LegacyNodeMigration\Command;
 
 /*
- * This file is part of the Neos.ContentRepositoryMigration package.
+ * This file is part of the Neos.ContentRepository.LegacyNodeMigration package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,192 +13,142 @@ namespace Neos\ContentRepository\LegacyNodeMigration\Command;
  * source code.
  */
 
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManagerInterface;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
+use Doctrine\DBAL\DriverManager;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\ContentRepository\LegacyNodeMigration\Service\ClosureEventPublisher;
-use Neos\ContentRepository\LegacyNodeMigration\Service\ContentRepositoryExportService;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\EventSourcing\EventListener\EventListenerInvoker;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ESCR\Export\Handler;
+use Neos\ESCR\Export\Middleware\Context;
+use Neos\ESCR\Export\Middleware\Event\NeosEventMiddleware;
+use Neos\ESCR\Export\Middleware\Event\NeosLegacyEventMiddleware;
+use Neos\ESCR\Export\Middleware\MiddlewareInterface;
+use Neos\ESCR\Export\ValueObject\Parameters;
 use Neos\EventSourcing\EventStore\EventNormalizer;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\Storage\EventStorageInterface;
+use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Core\Booting\Scripts;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Utility\Environment;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
-/**
- * @Flow\Scope("singleton")
- */
 class ContentRepositoryMigrateCommandController extends CommandController
 {
-    /**
-     * @Flow\InjectConfiguration(path="EventStore.stores.ContentRepository", package="Neos.EventSourcing")
-     * @var array<string,mixed>
-     */
-    protected $eventStoreConfiguration;
 
     /**
-     * @Flow\Inject(lazy=false)
-     * @var EventNormalizer
+     * @var array
      */
-    protected $eventNormalizer;
+    #[Flow\InjectConfiguration(package: 'Neos.Flow')]
+    protected array $flowSettings;
 
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var GraphProjector
-     */
-    protected $graphProjector;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var WorkspaceProjector
-     */
-    protected $workspaceProjector;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var ContentStreamProjector
-     */
-    protected $contentStreamProjector;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var ContentStreamRepository
-     */
-    protected $contentStreamRepository;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var ContentDimensionZookeeper
-     */
-    protected $contentDimensionZookeeper;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var InterDimensionalVariationGraph
-     */
-    protected $interDimensionalVariationGraph;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var ReadSideMemoryCacheManager
-     */
-    protected $readSideMemoryCacheManager;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var RuntimeBlocker
-     */
-    protected $runtimeBlocker;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var PropertyConverter
-     */
-    protected $propertyConverter;
-
-    /**
-     * @var Connection
-     */
-    private $dbal;
-
-    public function injectEntityManager(EntityManagerInterface $entityManager): void
-    {
-        $this->dbal = $entityManager->getConnection();
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly PropertyMapper $propertyMapper,
+        private readonly EventNormalizer $eventNormalizer,
+        private readonly PropertyConverter $propertyConverter,
+        private readonly Environment $environment,
+        private readonly EventStoreFactory $eventStoreFactory,
+        private readonly WorkspaceFinder $workspaceFinder,
+    ) {
+        parent::__construct();
     }
 
     /**
      * Run a CR export
+     *
+     * @param bool $quiet If set, only errors will be rendered
+     * @param bool $assumeYes If set, prompts will be skipped
      */
-    public function runCommand(): void
+    public function runCommand(bool $quiet = false, bool $assumeYes = false): void
     {
-        /** @var EventStorageInterface $eventStoreStorage */
-        $eventStoreStorage = $this->objectManager->get(
-            $this->eventStoreConfiguration['storage'],
-            $this->eventStoreConfiguration['storageOptions'] ?? []
-        );
+        $connection = $assumeYes ? $this->connection : $this->determineConnection();
 
-        // We need to build an own $eventStore instance, because we need a custom EventPublisher.
-        $eventPublisher = new ClosureEventPublisher();
-        $eventStore = new EventStore($eventStoreStorage, $eventPublisher, $this->eventNormalizer);
+        $filesystem = new Filesystem(new LocalFilesystemAdapter($this->environment->getPathToTemporaryDirectory()));
+        $context = new Context($filesystem, Parameters::fromArray([]));
 
-        // We also need to build our own NodeAggregateCommandHandler (and dependencies),
-        // so that the custom $eventStore is used there.
-        $nodeAggregateEventPublisher = new NodeAggregateEventPublisher(
-            // this is the custom EventStore we need here
-            $eventStore
-        );
+        // TODO: export/import Assets
 
-        $nodeAggregateCommandHandler = new NodeAggregateCommandHandler(
-            $this->contentStreamRepository,
-            $this->nodeTypeManager,
-            $this->contentDimensionZookeeper,
-            $this->contentGraph,
-            $this->interDimensionalVariationGraph,
-            // the nodeAggregateEventPublisher contains the custom EventStore from above
-            $nodeAggregateEventPublisher,
-            $this->readSideMemoryCacheManager,
-            $this->runtimeBlocker,
-            $this->propertyConverter
-        );
-        $contentRepositoryExportService = new ContentRepositoryExportService($eventStore, $nodeAggregateCommandHandler);
+        $exporter = Handler::fromContextAndMiddlewares($context, new NeosLegacyEventMiddleware($connection, $this->interDimensionalVariationGraph, $this->contentDimensionZookeeper, $this->nodeTypeManager, $this->propertyMapper, $this->eventNormalizer, $this->propertyConverter));
+        if (!$quiet) {
+            $this->outputLine('Exporting node data table rows');
+            $this->registerProgressCallbacks($exporter);
+        }
+        $exporter->processExport();
 
-        $contentStreamProjectorInvoker = new EventListenerInvoker(
-            $eventStore,
-            $this->contentStreamProjector,
-            $this->dbal
-        );
-        $workspaceProjectorInvoker = new EventListenerInvoker($eventStore, $this->workspaceProjector, $this->dbal);
-        $graphProjectorInvoker = new EventListenerInvoker($eventStore, $this->graphProjector, $this->dbal);
+        $importer = Handler::fromContextAndMiddlewares($context, new NeosEventMiddleware(true, true, $this->eventStoreFactory, $this->workspaceFinder, $this->eventNormalizer));
+        if (!$quiet) {
+            $this->outputLine('Importing events');
+            $this->registerProgressCallbacks($importer);
+        }
 
-        $eventPublisher->setClosure(static function () use (
-            $contentStreamProjectorInvoker,
-            $workspaceProjectorInvoker,
-            $graphProjectorInvoker
-        ) {
-            $contentStreamProjectorInvoker->catchUp();
-            $workspaceProjectorInvoker->catchUp();
-            $graphProjectorInvoker->catchUp();
+        // TODO: Fails if events table is not empty
+        // TODO: create site
+
+        $importer->processImport();
+
+        $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'assetUsage', 'contentStream'];
+        if (!$quiet) {
+            $this->outputLine('Replaying projections');
+            $this->output->progressStart(count($projections));
+        }
+        foreach ($projections as $projection) {
+            Scripts::executeCommand('neos.contentrepositoryregistry:cr:replay', $this->flowSettings, false, ['projectionName' => $projection]);
+            if (!$quiet) {
+                $this->output->progressAdvance();
+            }
+        }
+        if (!$quiet) {
+            $this->output->progressFinish();
+        }
+
+        $this->outputLine('<success>Done</success>');
+    }
+
+    private function determineConnection(): Connection
+    {
+        $connectionParams = $this->connection->getParams();
+        $useDefault = $this->output->askConfirmation(sprintf('Do you want to migrate nodes from the current database "%s@%s" (y/n)? ', $connectionParams['dbname'] ?? '?', $connectionParams['host'] ?? '?'));
+        if ($useDefault) {
+            return $this->connection;
+        }
+        $connectionParams['driver'] = $this->output->select(sprintf('Driver? [%s] ', $connectionParams['driver'] ?? ''), ['pdo_mysql', 'pdo_sqlite', 'pdo_pgsql'], $connectionParams['driver'] ?? null);
+        $connectionParams['host'] = $this->output->ask(sprintf('Host? [%s] ',$connectionParams['host'] ?? ''), $connectionParams['host'] ?? null);
+        $connectionParams['dbname'] = $this->output->ask(sprintf('DB name? [%s] ',$connectionParams['dbname'] ?? ''), $connectionParams['dbname'] ?? null);
+        $connectionParams['user'] = $this->output->ask(sprintf('DB user? [%s] ',$connectionParams['user'] ?? ''), $connectionParams['user'] ?? null);
+        $connectionParams['password'] = $this->output->askHiddenResponse('DB password? ') ?? $connectionParams['password'] ?? null;
+        $config = new Configuration();
+        return DriverManager::getConnection($connectionParams, $config);
+    }
+
+    private function registerProgressCallbacks(Handler $handler): void
+    {
+        $output = $this->output->getOutput();
+        $mainSection = $output instanceof ConsoleOutput ? $output->section() : $output;
+        $progressBar = new ProgressBar($mainSection);
+        $progressBar->setBarCharacter('<success>●</success>');
+        $progressBar->setEmptyBarCharacter('<error>◌</error>');
+        $progressBar->setProgressCharacter('<success>●</success>');
+        $progressBar->setFormat('%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s% - %message%');
+        $progressBar->setMessage('...');
+
+        $handler->onStart(fn(int $numberOfSteps) => $progressBar->start($numberOfSteps));
+        $handler->onStep(function(MiddlewareInterface $middleware) use ($progressBar) {
+            $progressBar->advance();
+            $progressBar->setMessage($middleware->getLabel());
         });
-
-        $contentRepositoryExportService->reset();
-        $this->graphProjector->assumeProjectorRunsSynchronously();
-        $this->workspaceProjector->assumeProjectorRunsSynchronously();
-        $this->contentStreamProjector->assumeProjectorRunsSynchronously();
-
-        $contentRepositoryExportService->migrate();
-
-        // TODO: re-enable asynchronous behavior; and trigger catchup of all projections. (e.g. ChangeProjector etc)
-        $this->outputLine('');
-        $this->outputLine('');
-        $this->outputLine('!!!!! NOW, run ./flow cr:replay change');
-        $this->outputLine('!!!!! NOW, run ./flow cr:replay nodeHiddenState');
-        $this->outputLine('!!!!! NOW, run ./flow cr:replay documentUriPath');
-        $this->outputLine('!!!!! NOW, run ./flow cr:replay assetUsage');
-
-        // ChangeProjector catchup
+        if ($output instanceof ConsoleOutput) {
+            $logSection = $output->section();
+            $handler->onMessage(fn(string $message) => $logSection->writeln($message));
+        }
     }
 }

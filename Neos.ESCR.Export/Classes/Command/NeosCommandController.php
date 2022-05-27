@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ESCR\Export\Command;
 
 use Neos\ESCR\Export\Handler;
-use Neos\ESCR\Export\HandlerFactory;
+use Neos\ESCR\Export\Factories\HandlerFactory;
 use Neos\ESCR\Export\Middleware\MiddlewareInterface;
 use Neos\ESCR\Export\ValueObject\Parameters;
 use Neos\ESCR\Export\ValueObject\PresetId;

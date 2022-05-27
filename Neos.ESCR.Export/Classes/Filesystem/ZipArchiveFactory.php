@@ -15,6 +15,9 @@ final class ZipArchiveFactory implements FilesystemFactoryInterface
      */
     public function create(array $options): Filesystem
     {
+        if (!class_exists(FilesystemZipArchiveProvider::class)) {
+            throw new \RuntimeException('For the ZipArchive Filesystem to use, the "league/flysystem-ziparchive" package must be installed', 1652862326);
+        }
         if (!isset($options['filename'])) {
             throw new \InvalidArgumentException('Missing option "filename"', 1646402533);
         }

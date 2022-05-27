@@ -1,4 +1,4 @@
-'Neos\ESCR\Export\HandlerFactory':
+'Neos\ESCR\Export\Factories\HandlerFactory':
   scope: singleton
   arguments:
     1:
