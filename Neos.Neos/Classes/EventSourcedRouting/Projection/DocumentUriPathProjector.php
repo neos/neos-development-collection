@@ -37,8 +37,8 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
-// NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider in
-// Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.
+// NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider
+// in Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.
 // See Neos.ContentRepositoryRegistry/Configuration/Settings.hacks.yaml for further details.
 final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
 {
@@ -205,22 +205,22 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
-        if ($this->isShortcutNodeType($event->getNewNodeTypeName())) {
+        if ($this->isShortcutNodeType($event->newNodeTypeName)) {
             // The node has been turned into a shortcut node, but since the shortcut mode is not yet set
             // we'll set it to "firstChildNode" in order to prevent an invalid mode
             $this->updateNodeQuery('SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\'
                 WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier
                     AND shortcuttarget IS NULL', [
-                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifier' => $event->nodeAggregateIdentifier,
             ]);
-        } elseif ($this->isDocumentNodeType($event->getNewNodeTypeName())) {
+        } elseif ($this->isDocumentNodeType($event->newNodeTypeName)) {
             $this->updateNodeQuery('SET shortcuttarget = NULL
                 WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier
                     AND shortcuttarget IS NOT NULL', [
-                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifier' => $event->nodeAggregateIdentifier,
             ]);
         }
     }

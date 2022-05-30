@@ -29,8 +29,7 @@ class NodeAddressFactory
     public function __construct(
         private readonly WorkspaceFinder $workspaceFinder,
         private readonly ContentGraphInterface $contentGraph
-    )
-    {
+    ) {
     }
 
     public function createFromNode(NodeInterface $node): NodeAddress

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,7 +10,10 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
+
 use Neos\Flow\Annotations as Flow;
 
 /**

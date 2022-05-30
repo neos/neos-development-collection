@@ -90,8 +90,10 @@ abstract class AbstractDimensionSpacePoint implements
         if (!$this->hasCoordinate($contentDimensionIdentifier) || !$other->hasCoordinate($contentDimensionIdentifier)) {
             return false;
         }
-        if ($this->coordinates[(string)$contentDimensionIdentifier]
-            === $other->coordinates[(string)$contentDimensionIdentifier]) {
+        if (
+            $this->coordinates[(string)$contentDimensionIdentifier]
+            === $other->coordinates[(string)$contentDimensionIdentifier]
+        ) {
             return false;
         }
 

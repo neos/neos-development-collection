@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -13,6 +10,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
+
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 trait ProjectorEventHandlerTrait
 {
-
     /**
      * @var array<callable> handlers to be executed in beforeInvoke
      * - called with ({@see EventEnvelope}, bool $doingFullReplayOfProjection).

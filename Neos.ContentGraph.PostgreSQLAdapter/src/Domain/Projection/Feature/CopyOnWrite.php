@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
@@ -77,10 +78,12 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
-        foreach ($this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
-            $originContentStreamIdentifier,
-            $originRelationAnchorPoint
-        ) as $ingoingHierarchyRelation) {
+        foreach (
+            $this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
+                $originContentStreamIdentifier,
+                $originRelationAnchorPoint
+            ) as $ingoingHierarchyRelation
+        ) {
             $ingoingHierarchyRelation->replaceChildNodeAnchor(
                 $originRelationAnchorPoint,
                 $targetRelationAnchorPoint,
@@ -97,10 +100,12 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
-        foreach ($this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
-            $originContentStreamIdentifier,
-            $originRelationAnchorPoint
-        ) as $outgoingHierarchyRelation) {
+        foreach (
+            $this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
+                $originContentStreamIdentifier,
+                $originRelationAnchorPoint
+            ) as $outgoingHierarchyRelation
+        ) {
             $outgoingHierarchyRelation->replaceParentNodeAnchor(
                 $targetRelationAnchorPoint,
                 $this->getDatabaseConnection()
@@ -115,9 +120,11 @@ trait CopyOnWrite
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
-        foreach ($this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
-            $originRelationAnchorPoint
-        ) as $outgoingReferenceRelation) {
+        foreach (
+            $this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
+                $originRelationAnchorPoint
+            ) as $outgoingReferenceRelation
+        ) {
             $copiedReferenceRelation = clone $outgoingReferenceRelation;
             $copiedReferenceRelation->originNodeAnchor = $targetRelationAnchorPoint;
             $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());

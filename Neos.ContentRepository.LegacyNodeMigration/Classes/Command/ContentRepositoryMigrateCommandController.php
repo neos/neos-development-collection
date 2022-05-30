@@ -36,9 +36,7 @@ use Neos\EventSourcing\EventStore\Storage\EventStorageInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class ContentRepositoryMigrateCommandController extends CommandController
 {
     /**

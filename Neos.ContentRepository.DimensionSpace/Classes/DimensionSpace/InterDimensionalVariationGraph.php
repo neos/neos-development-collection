@@ -169,8 +169,10 @@ class InterDimensionalVariationGraph
                 foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
                     $specializedDimensionSpacePoint = $generalization->dimensionSpacePoint
                         ->vary($dimensionIdentifier, (string)$specializedValue);
-                    if (!$this->contentDimensionZookeeper->getAllowedDimensionSubspace()
-                        ->contains($specializedDimensionSpacePoint)) {
+                    if (
+                        !$this->contentDimensionZookeeper->getAllowedDimensionSubspace()
+                            ->contains($specializedDimensionSpacePoint)
+                    ) {
                         continue;
                     }
                     /** @var WeightedDimensionSpacePoint $specialization */
@@ -191,8 +193,10 @@ class InterDimensionalVariationGraph
                     );
                     $normalizedVariationWeight = $normalizedVariationWeights[$specialization->getIdentityHash()]
                         - $normalizedVariationWeights[$generalizationHash];
-                    if (!isset($lowestVariationWeights[$specialization->getIdentityHash()])
-                        || $normalizedVariationWeight < $lowestVariationWeights[$specialization->getIdentityHash()]) {
+                    if (
+                        !isset($lowestVariationWeights[$specialization->getIdentityHash()])
+                        || $normalizedVariationWeight < $lowestVariationWeights[$specialization->getIdentityHash()]
+                    ) {
                         $this->primaryGeneralizations[$specialization->getIdentityHash()]
                             = $generalization->dimensionSpacePoint;
                         $lowestVariationWeights[$specialization->getIdentityHash()] = $normalizedVariationWeight;
@@ -230,8 +234,8 @@ class InterDimensionalVariationGraph
     ): void {
         $generalizationsToProcess = [$generalization->getIdentityHash() => $generalization];
         if (isset($indexedGeneralizations[$generalization->getIdentityHash()])) {
-            foreach ($indexedGeneralizations
-                     [$generalization->getIdentityHash()] as $parentGeneralizationHash => $parentGeneralization) {
+            $generalizations = $indexedGeneralizations[$generalization->getIdentityHash()];
+            foreach ($generalizations as $parentGeneralizationHash => $parentGeneralization) {
                 /** @var WeightedDimensionSpacePoint $weighedParent */
                 $weighedParent = $this->getWeightedDimensionSpacePointByHash($parentGeneralizationHash);
                 $generalizationsToProcess[$parentGeneralizationHash] = $weighedParent;
@@ -359,12 +363,16 @@ class InterDimensionalVariationGraph
             $this->initializeVariations();
         }
 
-        if (isset($this->indexedGeneralizations[$object->hash])
-            && $this->indexedGeneralizations[$object->hash]->contains($subject)) {
+        if (
+            isset($this->indexedGeneralizations[$object->hash])
+            && $this->indexedGeneralizations[$object->hash]->contains($subject)
+        ) {
             return VariantType::TYPE_GENERALIZATION;
         }
-        if (isset($this->indexedSpecializations[$object->hash])
-            && $this->indexedSpecializations[$object->hash]->contains($subject)) {
+        if (
+            isset($this->indexedSpecializations[$object->hash])
+            && $this->indexedSpecializations[$object->hash]->contains($subject)
+        ) {
             return VariantType::TYPE_SPECIALIZATION;
         }
 

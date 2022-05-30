@@ -22,7 +22,7 @@ use Neos\ContentRepository\NodeAccess\NodeAccessor\Exception\InvalidAccessorConf
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 final class ContentSubgraphAccessorFactory implements NodeAccessorFactoryInterface
 {
     /**

@@ -19,9 +19,7 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 abstract class AbstractModuleController extends ActionController
 {
     use BackendUserTranslationTrait;

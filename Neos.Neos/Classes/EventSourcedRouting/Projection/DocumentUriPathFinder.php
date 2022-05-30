@@ -13,9 +13,7 @@ use Neos\Neos\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class DocumentUriPathFinder
 {
     private Connection $dbal;

@@ -16,9 +16,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class NodeSerializer extends AbstractTypeConverter
 {
     /**

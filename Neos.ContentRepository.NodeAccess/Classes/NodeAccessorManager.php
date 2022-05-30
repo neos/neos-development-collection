@@ -21,7 +21,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class NodeAccessorManager
 {
     /**

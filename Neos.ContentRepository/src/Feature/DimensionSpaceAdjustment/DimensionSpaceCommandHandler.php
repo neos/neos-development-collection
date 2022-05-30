@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -40,7 +41,7 @@ use Ramsey\Uuid\Uuid;
 /**
  * ContentStreamCommandHandler
  */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 final class DimensionSpaceCommandHandler
 {
     protected EventStore $eventStore;
@@ -159,10 +160,12 @@ final class DimensionSpaceCommandHandler
         DimensionSpacePoint $target,
         DimensionSpacePoint $source
     ): void {
-        if ($this->interDimensionalVariationGraph->getVariantType(
-            $target,
-            $source
-        ) !== VariantType::TYPE_SPECIALIZATION) {
+        if (
+            $this->interDimensionalVariationGraph->getVariantType(
+                $target,
+                $source
+            ) !== VariantType::TYPE_SPECIALIZATION
+        ) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
     }

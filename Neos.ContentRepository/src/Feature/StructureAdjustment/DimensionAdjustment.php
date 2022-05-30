@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -7,11 +8,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class DimensionAdjustment
 {
     protected ProjectedNodeIterator $projectedNodeIterator;
@@ -32,14 +30,17 @@ class DimensionAdjustment
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
-                foreach ($nodeAggregate->getCoverageByOccupant(
-                    $node->getOriginDimensionSpacePoint()
-                ) as $coveredDimensionSpacePoint) {
+                foreach (
+                    $nodeAggregate->getCoverageByOccupant(
+                        $node->getOriginDimensionSpacePoint()
+                    ) as $coveredDimensionSpacePoint
+                ) {
                     $variantType = $this->interDimensionalVariationGraph->getVariantType(
                         $coveredDimensionSpacePoint,
                         $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint()
                     );
-                    if (!$node->getOriginDimensionSpacePoint()->equals($coveredDimensionSpacePoint)
+                    if (
+                        !$node->getOriginDimensionSpacePoint()->equals($coveredDimensionSpacePoint)
                         && $variantType !== VariantType::TYPE_SPECIALIZATION
                     ) {
                         $message = sprintf(

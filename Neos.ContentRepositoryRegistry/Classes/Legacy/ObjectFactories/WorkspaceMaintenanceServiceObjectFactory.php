@@ -22,9 +22,7 @@ use Neos\ContentRepository\Service\ContentStreamPruner;
 use Neos\ContentRepository\Service\WorkspaceMaintenanceService;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class WorkspaceMaintenanceServiceObjectFactory
 {
     public function __construct(

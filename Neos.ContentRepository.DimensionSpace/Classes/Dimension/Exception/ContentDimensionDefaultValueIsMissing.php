@@ -36,7 +36,7 @@ class ContentDimensionDefaultValueIsMissing extends \DomainException
     ): self {
         return new self(
             'Content dimension ' . $dimensionIdentifier . ' has the undefined value '
-                . $declaredDefaultValue. ' declared as default value.',
+                . $declaredDefaultValue . ' declared as default value.',
             1516639145
         );
     }

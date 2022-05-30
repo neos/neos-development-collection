@@ -18,8 +18,7 @@ use Neos\ContentRepository\Projection\Content\InMemoryCache\AllChildNodesByNodeI
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NodePathCache;
-/** @codingStandardsIgnoreStart */ use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
-/** @codingStandardsIgnoreEnd */
+use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
 /**
  * Accessors to In Memory Cache

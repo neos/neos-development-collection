@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\BehavioralTests\Command;
 
 /*
  * This file is part of the Neos.ContentRepository.BehavioralTests package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\BehavioralTests\Command;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\BehavioralTests\Command;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
@@ -103,7 +104,7 @@ final class ContentStreamCommandController extends CommandController
                 );
                 $this->graphProjector->whenNodeAggregateWithNodeWasCreated($nodeAggregateWasCreated);
                 $this->hypergraphProjector->whenNodeAggregateWithNodeWasCreated($nodeAggregateWasCreated);
-                $this->createHierarchy($nodeAggregateIdentifier, $currentLevel+1, $maximumLevel, $numberOfNodes);
+                $this->createHierarchy($nodeAggregateIdentifier, $currentLevel + 1, $maximumLevel, $numberOfNodes);
             }
         }
     }

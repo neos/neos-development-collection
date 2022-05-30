@@ -24,9 +24,7 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class NodePropertyConversionService
 {
     /**

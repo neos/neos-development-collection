@@ -22,9 +22,7 @@ use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class ContentStreamCommandHandlerObjectFactory
 {
     public function __construct(

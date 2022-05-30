@@ -22,8 +22,6 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-/** @codingStandardsIgnoreStart */ use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
-/** @codingStandardsIgnoreEnd */
 use Neos\Neos\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
@@ -42,6 +40,10 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 use Psr\Http\Message\UriInterface;
+
+/** @codingStandardsIgnoreStart */
+use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
+/** @codingStandardsIgnoreEnd */
 
 /**
  * A route part handler for finding nodes in the website's frontend.

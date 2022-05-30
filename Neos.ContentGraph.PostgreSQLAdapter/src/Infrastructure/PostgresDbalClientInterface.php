@@ -18,7 +18,5 @@ use Doctrine\DBAL\Connection;
 
 interface PostgresDbalClientInterface
 {
-
     public function getConnection(): Connection;
 }
-

@@ -327,7 +327,13 @@ class ContentCacheFlusher
             });
 
             if (!$node instanceof NodeInterface) {
-                $this->systemLogger->warning(sprintf('Found a node reference from node with identifier %s in workspace %s to asset %s, but the node could not be fetched.', $reference->getNodeIdentifier(), $reference->getWorkspaceName(), $this->persistenceManager->getIdentifierByObject($asset)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->systemLogger->warning(sprintf(
+                    'Found a node reference from node with identifier %s in workspace %s to asset %s,'
+                        . ' but the node could not be fetched.',
+                    $reference->getNodeIdentifier(),
+                    $reference->getWorkspaceName(),
+                    $this->persistenceManager->getIdentifierByObject($asset)
+                ), LogEnvironment::fromMethodName(__METHOD__));
                 continue;
             }
 
@@ -336,7 +342,14 @@ class ContentCacheFlusher
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
             // @see RuntimeContentCache.addTag
             $tagName = 'AssetDynamicTag_' . $workspaceHash . '_' . $assetIdentifier;
-            $this->addTagToFlush($tagName, sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier));
+            $this->addTagToFlush(
+                $tagName,
+                sprintf(
+                    'which were tagged with "%s" because asset "%s" has changed.',
+                    $tagName,
+                    $assetIdentifier
+                )
+            );
         }*/
     }
 }

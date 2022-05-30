@@ -52,21 +52,25 @@ trait NodeVariation
                 $event->specializationOrigin
             );
 
-            foreach ($this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $sourceNode->nodeAggregateIdentifier,
-                $event->specializationCoverage
-            ) as $hierarchyRelation) {
+            foreach (
+                $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamIdentifier,
+                    $sourceNode->nodeAggregateIdentifier,
+                    $event->specializationCoverage
+                ) as $hierarchyRelation
+            ) {
                 $hierarchyRelation->assignNewChildNode(
                     $specializedNode->relationAnchorPoint,
                     $this->getDatabaseConnection()
                 );
             }
-            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $sourceNode->nodeAggregateIdentifier,
-                $event->specializationCoverage
-            ) as $hierarchyRelation) {
+            foreach (
+                $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamIdentifier,
+                    $sourceNode->nodeAggregateIdentifier,
+                    $event->specializationCoverage
+                ) as $hierarchyRelation
+            ) {
                 $hierarchyRelation->assignNewParentNode(
                     $specializedNode->relationAnchorPoint,
                     null,
@@ -113,11 +117,13 @@ trait NodeVariation
             );
 
             $unassignedIngoingDimensionSpacePoints = $event->generalizationCoverage;
-            foreach ($this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
-                $event->generalizationCoverage
-            ) as $existingIngoingHierarchyRelation) {
+            foreach (
+                $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
+                    $event->generalizationCoverage
+                ) as $existingIngoingHierarchyRelation
+            ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $generalizedNode->relationAnchorPoint,
                     $this->getDatabaseConnection()
@@ -129,11 +135,13 @@ trait NodeVariation
                 );
             }
 
-            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
-                $event->generalizationCoverage
-            ) as $existingOutgoingHierarchyRelation) {
+            foreach (
+                $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
+                    $event->generalizationCoverage
+                ) as $existingOutgoingHierarchyRelation
+            ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
                     $generalizedNode->relationAnchorPoint,
                     null,
@@ -214,11 +222,13 @@ trait NodeVariation
             );
 
             $unassignedIngoingDimensionSpacePoints = $event->peerCoverage;
-            foreach ($this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
-                $event->peerCoverage
-            ) as $existingIngoingHierarchyRelation) {
+            foreach (
+                $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
+                    $event->peerCoverage
+                ) as $existingIngoingHierarchyRelation
+            ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $peerNode->relationAnchorPoint,
                     $this->getDatabaseConnection()
@@ -230,11 +240,13 @@ trait NodeVariation
                 );
             }
 
-            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
-                $event->peerCoverage
-            ) as $existingOutgoingHierarchyRelation) {
+            foreach (
+                $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
+                    $event->peerCoverage
+                ) as $existingOutgoingHierarchyRelation
+            ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
                     $peerNode->relationAnchorPoint,
                     null,

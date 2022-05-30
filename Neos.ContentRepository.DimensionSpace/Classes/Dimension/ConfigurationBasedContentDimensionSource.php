@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
  */
 final class ConfigurationBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
-    const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
+    public const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
 
     /**
      * Needs to stay protected as long as we need to be able to reset it via ObjectAccess

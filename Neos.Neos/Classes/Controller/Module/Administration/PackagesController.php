@@ -19,9 +19,7 @@ use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class PackagesController extends AbstractModuleController
 {
     /**

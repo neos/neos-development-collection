@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\ContentStreamRemoval\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,14 +10,16 @@ namespace Neos\ContentRepository\Feature\ContentStreamRemoval\Event;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\ContentStreamRemoval\Event;
+
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class ContentStreamWasRemoved implements DomainEventInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

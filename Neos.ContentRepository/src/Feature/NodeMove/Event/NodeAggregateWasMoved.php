@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -7,7 +9,6 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -20,9 +21,8 @@ use Neos\Flow\Annotations as Flow;
  * You can move any amount of nodes in the aggregate.
  * The targets (new parents // new succeeding) for each node & dimension space point
  * are specified in {@see NodeMoveMappings}.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateWasMoved implements
     DomainEventInterface,
     PublishableToOtherContentStreamsInterface,

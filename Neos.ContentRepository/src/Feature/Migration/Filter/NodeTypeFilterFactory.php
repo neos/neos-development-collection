@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -42,13 +43,12 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
             $exclude = (bool)$settings['exclude'];
         }
 
-        return new class(
+        return new class (
             $nodeType,
             $withSubTypes,
             $exclude,
             $this->nodeTypeManager
         ) implements NodeAggregateBasedFilterInterface {
-
             public function __construct(
                 /**
                  * Sets the node type name to match on.
