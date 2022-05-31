@@ -711,6 +711,7 @@ Neos.Fusion:CanRender
 Check whether a Fusion prototype can be rendered. For being renderable a prototype must exist and have an implementation class, or inherit from an existing renderable prototype. The implementation class can be defined indirectly via base prototypes.
 
 :type: (string) The prototype name that is checked
+:path: (string) The fusion path name that is checked
 
 Example::
 
