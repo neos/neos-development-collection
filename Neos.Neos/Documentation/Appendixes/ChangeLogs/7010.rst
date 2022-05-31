@@ -1,0 +1,34 @@
+`7.0.10 (2022-05-31) <https://github.com/neos/neos-development-collection/releases/tag/7.0.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Do not treat every given value as string <https://github.com/neos/neos-development-collection/pull/3802>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3801 <https://github.com/neos/neos-development-collection/issues/3801>`_
+
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Raise gedmo/doctrine-extensions dependency to ^3.5 <https://github.com/neos/neos-development-collection/pull/3786>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This avoids errors caused by calls to the deprecated
+`AbstractClassMetadataFactory::getCacheDriver()` method.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`TASK: Delete apigen.yml <https://github.com/neos/neos-development-collection/pull/3800>`_
+------------------------------------------------------------------------------------------
+
+The API documentation is discontinued, the tooling is outdated and
+no one cares for static documentation anymore.
+
+**Review instructions**
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.0.9...7.0.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
