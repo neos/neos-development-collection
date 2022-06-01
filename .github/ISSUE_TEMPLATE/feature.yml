@@ -1,0 +1,33 @@
+name: 🎁 Request a new feature
+description: You are missing a feature, please tell us about it
+title: "FEATURE: <title>"
+labels: [Feature]
+body: 
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: | 
+        Please describe the feature briefly. Try to avoid beeing specific about the solution as there may be more options available.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Possible Solution
+      description: | 
+        If you already have an idea how the feature could be implemented describe this here. We may still suggest other solutions but will consider your suggestion.
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        ### Sponsoring / Support ###
+  
+        Since we are an open source project we always have to find time for the tasks at hand. 
+        By sponsoring you may be able to by the time needed actually work on the feature you need.

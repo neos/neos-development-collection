@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter| |Pull Reminders|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
@@ -11,11 +11,8 @@
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://raw.githubusercontent.com/neos/neos-development-collection/4.3/LICENSE
 .. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
-   :target: https://neos.readthedocs.org/en/4.3/
+   :target: https://neos.readthedocs.org/en/8.0/
    :alt: Documentation
-.. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
-   :target: http://neos.github.io/neos/4.3/
-   :alt: API Docs
 .. |Slack| image:: http://slack.neos.io/badge.svg
    :target: http://slack.neos.io
    :alt: Slack
@@ -31,9 +28,6 @@
 .. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
    :target: https://twitter.com/NeosCMS
    :alt: Twitter
-.. |Pull Reminders| image:: https://pullreminders.com/badge.svg
-   :target: https://pullreminders.com?ref=badge
-   :alt: Pull Reminders
 
 ---------------------------
 Neos development collection
@@ -63,7 +57,7 @@ In the root directory of the development distribution, you can do the following 
 To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests.
 
 To switch the branch you intend to work on:
-``git checkout 7.1 && composer update``
+``git checkout 8.0 && composer update``
 
 .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
 
