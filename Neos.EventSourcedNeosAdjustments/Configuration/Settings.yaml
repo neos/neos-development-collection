@@ -17,11 +17,6 @@ Neos:
     fusion:
       enableObjectTreeCache: false
   Flow:
-    http:
-      middlewares:
-        'detectContentSubgraph':
-          position: 'before routing'
-          middleware: 'Neos\Neos\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
     error:
       debugger:
         ignoredClasses:
