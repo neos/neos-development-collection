@@ -118,14 +118,6 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * @return ContentSubgraphInterface
-     */
-    public function getSubgraph(): ?ContentSubgraphInterface
-    {
-        return $this->fusionValue('subgraph');
-    }
-
-    /**
      * Render the Uri.
      *
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
@@ -150,9 +142,6 @@ class NodeUriImplementation extends AbstractFusionObject
         $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
         NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
         );*/
-        if ($this->getSubgraph()) {
-            $nodeAddress = $nodeAddress->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
-        }
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
