@@ -1,13 +1,4 @@
 'Neos.Neos:Sites': []
-'Neos.Neos:Node':
-  label: "${Neos.EventSourcedNeosAdjustments.Node.labelForNode(node).properties('title', 'text')}"
-  properties:
-    _removed: ~
-    _creationDateTime: ~
-    _lastModificationDateTime: ~
-    _lastPublicationDateTime: ~
-    _path: ~
-    _name: ~
 
 'Neos.Neos:Timable':
   properties:
