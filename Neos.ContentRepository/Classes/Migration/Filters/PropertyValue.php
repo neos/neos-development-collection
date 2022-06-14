@@ -69,6 +69,9 @@ class PropertyValue implements DoctrineFilterInterface
             JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
         ), "{}\n\t "));
 
-        return [$baseQuery->like('properties', $likeParameter, false)];
+        $queryBuilder = $baseQuery->getQueryBuilder();
+        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
+
+        return [];
     }
 }
