@@ -30,33 +30,3 @@ Neos:
     fusion:
       autoInclude:
         Neos.EventSourcedNeosAdjustments: true
-    Ui:
-      initialState:
-        cr:
-          nodes:
-            byContextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.defaultNodesForBackend(site, documentNode, controllerContext)}'
-            siteNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(site)}'
-            documentNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
-          contentDimensions:
-            # TODO: re-enable dimensions
-            byName: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.contentDimensionsByName()}'
-            active: '${subgraph.dimensionSpacePoint.toLegacyDimensionArray()}'
-            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
-          workspaces:
-            personalWorkspace: '${Neos.EventSourcedNeosAdjustments.Workspace.getPersonalWorkspace()}'
-        ui:
-          contentCanvas:
-            src: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
-            contextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
-      documentNodeInformation:
-        metaData:
-          documentNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
-          siteNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(site)}'
-
-          previewUrl: '${documentNode == null ? "" : Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.redirectUri(documentNode, controllerContext)}'
-
-          contentDimensions:
-            active: '${documentNode.dimensionSpacePoint.toLegacyDimensionArray()}'
-            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
-          documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
-          url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
