@@ -16,10 +16,14 @@ use Flowpack\JobQueue\Common\Job\JobManager;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 
@@ -62,7 +66,7 @@ class CacheAwareGraphProjectorFactory
             $processedEventsCache,
             $projectionContentGraph,
             $throwableStorageInterface
-        );/*
+        );
         $graphProjector->onBeforeInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
                 // performance optimization: on full replay, we assume all caches to be flushed anyways
@@ -114,7 +118,7 @@ class CacheAwareGraphProjectorFactory
                     );
                 }
             }
-        });*/
+        });
 
         return $graphProjector;
     }
