@@ -80,8 +80,6 @@ class ContentElementWrappingService
      */
     protected $nodeInfoHelper;
 
-    protected NodeAddressFactory $nodeAddressFactory;
-
     /**
      * @Flow\Inject
      * @var NodeAccessorManager
@@ -101,6 +99,10 @@ class ContentElementWrappingService
      * @var string
      */
     protected $nonRenderedContentNodeMetadata;
+
+    public function __construct(protected readonly NodeAddressFactory $nodeAddressFactory)
+    {
+    }
 
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
