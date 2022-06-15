@@ -12,39 +12,23 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Aspects;
+namespace Neos\ContentRepositoryRegistry\Configuration;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
+ * Take the node types after loading and replace `i18n` labels with the namespaced parts.
+ *
+ * This happens BEFORE the node types are merged with the super types (in the node type management); but
+ * this is implemented as the last step of the {@see NodeTypesLoader}.
+ *
  * @Flow\Scope("singleton")
- * @Flow\Aspect
+ * @internal
  */
-class NodeTypeConfigurationEnrichmentAspect
+class NodeTypeEnrichmentService
 {
-    /**
-     * @var array
-     * @phpstan-var array<mixed>
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
-     */
-    protected $dataTypesDefaultConfiguration;
-
-    /**
-     * @var array
-     * @phpstan-var array<mixed>
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
-     */
-    protected $editorDefaultConfiguration;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\Flow\I18n\Translator
-     */
-    protected $translator;
 
     /**
      * @Flow\Inject
@@ -52,47 +36,41 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     protected $resourceManager;
 
-    /**
-     * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->__construct())")
-     * @param JoinPointInterface $joinPoint
-     * @return void
-     */
-    public function enrichNodeTypeLabelsConfiguration(JoinPointInterface $joinPoint): void
+    public function enrichNodeTypeLabelsConfiguration(array $fullConfiguration): array
     {
-        $declaredSuperTypes = $joinPoint->getMethodArgument('declaredSuperTypes');
-        $configuration = $joinPoint->getMethodArgument('configuration');
-        $nodeTypeName = $joinPoint->getMethodArgument('name');
+        $superTypeConfigResolver = new SuperTypeConfigResolver($fullConfiguration);
 
-        $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration, $declaredSuperTypes);
+        foreach ($fullConfiguration as $nodeTypeName => &$nodeTypeConfiguration) {
+            $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $nodeTypeConfiguration, $superTypeConfigResolver);
+        }
 
-        $joinPoint->setMethodArgument('configuration', $configuration);
-        $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return $fullConfiguration;
     }
 
     /**
      * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
-     * @param array<string,NodeType> $declaredSuperTypes
+     * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
-    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration, array $declaredSuperTypes)
+    protected function addLabelsToNodeTypeConfiguration(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver)
     {
         if (isset($configuration['ui'])) {
             $this->setGlobalUiElementLabels($nodeTypeName, $configuration);
         }
 
         if (isset($configuration['properties'])) {
-            $this->setPropertyLabels($nodeTypeName, $configuration, $declaredSuperTypes);
+            $this->setPropertyLabels($nodeTypeName, $configuration, $superTypeConfigResolver);
         }
     }
 
     /**
      * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
-     * @param array<string,NodeType> $declaredSuperTypes
+     * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
-    protected function setPropertyLabels($nodeTypeName, array &$configuration, array $declaredSuperTypes)
+    protected function setPropertyLabels(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
@@ -108,11 +86,11 @@ class NodeTypeConfigurationEnrichmentAspect
             }
 
             $editorName = $propertyConfiguration['ui']['inspector']['editor']
-                ?? array_reduce($declaredSuperTypes, function ($editorName, ?NodeType $superType) use ($propertyName) {
-                    if ($editorName !== null || $superType === null) {
+                ?? array_reduce($superTypeConfigResolver->getSuperTypesFor($nodeTypeName), function ($editorName, $superTypeName) use ($propertyName, $superTypeConfigResolver) {
+                    if ($editorName !== null || $superTypeName === null) {
                         return $editorName;
                     }
-                    $superTypeConfiguration = $superType->getLocalConfiguration();
+                    $superTypeConfiguration = $superTypeConfigResolver->getLocalConfiguration($superTypeName);
                     return $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
                 }, null);
             $hasEditor = !is_null($editorName);
@@ -140,10 +118,10 @@ class NodeTypeConfigurationEnrichmentAspect
             ) {
                 $propertyConfiguration['ui']['inline']['editorOptions']['placeholder']
                     = $this->getPropertyConfigurationTranslationId(
-                        $nodeTypeLabelIdPrefix,
-                        $propertyName,
-                        'ui.inline.editorOptions.placeholder'
-                    );
+                    $nodeTypeLabelIdPrefix,
+                    $propertyName,
+                    'ui.inline.editorOptions.placeholder'
+                );
             }
 
             if (
@@ -201,7 +179,8 @@ class NodeTypeConfigurationEnrichmentAspect
         $editorName,
         array &$editorOptions,
         $translationIdGenerator
-    ) {
+    )
+    {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
                 if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
@@ -245,7 +224,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array<string,mixed> $configuration
      * @return void
      */
-    protected function setGlobalUiElementLabels($nodeTypeName, array &$configuration)
+    protected function setGlobalUiElementLabels(string $nodeTypeName, array &$configuration)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         if ($this->shouldFetchTranslation($configuration['ui'])) {

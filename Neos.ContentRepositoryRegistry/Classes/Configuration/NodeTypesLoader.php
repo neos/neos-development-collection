@@ -7,6 +7,7 @@ use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Configuration\Loader\LoaderInterface;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
@@ -24,7 +25,7 @@ class NodeTypesLoader implements LoaderInterface
      */
     private $configurationBasePath;
 
-    public function __construct(YamlSource $yamlSource, string $configurationBasePath = FLOW_PATH_CONFIGURATION)
+    public function __construct(YamlSource $yamlSource, string $configurationBasePath = FLOW_PATH_CONFIGURATION, protected readonly ?Bootstrap $bootstrap = null)
     {
         $this->yamlSource = $yamlSource;
         $this->configurationBasePath = $configurationBasePath;
@@ -54,9 +55,10 @@ class NodeTypesLoader implements LoaderInterface
                         $fileInfo->getPath(),
                         $fileInfo->getBasename('.' . $fileInfo->getExtension())
                     ]);
+                    $single = $this->yamlSource->load($path, false);
                     $configuration = Arrays::arrayMergeRecursiveOverrule(
                         $configuration,
-                        $this->yamlSource->load($path, false)
+                        $single
                     );
                 }
             }
@@ -74,6 +76,13 @@ class NodeTypesLoader implements LoaderInterface
             $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($this->configurationBasePath . $contextName . '/' . 'NodeTypes', true));
         }
 
+        // NOTE: Node Types loading is wired very early in the bootstrap; and the NodeTypeEnrichmentService needs a more booted system.
+        // To break the cycle, we defer loading the NodeType
+        if ($this->bootstrap && $this->bootstrap->getObjectManager()->isRegistered(NodeTypeEnrichmentService::class)) {
+            $nodeTypeEnrichmentService = $this->bootstrap->getObjectManager()->get(NodeTypeEnrichmentService::class);
+            assert($nodeTypeEnrichmentService instanceof NodeTypeEnrichmentService);
+            $configuration = $nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
+        }
         return $configuration;
     }
 }
