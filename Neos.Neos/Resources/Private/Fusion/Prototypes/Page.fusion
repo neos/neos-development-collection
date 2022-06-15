@@ -64,7 +64,8 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     tagName = 'body'
     omitClosingTag = true
     attributes.class.@process.addNeosBackendClass = ${Array.push(value, 'neos-backend')}
-    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+    # TODO: inBackend helper should be moved OUT of Neos.Ui, as it is public API
+    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${Neos.Ui.NodeInfo.inBackend(documentNode)}
   }
 
   # Content of the body tag. To be defined by the integrator.
@@ -85,7 +86,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
     tagName = 'script'
     attributes {
-      data-neos-node = ${node.contextPath}
+      data-neos-node = ${Neos.Node.nodeAddressToString(node)}
       src = Neos.Fusion:ResourceUri {
         path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
       }

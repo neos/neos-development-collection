@@ -1,4 +1,5 @@
 prototype(Neos.Neos:FallbackNode) < prototype(Neos.Neos:Content) {
   templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/FallbackNode.html'
-  @if.onlyRenderInBackend = ${node.context.inBackend}
+  # TODO: inBackend helper should be moved OUT of Neos.Ui, as it is public API
+  @if.onlyRenderInBackend = ${Neos.Ui.NodeInfo.inBackend(node)}
 }

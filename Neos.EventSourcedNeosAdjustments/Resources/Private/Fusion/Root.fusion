@@ -15,37 +15,4 @@ prototype(Neos.Neos:ContentCollectionRenderer) {
     @process.appendRemovedContentForBackend = ${value}
 }
 
-// Last-Visited-Node Script
-prototype(Neos.Neos:Page) {
-    lastVisitedNodeScript.attributes.data-neos-node = ${Neos.EventSourcedNeosAdjustments.Node.nodeAddressToString(node)}
-    neosBackendMetaData = null
-}
-
-
-// Neos UI Backend conditions change
-prototype(Neos.Neos:Page) {
-    head {
-        javascriptBackendInformation {
-            @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
-            @cache.entryIdentifier.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
-        }
-        guestFrameApplication {
-            @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
-        }
-    }
-
-    newNeosBackendWrappingElement.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
-    neosBackendNotification.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
-
-    // TODO: fix me
-    neosUiNonRenderedNodeMetadata = null
-
-
-}
-
-prototype(Neos.Neos:Editable) {
-  // TODO: add props.node.context.currentRenderingMode.edit
-  renderer.editable.condition = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(props.node)}
-}
-
 
