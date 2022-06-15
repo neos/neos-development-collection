@@ -50,7 +50,7 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
   @cache {
     mode = 'cached'
     entryIdentifier {
-      documentNode = ${documentNode}
+      documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
     }
     entryTags {
       1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}

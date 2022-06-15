@@ -119,7 +119,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = [];
-        //$outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = [];
             $attributeFilters = [];
@@ -206,16 +206,15 @@ class ChildrenOperation extends AbstractOperation
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
-                    #$filteredOutput = $filteredFlowQuery->getContext();
+                    $filteredOutput = $filteredFlowQuery->getContext();
                 }
 
                 // Add filtered nodes to output
-                /* $outputNodeAggregateIdentifiers is never used, what is this for?
                 foreach ($filteredOutput as $filteredNode) {
                     if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->getNodeAggregateIdentifier()])) {
                         $output[] = $filteredNode;
                     }
-                }*/
+                }
             }
         }
 

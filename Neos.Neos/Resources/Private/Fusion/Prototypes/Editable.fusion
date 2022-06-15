@@ -12,7 +12,11 @@ prototype(Neos.Neos:Editable) < prototype(Neos.Fusion:Component) {
 
   renderer = Neos.Fusion:Case {
     editable {
-      condition = ${props.node.context.inBackend && props.node.context.currentRenderingMode.edit}
+      // TODO: add props.node.context.currentRenderingMode.edit
+      // condition = ${props.node.context.inBackend && props.node.context.currentRenderingMode.edit}
+      # TODO: inBackend helper should be moved OUT of Neos.Ui, as it is public API
+      condition = ${Neos.Ui.NodeInfo.inBackend(props.node)}
+
       renderer = Neos.Fusion:Tag {
         tagName = ${props.block ? 'div' : 'span'}
         content = ${q(props.node).property(props.property)}

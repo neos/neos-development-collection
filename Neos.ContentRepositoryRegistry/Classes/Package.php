@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepositoryRegistry;
 
 /*
@@ -35,8 +36,9 @@ class Package extends BasePackage
     public function boot(Bootstrap $bootstrap)
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
-        $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) {
-            $configurationManager->registerConfigurationType('NodeTypes', new NodeTypesLoader(new YamlSource()));
+
+        $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) use ($bootstrap) {
+            $configurationManager->registerConfigurationType('NodeTypes', new NodeTypesLoader(new YamlSource(), FLOW_PATH_CONFIGURATION, $bootstrap));
         });
 
         if ($bootstrap->getContext()->isProduction()) {
