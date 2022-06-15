@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
