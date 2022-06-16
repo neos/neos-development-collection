@@ -13,13 +13,13 @@ namespace Neos\ContentRepository\Migration\Filters;
  * source code.
  */
 
-use Neos\Flow\Persistence\Doctrine\Query;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Exception\NodeException;
 
 /**
  * Filter nodes having the given property and a matching value.
  */
-class PropertyValue implements DoctrineFilterInterface
+class PropertyValue implements FilterInterface
 {
     /**
      * @var string
@@ -27,7 +27,7 @@ class PropertyValue implements DoctrineFilterInterface
     protected $propertyName;
 
     /**
-     * @var string
+     * @var string|bool|int
      */
     protected $propertyValue;
 
@@ -45,33 +45,23 @@ class PropertyValue implements DoctrineFilterInterface
     /**
      * Sets the property value to be checked against.
      *
-     * @param string $propertyValue
+     * @param string|bool|int $propertyValue
      * @return void
      */
-    public function setPropertyValue(string $propertyValue): void
+    public function setPropertyValue($propertyValue): void
     {
         $this->propertyValue = $propertyValue;
     }
 
     /**
-     * Filters for nodes having the property and value requested.
+     * Returns true if the given node has the property and the value matches.
      *
-     * @param Query $baseQuery
-     * @return array
-     * @throws InvalidQueryException
+     * @param NodeData $node
+     * @return boolean
+     * @throws NodeException
      */
-    public function getFilterExpressions(Query $baseQuery): array
+    public function matches(NodeData $node)
     {
-        // Build the like parameter as "key": "value" to search by a specific key and value
-        // See NodeDataRepository.findByProperties() for the "inspiration"
-        $likeParameter = trim(json_encode(
-            [$this->propertyName => $this->propertyValue],
-            JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
-        ), "{}\n\t ");
-
-        $queryBuilder = $baseQuery->getQueryBuilder();
-        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
-
-        return [];
+        return ($node->hasProperty($this->propertyName) && $node->getProperty($this->propertyName) === $this->propertyValue);
     }
 }
