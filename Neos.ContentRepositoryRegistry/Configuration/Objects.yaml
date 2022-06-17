@@ -302,8 +302,15 @@ Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector:
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
   factoryMethodName: buildNodeHiddenStateProjector
 
+Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
+  factoryMethodName: buildNodeHiddenStateFinder
 
-
+Neos\ContentRepository\Projection\Changes\ChangeFinder:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\ProjectionObjectFactory
+  factoryMethodName: buildChangeFinder
 
 ################################
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\PropertyConverterObjectFactory:
@@ -378,15 +385,6 @@ Neos\EventSourcing\Event\EventTypeResolverInterface:
 
 
 
-
-
-
-Neos\ContentRepository\Projection\Changes\ChangeFinder:
-  scope: singleton
-
-
-Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder:
-  scope: singleton
 
 
 

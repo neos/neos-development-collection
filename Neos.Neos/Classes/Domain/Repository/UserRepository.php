@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Repository;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -9,10 +12,6 @@
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-declare(strict_types=1);
-
-namespace Neos\Neos\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
@@ -27,21 +26,30 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class UserRepository extends Repository
 {
+
     /**
      * @return QueryResultInterface
+     * @deprecated
      */
     public function findAllOrderedByUsername(): QueryResultInterface
     {
+        return $this->findAllOrdered('accounts.accountIdentifier');
+    }
+
+    public function findAllOrdered(string $fieldName, string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
+    {
+        $allowedFieldNames = ['accounts.accountIdentifier', 'accounts.lastSuccessfulAuthenticationDate', 'name.fullName'];
+
+        if (!in_array($fieldName, $allowedFieldNames)) {
+            throw new \InvalidArgumentException(sprintf('The field name "%s" is invalid, must be one of %s', $fieldName, implode(',', $allowedFieldNames)), 1651580413);
+        }
+
         return $this->createQuery()
-            ->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])
+            ->setOrderings([$fieldName => $sortDirection])
             ->execute();
     }
 
-    /**
-     * @param string $searchTerm
-     * @return QueryResultInterface
-     */
-    public function findBySearchTerm(string $searchTerm): QueryResultInterface
+    public function findBySearchTerm(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
         try {
             $query = $this->createQuery();
@@ -51,7 +59,7 @@ class UserRepository extends Repository
                     $query->like('name.fullName', '%' . $searchTerm . '%')
                 )
             );
-            return $query->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])->execute();
+            return $query->setOrderings([$sortBy => $sortDirection])->execute();
         } catch (\Neos\Flow\Persistence\Exception\InvalidQueryException $e) {
             throw new \RuntimeException($e->getMessage(), 1557767046, $e);
         }

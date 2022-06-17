@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,16 +13,13 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Module\Administration;
-
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
@@ -128,20 +128,24 @@ class UsersController extends AbstractModuleController
      * Shows a list of all users
      *
      * @param string $searchTerm
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return void
      */
-    public function indexAction(string $searchTerm = ''): void
+    public function indexAction(string $searchTerm = '', string $sortBy = 'accounts.accountIdentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): void
     {
         if (empty($searchTerm)) {
-            $users = $this->domainUserService->getUsers();
+            $users = $this->domainUserService->getUsers($sortBy, $sortDirection);
         } else {
-            $users = $this->domainUserService->searchUsers($searchTerm);
+            $users = $this->domainUserService->searchUsers($searchTerm, $sortBy, $sortDirection);
         }
 
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'users' => $users,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+            'sortBy' => $sortBy,
+            'sortDirection' => $sortDirection,
         ]);
     }
 

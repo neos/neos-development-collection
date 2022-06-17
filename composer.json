@@ -21,7 +21,7 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "doctrine/orm": "^2.6",
-        "gedmo/doctrine-extensions": "^3.0",
+        "gedmo/doctrine-extensions": "^3.5",
         "behat/transliterator": "~1.0",
         "webmozart/assert": "^1.10",
         "neos/utility-unicode": "*",

@@ -25,6 +25,7 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Scope('singleton')]
 final class WorkspaceMaintenanceServiceObjectFactory
 {
+
     public function __construct(
         private readonly WorkspaceFinder $workspaceFinder,
         private readonly WorkspaceCommandHandler $workspaceCommandHandler,
@@ -33,7 +34,7 @@ final class WorkspaceMaintenanceServiceObjectFactory
         private readonly DbalClientInterface $dbalClient
     ) {}
 
-    public function buildWorkspaceMaintenanceService()
+    public function buildWorkspaceMaintenanceService(): WorkspaceMaintenanceService
     {
         return new WorkspaceMaintenanceService(
             $this->workspaceFinder,
@@ -43,7 +44,7 @@ final class WorkspaceMaintenanceServiceObjectFactory
     }
 
 
-    public function buildContentStreamPruner()
+    public function buildContentStreamPruner(): ContentStreamPruner
     {
         return new ContentStreamPruner(
             $this->contentStreamFinder,

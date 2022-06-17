@@ -14,10 +14,12 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
 
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\Changes\ChangeFinder;
 use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner;
 use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
@@ -63,5 +65,15 @@ final class ProjectionObjectFactory
     public function buildNodeHiddenStateProjector(): NodeHiddenStateProjector
     {
         return new NodeHiddenStateProjector($this->dbalClient);
+    }
+
+    public function buildNodeHiddenStateFinder(): NodeHiddenStateFinder
+    {
+        return new NodeHiddenStateFinder($this->dbalClient);
+    }
+
+    public function buildChangeFinder(): ChangeFinder
+    {
+        return new ChangeFinder($this->dbalClient);
     }
 }

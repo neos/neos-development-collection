@@ -217,12 +217,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
         }
 
-        $traversableNode = $subtree->getNode();
-        if (!is_null($traversableNode)) {
+        $node = $subtree->getNode();
+        if (!is_null($node)) {
             return new MenuItem(
-                $traversableNode,
+                $node,
                 MenuItemState::normal(),
-                $subtree->getNode()?->getLabel(),
+                $node->getLabel(),
                 $subtree->getLevel(),
                 $children
             );

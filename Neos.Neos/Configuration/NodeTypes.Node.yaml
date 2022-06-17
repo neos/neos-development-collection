@@ -44,18 +44,17 @@
           group: 'nodeInfo'
           view: 'Neos.Neos/Inspector/Views/NodeInfoView'
   properties:
-    _removed:
-      type: boolean
-    _creationDateTime:
-      type: DateTime
-    _lastModificationDateTime:
-      type: DateTime
-    _lastPublicationDateTime:
-      type: DateTime
-    _path:
-      type: string
-    _name:
-      type: string
+    #TODO: IS IT BREAKING TO DISABLE THESE NODE PROPERTIES BELOW WITH ES CR?
+    #_creationDateTime:
+    #  type: DateTime
+    #_lastModificationDateTime:
+    #  type: DateTime
+    #_lastPublicationDateTime:
+    #  type: DateTime
+    #_path:
+    #  type: string
+    #_name:
+    #  type: string
     _nodeType:
       type: string
       ui:

@@ -18,7 +18,9 @@ use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
@@ -33,6 +35,9 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
@@ -131,6 +136,12 @@ class UserService
 
     /**
      * @Flow\Inject
+     * @var SessionManager
+     */
+    protected $sessionManager;
+
+    /**
+     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
@@ -149,21 +160,25 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers(): QueryResultInterface
+    public function getUsers(string $sortBy = 'accountidentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
     {
-        return $this->userRepository->findAllOrderedByUsername();
+        return $this->userRepository->findAllOrdered($sortBy, $sortDirection);
     }
 
     /**
      * @param string $searchTerm
+     * @param string $sortBy
+     * @param string $sortDirection
      * @return QueryResultInterface
      */
-    public function searchUsers(string $searchTerm): QueryResultInterface
+    public function searchUsers(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
-        return $this->userRepository->findBySearchTerm($searchTerm);
+        return $this->userRepository->findBySearchTerm($searchTerm, $sortBy, $sortDirection);
     }
 
     /**
@@ -359,11 +374,15 @@ class UserService
      *
      * @param User $user The user to delete
      * @return void
-     * @throws Exception
+     * @throws IllegalObjectTypeException
+     * @throws SessionNotStartedException
+     * @throws \Exception
      * @api
      */
     public function deleteUser(User $user)
     {
+        $this->destroyActiveSessionsForUser($user);
+
         foreach ($user->getAccounts() as $account) {
             $this->accountRepository->remove($account);
         }
@@ -395,6 +414,8 @@ class UserService
      * @param User $user The user to set the password for
      * @param string $password A new password
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws SessionNotStartedException
      * @api
      */
     public function setUserPassword(User $user, $password)
@@ -405,6 +426,8 @@ class UserService
             /** @var TokenInterface $token */
             $indexedTokens[$token->getAuthenticationProviderName()] = $token;
         }
+
+        $this->destroyActiveSessionsForUser($user, true);
 
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
@@ -630,10 +653,16 @@ class UserService
      * Deactivates the given user
      *
      * @param User $user The user to deactivate
+     * @return void
+     * @throws IllegalObjectTypeException
+     * @throws SessionNotStartedException
      * @api
      */
     public function deactivateUser(User $user): void
     {
+        $this->destroyActiveSessionsForUser($user);
+
+        /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
             $account->setExpirationDate(
                 \DateTime::createFromFormat(
@@ -844,6 +873,27 @@ class UserService
         }
 
         return $roles;
+    }
+
+    /**
+     * @param User $user
+     * @param bool $keepCurrentSession
+     * @throws SessionNotStartedException
+     */
+    private function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
+    {
+        $sessionToKeep = $keepCurrentSession ? $this->sessionManager->getCurrentSession() : null;
+
+        foreach ($user->getAccounts() as $account) {
+            $activeSessions = $this->sessionManager->getSessionsByTag($this->securityContext->getSessionTagForAccount($account));
+            foreach ($activeSessions as $activeSession) {
+                /** @var SessionInterface $activeSession */
+                if ($sessionToKeep instanceof SessionInterface && $activeSession->getId() === $sessionToKeep->getId()) {
+                    continue;
+                }
+                $activeSession->destroy('Requested to remove alle sessions for user ' . $account->getAccountIdentifier());
+            }
+        }
     }
 
     /**
