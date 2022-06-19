@@ -432,10 +432,10 @@ trait NodeMove
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)
-            : Nodes::empty());
+            : Nodes::createEmpty());
         $succeedingSiblingCandidates = iterator_to_array($succeedingSiblingIdentifier
             ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier)
-            : Nodes::empty());
+            : Nodes::createEmpty());
         $maximumIndex = max(count($succeedingSiblingCandidates), count($precedingSiblingCandidates));
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first

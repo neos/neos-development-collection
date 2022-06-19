@@ -54,7 +54,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return new self($nodes);
     }
 
-    public static function empty(): self
+    public static function createEmpty(): self
     {
         return new self([]);
     }

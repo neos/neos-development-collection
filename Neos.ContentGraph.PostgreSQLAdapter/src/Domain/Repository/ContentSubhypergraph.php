@@ -420,7 +420,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints,
         ?SearchTerm $searchTerm
     ): Nodes {
-        return Nodes::empty();
+        return Nodes::createEmpty();
     }
 
     /**
