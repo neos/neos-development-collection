@@ -43,6 +43,7 @@ use Psr\Http\Message\UriInterface;
 
 /** @codingStandardsIgnoreStart */
 use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
+
 /** @codingStandardsIgnoreEnd */
 
 /**
