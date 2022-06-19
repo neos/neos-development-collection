@@ -245,6 +245,13 @@ final class NeosLegacyEventMiddleware implements MiddlewareInterface
         return isset($this->visitedOriginDimensionSpacePointsByNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()]);
     }
 
+    /**
+     * Produces a node variant creation event (NodeSpecializationVariantWasCreated, NodeGeneralizationVariantWasCreated or NodePeerVariantWasCreated) and the corresponding NodePropertiesWereSet event
+     * if another variant of the specified node has been processed already.
+     *
+     * NOTE: We prioritize specializations/generalizations over peer variants ("ch" creates a specialization variant of "de" rather than a peer of "en" if both has been seen before).
+     * For that reason we loop over all previously visited dimension space points until we encounter a specialization/generalization. Otherwise, the last NodePeerVariantWasCreated will be used
+     */
     private function createNodeVariant(NodeAggregateIdentifier $nodeAggregateIdentifier, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValuesAndReferences $serializedPropertyValuesAndReferences): void
     {
         $alreadyVisitedOriginDimensionSpacePoints = $this->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier);
