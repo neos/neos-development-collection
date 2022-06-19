@@ -42,6 +42,11 @@ Neos\ContentRepository\Feature\ContentStreamCommandHandler:
 Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory:
   scope: singleton
 
+Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
+  factoryMethodName: buildContentGraph
+
 Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Legacy\ObjectFactories\DbalContentGraphObjectFactory
