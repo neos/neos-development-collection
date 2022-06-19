@@ -14,8 +14,6 @@ finder:
     - "Neos.Media.Browser/Tests"
     - "Neos.Media/Classes"
     - "Neos.Media/Tests"
-    - "Neos.Neos/Classes"
-    - "Neos.Neos/Tests"
     - "Neos.NodeTypes/Classes"
     - "Neos.NodeTypes/Tests"
     - "Neos.SiteKickstarter/Classes"
