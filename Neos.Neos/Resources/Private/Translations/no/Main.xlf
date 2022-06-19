@@ -1106,6 +1106,26 @@
                 <source>Switched back from "{0}" to the orginal user "{1}"</source>
         <target>Byttet tilbake fra «{0}» til den opprinnelige brukeren «{1}»</target>
       </trans-unit>
+      <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
+                <source>Switched to the new user "{0}".</source>
+        <target>Byttet til den nye {0}-brukeren.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
+                <source>Could not switch to the selected user.</source>
+        <target>Kunne ikke bytte til valgt bruker.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="no">
+                <source>Login as user</source>
+        <target>Logg inn som bruker</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
+                <source>Could not switch back to the original user.</source>
+        <target>Kunne ikke bytte tilbake til opprinnelig bruker.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
+                <source>Back to user "{0}"</source>
+        <target>Tilbake til {0}-brukeren</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

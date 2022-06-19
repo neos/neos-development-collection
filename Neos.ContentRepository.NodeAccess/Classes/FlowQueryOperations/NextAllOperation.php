@@ -76,8 +76,8 @@ class NextAllOperation extends AbstractOperation
             );
 
             foreach ($this->getNextForNode($contextNode, $nodeAccessor) as $nextNode) {
-                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()])) {
-                    $outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()] = true;
+                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()])) {
+                    $outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $nextNode;
                 }
             }

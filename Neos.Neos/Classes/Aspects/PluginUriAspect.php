@@ -120,7 +120,7 @@ class PluginUriAspect
 
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
         $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
-        $possibleObjectName = str_replace('@subpackage', $subPackageKey, $possibleObjectName);
+        $possibleObjectName = str_replace('@subpackage', $subPackageKey ?? '', $possibleObjectName);
         $possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
         $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 

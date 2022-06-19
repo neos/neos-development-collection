@@ -75,8 +75,8 @@ class PrevOperation extends AbstractOperation
             );
 
             $nextNode = $this->getPrevForNode($contextNode, $nodeAccessor);
-            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()])) {
-                $outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()] = true;
+            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()])) {
+                $outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()] = true;
                 $output[] = $nextNode;
             }
         }
