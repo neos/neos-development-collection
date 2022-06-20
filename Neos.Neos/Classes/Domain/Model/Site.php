@@ -148,6 +148,7 @@ class Site
      */
     public function getNodeName()
     {
+        // TODO: NodeName instance should be returned
         return $this->nodeName;
     }
 

@@ -19,6 +19,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ContentDimensionResolver\ContentDimensionResolverContext;
 use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
@@ -108,6 +109,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!is_string($requestPath)) {
             return false;
         }
+
+        $resolver = $this->contentDimensionResolverFactory->build($parameters);
+        $context = $resolver->resolveDSP(ContentDimensionResolverContext::fromUriPathAndRouteParameters($routePath, $parameters));
+
         if (!$parameters->has('dimensionSpacePointCacheEntryIdentifier') || !$parameters->has('requestUriHost')) {
             return false;
         }
