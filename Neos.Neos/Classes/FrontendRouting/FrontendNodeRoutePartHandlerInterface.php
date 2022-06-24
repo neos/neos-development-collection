@@ -12,13 +12,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Routing;
+namespace Neos\Neos\FrontendRouting;
 
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 
 /**
  * Marker interface which can be used to replace the currently used FrontendNodeRoutePartHandler,
  * to e.g. use the one with localization support.
+ *
+ * TODO CORE MIGRATION
  */
 interface FrontendNodeRoutePartHandlerInterface extends DynamicRoutePartInterface
 {

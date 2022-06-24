@@ -25,6 +25,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Psr\Http\Message\UriInterface;
 
 /**

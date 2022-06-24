@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Neos\SiteDetection;
+namespace Neos\Neos\FrontendRouting\SiteDetection;
 
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\ValueObject\SiteIdentifier;
-use Neos\Neos\SiteDetection\Dto\SiteDetectionResult;
+use Neos\Neos\FrontendRouting\Configuration\SiteConfigurationReader;
+use Neos\Neos\FrontendRouting\ValueObject\SiteIdentifier;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,6 +17,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * basically "singleton" (global functionality)
  * TODO: how to do reverse direction when generating links?
+ *
+ * Can be replaced.
  */
 class SiteDetectionMiddleware implements MiddlewareInterface
 {
@@ -41,11 +43,10 @@ class SiteDetectionMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // TODO: should we read from RequestUriHostMiddleware instead?? I guess yes.
-        $host = $request->getUri()->getHost();
+        $requestUriHost = $request->getUri()->getHost();
         $site = null;
-        if (!empty($host)) {
-            $activeDomain = $this->domainRepository->findOneByHost($host, true);
+        if (!empty($requestUriHost)) {
+            $activeDomain = $this->domainRepository->findOneByHost($requestUriHost, true);
             if ($activeDomain !== null) {
                 $site = $activeDomain->getSite();
             }
@@ -57,7 +58,7 @@ class SiteDetectionMiddleware implements MiddlewareInterface
         $siteIdentifier = SiteIdentifier::fromSite($site);
         $contentRepositoryIdentifier = $this->siteConfigurationReader->getContentRepositoryIdentifierForSite($siteIdentifier);
 
-        $siteDetectionResult = SiteDetectionResult::create($siteIdentifier, $contentRepositoryIdentifier);
+        $siteDetectionResult = SiteDetectionResult::create($requestUriHost, $siteIdentifier, $contentRepositoryIdentifier);
         return $handler->handle($siteDetectionResult->storeInRequest($request));
     }
 }

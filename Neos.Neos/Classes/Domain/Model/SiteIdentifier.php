@@ -12,10 +12,8 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Domain\ValueObject;
+namespace Neos\Neos\Domain\Model;
 
-
-use Neos\Neos\Domain\Model\Site;
 
 final class SiteIdentifier implements \Stringable
 {

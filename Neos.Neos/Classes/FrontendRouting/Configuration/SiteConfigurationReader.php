@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Neos\SiteDetection;
+namespace Neos\Neos\FrontendRouting\Configuration;
 
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\ValueObject\SiteIdentifier;
+use Neos\Neos\FrontendRouting\ValueObject\SiteIdentifier;
 
 /**
  * TODO correct location of this class?? I guess not...
@@ -20,7 +20,7 @@ class SiteConfigurationReader
      */
     protected $configuration;
 
-    public function getContentRepositoryIdentifierForSite(SiteIdentifier $siteIdentifier): ContentRepositoryIdentifier
+    /*public function getContentRepositoryIdentifierForSite(SiteIdentifier $siteIdentifier): ContentRepositoryIdentifier
     {
         $sitesConfig = $this->getConfigurationForSite($siteIdentifier);
         // TODO: more safe??
@@ -31,18 +31,35 @@ class SiteConfigurationReader
     {
         $sitesConfig = $this->getConfigurationForSite($siteIdentifier);
         // TODO: more safe??
-        return $sitesConfig['routing']['dimensionResolver']['className'];
+        return $sitesConfig['dimensionResolver']['className'];
     }
 
     public function getDimensionResolverOptionsForSite(SiteIdentifier $siteIdentifier): array
     {
         $sitesConfig = $this->getConfigurationForSite($siteIdentifier);
         // TODO: more safe??
-        return $sitesConfig['routing']['dimensionResolver']['options'];
-    }
+        // TODO: remove "routing" key.
+        return $sitesConfig['dimensionResolver']['options'];
+    }*/
+
+    // Domain/Model/SiteDetails
+        // getSiteConfig() -> untypisiert!!!! (array)
+        // Site Entity; ...
+        // defaultDimensionSpacePoint()
+    // Domain/Repository/SiteDetailsFinder
+        // byId()
+        // byRequest()
 
     private function getConfigurationForSite(SiteIdentifier $siteIdentifier): array
     {
+        // Ohne rekursiven merge :)
+        return $this->configuration[$siteIdentifier->getValue()] ?? $this->configuration['*'];
+        // TODO: more safe?? (null case)
+    }
+
+    private function getSiteConfigurationForRequest(RequestInterface $request): array
+    {
+        // Ohne rekursiven merge :)
         return $this->configuration[$siteIdentifier->getValue()] ?? $this->configuration['*'];
         // TODO: more safe?? (null case)
     }

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\ContentDimensionResolver;
+
+namespace Neos\Neos\FrontendRouting\DimensionResolving\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,8 +14,14 @@ namespace Neos\Neos\EventSourcedRouting\ContentDimensionResolver;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+use Neos\Neos\FrontendRouting\DimensionResolving\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolving\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\DimensionResolving\Resolver\UriPathSegmentBased\UriPathSegmentBasedOptions;
+use Webmozart\Assert\Assert;
 
 /**
  *
@@ -30,17 +37,29 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
  *
  * URI path segment based dimension value resolver
  */
-final class UriPathSegmentContentDimensionValueResolver implements ContentDimensionResolverInterface
+final class UriPathResolver implements DimensionResolverInterface
 {
-    private ContentDimension $contentDimension;
 
-    public function __construct(ContentDimension $contentDimension)
+    private UriPathSegmentBasedOptions $options;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionSourceInterface
+     */
+    private ContentDimensionSourceInterface $contentDimensionSource;
+
+    public function __construct(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions)
     {
-        $this->contentDimension = $contentDimension;
+        $this->options = UriPathSegmentBasedOptions::fromArray($dimensionResolverOptions);
+
+        // TODO: fetch $this->contentDimensionSource from $contentRepositoryIdentifier -- TODO NOTE HOW??
     }
 
-    public function resolveDimensionSpacePoint(ContentDimensionResolverContext $context): ContentDimensionResolverContext
+    public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
     {
+        $this->validate();
+
+
         foreach ($this->contentDimension->getValues() as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('meta.uriRepresentation') ?? $contentDimensionValue->getValue();
             if ($resolutionValue !== '' && strpos($context->remainingUriPath(), $resolutionValue) === 0) {
@@ -65,4 +84,22 @@ final class UriPathSegmentContentDimensionValueResolver implements ContentDimens
         }
         return $uriConstraints->withPathPrefix($resolutionValue . '/', true);
     }
+
+    private function validate()
+    {
+        foreach ($this->options->segments as $segment) {
+            $contentDimension = $this->contentDimensionSource->getDimension($segment->dimensionIdentifier);
+            if ($contentDimension === null) {
+                throw new \RuntimeException('TODO: Content Dimension "' . $contentDimension . '" is not configured.');
+            }
+
+            foreach ($segment->uriPathSegmentMapping as $mappingElement) {
+                // TODO: ExistsValue??
+                if ($contentDimension->getValue($mappingElement->contentDimensionValue->value) === null) {
+                    throw new \RuntimeException('TODO: Content Dimension Value "' . $mappingElement->contentDimensionValue->value . '" not configured');
+                }
+            }
+        }
+    }
+
 }

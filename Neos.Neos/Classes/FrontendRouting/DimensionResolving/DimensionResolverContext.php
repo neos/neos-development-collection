@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\Neos\EventSourcedRouting\ContentDimensionResolver;
+namespace Neos\Neos\FrontendRouting\DimensionResolving;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
@@ -11,7 +11,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class ContentDimensionResolverContext
+final class DimensionResolverContext
 {
     private string $uriPath;
     private string $remainingUriPath;

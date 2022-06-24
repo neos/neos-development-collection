@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\EventSourcedRouting;
+namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -23,7 +23,10 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ContentDimensionResolve
 use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-/** @codingStandardsIgnoreStart */ use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
+/** @codingStandardsIgnoreStart */
+
+use Neos\Neos\EventSourcedRouting\Http;
+use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 /** @codingStandardsIgnoreEnd */
 use Neos\Neos\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
@@ -41,6 +44,7 @@ use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -110,8 +114,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             return false;
         }
 
-        $resolver = $this->contentDimensionResolverFactory->build($parameters);
+        $siteDetectionRTesolt = SiteDetectionResult::fromRouteParameters($parameters);
+        $resolver = $this->contentDimensionResolverFactory->build($siteDetectionRTesolt);
         $context = $resolver->resolveDSP(ContentDimensionResolverContext::fromUriPathAndRouteParameters($routePath, $parameters));
+        // TODO Validate for full context
+
 
         if (!$parameters->has('dimensionSpacePointCacheEntryIdentifier') || !$parameters->has('requestUriHost')) {
             return false;
