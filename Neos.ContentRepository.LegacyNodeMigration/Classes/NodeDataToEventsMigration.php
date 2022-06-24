@@ -239,11 +239,11 @@ final class NodeDataToEventsMigration
                 $nodeAggregateIdentifier,
                 NodeMoveMappings::fromArray([
                     new NodeMoveMapping(
-                        $variantSourceOriginDimensionSpacePoint,
+                        $originDimensionSpacePoint,
                         NodeVariantAssignments::createFromArray([
-                            $originDimensionSpacePoint->hash => new NodeVariantAssignment(
+                            $variantSourceOriginDimensionSpacePoint->hash => new NodeVariantAssignment(
                                 $parentNodeAggregate->nodeAggregateIdentifier,
-                                $originDimensionSpacePoint,
+                                $variantSourceOriginDimensionSpacePoint,
                             )
                         ]),
                         NodeVariantAssignments::create()
