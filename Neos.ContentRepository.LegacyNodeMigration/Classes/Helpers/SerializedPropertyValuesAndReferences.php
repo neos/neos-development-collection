@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ESCR\Export\Middleware\Event\ValueObject;
+namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;

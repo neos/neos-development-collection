@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
+use JetBrains\PhpStorm\Internal\TentativeType;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -27,6 +28,7 @@ final class NodeAggregateWasMoved implements
     DomainEventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
+    /*\JsonSerializable*/
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -103,5 +105,10 @@ final class NodeAggregateWasMoved implements
             $this->repositionNodesWithoutAssignments,
             $this->initiatingUserIdentifier
         );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 }

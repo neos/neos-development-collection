@@ -21,12 +21,13 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\LegacyNodeMigration\Middleware\NeosLegacyEventMiddleware;
+use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsMigration;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ESCR\Export\Handler;
 use Neos\ESCR\Export\Middleware\Context;
 use Neos\ESCR\Export\Middleware\Event\NeosEventMiddleware;
-use Neos\ESCR\Export\Middleware\Event\NeosLegacyEventMiddleware;
 use Neos\ESCR\Export\Middleware\MiddlewareInterface;
 use Neos\ESCR\Export\ValueObject\Parameters;
 use Neos\EventSourcing\EventStore\EventNormalizer;
@@ -78,7 +79,8 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
         // TODO: export/import Assets
 
-        $exporter = Handler::fromContextAndMiddlewares($context, new NeosLegacyEventMiddleware($connection, $this->interDimensionalVariationGraph, $this->contentDimensionZookeeper, $this->nodeTypeManager, $this->propertyMapper, $this->eventNormalizer, $this->propertyConverter));
+        $nodeDataToEventsMigration = new NodeDataToEventsMigration($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph);
+        $exporter = Handler::fromContextAndMiddlewares($context, new NeosLegacyEventMiddleware($connection, $this->eventNormalizer, $nodeDataToEventsMigration));
         if (!$quiet) {
             $this->outputLine('Exporting node data table rows');
             $this->registerProgressCallbacks($exporter);
@@ -125,9 +127,8 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $connectionParams['host'] = $this->output->ask(sprintf('Host? [%s] ',$connectionParams['host'] ?? ''), $connectionParams['host'] ?? null);
         $connectionParams['dbname'] = $this->output->ask(sprintf('DB name? [%s] ',$connectionParams['dbname'] ?? ''), $connectionParams['dbname'] ?? null);
         $connectionParams['user'] = $this->output->ask(sprintf('DB user? [%s] ',$connectionParams['user'] ?? ''), $connectionParams['user'] ?? null);
-        $connectionParams['password'] = $this->output->askHiddenResponse('DB password? ') ?? $connectionParams['password'] ?? null;
-        $config = new Configuration();
-        return DriverManager::getConnection($connectionParams, $config);
+        $connectionParams['password'] = $this->output->askHiddenResponse(sprintf('DB password? [%s]', str_repeat('*', strlen($connectionParams['password'] ?? '')))) ?? $connectionParams['password'];
+        return DriverManager::getConnection($connectionParams, new Configuration());
     }
 
     private function registerProgressCallbacks(Handler $handler): void

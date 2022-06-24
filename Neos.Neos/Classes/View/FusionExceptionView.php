@@ -26,6 +26,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
@@ -93,8 +94,9 @@ class FusionExceptionView extends AbstractView
             ? $requestHandler->getHttpRequest()
             : ServerRequest::fromGlobals();
 
+        /** @var RouteParameters|null $routingParameters */
         $routingParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
-        $dimensionSpacePoint = $routingParameters['dimensionSpacePoint'] ?? null;
+        $dimensionSpacePoint = $routingParameters !== null && $routingParameters->getValue('dimensionSpacePoint') ?? null;
 
         $currentSiteNode = null;
         if ($dimensionSpacePoint instanceof DimensionSpacePoint) {
