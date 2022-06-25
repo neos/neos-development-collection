@@ -9,7 +9,10 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * See {@see DimensionResolverInterface} for documentation.
+ *
  * @Flow\Proxy(false)
+ * @api
  */
 final class DimensionResolverContext
 {

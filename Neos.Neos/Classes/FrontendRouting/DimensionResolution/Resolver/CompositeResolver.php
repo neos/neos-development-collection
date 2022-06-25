@@ -17,9 +17,14 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Webmozart\Assert\Assert;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
+ * Helper class implementing a Resolver Chain.
+ *
+ * See {@see DimensionResolverInterface} for detailed documentation.
+ *
+ * @api
  */
 final class CompositeResolver implements DimensionResolverInterface
 {
@@ -30,8 +35,9 @@ final class CompositeResolver implements DimensionResolverInterface
     }
 
     public static function create(
-        DimensionResolverInterface... $contentDimensionResolvers
-    ): self {
+        DimensionResolverInterface...$contentDimensionResolvers
+    ): self
+    {
         return new self($contentDimensionResolvers);
     }
 
@@ -43,7 +49,7 @@ final class CompositeResolver implements DimensionResolverInterface
         return $context;
     }
 
-    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint): UriConstraints
+    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints
     {
         // TODO: Reihenfolge umdrehen??
     }

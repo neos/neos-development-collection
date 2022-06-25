@@ -16,18 +16,17 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * TODO explain what this class does and how it relates in the routing.
- *
- * basically "singleton" (global functionality)
- * TODO: how to do reverse direction when generating links?
- *
+ * This is basically a singleton which globally, at the beginning of the
+ * request, decides which Site and Content Repository is active.
  *
  * Is a planned extension point; feel free to override this.
+ *
+ * TODO: how to do reverse direction when generating links?
  *
  * **See {@see EventSourcedFrontendNodeRoutePartHandler} documentation for a
  * detailed explanation of the Frontend Routing process.**
  */
-class SiteDetectionMiddleware implements MiddlewareInterface
+final class SiteDetectionMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\Inject

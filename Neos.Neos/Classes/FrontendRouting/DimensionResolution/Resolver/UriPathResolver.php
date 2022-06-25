@@ -20,6 +20,7 @@ use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Webmozart\Assert\Assert;
 
 /**
@@ -35,6 +36,10 @@ use Webmozart\Assert\Assert;
  * /de_b2b/foo
  *
  * URI path segment based dimension value resolver
+ *
+ * See {@see DimensionResolverInterface} for detailed documentation.
+ *
+ * @api
  */
 final class UriPathResolver implements DimensionResolverInterface
 {
@@ -58,7 +63,7 @@ final class UriPathResolver implements DimensionResolverInterface
         return $context->addDimensionSpacePointCoordinate($this->contentDimension->getIdentifier(), $this->contentDimension->getDefaultValue());
     }
 
-    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint): UriConstraints
+    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints
     {
         $dimensionCoordinate = $dimensionSpacePoint->getCoordinate($this->contentDimension->getIdentifier());
         $contentDimensionValue = $dimensionCoordinate !== null ? $this->contentDimension->getValue($dimensionCoordinate) : $this->contentDimension->getDefaultValue();

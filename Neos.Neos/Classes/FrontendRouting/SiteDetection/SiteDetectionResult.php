@@ -19,6 +19,7 @@ use Psr\Http\Message\UriInterface;
  * TODO NAMING: CurrentlySelectedSiteAndContentRepository?
  *
  * @Flow\Proxy(false)
+ * @api
  */
 final class SiteDetectionResult
 {

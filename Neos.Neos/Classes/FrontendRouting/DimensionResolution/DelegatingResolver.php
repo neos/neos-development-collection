@@ -18,13 +18,17 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
+ * Entry Point to the dimension resolution process - called from {@see EventSourcedFrontendNodeRoutePartHandler}.
+ * You will not call this class yourself.
  *
- * Entry point..
- * NOT inside "resolver"
+ * See {@see DimensionResolverInterface} for documentation.
+ *
  * @Flow\Scope("singleton")
+ * @internal
  */
 final class DelegatingResolver implements DimensionResolverInterface
 {

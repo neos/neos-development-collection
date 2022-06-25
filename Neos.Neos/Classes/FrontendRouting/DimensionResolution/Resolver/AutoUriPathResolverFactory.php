@@ -30,6 +30,8 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
  * /de_b2b/foo
  *
  * URI path segment based dimension value resolver
+ *
+ * @api
  */
 final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterface
 {

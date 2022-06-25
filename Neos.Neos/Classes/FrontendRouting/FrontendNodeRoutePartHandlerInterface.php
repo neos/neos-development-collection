@@ -21,6 +21,9 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
  * to e.g. use the one with localization support.
  *
  * TODO CORE MIGRATION
+ *
+ * **See {@see EventSourcedFrontendNodeRoutePartHandler} documentation for a
+ * detailed explanation of the Frontend Routing process.**
  */
 interface FrontendNodeRoutePartHandlerInterface extends DynamicRoutePartInterface
 {

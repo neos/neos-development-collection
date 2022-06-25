@@ -19,18 +19,11 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 
 /**
+ * Resolver which does not do anything.
  *
- * de/b2b
- * de_b2b
- * de___b2b
+ * See {@see DimensionResolverInterface} for detailed documentation.
  *
- * b2b
- *
- * _b2b
- *
- * /de_b2b/foo
- *
- * URI path segment based dimension value resolver
+ * @api
  */
 final class UriPathResolverFactory implements DimensionResolverFactoryInterface
 {

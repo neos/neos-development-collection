@@ -13,25 +13,27 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Webmozart\Assert\Assert;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
+/**
+ * Resolver which does not do anything.
+ *
+ * See {@see DimensionResolverInterface} for detailed documentation.
+ *
+ * @api
+ */
 final class NoopResolver implements DimensionResolverInterface
 {
-
-
     public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
     {
         return $context;
     }
 
-    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint): UriConstraints
+    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints
     {
         return $uriConstraints;
     }

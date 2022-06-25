@@ -13,16 +13,17 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
-use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Webmozart\Assert\Assert;
 
+/**
+ * Resolver which does not do anything.
+ *
+ * See {@see DimensionResolverInterface} for detailed documentation.
+ *
+ * @api
+ */
 final class NoopResolverFactory implements DimensionResolverFactoryInterface
 {
     public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface
