@@ -21,6 +21,10 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Workspace Read Model
+ *
+ * TODO: public readonly...
+ *
+ * @api
  */
 class Workspace
 {

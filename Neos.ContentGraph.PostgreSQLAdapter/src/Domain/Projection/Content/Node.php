@@ -27,6 +27,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The node implementation for the PostgreSQL content graph adapter
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final class Node implements NodeInterface

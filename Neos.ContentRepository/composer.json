@@ -11,13 +11,14 @@
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
+        "neos/error-messages": "*",
         "neos/fluid-adaptor": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
         "doctrine/orm": "^2.6",
         "gedmo/doctrine-extensions": "^3.0",
-        "behat/transliterator": "^1.0"
+        "behat/transliterator": "^1.0",
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

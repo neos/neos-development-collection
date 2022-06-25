@@ -26,6 +26,8 @@ use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
+ *
+ * @internal
  */
 final class Node implements NodeInterface
 {

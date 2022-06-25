@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Projection\Content;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
@@ -26,6 +25,13 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
+/**
+ * Main read model of the {@see ContentSubgraphInterface}.
+ *
+ * TODO: Identity (fetching ContentSubgraph from NodeInterface)
+ *
+ * @api
+ */
 interface NodeInterface
 {
     /**

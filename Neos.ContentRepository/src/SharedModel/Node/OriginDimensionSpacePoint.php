@@ -19,7 +19,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
 /**
- * A node's origin dimension space point. Defines in which point in the dimension space the node originates.
+ * A node's origin dimension space point. Defines in which point in the dimension space the node originates
+ * (= is "at home"). Every node has exactly ONE OriginDimensionSpacePoint, but one or more {@see DimensionSpacePoint}s
+ * where the node is visible.
  *
  * Example:
  * In a setup with dimension "language", a node that originates in English has English content,

@@ -32,6 +32,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Scope("singleton")
+ * @internal
  */
 class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 {
