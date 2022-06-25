@@ -54,4 +54,10 @@ final class NodeName implements \JsonSerializable, \Stringable
     {
         return $this->value;
     }
+
+    public function equals(NodeName $other): bool
+    {
+        return $this->value === $other->value;
+    }
+
 }

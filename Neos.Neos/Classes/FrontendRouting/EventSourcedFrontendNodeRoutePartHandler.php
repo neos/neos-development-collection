@@ -15,20 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ContentDimensionResolver\ContentDimensionResolverContext;
-use Neos\Neos\Domain\Model\DimensionSpacePointCacheEntryIdentifier;
+use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-/** @codingStandardsIgnoreStart */
-
-use Neos\Neos\EventSourcedRouting\Http;
-use Neos\Neos\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
-/** @codingStandardsIgnoreEnd */
-use Neos\Neos\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -44,13 +36,90 @@ use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * A route part handler for finding nodes in the website's frontend.
- * Uses a special projection {@see DocumentUriPathFinder}, and does NOT use the graph projection in any way.
+ * A route part handler for finding nodes in the website's frontend. Like every RoutePartHandler,
+ * this handles both directions:
+ * - from URL to NodeAddress (via {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters})
+ * - from NodeAddress to URL (via {@see EventSourcedFrontendNodeRoutePartHandler::resolveWithParameters})
+ *
+ * For performance reasons, this uses a special projection {@see DocumentUriPathFinder}, and
+ * does NOT use the graph projection in any way.
+ *
+ *
+ * ## Match Direction (URL to NodeAddress)
+ *
+ * This is usually simply triggered ONCE per request, before the controller starts working.
+ * The RoutePartHandler is invoked from {@see RoutingMiddleware} (which handles the routing).
+ *
+ * The overall process is as follows:
+ *
+ * ```
+ *  (*) = Extension Point               ┌───────────────────────────────────────────────┐
+ * ┌──────────────┐                     │   EventSourcedFrontendNodeRoutePartHandler    │
+ * │SiteDetection │                     │ ┌─────────────────────┐                       │
+ * │Middleware (*)│────────────────────▶│ │DimensionResolver (*)│─────▶ Finding the    ─┼─▶NodeAddress
+ * └──────────────┘ current site        │ └─────────────────────┘       NodeIdentifier  │
+ *                                      └───────────────────────────────────────────────┘
+ *                  current Content                              current
+ *                  Repository                                   DimensionSpacePoint
+ * ```
+ *
+ *
+ * ### {@see SiteDetectionMiddleware}: Multi-Site Support (implemented) and Multiple Content Repository Support (planned)
+ *
+ * The Dimension Resolving configuration might be site-specific, f.e. one site maps a subdomain to a different language;
+ * and another site which wants to use the UriPathSegment. Additionally, we soon want to support using different
+ * content repositories for different sites (e.g. to have different NodeTypes configured, or differing dimension configuration).
+ *
+ * Thus, the {@see DimensionResolverInterface} and the frontend routing in general needs the result of the site
+ * detection as input.
+ *
+ * Because of this, the site detection is done before the routing; inside the {@see SiteDetectionMiddleware}, which
+ * runs the routing. **Feel free to replace the Site Detection with your own custom Middleware (it's very little code).**
+ *
+ * The Site Detection is done at **every** request.
+ *
+ *
+ * ### {@see DimensionResolverInterface}: Custom Dimension Resolving
+ *
+ * Especially the {@see DimensionSpacePoint} matching must be very extensible, because
+ * people might want to map domains, subdomains, URL slugs, ... to different dimensions; and
+ * maybe even handle every dimension individually.
+ *
+ * This is why the {@see EventSourcedFrontendNodeRoutePartHandler} calls the {@see DelegatingResolver},
+ * which calls potentially multiple {@see DimensionResolverInterface}s.
+ * // TODO: Dimension Match?? -> Naming -- mit "resolveWithParameters" -- falsche Richtung??
+ *
+ * **For details on how to customize the Dimension Resolving, please see {@see DimensionResolverInterface}.**
+ *
+ * Because the Dimension Resolving runs inside the RoutePartHandler, this is all cached (via the Routing Cache).
+ *
+ *
+ * ### Reading the Uri Path Segment and finding the node
+ *
+ * This is the core capability of this class (the {@see EventSourcedFrontendNodeRoutePartHandler}).
+ *
+ *
+ * ### Result of the Routing
+ *
+ * The **result** of the {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters} call is a
+ * {@see NodeAddress} (wrapped in a {@see MatchResult}); so to build the NodeAddress, we need:
+ * - the {@see WorkspaceName} (which is always **live** in our case)
+ * - the {@see ContentStreamIdentifier} of the Live workspace
+ * - The {@see DimensionSpacePoint} we want to see the page in (i.e. in language=de) - resolved by {@see DimensionResolverInterface}
+ * - The {@see NodeAggregateIdentifier} (of the Document Node we want to show) - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
+ *
+ *
+ * ## Resolve Direction
+ *
+ * TODO EXPLAIN
  *
  * @Flow\Scope("singleton")
  */
@@ -60,11 +129,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     FrontendNodeRoutePartHandlerInterface
 {
     private string $splitString = '';
-
-    /**
-     * @var NodeName[] (indexed by the corresponding host)
-     */
-    private array $siteNodeNameRuntimeCache = [];
 
     /**
      * @Flow\Inject
@@ -92,15 +156,15 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var ContentSubgraphUriProcessor
-     */
-    protected $contentSubgraphUriProcessor;
-
-    /**
-     * @Flow\Inject
      * @var NodeShortcutResolver
      */
     protected $nodeShortcutResolver;
+
+    /**
+     * @Flow\Inject
+     * @var DelegatingResolver
+     */
+    protected $delegatingResolver;
 
     /**
      * @param mixed $requestPath
@@ -114,30 +178,29 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             return false;
         }
 
-        $siteDetectionRTesolt = SiteDetectionResult::fromRouteParameters($parameters);
-        $resolver = $this->contentDimensionResolverFactory->build($siteDetectionRTesolt);
-        $context = $resolver->resolveDSP(ContentDimensionResolverContext::fromUriPathAndRouteParameters($routePath, $parameters));
+        //if (!$parameters->has('dimensionSpacePointCacheEntryIdentifier') || !$parameters->has('requestUriHost')) {
+        //    return false;
+        // TODO }
+
+        $dimensionResolvingResult = $this->delegatingResolver->resolveDimensionSpacePoint(DimensionResolverContext::fromUriPathAndRouteParameters($requestPath, $parameters));
+        // TODO
+        //$dimensionSpacePoint = $dimensionResolvingResult->completeDimensionSpacePoint();
+        $dimensionSpacePoint = $dimensionResolvingResult->dimensionSpacePoint();
+        // TODO REMOVE?? $dimensionSpacePointCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($dimensionSpacePoint);
         // TODO Validate for full context
 
-
-        if (!$parameters->has('dimensionSpacePointCacheEntryIdentifier') || !$parameters->has('requestUriHost')) {
-            return false;
-        }
-        /** @var string $requestUriHost */
-        $requestUriHost = $parameters->getValue('requestUriHost');
+        // TODO: more clever logic here??
+        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         /** @var int $uriPathSegmentOffset */
         $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSegmentOffset);
-        $dimensionSpacePointCacheEntryIdentifier = $parameters->getValue('dimensionSpacePointCacheEntryIdentifier');
-        assert($dimensionSpacePointCacheEntryIdentifier instanceof DimensionSpacePointCacheEntryIdentifier);
-        $dimensionSpacePoint = $dimensionSpacePointCacheEntryIdentifier->dimensionSpacePoint;
 
         try {
             $matchResult = $this->matchUriPath(
                 $requestPath,
                 $dimensionSpacePoint,
-                $requestUriHost
+                $siteDetectionResult
             );
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
@@ -160,8 +223,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!$parameters->has('requestUriHost')) {
             return false;
         }
-        /** @var string $requestUriHost */
-        $requestUriHost = $parameters->getValue('requestUriHost');
+        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
         if (!$nodeAddress instanceof NodeAddress) {
@@ -169,7 +231,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $requestUriHost);
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $siteDetectionResult);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -181,12 +243,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @param NodeAddress $nodeAddress
-     * @param string $host
+     * @param SiteDetectionResult $siteDetectionResult
      * @return ResolveResult
-     * @throws Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
-     * @throws NodeNotFoundException | InvalidShortcutException
+     * @throws InvalidShortcutException
+     * @throws NodeNotFoundException
      */
-    private function resolveNodeAddress(NodeAddress $nodeAddress, string $host): ResolveResult
+    private function resolveNodeAddress(NodeAddress $nodeAddress, SiteDetectionResult $siteDetectionResult): ResolveResult
     {
         $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateIdentifier,
@@ -205,10 +267,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             }
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
-        $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress);
 
-        if ((string)$nodeInfo->getSiteNodeName() !== (string)$this->getCurrentSiteNodeName($host)) {
+        $uriConstraints = $this->delegatingResolver->resolveDimensionUriConstraints(UriConstraints::create(), $nodeAddress->dimensionSpacePoint, $siteDetectionResult);
+
+        if (!$nodeInfo->getSiteNodeName()->equals($siteDetectionResult->siteIdentifier->asNodeName())) {
             /** @var Site $site */
+            // TODO: WHERE TO MOVE THIS LOGIC??
             foreach ($this->siteRepository->findOnline() as $site) {
                 if ($site->getNodeName() === (string)$nodeInfo->getSiteNodeName()) {
                     $uriConstraints = $this->applyDomainToUriConstraints($uriConstraints, $site->getPrimaryDomain());
@@ -231,10 +295,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @return MatchResult
      * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
      */
-    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, string $host): MatchResult
+    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $siteDetectionResult): MatchResult
     {
         $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
-            $this->getCurrentSiteNodeName($host),
+            $siteDetectionResult->siteIdentifier->asNodeName(),
             $uriPath,
             $dimensionSpacePoint->hash
         );
@@ -247,26 +311,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
     }
 
-    private function getCurrentSiteNodeName(string $host): NodeName
-    {
-        if (!isset($this->siteNodeNameRuntimeCache[$host])) {
-            $site = null;
-            if (!empty($host)) {
-                $activeDomain = $this->domainRepository->findOneByHost($host, true);
-                if ($activeDomain !== null) {
-                    $site = $activeDomain->getSite();
-                }
-            }
-            if ($site === null) {
-                $site = $this->siteRepository->findFirstOnline();
-                if ($site === null) {
-                    throw new \RuntimeException('TODO: No site found. Please create one.');
-                }
-            }
-            $this->siteNodeNameRuntimeCache[$host] = NodeName::fromString($site->getNodeName());
-        }
-        return $this->siteNodeNameRuntimeCache[$host];
-    }
 
     private function truncateRequestPathAndReturnRemainder(string &$requestPath, int $uriPathSegmentOffset): string
     {

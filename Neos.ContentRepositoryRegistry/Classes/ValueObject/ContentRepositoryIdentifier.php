@@ -13,9 +13,13 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\ValueObject;
+use Neos\Cache\CacheAwareInterface;
+use Neos\Flow\Annotations as Flow;
 
-
-final class ContentRepositoryIdentifier implements \Stringable
+/**
+ * @Flow\Proxy(false)
+ */
+final class ContentRepositoryIdentifier implements \Stringable, CacheAwareInterface
 {
     private function __construct(
         private readonly string $value
@@ -38,6 +42,11 @@ final class ContentRepositoryIdentifier implements \Stringable
     }
 
     public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    public function getCacheEntryIdentifier(): string
     {
         return $this->value;
     }

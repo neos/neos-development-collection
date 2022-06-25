@@ -14,8 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
+use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\Flow\Annotations as Flow;
 
-final class SiteIdentifier implements \Stringable
+/**
+ * This is the node name underneath "/sites" which uniquely identifies the specific site; and which is defined
+ * by the user.
+ *
+ * @Flow\Proxy(false)
+ */
+final class SiteIdentifier implements \Stringable, CacheAwareInterface
 {
     private function __construct(
         private readonly string $siteNodeName
@@ -26,6 +35,12 @@ final class SiteIdentifier implements \Stringable
     {
         return new self($site->getNodeName());
     }
+
+    public static function fromString(string $siteNodeName): self
+    {
+        return new self($siteNodeName);
+    }
+
 
     public function equals(self $other): bool
     {
@@ -40,5 +55,15 @@ final class SiteIdentifier implements \Stringable
     public function getValue(): string
     {
         return $this->siteNodeName;
+    }
+
+    public function getCacheEntryIdentifier(): string
+    {
+        return $this->siteNodeName;
+    }
+
+    public function asNodeName(): NodeName
+    {
+        return NodeName::fromString($this->siteNodeName);
     }
 }

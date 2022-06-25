@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Neos\FrontendRouting\DimensionResolving\Resolver;
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -18,9 +18,8 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\FrontendRouting\DimensionResolving\DimensionResolverContext;
-use Neos\Neos\FrontendRouting\DimensionResolving\DimensionResolverInterface;
-use Neos\Neos\FrontendRouting\DimensionResolving\Resolver\UriPathSegmentBased\UriPathSegmentBasedOptions;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Webmozart\Assert\Assert;
 
 /**
@@ -42,18 +41,6 @@ final class UriPathResolver implements DimensionResolverInterface
 
     private UriPathSegmentBasedOptions $options;
 
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionSourceInterface
-     */
-    private ContentDimensionSourceInterface $contentDimensionSource;
-
-    public function __construct(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions)
-    {
-        $this->options = UriPathSegmentBasedOptions::fromArray($dimensionResolverOptions);
-
-        // TODO: fetch $this->contentDimensionSource from $contentRepositoryIdentifier -- TODO NOTE HOW??
-    }
 
     public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
     {

@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Neos\FrontendRouting\ValueObject\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Accessor for retrieving the currently resolved Site and Content Repository for the current Frontend Request.
@@ -15,6 +17,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * {@see SiteDetectionResult::fromRequest()}.
  *
  * TODO NAMING: CurrentlySelectedSiteAndContentRepository?
+ *
+ * @Flow\Proxy(false)
  */
 final class SiteDetectionResult
 {
@@ -32,12 +36,12 @@ final class SiteDetectionResult
     }
 
     public static function create(
-        string $requestUriHost,
+        UriInterface $requestUri,
         SiteIdentifier              $siteIdentifier,
         ContentRepositoryIdentifier $contentRepositoryIdentifier
     ): self
     {
-        return new self($requestUriHost, $siteIdentifier, $contentRepositoryIdentifier);
+        return new self($requestUri->getHost(), $siteIdentifier, $contentRepositoryIdentifier);
     }
 
     /**

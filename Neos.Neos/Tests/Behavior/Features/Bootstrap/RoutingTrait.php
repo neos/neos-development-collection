@@ -14,17 +14,15 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\Neos\EventSourcedRouting\Http\DetectContentSubgraphMiddleware;
-use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
@@ -43,9 +41,15 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Routing\RequestUriHostMiddleware;
+use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
+use Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -101,6 +105,31 @@ trait RoutingTrait
     }
 
     /**
+     * @Given the sites configuration is:
+     */
+    public function theSiteConfigurationIs(\Behat\Gherkin\Node\PyStringNode $configYaml): void
+    {
+        $config = \Symfony\Component\Yaml\Yaml::parse($configYaml->getRaw());
+        $entityManager = $this->getObjectManager()->get(EntityManagerInterface::class);
+        $entityManager->getEventManager()->addEventListener('postLoad', new class($config) {
+            public function __construct(
+                private readonly array $config
+            ) {
+            }
+            public function postLoad(LifecycleEventArgs $lifecycleEventArgs)  {
+                var_dump("FOO");
+                $object = $lifecycleEventArgs->getObject();
+                if ($object instanceof Site) {
+                    var_dump("FOO2");
+                    ObjectAccess::setProperty($object, 'sitesConfiguration', $this->config['Neos']['Neos']['sites'], true);
+                }
+            }
+        });
+        $site = $this->getObjectManager()->get(SiteRepository::class)->findByIdentifier(SiteIdentifier::fromString('node1'));
+        \Neos\Flow\var_dump($site->getConfiguration());
+    }
+
+    /**
      * @Given an asset with id :assetIdentifier and file name :fileName exists with the content :content
      */
     public function anAssetExists(string $assetIdentifier, string $fileName, string $content): void
@@ -146,8 +175,8 @@ trait RoutingTrait
         if (empty($this->requestUrl->getHost())) {
             $this->requestUrl = $this->requestUrl->withScheme('http')->withHost('localhost');
         }
-        /** @var FunctionalTestRequestHandler $activeRequestHandler */
         $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
+        assert($activeRequestHandler instanceof FunctionalTestRequestHandler, 'wrong request handler - given ' . get_class($activeRequestHandler) . ' -> You need to include BrowserTrait in the FeatureContext!');
         $activeRequestHandler->setHttpRequest($activeRequestHandler->getHttpRequest()->withUri($this->requestUrl));
     }
 
@@ -185,6 +214,8 @@ trait RoutingTrait
         Assert::assertTrue($exception, 'Expected an NoMatchingRouteException to be thrown but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
     }
 
+    private $eventListenerRegistered = false;
+
     private function match(UriInterface $uri): NodeAddress
     {
         $router = $this->getObjectManager()->get(RouterInterface::class);
@@ -192,10 +223,12 @@ trait RoutingTrait
         $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
+
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         $routeContext = new RouteContext($httpRequest, $routeParameters);
         $routeValues = $router->route($routeContext);
 
+        var_dump($routeValues);
         $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
         return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }
@@ -251,7 +284,7 @@ trait RoutingTrait
         putenv('FLOW_REWRITEURLS=1');
         $nodeAddress = new NodeAddress(
             ContentStreamIdentifier::fromString($contentStreamIdentifier),
-            OriginDimensionSpacePoint::fromJsonString($dimensionSpacePoint),
+            DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
             WorkspaceName::forLive()
         );
@@ -264,8 +297,7 @@ trait RoutingTrait
     private function addRoutingParameters(ServerRequestInterface $httpRequest): ServerRequestInterface
     {
         $spyMiddleware = new SpyRequestHandler();
-        (new RequestUriHostMiddleware())->process($httpRequest, $spyMiddleware);
-        (new DetectContentSubgraphMiddleware())->process($spyMiddleware->getHandledRequest(), $spyMiddleware);
+        (new SiteDetectionMiddleware())->process($httpRequest, $spyMiddleware);
         return $spyMiddleware->getHandledRequest();
     }
 }

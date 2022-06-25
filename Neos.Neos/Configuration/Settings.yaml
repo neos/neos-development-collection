@@ -421,12 +421,9 @@ Neos:
 
     http:
       middlewares:
-        'requestUriHostParameter':
+        'detectSite':
           position: 'before routing'
-          middleware: 'Neos\Neos\Routing\RequestUriHostMiddleware'
-        'detectContentSubgraph':
-          position: 'before routing'
-          middleware: 'Neos\Neos\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
+          middleware: 'Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware'
     mvc:
       routes:
         'Neos.Neos':

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\Neos\FrontendRouting\DimensionResolving;
+namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;

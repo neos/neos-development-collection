@@ -35,6 +35,12 @@ class Site
     public const STATE_OFFLINE = 2;
 
     /**
+     * @Flow\InjectConfiguration(path="sites")
+     * @var array
+     */
+    protected $sitesConfiguration = [];
+
+    /**
      * Name of the site
      *
      * @var string
@@ -358,5 +364,11 @@ class Site
      */
     public function emitSiteChanged()
     {
+    }
+
+    public function getConfiguration(): array
+    {
+        // Ohne rekursiven merge :)
+        return $this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*'];
     }
 }

@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\Configuration\SiteConfigurationReader;
-use Neos\Neos\FrontendRouting\ValueObject\SiteIdentifier;
+use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,7 +21,11 @@ use Psr\Http\Server\RequestHandlerInterface;
  * basically "singleton" (global functionality)
  * TODO: how to do reverse direction when generating links?
  *
- * Can be replaced.
+ *
+ * Is a planned extension point; feel free to override this.
+ *
+ * **See {@see EventSourcedFrontendNodeRoutePartHandler} documentation for a
+ * detailed explanation of the Frontend Routing process.**
  */
 class SiteDetectionMiddleware implements MiddlewareInterface
 {
@@ -34,13 +41,6 @@ class SiteDetectionMiddleware implements MiddlewareInterface
      */
     protected $siteRepository;
 
-    /**
-     * @Flow\Inject
-     * @var SiteConfigurationReader
-     */
-    protected $siteConfigurationReader;
-
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $requestUriHost = $request->getUri()->getHost();
@@ -54,11 +54,10 @@ class SiteDetectionMiddleware implements MiddlewareInterface
         if ($site === null) {
             $site = $this->siteRepository->findFirstOnline();
         }
+        assert($site instanceof Site);
 
-        $siteIdentifier = SiteIdentifier::fromSite($site);
-        $contentRepositoryIdentifier = $this->siteConfigurationReader->getContentRepositoryIdentifierForSite($siteIdentifier);
-
-        $siteDetectionResult = SiteDetectionResult::create($requestUriHost, $siteIdentifier, $contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($site->getConfiguration()['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository'));
+        $siteDetectionResult = SiteDetectionResult::create($request->getUri(), SiteIdentifier::fromSite($site), $contentRepositoryIdentifier);
         return $handler->handle($siteDetectionResult->storeInRequest($request));
     }
 }

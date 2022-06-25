@@ -18,8 +18,8 @@ Neos\Neos\Fusion\Cache\FusionCachingAspect:
           1:
             value: Neos_Neos_Fusion
 
-Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
-  className: Neos\Neos\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
+Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface:
+  className: Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler
 
 
 Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:

@@ -4,6 +4,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
 
   Background:
     Given I have no content dimensions
+    And I am user identified by "initiating-user-identifier"
     And I have the following NodeTypes configuration:
     """
     'Neos.Neos:Sites': {}
@@ -38,7 +39,8 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     #      nody-mc-nodeface
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                          | initialPropertyValues                    | nodeName |
       | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
       | sir-david-nodenborough  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
@@ -46,6 +48,16 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | earl-o-documentbourgh   | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
       | nody-mc-nodeface        | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node5    |
     And A site exists for node name "node1"
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            dimensionResolver:
+              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
     And The documenturipath projection is up to date
 
   Scenario: Match homepage URL
