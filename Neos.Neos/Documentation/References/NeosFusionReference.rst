@@ -655,6 +655,63 @@ A helper object to render the head of an HTTP response
 :statusCode: (integer) The HTTP status code for the response, defaults to ``200``
 :headers.*: (string) An HTTP header that should be set on the response, the property name (e.g. ``headers.Content-Type``) will be used for the header name
 
+.. _Neos_Fusion__ActionUri:
+
+Neos.Fusion:ActionUri
+---------------------
+
+Built a URI to a controller action
+
+:package: (string) The package key (e.g. ``'My.Package'``)
+:subpackage: (string) The subpackage, empty by default
+:controller: (string) The controller name (e.g. ``'Registration'``)
+:action: (string) The action name (e.g. ``'new'``)
+:arguments: (array) Arguments to the action by named key
+:format: (string) An optional request format (e.g. ``'html'``)
+:section: (string) An optional fragment (hash) for the URI
+:additionalParams: (array) Additional URI query parameters by named key
+:addQueryString: (boolean) Whether to keep the query parameters of the current URI
+:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
+:absolute: (boolean) Whether to create an absolute URI
+:useMainRequest: (boolean) If set, the main Request will be used instead of the current one.
+
+Example::
+
+	uri = Neos.Fusion:ActionUri {
+		package = 'My.Package'
+		controller = 'Registration'
+		action = 'new'
+	}
+
+A special case is generating URIs for links to Neos modules. In this case often the option `useMainRequest` is needed
+when linking to a controller outside of the context of the current subrequest.
+
+Link to content module::
+
+	uri = Neos.Fusion:ActionUri {
+		useMainRequest = true
+		package = 'Neos.Neos'
+		controller = 'Frontend\\Node'
+		action = 'show'
+		arguments.node = ${documentNode}
+	}
+
+Link to backend modules other than `content`::
+
+	uri = Neos.Fusion:ActionUri {
+		useMainRequest = true
+    action = "index"
+		package = "Neos.Neos"
+		controller = "Backend\\Module"
+		arguments {
+			module = 'administration/sites'
+			moduleArguments {
+				@action = 'edit'
+				site = ${site}
+			}
+		}
+	}
+
 .. _Neos_Fusion__UriBuilder:
 
 Neos.Fusion:UriBuilder
@@ -673,6 +730,8 @@ Built a URI to a controller action
 :addQueryString: (boolean) Whether to keep the query parameters of the current URI
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
+
+.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`_Neos_Fusion__ActionUri` instead.
 
 Example::
 
