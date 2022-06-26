@@ -4,6 +4,7 @@ Feature: Linking between multiple websites
 
   Background:
     Given I have no content dimensions
+    And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
@@ -26,7 +27,8 @@ Feature: Linking between multiple websites
     #        earl-o-documentbourgh
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues                    | nodeName |
       | homepage1               | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
       | sir-david-nodenborough  | homepage1                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
@@ -34,6 +36,16 @@ Feature: Linking between multiple websites
       | sir-david-nodenborough2 | homepage2                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node3    |
     And A site exists for node name "site-1" and domain "http://domain1.tld"
     And A site exists for node name "site-2" and domain "http://domain2.tld"
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            dimensionResolver:
+              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
     And The documenturipath projection is up to date
 
   Scenario: Resolve foreign website homepage node

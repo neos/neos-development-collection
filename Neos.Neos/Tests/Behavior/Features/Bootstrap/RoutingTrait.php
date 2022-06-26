@@ -55,6 +55,7 @@ use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Routing related Behat steps
@@ -104,29 +105,34 @@ trait RoutingTrait
         $persistenceManager->clearState();
     }
 
+    private $routingTraitSiteConfigurationPostLoadHook;
+
     /**
      * @Given the sites configuration is:
      */
     public function theSiteConfigurationIs(\Behat\Gherkin\Node\PyStringNode $configYaml): void
     {
-        $config = \Symfony\Component\Yaml\Yaml::parse($configYaml->getRaw());
         $entityManager = $this->getObjectManager()->get(EntityManagerInterface::class);
-        $entityManager->getEventManager()->addEventListener('postLoad', new class($config) {
+        // clean up old PostLoad Hook
+        if ($this->routingTraitSiteConfigurationPostLoadHook !== null) {
+            $entityManager->getEventManager()->removeEventListener('postLoad', $this->routingTraitSiteConfigurationPostLoadHook);
+        }
+
+        $config = Yaml::parse($configYaml->getRaw());
+        $this->routingTraitSiteConfigurationPostLoadHook = new class($config) {
             public function __construct(
                 private readonly array $config
             ) {
             }
             public function postLoad(LifecycleEventArgs $lifecycleEventArgs)  {
-                var_dump("FOO");
                 $object = $lifecycleEventArgs->getObject();
                 if ($object instanceof Site) {
-                    var_dump("FOO2");
                     ObjectAccess::setProperty($object, 'sitesConfiguration', $this->config['Neos']['Neos']['sites'], true);
                 }
             }
-        });
-        $site = $this->getObjectManager()->get(SiteRepository::class)->findByIdentifier(SiteIdentifier::fromString('node1'));
-        \Neos\Flow\var_dump($site->getConfiguration());
+        };
+
+        $entityManager->getEventManager()->addEventListener('postLoad', $this->routingTraitSiteConfigurationPostLoadHook);
     }
 
     /**
@@ -186,6 +192,7 @@ trait RoutingTrait
     public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): void
     {
         $nodeAddress = $this->match($this->requestUrl);
+        Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
         Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateIdentifier);
         Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamIdentifier);
@@ -204,19 +211,13 @@ trait RoutingTrait
      */
     public function noNodeShouldMatchUrl(string $url): void
     {
-        $matchedNodeAddress = null;
-        $exception = false;
-        try {
-            $matchedNodeAddress = $this->match(new Uri($url));
-        } catch (NoMatchingRouteException $exception) {
-            $exception = true;
-        }
-        Assert::assertTrue($exception, 'Expected an NoMatchingRouteException to be thrown but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
+        $matchedNodeAddress = $this->match(new Uri($url));
+        Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
     }
 
     private $eventListenerRegistered = false;
 
-    private function match(UriInterface $uri): NodeAddress
+    private function match(UriInterface $uri): ?NodeAddress
     {
         $router = $this->getObjectManager()->get(RouterInterface::class);
         $serverRequestFactory = $this->getObjectManager()->get(ServerRequestFactoryInterface::class);
@@ -227,8 +228,10 @@ trait RoutingTrait
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         $routeContext = new RouteContext($httpRequest, $routeParameters);
         $routeValues = $router->route($routeContext);
+        if (!isset($routeValues['node'])) {
+            return null;
+        }
 
-        var_dump($routeValues);
         $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
         return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }

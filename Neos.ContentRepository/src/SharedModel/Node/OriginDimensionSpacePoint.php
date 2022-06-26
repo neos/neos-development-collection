@@ -26,6 +26,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  * Example:
  * In a setup with dimension "language", a node that originates in English has English content,
  * but might be visible in other languages via fallback mechanisms.
+ *
+ * @api
  */
 #[Flow\Proxy(false)]
 final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint

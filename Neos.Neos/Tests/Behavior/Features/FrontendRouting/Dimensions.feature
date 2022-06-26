@@ -7,6 +7,8 @@ Feature: Routing functionality with multiple content dimensions
       | Identifier | Default | Values      | Generalizations | ResolutionMode | ResolutionValues      |
       | market     | DE      | DE, CH      | CH->DE          |                |                       |
       | language   | en      | en, de, gsw | gsw->de->en     | uriPathSegment | en:en, de:de, gsw:gsw |
+    And I am user identified by "initiating-user-identifier"
+
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
@@ -21,7 +23,8 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin '{"market":"DE", "language":"en"}':
+    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
       | nody-mc-nodeface        | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
@@ -40,6 +43,17 @@ Feature: Routing functionality with multiple content dimensions
       | originDimensionSpacePoint | {"market":"DE", "language":"de"} |
       | propertyValues            | {"uriPathSegment": "karl-de"}    |
     And A site exists for node name "node1"
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            dimensionResolver:
+              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
+
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 

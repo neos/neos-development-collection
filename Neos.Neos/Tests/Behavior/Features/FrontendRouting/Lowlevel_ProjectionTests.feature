@@ -4,6 +4,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Background:
     Given I have no content dimensions
+    And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
@@ -18,7 +19,8 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | nodeAggregateClassification | "root"                       |
     And the graph projection is fully up to date
 
-    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | site     |
       | a                       | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "a"}         | a        |
@@ -220,7 +222,8 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"     | "lady-eleonode-rootford/shernode-homes/c"    | "c"                      | "shernode-homes"              | "b"                              | null                              |
 
   Scenario: ab(> b1, b2 > b2a)c => a(> b2 > b2a)b(> b1)c (moving b1 below a)
-    Given the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues     | nodeName |
       | b1                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
@@ -245,7 +248,8 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"              | "b"                              | null                              |
 
   Scenario: ab(> b1, b2 > b2a)c => b(> b1, a, b2 > b2a)c (moving a below b)
-    Given the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues     | nodeName |
       | b1                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |

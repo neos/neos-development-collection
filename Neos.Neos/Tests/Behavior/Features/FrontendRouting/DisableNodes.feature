@@ -4,6 +4,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
 
   Background:
     Given I have no content dimensions
+    And I am user identified by "initiating-user-identifier"
     And I have the following NodeTypes configuration:
     """
     'Neos.Neos:Sites': {}
@@ -39,7 +40,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     #      nody-mc-nodeface
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                          | initialPropertyValues                    | nodeName |
       | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
       | sir-david-nodenborough  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
@@ -48,6 +50,17 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | leaf-mc-node            | earl-o-documentbourgh         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "leaf"}               | node5    |
       | nody-mc-nodeface        | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node6    |
     And A site exists for node name "node1"
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            dimensionResolver:
+              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
+
     And The documenturipath projection is up to date
 
   Scenario: Disable leaf node

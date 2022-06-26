@@ -21,6 +21,7 @@ use Neos\Flow\Annotations as Flow;
  * the node name is "foo".
  *
  * Semantically it describes the hierarchical relation of a node to its parent, e.g. "main" denotes the main child node.
+ *
  * @api
  */
 #[Flow\Proxy(false)]

@@ -4,6 +4,7 @@ Feature: Routing behavior of shortcut nodes
 
   Background:
     Given I have no content dimensions
+    And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
@@ -32,7 +33,8 @@ Feature: Routing behavior of shortcut nodes
     #        sir-nodeward-nodington-iii
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier    | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues                                                                                                       | nodeName |
       | shernode-homes             | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}                                                                                             | node1    |
       | sir-david-nodenborough     | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"}                                                                                    | node2    |
@@ -47,6 +49,16 @@ Feature: Routing behavior of shortcut nodes
       | sir-david-nodenborough-ii  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough-2"}                                                                                  | node11   |
       | sir-nodeward-nodington-iii | sir-david-nodenborough-ii     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nodeward-3"}                                                                                            | node12   |
     And A site exists for node name "node1"
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            dimensionResolver:
+              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
     And The documenturipath projection is up to date
 
   Scenario: Shortcut parent node
@@ -304,7 +316,8 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Recursive shortcuts
-    Given the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName       | initialPropertyValues                                                                                      | nodeName |
       | level-1                 | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "level1", "targetMode": "selectedTarget", "target": "node://level-2"}                   | level1   |
       | level-2                 | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "level2", "targetMode": "selectedTarget", "target": "node://shortcut-first-child-node"} | level2   |
@@ -314,7 +327,8 @@ Feature: Routing behavior of shortcut nodes
     Then the node "level-2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Unlimited recursive shortcuts
-    Given the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName       | initialPropertyValues                                                              | nodeName |
       | node-a                  | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "a", "targetMode": "selectedTarget", "target": "node://node-b"} | node-a   |
       | node-b                  | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "b", "targetMode": "selectedTarget", "target": "node://node-a"} | node-b   |
