@@ -10,53 +10,63 @@ body {
 
 .neos-raw-content-mode {
   background-color: #f5f5f5;
+  font-size: 14px;
 }
 
 #neos-raw-content-container {
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 16px auto;
 }
 
 .neos-raw-content-node {
-  box-shadow: 0 0 5px #ccc;
-  margin: 20px 0;
-  padding: 20px;
-  background-color: white;
   position: relative;
+  margin: 16px 0;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 5px #eee;
+  padding: 16px;
+  background-color: white;
 }
 
 .neos-raw-content-node > header {
-  font-family: monospace;
-  color: white;
-  text-transform: uppercase;
-  hyphens: auto;
-  background-color: lightgrey;
-  display: inline-block;
   position: relative;
-  padding: 3px 15px;
-  left: -20px;
-  top: -21px;
-  color: white;
+  margin: -16px -16px 0 -16px;
+  box-shadow: 0 0 5px #ddd;
+  border-bottom: 1px solid #ddd;
+  background-color: #f8f8f8;
+  padding: 0 16px;
+  line-height: 40px;
+  color: #222222;
+  font-weight: bold;
+  hyphens: auto;
+}
 
+.neos-raw-content-node > *:last-child {
+  margin-bottom: 0;
 }
 
 .neos-raw-content-properties {
+  margin-bottom: 16px;
+  margin-top: 16px;
 }
 
 .neos-raw-content-properties > dt {
-  font-family: monospace;
-  text-transform: uppercase;
-  hyphens: auto;
-  color: lightgrey;
+  margin-bottom: 4px;
 }
 
 .neos-raw-content-properties > dd {
-  margin-inline-start: 0;
-  margin: 10px 0;
+  background-color: #f8f8f8;
+  border-left: 5px solid #cdcdcd;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
-.neos-raw-content-properties > dd:not(:last-child) {
-  border-bottom: 1px solid lightgrey;
+.neos-raw-content-properties > dd:last-child {
+  margin-bottom: 0;
+}
+
+.neos-raw-content-children {
+	margin-bottom: 16px;
+	margin-top: 16px;
 }
 
 a {
