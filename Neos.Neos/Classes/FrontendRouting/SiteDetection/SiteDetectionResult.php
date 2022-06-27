@@ -77,12 +77,17 @@ final class SiteDetectionResult
 
     public function storeInRequest(ServerRequestInterface $request): ServerRequestInterface
     {
-        $existingParameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
+        $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
             ?? RouteParameters::createEmpty();
-        $parameters = $existingParameters
+        $parameters = self::storeInRouteParameters($parameters);
+        return $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
+    }
+
+    public function storeInRouteParameters(RouteParameters $routeParameters): RouteParameters
+    {
+        return $routeParameters
             ->withParameter(self::ROUTINGPARAMETER_REQUESTURIHOST, $this->requestUriHost)
             ->withParameter(self::ROUTINGPARAMETER_SITEIDENTIFIER, $this->siteIdentifier)
             ->withParameter(self::ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER, $this->contentRepositoryIdentifier);
-        return $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
     }
 }

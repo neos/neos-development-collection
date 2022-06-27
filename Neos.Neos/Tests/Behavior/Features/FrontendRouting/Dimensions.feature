@@ -4,6 +4,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Background:
     Given I have the following content dimensions:
+    # TODO: remove ResolutionMode, ResolutionValues (and rewrite to new format) - IN WHOLE FILE
       | Identifier | Default | Values      | Generalizations | ResolutionMode | ResolutionValues      |
       | market     | DE      | DE, CH      | CH->DE          |                |                       |
       | language   | en      | en, de, gsw | gsw->de->en     | uriPathSegment | en:en, de:de, gsw:gsw |
@@ -71,6 +72,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Move Dimension, then resolving should still work
     Given I have the following content dimensions:
+    # TODO: remove ResolutionMode, ResolutionValues (and rewrite to new format) - IN WHOLE FILE
       | Identifier | Default | Values         | Generalizations | ResolutionMode | ResolutionValues         |
       | market     | DE      | DE, CH         | CH->DE          |                |                          |
       | language   | en      | en, de_DE, gsw | gsw->de_DE->en  | uriPathSegment | en:en, de_DE:de, gsw:gsw |
@@ -122,6 +124,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Add Dimension shine through, then resolving should still work
     Given I have the following content dimensions:
+    # TODO: remove ResolutionMode, ResolutionValues (and rewrite to new format) - IN WHOLE FILE
       | Identifier | Default | Values          | Generalizations         | ResolutionMode | ResolutionValues             |
       | market     | DE      | DE, CH          | CH->DE                  |                |                              |
       | language   | en      | en, de, gsw, at | gsw->de->en, at->de->en | uriPathSegment | en:en, de:de, gsw:gsw, at:at |

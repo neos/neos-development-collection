@@ -20,6 +20,7 @@ use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Webmozart\Assert\Assert;
 
@@ -43,8 +44,12 @@ use Webmozart\Assert\Assert;
  */
 final class UriPathResolver implements DimensionResolverInterface
 {
-
-    private UriPathSegmentBasedOptions $options;
+    private function __construct(
+        private readonly Segments $segments,
+        private readonly Separator $separator,
+    )
+    {
+    }
 
 
     public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext

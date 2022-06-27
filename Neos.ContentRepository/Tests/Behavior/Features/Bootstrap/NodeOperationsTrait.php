@@ -105,18 +105,8 @@ trait NodeOperationsTrait
                     }
                 }
 
-                $resolutionValues = [];
-                if (isset($row['ResolutionValues'])) {
-                    foreach (Arrays::trimExplode(',', $row['ResolutionValues']) as $resolutionValueMap) {
-                        [$key, $value] = Arrays::trimExplode(':', $resolutionValueMap);
-                        $resolutionValues[$key] = $value;
-                    }
-                }
                 foreach (Arrays::trimExplode(',', $row['Values']) as $rawDimensionValue) {
                     $dimensionValueConfiguration = [];
-                    if (isset($resolutionValues[$rawDimensionValue])) {
-                        $dimensionValueConfiguration['resolution']['value'] = $resolutionValues[$rawDimensionValue];
-                    }
                     $dimensionValues[$rawDimensionValue] = new ContentDimensionValue(
                         $rawDimensionValue,
                         new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0),
@@ -130,9 +120,6 @@ trait NodeOperationsTrait
                 }
 
                 $dimensionConfiguration = [];
-                if (!empty($row['ResolutionMode'])) {
-                    $dimensionConfiguration['resolution']['mode'] = $row['ResolutionMode'];
-                }
                 $dimensions[$row['Identifier']] = new ContentDimension(
                     new ContentDimensionIdentifier($row['Identifier']),
                     new ContentDimensionValues($dimensionValues),

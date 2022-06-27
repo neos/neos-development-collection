@@ -30,9 +30,10 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
 
     public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface
     {
+
         return new UriPathResolver(
             Segments::fromArray($dimensionResolverOptions['segments']),
-            Separator::fromString($dimensionResolverOptions['separator'])
+            Separator::fromString($dimensionResolverOptions['separator'] ?? '_')
         );
     }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  * source code.
  */
 
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +24,7 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
@@ -46,6 +48,8 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
@@ -302,5 +306,36 @@ trait RoutingTrait
         $spyMiddleware = new SpyRequestHandler();
         (new SiteDetectionMiddleware())->process($httpRequest, $spyMiddleware);
         return $spyMiddleware->getHandledRequest();
+    }
+
+
+    private DimensionSpacePoint $dimensionResolverResolvedDimension;
+
+    /**
+     * @When I invoke the Dimension Resolver :factoryClassName with options:
+     */
+    public function iInvokeTheDimensionResolverWithOptions(string $factoryClassName, PyStringNode $resolverOptionsYaml)
+    {
+        $dimensionResolverFactory = $this->getObjectManager()->get($factoryClassName);
+        assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
+        $resolverOptions = Yaml::parse($resolverOptionsYaml->getRaw()) ?? [];
+        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryIdentifier::fromString('default'), $resolverOptions);
+
+        $siteDetectionResult = SiteDetectionResult::create($this->requestUrl, SiteIdentifier::fromString("site-node"), ContentRepositoryIdentifier::fromString("default"));
+        $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
+
+        $dimensionResolverContext = DimensionResolverContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
+        $dimensionResolverContext = $dimensionResolver->resolveDimensionSpacePoint($dimensionResolverContext);
+        $this->dimensionResolverResolvedDimension = $dimensionResolverContext->dimensionSpacePoint();
+    }
+
+    /**
+     * @Then the resolved dimension should be :dimensionSpacePoint
+     */
+    public function theResolvedDimensionShouldBe($dimensionSpacePointString)
+    {
+        $expected = DimensionSpacePoint::fromJsonString($dimensionSpacePointString);
+        $actual = $this->dimensionResolverResolvedDimension;
+        Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . json_encode($actual->jsonSerialize()));
     }
 }
