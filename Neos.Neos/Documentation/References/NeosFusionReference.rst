@@ -700,7 +700,7 @@ Link to backend modules other than `content`::
 
 	uri = Neos.Fusion:ActionUri {
 		useMainRequest = true
-    action = "index"
+		action = "index"
 		package = "Neos.Neos"
 		controller = "Backend\\Module"
 		arguments {
@@ -713,6 +713,39 @@ Link to backend modules other than `content`::
 	}
 
 .. _Neos_Fusion__UriBuilder:
+
+Neos.Fusion:ActionLink
+---------------------
+
+The action link combines all properties form ``Neos.Fusion:Tag`` and ``Neos.Fusion:ActionUri`` with the deviation
+that the default ``tagName`` is an ``a`` other than ``div``.
+
+... from ``Neos.Fusion:Tag``:
+:tagName: (string) Tag name of the HTML element, defaults to ``a``
+:content: (string) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
+:attributes: (iterable) Tag attributes as key-value pairs. Default is ``Neos.Fusion:DataStructure``. If a non iterable is returned the value is casted to string.
+... from ``Neos.Fusion:ActionUri``:
+:package: (string) The package key (e.g. ``'My.Package'``)
+:subpackage: (string) The subpackage, empty by default
+:controller: (string) The controller name (e.g. ``'Registration'``)
+:action: (string) The action name (e.g. ``'new'``)
+:arguments: (array) Arguments to the action by named key
+:format: (string) An optional request format (e.g. ``'html'``)
+:section: (string) An optional fragment (hash) for the URI
+:additionalParams: (array) Additional URI query parameters by named key
+:addQueryString: (boolean) Whether to keep the query parameters of the current URI
+:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
+:absolute: (boolean) Whether to create an absolute URI
+:useMainRequest: (boolean) If set, the main Request will be used instead of the current one.
+
+Example::
+
+	link = Neos.Fusion:ActionLink {
+		content = "register"
+		package = 'My.Package'
+		controller = 'Registration'
+		action = 'new'
+	}
 
 Neos.Fusion:UriBuilder
 ----------------------

@@ -147,6 +147,52 @@ prototype(Neos.Fusion:ActionUri) {
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
+# Renders an link tag with a uri pointing to a controller/action
+#
+# Usage:
+# uri = Neos.Fusion:Link {
+#   content = 'to special controller'
+#   package = 'Some.Package'
+#   controller = 'Standard'
+#   action = 'index'
+# }
+prototype(Neos.Fusion:ActionLink) < prototype(Neos.Fusion:Tag) {
+  tagName = 'a'
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+
+  attributes.href = Neos.Fusion:ActionUri {
+    package = ${__package}
+    subpackage = ${__subpackage}
+    controller = ${__controller}
+    action = ${__action}
+    arguments = ${__arguments}
+    format = ${__format}
+    section = ${__section}
+    additionalParams = ${__additionalParams}
+    argumentsToBeExcludedFromQueryString = ${__argumentsToBeExcludedFromQueryString}
+    addQueryString = ${__addQueryString}
+    absolute = ${__absolute}
+    useMainRequest = ${__useMainRequest}
+  }
+
+  @context {
+    __package = ${this.package}
+    __subpackage = ${this.subpackage}
+    __controller = ${this.controller}
+    __action = ${this.action}
+    __arguments = ${this.arguments}
+    __format = ${this.format}
+    __section = ${this.section}
+    __additionalParams = ${this.additionalParams}
+    __argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
+    __addQueryString = ${this.addQueryString}
+    __absolute = ${this.absolute}
+    __useMainRequest = ${this.useMainRequest}
+  }
+}
+
 # Modify given html content and add attributes
 #
 # Usage:
