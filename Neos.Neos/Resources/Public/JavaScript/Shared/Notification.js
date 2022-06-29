@@ -54,8 +54,9 @@ function(
 				var that = this;
 				setTimeout(function() {
 					$('li', notifications).each(function(index, notification) {
-						var title = $(notification).data('title');
-						that[$(notification).data('type')](title ? title : $(notification).text(), title ? $(notification).html() : '');
+						var title = $(notification).data('title') || $(notification).text();
+						var message = $(notification).data('title') ? $(notification).text() : '';
+						that[$(notification).data('type')](that._sanitizeHtml(title), that._sanitizeHtml(message));
 					});
 				}, 250);
 			}
@@ -142,6 +143,21 @@ function(
 				$(this).parent().toggleClass('expanded');
 				$(this).next('.neos-expand-content').slideToggle();
 			});
+		},
+
+		/**
+		 * Ensure the provided string retains HTML escaping as provided by the backend,
+		 * as in some cases JS could actually unescape it.
+		 *
+		 * @param string html
+		 * @returns {string}
+		 * @private
+		 */
+		_sanitizeHtml: function(html) {
+			var text = document.createTextNode(html);
+			var div = document.createElement('div');
+			div.appendChild(text);
+			return div.innerHTML;
 		}
 	}).create();
 });

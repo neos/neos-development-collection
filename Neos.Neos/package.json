@@ -8,7 +8,8 @@
     "build-watch": "yarn build --progress --colors --watch",
     "build:production": "NODE_ENV=production yarn build:js --mode production && NODE_ENV=production yarn build:styles --mode production",
     "build:js": "webpack -p --env=js",
-    "build:styles": "webpack -d --env=styles"
+    "build:styles": "webpack -d --env=styles",
+    "build:legacy-js": "cd Scripts && yarn install && npx grunt build-js"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
