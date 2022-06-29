@@ -11,12 +11,9 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Media\Domain\Model\Document;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Exception;
-use Psr\Log\LoggerInterface;
 
 /**
  * A system-generated preview version of a Document (PDF, AI and EPS)
@@ -32,12 +29,6 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
     protected static $priority = 5;
 
     /**
-     * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @param Thumbnail $thumbnail
      * @return boolean
      */
@@ -46,7 +37,10 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
         return (
             $thumbnail->getOriginalAsset() instanceof Document &&
             $this->isExtensionSupported($thumbnail) &&
-            extension_loaded('imagick')
+            (
+                $this->imagineService instanceof \Imagine\Imagick\Imagine ||
+                (extension_loaded('imagick') && $this->getOption('overrideImagineDriverCheck'))
+            )
         );
     }
 
@@ -78,9 +72,15 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
                 $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
                 $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();
                 $message = $readResult instanceof \ImagickException ? $readResult->getMessage() : 'unknown';
-                $this->logger->notice(sprintf('Could not read image (filename: %s, SHA1: %s) for thumbnail generation. Maybe the ImageMagick security policy denies reading the format? Error: %s', $filename, $sha1, $message), LogEnvironment::fromMethodName(__METHOD__));
-
-                return;
+                throw new \RuntimeException(
+                    sprintf(
+                        'Could not read image (filename: %s, SHA1: %s) for thumbnail generation. Maybe the ImageMagick security policy denies reading the format? Error: %s',
+                        $filename,
+                        $sha1,
+                        $message
+                    ),
+                    1656518085
+                );
             }
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
