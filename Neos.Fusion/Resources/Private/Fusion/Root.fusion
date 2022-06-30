@@ -140,6 +140,7 @@ prototype(Neos.Fusion:UriBuilder) {
 #
 prototype(Neos.Fusion:ActionUri) {
   @class = 'Neos\\Fusion\\FusionObjects\\ActionUriImplementation'
+  request = ${request}
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
   argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
@@ -158,6 +159,7 @@ prototype(Neos.Fusion:ActionUri) {
 # }
 prototype(Neos.Fusion:ActionLink) < prototype(Neos.Fusion:Tag) {
   tagName = 'a'
+  request = ${request}
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
   argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
@@ -174,7 +176,7 @@ prototype(Neos.Fusion:ActionLink) < prototype(Neos.Fusion:Tag) {
     argumentsToBeExcludedFromQueryString = ${__argumentsToBeExcludedFromQueryString}
     addQueryString = ${__addQueryString}
     absolute = ${__absolute}
-    useMainRequest = ${__useMainRequest}
+    request = ${__request}
   }
 
   @context {
@@ -189,7 +191,7 @@ prototype(Neos.Fusion:ActionLink) < prototype(Neos.Fusion:Tag) {
     __argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
     __addQueryString = ${this.addQueryString}
     __absolute = ${this.absolute}
-    __useMainRequest = ${this.useMainRequest}
+    __request = ${this.request}
   }
 }
 

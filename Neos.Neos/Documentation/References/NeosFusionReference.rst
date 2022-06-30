@@ -662,6 +662,7 @@ Neos.Fusion:ActionUri
 
 Built a URI to a controller action
 
+:request: (ActionRequest, defaults to the the current ``request``) The action request the uri is build from.
 :package: (string) The package key (e.g. ``'My.Package'``)
 :subpackage: (string) The subpackage, empty by default
 :controller: (string) The controller name (e.g. ``'Registration'``)
@@ -686,20 +687,20 @@ Example::
 A special case is generating URIs for links to Neos modules. In this case often the option `useMainRequest` is needed
 when linking to a controller outside of the context of the current subrequest.
 
-Link to content module::
+Link to the content module::
 
 	uri = Neos.Fusion:ActionUri {
-		useMainRequest = true
-		package = 'Neos.Neos'
-		controller = 'Frontend\\Node'
-		action = 'show'
+		request = ${request.mainRequest}
+    package="Neos.Neos.Ui"
+    controller="Backend"
+		action = 'index'
 		arguments.node = ${documentNode}
 	}
 
-Link to backend modules other than `content`::
+Link to backend modules (other than `content`)::
 
 	uri = Neos.Fusion:ActionUri {
-		useMainRequest = true
+		request = ${request.mainRequest}
 		action = "index"
 		package = "Neos.Neos"
 		controller = "Backend\\Module"
@@ -725,6 +726,7 @@ that the default ``tagName`` is an ``a`` other than ``div``.
 :content: (string) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
 :attributes: (iterable) Tag attributes as key-value pairs. Default is ``Neos.Fusion:DataStructure``. If a non iterable is returned the value is casted to string.
 ... from ``Neos.Fusion:ActionUri``:
+:request: (ActionRequest, defaults to the the current ``request``) The action request the uri is build from.
 :package: (string) The package key (e.g. ``'My.Package'``)
 :subpackage: (string) The subpackage, empty by default
 :controller: (string) The controller name (e.g. ``'Registration'``)
@@ -736,7 +738,6 @@ that the default ``tagName`` is an ``a`` other than ``div``.
 :addQueryString: (boolean) Whether to keep the query parameters of the current URI
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
-:useMainRequest: (boolean) If set, the main Request will be used instead of the current one.
 
 Example::
 
@@ -746,6 +747,31 @@ Example::
 		controller = 'Registration'
 		action = 'new'
 	}
+
+Link to content module in afx::
+
+    <Neos.Fusion:ActionLink
+      request={request.mainRequest}
+      action="index"
+      package="Neos.Neos.Ui"
+      controller="Backend"
+      arguments.node={node}
+    >
+      to Content module
+    </Neos.Fusion:ActionLink>
+
+Link to backend modules (other than `content`)::
+
+    <Neos.Fusion:ActionLink
+      request={request.mainRequest}
+      action="index"
+      package="Neos.Neos"
+      controller="Backend\\Module"
+      arguments.module='administration/sites'
+      arguments.moduleArguments.@action='index'
+    >
+      to Site module
+    </Neos.Fusion:ActionLink>
 
 Neos.Fusion:UriBuilder
 ----------------------

@@ -13,6 +13,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
@@ -30,12 +31,20 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  *  * addQueryString
  *  * argumentsToBeExcludedFromQueryString
  *  * absolute
- *  * useMainRequest
+ *  * request
  *
  * See respective getters for descriptions
  */
 class ActionUriImplementation extends AbstractFusionObject
 {
+    /**
+     * @return ActionRequest
+     */
+    public function getRequest(): ActionRequest
+    {
+        return $this->fusionValue('request');
+    }
+
     /**
      * Key of the target package
      *
@@ -148,27 +157,12 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If true, an absolute the url is generated for the main request and ignores possible subrequests
-     *
-     * @return boolean
-     */
-    public function isUseMainRequest(): bool
-    {
-        return (boolean)$this->fusionValue('useMainRequest');
-    }
-
-    /**
      * @return string
      */
     public function evaluate()
     {
-        $controllerContext = $this->runtime->getControllerContext();
         $uriBuilder = new UriBuilder();
-        if ($this->isUseMainRequest()) {
-            $uriBuilder->setRequest($controllerContext->getRequest()->getMainRequest());
-        } else {
-            $uriBuilder->setRequest($controllerContext->getRequest());
-        }
+        $uriBuilder->setRequest($this->getRequest());
 
         $format = $this->getFormat();
         if ($format !== null) {
