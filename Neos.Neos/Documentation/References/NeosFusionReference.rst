@@ -691,8 +691,8 @@ Link to the content module::
 
 	uri = Neos.Fusion:ActionUri {
 		request = ${request.mainRequest}
-    package="Neos.Neos.Ui"
-    controller="Backend"
+        package="Neos.Neos.Ui"
+        controller="Backend"
 		action = 'index'
 		arguments.node = ${documentNode}
 	}
