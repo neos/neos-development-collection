@@ -498,8 +498,8 @@ Matches the given subject to a value
 Example::
 
 	myValue = Neos.Fusion:Match {
-	  @subject = 'hello'
-	  @default = 'World?'
+		@subject = 'hello'
+		@default = 'World?'
 		hello = 'Hello World'
 		bye = 'Goodbye world'
 	}
