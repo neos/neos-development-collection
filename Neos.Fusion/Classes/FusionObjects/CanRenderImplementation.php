@@ -30,10 +30,26 @@ class CanRenderImplementation extends AbstractFusionObject
     }
 
     /**
+     * Fusion path which shall be rendered
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->fusionValue('path');
+    }
+
+    /**
      * @return boolean
      */
     public function evaluate()
     {
-        return $this->runtime->canRender('/type<' . $this->getType() . '>');
+        if ($type = $this->getType()) {
+            return $this->runtime->canRender('/type<' . $type . '>');
+        }
+        if ($path = $this->getPath()) {
+            return $this->runtime->canRender($path);
+        }
+        return false;
     }
 }

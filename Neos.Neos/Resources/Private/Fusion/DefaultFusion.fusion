@@ -41,8 +41,23 @@ root {
 
   default {
     @position = 'end 9999'
-    condition = true
+    condition = Neos.Fusion:CanRender {
+      path = '/page'
+    }
     renderPath = '/page'
+  }
+
+  rawContent {
+    @position = 'end 10000'
+    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.edit}
+    renderPath = '/rawContent'
+  }
+
+  # Fail but create a helpful error message
+  error {
+    @position = 'end 10001'
+    condition = true
+    type = ${documentNode.nodeType.name}
   }
 
   @cache {
