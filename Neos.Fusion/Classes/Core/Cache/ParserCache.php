@@ -52,7 +52,7 @@ class ParserCache
         if ($this->enableCache === false) {
             return $generateValueToCache();
         }
-        if ($contextPathAndFilename === null) {
+        if ($contextPathAndFilename === null || !\is_file($contextPathAndFilename)) {
             return $generateValueToCache();
         }
         if (str_contains($contextPathAndFilename, '://')) {

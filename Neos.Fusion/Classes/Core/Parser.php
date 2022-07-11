@@ -78,6 +78,7 @@ class Parser implements ParserInterface
             }
             // Check if not trying to recursively include the current file via globbing
             if ($contextPathAndFilename === null
+                || !\is_file($contextPathAndFilename)
                 || stat($contextPathAndFilename) !== stat($file)) {
                 $fusionFile = $this->getFusionFile(file_get_contents($file), $file);
                 $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile($fusionFile);
