@@ -674,7 +674,6 @@ Built a URI to a controller action
 :addQueryString: (boolean) Whether to keep the query parameters of the current URI
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
-:useMainRequest: (boolean) If set, the main Request will be used instead of the current one.
 
 Example::
 
