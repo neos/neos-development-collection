@@ -44,7 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mariadb:
-        image: mariadb:10.2
+        # see https://mariadb.com/kb/en/mariadb-server-release-dates/
+        # this should be a current release, e.g. the LTS version
+        image: mariadb:10.6
         env:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
@@ -54,7 +56,9 @@ jobs:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:9.5-alpine
+        # see https://www.postgresql.org/support/versioning/
+        # this should be a current release
+        image: postgres:14-alpine
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
