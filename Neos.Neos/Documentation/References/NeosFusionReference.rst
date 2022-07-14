@@ -683,7 +683,7 @@ Example::
 		action = 'new'
 	}
 
-A special case is generating URIs for links to Neos modules. In this case often the option `useMainRequest` is needed
+A special case is generating URIs for links to Neos modules. In this case often the option `request = ${request.mainRequest}` is needed
 when linking to a controller outside of the context of the current subrequest.
 
 Link to the content module::
