@@ -196,6 +196,25 @@ prototype(Neos.Fusion:ResourceUri) {
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
+# Renders an URI pointing to a controller/action
+#
+# Usage:
+# uri = Neos.Fusion:ActionUri {
+#   package = 'Some.Package'
+#   controller = 'Standard'
+#   action = 'index'
+# }
+#
+prototype(Neos.Fusion:ActionUri) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ActionUriImplementation'
+  request = ${request}
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
+
 # Renders a link pointing to a controller/action
 #
 # Usage:
@@ -206,7 +225,7 @@ prototype(Neos.Fusion:ResourceUri) {
 # `
 #
 prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
-    href = Neos.Fusion:UriBuilder
+    href = Neos.Fusion:ActionUri
     content = ''
 
     renderer = Neos.Fusion:Tag {
@@ -223,7 +242,7 @@ prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
 #
 # Usage:
 # link = afx`
-#    <Neos.Fusion:Link.Resource class="action-link" href.path="resource://Some.Package/Public/Images/SomeImage.png">
+#    <Neos.Fusion:Link.Resource class="resource-link" href.path="resource://Some.Package/Public/Images/SomeImage.png">
 #        Some Link
 #    </Neos.Fusion:Link.Resource>
 # `
