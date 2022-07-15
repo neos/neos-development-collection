@@ -1,0 +1,83 @@
+`7.0.11 (2022-07-15) <https://github.com/neos/neos-development-collection/releases/tag/7.0.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fusion Array.keys() on null if documentNode doesnt exist in GlobalCacheIdentifiers <https://github.com/neos/neos-development-collection/pull/3837>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+https://neos-project.slack.com/archives/C050C8FEK/p1657807863902929
+
+For example when using Fusion in an ajax request, with cache enabled - but no documentNode provided as context, then the calculation of the GlobalCacheIdentifiers fails due to the Eel helper beeing incorrectly used.
+
+* Packages: ``Neos``
+
+`TASK: Continue on error in ThumbnailGeneratorStrategy <https://github.com/neos/neos-development-collection/pull/3828>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This makes the `ThumbnailGeneratorStrategy` continue with the next
+available thumbnail generator in case `refresh()` failed. This allows
+for a "fallback" to be used in case thumbnail generation fails.
+
+Errors are logged to aid with debugging and if all generators fail
+another separate error is logged.
+
+See neos/neos-development-collection#3678 for some background info.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+* Packages: ``Media``
+
+`BUGFIX: Check for Imagick in DocumentThumbnailGenerator <https://github.com/neos/neos-development-collection/pull/3783>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The `DocumentThumbnailGenerator` will now (again) check for
+Imagick being the configured driver in `canRefresh()`. If the
+`imagick` PHP extension is available and should  be used even
+though Imagick is _not_ the driver for Imagine, a new feature flag
+can be turned on:
+
+```yaml
+Neos:
+  Media:
+    thumbnailGenerators:
+      Neos\\Media\\Domain\\Model\\ThumbnailGenerator\\DocumentThumbnailGenerator:
+        # if set, the DocumentThumbnailGenerator will be used when possible, even if the
+        # used Imagine driver would usually prohibit it's use (because GD doesn't do PDF)
+        overrideImagineDriverCheck: true
+```
+
+If reading the source fails without an exception, an exception is
+raised and passed on from the `refresh()` method. This e.g.
+happens when the security policy of ImageMagick denies reading
+PDF files.
+
+* See: `#3678 <https://github.com/neos/neos-development-collection/issues/3678>`_
+
+**Review instructions**
+
+To have ImageMagick deny reading of PDF, as is needed to check this, the policy must be changed to include
+
+    <policy domain="coder" rights="none" pattern="PDF" />
+
+- the policy is usually in a place like `/etc/ImageMagick-6/policy.xml`
+- for Local Beach it's inside the `php` container in `/opt/flownative/php/build/extensions/imagick/policy.xml`. To be able to edit it, you must use `docker exec -u root -it yourproject_php /bin/bash` to become `root` inside the container.
+
+* Packages: ``Browser`` ``Media``
+
+`BUGFIX: Adds missing documentation <https://github.com/neos/neos-development-collection/pull/3819>`_
+-----------------------------------------------------------------------------------------------------
+
+In Neos 7.0 we introduced the  `PropertyValue` filter for node migrations. With this change, we extend the documentation as well.
+
+**Review instructions**
+
+Please proofread the documentation change.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.0.10...7.0.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
