@@ -1,27 +1,22 @@
 prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
-    node = null
 
-    renderer = Neos.Fusion:Component {
-        node = ${props.node}
-        labelParts = ${String.split(node.nodeType.label, ':')}
-        icon = ${node.nodeType.fullConfiguration.ui.icon}
+  labelParts = ${String.split(node.nodeType.label, ':')}
+  icon = ${node.nodeType.fullConfiguration.ui.icon}
+  visibilityInformations = Neos.Fusion:DataStructure {
+    hidden = 'hidden'
+    hidden.@if.isHidden = ${node.hidden}
+    hiddenBeforeDateTime = ${'hidden before ' + Date.format(node.hiddenBeforeDateTime, 'Y-m-d H:i:s')}
+    hiddenBeforeDateTime.@if.hasHiddenBeforeDateTime = ${node.hiddenBeforeDateTime}
+    hiddenAfterDateTime = ${'hidden after ' + Date.format(node.hiddenAfterDateTime, 'Y-m-d H:i:s')}
+    hiddenAfterDateTime.@if.hasHiddenAfterDateTime = ${node.hiddenAfterDateTime}
+    @process.join = ${Array.join(value, ', ')}
+  }
 
-        visibilityInformations = Neos.Fusion:DataStructure {
-            hidden = 'hidden'
-            hidden.@if.isHidden = ${props.node.hidden}
-            hiddenBeforeDateTime = ${'hidden before ' + Date.format(props.node.hiddenBeforeDateTime, 'Y-m-d H:i:s')}
-            hiddenBeforeDateTime.@if.hasHiddenBeforeDateTime = ${props.node.hiddenBeforeDateTime}
-            hiddenAfterDateTime = ${'hidden after ' + Date.format(props.node.hiddenAfterDateTime, 'Y-m-d H:i:s')}
-            hiddenAfterDateTime.@if.hasHiddenAfterDateTime = ${props.node.hiddenAfterDateTime}
-            @process.join = ${Array.join(value,', ')}
-        }
-
-        renderer = afx`
-            <header>
-                <i class={'fas fa-' + props.icon + ' ' + props.icon} @if={props.icon}></i>&nbsp;
-                {(props.node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? props.node.label : Translation.translate(props.labelParts[2],props.node.nodeType.label,[],props.labelParts[1],props.labelParts[0])}
-                <span @if={props.visibilityInformations}> - {props.visibilityInformations}</span>
-            </header>
-        `
-    }
+  renderer = afx`
+    <header>
+      <i class={'fas fa-' + props.icon + ' ' + props.icon} @if={props.icon}></i>&nbsp;
+      {(node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? node.label : Translation.translate(props.labelParts[2], node.nodeType.label, [], props.labelParts[1], props.labelParts[0])}
+      <span @if={props.visibilityInformations}> - {props.visibilityInformations}</span>
+    </header>
+  `
 }

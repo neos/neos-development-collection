@@ -1,39 +1,33 @@
-
 prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
-    node = ${node}
-    @context.node = ${this.node}
 
-    renderer = Neos.Fusion:Case {
+  nodeType = ${node.nodeType.name}
 
-        custom {
-            @position = "100"
-            condition = Neos.Fusion:CanRender {
-                type = ${props.node.nodeType.name + '.RawContentMode'}
-            }
-            renderer = afx`
-                <section class="neos-raw-content-node">
-                    <Neos.Neos:RawContent.NodeHeader node={props.node} />
-                    <Neos.Fusion:Renderer
-                        @context.node={props.node}
-                        type={props.node.nodeType.name + '.RawContentMode'}
-                        element.node={props.node}
-                    />
-                </section>
-            `
-        }
-
-        default {
-            @position = "end"
-            condition = true
-            renderer = afx`
-                <section class="neos-raw-content-node">
-                    <Neos.Neos:RawContent.NodeHeader node={props.node} />
-                    <Neos.Neos:RawContent.NodeProperties node={props.node} />
-                    <Neos.Neos:RawContent.NodeChildren node={props.node} />
-                </section>
-            `
-        }
+  renderer = Neos.Fusion:Case {
+    custom {
+      @position = "100"
+      condition = Neos.Fusion:CanRender {
+        type = ${props.nodeType + '.RawContentMode'}
+      }
+      renderer = afx`
+        <section class="neos-raw-content-node">
+          <Neos.Neos:RawContent.NodeHeader/>
+          <Neos.Fusion:Renderer type={props.nodeType + '.RawContentMode'}/>
+        </section>
+      `
     }
+
+    default {
+      @position = "end"
+      condition = true
+      renderer = afx`
+        <section class="neos-raw-content-node">
+          <Neos.Neos:RawContent.NodeHeader/>
+          <Neos.Neos:RawContent.NodeProperties/>
+          <Neos.Neos:RawContent.NodeChildren/>
+        </section>
+      `
+    }
+  }
 }
 
 
