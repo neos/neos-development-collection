@@ -13,11 +13,15 @@ namespace Neos\Media\Domain\Strategy;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Utility\PositionalArraySorter;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailGenerator\ThumbnailGeneratorInterface;
+use Neos\Media\Exception\NoThumbnailAvailableException;
+use Neos\Utility\PositionalArraySorter;
+use Psr\Log\LoggerInterface;
 
 /**
  * A strategy to detect the correct thumbnail generator
@@ -33,6 +37,18 @@ class ThumbnailGeneratorStrategy
     protected $objectManager;
 
     /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * Refresh the given thumbnail
      *
      * @param Thumbnail $thumbnail
@@ -42,13 +58,21 @@ class ThumbnailGeneratorStrategy
     {
         $generatorClassNames = static::getThumbnailGeneratorClassNames($this->objectManager);
         foreach ($generatorClassNames as $generator) {
-            $generator = $this->objectManager->get($generator['className']);
+            $className = $generator['className'];
+            $generator = $this->objectManager->get($className);
             if (!$generator->canRefresh($thumbnail)) {
                 continue;
             }
-            $generator->refresh($thumbnail);
-            return;
+            try {
+                $generator->refresh($thumbnail);
+                return;
+            } catch (NoThumbnailAvailableException $exception) {
+                $message = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error(sprintf('%s.refresh() failed, trying next generator. %s', $className, $message), LogEnvironment::fromMethodName(__METHOD__));
+            }
         }
+
+        $this->logger->error(sprintf('All thumbnail generators failed to generate a thumbnail for asset %s (%s)', $thumbnail->getOriginalAsset()->getResource()->getSha1(), $thumbnail->getOriginalAsset()->getResource()->getFilename()), LogEnvironment::fromMethodName(__METHOD__));
     }
 
     /**
