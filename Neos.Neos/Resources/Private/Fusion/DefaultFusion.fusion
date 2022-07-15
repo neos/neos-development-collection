@@ -120,5 +120,6 @@ error = Neos.Fusion:Case {
 #
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
   workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
+  workspaceChain.@if.has = ${!!documentNode}
   editPreviewMode = ${documentNode.context.currentRenderingMode.name}
 }
