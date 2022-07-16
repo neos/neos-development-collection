@@ -145,9 +145,9 @@ class FusionService
             FusionCodeCollection::fromArray(array_filter([
                 $nodeTypeDefinitions ? FusionCode::fromString($nodeTypeDefinitions) : null,
                 ...$this->prepareAutoIncludeFusion(),
-                ...array_map(fn (string $file) => FusionCode::fromFile($file), $this->prependFusionIncludes),
+                ...$this->prepareFusionIncludes($this->prependFusionIncludes, $siteRootFusionPathAndFilename),
                 is_readable($siteRootFusionPathAndFilename) ? FusionCode::fromFile($siteRootFusionPathAndFilename) : null,
-                ...array_map(fn (string $file) => FusionCode::fromFile($file), $this->appendFusionIncludes),
+                ...$this->prepareFusionIncludes($this->appendFusionIncludes, $siteRootFusionPathAndFilename),
             ]))
         );
     }
@@ -277,5 +277,19 @@ class FusionService
     public function setAppendFusionIncludes(array $appendFusionIncludes)
     {
         $this->appendFusionIncludes = $appendFusionIncludes;
+    }
+
+    private function prepareFusionIncludes(array $fusionIncludes, string $filePathForRelativeResolves): FusionCodeCollection
+    {
+        return FusionCodeCollection::fromArray(array_map(
+            function (string $fusionFile) use ($filePathForRelativeResolves) {
+                if (str_starts_with($fusionFile, "resource://") === false) {
+                    // legacy relative includes
+                    $fusionFile = dirname($filePathForRelativeResolves) . '/' . $fusionFile;
+                }
+                return FusionCode::fromFile($fusionFile);
+            },
+            $fusionIncludes
+        ));
     }
 }
