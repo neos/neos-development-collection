@@ -14,7 +14,8 @@ namespace Neos\Fusion\View;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Utility\Files;
+use Neos\Fusion\Core\FusionCode;
+use Neos\Fusion\Core\FusionCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
@@ -184,17 +185,17 @@ class FusionView extends AbstractView
      */
     protected function getMergedFusionObjectTree(): array
     {
-        $parsedFusion = [];
+        $fusionCodeCollection = [];
         $fusionPathPatterns = $this->getFusionPathPatterns();
         foreach ($fusionPathPatterns as $fusionPathPattern) {
             if (is_dir($fusionPathPattern)) {
                 $fusionPathPattern .= '/Root.fusion';
             }
             if (file_exists($fusionPathPattern)) {
-                $parsedFusion = $this->fusionParser->parse(file_get_contents($fusionPathPattern), $fusionPathPattern, $parsedFusion);
+                $fusionCodeCollection[] = FusionCode::fromFile($fusionPathPattern);
             }
         }
-        return $parsedFusion;
+        return $this->fusionParser->parse(FusionCodeCollection::fromArray($fusionCodeCollection));
     }
 
     /**

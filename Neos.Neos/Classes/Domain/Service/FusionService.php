@@ -16,9 +16,10 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Fusion\Core\FusionCode;
+use Neos\Fusion\Core\FusionCodeCollection;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
@@ -138,16 +139,17 @@ class FusionService
         $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
-        $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
+        $nodeTypeDefinitions = $this->generateNodeTypeDefinitions();
 
-        $mergedFusionCode = '';
-        $mergedFusionCode .= $this->generateNodeTypeDefinitions();
-        $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
-        $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
-        $mergedFusionCode .= $siteRootFusionCode;
-        $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes);
-
-        return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
+        return $this->fusionParser->parse(
+            FusionCodeCollection::fromArray(array_filter([
+                $nodeTypeDefinitions ? FusionCode::fromString($nodeTypeDefinitions) : null,
+                ...$this->prepareAutoIncludeFusion(),
+                ...array_map(fn (string $file) => FusionCode::fromFile($file), $this->prependFusionIncludes),
+                is_readable($siteRootFusionPathAndFilename) ? FusionCode::fromFile($siteRootFusionPathAndFilename) : null,
+                ...array_map(fn (string $file) => FusionCode::fromFile($file), $this->appendFusionIncludes),
+            ]))
+        );
     }
 
     /**
@@ -160,31 +162,21 @@ class FusionService
     }
 
     /**
-     * Reads the Fusion file from the given path and filename.
-     * If it doesn't exist, this function will just return an empty string.
-     *
-     * @param string $pathAndFilename Path and filename of the Fusion file
-     * @return string The content of the .fusion file, plus one chr(10) at the end
-     */
-    protected function readExternalFusionFile($pathAndFilename)
-    {
-        return (is_file($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
-    }
-
-    /**
      * Generate Fusion prototype definitions for all node types
      *
      * Only fully qualified node types (e.g. MyVendor.MyPackage:NodeType) will be considered.
      *
-     * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateNodeTypeDefinitions()
+    protected function generateNodeTypeDefinitions(): ?string
     {
         $code = '';
         /** @var NodeType $nodeType */
         foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
             $code .= $this->generateFusionForNodeType($nodeType);
+        }
+        if (trim($code) === '') {
+            return null;
         }
         return $code;
     }
@@ -216,39 +208,20 @@ class FusionService
     }
 
     /**
-     * Concatenate the given Fusion resources with include statements
-     *
-     * @param array $fusionResources An array of Fusion resource URIs
-     * @return string A string of include statements for all resources
-     */
-    protected function getFusionIncludes(array $fusionResources)
-    {
-        $code = chr(10);
-        foreach ($fusionResources as $fusionResource) {
-            $code .= 'include: ' . (string)$fusionResource . chr(10);
-        }
-        $code .= chr(10);
-        return $code;
-    }
-
-    /**
      * Prepares an array with Fusion paths to auto include before the Site Fusion.
-     *
-     * @return array
      */
-    protected function prepareAutoIncludeFusion()
+    protected function prepareAutoIncludeFusion(): FusionCodeCollection
     {
         $autoIncludeFusion = [];
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);
                 if (is_file($autoIncludeFusionFile)) {
-                    $autoIncludeFusion[] = $autoIncludeFusionFile;
+                    $autoIncludeFusion[] = FusionCode::fromFile($autoIncludeFusionFile);
                 }
             }
         }
-
-        return $autoIncludeFusion;
+        return FusionCodeCollection::fromArray($autoIncludeFusion);
     }
 
     /**
