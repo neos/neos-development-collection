@@ -66,7 +66,7 @@ class Parser
             $fusionCodeCollection = new FusionCodeCollection(
                 $contextPathAndFilename === null
                     ? FusionCode::fromString($sourceCode)
-                    : FusionCode::fromDangerousDeprecatedLegacyArguments($sourceCode, $contextPathAndFilename)
+                    : FusionCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $contextPathAndFilename)
             );
         }
 
@@ -108,7 +108,7 @@ class Parser
 
                 $transpiledFusion = $dslObject->transpile($code);
 
-                $fusionFile = ObjectTreeParser::parse('value = ' . $transpiledFusion);
+                $fusionFile = ObjectTreeParser::parse(FusionCode::fromString('value = ' . $transpiledFusion));
 
                 $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
 
@@ -134,7 +134,7 @@ class Parser
     {
         return $this->parserCache->cacheForFusionFile(
             $fusionCode->getContextPathAndFilename(),
-            fn () => ObjectTreeParser::parse($fusionCode->getSourceCode(), $fusionCode->getContextPathAndFilename())
+            fn () => ObjectTreeParser::parse($fusionCode)
         );
     }
 }

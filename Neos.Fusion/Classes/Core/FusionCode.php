@@ -42,9 +42,9 @@ class FusionCode
     }
 
     /**
-     * @deprecated because of unexpected behaviour {@link https://github.com/neos/neos-development-collection/issues/3835}
+     * Watch out for unexpected behaviour {@link https://github.com/neos/neos-development-collection/issues/3835}
      */
-    public static function fromDangerousDeprecatedLegacyArguments(string $sourceCode, string $contextPathAndFilename): self
+    public static function fromDangerousPotentiallyDifferingSourceCodeAndContextPath(string $sourceCode, string $contextPathAndFilename): self
     {
         return new self($sourceCode, $contextPathAndFilename);
     }
