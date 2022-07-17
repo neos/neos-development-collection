@@ -15,7 +15,8 @@ body {
 
 #neos-raw-content-container {
   max-width: 1200px;
-  margin: 16px auto;
+  margin: 0 auto;
+  padding: 16px;
 }
 
 .neos-raw-content-node {
@@ -40,6 +41,31 @@ body {
   hyphens: auto;
 }
 
+@media screen and (-ms-high-contrast: active) {
+	.neos-raw-content-node {
+		border: 2px solid black;
+		box-shadow: none;
+	}
+
+	.neos-raw-content-node > header {
+		border-bottom: 2px solid black;
+		box-shadow: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.neos-raw-content-node {
+		border: 2px solid black;
+		box-shadow: none;
+	}
+
+	.neos-raw-content-node > header {
+		border-bottom: 2px solid black;
+		box-shadow: none;
+	}
+}
+
+
 .neos-raw-content-node > *:last-child {
   margin-bottom: 0;
 }
@@ -58,6 +84,12 @@ body {
   border-left: 5px solid #cdcdcd;
   padding: 16px;
   margin-bottom: 16px;
+}
+
+.neos-raw-content-properties > dd img {
+	width: 300px;
+	max-height: 50%;
+	object-fit: contain;
 }
 
 .neos-raw-content-properties > dd:last-child {
