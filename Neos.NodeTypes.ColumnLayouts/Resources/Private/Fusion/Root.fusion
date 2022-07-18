@@ -26,9 +26,9 @@ prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) < prototype(Neos.NodeTypes.Col
 
 prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
   renderer = afx`
-    <div style="display:grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column0').get(0)} /></div>
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column1').get(0)} /></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; grid-gap: 16px;">
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column0').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column1').get(0)} /></div>
     </div>
   `
 }
@@ -39,10 +39,10 @@ prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) < prototype(Neos.NodeTypes.C
 
 prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
   renderer = afx`
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 20px;">
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column0').get(0)} /></div>
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column1').get(0)} /></div>
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column2').get(0)} /></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 16px;">
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column0').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column1').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column2').get(0)} /></div>
     </div>
   `
 }
@@ -53,11 +53,11 @@ prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) < prototype(Neos.NodeTypes.Co
 
 prototype(Neos.NodeTypes.ColumnLayouts:FourColumn.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
   renderer = afx`
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 20px;">
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column0').get(0)} /></div>
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column1').get(0)} /></div>
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column2').get(0)} /></div>
-      <div><Neos.Neos:RawContent.Node node={q(props.node).children('column3').get(0)} /></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 16px;">
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column0').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column1').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column2').get(0)} /></div>
+      <div><Neos.Neos:RawContent.Node @context.node={q(node).children('column3').get(0)} /></div>
     </div>
   `
 }
