@@ -413,7 +413,7 @@ class AssetController extends ActionController
             // The variantsAction fetches the variants the same way, so having an originalAsset that is an instance of VariantSupportInterface should be sufficient
             if ($assetProxy->getLocalAssetIdentifier() !== null) {
                 $asset = $this->persistenceManager->getObjectByIdentifier($assetProxy->getLocalAssetIdentifier(), Asset::class);
-                            /** @var VariantSupportInterface $originalAsset */
+                /** @var VariantSupportInterface $originalAsset */
                 $originalAsset = ($asset instanceof AssetVariantInterface ? $asset->getOriginalAsset() : $asset);
             }
 
