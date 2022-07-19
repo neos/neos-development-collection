@@ -18,7 +18,7 @@ prototype(Neos.Neos:RawContent.NodeProperty) < prototype(Neos.Fusion:Component) 
         <Neos.Neos:RawContent.NodePropertyName name={propertyConfiguration.ui.label || propertyName}/>
       </dt>
       <dd>
-        <Neos.Neos:ImageTag asset={q(node).property(propertyName)} maximumHeight={200} maximumWidth={200}/>
+        <Neos.Neos:ImageTag asset={q(node).property(propertyName)} preset="Neos.Media.Browser:Thumbnail" />
       </dd>
     </Neos.Fusion:Fragment>
   `
