@@ -60,18 +60,23 @@ class ImageHandlerService
     }
 
     /**
-     * @return string
+     * Returns unavailable drivers.
+     *
+     * @return array
      */
-    public function checkIfVipsIsAvailable(): string
+    public function checkDriverAvailability(): array
     {
-        if (
-            array_key_exists('Vips', $this->supportedImageHandlers) &&
-            \extension_loaded('vips') &&
-            !class_exists("Imagine\\Vips\\Imagine")) {
-            return 'It is also possible to use the vips php module. But right now its not available because you havent the rokka/imagine-vips package installed';
+        $unavailableDrivers = [];
+        foreach ($this->supportedImageHandlers as $driverName => $description) {
+            if (\extension_loaded(strtolower($driverName))) {
+                $className = 'Imagine\\' . ucfirst($driverName) . '\\Imagine';
+                if (!class_exists($className)) {
+                    $unavailableDrivers[] = $driverName;
+                }
+            }
         }
 
-        return '';
+        return $unavailableDrivers;
     }
 
     /**
@@ -80,8 +85,7 @@ class ImageHandlerService
      */
     protected function findUnsupportedImageFormats(string $driver): array
     {
-        $this->imagineFactory->injectSettings(['driver' => ucfirst($driver)]);
-        $imagine = $this->imagineFactory->create();
+        $imagine = $this->getImagineInstance($driver);
         $unsupportedFormats = [];
 
         foreach ($this->requiredImageFormats as $imageFormat => $testFile) {
@@ -92,5 +96,16 @@ class ImageHandlerService
             }
         }
         return $unsupportedFormats;
+    }
+
+    /**
+     * @param string $driver
+     * @return \Imagine\Image\ImagineInterface
+     * @throws \ReflectionException
+     */
+    protected function getImagineInstance(string $driver): \Imagine\Image\ImagineInterface
+    {
+        $this->imagineFactory->injectSettings(['driver' => ucfirst($driver)]);
+        return $this->imagineFactory->create();
     }
 }

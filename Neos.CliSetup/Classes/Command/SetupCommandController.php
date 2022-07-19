@@ -151,11 +151,11 @@ class SetupCommandController extends CommandController
      */
     public function imageHandlerCommand(string $driver = null): void
     {
-        $vipsAvailableMessage = $this->imageHandlerService->checkIfVipsIsAvailable();
+        $unavailableDrivers= $this->imageHandlerService->checkDriverAvailability();
         $availableImageHandlers = $this->imageHandlerService->getAvailableImageHandlers();
 
-        if ($vipsAvailableMessage !== '') {
-            $this->outputLine($vipsAvailableMessage);
+        if (count($unavailableDrivers) > 0) {
+            $this->outputLine(sprintf('List of loaded but unavailable Drivers: <info>%s</info>', implode(', ', $unavailableDrivers )));
         }
 
         if (count($availableImageHandlers) == 0) {
