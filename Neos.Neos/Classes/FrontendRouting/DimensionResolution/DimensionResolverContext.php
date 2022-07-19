@@ -2,8 +2,6 @@
 declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Annotations as Flow;
@@ -17,15 +15,16 @@ use Neos\Flow\Annotations as Flow;
 final class DimensionResolverContext
 {
     private string $uriPath;
-    private string $remainingUriPath;
+    private string $remainingUriPath = '';
     private RouteParameters $routeParameters;
-    private array $dimensionSpacePointCoordinates = [];
+    private DimensionSpacePoint $resolvedDimensionSpacePoint;
 
     private function __construct(string $uriPath, RouteParameters $routeParameters)
     {
         $this->uriPath = $uriPath;
         $this->remainingUriPath = $uriPath;
         $this->routeParameters = $routeParameters;
+        $this->resolvedDimensionSpacePoint = DimensionSpacePoint::fromArray([]);
     }
 
     public static function fromUriPathAndRouteParameters(string $uriPath, RouteParameters $routeParameters): self
@@ -33,13 +32,16 @@ final class DimensionResolverContext
         return new self($uriPath, $routeParameters);
     }
 
-    // .... -> extra helper method.
-    public function addDimensionSpacePointCoordinate(ContentDimensionIdentifier $dimensionIdentifier, ContentDimensionValue $dimensionValue): self
+    public function withAddedDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePointToAdd)
     {
-        $dimensionSpacePointCoordinates = $this->dimensionSpacePointCoordinates;
-        $dimensionSpacePointCoordinates[$dimensionIdentifier->identifier] = $dimensionValue->value;
         $newInstance = clone $this;
-        $newInstance->dimensionSpacePointCoordinates = $dimensionSpacePointCoordinates;
+
+        $coordinatesSoFar = $this->resolvedDimensionSpacePoint->coordinates;
+        foreach ($dimensionSpacePointToAdd->coordinates as $dimensionName => $dimensionValue) {
+            $coordinatesSoFar[$dimensionName] = $dimensionValue;
+        }
+
+        $newInstance->resolvedDimensionSpacePoint = DimensionSpacePoint::fromArray($coordinatesSoFar);
         return $newInstance;
     }
 
@@ -65,9 +67,9 @@ final class DimensionResolverContext
         return $this->remainingUriPath;
     }
 
-    public function dimensionSpacePoint(): DimensionSpacePoint
+    public function resolvedDimensionSpacePoint(): DimensionSpacePoint
     {
-        // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
-        return DimensionSpacePoint::fromArray($this->dimensionSpacePointCoordinates);
+        return $this->resolvedDimensionSpacePoint;
     }
+
 }

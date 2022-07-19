@@ -18,6 +18,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
@@ -183,11 +184,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         // TODO }
 
         $dimensionResolvingResult = $this->delegatingResolver->resolveDimensionSpacePoint(DimensionResolverContext::fromUriPathAndRouteParameters($requestPath, $parameters));
-        // TODO
-        //$dimensionSpacePoint = $dimensionResolvingResult->completeDimensionSpacePoint();
-        $dimensionSpacePoint = $dimensionResolvingResult->dimensionSpacePoint();
+        $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint();
         // TODO REMOVE?? $dimensionSpacePointCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($dimensionSpacePoint);
         // TODO Validate for full context
+        // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
 
         // TODO: more clever logic here??
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
@@ -220,12 +220,14 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
         }
-        if (!$parameters->has('requestUriHost')) {
-            return false;
-        }
+        // TODO!!!
+        //if (!$parameters->has('requestUriHost')) {
+        //    return false;
+        //}
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
+        // for cross-CR links: NodeAddressInContentRepository as value object
         if (!$nodeAddress instanceof NodeAddress) {
             return false;
         }
@@ -248,8 +250,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
      */
-    private function resolveNodeAddress(NodeAddress $nodeAddress, SiteDetectionResult $siteDetectionResult): ResolveResult
+    private function resolveNodeAddress(NodeAddressInCr $nodeAddress, SiteDetectionResult $siteDetectionResult): ResolveResult
     {
+        // SiteDetectionResult == CURRENT
+
+
         $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateIdentifier,
             $nodeAddress->dimensionSpacePoint->hash
@@ -268,7 +273,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
 
-        $uriConstraints = $this->delegatingResolver->resolveDimensionUriConstraints(UriConstraints::create(), $nodeAddress->dimensionSpacePoint, $siteDetectionResult);
 
         if (!$nodeInfo->getSiteNodeName()->equals($siteDetectionResult->siteIdentifier->asNodeName())) {
             /** @var Site $site */
@@ -280,6 +284,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
                 }
             }
         }
+
+
+
+        $uriConstraints = $this->delegatingResolver->resolveDimensionUriConstraints(UriConstraints::create(), $nodeAddress->dimensionSpacePoint, $siteDetectionResult);
+
+
 
         if (!empty($this->options['uriSuffix']) && $nodeInfo->hasUriPath()) {
             $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriSuffix']);

@@ -51,6 +51,7 @@ final class DelegatingResolver implements DimensionResolverInterface
         return $factory->create($siteDetectionResult->contentRepositoryIdentifier, $resolverOptions)->resolveDimensionSpacePoint($context);
     }
 
+    // ZIEL SITE MUSS HIER REIN!!!! -> diese Config ist entscheidend.
     public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints
     {
         // TODO: SiteDetectionResult parameter?? // TODO: Naming: $currentSite !== $siteDetectionResult. What is better?

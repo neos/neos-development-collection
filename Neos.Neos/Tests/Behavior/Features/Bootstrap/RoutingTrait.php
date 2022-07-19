@@ -126,9 +126,12 @@ trait RoutingTrait
         $this->routingTraitSiteConfigurationPostLoadHook = new class($config) {
             public function __construct(
                 private readonly array $config
-            ) {
+            )
+            {
             }
-            public function postLoad(LifecycleEventArgs $lifecycleEventArgs)  {
+
+            public function postLoad(LifecycleEventArgs $lifecycleEventArgs)
+            {
                 $object = $lifecycleEventArgs->getObject();
                 if ($object instanceof Site) {
                     ObjectAccess::setProperty($object, 'sitesConfiguration', $this->config['Neos']['Neos']['sites'], true);
@@ -309,7 +312,7 @@ trait RoutingTrait
     }
 
 
-    private DimensionSpacePoint $dimensionResolverResolvedDimension;
+    private DimensionResolverContext $dimensionResolverContext;
 
     /**
      * @When I invoke the Dimension Resolver :factoryClassName with options:
@@ -326,16 +329,30 @@ trait RoutingTrait
 
         $dimensionResolverContext = DimensionResolverContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
         $dimensionResolverContext = $dimensionResolver->resolveDimensionSpacePoint($dimensionResolverContext);
-        $this->dimensionResolverResolvedDimension = $dimensionResolverContext->dimensionSpacePoint();
+        $this->dimensionResolverContext = $dimensionResolverContext;
     }
 
     /**
-     * @Then the resolved dimension should be :dimensionSpacePoint
+     * @When I invoke the Dimension Resolver :factoryClassName with options and exceptions are caught:
      */
-    public function theResolvedDimensionShouldBe($dimensionSpacePointString)
+    public function iInvokeTheDimensionResolverWithOptionsAndExceptionsAreCaught(string $factoryClassName, PyStringNode $resolverOptionsYaml)
+    {
+        try {
+            $this->iInvokeTheDimensionResolverWithOptions($factoryClassName, $resolverOptionsYaml);
+        } catch (\Exception $e) {
+            $this->lastCommandException = $e;
+        }
+    }
+
+    /**
+     * @Then the resolved dimension should be :dimensionSpacePoint and the remaining URI Path should be :remainingUriPathString
+     */
+    public function theResolvedDimensionShouldBe($dimensionSpacePointString, $remainingUriPathString)
     {
         $expected = DimensionSpacePoint::fromJsonString($dimensionSpacePointString);
-        $actual = $this->dimensionResolverResolvedDimension;
+        $actual = $this->dimensionResolverContext->resolvedDimensionSpacePoint();
         Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . json_encode($actual->jsonSerialize()));
+
+        Assert::assertEquals($remainingUriPathString, $this->dimensionResolverContext->remainingUriPath(), 'Remaining URI path does not match');
     }
 }
