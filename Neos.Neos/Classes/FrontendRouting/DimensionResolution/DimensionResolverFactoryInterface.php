@@ -5,6 +5,9 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 
 /**
+ * API Contract for creating a {@see DimensionResolverInterface} from Settings (usually
+ * `Neos.Neos.sites.*.dimensionResolver.factoryClassName` and  `Neos.Neos.sites.*.dimensionResolver.options`).
+ *
  * See {@see DimensionResolverInterface} for documentation.
  *
  * @api

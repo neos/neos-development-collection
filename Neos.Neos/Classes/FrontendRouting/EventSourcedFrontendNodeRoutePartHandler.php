@@ -20,6 +20,7 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
@@ -37,6 +38,7 @@ use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinker;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
@@ -145,12 +147,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
-
-    /**
-     * @Flow\Inject
      * @var DomainRepository
      */
     protected $domainRepository;
@@ -168,6 +164,14 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     protected $delegatingResolver;
 
     /**
+     * @Flow\Inject
+     * @var CrossSiteLinker
+     */
+    protected $crossSiteLinker;
+
+    /**
+     * Incoming URLs
+     *
      * @param mixed $requestPath
      * @param RouteParameters $parameters
      * @return bool|MatchResult
@@ -179,26 +183,19 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             return false;
         }
 
-        //if (!$parameters->has('dimensionSpacePointCacheEntryIdentifier') || !$parameters->has('requestUriHost')) {
-        //    return false;
-        // TODO }
+        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath);
 
         $dimensionResolvingResult = $this->delegatingResolver->resolveDimensionSpacePoint(DimensionResolverContext::fromUriPathAndRouteParameters($requestPath, $parameters));
-        $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint();
-        // TODO REMOVE?? $dimensionSpacePointCacheEntryIdentifier = DimensionSpacePointCacheEntryIdentifier::fromDimensionSpacePoint($dimensionSpacePoint);
+        $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint;
         // TODO Validate for full context
         // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
+        // if incomplete -> no match + log
 
-        // TODO: more clever logic here??
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
-
-        /** @var int $uriPathSegmentOffset */
-        $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
-        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSegmentOffset);
 
         try {
             $matchResult = $this->matchUriPath(
-                $requestPath,
+                $dimensionResolvingResult->remainingUriPath,
                 $dimensionSpacePoint,
                 $siteDetectionResult
             );
@@ -207,11 +204,40 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             // (and other routes could still handle this).
             return false;
         }
+
         $requestPath = $remainingRequestPath;
+
         return $matchResult;
     }
 
+
     /**
+     * @param string $uriPath
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param string $host
+     * @return MatchResult
+     * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
+     */
+    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $siteDetectionResult): MatchResult
+    {
+        $uriPath = trim($uriPath, '/');
+        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
+            $siteDetectionResult->siteIdentifier->asNodeName(),
+            $uriPath,
+            $dimensionSpacePoint->hash
+        );
+        $nodeAddress = new NodeAddress(
+            $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
+            $dimensionSpacePoint,
+            $nodeInfo->getNodeAggregateIdentifier(),
+            WorkspaceName::forLive()
+        );
+        return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
+    }
+
+    /**
+     * Outgoing URLs (link generation)
+     *
      * @param array<string,mixed> &$routeValues
      * @throws InvalidContentDimensionValueUriProcessorException
      */
@@ -224,16 +250,16 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         //if (!$parameters->has('requestUriHost')) {
         //    return false;
         //}
-        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
+        $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
-        // for cross-CR links: NodeAddressInContentRepository as value object
+        // TODO: for cross-CR links: NodeAddressInContentRepository as a new value object
         if (!$nodeAddress instanceof NodeAddress) {
             return false;
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $siteDetectionResult);
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -245,16 +271,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @param NodeAddress $nodeAddress
-     * @param SiteDetectionResult $siteDetectionResult
+     * @param SiteDetectionResult $currentRequestSiteDetectionResult
      * @return ResolveResult
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
      */
-    private function resolveNodeAddress(NodeAddressInCr $nodeAddress, SiteDetectionResult $siteDetectionResult): ResolveResult
+    private function resolveNodeAddress(NodeAddress $nodeAddress, SiteDetectionResult $currentRequestSiteDetectionResult): ResolveResult
     {
-        // SiteDetectionResult == CURRENT
-
-
         $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateIdentifier,
             $nodeAddress->dimensionSpacePoint->hash
@@ -273,23 +296,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
 
-
-        if (!$nodeInfo->getSiteNodeName()->equals($siteDetectionResult->siteIdentifier->asNodeName())) {
-            /** @var Site $site */
-            // TODO: WHERE TO MOVE THIS LOGIC??
-            foreach ($this->siteRepository->findOnline() as $site) {
-                if ($site->getNodeName() === (string)$nodeInfo->getSiteNodeName()) {
-                    $uriConstraints = $this->applyDomainToUriConstraints($uriConstraints, $site->getPrimaryDomain());
-                    break;
-                }
-            }
-        }
-
-
-
-        $uriConstraints = $this->delegatingResolver->resolveDimensionUriConstraints(UriConstraints::create(), $nodeAddress->dimensionSpacePoint, $siteDetectionResult);
-
-
+        $uriConstraints = $this->crossSiteLinker->createCrossSiteLink($nodeInfo, $currentRequestSiteDetectionResult);
+        $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints($nodeAddress->dimensionSpacePoint, SiteIdentifier::fromNodeName($nodeInfo->getSiteNodeName()), $uriConstraints);
 
         if (!empty($this->options['uriSuffix']) && $nodeInfo->hasUriPath()) {
             $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriSuffix']);
@@ -298,34 +306,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
 
-    /**
-     * @param string $uriPath
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param string $host
-     * @return MatchResult
-     * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
-     */
-    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $siteDetectionResult): MatchResult
-    {
-        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
-            $siteDetectionResult->siteIdentifier->asNodeName(),
-            $uriPath,
-            $dimensionSpacePoint->hash
-        );
-        $nodeAddress = new NodeAddress(
-            $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
-            $dimensionSpacePoint,
-            $nodeInfo->getNodeAggregateIdentifier(),
-            WorkspaceName::forLive()
-        );
-        return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
-    }
 
-
-    private function truncateRequestPathAndReturnRemainder(string &$requestPath, int $uriPathSegmentOffset): string
+    // TODO
+    private function truncateRequestPathAndReturnRemainder(string &$requestPath): string
     {
-        $uriPathSegments = array_slice(explode('/', $requestPath), $uriPathSegmentOffset);
-        $requestPath = implode('/', $uriPathSegments);
         if (!empty($this->options['uriSuffix'])) {
             $suffixPosition = strpos($requestPath, $this->options['uriSuffix']);
             if ($suffixPosition === false) {
@@ -370,21 +354,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         return new ResolveResult($uri->getPath(), $uriConstraints);
     }
 
-    private function applyDomainToUriConstraints(UriConstraints $uriConstraints, ?Domain $domain): UriConstraints
-    {
-        if ($domain === null) {
-            return $uriConstraints;
-        }
-        $uriConstraints = $uriConstraints->withHost($domain->getHostname());
-        if (!empty($domain->getScheme())) {
-            $uriConstraints = $uriConstraints->withScheme($domain->getScheme());
-        }
-        if (!empty($domain->getPort())) {
-            $uriConstraints = $uriConstraints->withPort($domain->getPort());
-        }
-        return $uriConstraints;
-    }
-
+    // TODO: STILL NEEDED???
     public function setSplitString($splitString): void
     {
         $this->splitString = $splitString;

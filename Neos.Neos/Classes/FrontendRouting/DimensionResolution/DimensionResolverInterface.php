@@ -4,6 +4,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\CompositeResolver;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -30,7 +31,7 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  * through which the current URL and route parameters can be received; and via {@see SiteDetectionResult},
  * also the current site / content repository / hostname are accessible.
  *
- * The {@see DimensionResolverContext::addDimensionSpacePointCoordinate()} method should be called with
+ * The {@see DimensionResolverContext::withAddedDimensionSpacePoint()} method should be called with
  * the resolving result, potentially multiple times. NOTE: {@see DimensionResolverContext} is immutable,
  * so calling a method like the above returns a *new instance* which you need to properly return to the
  * caller.
@@ -84,10 +85,20 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 interface DimensionResolverInterface
 {
     /**
+     * TODO Incoming fromRequestToDimensionSpacePoint
+     *
      * @param DimensionResolverContext $context
      * @return DimensionResolverContext Note: This can contain an "incomplete" dimension space point... TODO
      */
     public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext;
 
-    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints;
+    /**
+     * Called for each generated URL, to adjust (and return) the passed-in UriConstraints depending on the given DimensionSpacePoint.
+     *
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param SiteIdentifier $targetSiteIdentifier
+     * @param UriConstraints $uriConstraints the pre-applied uriConstraints -> modify and return them.
+     * @return UriConstraints
+     */
+    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints;
 }

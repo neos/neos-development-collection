@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver;
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 
@@ -13,7 +14,7 @@ final class Segment
 {
     private function __construct(
         public readonly ContentDimensionIdentifier $dimensionIdentifier,
-        public readonly string $defaultDimensionValue,
+        public readonly ContentDimensionValue $defaultDimensionValue,
         public readonly SegmentMapping $uriPathSegmentMapping,
     )
     {
@@ -21,7 +22,7 @@ final class Segment
 
     public static function create(
         ContentDimensionIdentifier $dimensionIdentifier,
-        string $defaultDimensionValue,
+        ContentDimensionValue $defaultDimensionValue,
         SegmentMapping $uriPathSegmentMapping,
     ): self
     {

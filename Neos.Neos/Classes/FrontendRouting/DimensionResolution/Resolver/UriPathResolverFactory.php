@@ -23,8 +23,6 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separ
 /**
  * TODO
  *
- * See {@see DimensionResolverInterface} for detailed documentation.
- *
  * @api
  */
 final class UriPathResolverFactory implements DimensionResolverFactoryInterface

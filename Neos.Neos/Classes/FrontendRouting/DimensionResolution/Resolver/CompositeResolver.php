@@ -15,9 +15,9 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
  * Helper class implementing a Resolver Chain.
@@ -44,13 +44,18 @@ final class CompositeResolver implements DimensionResolverInterface
     public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
     {
         foreach ($this->resolvers as $resolver) {
+            assert($resolver instanceof DimensionResolverInterface);
             $context = $resolver->resolveDimensionSpacePoint($context);
         }
         return $context;
     }
 
-    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints
+    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
     {
-        // TODO: Reihenfolge umdrehen??
+        foreach (array_reverse($this->resolvers) as $resolver) {
+            assert($resolver instanceof DimensionResolverInterface);
+            $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints($dimensionSpacePoint, $targetSiteIdentifier, $uriConstraints);
+        }
+        return $uriConstraints;
     }
 }

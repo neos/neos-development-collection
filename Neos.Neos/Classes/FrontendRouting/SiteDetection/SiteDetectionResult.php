@@ -30,7 +30,7 @@ final class SiteDetectionResult
     private function __construct(
         // TODO: RequestUriHost als ValueObject?
         public readonly string $requestUriHost,
-        public readonly SiteIdentifier              $siteIdentifier,
+        public readonly SiteIdentifier $siteIdentifier,
         public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
     )
     {
@@ -38,7 +38,7 @@ final class SiteDetectionResult
 
     public static function create(
         UriInterface $requestUri,
-        SiteIdentifier              $siteIdentifier,
+        SiteIdentifier $siteIdentifier,
         ContentRepositoryIdentifier $contentRepositoryIdentifier
     ): self
     {

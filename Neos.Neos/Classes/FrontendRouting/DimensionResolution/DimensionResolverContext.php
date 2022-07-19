@@ -9,67 +9,40 @@ use Neos\Flow\Annotations as Flow;
 /**
  * See {@see DimensionResolverInterface} for documentation.
  *
+ * TODO: RequestToDimensionSpacePointContext
+ *
  * @Flow\Proxy(false)
  * @api
  */
 final class DimensionResolverContext
 {
-    private string $uriPath;
-    private string $remainingUriPath = '';
-    private RouteParameters $routeParameters;
-    private DimensionSpacePoint $resolvedDimensionSpacePoint;
 
-    private function __construct(string $uriPath, RouteParameters $routeParameters)
+    private function __construct(
+        public readonly string $initialUriPath,
+        public readonly RouteParameters $routeParameters,
+        public readonly string $remainingUriPath,
+        public readonly DimensionSpacePoint $resolvedDimensionSpacePoint,
+    )
     {
-        $this->uriPath = $uriPath;
-        $this->remainingUriPath = $uriPath;
-        $this->routeParameters = $routeParameters;
-        $this->resolvedDimensionSpacePoint = DimensionSpacePoint::fromArray([]);
     }
 
-    public static function fromUriPathAndRouteParameters(string $uriPath, RouteParameters $routeParameters): self
+    public static function fromUriPathAndRouteParameters(string $initialUriPath, RouteParameters $routeParameters): self
     {
-        return new self($uriPath, $routeParameters);
+        return new self($initialUriPath, $routeParameters, $initialUriPath, DimensionSpacePoint::fromArray([]));
     }
 
-    public function withAddedDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePointToAdd)
+    public function withAddedDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePointToAdd): self
     {
-        $newInstance = clone $this;
-
         $coordinatesSoFar = $this->resolvedDimensionSpacePoint->coordinates;
         foreach ($dimensionSpacePointToAdd->coordinates as $dimensionName => $dimensionValue) {
             $coordinatesSoFar[$dimensionName] = $dimensionValue;
         }
 
-        $newInstance->resolvedDimensionSpacePoint = DimensionSpacePoint::fromArray($coordinatesSoFar);
-        return $newInstance;
+        return new self($this->initialUriPath, $this->routeParameters, $this->remainingUriPath, DimensionSpacePoint::fromArray($coordinatesSoFar));
     }
 
     public function withRemainingUriPath(string $remainingUriPath): self
     {
-        $newInstance = clone $this;
-        $newInstance->remainingUriPath = $remainingUriPath;
-        return $newInstance;
+        return new self($this->initialUriPath, $this->routeParameters, $remainingUriPath, $this->resolvedDimensionSpacePoint);
     }
-
-    public function routeParameters(): RouteParameters
-    {
-        return $this->routeParameters;
-    }
-
-    public function uriPath(): string
-    {
-        return $this->uriPath;
-    }
-
-    public function remainingUriPath(): string
-    {
-        return $this->remainingUriPath;
-    }
-
-    public function resolvedDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->resolvedDimensionSpacePoint;
-    }
-
 }

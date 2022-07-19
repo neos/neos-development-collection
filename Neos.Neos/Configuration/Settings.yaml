@@ -62,6 +62,12 @@ Neos:
       # The only limitation is that all segments must be unique across all dimenions.
       supportEmptySegmentForDimensions: true
 
+    sites:
+      '*':
+        contentRepository: default
+        dimensionResolver:
+          factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
+
     nodeTypes:
       groups:
         general:

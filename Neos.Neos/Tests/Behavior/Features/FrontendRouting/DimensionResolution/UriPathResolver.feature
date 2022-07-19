@@ -237,14 +237,12 @@ Feature: UriPathResolver works as expected
         dimensionIdentifier: language
         defaultDimensionValue: de
         dimensionValueMapping:
-          # empty for "de"
           de: 'deu'
           en: uk
       -
         dimensionIdentifier: target_group
         defaultDimensionValue: normal
         dimensionValueMapping:
-          # empty for "de"
           normal: 'no'
           simple: 'si'
 
@@ -272,7 +270,6 @@ Feature: UriPathResolver works as expected
         dimensionIdentifier: target_group
         defaultDimensionValue: normal
         dimensionValueMapping:
-          # empty for "de"
           normal: ''
           simple: 'si'
 
@@ -289,6 +286,7 @@ Feature: UriPathResolver works as expected
       | /uk/test    | {"language": "en", "target_group": "normal"} | /test                    |
       | /uk_si      | {"language": "en", "target_group": "simple"} | /                        |
       | /uk_si/test | {"language": "en", "target_group": "simple"} | /test                    |
+    # TODO /uk_ do NOT RESOLVE
 
   Scenario: Error: two uri path segment identifiers mapping to different dimensions
     Given I have the following content dimensions:

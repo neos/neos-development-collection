@@ -22,6 +22,11 @@ final class SegmentMapping implements \IteratorAggregate, \Countable
         $this->elements = $elements;
     }
 
+    public static function create(SegmentMappingElement...$elements): self
+    {
+        return new self(...$elements);
+    }
+
     public static function fromArray(array $dimensionValueMapping): self
     {
         $elements = [];

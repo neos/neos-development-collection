@@ -13,35 +13,57 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\AutoUriPathResolverConfigurationException;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMapping;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
 /**
  *
- * de/b2b
- * de_b2b
- * de___b2b
- *
- * b2b
- *
- * _b2b
- *
- * /de_b2b/foo
- *
- * URI path segment based dimension value resolver
  *
  * @api
  */
 final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterface
 {
+    public function __construct(
+        private readonly ContentDimensionSourceInterface $contentDimensionSource
+    ) {
+    }
 
     public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface
     {
-        // TODO: Only single dimension, otherwise exception.
+        $contentDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
+        if (count($contentDimensions) >= 2) {
+            throw new AutoUriPathResolverConfigurationException('The AutoUriPathResolverFactory is only meant for single-dimension use cases. For everything more advanced, please manually configure UriPathResolver in Settings.yaml.');
+        }
 
-        //$this->contentRepositoryManaager->byId($contentRepositoryIdentifier)->getConfiguredDimensions();
-        //$segments = // irgendein code.
-        //return new UriPathResolver($contentRepositoryIdentifier, $segmenrts, Separator::fromString($dimensionResolverOptions['separator']));
+        $contentDimension = reset($contentDimensions);
+        assert($contentDimension instanceof ContentDimension);
+        $mapping = [];
+        foreach ($contentDimension->values as $value) {
+            // we'll take the Dimension Value as Uri Path Segment value.
+            $mapping[] = SegmentMappingElement::create($value, $value->value);
+        }
+
+        $segments = Segments::create(
+            Segment::create(
+                $contentDimension->identifier,
+                $contentDimension->defaultValue,
+                SegmentMapping::create(...$mapping)
+            )
+        );
+
+        return UriPathResolver::create(
+            $segments,
+            Separator::fromString('-'),
+            $this->contentDimensionSource
+        );
     }
 }

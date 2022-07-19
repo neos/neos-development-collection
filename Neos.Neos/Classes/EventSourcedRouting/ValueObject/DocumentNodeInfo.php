@@ -178,6 +178,8 @@ final class DocumentNodeInfo
         return RouteTags::createFromArray($nodeAggregateIdentifiers);
     }
 
+    // TODO: maybe return SiteIdentifier here?
+    // TODO: name clash "Site Identifier" and "SiteNodeName"?
     public function getSiteNodeName(): NodeName
     {
         return NodeName::fromString($this->source['sitenodename']);

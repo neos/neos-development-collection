@@ -26,6 +26,11 @@ final class Segments
     }
 
 
+    public static function create(Segment...$segments): self
+    {
+        return new self(...$segments);
+    }
+
     public static function fromArray(array $arr): self
     {
         // TODO:
@@ -46,7 +51,7 @@ final class Segments
     {
         $coordinates = [];
         foreach ($this->segments as $segment) {
-            $coordinates[$segment->dimensionIdentifier->identifier] = $segment->defaultDimensionValue;
+            $coordinates[$segment->dimensionIdentifier->identifier] = $segment->defaultDimensionValue->value;
         }
         return DimensionSpacePoint::fromArray($coordinates);
     }

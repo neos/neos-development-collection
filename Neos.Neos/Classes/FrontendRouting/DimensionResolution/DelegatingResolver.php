@@ -13,10 +13,13 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
  * source code.
  */
 
+use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -39,7 +42,7 @@ final class DelegatingResolver implements DimensionResolverInterface
 
     public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
     {
-        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($context->routeParameters());
+        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($context->routeParameters);
         $site = $this->siteRepository->findByIdentifier($siteDetectionResult->siteIdentifier);
         if ($site === null) {
             throw new \RuntimeException('Did not find site object for identifier ' . $siteDetectionResult->siteIdentifier->getValue());
@@ -51,20 +54,20 @@ final class DelegatingResolver implements DimensionResolverInterface
         return $factory->create($siteDetectionResult->contentRepositoryIdentifier, $resolverOptions)->resolveDimensionSpacePoint($context);
     }
 
-    // ZIEL SITE MUSS HIER REIN!!!! -> diese Config ist entscheidend.
-    public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $currentSite): UriConstraints
+    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
     {
-        // TODO: SiteDetectionResult parameter?? // TODO: Naming: $currentSite !== $siteDetectionResult. What is better?
-        $site = $this->siteRepository->findByIdentifier($currentSite->siteIdentifier);
+        $targetSite = $this->siteRepository->findByIdentifier($targetSiteIdentifier);
 
-        if ($site === null) {
-            throw new \RuntimeException('Did not find site object for identifier ' . $currentSite->siteIdentifier->getValue());
+        if ($targetSite === null) {
+            throw new \RuntimeException('Did not find site object for identifier ' . $targetSiteIdentifier->getValue());
         }
-        $siteConfiguration = $site->getConfiguration();
+        $siteConfiguration = $targetSite->getConfiguration();
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($siteConfiguration['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository'));
+
         $factory = $this->objectManager->get($siteConfiguration['dimensionResolver']['factoryClassName'] ?? throw new \RuntimeException('No Dimension Resolver Factory configured at Neos.Neos.sites.*.dimensionResolver.factoryClassName'));
         assert($factory instanceof DimensionResolverFactoryInterface);
         $resolverOptions = $siteConfiguration['dimensionResolver']['options'] ?? [];
-        // TODO: should this be current site or the "other" site??
-        return $factory->create($currentSite->contentRepositoryIdentifier, $resolverOptions)->resolveDimensionUriConstraints($uriConstraints, $dimensionSpacePoint, $currentSite);
+
+        return $factory->create($contentRepositoryIdentifier, $resolverOptions)->fromDimensionSpacePointToUriConstraints($dimensionSpacePoint, $targetSiteIdentifier, $uriConstraints);
     }
 }

@@ -36,6 +36,11 @@ final class SiteIdentifier implements \Stringable, CacheAwareInterface
         return new self($site->getNodeName());
     }
 
+    public static function fromNodeName(NodeName $siteNodeName): self
+    {
+        return new self($siteNodeName->jsonSerialize());
+    }
+
     public static function fromString(string $siteNodeName): self
     {
         return new self($siteNodeName);
