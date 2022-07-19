@@ -47,6 +47,9 @@ class ImageHandlerService
         $availableImageHandlers = [];
         foreach ($this->supportedImageHandlers as $driverName => $description) {
             if (\extension_loaded(strtolower($driverName))) {
+                if ($driverName == "Vips" && !class_exists("Imagine\\Vips\\Imagine")) {
+                    continue;
+                }
                 $unsupportedFormats = $this->findUnsupportedImageFormats($driverName);
                 if (\count($unsupportedFormats) === 0) {
                     $availableImageHandlers[$driverName] = $description;
@@ -54,6 +57,21 @@ class ImageHandlerService
             }
         }
         return $availableImageHandlers;
+    }
+
+    /**
+     * @return string
+     */
+    public function checkIfVipsIsAvailable(): string
+    {
+        if (
+            array_key_exists('Vips', $this->supportedImageHandlers) &&
+            \extension_loaded('vips') &&
+            !class_exists("Imagine\\Vips\\Imagine")) {
+            return 'It is also possible to use the vips php module. But right now its not available because you havent the rokka/imagine-vips package installed';
+        }
+
+        return '';
     }
 
     /**

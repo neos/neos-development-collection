@@ -151,7 +151,12 @@ class SetupCommandController extends CommandController
      */
     public function imageHandlerCommand(string $driver = null): void
     {
+        $vipsAvailableMessage = $this->imageHandlerService->checkIfVipsIsAvailable();
         $availableImageHandlers = $this->imageHandlerService->getAvailableImageHandlers();
+
+        if ($vipsAvailableMessage !== '') {
+            $this->outputLine($vipsAvailableMessage);
+        }
 
         if (count($availableImageHandlers) == 0) {
             $this->outputLine('No supported image handler found.');
