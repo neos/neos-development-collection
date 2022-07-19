@@ -1,0 +1,28 @@
+prototype(Neos.Neos:RawContent.Document) < prototype(Neos.Fusion:Component) {
+
+  contentCollections = ${q(documentNode).children('[instanceof Neos.Neos:ContentCollection]').get()}
+
+  renderer = Neos.Neos:Page {
+    head {
+      stylesheets = afx`
+        <link rel="stylesheet" type="text/css" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css')}/>
+        <link rel="stylesheet" type="text/css" href={StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css')}/>
+      `
+    }
+
+    bodyTag.attributes.class = 'neos-raw-content-mode'
+    body >
+    body = afx`
+      <div id="neos-raw-content-container">
+        <div class="neos-raw-content-node">
+          <Neos.Neos:RawContent.NodeHeader node={documentNode}/>
+          <Neos.Neos:RawContent.NodeProperties node={documentNode}/>
+          <Neos.Fusion:Loop items={props.contentCollections} itemName="node">
+            <Neos.Neos:RawContent.Node/>
+          </Neos.Fusion:Loop>
+        </div>
+      </div>
+    `
+    body.@process.contentElementWrapping = Neos.Neos:ContentElementWrapping
+  }
+}

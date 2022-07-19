@@ -1,0 +1,12 @@
+prototype(Neos.Neos:RawContent.NodeChildren) < prototype(Neos.Fusion:Component) {
+
+  children = ${q(node).children().get()}
+
+  renderer = afx`
+    <div class="neos-raw-content-children" @if.hasContent={props.children}>
+      <Neos.Fusion:Loop items={props.children} itemName="node">
+        <Neos.Neos:RawContent.Node/>
+      </Neos.Fusion:Loop>
+    </div>
+  `
+}
