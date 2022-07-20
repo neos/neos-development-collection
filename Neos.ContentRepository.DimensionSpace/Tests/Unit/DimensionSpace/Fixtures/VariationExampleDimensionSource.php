@@ -45,7 +45,6 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
                     $dimensionAValue12->value => $dimensionAValue12,
                     $dimensionAValue111->value => $dimensionAValue111
                 ]),
-                $dimensionAValue1,
                 new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($dimensionAValue11, $dimensionAValue1),
                     new Dimension\ContentDimensionValueVariationEdge($dimensionAValue12, $dimensionAValue1),
@@ -60,7 +59,6 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
                     $dimensionBValue12->value => $dimensionBValue12,
                     $dimensionBValue111->value => $dimensionBValue111
                 ]),
-                $dimensionBValue1,
                 new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($dimensionBValue11, $dimensionBValue1),
                     new Dimension\ContentDimensionValueVariationEdge($dimensionBValue12, $dimensionBValue1),
