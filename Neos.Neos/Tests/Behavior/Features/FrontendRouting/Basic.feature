@@ -55,8 +55,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
         sites:
           '*':
             contentRepository: default
-            dimensionResolver:
-              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
     And The documenturipath projection is up to date
 

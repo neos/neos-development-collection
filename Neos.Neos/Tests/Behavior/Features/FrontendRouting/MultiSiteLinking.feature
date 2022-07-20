@@ -43,8 +43,9 @@ Feature: Linking between multiple websites
         sites:
           '*':
             contentRepository: default
-            dimensionResolver:
-              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
     And The documenturipath projection is up to date
 

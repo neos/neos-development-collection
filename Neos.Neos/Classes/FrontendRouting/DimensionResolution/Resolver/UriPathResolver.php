@@ -16,7 +16,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\Domain\Model\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
@@ -25,18 +25,12 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separ
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPathResolverConfigurationException;
 
 /**
- *
- * de/b2b
- * de_b2b
- * de___b2b
- *
- * b2b
- *
- * _b2b
- *
- * /de_b2b/foo
- *
  * URI path segment based dimension value resolver
+ *
+ * Reads the first part of the URL segment (`/SOMETHING/`) and extracts the correct dimension
+ * values from it. Supports multiple dimensions, such as "language" and "country".
+ *
+ * Each part of the first uri path is called a "segment" (once for each dimension).
  *
  * See {@see DimensionResolverInterface} for detailed documentation.
  */
@@ -76,12 +70,6 @@ final class UriPathResolver implements DimensionResolverInterface
             foreach ($segment->uriPathSegmentMapping as $mappingElement) {
                 if ($contentDimension->getValue($mappingElement->dimensionValue->value) === null) {
                     throw new UriPathResolverConfigurationException('Content Dimension Value "' . $mappingElement->dimensionValue->value . '" in dimension "' . $segment->dimensionIdentifier->identifier . '" does not exist.');
-                }
-
-                if ($mappingElement->uriPathSegmentValue === '') {
-                    if ($mappingElement->dimensionValue->value !== $segment->defaultDimensionValue) {
-                        throw new UriPathResolverConfigurationException('Empty URL Path Segment value is only allowed for the default dimension value "' . $segment->defaultDimensionValue . '" - but you configured it for dimension value "' . $mappingElement->dimensionValue->value . '"');
-                    }
                 }
 
                 if (str_contains($mappingElement->uriPathSegmentValue, $separator->value)) {
@@ -155,17 +143,14 @@ final class UriPathResolver implements DimensionResolverInterface
         } elseif (isset($this->uriPathToDimensionSpacePoint[''])) {
             // Fall-through empty match (if configured)
             $context = $context->withAddedDimensionSpacePoint($this->uriPathToDimensionSpacePoint['']);
-        } elseif (strlen($normalizedUriPath) === 0) {
-            // Special case "/"
-            $context = $context->withAddedDimensionSpacePoint($this->segments->defaultDimensionSpacePoint());
         }
 
         return $context;
     }
 
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
+    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
     {
-        // TODO $dimensionSpacePoint = self::reduceDimensionSpacePointToOnlyIncludedDimensions($dimensionSpacePoint);
+        $dimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($dimensionSpacePoint);
 
         if (isset($this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash])) {
             $uriPath = $this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash];
@@ -175,5 +160,14 @@ final class UriPathResolver implements DimensionResolverInterface
         }
 
         return $uriConstraints;
+    }
+
+    private function reduceDimensionSpacePointToConfiguredDimensions(DimensionSpacePoint $incoming)
+    {
+        $newCoordinates = [];
+        foreach ($this->segments->segments as $segment) {
+            $newCoordinates[$segment->dimensionIdentifier->identifier] = $incoming->getCoordinate($segment->dimensionIdentifier);
+        }
+        return DimensionSpacePoint::fromArray($newCoordinates);
     }
 }

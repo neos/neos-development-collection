@@ -6,7 +6,7 @@ namespace Neos\Neos\FrontendRouting\SiteDetection;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Model\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
@@ -56,7 +56,7 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
         assert($site instanceof Site);
 
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($site->getConfiguration()['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository'));
-        $siteDetectionResult = SiteDetectionResult::create($request->getUri(), SiteIdentifier::fromSite($site), $contentRepositoryIdentifier);
+        $siteDetectionResult = SiteDetectionResult::create($site->getNodeName(), $contentRepositoryIdentifier);
         return $handler->handle($siteDetectionResult->storeInRequest($request));
     }
 }

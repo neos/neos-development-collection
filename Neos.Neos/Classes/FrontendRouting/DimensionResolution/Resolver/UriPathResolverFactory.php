@@ -21,7 +21,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segme
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
 /**
- * TODO
+ * Factory for {@see UriPathResolver}.
  *
  * @api
  */

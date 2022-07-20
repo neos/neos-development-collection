@@ -21,6 +21,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -178,11 +179,9 @@ final class DocumentNodeInfo
         return RouteTags::createFromArray($nodeAggregateIdentifiers);
     }
 
-    // TODO: maybe return SiteIdentifier here?
-    // TODO: name clash "Site Identifier" and "SiteNodeName"?
-    public function getSiteNodeName(): NodeName
+    public function getSiteNodeName(): SiteNodeName
     {
-        return NodeName::fromString($this->source['sitenodename']);
+        return SiteNodeName::fromString($this->source['sitenodename']);
     }
 
     /**

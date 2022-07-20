@@ -19,9 +19,7 @@ use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
-use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
@@ -143,7 +141,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var \Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder
+     * @var DocumentUriPathFinder
      */
     protected $documentUriPathFinder;
 
@@ -218,7 +216,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     {
         $uriPath = trim($uriPath, '/');
         $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
-            $siteDetectionResult->siteIdentifier->asNodeName(),
+            $siteDetectionResult->siteNodeName,
             $uriPath,
             $dimensionSpacePoint->hash
         );
@@ -285,11 +283,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             if ($nodeInfo instanceof UriInterface) {
                 return $this->buildResolveResultFromUri($nodeInfo);
             }
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
 
         $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints($nodeInfo, $currentRequestSiteDetectionResult);
-        $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints($nodeAddress->dimensionSpacePoint, SiteIdentifier::fromNodeName($nodeInfo->getSiteNodeName()), $uriConstraints);
+        $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints($nodeAddress->dimensionSpacePoint, $nodeInfo->getSiteNodeName(), $uriConstraints);
 
         if (!empty($this->options['uriSuffix']) && $nodeInfo->hasUriPath()) {
             $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriSuffix']);

@@ -5,8 +5,8 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values  | Generalizations |
-      | language   | de      | de, gsw | gsw->de         |
+      | Identifier | Values  | Generalizations |
+      | language   | de, gsw | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

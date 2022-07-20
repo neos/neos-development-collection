@@ -36,8 +36,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: One dimension; with non-empty default value; /
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -45,18 +45,19 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # Dimension Value -> URI Path Segment
           de: deu
           en: uk
     """
-    Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/"
+    # the UriPathResolver will return an empty object for the homepage, but then the DelegatingResolver will fill
+    # it with the default values
+    Then the resolved dimension should be '{}' and the remaining URI Path should be "/"
 
   Scenario: One dimension; with non-empty default value; /deu
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/deu"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -64,7 +65,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # Dimension Value -> URI Path Segment
           de: deu
@@ -74,8 +74,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: One dimension; with non-empty default value; /deu/test
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/deu/test"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -83,7 +83,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # Dimension Value -> URI Path Segment
           de: deu
@@ -93,8 +92,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: One dimension; with empty default value; /
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -102,7 +101,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # empty for "de"
           de: ''
@@ -112,8 +110,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: One dimension; with empty default value; /test
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/test"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -121,7 +119,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # empty for "de"
           de: ''
@@ -131,8 +128,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: One dimension; with empty default value; /uk
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/uk"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -140,7 +137,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # empty for "de"
           de: ''
@@ -150,8 +146,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: One dimension; with empty default value; /uk/test
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/uk/test"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -159,7 +155,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # empty for "de"
           de: ''
@@ -169,9 +164,9 @@ Feature: UriPathResolver works as expected
 
   Scenario: Multiple dimensions; with non-empty default value; /
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | target_group | normal  | normal, simple |                 |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | target_group | normal, simple |                 |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -179,27 +174,25 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
-          # empty for "de"
           de: 'deu'
           en: uk
       -
         dimensionIdentifier: target_group
-        defaultDimensionValue: normal
         dimensionValueMapping:
-          # empty for "de"
           normal: 'no'
           simple: 'si'
 
     """
-    Then the resolved dimension should be '{"language": "de", "target_group": "normal"}' and the remaining URI Path should be "/"
+    # the UriPathResolver will return an empty object for the homepage, but then the DelegatingResolver will fill
+    # it with the default values
+    Then the resolved dimension should be '{}' and the remaining URI Path should be "/"
 
   Scenario: Multiple dimensions; with non-empty default value; /uk_si
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | target_group | normal  | normal, simple |                 |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | target_group | normal, simple |                 |
+      | language     | en, de         |                 |
 
     When I am on URL "/uk_si"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -207,14 +200,12 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # empty for "de"
           de: 'deu'
           en: uk
       -
         dimensionIdentifier: target_group
-        defaultDimensionValue: normal
         dimensionValueMapping:
           # empty for "de"
           normal: 'no'
@@ -225,9 +216,9 @@ Feature: UriPathResolver works as expected
 
   Scenario: Multiple dimensions; with non-empty default value; /uk_si/test
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | target_group | normal  | normal, simple |                 |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | target_group | normal, simple |                 |
+      | language     | en, de         |                 |
 
     When I am on URL "/uk_si/test"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -235,13 +226,11 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           de: 'deu'
           en: uk
       -
         dimensionIdentifier: target_group
-        defaultDimensionValue: normal
         dimensionValueMapping:
           normal: 'no'
           simple: 'si'
@@ -251,9 +240,9 @@ Feature: UriPathResolver works as expected
 
   Scenario Outline: Multiple dimensions; with empty default value
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | target_group | normal  | normal, simple |                 |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | target_group | normal, simple |                 |
+      | language     | en, de         |                 |
 
     When I am on URL "<inputUri>"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
@@ -261,14 +250,12 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           # empty for "de"
           de: ''
           en: uk
       -
         dimensionIdentifier: target_group
-        defaultDimensionValue: normal
         dimensionValueMapping:
           normal: ''
           simple: 'si'
@@ -290,9 +277,9 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: two uri path segment identifiers mapping to different dimensions
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | target_group | normal  | normal, simple |                 |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | target_group | normal, simple |                 |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -300,7 +287,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           de: 'deu'
           en: 'deu'
@@ -309,9 +295,9 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: two uri path segment identifiers mapping to different dimensions
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | target_group | normal  | normal, simple |                 |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | target_group | normal, simple |                 |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -319,41 +305,21 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: de
         dimensionValueMapping:
           de: ''
           en: uk
       -
         dimensionIdentifier: target_group
-        defaultDimensionValue: normal
         dimensionValueMapping:
           normal: ''
           simple: 'uk'
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
-  Scenario: Error: an empty URI path segment with is NOT the default dimension value (we might support this in the medium term)
-    Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | language     | en      | en, de         |                 |
-
-    When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
-    """
-    segments:
-      -
-        dimensionIdentifier: language
-        defaultDimensionValue: en
-        dimensionValueMapping:
-          de: ''
-          en: uk
-    """
-    Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
-
   Scenario: Error: non-existing dimension name
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -361,14 +327,13 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language_notexisting
-        defaultDimensionValue: en
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
   Scenario: Error: non-existing dimension value
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -376,7 +341,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: en
         dimensionValueMapping:
           nonExisting: "foo"
     """
@@ -384,8 +348,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: / in dimensionValueMapping
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -393,7 +357,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: en
         dimensionValueMapping:
           de: de
           en: u/k
@@ -402,8 +365,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: / as separator
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -412,7 +375,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: en
         dimensionValueMapping:
           de: de
           en: uk
@@ -421,8 +383,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: separator in dimensionValueMapping
     Given I have the following content dimensions:
-      | Identifier   | Default | Values         | Generalizations |
-      | language     | en      | en, de         |                 |
+      | Identifier   | Values         | Generalizations |
+      | language     | en, de         |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
@@ -431,7 +393,6 @@ Feature: UriPathResolver works as expected
     segments:
       -
         dimensionIdentifier: language
-        defaultDimensionValue: en
         dimensionValueMapping:
           de: d-e
           en: uk

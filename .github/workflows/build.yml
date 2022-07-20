@@ -209,14 +209,13 @@ jobs:
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
 
-      - name: Run behat tests of Neos (without ES CR)
+      - name: Run behat tests of Neos
         if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrate
           # TODO: RE-ENABLE AFTER FIXING
-          # bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
+          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
 
       - name: Run ES CR Tests
         id: escrtests

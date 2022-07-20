@@ -22,6 +22,7 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
@@ -80,6 +81,7 @@ class FeatureContext extends MinkContext
 
     use EventSourcedTrait;
     use RoutingTrait;
+    use MigrationsTrait;
 
 
     /**
@@ -118,6 +120,7 @@ class FeatureContext extends MinkContext
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
         $this->setupEventSourcedTrait();
+        $this->setupMigrationsTrait();
     }
 
     /**

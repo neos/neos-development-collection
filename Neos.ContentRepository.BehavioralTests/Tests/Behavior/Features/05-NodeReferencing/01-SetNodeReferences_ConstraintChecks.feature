@@ -5,8 +5,8 @@ Feature: Constraint checks on SetNodeReferences
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | language   | de      | de, gsw, en | gsw->de, en     |
+      | Identifier | Values      | Generalizations |
+      | language   | de, gsw, en | gsw->de, en     |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

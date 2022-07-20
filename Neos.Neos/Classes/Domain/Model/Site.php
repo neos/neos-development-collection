@@ -149,13 +149,12 @@ class Site
      * If you need to fetch the root node for this site, use the content
      * context, do not use the NodeDataRepository!
      *
-     * @return string The node name
+     * @return SiteNodeName The node name
      * @api
      */
-    public function getNodeName()
+    public function getNodeName(): SiteNodeName
     {
-        // TODO: NodeName instance should be returned
-        return $this->nodeName;
+        return SiteNodeName::fromString($this->nodeName);
     }
 
     /**
@@ -165,8 +164,11 @@ class Site
      * @return void
      * @api
      */
-    public function setNodeName($nodeName)
+    public function setNodeName(string|SiteNodeName $nodeName)
     {
+        if ($nodeName instanceof SiteNodeName) {
+            $nodeName = $nodeName->value;
+        }
         $this->nodeName = $nodeName;
     }
 

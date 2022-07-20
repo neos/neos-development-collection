@@ -11,8 +11,8 @@ Feature: Move dimension space point
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values          | Generalizations      |
-      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
+      | Identifier | Values          | Generalizations      |
+      | language   | mul, de, en, ch | ch->de->mul, en->mul |
 
     ########################
     # SETUP
@@ -59,8 +59,8 @@ Feature: Move dimension space point
   Scenario: Success Case - simple
     # we change the dimension configuration
     When I have the following content dimensions:
-      | Identifier | Default | Values     | Generalizations |
-      | language   | mul     | mul, de_DE | de_DE->mul      |
+      | Identifier | Values     | Generalizations |
+      | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
@@ -110,8 +110,8 @@ Feature: Move dimension space point
 
     # we change the dimension configuration
     When I have the following content dimensions:
-      | Identifier | Default | Values     | Generalizations |
-      | language   | mul     | mul, de_DE | de_DE->mul      |
+      | Identifier | Values     | Generalizations |
+      | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
@@ -145,8 +145,8 @@ Feature: Move dimension space point
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
     When I have the following content dimensions:
-      | Identifier | Default | Values  | Generalizations |
-      | language   | mul     | mul, ch | ch->mul         |
+      | Identifier | Values  | Generalizations |
+      | language   | mul, ch | ch->mul         |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
     """

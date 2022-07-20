@@ -123,7 +123,6 @@ trait NodeOperationsTrait
                 $dimensions[$row['Identifier']] = new ContentDimension(
                     new ContentDimensionIdentifier($row['Identifier']),
                     new ContentDimensionValues($dimensionValues),
-                    $dimensionValues[$row['Default']],
                     new ContentDimensionValueVariationEdges($variationEdges),
                     $dimensionConfiguration
                 );

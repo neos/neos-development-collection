@@ -22,7 +22,7 @@ Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler
 
 
-Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder:
+Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder:
   arguments:
     1:
       object:
@@ -94,7 +94,7 @@ Neos\Neos\Controller\LoginController:
       object: 'Neos\Flow\Log\ThrowableStorageInterface'
 
 
-Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjectorFactory:
+Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectorFactory:
   arguments:
     3:
       object:
@@ -102,7 +102,7 @@ Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjectorFactory:
         factoryMethodName: 'getConnection'
 
 
-Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
+Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector:
   scope: singleton
   factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectorFactory
   factoryMethodName: build

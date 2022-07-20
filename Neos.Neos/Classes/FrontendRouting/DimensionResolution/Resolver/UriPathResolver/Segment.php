@@ -14,7 +14,6 @@ final class Segment
 {
     private function __construct(
         public readonly ContentDimensionIdentifier $dimensionIdentifier,
-        public readonly ContentDimensionValue $defaultDimensionValue,
         public readonly SegmentMapping $uriPathSegmentMapping,
     )
     {
@@ -22,13 +21,11 @@ final class Segment
 
     public static function create(
         ContentDimensionIdentifier $dimensionIdentifier,
-        ContentDimensionValue $defaultDimensionValue,
         SegmentMapping $uriPathSegmentMapping,
     ): self
     {
         return new self(
             $dimensionIdentifier,
-            $defaultDimensionValue,
             $uriPathSegmentMapping,
         );
     }

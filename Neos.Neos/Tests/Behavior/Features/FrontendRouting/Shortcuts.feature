@@ -39,7 +39,7 @@ Feature: Routing behavior of shortcut nodes
       | shernode-homes             | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}                                                                                             | node1    |
       | sir-david-nodenborough     | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"}                                                                                    | node2    |
       | shortcuts                  | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "shortcuts"}                                                                                             | node3    |
-      | shortcut-first-child-node  | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-first-child"}                                                                                  | node4    |
+      | shortcut-first-child-node  | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-first-child", "targetMode": "firstChildNode"}                                                  | node4    |
       | first-child-node           | shortcut-first-child-node     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "first-child-node"}                                                                                      | node5    |
       | second-child-node          | shortcut-first-child-node     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "second-child-node"}                                                                                     | node6    |
       | shortcut-parent-node       | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-parent-node", "targetMode": "parentNode"}                                                      | node7    |
@@ -56,8 +56,9 @@ Feature: Routing behavior of shortcut nodes
         sites:
           '*':
             contentRepository: default
-            dimensionResolver:
-              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
     And The documenturipath projection is up to date
 
@@ -91,10 +92,10 @@ Feature: Routing behavior of shortcut nodes
 
   Scenario: Shortcut selected target URL keeps schema, port, query and fragment of absolute target URLs
     When the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                                                            |
-      | contentStreamIdentifier   | "cs-identifier"                                                                  |
-      | nodeAggregateIdentifier   | "shortcut-external-url"                                                          |
-      | originDimensionSpacePoint | {}                                                                               |
+      | Key                       | Value                                                                                 |
+      | contentStreamIdentifier   | "cs-identifier"                                                                       |
+      | nodeAggregateIdentifier   | "shortcut-external-url"                                                               |
+      | originDimensionSpacePoint | {}                                                                                    |
       | propertyValues            | {"target": "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"} |
     And The documenturipath projection is up to date
     When I am on URL "http://current.host/"
@@ -221,7 +222,8 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://www.neos.io/"
 
   Scenario: Change shortcut targetMode from "parentNode" to "firstChildNode"
-    When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And I am in content stream "cs-identifier" and dimension space point {}
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | new-child-node          | shortcut-parent-node          | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "new-child"} | new      |
     When the command SetNodeProperties is executed with payload:

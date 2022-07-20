@@ -4,7 +4,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\Domain\Model\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\CompositeResolver;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -45,7 +45,7 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  *
  * ## Site-specific configuration through Settings.yaml
  *
- * In Settings.yaml, underneath the path `Neos.Neos.sites.[site-node-name|*].dimensionResolver.factoryClassName`,
+ * In Settings.yaml, underneath the path `Neos.Neos.sites.[site-node-name|*].contentDimensions.resolver.factoryClassName`,
  * you specify which {@see DimensionResolverFactoryInterface} should be used to build the used
  * {@see DimensionResolverInterface}.
  *
@@ -99,9 +99,9 @@ interface DimensionResolverInterface
      * Called for each generated URL, to adjust (and return) the passed-in UriConstraints depending on the given DimensionSpacePoint.
      *
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param SiteIdentifier $targetSiteIdentifier
+     * @param SiteNodeName $targetSiteIdentifier
      * @param UriConstraints $uriConstraints the pre-applied uriConstraints -> modify and return them.
      * @return UriConstraints
      */
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints;
+    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints;
 }

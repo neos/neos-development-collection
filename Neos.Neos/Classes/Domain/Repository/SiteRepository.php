@@ -20,7 +20,7 @@ use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
-use Neos\Neos\Domain\Model\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteNodeName;
 
 /**
  * The Site Repository
@@ -47,14 +47,11 @@ class SiteRepository extends Repository
     protected $defaultSiteNodeName;
 
     /**
-     * @param string|SiteIdentifier $identifier
+     * @param string|SiteNodeName $identifier
      * @return Site|null
      */
     public function findByIdentifier($identifier): ?Site
     {
-        if ($identifier instanceof SiteIdentifier) {
-            return $this->findOneByNodeName($identifier->getValue());
-        }
         return parent::findByIdentifier($identifier);
     }
 
@@ -93,7 +90,7 @@ class SiteRepository extends Repository
         return $site;
     }
 
-    public function findOneByNodeName(string $nodeName): ?Site
+    public function findOneByNodeName(string|SiteNodeName $nodeName): ?Site
     {
         $query = $this->createQuery();
         /** @var ?Site $site */

@@ -19,7 +19,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\Domain\Model\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -43,30 +43,42 @@ final class DelegatingResolver implements DimensionResolverInterface
     public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
     {
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($context->routeParameters);
-        $site = $this->siteRepository->findByIdentifier($siteDetectionResult->siteIdentifier);
+        $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
         if ($site === null) {
-            throw new \RuntimeException('Did not find site object for identifier ' . $siteDetectionResult->siteIdentifier->getValue());
+            throw new \RuntimeException('Did not find site object for identifier ' . $siteDetectionResult->siteNodeName->value);
         }
         $siteConfiguration = $site->getConfiguration();
-        $factory = $this->objectManager->get($siteConfiguration['dimensionResolver']['factoryClassName'] ?? throw new \RuntimeException('No Dimension Resolver Factory configured at Neos.Neos.sites.*.dimensionResolver.factoryClassName'));
+        $factory = $this->objectManager->get($siteConfiguration['contentDimensions']['resolver']['factoryClassName'] ?? throw new \RuntimeException('No Dimension Resolver Factory configured at Neos.Neos.sites.*.contentDimensions.resolver.factoryClassName'));
         assert($factory instanceof DimensionResolverFactoryInterface);
-        $resolverOptions = $siteConfiguration['dimensionResolver']['options'] ?? [];
-        return $factory->create($siteDetectionResult->contentRepositoryIdentifier, $resolverOptions)->fromRequestToDimensionSpacePoint($context);
+        $resolverOptions = $siteConfiguration['contentDimensions']['resolver']['options'] ?? [];
+        $context = $factory->create($siteDetectionResult->contentRepositoryIdentifier, $resolverOptions)->fromRequestToDimensionSpacePoint($context);
+
+        return self::fillWithDefaultDimensionSpacePoint($context, $siteConfiguration['contentDimensions']['defaultDimensionSpacePoint'] ?? []);
     }
 
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
+    private static function fillWithDefaultDimensionSpacePoint(RequestToDimensionSpacePointContext $context, array $defaultDimensionSpacePointCoordinates): RequestToDimensionSpacePointContext
     {
-        $targetSite = $this->siteRepository->findByIdentifier($targetSiteIdentifier);
+        foreach ($defaultDimensionSpacePointCoordinates as $dimensionName => $defaultDimensionValue) {
+            if (!isset($context->resolvedDimensionSpacePoint->coordinates[$dimensionName])) {
+                $context = $context->withAddedDimensionSpacePoint(DimensionSpacePoint::fromArray([$dimensionName => $defaultDimensionValue]));
+            }
+        }
+        return $context;
+    }
+
+    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
+    {
+        $targetSite = $this->siteRepository->findOneByNodeName($targetSiteIdentifier);
 
         if ($targetSite === null) {
-            throw new \RuntimeException('Did not find site object for identifier ' . $targetSiteIdentifier->getValue());
+            throw new \RuntimeException('Did not find site object for identifier ' . $targetSiteIdentifier->value);
         }
         $siteConfiguration = $targetSite->getConfiguration();
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($siteConfiguration['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository'));
 
-        $factory = $this->objectManager->get($siteConfiguration['dimensionResolver']['factoryClassName'] ?? throw new \RuntimeException('No Dimension Resolver Factory configured at Neos.Neos.sites.*.dimensionResolver.factoryClassName'));
+        $factory = $this->objectManager->get($siteConfiguration['contentDimensions']['resolver']['factoryClassName'] ?? throw new \RuntimeException('No Dimension Resolver Factory configured at Neos.Neos.sites.*.contentDimensions.resolver.factoryClassName'));
         assert($factory instanceof DimensionResolverFactoryInterface);
-        $resolverOptions = $siteConfiguration['dimensionResolver']['options'] ?? [];
+        $resolverOptions = $siteConfiguration['contentDimensions']['resolver']['options'] ?? [];
 
         return $factory->create($contentRepositoryIdentifier, $resolverOptions)->fromDimensionSpacePointToUriConstraints($dimensionSpacePoint, $targetSiteIdentifier, $uriConstraints);
     }

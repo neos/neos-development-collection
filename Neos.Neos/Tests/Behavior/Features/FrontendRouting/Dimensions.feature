@@ -4,10 +4,9 @@ Feature: Routing functionality with multiple content dimensions
 
   Background:
     Given I have the following content dimensions:
-    # TODO: remove ResolutionMode, ResolutionValues (and rewrite to new format) - IN WHOLE FILE
-      | Identifier | Default | Values      | Generalizations | ResolutionMode | ResolutionValues      |
-      | market     | DE      | DE, CH      | CH->DE          |                |                       |
-      | language   | en      | en, de, gsw | gsw->de->en     | uriPathSegment | en:en, de:de, gsw:gsw |
+      | Identifier | Values      | Generalizations |
+      | market     | DE, CH      | CH->DE          |
+      | language   | en, de, gsw | gsw->de->en     |
     And I am user identified by "initiating-user-identifier"
 
     And the command CreateRootWorkspace is executed with payload:
@@ -51,8 +50,20 @@ Feature: Routing functionality with multiple content dimensions
         sites:
           '*':
             contentRepository: default
-            dimensionResolver:
-              factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+            contentDimensions:
+              defaultDimensionSpacePoint:
+                market: DE
+                language: en
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de: de
+                        gsw: gsw
+                        en: ''
     """
 
     And the graph projection is fully up to date
@@ -72,10 +83,28 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Move Dimension, then resolving should still work
     Given I have the following content dimensions:
-    # TODO: remove ResolutionMode, ResolutionValues (and rewrite to new format) - IN WHOLE FILE
-      | Identifier | Default | Values         | Generalizations | ResolutionMode | ResolutionValues         |
-      | market     | DE      | DE, CH         | CH->DE          |                |                          |
-      | language   | en      | en, de_DE, gsw | gsw->de_DE->en  | uriPathSegment | en:en, de_DE:de, gsw:gsw |
+      | Identifier | Values         | Generalizations |
+      | market     | DE, CH         | CH->DE          |
+      | language   | en, de_DE, gsw | gsw->de_DE->en  |
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de_DE: de
+                        gsw: gsw
+                        en: ''
+    """
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
@@ -93,7 +122,7 @@ Feature: Routing functionality with multiple content dimensions
               from: {"market":"CH", "language":"de"}
               to: {"market":"CH", "language":"de_DE"}
     """
-    When the command "PublishWorkspace" is executed with payload:
+    When the command PublishWorkspace is executed with payload:
       | Key                      | Value          |
       | workspaceName            | "migration-cs" |
       | initiatingUserIdentifier | "user"         |
@@ -124,10 +153,9 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Add Dimension shine through, then resolving should still work
     Given I have the following content dimensions:
-    # TODO: remove ResolutionMode, ResolutionValues (and rewrite to new format) - IN WHOLE FILE
-      | Identifier | Default | Values          | Generalizations         | ResolutionMode | ResolutionValues             |
-      | market     | DE      | DE, CH          | CH->DE                  |                |                              |
-      | language   | en      | en, de, gsw, at | gsw->de->en, at->de->en | uriPathSegment | en:en, de:de, gsw:gsw, at:at |
+      | Identifier | Values          | Generalizations         |
+      | market     | DE, CH          | CH->DE                  |
+      | language   | en, de, gsw, at | gsw->de->en, at->de->en |
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -146,7 +174,7 @@ Feature: Routing functionality with multiple content dimensions
               from: {"market":"CH", "language":"de"}
               to: {"market":"CH", "language":"at"}
     """
-    When the command "PublishWorkspace" is executed with payload:
+    When the command PublishWorkspace is executed with payload:
       | Key                      | Value          |
       | workspaceName            | "migration-cs" |
       | initiatingUserIdentifier | "user"         |

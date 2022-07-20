@@ -65,8 +65,9 @@ Neos:
     sites:
       '*':
         contentRepository: default
-        dimensionResolver:
-          factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
+        contentDimensions:
+          resolver:
+            factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
 
     nodeTypes:
       groups:

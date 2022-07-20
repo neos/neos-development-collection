@@ -34,6 +34,7 @@ use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 // NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider in
@@ -180,7 +181,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 . '/' . $event->nodeAggregateIdentifier;
             if ($parentNode->isRoot()) {
                 $uriPath = '';
-                $siteNodeName = $event->nodeName;
+                $siteNodeName = SiteNodeName::fromNodeName($event->nodeName);
             } else {
                 $uriPath = $parentNode->getUriPath() === ''
                     ? $uriPathSegment

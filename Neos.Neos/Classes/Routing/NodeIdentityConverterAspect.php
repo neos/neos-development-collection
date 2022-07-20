@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Routing;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
@@ -47,6 +48,8 @@ class NodeIdentityConverterAspect
         if ($objectArgument instanceof NodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->createFromNode($objectArgument);
             return ['__contextNodePath' => $nodeAddress->serializeForUri()];
+        } elseif ($objectArgument instanceof NodeAddress) {
+            return ['__contextNodePath' => $objectArgument->serializeForUri()];
         }
 
         return $joinPoint->getAdviceChain()->proceed($joinPoint);

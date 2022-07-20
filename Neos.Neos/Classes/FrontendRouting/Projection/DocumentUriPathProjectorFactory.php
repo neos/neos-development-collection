@@ -7,8 +7,6 @@ namespace Neos\Neos\FrontendRouting\Projection;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 
 // NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider in
 // Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory (this class)

@@ -43,7 +43,7 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Model\SiteIdentifier;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
@@ -324,7 +324,7 @@ trait RoutingTrait
         $resolverOptions = Yaml::parse($resolverOptionsYaml->getRaw()) ?? [];
         $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryIdentifier::fromString('default'), $resolverOptions);
 
-        $siteDetectionResult = SiteDetectionResult::create($this->requestUrl, SiteIdentifier::fromString("site-node"), ContentRepositoryIdentifier::fromString("default"));
+        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryIdentifier::fromString("default"));
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
         $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);

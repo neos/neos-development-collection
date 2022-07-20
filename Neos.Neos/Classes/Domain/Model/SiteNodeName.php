@@ -24,16 +24,11 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class SiteIdentifier implements \Stringable, CacheAwareInterface
+final class SiteNodeName implements CacheAwareInterface
 {
     private function __construct(
-        private readonly string $siteNodeName
+        public readonly string $value
     ) {
-    }
-
-    public static function fromSite(Site $site): self
-    {
-        return new self($site->getNodeName());
     }
 
     public static function fromNodeName(NodeName $siteNodeName): self
@@ -46,29 +41,18 @@ final class SiteIdentifier implements \Stringable, CacheAwareInterface
         return new self($siteNodeName);
     }
 
-
     public function equals(self $other): bool
     {
-        return $this->siteNodeName === $other->siteNodeName;
+        return $this->value === $other->value;
     }
 
     public function __toString(): string
     {
-        return 'SiteIdentifier: ' . $this->siteNodeName;
-    }
-
-    public function getValue(): string
-    {
-        return $this->siteNodeName;
+        return $this->value;
     }
 
     public function getCacheEntryIdentifier(): string
     {
-        return $this->siteNodeName;
-    }
-
-    public function asNodeName(): NodeName
-    {
-        return NodeName::fromString($this->siteNodeName);
+        return $this->value;
     }
 }

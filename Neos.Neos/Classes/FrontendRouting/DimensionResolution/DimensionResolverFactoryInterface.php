@@ -6,7 +6,7 @@ use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 
 /**
  * API Contract for creating a {@see DimensionResolverInterface} from Settings (usually
- * `Neos.Neos.sites.*.dimensionResolver.factoryClassName` and  `Neos.Neos.sites.*.dimensionResolver.options`).
+ * `Neos.Neos.sites.*.contentDimensions.resolver.factoryClassName` and  `Neos.Neos.sites.*.contentDimensions.resolver.options`).
  *
  * See {@see DimensionResolverInterface} for documentation.
  *

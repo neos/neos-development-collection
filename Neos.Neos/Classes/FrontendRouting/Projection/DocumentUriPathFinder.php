@@ -10,6 +10,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
@@ -37,7 +38,7 @@ final class DocumentUriPathFinder
      * (node is disabled, node doesn't exist in live workspace, projection not up to date)
      */
     public function getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
-        NodeName $siteNodeName,
+        SiteNodeName $siteNodeName,
         string $uriPath,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
