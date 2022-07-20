@@ -20,9 +20,10 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Finder for changes
- * @Flow\Scope("singleton")
  *
- * @api
+ * !!! Still a bit unstable - might change in the future.
+ *
+ * @Flow\Scope("singleton")
  */
 final class ChangeFinder
 {

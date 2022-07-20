@@ -16,11 +16,15 @@ namespace Neos\ContentRepository\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Service\ContentStreamPruner;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * Internal - implementation detail of {@see ContentStreamPruner}
+ *
  * @Flow\Scope("singleton")
+ * @internal
  */
 final class ContentStreamFinder
 {

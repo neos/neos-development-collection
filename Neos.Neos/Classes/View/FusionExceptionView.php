@@ -26,6 +26,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
@@ -94,9 +95,11 @@ class FusionExceptionView extends AbstractView
             : ServerRequest::fromGlobals();
 
         $routingParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
-        $dimensionSpacePoint = $routingParameters['dimensionSpacePoint'] ?? null;
+        assert($routingParameters instanceof RouteParameters);
+        $dimensionSpacePoint = $routingParameters->getValue('dimensionSpacePoint') ?? null;
 
         $currentSiteNode = null;
+        /** @phpstan-ignore-next-line */
         if ($dimensionSpacePoint instanceof DimensionSpacePoint) {
             $contentStreamIdentifier = $this->workspaceFinder->findOneByName(WorkspaceName::forLive())
                 ?->getCurrentContentStreamIdentifier();
@@ -126,10 +129,12 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
+        /** @phpstan-ignore-next-line */
         if ($currentSiteNode) {
             $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
             if ($dimensionSpacePoint) {
+                /** @phpstan-ignore-next-line */
                 $this->setFallbackRuleFromDimension($dimensionSpacePoint);
             }
 

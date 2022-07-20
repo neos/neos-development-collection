@@ -16,6 +16,9 @@ namespace Neos\ContentRepository\Projection\Content;
 
 use Neos\Error\Messages\Result;
 
+/**
+ * @api
+ */
 final class ProjectionIntegrityViolationDetectionRunner
 {
     private ProjectionIntegrityViolationDetectorInterface $projectionIntegrityViolationDetector;

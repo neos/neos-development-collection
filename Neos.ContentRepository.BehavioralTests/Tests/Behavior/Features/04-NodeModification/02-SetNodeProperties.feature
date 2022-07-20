@@ -5,8 +5,8 @@ Feature: Set properties
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values       | Generalizations |
-      | language   | mul     | mul, de, gsw | gsw->de->mul    |
+      | Identifier | Values       | Generalizations |
+      | language   | mul, de, gsw | gsw->de->mul    |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

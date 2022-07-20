@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 
 /**
  * This cache is only filled for a $parentNodeIdentifier if we have retrieved *all* childNodes, without any restriction.
+ *
+ * @internal
  */
 final class AllChildNodesByNodeIdentifierCache
 {

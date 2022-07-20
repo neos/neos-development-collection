@@ -97,13 +97,11 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
             'market' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('market'),
                 $marketValues,
-                $luxembourg,
                 Dimension\ContentDimensionValueVariationEdges::createEmpty()
             ),
             'language' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('language'),
                 $languageValues,
-                $letzebuergesch,
                 Dimension\ContentDimensionValueVariationEdges::createEmpty()
             )
         ];

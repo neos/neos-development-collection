@@ -32,6 +32,7 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
+ * @internal
  */
 class ChangeProjector implements ProjectorInterface
 {

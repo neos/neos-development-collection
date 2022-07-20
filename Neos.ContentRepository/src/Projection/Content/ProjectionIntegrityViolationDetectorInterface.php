@@ -16,6 +16,11 @@ namespace Neos\ContentRepository\Projection\Content;
 
 use Neos\Error\Messages\Result;
 
+/**
+ * interface because different impls.
+ *
+ * @internal
+ */
 interface ProjectionIntegrityViolationDetectorInterface
 {
     public const ERROR_CODE_ORPHANED_NON_ROOT_NODE = 1597667433;

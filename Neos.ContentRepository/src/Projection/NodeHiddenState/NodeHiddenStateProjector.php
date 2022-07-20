@@ -24,6 +24,7 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 
 /**
  * TODO: this class needs proper testing
+ * @internal
  */
 class NodeHiddenStateProjector implements ProjectorInterface
 {

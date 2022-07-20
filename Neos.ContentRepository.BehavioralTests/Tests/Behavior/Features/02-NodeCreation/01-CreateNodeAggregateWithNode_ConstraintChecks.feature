@@ -180,8 +180,8 @@ Feature: Create node aggregate with node
 
   Scenario: Try to create a node aggregate in an origin dimension space point the parent node does not cover:
     Given I have the following content dimensions:
-      | Identifier | Default | Values       | Generalizations |
-      | language   | mul     | mul, de, gsw | gsw->de->mul    |
+      | Identifier | Values       | Generalizations |
+      | language   | mul, de, gsw | gsw->de->mul    |
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                           | Value                                 |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                    |

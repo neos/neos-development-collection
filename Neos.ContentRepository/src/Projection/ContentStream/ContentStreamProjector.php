@@ -34,6 +34,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Scope("singleton")
+ * @internal
  */
 class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
 {

@@ -19,9 +19,10 @@ use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A central place to enable / disable all caches in the read side
+ * A central place to enable / disable all caches in the read side. Called inside each CommandHandler.
  *
  * @Flow\Scope("singleton")
+ * @internal
  */
 class ReadSideMemoryCacheManager
 {

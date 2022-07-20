@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 
 /**
  * Parent Node Identifier + Node Name => Child Node
+ *
+ * @internal
  */
 final class NamedChildNodeByNodeIdentifierCache
 {

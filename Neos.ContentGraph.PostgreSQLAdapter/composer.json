@@ -1,5 +1,6 @@
 {
     "name": "neos/contentgraph-postgresqladapter",
+
     "description": "The PostgreSQL database backend for the Neos content graph",
     "license": "GPL-3.0+",
     "require": {

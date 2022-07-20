@@ -13,9 +13,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -27,6 +27,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The node implementation for the PostgreSQL content graph adapter
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final class Node implements NodeInterface

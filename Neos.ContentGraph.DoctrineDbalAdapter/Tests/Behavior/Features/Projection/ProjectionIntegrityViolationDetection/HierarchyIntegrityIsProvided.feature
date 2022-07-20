@@ -5,8 +5,8 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | language   | de      | de, gsw, fr | gsw->de         |
+      | Identifier | Values      | Generalizations |
+      | language   | de, gsw, fr | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

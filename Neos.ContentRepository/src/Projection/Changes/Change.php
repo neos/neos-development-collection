@@ -24,6 +24,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 /**
  * Change Read Model
  *
+ * !!! Still a bit unstable - might change in the future.
  * @Flow\Proxy(false)
  */
 class Change

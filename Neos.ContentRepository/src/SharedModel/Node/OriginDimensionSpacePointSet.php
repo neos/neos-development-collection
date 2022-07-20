@@ -24,6 +24,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * @implements \IteratorAggregate<string,OriginDimensionSpacePoint>
  * @implements \ArrayAccess<string,OriginDimensionSpacePoint>
+ *
+ * @api
  */
 #[Flow\Proxy(false)]
 final class OriginDimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable

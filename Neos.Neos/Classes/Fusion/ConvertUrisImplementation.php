@@ -17,7 +17,7 @@ namespace Neos\Neos\Fusion;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -135,6 +135,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                         $uriBuilder->setCreateAbsoluteUri($absolute);
 
+                        // TODO: multi-site .... -> different object than NodeAddress which also contains the CR Identifier.
                         $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
                         $this->runtime->addCacheTag('node', $matches[2]);
                         break;

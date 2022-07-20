@@ -21,9 +21,9 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Finder for changes
- * @Flow\Scope("singleton")
+ * Finder for hidden states
  *
+ * @Flow\Scope("singleton")
  * @api
  */
 final class NodeHiddenStateFinder

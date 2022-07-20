@@ -34,7 +34,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;

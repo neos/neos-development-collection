@@ -101,6 +101,10 @@ class NodeHiddenState
         );
     }
 
+    /**
+     * @return bool
+     * @api
+     */
     public function isHidden(): bool
     {
         return $this->hidden;
