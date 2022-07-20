@@ -14,7 +14,7 @@ namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
  */
 
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\EventSourcedRouting\ValueObject\DocumentNodeInfo;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
@@ -24,14 +24,13 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  * You will not call implementations of this interface yourself.
  *
  * See {@see EventSourcedFrontendNodeRoutePartHandler} for documentation.
- * @api
  */
 interface CrossSiteLinkerInterface
 {
     /**
-     * @param DocumentNodeInfo $targetNode the target node where we want to generate the link to
+     * @param \Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo $targetNode the target node where we want to generate the link to
      * @param SiteDetectionResult $currentRequestSiteDetectionResult
      * @return UriConstraints
      */
-    public function createCrossSiteLink(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints;
+    public function applyCrossSiteUriConstraints(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints;
 }

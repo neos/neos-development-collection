@@ -20,9 +20,10 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Neos\Domain\Model\SiteIdentifier;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\AbstractRoutePart;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
@@ -31,7 +32,6 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
@@ -143,7 +143,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var DocumentUriPathFinder
+     * @var \Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder
      */
     protected $documentUriPathFinder;
 
@@ -288,7 +288,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
 
-        $uriConstraints = $this->crossSiteLinker->createCrossSiteLink($nodeInfo, $currentRequestSiteDetectionResult);
+        $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints($nodeInfo, $currentRequestSiteDetectionResult);
         $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints($nodeAddress->dimensionSpacePoint, SiteIdentifier::fromNodeName($nodeInfo->getSiteNodeName()), $uriConstraints);
 
         if (!empty($this->options['uriSuffix']) && $nodeInfo->hasUriPath()) {

@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\EventSourcedRouting;
+namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;

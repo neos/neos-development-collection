@@ -12,20 +12,19 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Domain\Service;
+namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
-use Neos\Neos\EventSourcedRouting\ValueObject\DocumentNodeInfo;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -62,7 +61,7 @@ class NodeShortcutResolver
      * @return NodeAddress|UriInterface NodeAddress is returned if we want to link to another node
      * (i.e. node is NOT a shortcut node; or target is a node);
      * or UriInterface for links to fixed URLs (Asset URLs or external URLs)
-     * @throws InvalidShortcutException
+     * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException
      * @throws NodeNotFoundException
      */
     public function resolveShortcutTarget(NodeAddress $nodeAddress)
@@ -88,10 +87,10 @@ class NodeShortcutResolver
      * because it is only covering the live workspace
      *
      * @param DocumentNodeInfo $documentNodeInfo
-     * @return DocumentNodeInfo|UriInterface DocumentNodeInfo is returned if we want to link to another node
+     * @return \Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo|UriInterface DocumentNodeInfo is returned if we want to link to another node
      * (i.e. node is NOT a shortcut node; or target is a node);
      * or UriInterface for links to fixed URLs (Asset URLs or external URLs)
-     * @throws InvalidShortcutException
+     * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException
      */
     public function resolveNode(DocumentNodeInfo $documentNodeInfo)
     {

@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\EventSourcedRouting\Projection;
+namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\Neos\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
  * @Flow\Scope("singleton")

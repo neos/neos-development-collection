@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\EventSourcedRouting\Projection;
+namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
@@ -28,14 +28,13 @@ use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariant
 use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\Neos\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 // NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider in
 // Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.

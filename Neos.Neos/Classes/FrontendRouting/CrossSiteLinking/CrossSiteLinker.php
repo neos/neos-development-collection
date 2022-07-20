@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\EventSourcedRouting\ValueObject\DocumentNodeInfo;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
@@ -39,8 +39,7 @@ final class CrossSiteLinker implements CrossSiteLinkerInterface
      */
     protected $siteRepository;
 
-    // TODO: API: maybe not $targetNode, but 2x SiteNodeName??
-    public function createCrossSiteLink(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints
+    public function applyCrossSiteUriConstraints(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints
     {
         $uriConstraints = UriConstraints::create();
         if (!$targetNode->getSiteNodeName()->equals($currentRequestSiteDetectionResult->siteIdentifier->asNodeName())) {

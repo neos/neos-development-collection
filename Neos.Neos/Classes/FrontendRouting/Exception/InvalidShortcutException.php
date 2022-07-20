@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\EventSourcedRouting\Exception;
+namespace Neos\Neos\FrontendRouting\Exception;
 
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 

@@ -104,5 +104,5 @@ Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjectorFactory:
 
 Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector:
   scope: singleton
-  factoryObjectName: Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjectorFactory
+  factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectorFactory
   factoryMethodName: build
