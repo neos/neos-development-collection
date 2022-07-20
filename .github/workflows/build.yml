@@ -208,14 +208,6 @@ jobs:
           FLOW_CONTEXT=Testing ./flow doctrine:migrate
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
-
-      - name: Run behat tests of Neos
-        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
-        run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrate
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
-
       - name: Run ES CR Tests
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
