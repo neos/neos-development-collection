@@ -221,7 +221,7 @@ jobs:
         if: matrix.parallel-parts == 'escr-behavioral'
         # we want to reach the Upload Postgres DB dump step.
         # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
-        continue-on-error: true
+        #continue-on-error: true
         run: |
           echo ${{ github.workspace }}
           ls ${{ github.workspace }}
@@ -232,32 +232,31 @@ jobs:
 
           FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           ./flow package:list --loading-order
-          ./flow configuration:show --type NodeTypes
+          ./flow configuration:show --type Settings
           cd Packages/Neos
 
-          # composer test
+          composer test
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
-          set +e
-          composer test:behavioral:stop-on-failure
-          retVal=$?
-          set -e
-          if [ $retVal -ne 0 ]; then
-            cd ../../
-            echo "DUMPING DATABASE (because of error)"
-            sudo apt-get install -y postgresql-client
-            echo "writing PW file"
-            touch ~/.pgpass
-            echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
-            chmod 600 ~/.pgpass
-
-            echo "starting pg_dump"
-            pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
-            echo "pg_dump finished - ALL DONE NOW"
-          fi
-          exit $retVal
-
+          # set +e
+          # composer test:behavioral:stop-on-failure
+          # retVal=$?
+          # set -e
+          # if [ $retVal -ne 0 ]; then
+          #   cd ../../
+          #   echo "DUMPING DATABASE (because of error)"
+          #   sudo apt-get install -y postgresql-client
+          #   echo "writing PW file"
+          #   touch ~/.pgpass
+          #   echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
+          #   chmod 600 ~/.pgpass
+          #
+          #   echo "starting pg_dump"
+          #   pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+          #   echo "pg_dump finished - ALL DONE NOW"
+          # fi
+          # exit $retVal
           # END OF DEBUG SCRIPT
 
       - name: Upload Postgres DB dump
