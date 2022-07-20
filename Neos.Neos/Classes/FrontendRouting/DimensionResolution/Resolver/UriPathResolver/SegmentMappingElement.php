@@ -14,8 +14,7 @@ final class SegmentMappingElement
     private function __construct(
         public readonly ContentDimensionValue $dimensionValue,
         public readonly string $uriPathSegmentValue
-    )
-    {
+    ) {
     }
 
     public static function create(ContentDimensionValue $dimensionValue, string $uriPathSegmentValue): self

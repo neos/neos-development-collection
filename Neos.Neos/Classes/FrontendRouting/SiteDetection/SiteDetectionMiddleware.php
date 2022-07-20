@@ -6,7 +6,6 @@ namespace Neos\Neos\FrontendRouting\SiteDetection;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;

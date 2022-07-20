@@ -19,7 +19,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -50,8 +49,6 @@ use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
-use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
-use Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\ObjectAccess;
@@ -126,8 +123,7 @@ trait RoutingTrait
         $this->routingTraitSiteConfigurationPostLoadHook = new class($config) {
             public function __construct(
                 private readonly array $config
-            )
-            {
+            ) {
             }
 
             public function postLoad(LifecycleEventArgs $lifecycleEventArgs)
@@ -208,7 +204,8 @@ trait RoutingTrait
             $nodeAddress->dimensionSpacePoint,
             sprintf(
                 'Dimension space point "%s" did not match the expected "%s"',
-                json_encode($nodeAddress->dimensionSpacePoint), $dimensionSpacePoint
+                json_encode($nodeAddress->dimensionSpacePoint),
+                $dimensionSpacePoint
             )
         );
     }

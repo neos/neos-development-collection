@@ -40,16 +40,14 @@ final class UriPathResolver implements DimensionResolverInterface
         private readonly array $uriPathToDimensionSpacePoint,
         private readonly array $dimensionSpacePointHashToUriPath,
         private readonly Segments $segments,
-    )
-    {
+    ) {
     }
 
     public static function create(
         Segments $segments,
         Separator $separator,
         ContentDimensionSourceInterface $contentDimensionSource
-    ): self
-    {
+    ): self {
         self::validate($segments, $separator, $contentDimensionSource);
         list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths($segments, $separator);
         return new self(
@@ -114,7 +112,7 @@ final class UriPathResolver implements DimensionResolverInterface
         $result = [[]];
 
         foreach ($segments->segments as $segment) {
-            $append = array();
+            $append = [];
 
             foreach ($result as $product) {
                 foreach ($segment->uriPathSegmentMapping as $item) {

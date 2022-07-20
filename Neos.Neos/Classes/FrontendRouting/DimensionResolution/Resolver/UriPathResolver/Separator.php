@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver;
+
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -11,7 +12,8 @@ final class Separator
 {
     private function __construct(
         public readonly string $value
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {

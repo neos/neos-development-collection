@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver;
+
 use Neos\Flow\Annotations as Flow;
 
 /**

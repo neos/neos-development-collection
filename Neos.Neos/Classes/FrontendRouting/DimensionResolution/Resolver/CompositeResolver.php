@@ -30,14 +30,12 @@ final class CompositeResolver implements DimensionResolverInterface
 {
     private function __construct(
         private readonly array $resolvers
-    )
-    {
+    ) {
     }
 
     public static function create(
         DimensionResolverInterface...$contentDimensionResolvers
-    ): self
-    {
+    ): self {
         return new self($contentDimensionResolvers);
     }
 

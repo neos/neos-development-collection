@@ -26,15 +26,13 @@ final class SiteDetectionResult
     private function __construct(
         public readonly SiteNodeName $siteNodeName,
         public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
-    )
-    {
+    ) {
     }
 
     public static function create(
         SiteNodeName $siteIdentifier,
         ContentRepositoryIdentifier $contentRepositoryIdentifier
-    ): self
-    {
+    ): self {
         return new self($siteIdentifier, $contentRepositoryIdentifier);
     }
 

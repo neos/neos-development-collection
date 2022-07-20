@@ -13,7 +13,6 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -38,7 +37,8 @@ final class DelegatingResolver implements DimensionResolverInterface
     public function __construct(
         private readonly ObjectManagerInterface $objectManager,
         private readonly SiteRepository $siteRepository,
-    ) {}
+    ) {
+    }
 
     public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
     {

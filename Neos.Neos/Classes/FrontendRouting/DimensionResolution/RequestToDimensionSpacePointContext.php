@@ -14,14 +14,12 @@ use Neos\Flow\Annotations as Flow;
  */
 final class RequestToDimensionSpacePointContext
 {
-
     private function __construct(
         public readonly string $initialUriPath,
         public readonly RouteParameters $routeParameters,
         public readonly string $remainingUriPath,
         public readonly DimensionSpacePoint $resolvedDimensionSpacePoint,
-    )
-    {
+    ) {
     }
 
     public static function fromUriPathAndRouteParameters(string $initialUriPath, RouteParameters $routeParameters): self
