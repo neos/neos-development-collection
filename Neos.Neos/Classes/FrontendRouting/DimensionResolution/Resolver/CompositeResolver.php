@@ -28,6 +28,9 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
  */
 final class CompositeResolver implements DimensionResolverInterface
 {
+    /**
+     * @param DimensionResolverInterface[] $resolvers
+     */
     private function __construct(
         private readonly array $resolvers
     ) {

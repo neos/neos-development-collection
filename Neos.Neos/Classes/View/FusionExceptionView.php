@@ -89,8 +89,6 @@ class FusionExceptionView extends AbstractView
      */
     public function render()
     {
-        throw new \RuntimeException('TODO fix me');
-
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler instanceof HttpRequestHandler
             ? $requestHandler->getHttpRequest()
@@ -101,6 +99,7 @@ class FusionExceptionView extends AbstractView
         $dimensionSpacePoint = $routingParameters->getValue('dimensionSpacePoint') ?? null;
 
         $currentSiteNode = null;
+        /** @phpstan-ignore-next-line */
         if ($dimensionSpacePoint instanceof DimensionSpacePoint) {
             $contentStreamIdentifier = $this->workspaceFinder->findOneByName(WorkspaceName::forLive())
                 ?->getCurrentContentStreamIdentifier();
@@ -130,10 +129,12 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
+        /** @phpstan-ignore-next-line */
         if ($currentSiteNode) {
             $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
             if ($dimensionSpacePoint) {
+                /** @phpstan-ignore-next-line */
                 $this->setFallbackRuleFromDimension($dimensionSpacePoint);
             }
 

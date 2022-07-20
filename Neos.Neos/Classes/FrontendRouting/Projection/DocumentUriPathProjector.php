@@ -179,7 +179,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
             $nodeAggregateIdentifierPath = $parentNode->getNodeAggregateIdentifierPath()
                 . '/' . $event->nodeAggregateIdentifier;
-            if ($parentNode->isRoot()) {
+            if ($parentNode->isRoot() && $event->nodeName !== null) {
                 $uriPath = '';
                 $siteNodeName = SiteNodeName::fromNodeName($event->nodeName);
             } else {

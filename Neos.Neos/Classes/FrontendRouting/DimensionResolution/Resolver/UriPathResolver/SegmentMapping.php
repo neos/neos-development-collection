@@ -8,6 +8,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
 
 /**
  * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<int,SegmentMappingElement>
  */
 final class SegmentMapping implements \IteratorAggregate, \Countable
 {
@@ -26,6 +27,10 @@ final class SegmentMapping implements \IteratorAggregate, \Countable
         return new self(...$elements);
     }
 
+    /**
+     * @param array<string,string> $dimensionValueMapping
+     * @return static
+     */
     public static function fromArray(array $dimensionValueMapping): self
     {
         $elements = [];
@@ -37,9 +42,6 @@ final class SegmentMapping implements \IteratorAggregate, \Countable
         return new self(...$elements);
     }
 
-    /**
-     * @return SegmentMappingElement[]
-     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->elements);

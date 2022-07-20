@@ -14,5 +14,10 @@ use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
  */
 interface DimensionResolverFactoryInterface
 {
+    /**
+     * @param ContentRepositoryIdentifier $contentRepositoryIdentifier
+     * @param array<string,mixed> $dimensionResolverOptions
+     * @return DimensionResolverInterface
+     */
     public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface;
 }

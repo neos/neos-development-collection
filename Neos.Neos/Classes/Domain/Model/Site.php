@@ -36,7 +36,7 @@ class Site
 
     /**
      * @Flow\InjectConfiguration(path="sites")
-     * @var array
+     * @var array<string,array<string,mixed>>
      */
     protected $sitesConfiguration = [];
 
@@ -117,7 +117,7 @@ class Site
      */
     public function __toString()
     {
-        return $this->getNodeName();
+        return $this->getNodeName()->value;
     }
 
     /**
@@ -368,9 +368,12 @@ class Site
     {
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getConfiguration(): array
     {
-        // Ohne rekursiven merge :)
+        // without recursive merge
         return $this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*'];
     }
 }

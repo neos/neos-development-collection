@@ -56,6 +56,11 @@ final class DelegatingResolver implements DimensionResolverInterface
         return self::fillWithDefaultDimensionSpacePoint($context, $siteConfiguration['contentDimensions']['defaultDimensionSpacePoint'] ?? []);
     }
 
+    /**
+     * @param RequestToDimensionSpacePointContext $context
+     * @param array<string,string> $defaultDimensionSpacePointCoordinates
+     * @return RequestToDimensionSpacePointContext
+     */
     private static function fillWithDefaultDimensionSpacePoint(RequestToDimensionSpacePointContext $context, array $defaultDimensionSpacePointCoordinates): RequestToDimensionSpacePointContext
     {
         foreach ($defaultDimensionSpacePointCoordinates as $dimensionName => $defaultDimensionValue) {

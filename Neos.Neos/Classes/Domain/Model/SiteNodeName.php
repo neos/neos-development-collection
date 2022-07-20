@@ -55,4 +55,9 @@ final class SiteNodeName implements CacheAwareInterface
     {
         return $this->value;
     }
+
+    public function toNodeName(): NodeName
+    {
+        return NodeName::fromString($this->value);
+    }
 }

@@ -36,6 +36,11 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPa
  */
 final class UriPathResolver implements DimensionResolverInterface
 {
+    /**
+     * @param array<string,DimensionSpacePoint> $uriPathToDimensionSpacePoint
+     * @param array<string,string> $dimensionSpacePointHashToUriPath
+     * @param Segments $segments
+     */
     private function __construct(
         private readonly array $uriPathToDimensionSpacePoint,
         private readonly array $dimensionSpacePointHashToUriPath,
@@ -57,7 +62,7 @@ final class UriPathResolver implements DimensionResolverInterface
         );
     }
 
-    private static function validate(Segments $segments, Separator $separator, ContentDimensionSourceInterface $contentDimensionSource)
+    private static function validate(Segments $segments, Separator $separator, ContentDimensionSourceInterface $contentDimensionSource): void
     {
         foreach ($segments->segments as $segment) {
             $contentDimension = $contentDimensionSource->getDimension($segment->dimensionIdentifier);
@@ -78,6 +83,11 @@ final class UriPathResolver implements DimensionResolverInterface
     }
 
 
+    /**
+     * @param Segments $segments
+     * @param Separator $separator
+     * @return array<mixed>
+     */
     private static function calculateUriPaths(Segments $segments, Separator $separator): array
     {
         $uriPathToDimensionSpacePoint = [];
@@ -106,6 +116,10 @@ final class UriPathResolver implements DimensionResolverInterface
         return [$uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath];
     }
 
+    /**
+     * @param Segments $segments
+     * @return array<int,array<string,SegmentMappingElement>>
+     */
     private static function cartesian(Segments $segments): array
     {
         // taken and adapted from https://stackoverflow.com/a/15973172/4921449
@@ -160,11 +174,14 @@ final class UriPathResolver implements DimensionResolverInterface
         return $uriConstraints;
     }
 
-    private function reduceDimensionSpacePointToConfiguredDimensions(DimensionSpacePoint $incoming)
+    private function reduceDimensionSpacePointToConfiguredDimensions(DimensionSpacePoint $incoming): DimensionSpacePoint
     {
         $newCoordinates = [];
         foreach ($this->segments->segments as $segment) {
-            $newCoordinates[$segment->dimensionIdentifier->identifier] = $incoming->getCoordinate($segment->dimensionIdentifier);
+            $coordinateValue = $incoming->getCoordinate($segment->dimensionIdentifier);
+            if ($coordinateValue !== null) {
+                $newCoordinates[$segment->dimensionIdentifier->identifier] = $coordinateValue;
+            }
         }
         return DimensionSpacePoint::fromArray($newCoordinates);
     }

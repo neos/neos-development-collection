@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -30,7 +29,7 @@ final class DocumentUriPathFinder
     /**
      * Returns the DocumentNodeInfo of a node for the given $siteNodeName and $uriPath
      *
-     * @param NodeName $siteNodeName
+     * @param SiteNodeName $siteNodeName
      * @param string $uriPath
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo

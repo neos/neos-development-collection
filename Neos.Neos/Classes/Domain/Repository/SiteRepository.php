@@ -47,15 +47,6 @@ class SiteRepository extends Repository
     protected $defaultSiteNodeName;
 
     /**
-     * @param string|SiteNodeName $identifier
-     * @return Site|null
-     */
-    public function findByIdentifier($identifier): ?Site
-    {
-        return parent::findByIdentifier($identifier);
-    }
-
-    /**
      * Finds the first site
      *
      * @return Site The first site or NULL if none exists

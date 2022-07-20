@@ -28,6 +28,10 @@ final class Segments
         return new self(...$segments);
     }
 
+    /**
+     * @param array<string,mixed> $arr
+     * @return static
+     */
     public static function fromArray(array $arr): self
     {
         // TODO:

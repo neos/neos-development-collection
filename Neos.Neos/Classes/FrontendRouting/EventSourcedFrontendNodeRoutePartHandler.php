@@ -208,7 +208,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     /**
      * @param string $uriPath
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param string $host
      * @return MatchResult
      * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
      */
@@ -233,7 +232,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * Outgoing URLs (link generation)
      *
      * @param array<string,mixed> &$routeValues
-     * @throws InvalidContentDimensionValueUriProcessorException
      */
     public function resolveWithParameters(array &$routeValues, RouteParameters $parameters): ResolveResult|false
     {
