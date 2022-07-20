@@ -55,7 +55,6 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
         $segments = Segments::create(
             Segment::create(
                 $contentDimension->identifier,
-                $contentDimension->defaultValue,
                 SegmentMapping::create(...$mapping)
             )
         );

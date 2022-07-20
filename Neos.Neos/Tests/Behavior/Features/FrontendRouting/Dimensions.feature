@@ -156,8 +156,27 @@ Feature: Routing functionality with multiple content dimensions
       | Identifier | Values          | Generalizations         |
       | market     | DE, CH          | CH->DE                  |
       | language   | en, de, gsw, at | gsw->de->en, at->de->en |
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de: de
+                        at: at
+                        gsw: gsw
+                        en: ''
+    """
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
-
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:

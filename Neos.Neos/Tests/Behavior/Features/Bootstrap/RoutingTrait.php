@@ -231,11 +231,14 @@ trait RoutingTrait
         $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
-
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         $routeContext = new RouteContext($httpRequest, $routeParameters);
-        $routeValues = $router->route($routeContext);
-        if (!isset($routeValues['node'])) {
+        try {
+            $routeValues = $router->route($routeContext);
+            if (!isset($routeValues['node'])) {
+                return null;
+            }
+        } catch (NoMatchingRouteException) {
             return null;
         }
 

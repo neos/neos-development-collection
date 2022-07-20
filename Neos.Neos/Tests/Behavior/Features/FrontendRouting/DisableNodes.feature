@@ -119,6 +119,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
       | initiatingUserIdentifier     | "user"                   |
     And the graph projection is fully up to date
+    And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And No node should match URL "/david-nodenborough/earl-document"
@@ -154,6 +155,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
       | initiatingUserIdentifier     | "user"                  |
     And the graph projection is fully up to date
+    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
@@ -188,6 +190,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
       | initiatingUserIdentifier     | "user"                   |
     And the graph projection is fully up to date
+    And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
