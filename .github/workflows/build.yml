@@ -159,9 +159,6 @@ jobs:
                   user: 'neos'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
-              mvc:
-                routes:
-                  'Neos.Flow': TRUE
             ContentRepositoryRegistry:
               postgres:
                 persistence:
@@ -284,9 +281,6 @@ jobs:
                   charset: 'utf8'
                   defaultTableOptions:
                     charset: 'utf8'
-              mvc:
-                routes:
-                  'Neos.Flow': TRUE
           EOF
           mkdir Configuration/Testing/Behat
           cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
