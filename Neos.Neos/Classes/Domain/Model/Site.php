@@ -36,7 +36,8 @@ class Site
 
     /**
      * @Flow\InjectConfiguration(path="sites")
-     * @var array<string,array<string,mixed>>
+     * @var array
+     * @phpstan-var array<string,array<string,mixed>>
      */
     protected $sitesConfiguration = [];
 
