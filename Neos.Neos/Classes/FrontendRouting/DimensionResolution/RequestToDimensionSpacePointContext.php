@@ -9,12 +9,10 @@ use Neos\Flow\Annotations as Flow;
 /**
  * See {@see DimensionResolverInterface} for documentation.
  *
- * TODO: RequestToDimensionSpacePointContext
- *
  * @Flow\Proxy(false)
  * @api
  */
-final class DimensionResolverContext
+final class RequestToDimensionSpacePointContext
 {
 
     private function __construct(

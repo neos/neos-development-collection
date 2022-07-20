@@ -40,7 +40,7 @@ final class DelegatingResolver implements DimensionResolverInterface
         private readonly SiteRepository $siteRepository,
     ) {}
 
-    public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
+    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
     {
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($context->routeParameters);
         $site = $this->siteRepository->findByIdentifier($siteDetectionResult->siteIdentifier);
@@ -51,7 +51,7 @@ final class DelegatingResolver implements DimensionResolverInterface
         $factory = $this->objectManager->get($siteConfiguration['dimensionResolver']['factoryClassName'] ?? throw new \RuntimeException('No Dimension Resolver Factory configured at Neos.Neos.sites.*.dimensionResolver.factoryClassName'));
         assert($factory instanceof DimensionResolverFactoryInterface);
         $resolverOptions = $siteConfiguration['dimensionResolver']['options'] ?? [];
-        return $factory->create($siteDetectionResult->contentRepositoryIdentifier, $resolverOptions)->resolveDimensionSpacePoint($context);
+        return $factory->create($siteDetectionResult->contentRepositoryIdentifier, $resolverOptions)->fromRequestToDimensionSpacePoint($context);
     }
 
     public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteIdentifier $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints

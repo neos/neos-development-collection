@@ -14,9 +14,7 @@ namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -25,15 +23,14 @@ use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
- *  - called from {@see EventSourcedFrontendNodeRoutePartHandler}.
- * You will not call this class yourself.
+ * Default implementation for cross-site linking.
  *
  * See {@see EventSourcedFrontendNodeRoutePartHandler} for documentation.
  *
  * @Flow\Scope("singleton")
  * @internal
  */
-final class CrossSiteLinker
+final class CrossSiteLinker implements CrossSiteLinkerInterface
 {
 
     /**
@@ -42,11 +39,6 @@ final class CrossSiteLinker
      */
     protected $siteRepository;
 
-    /**
-     * @param DocumentNodeInfo $targetNode the target node where we want to generate the link to
-     * @param SiteDetectionResult $currentRequestSiteDetectionResult
-     * @return void
-     */
     // TODO: API: maybe not $targetNode, but 2x SiteNodeName??
     public function createCrossSiteLink(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints
     {
@@ -63,7 +55,6 @@ final class CrossSiteLinker
         return $uriConstraints;
     }
 
-
     private function applyDomainToUriConstraints(UriConstraints $uriConstraints, ?Domain $domain): UriConstraints
     {
         if ($domain === null) {
@@ -78,5 +69,4 @@ final class CrossSiteLinker
         }
         return $uriConstraints;
     }
-
 }

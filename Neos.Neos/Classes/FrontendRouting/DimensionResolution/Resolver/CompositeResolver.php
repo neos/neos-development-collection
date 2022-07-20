@@ -16,7 +16,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteIdentifier;
-use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 
 /**
@@ -41,11 +41,11 @@ final class CompositeResolver implements DimensionResolverInterface
         return new self($contentDimensionResolvers);
     }
 
-    public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
+    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
     {
         foreach ($this->resolvers as $resolver) {
             assert($resolver instanceof DimensionResolverInterface);
-            $context = $resolver->resolveDimensionSpacePoint($context);
+            $context = $resolver->fromRequestToDimensionSpacePoint($context);
         }
         return $context;
     }

@@ -48,7 +48,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
-use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface;
@@ -312,7 +312,7 @@ trait RoutingTrait
     }
 
 
-    private DimensionResolverContext $dimensionResolverContext;
+    private RequestToDimensionSpacePointContext $dimensionResolverContext;
 
     /**
      * @When I invoke the Dimension Resolver :factoryClassName with options:
@@ -327,8 +327,8 @@ trait RoutingTrait
         $siteDetectionResult = SiteDetectionResult::create($this->requestUrl, SiteIdentifier::fromString("site-node"), ContentRepositoryIdentifier::fromString("default"));
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
-        $dimensionResolverContext = DimensionResolverContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
-        $dimensionResolverContext = $dimensionResolver->resolveDimensionSpacePoint($dimensionResolverContext);
+        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
+        $dimensionResolverContext = $dimensionResolver->fromRequestToDimensionSpacePoint($dimensionResolverContext);
         $this->dimensionResolverContext = $dimensionResolverContext;
     }
 

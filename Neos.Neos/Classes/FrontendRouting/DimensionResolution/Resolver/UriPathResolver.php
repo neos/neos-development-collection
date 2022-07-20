@@ -17,7 +17,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteIdentifier;
-use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
@@ -142,7 +142,7 @@ final class UriPathResolver implements DimensionResolverInterface
     }
 
 
-    public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext
+    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
     {
         $normalizedUriPath = trim($context->initialUriPath, '/');
         $uriPathSegments = explode('/', $normalizedUriPath);

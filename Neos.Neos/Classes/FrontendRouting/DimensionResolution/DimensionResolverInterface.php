@@ -25,19 +25,22 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  * **For a high-level overview on the Frontend Routing, visit {@see EventSourcedFrontendNodeRoutePartHandler}.**
  *
  *
- * ## Usage of {@see DimensionResolverInterface::resolveDimensionSpacePoint}
+ * ## Usage of {@see DimensionResolverInterface::fromRequestToDimensionSpacePoint}
  *
- * This method is called during the Routing stage (1) above. It receives a {@see DimensionResolverContext},
+ * This method is called during the Routing stage (1) above. It receives a {@see RequestToDimensionSpacePointContext},
  * through which the current URL and route parameters can be received; and via {@see SiteDetectionResult},
  * also the current site / content repository / hostname are accessible.
  *
- * The {@see DimensionResolverContext::withAddedDimensionSpacePoint()} method should be called with
- * the resolving result, potentially multiple times. NOTE: {@see DimensionResolverContext} is immutable,
+ * The {@see RequestToDimensionSpacePointContext::withAddedDimensionSpacePoint()} method should be called with
+ * the resolving result, potentially multiple times. NOTE: {@see RequestToDimensionSpacePointContext} is immutable,
  * so calling a method like the above returns a *new instance* which you need to properly return to the
  * caller.
  *
  *
- * ## TODO: OTHER USAGE
+ * ## Usage of {@see DimensionResolverInterface::fromDimensionSpacePointToUriConstraints}
+ *
+ * This method is called during the Link rendering (2) above. It receives a DimensionSpacePoint and returns
+ * an UriConstraints object which contains the necessary URL modifications.
  *
  *
  * ## Site-specific configuration through Settings.yaml
@@ -85,12 +88,12 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 interface DimensionResolverInterface
 {
     /**
-     * TODO Incoming fromRequestToDimensionSpacePoint
+     * Called in the incoming direction, when an URL is resolved on its way
      *
-     * @param DimensionResolverContext $context
-     * @return DimensionResolverContext Note: This can contain an "incomplete" dimension space point... TODO
+     * @param RequestToDimensionSpacePointContext $context
+     * @return RequestToDimensionSpacePointContext the modified context
      */
-    public function resolveDimensionSpacePoint(DimensionResolverContext $context): DimensionResolverContext;
+    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext;
 
     /**
      * Called for each generated URL, to adjust (and return) the passed-in UriConstraints depending on the given DimensionSpacePoint.

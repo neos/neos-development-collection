@@ -18,14 +18,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Neos\Domain\Model\SiteIdentifier;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
 use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Routing\AbstractRoutePart;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
@@ -34,13 +32,9 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
-use Neos\Neos\Domain\Model\Domain;
-use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinker;
+use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
-use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverContext;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -98,7 +92,6 @@ use Psr\Http\Message\UriInterface;
  *
  * This is why the {@see EventSourcedFrontendNodeRoutePartHandler} calls the {@see DelegatingResolver},
  * which calls potentially multiple {@see DimensionResolverInterface}s.
- * // TODO: Dimension Match?? -> Naming -- mit "resolveWithParameters" -- falsche Richtung??
  *
  * **For details on how to customize the Dimension Resolving, please see {@see DimensionResolverInterface}.**
  *
@@ -120,9 +113,24 @@ use Psr\Http\Message\UriInterface;
  * - The {@see NodeAggregateIdentifier} (of the Document Node we want to show) - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
  *
  *
- * ## Resolve Direction
+ * ## Resolve Direction (NodeAddress to URL)
  *
- * TODO EXPLAIN
+ * ```
+ *                ┌────────────────────────────────────────────────────────────────────────┐
+ *                │                EventSourcedFrontendNodeRoutePartHandler                │
+ *                │                   ┌─────────────────────┐      ┌─────────────────────┐ │
+ * NodeAddress────┼▶ Finding the ────▶│ CrossSiteLinker (*) │─────▶│DimensionResolver (*)│─┼──▶ URL
+ *                │  URL              └─────────────────────┘      └─────────────────────┘ │
+ *                └────────────────────────────────────────────────────────────────────────┘
+ * ```
+ *
+ * First, the URL path is resolved by checking the {@see DocumentUriPathFinder} projection.
+ *
+ * Then, the {@see CrossSiteLinkerInterface} is responsible for adjusting the built URL in case it needs to
+ * be generated for a different Site. It is basically a global singleton, but can be replaced globally
+ * if needed.
+ *
+ * Then, the {@see DimensionResolverInterface} of the target site is called for adjusting the URL.
  *
  * @Flow\Scope("singleton")
  */
@@ -141,18 +149,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var Bootstrap
-     */
-    protected $bootstrap;
-
-    /**
-     * @Flow\Inject
-     * @var DomainRepository
-     */
-    protected $domainRepository;
-
-    /**
-     * @Flow\Inject
      * @var NodeShortcutResolver
      */
     protected $nodeShortcutResolver;
@@ -165,7 +161,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var CrossSiteLinker
+     * @var CrossSiteLinkerInterface
      */
     protected $crossSiteLinker;
 
@@ -185,7 +181,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath);
 
-        $dimensionResolvingResult = $this->delegatingResolver->resolveDimensionSpacePoint(DimensionResolverContext::fromUriPathAndRouteParameters($requestPath, $parameters));
+        $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($requestPath, $parameters));
         $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint;
         // TODO Validate for full context
         // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
@@ -246,10 +242,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
         }
-        // TODO!!!
-        //if (!$parameters->has('requestUriHost')) {
-        //    return false;
-        //}
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
@@ -306,8 +298,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
 
-
-    // TODO
     private function truncateRequestPathAndReturnRemainder(string &$requestPath): string
     {
         if (!empty($this->options['uriSuffix'])) {
@@ -354,7 +344,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         return new ResolveResult($uri->getPath(), $uriConstraints);
     }
 
-    // TODO: STILL NEEDED???
     public function setSplitString($splitString): void
     {
         $this->splitString = $splitString;
