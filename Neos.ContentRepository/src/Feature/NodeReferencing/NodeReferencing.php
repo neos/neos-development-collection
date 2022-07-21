@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeReferencing;
 
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
@@ -50,10 +51,12 @@ trait NodeReferencing
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
-        $lowLevelCommand = new SetSerializedNodeProperties(
+        $lowLevelCommand = new SetSerializedNodeReferences(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
-            $command->originDimensionSpacePoint,
+            $command->sourceNodeAggregateIdentifier,
+            $command->sourceOriginDimensionSpacePoint,
+            $command->destinationNodeAggregateIdentifiers,
+            $command->referenceName,
             $this->getPropertyConverter()->serializePropertyValues(
                 $command->propertyValues,
                 $this->requireNodeType($nodeTypeName)
@@ -61,16 +64,15 @@ trait NodeReferencing
             $command->initiatingUserIdentifier
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
+        return $this->handleSetSerializedNodeReferences($lowLevelCommand);
     }
+
     /**
-     * @param SetNodeReferences $command
-     * @return CommandResult
      * @throws \Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
+    public function handleSetSerializedNodeReferences(SetSerializedNodeReferences $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -109,32 +111,38 @@ trait NodeReferencing
         $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
             function () use ($command, &$domainEvents, $sourceNodeAggregate) {
-                $events = [];
                 $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
-                $declaration = $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? null;
-                if (is_string($declaration)) {
-                    $scope = PropertyScope::from($declaration);
-                } else {
-                    $scope = PropertyScope::SCOPE_NODE;
-                }
-                $affectedOrigins = $scope->resolveAffectedOrigins(
-                    $command->sourceOriginDimensionSpacePoint,
-                    $sourceNodeAggregate,
-                    $this->interDimensionalVariationGraph
-                );
-                foreach ($affectedOrigins as $originDimensionSpacePoint) {
-                    $events[] = DecoratedEvent::addIdentifier(
-                        new NodeReferencesWereSet(
-                            $command->contentStreamIdentifier,
-                            $command->sourceNodeAggregateIdentifier,
-                            $originDimensionSpacePoint,
-                            $command->destinationNodeAggregateIdentifiers,
-                            $command->referenceName,
-                            $command->initiatingUserIdentifier
-                        ),
-                        Uuid::uuid4()->toString()
+                $propertyValuesByScope = $command->propertyValues->splitByScope($sourceNodeType);
+                $events = [];
+                foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
+                    $scope = PropertyScope::from($scopeValue);
+                    $affectedOrigins = $scope->resolveAffectedOrigins(
+                        $command->sourceOriginDimensionSpacePoint,
+                        $sourceNodeAggregate,
+                        $this->interDimensionalVariationGraph
                     );
+                    foreach ($affectedOrigins as $affectedOrigin) {
+                        $events[] = DecoratedEvent::addIdentifier(
+                            new NodeReferencesWereSet(
+                                $command->contentStreamIdentifier,
+                                $command->sourceNodeAggregateIdentifier,
+                                $affectedOrigin,
+                                $command->destinationNodeAggregateIdentifiers,
+                                $command->referenceName,
+                                $propertyValues,
+                                $command->initiatingUserIdentifier
+                            ),
+                            Uuid::uuid4()->toString()
+                        );
+                    }
                 }
+
+                $domainEvents = DomainEvents::fromArray($events);
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                        ->getEventStreamName(),
+                    $domainEvents
+                );
 
                 $domainEvents = DomainEvents::fromArray($events);
                 $this->getNodeAggregateEventPublisher()->publishMany(
