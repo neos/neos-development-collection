@@ -63,8 +63,8 @@ final class SerializedReferencePropertyValues implements \IteratorAggregate, \Co
                     'DateTimeImmutable', 'DateTime'
                         => new \DateTimeImmutable($referencePropertyConfiguration['defaultValue']),
                     'reference', 'references' => throw new \InvalidArgumentException(
-                            'Cannot use references as reference properties',
-                            1655650930
+                        'Cannot use references as reference properties',
+                        1655650930
                     ),
                     default => $referencePropertyConfiguration['defaultValue'],
                 };

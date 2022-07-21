@@ -675,6 +675,5 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-
     }
 }
