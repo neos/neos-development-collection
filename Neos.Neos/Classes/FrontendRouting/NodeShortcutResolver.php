@@ -87,7 +87,8 @@ class NodeShortcutResolver
      * because it is only covering the live workspace
      *
      * @param DocumentNodeInfo $documentNodeInfo
-     * @return \Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo|UriInterface DocumentNodeInfo is returned if we want to link to another node
+     * @return \Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo|UriInterface
+     * DocumentNodeInfo is returned if we want to link to another node
      * (i.e. node is NOT a shortcut node; or target is a node);
      * or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException

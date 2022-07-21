@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
@@ -32,8 +33,13 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
     ) {
     }
 
-    public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface
-    {
+    /**
+     * @var array<string,mixed> $dimensionResolverOptions
+     */
+    public function create(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        array $dimensionResolverOptions
+    ): DimensionResolverInterface {
         return UriPathResolver::create(
             Segments::fromArray($dimensionResolverOptions['segments'] ?? []),
             Separator::fromString($dimensionResolverOptions['separator'] ?? '_'),

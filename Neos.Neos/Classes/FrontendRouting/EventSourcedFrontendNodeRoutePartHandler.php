@@ -67,17 +67,20 @@ use Psr\Http\Message\UriInterface;
  * ```
  *
  *
- * ### {@see SiteDetectionMiddleware}: Multi-Site Support (implemented) and Multiple Content Repository Support (planned)
+ * ### {@see SiteDetectionMiddleware}: Multi-Site Support (implemented)
+ * and Multiple Content Repository Support (planned)
  *
  * The Dimension Resolving configuration might be site-specific, f.e. one site maps a subdomain to a different language;
- * and another site which wants to use the UriPathSegment. Additionally, we soon want to support using different
- * content repositories for different sites (e.g. to have different NodeTypes configured, or differing dimension configuration).
+ * and another site which wants to use the UriPathSegment.
+ * Additionally, we soon want to support using different content repositories for different sites
+ * (e.g. to have different NodeTypes configured, or differing dimension configuration).
  *
  * Thus, the {@see DimensionResolverInterface} and the frontend routing in general needs the result of the site
  * detection as input.
  *
- * Because of this, the site detection is done before the routing; inside the {@see SiteDetectionMiddleware}, which
- * runs the routing. **Feel free to replace the Site Detection with your own custom Middleware (it's very little code).**
+ * Because of this, the site detection is done before the routing; inside the {@see SiteDetectionMiddleware},
+ * which runs the routing.
+ * **Feel free to replace the Site Detection with your own custom Middleware (it's very little code).**
  *
  * The Site Detection is done at **every** request.
  *
@@ -107,8 +110,10 @@ use Psr\Http\Message\UriInterface;
  * {@see NodeAddress} (wrapped in a {@see MatchResult}); so to build the NodeAddress, we need:
  * - the {@see WorkspaceName} (which is always **live** in our case)
  * - the {@see ContentStreamIdentifier} of the Live workspace
- * - The {@see DimensionSpacePoint} we want to see the page in (i.e. in language=de) - resolved by {@see DimensionResolverInterface}
- * - The {@see NodeAggregateIdentifier} (of the Document Node we want to show) - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
+ * - The {@see DimensionSpacePoint} we want to see the page in (i.e. in language=de)
+ *   - resolved by {@see DimensionResolverInterface}
+ * - The {@see NodeAggregateIdentifier} (of the Document Node we want to show)
+ *   - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
  *
  *
  * ## Resolve Direction (NodeAddress to URL)
@@ -179,7 +184,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath);
 
-        $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($requestPath, $parameters));
+        $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(
+            RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters(
+                $requestPath,
+                $parameters
+            )
+        );
         $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint;
         // TODO Validate for full context
         // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
@@ -204,15 +214,17 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         return $matchResult;
     }
 
-
     /**
      * @param string $uriPath
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return MatchResult
      * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
      */
-    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, SiteDetectionResult $siteDetectionResult): MatchResult
-    {
+    private function matchUriPath(
+        string $uriPath,
+        DimensionSpacePoint $dimensionSpacePoint,
+        SiteDetectionResult $siteDetectionResult
+    ): MatchResult {
         $uriPath = trim($uriPath, '/');
         $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
             $siteDetectionResult->siteNodeName,
@@ -264,8 +276,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
      */
-    private function resolveNodeAddress(NodeAddress $nodeAddress, SiteDetectionResult $currentRequestSiteDetectionResult): ResolveResult
-    {
+    private function resolveNodeAddress(
+        NodeAddress $nodeAddress,
+        SiteDetectionResult $currentRequestSiteDetectionResult
+    ): ResolveResult {
         $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateIdentifier,
             $nodeAddress->dimensionSpacePoint->hash
@@ -283,8 +297,15 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             }
         }
 
-        $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints($nodeInfo, $currentRequestSiteDetectionResult);
-        $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints($nodeAddress->dimensionSpacePoint, $nodeInfo->getSiteNodeName(), $uriConstraints);
+        $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints(
+            $nodeInfo,
+            $currentRequestSiteDetectionResult
+        );
+        $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints(
+            $nodeAddress->dimensionSpacePoint,
+            $nodeInfo->getSiteNodeName(),
+            $uriConstraints
+        );
 
         if (!empty($this->options['uriSuffix']) && $nodeInfo->hasUriPath()) {
             $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriSuffix']);

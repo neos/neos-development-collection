@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -24,7 +26,12 @@ final class RequestToDimensionSpacePointContext
 
     public static function fromUriPathAndRouteParameters(string $initialUriPath, RouteParameters $routeParameters): self
     {
-        return new self($initialUriPath, $routeParameters, $initialUriPath, DimensionSpacePoint::fromArray([]));
+        return new self(
+            $initialUriPath,
+            $routeParameters,
+            $initialUriPath,
+            DimensionSpacePoint::fromArray([])
+        );
     }
 
     public function withAddedDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePointToAdd): self
@@ -34,11 +41,21 @@ final class RequestToDimensionSpacePointContext
             $coordinatesSoFar[$dimensionName] = $dimensionValue;
         }
 
-        return new self($this->initialUriPath, $this->routeParameters, $this->remainingUriPath, DimensionSpacePoint::fromArray($coordinatesSoFar));
+        return new self(
+            $this->initialUriPath,
+            $this->routeParameters,
+            $this->remainingUriPath,
+            DimensionSpacePoint::fromArray($coordinatesSoFar)
+        );
     }
 
     public function withRemainingUriPath(string $remainingUriPath): self
     {
-        return new self($this->initialUriPath, $this->routeParameters, $remainingUriPath, $this->resolvedDimensionSpacePoint);
+        return new self(
+            $this->initialUriPath,
+            $this->routeParameters,
+            $remainingUriPath,
+            $this->resolvedDimensionSpacePoint
+        );
     }
 }

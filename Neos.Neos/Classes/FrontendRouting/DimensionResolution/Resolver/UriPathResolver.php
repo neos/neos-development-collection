@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -54,7 +55,10 @@ final class UriPathResolver implements DimensionResolverInterface
         ContentDimensionSourceInterface $contentDimensionSource
     ): self {
         self::validate($segments, $separator, $contentDimensionSource);
-        list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths($segments, $separator);
+        list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths(
+            $segments,
+            $separator
+        );
         return new self(
             $uriPathToDimensionSpacePoint,
             $dimensionSpacePointHashToUriPath,
@@ -62,21 +66,32 @@ final class UriPathResolver implements DimensionResolverInterface
         );
     }
 
-    private static function validate(Segments $segments, Separator $separator, ContentDimensionSourceInterface $contentDimensionSource): void
-    {
+    private static function validate(
+        Segments $segments,
+        Separator $separator,
+        ContentDimensionSourceInterface $contentDimensionSource
+    ): void {
         foreach ($segments->segments as $segment) {
             $contentDimension = $contentDimensionSource->getDimension($segment->dimensionIdentifier);
             if ($contentDimension === null) {
-                throw new UriPathResolverConfigurationException('Content Dimension "' . $segment->dimensionIdentifier . '" does not exist.');
+                throw new UriPathResolverConfigurationException(
+                    'Content Dimension "' . $segment->dimensionIdentifier . '" does not exist.'
+                );
             }
 
             foreach ($segment->uriPathSegmentMapping as $mappingElement) {
                 if ($contentDimension->getValue($mappingElement->dimensionValue->value) === null) {
-                    throw new UriPathResolverConfigurationException('Content Dimension Value "' . $mappingElement->dimensionValue->value . '" in dimension "' . $segment->dimensionIdentifier->identifier . '" does not exist.');
+                    throw new UriPathResolverConfigurationException(
+                        'Content Dimension Value "' . $mappingElement->dimensionValue->value
+                            . '" in dimension "' . $segment->dimensionIdentifier->identifier . '" does not exist.'
+                    );
                 }
 
                 if (str_contains($mappingElement->uriPathSegmentValue, $separator->value)) {
-                    throw new UriPathResolverConfigurationException('The URI Path segment for dimension value "' . $mappingElement->dimensionValue->value . '" contains the separator "' . $separator->value . '".');
+                    throw new UriPathResolverConfigurationException(
+                        'The URI Path segment for dimension value "' . $mappingElement->dimensionValue->value
+                            . '" contains the separator "' . $separator->value . '".'
+                    );
                 }
             }
         }
@@ -106,7 +121,11 @@ final class UriPathResolver implements DimensionResolverInterface
 
             $uriPathSegment = implode($separator->value, $segmentParts);
             if (isset($uriPathToDimensionSpacePoint[$uriPathSegment])) {
-                throw new UriPathResolverConfigurationException('Uri path segment "' . $uriPathSegment . '" already configured by dimension ' . $uriPathToDimensionSpacePoint[$uriPathSegment] . '. Thus, we cannot use it for dimension ' . json_encode($dimensionSpacePointCoordinates));
+                throw new UriPathResolverConfigurationException(
+                    'Uri path segment "' . $uriPathSegment
+                        . '" already configured by dimension ' . $uriPathToDimensionSpacePoint[$uriPathSegment]
+                        . '. Thus, we cannot use it for dimension ' . json_encode($dimensionSpacePointCoordinates)
+                );
             }
             $dimensionSpacePoint = DimensionSpacePoint::fromArray($dimensionSpacePointCoordinates);
             $uriPathToDimensionSpacePoint[$uriPathSegment] = $dimensionSpacePoint;
@@ -141,9 +160,9 @@ final class UriPathResolver implements DimensionResolverInterface
         return $result;
     }
 
-
-    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
-    {
+    public function fromRequestToDimensionSpacePoint(
+        RequestToDimensionSpacePointContext $context
+    ): RequestToDimensionSpacePointContext {
         $normalizedUriPath = trim($context->initialUriPath, '/');
         $uriPathSegments = explode('/', $normalizedUriPath);
         $firstUriPathSegment = array_shift($uriPathSegments);
@@ -151,7 +170,9 @@ final class UriPathResolver implements DimensionResolverInterface
         if (isset($this->uriPathToDimensionSpacePoint[$firstUriPathSegment])) {
             // match
             $context = $context->withRemainingUriPath('/' . implode('/', $uriPathSegments));
-            $context = $context->withAddedDimensionSpacePoint($this->uriPathToDimensionSpacePoint[$firstUriPathSegment]);
+            $context = $context->withAddedDimensionSpacePoint(
+                $this->uriPathToDimensionSpacePoint[$firstUriPathSegment]
+            );
         } elseif (isset($this->uriPathToDimensionSpacePoint[''])) {
             // Fall-through empty match (if configured)
             $context = $context->withAddedDimensionSpacePoint($this->uriPathToDimensionSpacePoint['']);
@@ -160,8 +181,11 @@ final class UriPathResolver implements DimensionResolverInterface
         return $context;
     }
 
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
-    {
+    public function fromDimensionSpacePointToUriConstraints(
+        DimensionSpacePoint $dimensionSpacePoint,
+        SiteNodeName $targetSiteIdentifier,
+        UriConstraints $uriConstraints
+    ): UriConstraints {
         $dimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($dimensionSpacePoint);
 
         if (isset($this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash])) {

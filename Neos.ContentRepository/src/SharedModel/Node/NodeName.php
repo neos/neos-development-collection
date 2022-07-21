@@ -60,5 +60,4 @@ final class NodeName implements \JsonSerializable, \Stringable
     {
         return $this->value === $other->value;
     }
-
 }

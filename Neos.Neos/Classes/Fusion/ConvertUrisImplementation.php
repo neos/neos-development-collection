@@ -135,7 +135,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                         $uriBuilder->setCreateAbsoluteUri($absolute);
 
-                        // TODO: multi-site .... -> different object than NodeAddress which also contains the CR Identifier.
+                        // TODO: multi-site ....
+                        // -> different object than NodeAddress which also contains the CR Identifier.
                         $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
                         $this->runtime->addCacheTag('node', $matches[2]);
                         break;
