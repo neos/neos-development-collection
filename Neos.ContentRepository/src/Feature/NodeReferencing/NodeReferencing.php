@@ -37,6 +37,32 @@ trait NodeReferencing
 
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
+    public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
+    {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
+        $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->sourceNodeAggregateIdentifier
+        );
+        $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
+        $nodeTypeName = $sourceNodeAggregate->getNodeTypeName();
+
+        $this->validateProperties($command->propertyValues, $nodeTypeName);
+
+        $lowLevelCommand = new SetSerializedNodeProperties(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $command->originDimensionSpacePoint,
+            $this->getPropertyConverter()->serializePropertyValues(
+                $command->propertyValues,
+                $this->requireNodeType($nodeTypeName)
+            ),
+            $command->initiatingUserIdentifier
+        );
+
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
+    }
     /**
      * @param SetNodeReferences $command
      * @return CommandResult

@@ -669,4 +669,12 @@ trait ConstraintChecks
             );
         }
     }
+
+    protected function validateReferenceProperties(
+        PropertyName $referenceName,
+        PropertyValuesToWrite $referenceProperties,
+        NodeTypeName $nodeTypeName
+    ): void {
+
+    }
 }

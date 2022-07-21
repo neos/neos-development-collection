@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing\Event;
 
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
@@ -30,6 +31,7 @@ final class NodeReferencesWereSet implements
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly NodeAggregateIdentifiers $destinationNodeAggregateIdentifiers,
         public readonly PropertyName $referenceName,
+        public readonly SerializedPropertyValues $propertyValues,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -47,6 +49,7 @@ final class NodeReferencesWereSet implements
             $this->sourceOriginDimensionSpacePoint,
             $this->destinationNodeAggregateIdentifiers,
             $this->referenceName,
+            $this->propertyValues,
             $this->initiatingUserIdentifier
         );
     }

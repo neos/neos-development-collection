@@ -18,84 +18,38 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
- * "Raw" property values as saved in the event log // in projections.
+ * A collection of SerializedPropertyValues collections, to be used in reference relations.
  *
- * This means: each "value" must be a simple PHP data type.
- *
- * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
- * because we treat NULL and "not set" the same from an API perspective.
- *
- * @implements \IteratorAggregate<string,?SerializedPropertyValue>
+ * @implements \IteratorAggregate<string,SerializedPropertyValues>
  */
-final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
+final class SerializedReferencePropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<string,?SerializedPropertyValue>
+     * SerializedPropertyValues collections, indexed by target node aggregate identifier
+     *
+     * @var array<string,SerializedPropertyValues>
      */
     private array $values;
 
     /**
-     * @var \ArrayIterator<string,?SerializedPropertyValue>
-     */
-    protected \ArrayIterator $iterator;
-
-    /**
-     * @param array<string,?SerializedPropertyValue> $values
+     * @param array<string,SerializedPropertyValues> $values
      */
     private function __construct(array $values)
     {
         $this->values = $values;
-        $this->iterator = new \ArrayIterator($this->values);
     }
 
     /**
-     * @param array<string,mixed> $propertyValues
+     * @param array<string,mixed> $referencePropertyValues
      */
-    public static function fromArray(array $propertyValues): self
+    public static function fromArray(array $referencePropertyValues): self
     {
-        $values = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
-            if ($propertyValue === null) {
-                // this case means we want to un-set a property.
-                $values[$propertyName] = null;
-            } elseif (is_array($propertyValue)) {
-                $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
-            } elseif ($propertyValue instanceof SerializedPropertyValue) {
-                $values[$propertyName] = $propertyValue;
-            } else {
-                throw new \InvalidArgumentException(sprintf(
-                    'Invalid property value. Expected instance of %s, got: %s',
-                    SerializedPropertyValue::class,
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)
-                ), 1546524480);
-            }
-        }
-
-        return new self($values);
+        return new self(array_map(
+            fn (array $propertyValues): SerializedPropertyValues
+                => SerializedPropertyValues::fromArray($propertyValues),
+            $referencePropertyValues
+        ));
     }
-
-    public static function defaultFromNodeType(NodeType $nodeType): self
-    {
-        $values = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            if ($defaultValue instanceof \DateTimeInterface) {
-                $defaultValue = json_encode($defaultValue);
-            }
-
-            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
-
-            $values[$propertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
-        }
-
-        return new self($values);
-    }
-
-    public static function fromJsonString(string $jsonString): self
-    {
-        return self::fromArray(\json_decode($jsonString, true));
-    }
-
 
     public static function defaultFromNodeType(NodeType $nodeType, PropertyName $referenceName): self
     {
@@ -107,10 +61,10 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
                 $type = $referencePropertyConfiguration['type'] ?? '';
                 $values[$referencePropertyName] = match ($type) {
                     'DateTimeImmutable', 'DateTime'
-                    => new \DateTimeImmutable($referencePropertyConfiguration['defaultValue']),
+                        => new \DateTimeImmutable($referencePropertyConfiguration['defaultValue']),
                     'reference', 'references' => throw new \InvalidArgumentException(
-                        'Cannot use references as reference properties',
-                        1655650930
+                            'Cannot use references as reference properties',
+                            1655650930
                     ),
                     default => $referencePropertyConfiguration['defaultValue'],
                 };
@@ -128,6 +82,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         }
 
         return new self($values);
+    }
+
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true));
     }
 
     private static function assertTypeIsNoReference(string $propertyTypeFromSchema): void

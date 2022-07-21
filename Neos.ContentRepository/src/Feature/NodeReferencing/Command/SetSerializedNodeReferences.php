@@ -1,26 +1,38 @@
 <?php
 
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeReferencing\Command;
+namespace Neos\ContentRepository\Feature\NodeModification\Command;
 
-use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 
 /**
- * Create a named reference from source to destination node
+ * Set property values for a given node (internal implementation).
+ *
+ * The property values contain the serialized types already, and include type information.
  */
 #[Flow\Proxy(false)]
-final class SetNodeReferences implements
+final class SetSerializedNodeReferences implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
@@ -31,7 +43,7 @@ final class SetNodeReferences implements
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly NodeAggregateIdentifiers $destinationNodeAggregateIdentifiers,
         public readonly PropertyName $referenceName,
-        public readonly PropertyValuesToWrite $propertyValues,
+        public readonly SerializedPropertyValues $propertyValues,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -47,13 +59,14 @@ final class SetNodeReferences implements
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
             NodeAggregateIdentifiers::fromArray($array['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($array['referenceName']),
-            PropertyValuesToWrite::fromArray($array['propertyValues']),
+            SerializedPropertyValues::fromArray($array['propertyValues']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
     /**
-     * @return array<string,\JsonSerializable>
+     * @internal
+     * @return array<string,mixed>
      */
     public function jsonSerialize(): array
     {
