@@ -19,6 +19,8 @@ namespace Neos\ContentRepository\Projection\Content;
  *
  * @implements \IteratorAggregate<int,NodeInterface>
  * @implements \ArrayAccess<int,NodeInterface>
+ *
+ * @api
  */
 final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 {

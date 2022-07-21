@@ -18,8 +18,10 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -38,11 +40,26 @@ use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
+
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
+
 require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
 /**
@@ -51,11 +68,17 @@ require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 class FeatureContext extends MinkContext
 {
     use FlowContextTrait;
-    use LegacyNodeOperationsTrait;
+    use BrowserTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;
+    use NodeOperationsTrait;
+
+    use EventSourcedTrait;
+    use RoutingTrait;
+    use MigrationsTrait;
+
 
     /**
      * @var string
@@ -92,14 +115,8 @@ class FeatureContext extends MinkContext
 
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
-    }
-
-    /**
-     * @return PublishingService $publishingService
-     */
-    private function getPublishingService()
-    {
-        return $this->getObjectManager()->get(PublishingService::class);
+        $this->setupEventSourcedTrait();
+        $this->setupMigrationsTrait();
     }
 
     /**
@@ -307,23 +324,22 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @BeforeScenario @fixtures
+     * @BeforeScenario
      */
-    public function resetContextFactory()
+    public function resetPersistenceManagerAndFeedbackCollection()
     {
-        /** @var ContextFactoryInterface $contextFactory */
-        $contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        ObjectAccess::setProperty($contextFactory, 'contextInstances', [], true);
-    }
+        // FIXME: we have some strange race condition between the scenarios; my theory is that
+        // somehow projectors still run in the background when we start from scratch...
+        sleep(2);
+        $this->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
+        // FIXME: FeedbackCollection is a really ugly, hacky SINGLETON; so it needs to be RESET!
+        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
 
-    /**
-     * @BeforeScenario @fixtures
-     */
-    public function resetContentDimensionConfiguration()
-    {
-        $this->resetContentDimensions();
+        // The UserService has a runtime cache - which we need to reset as well as our users get new IDs.
+        // Did I already mention I LOVE in memory caches? ;-) ;-) ;-)
+        $userService = $this->getObjectManager()->get(\Neos\Neos\Domain\Service\UserService::class);
+        \Neos\Utility\ObjectAccess::setProperty($userService, 'runtimeUserCache', [], true);
     }
-
     /**
      * @Then /^I should see the following sites in a table:$/
      */

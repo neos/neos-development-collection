@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
-use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;

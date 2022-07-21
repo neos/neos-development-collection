@@ -21,6 +21,7 @@ use Neos\Flow\Annotations as Flow;
  * the node name is "foo".
  *
  * Semantically it describes the hierarchical relation of a node to its parent, e.g. "main" denotes the main child node.
+ *
  * @api
  */
 #[Flow\Proxy(false)]
@@ -53,5 +54,10 @@ final class NodeName implements \JsonSerializable, \Stringable
     public function __toString(): string
     {
         return $this->value;
+    }
+
+    public function equals(NodeName $other): bool
+    {
+        return $this->value === $other->value;
     }
 }

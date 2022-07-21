@@ -19,6 +19,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @implements \IteratorAggregate<int,ProcessedEventsAwareProjectorInterface>
  * @implements \ArrayAccess<int,ProcessedEventsAwareProjectorInterface>
+ * @internal
  */
 #[Flow\Proxy(false)]
 final class ProcessedEventsAwareProjectorCollection implements \IteratorAggregate, \ArrayAccess

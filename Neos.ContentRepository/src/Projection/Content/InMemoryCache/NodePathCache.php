@@ -19,6 +19,8 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 
 /**
  * Node Identifier -> Node Path cache
+ *
+ * @internal
  */
 final class NodePathCache
 {

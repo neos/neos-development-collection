@@ -23,10 +23,11 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
-use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -35,7 +36,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.

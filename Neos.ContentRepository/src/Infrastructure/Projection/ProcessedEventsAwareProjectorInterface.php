@@ -9,6 +9,9 @@ use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\AppliedEventsStorage\AppliedEventsStorageInterface;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 
+/**
+ * @internal
+ */
 interface ProcessedEventsAwareProjectorInterface extends
     ProjectorInterface,
     AfterInvokeInterface,

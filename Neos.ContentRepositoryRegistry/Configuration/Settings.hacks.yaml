@@ -6,4 +6,4 @@ Neos:
       includeClasses:
         # skip the AssetUsageProjector from reflection. We manually wire this class.
         'Neos.ESCR.AssetUsage': [ '^(?!Neos\\ESCR\\AssetUsage\\Projector\\AssetUsageProjector$).*$' ]
-        'Neos.Neos': [ '^(?!Neos\\Neos\\EventSourcedRouting\\Projection\\DocumentUriPathProjector$).*$' ]
+        'Neos.Neos': [ '^(?!Neos\\Neos\\FrontendRouting\\Projection\\DocumentUriPathProjector$).*$' ]

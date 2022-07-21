@@ -51,7 +51,7 @@ use Neos\EventSourcing\EventPublisher\EventPublisherFactoryInterface;
 use Neos\EventSourcing\EventPublisher\EventPublisherInterface;
 use Neos\EventSourcing\EventPublisher\JobQueueEventPublisher;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 
 /**
  *

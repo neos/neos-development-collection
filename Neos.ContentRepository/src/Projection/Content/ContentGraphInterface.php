@@ -25,7 +25,13 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguou
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 
 /**
- * The interface to be implemented by content graphs
+ * This is the MAIN ENTRY POINT for the Content Repository. This class exists only
+ * **once per Content Repository**.
+ *
+ * The most important API method is {@see ContentGraphInterface::getSubgraphByIdentifier()},
+ * where you can access the most important read model, the {@see ContentSubgraphInterface}.
+ *
+ * @api
  */
 interface ContentGraphInterface
 {

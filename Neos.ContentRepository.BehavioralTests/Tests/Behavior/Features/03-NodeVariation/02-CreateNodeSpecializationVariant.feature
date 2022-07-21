@@ -5,9 +5,9 @@ Feature: Create node specialization
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | market     | DE      | DE, CH      | CH->DE          |
-      | language   | en      | en, de, gsw | gsw->de->en     |
+      | Identifier | Values      | Generalizations |
+      | market     | DE, CH      | CH->DE          |
+      | language   | en, de, gsw | gsw->de->en     |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

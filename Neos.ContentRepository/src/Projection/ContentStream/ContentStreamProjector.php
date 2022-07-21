@@ -32,6 +32,9 @@ use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal
+ */
 #[Flow\Scope('singleton')]
 class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
 {

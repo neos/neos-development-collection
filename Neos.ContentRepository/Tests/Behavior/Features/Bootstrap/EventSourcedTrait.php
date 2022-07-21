@@ -13,6 +13,21 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+require_once(__DIR__ . '/Features/ContentStreamForking.php');
+require_once(__DIR__ . '/Features/NodeCopying.php');
+require_once(__DIR__ . '/Features/NodeCreation.php');
+require_once(__DIR__ . '/Features/NodeDisabling.php');
+require_once(__DIR__ . '/Features/NodeModification.php');
+require_once(__DIR__ . '/Features/NodeMove.php');
+require_once(__DIR__ . '/Features/NodeReferencing.php');
+require_once(__DIR__ . '/Features/NodeRemoval.php');
+require_once(__DIR__ . '/Features/NodeRenaming.php');
+require_once(__DIR__ . '/Features/NodeTypeChange.php');
+require_once(__DIR__ . '/Features/NodeVariation.php');
+require_once(__DIR__ . '/Features/WorkspaceCreation.php');
+require_once(__DIR__ . '/Features/WorkspaceDiscarding.php');
+require_once(__DIR__ . '/Features/WorkspacePublishing.php');
+
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;

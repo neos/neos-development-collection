@@ -14,9 +14,9 @@ Feature: Move node to a new parent / within the current parent before a sibling 
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | market     | DE      | DE, CH      | CH->DE          |
-      | language   | de      | de, gsw, fr | gsw->de         |
+      | Identifier | Values      | Generalizations |
+      | market     | DE, CH      | CH->DE          |
+      | language   | de, gsw, fr | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

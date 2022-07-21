@@ -10,8 +10,8 @@ Feature: Dimension mismatch
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de | de->en          |
+      | Identifier | Values | Generalizations |
+      | language   | en, de | de->en          |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
@@ -47,8 +47,8 @@ Feature: Dimension mismatch
     And the graph projection is fully up to date
 
     When I have the following content dimensions:
-      | Identifier | Default | Values | Generalizations |
-      | language   | en      | en, de | en->de          |
+      | Identifier | Values | Generalizations |
+      | language   | en, de | en->de          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                                | nodeAggregateIdentifier |
       | NODE_COVERS_GENERALIZATION_OR_PEERS | sir-david-nodenborough  |

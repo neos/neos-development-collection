@@ -22,6 +22,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The property collection implementation
  * @Flow\Proxy(false)
+ * @internal
  */
 final class PropertyCollection implements PropertyCollectionInterface
 {

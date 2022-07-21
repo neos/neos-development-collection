@@ -8,8 +8,8 @@ Feature: Creation of nodes underneath disabled nodes
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values                | Generalizations                     |
-      | language   | mul     | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
+      | Identifier | Values                | Generalizations                     |
+      | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': {}

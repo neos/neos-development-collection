@@ -11,6 +11,7 @@
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
+        "neos/error-messages": "*",
         "neos/fluid-adaptor": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
