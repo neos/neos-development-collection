@@ -126,7 +126,7 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $this->removeSiteNode(NodeName::fromString($site->getNodeName()));
+        $this->removeSiteNode($site->getNodeName()->toNodeName());
         $site->setPrimaryDomain(null);
         $this->siteRepository->update($site);
 

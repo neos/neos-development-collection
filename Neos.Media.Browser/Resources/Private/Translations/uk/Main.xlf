@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-        <target state="translated">Цей модуль дозволяє управляти медіа активами, у тому числі фотографіями, відео, аудіо та документами.</target>
+        <target state="translated">Цей модуль дозволяє управляти медіа активами, у тому числі світлинами, відео, аудіо та документами.</target>
       </trans-unit>
       <trans-unit id="field.name" xml:space="preserve">
 				<source>Name</source>
@@ -453,12 +453,10 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">{0} вокристано</target>
-        </trans-unit>
+          <target state="translated">{0} вокристано</target> </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="translated">{0} вокристано</target>
-        </trans-unit>
+          <target state="translated">{0} вокристано</target> </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>

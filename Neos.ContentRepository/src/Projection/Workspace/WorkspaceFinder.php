@@ -21,6 +21,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Workspace Finder
+ *
+ * @api
  */
 final class WorkspaceFinder
 {

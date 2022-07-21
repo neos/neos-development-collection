@@ -14,6 +14,9 @@ use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStr
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 
+/**
+ * @api
+ */
 class ContentStreamPruner
 {
     protected ContentStreamFinder $contentStreamFinder;

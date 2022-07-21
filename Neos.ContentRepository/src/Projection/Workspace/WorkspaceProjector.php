@@ -30,6 +30,9 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal
+ */
 #[Flow\Scope('singleton')]
 class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 {

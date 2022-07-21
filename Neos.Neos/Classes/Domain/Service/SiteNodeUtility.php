@@ -18,7 +18,6 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -80,7 +79,7 @@ final class SiteNodeUtility
             $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
             $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
                 $sitesNode,
-                NodeName::fromString($site->getNodeName())
+                $site->getNodeName()->toNodeName()
             );
             if ($siteNode instanceof NodeInterface) {
                 return $siteNode;

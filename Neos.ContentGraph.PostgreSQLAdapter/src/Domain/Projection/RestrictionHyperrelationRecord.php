@@ -94,12 +94,21 @@ final class RestrictionHyperrelationRecord
      */
     public function addToDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
-            'contentstreamidentifier' => (string)$this->contentStreamIdentifier,
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'originnodeaggregateidentifier' => (string)$this->originNodeAggregateIdentifier,
-            'affectednodeaggregateidentifiers' => $this->affectedNodeAggregateIdentifiers->toDatabaseString()
-        ]);
+        $databaseConnection->executeStatement(
+            'INSERT INTO ' . self::TABLE_NAME . ' (
+                contentstreamidentifier,
+                dimensionspacepointhash,
+                originnodeaggregateidentifier,
+                affectednodeaggregateidentifiers
+            ) VALUES (?, ?, ?, ?)
+            ON CONFLICT DO NOTHING',
+            [
+                (string)$this->contentStreamIdentifier,
+                $this->dimensionSpacePointHash,
+                (string)$this->originNodeAggregateIdentifier,
+                $this->affectedNodeAggregateIdentifiers->toDatabaseString()
+            ]
+        );
     }
 
     /**

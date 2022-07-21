@@ -233,7 +233,7 @@ class SitesController extends AbstractModuleController
             $siteNodeAggregates = $this->contentGraph->findChildNodeAggregatesByName(
                 $workspace->getCurrentContentStreamIdentifier(),
                 $sitesNode->getIdentifier(),
-                NodeName::fromString($site->getNodeName())
+                $site->getNodeName()->toNodeName()
             );
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {

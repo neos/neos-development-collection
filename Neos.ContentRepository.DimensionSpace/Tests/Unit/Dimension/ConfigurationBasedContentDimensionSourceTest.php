@@ -243,25 +243,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
     /**
      * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
      */
-    public function testDefaultValuesAreCorrectlyInitialized()
-    {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
-        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
-
-        $this->assertSame(
-            $dimensionA->getValue('valueA1'),
-            $dimensionA->defaultValue
-        );
-
-        $this->assertSame(
-            $dimensionB->getValue('valueB1'),
-            $dimensionB->defaultValue
-        );
-    }
-
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testMaximumDepthIsCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));

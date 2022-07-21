@@ -62,6 +62,13 @@ Neos:
       # The only limitation is that all segments must be unique across all dimenions.
       supportEmptySegmentForDimensions: true
 
+    sites:
+      '*':
+        contentRepository: default
+        contentDimensions:
+          resolver:
+            factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
+
     nodeTypes:
       groups:
         general:
@@ -421,12 +428,9 @@ Neos:
 
     http:
       middlewares:
-        'requestUriHostParameter':
+        'detectSite':
           position: 'before routing'
-          middleware: 'Neos\Neos\Routing\RequestUriHostMiddleware'
-        'detectContentSubgraph':
-          position: 'before routing'
-          middleware: 'Neos\Neos\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
+          middleware: 'Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware'
     mvc:
       routes:
         'Neos.Neos':

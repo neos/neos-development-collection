@@ -10,8 +10,8 @@ Feature: Add Dimension Specialization
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | language   | mul     | mul, de, en | de->mul         |
+      | Identifier | Values      | Generalizations |
+      | language   | mul, de, en | de->mul         |
 
     ########################
     # SETUP
@@ -62,8 +62,8 @@ Feature: Add Dimension Specialization
   Scenario: Success Case - simple
     # we change the dimension configuration
     When I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | language   | mul     | mul, de, ch | ch->de->mul     |
+      | Identifier | Values      | Generalizations |
+      | language   | mul, de, ch | ch->de->mul     |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
@@ -159,8 +159,8 @@ Feature: Add Dimension Specialization
 
     # we change the dimension configuration
     When I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | language   | mul     | mul, de, ch | ch->de->mul     |
+      | Identifier | Values      | Generalizations |
+      | language   | mul, de, ch | ch->de->mul     |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
@@ -195,8 +195,8 @@ Feature: Add Dimension Specialization
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
     When I have the following content dimensions:
-      | Identifier | Default | Values          | Generalizations |
-      | language   | mul     | mul, de, ch, en | ch->de->mul     |
+      | Identifier | Values          | Generalizations |
+      | language   | mul, de, ch, en | ch->de->mul     |
 
     # we create a node in CH
     When the command CreateNodeVariant is executed with payload:
@@ -238,8 +238,8 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (1)
     Given I have the following content dimensions:
-      | Identifier | Default | Values       | Generalizations |
-      | language   | mul     | mul, de, foo | de->mul         |
+      | Identifier | Values       | Generalizations |
+      | language   | mul, de, foo | de->mul         |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
     """
@@ -257,8 +257,8 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (2)
     Given I have the following content dimensions:
-      | Identifier | Default | Values       | Generalizations   |
-      | language   | mul     | mul, de, foo | de->mul, foo->mul |
+      | Identifier | Values       | Generalizations   |
+      | language   | mul, de, foo | de->mul, foo->mul |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
     """

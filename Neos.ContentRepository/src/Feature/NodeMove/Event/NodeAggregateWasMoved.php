@@ -37,6 +37,15 @@ final class NodeAggregateWasMoved implements
      * a list of new parent NodeAggregateIdentifiers, and a list of new succeeding-sibling NodeAggregateIdentifiers.
      *
      * This happens between
+     * MoveNodeMappings
+     *   (list of MoveNodeMapping)
+     *   one MoveNodeMapping == one OriginDimensionSpacePoint we want to move.
+     *     -> new parents need to be specified (NodeVariantAssignments); new succeeding siblings need to be specified (for order) (NodeVariantAssignments)
+     *     -> !!! this might be multiple DIFFERENT ones, because one OriginDimensionSpacePoint might shine through into different covered dimensions,
+     *        and there it might be at a different location.
+     *         the KEY here is the COVERED DSP Hash (!!!) - TODO should be fixed
+     *         the value is the Identifier + Origin Dimension Space Point OF THE PARENT
+     *
      *
      * @var NodeMoveMappings|null
      */

@@ -166,54 +166,6 @@ trait LegacyNodeOperationsTrait
     }
 
     /**
-     * @Given /^I have the following content dimensions:$/
-     */
-    public function iHaveTheFollowingContentDimensions($table)
-    {
-        if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
-        } else {
-            $dimensions = [];
-            $presetsFound = false;
-            foreach ($table->getHash() as $row) {
-                $dimensions[$row['Identifier']] = [
-                    'default' => $row['Default']
-                ];
-
-                $defaultPreset = '';
-                if (isset($row['Presets'])) {
-                    $presetsFound = true;
-                    // parse a preset string like:
-                    // preset1=dimensionValue1,dimensionValue2; preset2=dimensionValue3
-                    $presetStrings = Arrays::trimExplode(';', $row['Presets']);
-                    $presets = [];
-                    foreach ($presetStrings as $presetString) {
-                        list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
-                        $presets[$presetName] = [
-                            'values' => Arrays::trimExplode(',', $presetValues),
-                            'uriSegment' => $presetName
-                        ];
-
-                        if ($defaultPreset === '') {
-                            $defaultPreset = $presetName;
-                        }
-                    }
-
-                    $dimensions[$row['Identifier']]['presets'] = $presets;
-                    $dimensions[$row['Identifier']]['defaultPreset'] = $defaultPreset;
-                }
-            }
-            $contentDimensionRepository = $this->getObjectManager()->get(ContentDimensionRepository::class);
-            $contentDimensionRepository->setDimensionsConfiguration($dimensions);
-
-            if ($presetsFound === true) {
-                $contentDimensionPresetSource = $this->getObjectManager()->get(ContentDimensionPresetSourceInterface::class);
-                $contentDimensionPresetSource->setConfiguration($dimensions);
-            }
-        }
-    }
-
-    /**
      * @When /^I copy the node (into|after|before) path "([^"]*)" with the following context:$/
      */
     public function iCopyANodeToPath($position, $path, $table)

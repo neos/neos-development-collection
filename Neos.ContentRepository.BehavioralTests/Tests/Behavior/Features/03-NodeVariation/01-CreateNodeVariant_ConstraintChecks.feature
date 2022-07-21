@@ -5,9 +5,9 @@ Feature: Create node variant
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values  | Generalizations |
-      | market     | DE      | DE, CH  | CH->DE          |
-      | language   | de      | de, gsw | gsw->de         |
+      | Identifier | Values  | Generalizations |
+      | market     | DE, CH  | CH->DE          |
+      | language   | de, gsw | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

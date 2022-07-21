@@ -17,7 +17,7 @@ use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 
 class CrCommandController extends CommandController
 {

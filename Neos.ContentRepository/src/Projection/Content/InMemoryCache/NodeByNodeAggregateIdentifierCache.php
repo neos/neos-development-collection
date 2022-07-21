@@ -21,6 +21,8 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
  * NodeAggregateIdentifier -> Node cache
  *
  * also contains a *blacklist* of unknown NodeAggregateIdentifiers.
+ *
+ * @internal
  */
 final class NodeByNodeAggregateIdentifierCache
 {

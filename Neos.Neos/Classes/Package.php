@@ -28,7 +28,7 @@ use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Fusion\Core\Cache\ContentCache;

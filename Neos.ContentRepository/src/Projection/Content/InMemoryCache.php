@@ -21,7 +21,12 @@ use Neos\ContentRepository\Projection\Content\InMemoryCache\NodePathCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
 /**
- * Accessors to In Memory Cache
+ * Accessors to in Memory Cache
+ *
+ * Detail for runtime performance improvement of the different implementations
+ * of {@see ContentSubgraphInterface}. You never need this externally.
+ *
+ * @internal
  */
 final class InMemoryCache
 {

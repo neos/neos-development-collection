@@ -14,16 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Workspace;
 
-use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * Name of a workspace.
  *
- * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
+ * @api
  */
 #[Flow\Proxy(false)]
-final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \Stringable
+final class WorkspaceName implements \JsonSerializable, \Stringable
 {
     public const WORKSPACE_NAME_LIVE = 'live';
 
@@ -66,11 +65,6 @@ final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \St
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->name;
-    }
-
-    public function getCacheEntryIdentifier(): string
     {
         return $this->name;
     }
