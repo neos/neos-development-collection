@@ -34,7 +34,7 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
     }
 
     /**
-     * @var array<string,mixed> $dimensionResolverOptions
+     * @param array<string,mixed> $dimensionResolverOptions
      */
     public function create(
         ContentRepositoryIdentifier $contentRepositoryIdentifier,
