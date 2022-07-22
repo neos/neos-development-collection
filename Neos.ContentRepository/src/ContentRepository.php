@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository;
 
 
+use Neos\ContentRepository\CommandHandler\CommandBus;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\CommandHandler\PendingProjections;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\Feature\CommandInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;

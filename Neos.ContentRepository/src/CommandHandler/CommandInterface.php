@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Feature;
+namespace Neos\ContentRepository\CommandHandler;
 
 
 /**

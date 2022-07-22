@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature;
 
+use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
@@ -35,7 +39,7 @@ use Ramsey\Uuid\Uuid;
  * @Flow\Scope("singleton")
  * ContentStreamCommandHandler
  */
-final class ContentStreamCommandHandler
+final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
     private ContentStreamRepository $contentStreamRepository;
 
@@ -57,10 +61,27 @@ final class ContentStreamCommandHandler
         $this->runtimeBlocker = $runtimeBlocker;
     }
 
+    public function canHandle(CommandInterface $command): bool
+    {
+        return $command instanceof CreateContentStream
+            || $command instanceof ForkContentStream
+            || $command instanceof RemoveContentStream
+            || $command instanceof RemoveContentStream;
+    }
+
+    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        if ($command instanceof CreateContentStream) {
+            return $this->handleCreateContentStream($command);
+        } elseif ($command instanceof ForkContentStream) {
+            return $this->handleForkContentStream($command);
+        }
+    }
+
     /**
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateContentStream(CreateContentStream $command): CommandResult
+    private function handleCreateContentStream(CreateContentStream $command): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -85,7 +106,7 @@ final class ContentStreamCommandHandler
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
-    public function handleForkContentStream(ForkContentStream $command): CommandResult
+    private function handleForkContentStream(ForkContentStream $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 

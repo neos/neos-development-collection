@@ -14,7 +14,7 @@
         "neos/cache": "*",
         "neos/utility-arrays": "*",
         "neos/neos-ui": "*",
-        "neos/event-sourcing": "*",
+        "neos/eventstore": "*",
         "neos/flow": "*",
         "neos/eel": "*",
         "neos/fluid-adaptor": "*",

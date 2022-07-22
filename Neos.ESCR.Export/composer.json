@@ -5,7 +5,7 @@
     "require": {
         "php": ">=8.1",
         "neos/neos": "*",
-        "neos/event-sourcing": "*",
+        "neos/eventstore": "*",
         "neos/content-repository": "*",
         "neos/escr-asset-usage": "*",
         "webmozart/assert": "^1.10"
