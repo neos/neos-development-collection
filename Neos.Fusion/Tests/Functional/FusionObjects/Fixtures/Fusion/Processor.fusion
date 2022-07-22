@@ -21,6 +21,9 @@ processors.newSyntax.basicProcessor {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
   }
+
+  plainValueOverriddenByPlainValue = "bar"
+  plainValueOverriddenByPlainValue.@process.replace = "foo"
 }
 
 processors.newSyntax.processorBeforeValue {

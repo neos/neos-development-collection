@@ -42,6 +42,14 @@ class ProcessorTest extends AbstractFusionObjectTest
     }
 
     /**
+     * @test
+     */
+    public function plainValueOverriddenByPlainValueWorks()
+    {
+        $this->assertMultipleFusionPaths('foo', 'processors/newSyntax/basicProcessor/plainValueOverriddenByPlainValue');
+    }
+
+    /**
      * Data Provider for processorsCanBeUnset
      *
      * @return array

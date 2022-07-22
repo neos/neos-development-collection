@@ -825,7 +825,7 @@ class Runtime
             }
 
             # If there is only the internal "__stopInheritanceChain" path set, skip evaluation
-            if (count($processorConfiguration[$key]) === 1 && isset($processorConfiguration[$key]['__stopInheritanceChain'])) {
+            if (isset($processorConfiguration[$key]['__stopInheritanceChain']) && count($processorConfiguration[$key]) === 1) {
                 continue;
             }
 
