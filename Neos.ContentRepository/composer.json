@@ -5,7 +5,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/event-sourcing": "^2.4",
+        "neos/eventstore": "*",
         "neos/content-repository-dimensionspace": "*",
         "php": "^8.1",
         "neos/flow": "*",
