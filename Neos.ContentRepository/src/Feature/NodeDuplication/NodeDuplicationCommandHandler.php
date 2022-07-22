@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Feature\NodeDuplication;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -28,16 +30,14 @@ use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Ramsey\Uuid\Uuid;
 
 final class NodeDuplicationCommandHandler
@@ -107,7 +107,7 @@ final class NodeDuplicationCommandHandler
     /**
      * @throws NodeConstraintException
      */
-    public function handleCopyNodesRecursively(CopyNodesRecursively $command): CommandResult
+    private function handleCopyNodesRecursively(CopyNodesRecursively $command): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -172,34 +172,30 @@ final class NodeDuplicationCommandHandler
         }
 
         // Now, we can start creating the recursive structure.
-        $events = DomainEvents::createEmpty();
-        $this->nodeAggregateEventPublisher->withCommand(
-            $command,
-            function () use ($command, $coveredDimensionSpacePoints, &$events) {
-                $this->createEventsForNodeToInsert(
-                    $command->getContentStreamIdentifier(),
-                    $command->getTargetDimensionSpacePoint(),
-                    $coveredDimensionSpacePoints,
-                    $command->getTargetParentNodeAggregateIdentifier(),
-                    $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
-                    $command->getTargetNodeName(),
-                    $command->getNodeToInsert(),
-                    $command->getNodeAggregateIdentifierMapping(),
-                    $command->getInitiatingUserIdentifier(),
-                    $events
-                );
-
-                $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-                    $command->getContentStreamIdentifier()
-                );
-                $this->nodeAggregateEventPublisher->enrichWithCommand(
-                    $contentStreamEventStreamName->getEventStreamName(),
-                    $events
-                );
-            }
+        $events = [];
+        $this->createEventsForNodeToInsert(
+            $command->getContentStreamIdentifier(),
+            $command->getTargetDimensionSpacePoint(),
+            $coveredDimensionSpacePoints,
+            $command->getTargetParentNodeAggregateIdentifier(),
+            $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
+            $command->getTargetNodeName(),
+            $command->getNodeToInsert(),
+            $command->getNodeAggregateIdentifierMapping(),
+            $command->getInitiatingUserIdentifier(),
+            $events
         );
 
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier(
+                $command->getContentStreamIdentifier()
+            )->getEventStreamName(),
+            $this->nodeAggregateEventPublisher->enrichWithCommand(
+                $command,
+                Events::fromArray($events)
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 
     private function requireNewNodeAggregateIdentifiersToNotExist(
@@ -221,27 +217,22 @@ final class NodeDuplicationCommandHandler
         \Neos\ContentRepository\Feature\NodeDuplication\Command\NodeSubtreeSnapshot $nodeToInsert,
         NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
         UserIdentifier $initiatingUserIdentifier,
-        DomainEvents &$events
+        array &$events
     ): void {
-        $events = $events->appendEvent(
-            DecoratedEvent::addIdentifier(
-                new NodeAggregateWithNodeWasCreated(
-                    $contentStreamIdentifier,
-                    $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
-                        $nodeToInsert->getNodeAggregateIdentifier()
-                    ) ?: NodeAggregateIdentifier::create(),
-                    $nodeToInsert->getNodeTypeName(),
-                    $originDimensionSpacePoint,
-                    $coveredDimensionSpacePoints,
-                    $targetParentNodeAggregateIdentifier,
-                    $targetNodeName,
-                    $nodeToInsert->getPropertyValues(),
-                    $nodeToInsert->getNodeAggregateClassification(),
-                    $initiatingUserIdentifier,
-                    $targetSucceedingSiblingNodeAggregateIdentifier
-                ),
-                Uuid::uuid4()->toString()
-            )
+        $events[] = new NodeAggregateWithNodeWasCreated(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
+                $nodeToInsert->getNodeAggregateIdentifier()
+            ) ?: NodeAggregateIdentifier::create(),
+            $nodeToInsert->getNodeTypeName(),
+            $originDimensionSpacePoint,
+            $coveredDimensionSpacePoints,
+            $targetParentNodeAggregateIdentifier,
+            $targetNodeName,
+            $nodeToInsert->getPropertyValues(),
+            $nodeToInsert->getNodeAggregateClassification(),
+            $initiatingUserIdentifier,
+            $targetSucceedingSiblingNodeAggregateIdentifier
         );
 
         foreach ($nodeToInsert->getChildNodesToInsert() as $childNodeToInsert) {

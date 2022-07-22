@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -43,6 +44,7 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class MoveNodeAggregate implements
+    CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface

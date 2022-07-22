@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
@@ -20,6 +21,7 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class SetNodeReferences implements
+    CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface

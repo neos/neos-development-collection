@@ -43,7 +43,7 @@ trait NodeReferencing
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleSetNodeReferences(SetNodeReferences $command): EventsToPublish
+    private function handleSetNodeReferences(SetNodeReferences $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -78,40 +78,38 @@ trait NodeReferencing
             );
         }
 
-        return $this->getNodeAggregateEventPublisher()->withCommand(
-            $command,
-            function () use ($command, $sourceNodeAggregate) {
-                $events = [];
-                $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
-                $declaration = $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? null;
-                if (is_string($declaration)) {
-                    $scope = PropertyScope::from($declaration);
-                } else {
-                    $scope = PropertyScope::SCOPE_NODE;
-                }
-                $affectedOrigins = $scope->resolveAffectedOrigins(
-                    $command->sourceOriginDimensionSpacePoint,
-                    $sourceNodeAggregate,
-                    $this->interDimensionalVariationGraph
-                );
-                foreach ($affectedOrigins as $originDimensionSpacePoint) {
-                    $events[] = new NodeReferencesWereSet(
-                        $command->contentStreamIdentifier,
-                        $command->sourceNodeAggregateIdentifier,
-                        $originDimensionSpacePoint,
-                        $command->destinationNodeAggregateIdentifiers,
-                        $command->referenceName,
-                        $command->initiatingUserIdentifier
-                    );
-                }
+        $events = [];
+        $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
+        $declaration = $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? null;
+        if (is_string($declaration)) {
+            $scope = PropertyScope::from($declaration);
+        } else {
+            $scope = PropertyScope::SCOPE_NODE;
+        }
+        $affectedOrigins = $scope->resolveAffectedOrigins(
+            $command->sourceOriginDimensionSpacePoint,
+            $sourceNodeAggregate,
+            $this->interDimensionalVariationGraph
+        );
+        foreach ($affectedOrigins as $originDimensionSpacePoint) {
+            $events[] = new NodeReferencesWereSet(
+                $command->contentStreamIdentifier,
+                $command->sourceNodeAggregateIdentifier,
+                $originDimensionSpacePoint,
+                $command->destinationNodeAggregateIdentifiers,
+                $command->referenceName,
+                $command->initiatingUserIdentifier
+            );
+        }
 
-                return $this->getNodeAggregateEventPublisher()->enrichWithCommand(
-                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
-                        ->getEventStreamName(),
-                    Events::fromArray($events),
-                    ExpectedVersion::ANY()
-                );
-            }
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+                $command,
+                Events::fromArray($events)
+            ),
+            ExpectedVersion::ANY()
         );
     }
 }

@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Feature\NodeMove;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -44,6 +46,7 @@ use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Ramsey\Uuid\Uuid;
 
 trait NodeMove
@@ -67,14 +70,14 @@ trait NodeMove
 
     /**
      * @param MoveNodeAggregate $command
-     * @return CommandResult
+     * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
      */
-    public function handleMoveNodeAggregate(MoveNodeAggregate $command): CommandResult
+    private function handleMoveNodeAggregate(MoveNodeAggregate $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -88,122 +91,115 @@ trait NodeMove
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getDimensionSpacePoint());
 
-        $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand(
-            $command,
-            function () use ($command, $nodeAggregate, &$events) {
-                $affectedDimensionSpacePoints = $this->resolveAffectedDimensionSpacePointSet(
-                    $nodeAggregate,
-                    $command->getRelationDistributionStrategy(),
-                    $command->getDimensionSpacePoint()
-                );
-
-                $newParentNodeAggregate = null;
-                if ($command->getNewParentNodeAggregateIdentifier()) {
-                    $this->requireConstraintsImposedByAncestorsAreMet(
-                        $command->getContentStreamIdentifier(),
-                        $this->requireNodeType($nodeAggregate->getNodeTypeName()),
-                        $nodeAggregate->getNodeName(),
-                        [$command->getNewParentNodeAggregateIdentifier()]
-                    );
-
-                    $this->requireNodeNameToBeUncovered(
-                        $command->getContentStreamIdentifier(),
-                        $nodeAggregate->getNodeName(),
-                        $command->getNewParentNodeAggregateIdentifier(),
-                        $affectedDimensionSpacePoints
-                    );
-
-                    $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNewParentNodeAggregateIdentifier()
-                    );
-
-                    $this->requireNodeAggregateToCoverDimensionSpacePoints(
-                        $newParentNodeAggregate,
-                        $affectedDimensionSpacePoints
-                    );
-
-                    $this->requireNodeAggregateToNotBeDescendant(
-                        $command->getContentStreamIdentifier(),
-                        $newParentNodeAggregate,
-                        $nodeAggregate
-                    );
-                }
-
-                if ($command->getNewPrecedingSiblingNodeAggregateIdentifier()) {
-                    $this->requireProjectedNodeAggregate(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNewPrecedingSiblingNodeAggregateIdentifier()
-                    );
-                }
-                if ($command->getNewSucceedingSiblingNodeAggregateIdentifier()) {
-                    $this->requireProjectedNodeAggregate(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNewSucceedingSiblingNodeAggregateIdentifier()
-                    );
-                }
-
-                /** @var NodeVariantAssignments[] $succeedingSiblingAssignments */
-                $succeedingSiblingAssignments = [];
-                $parentAssignments = [];
-                foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $occupiedDimensionSpacePoint) {
-                    $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash]
-                        = $this->resolveNewSucceedingSiblingsAssignments(
-                            $command->getContentStreamIdentifier(),
-                            $nodeAggregate,
-                            $command->getNewParentNodeAggregateIdentifier(),
-                            $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
-                            $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
-                            $occupiedDimensionSpacePoint,
-                            $affectedDimensionSpacePoints
-                        );
-                    $parentAssignments[$occupiedDimensionSpacePoint->hash] = $this->resolveNewParentAssignments(
-                        $command->getContentStreamIdentifier(),
-                        $nodeAggregate,
-                        $command->getNewParentNodeAggregateIdentifier(),
-                        $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash],
-                        $occupiedDimensionSpacePoint,
-                        $affectedDimensionSpacePoints
-                    );
-                }
-
-                $nodeMoveMappings = $this->getNodeMoveMappings(
-                    $nodeAggregate,
-                    $parentAssignments,
-                    $succeedingSiblingAssignments,
-                    $affectedDimensionSpacePoints
-                );
-
-                $events = DomainEvents::withSingleEvent(
-                    DecoratedEvent::addIdentifier(
-                        new NodeAggregateWasMoved(
-                            $command->getContentStreamIdentifier(),
-                            $command->getNodeAggregateIdentifier(),
-                            $nodeMoveMappings,
-                            !$command->getNewParentNodeAggregateIdentifier()
-                                && !$command->getNewSucceedingSiblingNodeAggregateIdentifier()
-                                && !$command->getNewPrecedingSiblingNodeAggregateIdentifier()
-                                    ? $affectedDimensionSpacePoints
-                                    : new DimensionSpacePointSet([]),
-                            $command->getInitiatingUserIdentifier()
-                        ),
-                        Uuid::uuid4()->toString()
-                    )
-                );
-
-                $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-                    $command->getContentStreamIdentifier()
-                );
-                $this->getNodeAggregateEventPublisher()->enrichWithCommand(
-                    $contentStreamEventStreamName->getEventStreamName(),
-                    $events
-                );
-            }
+        $affectedDimensionSpacePoints = $this->resolveAffectedDimensionSpacePointSet(
+            $nodeAggregate,
+            $command->getRelationDistributionStrategy(),
+            $command->getDimensionSpacePoint()
         );
-        /** @var DomainEvents $events */
 
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+        if ($command->getNewParentNodeAggregateIdentifier()) {
+            $this->requireConstraintsImposedByAncestorsAreMet(
+                $command->getContentStreamIdentifier(),
+                $this->requireNodeType($nodeAggregate->getNodeTypeName()),
+                $nodeAggregate->getNodeName(),
+                [$command->getNewParentNodeAggregateIdentifier()]
+            );
+
+            $this->requireNodeNameToBeUncovered(
+                $command->getContentStreamIdentifier(),
+                $nodeAggregate->getNodeName(),
+                $command->getNewParentNodeAggregateIdentifier(),
+                $affectedDimensionSpacePoints
+            );
+
+            $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
+                $command->getContentStreamIdentifier(),
+                $command->getNewParentNodeAggregateIdentifier()
+            );
+
+            $this->requireNodeAggregateToCoverDimensionSpacePoints(
+                $newParentNodeAggregate,
+                $affectedDimensionSpacePoints
+            );
+
+            $this->requireNodeAggregateToNotBeDescendant(
+                $command->getContentStreamIdentifier(),
+                $newParentNodeAggregate,
+                $nodeAggregate
+            );
+        }
+
+        if ($command->getNewPrecedingSiblingNodeAggregateIdentifier()) {
+            $this->requireProjectedNodeAggregate(
+                $command->getContentStreamIdentifier(),
+                $command->getNewPrecedingSiblingNodeAggregateIdentifier()
+            );
+        }
+        if ($command->getNewSucceedingSiblingNodeAggregateIdentifier()) {
+            $this->requireProjectedNodeAggregate(
+                $command->getContentStreamIdentifier(),
+                $command->getNewSucceedingSiblingNodeAggregateIdentifier()
+            );
+        }
+
+        /** @var NodeVariantAssignments[] $succeedingSiblingAssignments */
+        $succeedingSiblingAssignments = [];
+        $parentAssignments = [];
+        foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $occupiedDimensionSpacePoint) {
+            $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash]
+                = $this->resolveNewSucceedingSiblingsAssignments(
+                $command->getContentStreamIdentifier(),
+                $nodeAggregate,
+                $command->getNewParentNodeAggregateIdentifier(),
+                $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
+                $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
+                $occupiedDimensionSpacePoint,
+                $affectedDimensionSpacePoints
+            );
+            $parentAssignments[$occupiedDimensionSpacePoint->hash] = $this->resolveNewParentAssignments(
+                $command->getContentStreamIdentifier(),
+                $nodeAggregate,
+                $command->getNewParentNodeAggregateIdentifier(),
+                $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash],
+                $occupiedDimensionSpacePoint,
+                $affectedDimensionSpacePoints
+            );
+        }
+
+        $nodeMoveMappings = $this->getNodeMoveMappings(
+            $nodeAggregate,
+            $parentAssignments,
+            $succeedingSiblingAssignments,
+            $affectedDimensionSpacePoints
+        );
+
+        $events = Events::with(
+            new NodeAggregateWasMoved(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeAggregateIdentifier(),
+                $nodeMoveMappings,
+                !$command->getNewParentNodeAggregateIdentifier()
+                && !$command->getNewSucceedingSiblingNodeAggregateIdentifier()
+                && !$command->getNewPrecedingSiblingNodeAggregateIdentifier()
+                    ? $affectedDimensionSpacePoints
+                    : new DimensionSpacePointSet([]),
+                $command->getInitiatingUserIdentifier()
+            )
+        );
+
+        $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $command->getContentStreamIdentifier()
+        );
+        ;
+
+        return new EventsToPublish(
+            $contentStreamEventStreamName->getEventStreamName(),
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
@@ -224,14 +220,15 @@ trait NodeMove
         /** A dimension space point occupied by the node aggregate to be moved */
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): NodeVariantAssignments {
+    ): NodeVariantAssignments
+    {
         $parents = NodeVariantAssignments::create();
         if ($parentIdentifier) {
             // if a parent node aggregate identifier is explicitly given,
             // then all variants are assigned to it as children
             foreach (
                 $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
-                     ->getIntersection($affectedDimensionSpacePoints) as $coveredDimensionSpacePoint
+                    ->getIntersection($affectedDimensionSpacePoints) as $coveredDimensionSpacePoint
             ) {
                 $parents = $parents->add(
                     new NodeVariantAssignment(
@@ -272,8 +269,8 @@ trait NodeMove
             if (is_null($parentNode)) {
                 throw new \InvalidArgumentException(
                     'Could not find parent for succeeding sibling '
-                        . $succeedingSiblingAssignment->nodeAggregateIdentifier
-                        . ' in subgraph ' . json_encode($contentSubgraph),
+                    . $succeedingSiblingAssignment->nodeAggregateIdentifier
+                    . ' in subgraph ' . json_encode($contentSubgraph),
                     1645367254
                 );
             }
@@ -297,14 +294,15 @@ trait NodeMove
         ReadableNodeAggregateInterface $nodeAggregate,
         RelationDistributionStrategy $relationDistributionStrategy,
         DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
-    ): DimensionSpacePointSet {
+    ): DimensionSpacePointSet
+    {
         return match ($relationDistributionStrategy) {
             RelationDistributionStrategy::STRATEGY_SCATTER =>
-                new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
+            new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
             RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS =>
-                $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
-                    $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
-                ),
+            $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
+                $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
+            ),
             default => $nodeAggregate->getCoveredDimensionSpacePoints(),
         };
     }
@@ -332,7 +330,8 @@ trait NodeMove
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         /** The dimension space points affected by the move operation */
         DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): NodeVariantAssignments {
+    ): NodeVariantAssignments
+    {
         $succeedingSiblings = NodeVariantAssignments::create();
         if (!$precedingSiblingIdentifier && !$succeedingSiblingIdentifier) {
             return $succeedingSiblings;
@@ -346,7 +345,7 @@ trait NodeMove
         );
         foreach (
             $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
-                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
+                ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
             $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
                 $contentStreamIdentifier,
@@ -400,7 +399,8 @@ trait NodeMove
         ContentSubgraphInterface $contentSubgraph,
         ?NodeAggregateIdentifier $parentIdentifier,
         NodeAggregateIdentifier $siblingIdentifier
-    ): ?NodeInterface {
+    ): ?NodeInterface
+    {
         $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateIdentifier($siblingIdentifier);
         if ($parentIdentifier && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
@@ -428,7 +428,8 @@ trait NodeMove
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
         ContentSubgraphInterface $currentContentSubgraph,
         ContentSubgraphInterface $originContentSubgraph
-    ): ?NodeInterface {
+    ): ?NodeInterface
+    {
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)
@@ -491,7 +492,8 @@ trait NodeMove
         array $parentAssignments,
         array $succeedingSiblingAssignments,
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): NodeMoveMappings {
+    ): NodeMoveMappings
+    {
         $nodeMoveMappings = [];
         $coveredAffectedDimensionSpacePoints = is_null($affectedDimensionSpacePoints)
             ? $nodeAggregate->getCoveredDimensionSpacePoints()

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeDuplication\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
@@ -33,6 +34,7 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * `dimensionSpacePoint`.
  */
 final class CopyNodesRecursively implements
+    CommandInterface,
     \JsonSerializable,
     MatchableWithNodeAddressInterface,
     RebasableToOtherContentStreamsInterface

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeModification;
 
+use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -76,42 +77,44 @@ trait NodeModification
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        return $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$domainEvents) {
-            // Check if node exists
-            $nodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier
-            );
-            $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
-            $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
-            $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
-            $events = [];
-            foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
-                $scope = PropertyScope::from($scopeValue);
-                $affectedOrigins = $scope->resolveAffectedOrigins(
-                    $command->originDimensionSpacePoint,
-                    $nodeAggregate,
-                    $this->interDimensionalVariationGraph
-                );
-                foreach ($affectedOrigins as $affectedOrigin) {
-                    $events[] = new NodePropertiesWereSet(
-                        $command->contentStreamIdentifier,
-                        $command->nodeAggregateIdentifier,
-                        $affectedOrigin,
-                        $propertyValues,
-                        $command->initiatingUserIdentifier
-                    );
-                }
-            }
-            $events = $this->mergeSplitEvents($events);
 
-            return $this->getNodeAggregateEventPublisher()->enrichWithCommand(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
-                    ->getEventStreamName(),
-                $events,
-                ExpectedVersion::ANY()
+        // Check if node exists
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
+        );
+        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
+        $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
+        $events = [];
+        foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
+            $scope = PropertyScope::from($scopeValue);
+            $affectedOrigins = $scope->resolveAffectedOrigins(
+                $command->originDimensionSpacePoint,
+                $nodeAggregate,
+                $this->interDimensionalVariationGraph
             );
-        });
+            foreach ($affectedOrigins as $affectedOrigin) {
+                $events[] = new NodePropertiesWereSet(
+                    $command->contentStreamIdentifier,
+                    $command->nodeAggregateIdentifier,
+                    $affectedOrigin,
+                    $propertyValues,
+                    $command->initiatingUserIdentifier
+                );
+            }
+        }
+        $events = $this->mergeSplitEvents($events);
+
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+                $command,
+                Events::fromArray($events)
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
