@@ -16,7 +16,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Add a Dimension Space Point Shine-Through;
@@ -29,38 +28,13 @@ use Neos\Flow\Annotations as Flow;
  *
  * NOTE: the target dimension space point must not contain any content.
  */
-#[Flow\Proxy(false)]
 final class DimensionShineThroughWasAdded implements EventInterface, PublishableToOtherContentStreamsInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private DimensionSpacePoint $source;
-
-    private DimensionSpacePoint $target;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $source,
-        DimensionSpacePoint $target
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly DimensionSpacePoint $source,
+        public readonly DimensionSpacePoint $target
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->source = $source;
-        $this->target = $target;
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getSource(): DimensionSpacePoint
-    {
-        return $this->source;
-    }
-
-    public function getTarget(): DimensionSpacePoint
-    {
-        return $this->target;
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
@@ -70,5 +44,23 @@ final class DimensionShineThroughWasAdded implements EventInterface, Publishable
             $this->source,
             $this->target
         );
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            DimensionSpacePoint::fromArray($values['source']),
+            DimensionSpacePoint::fromArray($values['target'])
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'source' => $this->source,
+            'target' => $this->target,
+        ];
     }
 }

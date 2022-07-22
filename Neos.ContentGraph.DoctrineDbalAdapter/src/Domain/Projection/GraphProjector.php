@@ -937,18 +937,18 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                      AND n.origindimensionspacepointhash = :dimensionSpacePointHash
                 ',
                 [
-                    'dimensionSpacePointHash' => $event->getSource()->hash,
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    'dimensionSpacePointHash' => $event->source->hash,
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
                 ]
             );
             while ($res = $rel->fetchAssociative()) {
                 $relationAnchorPoint = NodeRelationAnchorPoint::fromString($res['relationanchorpoint']);
                 $this->updateNodeRecordWithCopyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamIdentifier,
                     $relationAnchorPoint,
                     function (NodeRecord $nodeRecord) use ($event) {
-                        $nodeRecord->originDimensionSpacePoint = $event->getTarget()->jsonSerialize();
-                        $nodeRecord->originDimensionSpacePointHash = $event->getTarget()->hash;
+                        $nodeRecord->originDimensionSpacePoint = $event->target->jsonSerialize();
+                        $nodeRecord->originDimensionSpacePointHash = $event->target->hash;
                     }
                 );
             }
@@ -965,10 +965,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
-                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
-                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    'originalDimensionSpacePointHash' => $event->source->hash,
+                    'newDimensionSpacePointHash' => $event->target->hash,
+                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
                 ]
             );
 
@@ -983,9 +983,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                       AND r.contentstreamidentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
-                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    'originalDimensionSpacePointHash' => $event->source->hash,
+                    'newDimensionSpacePointHash' => $event->target->hash,
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
                 ]
             );
         });
@@ -1019,10 +1019,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                     WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash',
                 [
-                    'contentStreamIdentifier' => $event->getContentStreamIdentifier()->jsonSerialize(),
-                    'sourceDimensionSpacePointHash' => $event->getSource()->hash,
-                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
-                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                    'contentStreamIdentifier' => $event->contentStreamIdentifier->jsonSerialize(),
+                    'sourceDimensionSpacePointHash' => $event->source->hash,
+                    'newDimensionSpacePointHash' => $event->target->hash,
+                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
                 ]
             );
 
@@ -1045,9 +1045,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                     AND r.dimensionspacepointhash = :sourceDimensionSpacePointHash
 
             ', [
-                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                'sourceDimensionSpacePointHash' => $event->getSource()->hash,
-                'targetDimensionSpacePointHash' => $event->getTarget()->hash
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'sourceDimensionSpacePointHash' => $event->source->hash,
+                'targetDimensionSpacePointHash' => $event->target->hash
             ]);
         });
     }

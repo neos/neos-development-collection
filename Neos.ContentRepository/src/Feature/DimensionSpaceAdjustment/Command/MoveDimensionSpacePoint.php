@@ -12,10 +12,10 @@ namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command;
  * source code.
  */
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Move a dimension space point to a new location; basically moving all content to the new dimension space point.
@@ -24,23 +24,13 @@ use Neos\Flow\Annotations as Flow;
  *
  * NOTE: the target dimension space point must not contain any content.
  */
-#[Flow\Proxy(false)]
-final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOtherContentStreamsInterface
+final class MoveDimensionSpacePoint implements \JsonSerializable, CommandInterface, RebasableToOtherContentStreamsInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private DimensionSpacePoint $source;
-
-    private DimensionSpacePoint $target;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $source,
-        DimensionSpacePoint $target
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly DimensionSpacePoint $source,
+        public readonly DimensionSpacePoint $target
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->source = $source;
-        $this->target = $target;
     }
 
     /**
@@ -53,21 +43,6 @@ final class MoveDimensionSpacePoint implements \JsonSerializable, RebasableToOth
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
         );
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getSource(): DimensionSpacePoint
-    {
-        return $this->source;
-    }
-
-    public function getTarget(): DimensionSpacePoint
-    {
-        return $this->target;
     }
 
     /**

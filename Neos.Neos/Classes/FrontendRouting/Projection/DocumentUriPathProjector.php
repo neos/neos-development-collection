@@ -757,13 +757,13 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
-        if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if ($this->isLiveContentStream($event->contentStreamIdentifier)) {
             $this->updateNodeQuery(
                 'SET dimensionspacepointhash = :newDimensionSpacePointHash
                         WHERE dimensionspacepointhash = :originalDimensionSpacePointHash',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
-                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
+                    'originalDimensionSpacePointHash' => $event->source->hash,
+                    'newDimensionSpacePointHash' => $event->target->hash,
                 ]
             );
 
@@ -771,8 +771,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'SET origindimensionspacepointhash = :newDimensionSpacePointHash
                         WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
-                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
+                    'originalDimensionSpacePointHash' => $event->source->hash,
+                    'newDimensionSpacePointHash' => $event->target->hash,
                 ]
             );
         }
@@ -781,7 +781,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
-        if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
+        if ($this->isLiveContentStream($event->contentStreamIdentifier)) {
             try {
                 $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME_DOCUMENT_URIS . ' (
                     nodeaggregateidentifier,
@@ -813,8 +813,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 WHERE
                     dimensionSpacePointHash = :sourceDimensionSpacePointHash
                 ', [
-                    'sourceDimensionSpacePointHash' => $event->getSource()->hash,
-                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
+                    'sourceDimensionSpacePointHash' => $event->source->hash,
+                    'newDimensionSpacePointHash' => $event->target->hash,
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf(

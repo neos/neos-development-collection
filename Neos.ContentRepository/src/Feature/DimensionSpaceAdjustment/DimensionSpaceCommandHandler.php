@@ -13,117 +13,110 @@ namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment;
  * source code.
  */
 
+use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStore;
-use Ramsey\Uuid\Uuid;
 
 /**
  * ContentStreamCommandHandler
  */
-#[Flow\Scope("singleton")]
-final class DimensionSpaceCommandHandler
+final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 {
-    protected EventStore $eventStore;
-
-    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
-    protected ContentGraphInterface $contentGraph;
-
-    protected ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
-    protected RuntimeBlocker $runtimeBlocker;
 
     public function __construct(
-        EventStore $eventStore,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        ContentGraphInterface $contentGraph,
-        ContentDimensionZookeeper $contentDimensionZookeeper,
-        InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        RuntimeBlocker $runtimeBlocker
-    ) {
-        $this->eventStore = $eventStore;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->contentGraph = $contentGraph;
-        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->runtimeBlocker = $runtimeBlocker;
+        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        private readonly ContentGraphInterface $contentGraph,
+        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
+    )
+    {
     }
 
-    public function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command): CommandResult
+    public function canHandle(CommandInterface $command): bool
+    {
+        return $command instanceof MoveDimensionSpacePoint
+            || $command instanceof AddDimensionShineThrough;
+    }
+
+    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        if ($command instanceof MoveDimensionSpacePoint) {
+            return $this->handleMoveDimensionSpacePoint($command);
+        } elseif ($command instanceof AddDimensionShineThrough) {
+            return $this->handleAddDimensionShineThrough($command);
+        }
+    }
+
+    private function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
         $this->requireDimensionSpacePointToBeEmptyInContentStream(
-            $command->getTarget(),
-            $command->getContentStreamIdentifier()
+            $command->target,
+            $command->contentStreamIdentifier
         );
-        $this->requireDimensionSpacePointToExistInConfiguration($command->getTarget());
+        $this->requireDimensionSpacePointToExistInConfiguration($command->target);
 
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
                 new DimensionSpacePointWasMoved(
-                    $command->getContentStreamIdentifier(),
-                    $command->getSource(),
-                    $command->getTarget()
+                    $command->contentStreamIdentifier,
+                    $command->source,
+                    $command->target
                 ),
-                Uuid::uuid4()->toString()
-            )
+            ),
+            ExpectedVersion::ANY()
         );
-        $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
-    public function handleAddDimensionShineThrough(AddDimensionShineThrough $command): CommandResult
+    private function handleAddDimensionShineThrough(AddDimensionShineThrough $command): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
         $this->requireDimensionSpacePointToBeEmptyInContentStream(
             $command->getTarget(),
-            $command->getContentStreamIdentifier()
+            $command->contentStreamIdentifier
         );
         $this->requireDimensionSpacePointToExistInConfiguration($command->getTarget());
 
-        $this->requireDimensionSpacePointToBeSpecialization($command->getTarget(), $command->getSource());
+        $this->requireDimensionSpacePointToBeSpecialization($command->target, $command->source);
 
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
                 new DimensionShineThroughWasAdded(
-                    $command->getContentStreamIdentifier(),
-                    $command->getSource(),
-                    $command->getTarget()
-                ),
-                Uuid::uuid4()->toString()
-            )
+                    $command->contentStreamIdentifier,
+                    $command->source,
+                    $command->target
+                )
+            ),
+            ExpectedVersion::ANY()
         );
-        $this->eventStore->commit($streamName, $events);
-
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     /**
@@ -140,7 +133,8 @@ final class DimensionSpaceCommandHandler
     protected function requireDimensionSpacePointToBeEmptyInContentStream(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentStreamIdentifier $contentStreamIdentifier
-    ): void {
+    ): void
+    {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
@@ -158,11 +152,12 @@ final class DimensionSpaceCommandHandler
     private function requireDimensionSpacePointToBeSpecialization(
         DimensionSpacePoint $target,
         DimensionSpacePoint $source
-    ): void {
+    ): void
+    {
         if ($this->interDimensionalVariationGraph->getVariantType(
-            $target,
-            $source
-        ) !== VariantType::TYPE_SPECIALIZATION) {
+                $target,
+                $source
+            ) !== VariantType::TYPE_SPECIALIZATION) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
     }
