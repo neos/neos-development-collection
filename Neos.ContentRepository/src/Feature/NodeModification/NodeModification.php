@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeModification;
 
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -25,12 +26,9 @@ use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\PropertyScope;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeModification
 {
@@ -47,7 +45,7 @@ trait NodeModification
 
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
-    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
+    private function handleSetNodeProperties(SetNodeProperties $command): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
@@ -74,12 +72,11 @@ trait NodeModification
         return $this->handleSetSerializedNodeProperties($lowLevelCommand);
     }
 
-    public function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): CommandResult
+    private function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        $domainEvents = DomainEvents::createEmpty();
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$domainEvents) {
+        return $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$domainEvents) {
             // Check if node exists
             $nodeAggregate = $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
@@ -107,22 +104,14 @@ trait NodeModification
                 }
             }
             $events = $this->mergeSplitEvents($events);
-            $domainEvents = DomainEvents::fromArray(array_map(
-                fn(NodePropertiesWereSet $event): DecoratedEvent => DecoratedEvent::addIdentifier(
-                    $event,
-                    Uuid::uuid4()->toString()
-                ),
-                $events
-            ));
 
-            $this->getNodeAggregateEventPublisher()->publishMany(
+            return $this->getNodeAggregateEventPublisher()->enrichWithCommand(
                 ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                     ->getEventStreamName(),
-                $domainEvents
+                $events,
+                ExpectedVersion::ANY()
             );
         });
-
-        return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
     }
 
     /**

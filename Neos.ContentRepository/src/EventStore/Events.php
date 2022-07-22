@@ -2,28 +2,25 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\EventStore;
 
-use Webmozart\Assert\Assert;
-
 /**
  * A set of Content Repository "domain events"
  *
- * @implements \IteratorAggregate<EventInterface>
+ * @implements \IteratorAggregate<EventInterface|DecoratedEvent>
  */
 final class Events implements \IteratorAggregate
 {
 
     /**
-     * @var EventInterface[]
+     * @var EventInterface|DecoratedEvent[]
      */
     private readonly array $events;
 
-    private function __construct(EventInterface ...$events)
+    private function __construct(EventInterface|DecoratedEvent ...$events)
     {
-        Assert::notEmpty($events);
         $this->events = $events;
     }
 
-    public static function with(EventInterface $event): self
+    public static function with(EventInterface|DecoratedEvent $event): self
     {
         return new self($event);
     }

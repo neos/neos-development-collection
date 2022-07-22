@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeModification\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
@@ -32,7 +33,7 @@ use Neos\Flow\Annotations as Flow;
  * then processed and stored.
  */
 #[Flow\Proxy(false)]
-final class SetNodeProperties
+final class SetNodeProperties implements CommandInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,

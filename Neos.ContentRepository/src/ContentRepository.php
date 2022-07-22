@@ -19,6 +19,7 @@ use Neos\ContentRepository\CommandHandler\CommandBus;
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\CommandHandler\PendingProjections;
+use Neos\ContentRepository\EventStore\DecoratedEvent;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
@@ -71,7 +72,7 @@ final class ContentRepository
 
         // the following logic could also be done in an AppEventStore::commit method (being called directly from the individual
         // Command Handlers).
-        $normalizedEvents = Events::fromArray($eventsToPublish->events->map(fn (EventInterface $event) => $this->normalizeEvent($event)));
+        $normalizedEvents = Events::fromArray($eventsToPublish->events->map(fn (EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event)));
         $commitResult = $this->eventStore->commit($eventsToPublish->streamName, $normalizedEvents, $eventsToPublish->expectedVersion);
         // for performance reasons, we do not want to update ALL projections all the time; but instead only
         // the projections which are interested in the events from above.
@@ -83,14 +84,22 @@ final class ContentRepository
         return new CommandResult($pendingProjections, $commitResult);
     }
 
-    private function normalizeEvent(EventInterface $event): Event
+    private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
     {
-        // TODO support decorated events (specifying id, metadata, ...)
+
+        if ($event instanceof DecoratedEvent) {
+            $eventId = $event->eventId;
+            $eventMetadata = $event->eventMetadata;
+            $event = $event->innerEvent;
+        } else {
+            $eventId = EventId::create();
+            $eventMetadata = EventMetadata::none();
+        }
         return new Event(
-            EventId::create(),
+            $eventId,
             $this->eventNormalizer->getEventType($event),
             $this->eventNormalizer->getEventData($event),
-            EventMetadata::none(),
+            $eventMetadata,
         );
     }
 

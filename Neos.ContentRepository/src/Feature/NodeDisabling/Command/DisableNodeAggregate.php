@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeDisabling\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -29,6 +29,7 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class DisableNodeAggregate implements
+    CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface

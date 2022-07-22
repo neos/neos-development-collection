@@ -33,7 +33,7 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class NodeAggregateWithNodeWasCreated implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -82,5 +82,39 @@ final class NodeAggregateWithNodeWasCreated implements
             $this->initiatingUserIdentifier,
             $this->succeedingNodeAggregateIdentifier
         );
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($values['nodeTypeName']),
+            OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
+            DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
+            NodeAggregateIdentifier::fromString($values['parentNodeAggregateIdentifier']),
+            isset($values['nodeName']) ? NodeName::fromString($values['nodeName']) : null,
+            SerializedPropertyValues::fromArray($values['initialPropertyValues']),
+            NodeAggregateClassification::from($values['nodeAggregateClassification']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            isset($values['succeedingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($values['succeedingNodeAggregateIdentifier']) : null,
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeTypeName' => $this->nodeTypeName,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
+            'coveredDimensionSpacePoints' => $this->coveredDimensionSpacePoints,
+            'parentNodeAggregateIdentifier' => $this->parentNodeAggregateIdentifier,
+            'nodeName' => $this->nodeName,
+            'initialPropertyValues' => $this->initialPropertyValues,
+            'nodeAggregateClassification' => $this->nodeAggregateClassification,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'succeedingNodeAggregateIdentifier' => $this->succeedingNodeAggregateIdentifier
+        ];
     }
 }

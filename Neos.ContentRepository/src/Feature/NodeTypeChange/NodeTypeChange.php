@@ -14,6 +14,8 @@ namespace Neos\ContentRepository\Feature\NodeTypeChange;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -44,6 +46,7 @@ use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Ramsey\Uuid\Uuid;
 
 trait NodeTypeChange
@@ -113,7 +116,7 @@ trait NodeTypeChange
      * @throws NodeTypeNotFoundException
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function handleChangeNodeAggregateType(ChangeNodeAggregateType $command): CommandResult
+    public function handleChangeNodeAggregateType(ChangeNodeAggregateType $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -168,7 +171,7 @@ trait NodeTypeChange
          * Creating the events
          **************/
         $events = DomainEvents::fromArray([]);
-        $this->getNodeAggregateEventPublisher()->withCommand(
+        return $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
             function () use ($command, $nodeAggregate, $newNodeType, &$events) {
                 $events = DomainEvents::withSingleEvent(
@@ -217,7 +220,7 @@ trait NodeTypeChange
                             $tetheredNodeAggregateIdentifier = $command->getTetheredDescendantNodeAggregateIdentifiers()
                                 ?->getNodeAggregateIdentifier(NodePath::fromString((string)$tetheredNodeName))
                                 ?: NodeAggregateIdentifier::create();
-                            $events = $events->appendEvents($this->createEventsForMissingTetheredNode(
+                            $events[] = $this->createEventsForMissingTetheredNode(
                                 $nodeAggregate,
                                 $node,
                                 $tetheredNodeName,
@@ -229,16 +232,15 @@ trait NodeTypeChange
                     }
                 }
 
-                $this->getNodeAggregateEventPublisher()->publishMany(
+                return $this->getNodeAggregateEventPublisher()->enrichWithCommand(
                     ContentStreamEventStreamName::fromContentStreamIdentifier(
                         $command->getContentStreamIdentifier()
                     )->getEventStreamName(),
-                    $events
+                    Events::fromArray($events),
+                    ExpectedVersion::ANY()
                 );
             }
         );
-
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
 

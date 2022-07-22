@@ -191,7 +191,7 @@ final class NodeDuplicationCommandHandler
                 $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
                     $command->getContentStreamIdentifier()
                 );
-                $this->nodeAggregateEventPublisher->publishMany(
+                $this->nodeAggregateEventPublisher->enrichWithCommand(
                     $contentStreamEventStreamName->getEventStreamName(),
                     $events
                 );

@@ -99,7 +99,7 @@ trait NodeRemoval
                     )
                 );
 
-                $this->getNodeAggregateEventPublisher()->publishMany(
+                $this->getNodeAggregateEventPublisher()->enrichWithCommand(
                     ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                         ->getEventStreamName(),
                     $events

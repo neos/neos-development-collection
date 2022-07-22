@@ -90,7 +90,7 @@ trait NodeVariation
                 $command->contentStreamIdentifier
             );
 
-            $this->getNodeAggregateEventPublisher()->publishMany($streamName->getEventStreamName(), $events);
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand($streamName->getEventStreamName(), $events);
         });
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());

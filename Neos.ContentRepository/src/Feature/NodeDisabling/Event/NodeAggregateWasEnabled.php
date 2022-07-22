@@ -28,7 +28,7 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class NodeAggregateWasEnabled implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -58,5 +58,25 @@ final class NodeAggregateWasEnabled implements
             $this->affectedDimensionSpacePoints,
             $this->initiatingUserIdentifier
         );
+    }
+
+    public static function fromArray(array $values): EventInterface
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'affectedDimensionSpacePoints' => $this->affectedDimensionSpacePoints,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
     }
 }

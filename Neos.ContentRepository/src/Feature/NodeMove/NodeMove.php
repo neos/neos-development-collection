@@ -193,7 +193,7 @@ trait NodeMove
                 $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
                     $command->getContentStreamIdentifier()
                 );
-                $this->getNodeAggregateEventPublisher()->publishMany(
+                $this->getNodeAggregateEventPublisher()->enrichWithCommand(
                     $contentStreamEventStreamName->getEventStreamName(),
                     $events
                 );

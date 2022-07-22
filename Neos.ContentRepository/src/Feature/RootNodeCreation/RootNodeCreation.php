@@ -108,7 +108,7 @@ trait RootNodeCreation
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $command->contentStreamIdentifier
         );
-        $this->getNodeAggregateEventPublisher()->publishMany(
+        $this->getNodeAggregateEventPublisher()->enrichWithCommand(
             $contentStreamEventStreamName->getEventStreamName(),
             $events
         );

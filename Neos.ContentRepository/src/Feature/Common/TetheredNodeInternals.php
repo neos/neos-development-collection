@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
+use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -23,11 +24,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
 
 trait TetheredNodeInternals
 {
@@ -41,7 +38,7 @@ trait TetheredNodeInternals
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents;
+    ): Events;
 
     /**
      * This is the remediation action for non-existing tethered nodes.
@@ -58,7 +55,7 @@ trait TetheredNodeInternals
         ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
         UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents {
+    ): Events {
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName(
             $parentNode->getContentStreamIdentifier(),
             $parentNode->getNodeAggregateIdentifier(),
@@ -74,21 +71,18 @@ trait TetheredNodeInternals
 
         if (count($childNodeAggregates) === 0) {
             // there is no tethered child node aggregate already; let's create it!
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeAggregateWithNodeWasCreated(
-                        $parentNode->getContentStreamIdentifier(),
-                        $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
-                        NodeTypeName::fromString($expectedTetheredNodeType->getName()),
-                        $parentNode->getOriginDimensionSpacePoint(),
-                        $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
-                        $parentNode->getNodeAggregateIdentifier(),
-                        $tetheredNodeName,
-                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
-                        NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                        $initiatingUserIdentifier
-                    ),
-                    Uuid::uuid4()->toString()
+            return Events::with(
+                new NodeAggregateWithNodeWasCreated(
+                    $parentNode->getContentStreamIdentifier(),
+                    $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
+                    NodeTypeName::fromString($expectedTetheredNodeType->getName()),
+                    $parentNode->getOriginDimensionSpacePoint(),
+                    $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
+                    $parentNode->getNodeAggregateIdentifier(),
+                    $tetheredNodeName,
+                    SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
+                    NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                    $initiatingUserIdentifier
                 )
             );
         } elseif (count($childNodeAggregates) === 1) {
@@ -108,7 +102,7 @@ trait TetheredNodeInternals
                 break;
             }
             /** @var NodeInterface $childNodeSource Node aggregates are never empty */
-            $events = $this->createEventsForVariations(
+            return $this->createEventsForVariations(
                 $parentNode->getContentStreamIdentifier(),
                 $childNodeSource->getOriginDimensionSpacePoint(),
                 $parentNode->getOriginDimensionSpacePoint(),
@@ -121,7 +115,5 @@ trait TetheredNodeInternals
                     '- this is ambiguous and we should analyze how this may happen. That is very likely a bug.'
             );
         }
-
-        return $events;
     }
 }

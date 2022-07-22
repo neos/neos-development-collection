@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeCreation\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
@@ -32,6 +33,7 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
  */
 #[Flow\Proxy(false)]
 final class CreateNodeAggregateWithNodeAndSerializedProperties implements
+    CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface

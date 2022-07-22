@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeCreation\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -33,7 +34,7 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * `originDimensionSpacePoint`.
  */
 #[Flow\Proxy(false)]
-final class CreateNodeAggregateWithNode
+final class CreateNodeAggregateWithNode implements CommandInterface
 {
     /**
      * Node aggregate identifier of the node's succeeding sibling (optional)

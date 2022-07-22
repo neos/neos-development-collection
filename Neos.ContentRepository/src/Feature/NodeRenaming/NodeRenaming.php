@@ -51,7 +51,7 @@ trait NodeRenaming
                 )
             );
 
-            $this->getNodeAggregateEventPublisher()->publishMany(
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
                 ContentStreamEventStreamName::fromContentStreamIdentifier(
                     $command->getContentStreamIdentifier()
                 )->getEventStreamName(),
