@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\SiteDetection;
@@ -54,7 +55,13 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
         }
         assert($site instanceof Site);
 
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($site->getConfiguration()['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository'));
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+            $site->getConfiguration()['contentRepository']
+                ?? throw new \RuntimeException(
+                    'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+                        . ' Neos.Neos.sites.*.contentRepository'
+                )
+        );
         $siteDetectionResult = SiteDetectionResult::create($site->getNodeName(), $contentRepositoryIdentifier);
         return $handler->handle($siteDetectionResult->storeInRequest($request));
     }

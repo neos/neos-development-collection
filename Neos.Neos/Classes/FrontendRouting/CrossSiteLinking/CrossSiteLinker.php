@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
@@ -32,15 +33,16 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  */
 final class CrossSiteLinker implements CrossSiteLinkerInterface
 {
-
     /**
      * @Flow\Inject
      * @var SiteRepository
      */
     protected $siteRepository;
 
-    public function applyCrossSiteUriConstraints(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints
-    {
+    public function applyCrossSiteUriConstraints(
+        DocumentNodeInfo $targetNode,
+        SiteDetectionResult $currentRequestSiteDetectionResult
+    ): UriConstraints {
         $uriConstraints = UriConstraints::create();
         if (!$targetNode->getSiteNodeName()->equals($currentRequestSiteDetectionResult->siteNodeName)) {
             /** @var Site $site */

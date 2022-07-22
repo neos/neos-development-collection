@@ -165,8 +165,10 @@ class UserService
      * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers(string $sortBy = 'accountidentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
-    {
+    public function getUsers(
+        string $sortBy = 'accountidentifier',
+        string $sortDirection = QueryInterface::ORDER_ASCENDING
+    ): QueryResultInterface {
         return $this->userRepository->findAllOrdered($sortBy, $sortDirection);
     }
 
@@ -885,13 +887,17 @@ class UserService
         $sessionToKeep = $keepCurrentSession ? $this->sessionManager->getCurrentSession() : null;
 
         foreach ($user->getAccounts() as $account) {
-            $activeSessions = $this->sessionManager->getSessionsByTag($this->securityContext->getSessionTagForAccount($account));
+            $activeSessions = $this->sessionManager->getSessionsByTag(
+                $this->securityContext->getSessionTagForAccount($account)
+            );
             foreach ($activeSessions as $activeSession) {
                 /** @var SessionInterface $activeSession */
                 if ($sessionToKeep instanceof SessionInterface && $activeSession->getId() === $sessionToKeep->getId()) {
                     continue;
                 }
-                $activeSession->destroy('Requested to remove alle sessions for user ' . $account->getAccountIdentifier());
+                $activeSession->destroy(
+                    'Requested to remove alle sessions for user ' . $account->getAccountIdentifier()
+                );
             }
         }
     }

@@ -116,7 +116,7 @@ class PrevUntilOperation extends AbstractOperation
     {
         $parentNode = $nodeAccessor->findParentNode($contextNode);
         if ($parentNode === null) {
-            return Nodes::empty();
+            return Nodes::createEmpty();
         }
 
         return $nodeAccessor->findChildNodes($parentNode)->previousAll($contextNode);

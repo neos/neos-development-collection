@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -20,7 +21,7 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
  *
  * You should not need this class in your own code.
  */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class ProjectedNodeIterator
 {
     protected WorkspaceFinder $workspaceFinder;

@@ -23,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Command controller for tasks related to node migration.
  */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class NodeMigrationCommandController extends CommandController
 {
     /**

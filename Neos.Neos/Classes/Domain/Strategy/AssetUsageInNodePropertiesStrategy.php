@@ -25,9 +25,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 {
     /**

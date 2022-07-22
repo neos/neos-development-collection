@@ -16,9 +16,7 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class IconNameMappingService
 {
     /**

@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -192,7 +193,8 @@ final class NodeFactory
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
                 $nodeRow['origindimensionspacepoint']
             );
-            if (!isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate
+            if (
+                !isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate
                 [$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->hash])
             ) {
                 // ... so we handle occupation exactly once ...

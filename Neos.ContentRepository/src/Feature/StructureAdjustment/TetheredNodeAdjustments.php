@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -8,8 +9,6 @@ use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignments;
-use Neos\ContentRepository\Feature\StructureAdjustment\LoadNodeTypeTrait;
-use Neos\ContentRepository\Feature\StructureAdjustment\RemoveNodeAggregateTrait;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
@@ -25,7 +24,6 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -33,7 +31,7 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
@@ -44,7 +42,7 @@ class TetheredNodeAdjustments
     protected EventStore $eventStore;
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
-    protected DimensionSpace\InterDimensionalVariationGraph  $interDimensionalVariationGraph;
+    protected DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
     protected ContentGraphInterface $contentGraph;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
     protected RuntimeBlocker $runtimeBlocker;

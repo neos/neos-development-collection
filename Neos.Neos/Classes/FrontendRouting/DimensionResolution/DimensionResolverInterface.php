@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -45,12 +47,14 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  *
  * ## Site-specific configuration through Settings.yaml
  *
- * In Settings.yaml, underneath the path `Neos.Neos.sites.[site-node-name|*].contentDimensions.resolver.factoryClassName`,
+ * In Settings.yaml, underneath the path
+ * `Neos.Neos.sites.[site-node-name|*].contentDimensions.resolver.factoryClassName`,
  * you specify which {@see DimensionResolverFactoryInterface} should be used to build the used
  * {@see DimensionResolverInterface}.
  *
  * The settings path can either:
- * - contain a **specific site node name** - in this case, the dimension config etc is **just used for the single site.**
+ * - contain a **specific site node name** - in this case,
+ *   the dimension config etc is **just used for the single site.**
  * - contain a fallback `*` for all other cases.
  *
  * The referenced factories are usually singletons; and you can process configuration and instantiate the actual
@@ -81,7 +85,8 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  * or any other global state**. If you need to access global state, read it in the Factory and pass it
  * via Constructor to the Resolvers.
  *
- * (Note: This rule does not apply to {@see DelegatingResolver}, which is the hardcoded entrypoint to the resolver list.)
+ * (Note: This rule does not apply to {@see DelegatingResolver},
+ * which is the hardcoded entrypoint to the resolver list.)
  *
  * @api
  */
@@ -93,15 +98,22 @@ interface DimensionResolverInterface
      * @param RequestToDimensionSpacePointContext $context
      * @return RequestToDimensionSpacePointContext the modified context
      */
-    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext;
+    public function fromRequestToDimensionSpacePoint(
+        RequestToDimensionSpacePointContext $context
+    ): RequestToDimensionSpacePointContext;
 
     /**
-     * Called for each generated URL, to adjust (and return) the passed-in UriConstraints depending on the given DimensionSpacePoint.
+     * Called for each generated URL, to adjust (and return) the passed-in UriConstraints
+     * depending on the given DimensionSpacePoint.
      *
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param SiteNodeName $targetSiteIdentifier
      * @param UriConstraints $uriConstraints the pre-applied uriConstraints -> modify and return them.
      * @return UriConstraints
      */
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints;
+    public function fromDimensionSpacePointToUriConstraints(
+        DimensionSpacePoint $dimensionSpacePoint,
+        SiteNodeName $targetSiteIdentifier,
+        UriConstraints $uriConstraints
+    ): UriConstraints;
 }

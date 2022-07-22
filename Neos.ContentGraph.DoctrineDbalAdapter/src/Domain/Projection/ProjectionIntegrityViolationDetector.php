@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -458,9 +459,11 @@ WHERE
     {
         $result = new Result();
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream(
-                $contentStreamIdentifier
-            ) as $nodeAggregateIdentifier) {
+            foreach (
+                $this->findProjectedNodeAggregateIdentifiersInContentStream(
+                    $contentStreamIdentifier
+                ) as $nodeAggregateIdentifier
+            ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.nodetypename FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -498,9 +501,11 @@ WHERE
     {
         $result = new Result();
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream(
-                $contentStreamIdentifier
-            ) as $nodeAggregateIdentifier) {
+            foreach (
+                $this->findProjectedNodeAggregateIdentifiersInContentStream(
+                    $contentStreamIdentifier
+                ) as $nodeAggregateIdentifier
+            ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.classification FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint

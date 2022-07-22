@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\NodeMove;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Feature\NodeMove;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\NodeMove;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -227,8 +229,10 @@ trait NodeMove
         if ($parentIdentifier) {
             // if a parent node aggregate identifier is explicitly given,
             // then all variants are assigned to it as children
-            foreach ($nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
-                         ->getIntersection($affectedDimensionSpacePoints) as $coveredDimensionSpacePoint) {
+            foreach (
+                $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
+                     ->getIntersection($affectedDimensionSpacePoints) as $coveredDimensionSpacePoint
+            ) {
                 $parents = $parents->add(
                     new NodeVariantAssignment(
                         $parentIdentifier,
@@ -340,8 +344,10 @@ trait NodeMove
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
         );
-        foreach ($nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
-                     ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint) {
+        foreach (
+            $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
+                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
+        ) {
             $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
@@ -426,10 +432,10 @@ trait NodeMove
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)
-            : Nodes::empty());
+            : Nodes::createEmpty());
         $succeedingSiblingCandidates = iterator_to_array($succeedingSiblingIdentifier
             ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier)
-            : Nodes::empty());
+            : Nodes::createEmpty());
         $maximumIndex = max(count($succeedingSiblingCandidates), count($precedingSiblingCandidates));
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first

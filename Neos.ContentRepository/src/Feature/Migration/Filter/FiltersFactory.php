@@ -13,7 +13,6 @@ use Psr\Container\ContainerInterface;
  */
 class FiltersFactory
 {
-
     public function __construct(
         private readonly ContainerInterface $container
     ) {

@@ -143,7 +143,7 @@ final class ContentHypergraph implements ContentGraphInterface
                 AND n.nodeaggregateidentifier = (
                     SELECT pn.nodeaggregateidentifier
                         FROM ' . NodeRecord::TABLE_NAME . ' pn
-                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME .' ch
+                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch
                             ON pn.relationanchorpoint = ch.parentnodeanchor
                         JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
                     WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier

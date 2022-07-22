@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -428,8 +429,10 @@ final class ContentGraph implements ContentGraphInterface
             'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
         ];
         $dimensionSpacePoints = [];
-        foreach ($connection->executeQuery($query, $parameters, $types)
-                     ->fetchAll() as $hierarchyRelationData) {
+        foreach (
+            $connection->executeQuery($query, $parameters, $types)
+                ->fetchAllAssociative() as $hierarchyRelationData
+        ) {
             $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']]
                 = DimensionSpacePoint::fromJsonString($hierarchyRelationData['dimensionspacepoint']);
         }

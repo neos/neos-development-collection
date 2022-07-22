@@ -54,7 +54,7 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 /**
  * The alternate reality-aware graph projector for the general Doctrine DBAL backend
  */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class GraphProjector extends AbstractProcessedEventsAwareProjector implements BeforeInvokeInterface
 {
     use NodeVariation;
@@ -64,7 +64,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     use NodeMove;
     use ProjectorEventHandlerTrait;
 
-    const RELATION_DEFAULT_OFFSET = 128;
+    public const RELATION_DEFAULT_OFFSET = 128;
 
     protected ProjectionContentGraph $projectionContentGraph;
 
@@ -440,8 +440,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
-            if ($succeedingSiblingAnchorPoint
-                && (string)$relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint) {
+            if (
+                $succeedingSiblingAnchorPoint
+                && (string)$relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint
+            ) {
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
             }
@@ -765,16 +767,16 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     {
         $this->transactional(function () use ($event) {
             $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
-                $event->getNodeAggregateIdentifier(),
-                $event->getContentStreamIdentifier()
+                $event->nodeAggregateIdentifier,
+                $event->contentStreamIdentifier
             );
 
             foreach ($anchorPoints as $anchorPoint) {
                 $this->updateNodeRecordWithCopyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamIdentifier,
                     $anchorPoint,
                     function (NodeRecord $node) use ($event) {
-                        $node->nodeTypeName = $event->getNewNodeTypeName();
+                        $node->nodeTypeName = $event->newNodeTypeName;
                     }
                 );
             }
@@ -798,9 +800,11 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                     );
                 break;
             default:
-                if (method_exists($event, 'getNodeAggregateIdentifier')
+                if (
+                    method_exists($event, 'getNodeAggregateIdentifier')
                     && method_exists($event, 'getOriginDimensionSpacePoint')
-                    && method_exists($event, 'getContentStreamIdentifier')) {
+                    && method_exists($event, 'getContentStreamIdentifier')
+                ) {
                     $anchorPoint = $this->projectionContentGraph
                         ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                             $event->getNodeAggregateIdentifier(),

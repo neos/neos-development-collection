@@ -103,7 +103,8 @@ class CacheAwareGraphProjectorFactory
             }
 
             $domainEvent = $eventEnvelope->getDomainEvent();
-            if (!($domainEvent instanceof NodeAggregateWasRemoved)
+            if (
+                !($domainEvent instanceof NodeAggregateWasRemoved)
                 && $domainEvent instanceof EmbedsContentStreamAndNodeAggregateIdentifier
             ) {
                 $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(

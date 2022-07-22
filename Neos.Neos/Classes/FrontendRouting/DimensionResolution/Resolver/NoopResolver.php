@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
@@ -28,13 +29,17 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
  */
 final class NoopResolver implements DimensionResolverInterface
 {
-    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
-    {
+    public function fromRequestToDimensionSpacePoint(
+        RequestToDimensionSpacePointContext $context
+    ): RequestToDimensionSpacePointContext {
         return $context;
     }
 
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
-    {
+    public function fromDimensionSpacePointToUriConstraints(
+        DimensionSpacePoint $dimensionSpacePoint,
+        SiteNodeName $targetSiteIdentifier,
+        UriConstraints $uriConstraints
+    ): UriConstraints {
         return $uriConstraints;
     }
 }

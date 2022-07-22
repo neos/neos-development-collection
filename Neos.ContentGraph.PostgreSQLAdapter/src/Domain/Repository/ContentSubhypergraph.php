@@ -66,10 +66,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 {
     public function __construct(
         private readonly ContentStreamIdentifier $contentStreamIdentifier,
-        private readonly DimensionSpacePoint     $dimensionSpacePoint,
-        private readonly VisibilityConstraints   $visibilityConstraints,
-        private readonly PostgresDbalClientInterface      $databaseClient,
-        private readonly NodeFactory             $nodeFactory
+        private readonly DimensionSpacePoint $dimensionSpacePoint,
+        private readonly VisibilityConstraints $visibilityConstraints,
+        private readonly PostgresDbalClientInterface $databaseClient,
+        private readonly NodeFactory $nodeFactory
     ) {
     }
 
@@ -389,7 +389,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 	 	    ch.contentstreamidentifier = :contentStreamIdentifier
 		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
 		    AND p.level + 1 <= :maximumLevels
-            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, 'c') .'
+            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, 'c') . '
 		    -- @todo node type constraints
     )
     SELECT * FROM subtree
@@ -420,7 +420,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints,
         ?SearchTerm $searchTerm
     ): Nodes {
-        return Nodes::empty();
+        return Nodes::createEmpty();
     }
 
     /**
@@ -431,8 +431,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     {
         $query = /** @lang PostgreSQL */
         'SELECT COUNT(*)
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
-            JOIN ' . NodeRecord::TABLE_NAME .' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 

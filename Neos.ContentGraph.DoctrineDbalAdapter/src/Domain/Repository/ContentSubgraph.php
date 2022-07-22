@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -12,11 +9,15 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
+
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
@@ -55,12 +56,7 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
  */
 final class ContentSubgraph implements ContentSubgraphInterface
 {
-
-    /**
-     * @var InMemoryCache
-     */
-    protected $inMemoryCache;
-
+    protected InMemoryCache $inMemoryCache;
 
     public function __construct(
         private readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -112,18 +108,18 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
             if ($allowanceQueryPart && $disAllowanceQueryPart) {
                 $query->addToQuery(
-                    ' ' . $concatenation .' (' . $allowanceQueryPart
+                    ' ' . $concatenation . ' (' . $allowanceQueryPart
                         . ($nodeTypeConstraints->isWildCardAllowed ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')',
                     $markerToReplaceInQuery
                 );
             } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildCardAllowed) {
                 $query->addToQuery(
-                    ' ' . $concatenation .' ' . $allowanceQueryPart,
+                    ' ' . $concatenation . ' ' . $allowanceQueryPart,
                     $markerToReplaceInQuery
                 );
             } elseif ($disAllowanceQueryPart) {
                 $query->addToQuery(
-                    ' ' . $concatenation .' ' . $disAllowanceQueryPart,
+                    ' ' . $concatenation . ' ' . $disAllowanceQueryPart,
                     $markerToReplaceInQuery
                 );
             } else {
@@ -191,10 +187,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $parentNodeIdentifierCache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
-        if ($cache->contains(
-            $parentNodeAggregateIdentifier,
-            $nodeTypeConstraints
-        )) {
+        if (
+            $cache->contains(
+                $parentNodeAggregateIdentifier,
+                $nodeTypeConstraints
+            )
+        ) {
             return Nodes::fromArray($cache->findChildNodes(
                 $parentNodeAggregateIdentifier,
                 $nodeTypeConstraints,
@@ -452,7 +450,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ) :Nodes {
+    ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
             '

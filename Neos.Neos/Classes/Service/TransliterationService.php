@@ -18,9 +18,7 @@ use Behat\Transliterator\Transliterator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Service as LocalizationService;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class TransliterationService
 {
     /**

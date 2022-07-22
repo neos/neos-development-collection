@@ -64,13 +64,15 @@ final class ContentDimensionZookeeper
         foreach ($dimensionCombinations as $dimensionCombination) {
             foreach ($contentDimension->values as $currentDimensionValue) {
                 foreach ($dimensionCombination as $otherDimensionIdentifier => $otherDimensionValue) {
-                    if (!$currentDimensionValue->canBeCombinedWith(
-                        new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
-                        $otherDimensionValue
-                    ) || !$otherDimensionValue->canBeCombinedWith(
-                        $contentDimension->identifier,
-                        $currentDimensionValue
-                    )
+                    if (
+                        !$currentDimensionValue->canBeCombinedWith(
+                            new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
+                            $otherDimensionValue
+                        )
+                        || !$otherDimensionValue->canBeCombinedWith(
+                            $contentDimension->identifier,
+                            $currentDimensionValue
+                        )
                     ) {
                         continue 2;
                     }

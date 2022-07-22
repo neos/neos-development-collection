@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver;
@@ -17,13 +18,12 @@ final class Segments
      */
     public readonly array $segments;
 
-    private function __construct(Segment...$segments)
+    private function __construct(Segment ...$segments)
     {
         $this->segments = $segments;
     }
 
-
-    public static function create(Segment...$segments): self
+    public static function create(Segment ...$segments): self
     {
         return new self(...$segments);
     }

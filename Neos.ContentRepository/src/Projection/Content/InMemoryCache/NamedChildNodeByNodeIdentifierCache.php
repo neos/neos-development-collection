@@ -25,7 +25,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
  */
 final class NamedChildNodeByNodeIdentifierCache
 {
-
     /**
      * first level: Parent Node Identifier
      * Second Level: Node Name

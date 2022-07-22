@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignments;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 

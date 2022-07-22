@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
 
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
@@ -28,9 +29,12 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 interface CrossSiteLinkerInterface
 {
     /**
-     * @param \Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo $targetNode the target node where we want to generate the link to
+     * @param DocumentNodeInfo $targetNode the target node where we want to generate the link to
      * @param SiteDetectionResult $currentRequestSiteDetectionResult
      * @return UriConstraints
      */
-    public function applyCrossSiteUriConstraints(DocumentNodeInfo $targetNode, SiteDetectionResult $currentRequestSiteDetectionResult): UriConstraints;
+    public function applyCrossSiteUriConstraints(
+        DocumentNodeInfo $targetNode,
+        SiteDetectionResult $currentRequestSiteDetectionResult
+    ): UriConstraints;
 }

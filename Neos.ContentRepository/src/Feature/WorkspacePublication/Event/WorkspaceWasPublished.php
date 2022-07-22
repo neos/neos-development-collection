@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\WorkspacePublication\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,15 +10,17 @@ namespace Neos\ContentRepository\Feature\WorkspacePublication\Event;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\WorkspacePublication\Event;
+
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class WorkspaceWasPublished implements DomainEventInterface
 {
     /**

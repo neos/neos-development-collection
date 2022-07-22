@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -20,22 +21,17 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\Common\NodeConstraintException;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
-/** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
-/** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateIsRoot;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateIsTethered;
@@ -52,7 +48,6 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsFactory;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 trait ConstraintChecks
@@ -279,10 +274,12 @@ trait ConstraintChecks
                 // the constraint checks are executed again. See handleChangeNodeAggregateType
             }
 
-            foreach ($this->getContentGraph()->findParentNodeAggregates(
-                $contentStreamIdentifier,
-                $parentNodeAggregateIdentifier
-            ) as $grandParentNodeAggregate) {
+            foreach (
+                $this->getContentGraph()->findParentNodeAggregates(
+                    $contentStreamIdentifier,
+                    $parentNodeAggregateIdentifier
+                ) as $grandParentNodeAggregate
+            ) {
                 try {
                     $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->getNodeTypeName());
                     $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
@@ -314,15 +311,17 @@ trait ConstraintChecks
                     . $parentsNodeType->getName()
             );
         }
-        if ($nodeName
+        if (
+            $nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName() !== $nodeType->getName()) {
-                throw new NodeConstraintException(
-                    'Node type "' . $nodeType . '" does not match configured "'
-                        . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName()
-                        . '" for auto created child nodes for parent type "' . $parentsNodeType
-                        . '" with name "' . $nodeName . '"'
-                );
+            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName() !== $nodeType->getName()
+        ) {
+            throw new NodeConstraintException(
+                'Node type "' . $nodeType . '" does not match configured "'
+                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName()
+                    . '" for auto created child nodes for parent type "' . $parentsNodeType
+                    . '" with name "' . $nodeName . '"'
+            );
         }
     }
 
@@ -335,9 +334,11 @@ trait ConstraintChecks
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
             return false;
         }
-        if ($nodeName
+        if (
+            $nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName() !== $nodeType->getName()) {
+            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName() !== $nodeType->getName()
+        ) {
             return false;
         }
         return true;
@@ -351,11 +352,13 @@ trait ConstraintChecks
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): void {
-        if (!$this->areNodeTypeConstraintsImposedByGrandparentValid(
-            $grandParentsNodeType,
-            $parentNodeName,
-            $nodeType
-        )) {
+        if (
+            !$this->areNodeTypeConstraintsImposedByGrandparentValid(
+                $grandParentsNodeType,
+                $parentNodeName,
+                $nodeType
+            )
+        ) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
                     . '" of nodes of type "' . $grandParentsNodeType->getName() . '"',
@@ -374,9 +377,11 @@ trait ConstraintChecks
         $grandParentsNodeType->getFullConfiguration();
         $nodeType->getFullConfiguration();
 
-        if ($parentNodeName
+        if (
+            $parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
-            && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentNodeName, $nodeType)) {
+            && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentNodeName, $nodeType)
+        ) {
             return false;
         }
         return true;
@@ -526,10 +531,12 @@ trait ConstraintChecks
                 1554971124
             );
         }
-        foreach ($this->getContentGraph()->findChildNodeAggregates(
-            $contentStreamIdentifier,
-            $referenceNodeAggregate->getIdentifier()
-        ) as $childReferenceNodeAggregate) {
+        foreach (
+            $this->getContentGraph()->findChildNodeAggregates(
+                $contentStreamIdentifier,
+                $referenceNodeAggregate->getIdentifier()
+            ) as $childReferenceNodeAggregate
+        ) {
             $this->requireNodeAggregateToNotBeDescendant(
                 $contentStreamIdentifier,
                 $nodeAggregate,

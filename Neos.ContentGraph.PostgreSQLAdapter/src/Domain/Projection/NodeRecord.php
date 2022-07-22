@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
@@ -30,7 +31,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeRecord
 {
-    const TABLE_NAME = 'neos_contentgraph_node';
+    public const TABLE_NAME = 'neos_contentgraph_node';
 
     public NodeRelationAnchorPoint $relationAnchorPoint;
 
