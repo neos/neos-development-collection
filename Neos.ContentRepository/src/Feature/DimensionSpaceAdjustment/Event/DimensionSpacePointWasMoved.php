@@ -15,7 +15,7 @@ namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -26,7 +26,7 @@ use Neos\Flow\Annotations as Flow;
  * NOTE: the target dimension space point must not contain any content.
  */
 #[Flow\Proxy(false)]
-final class DimensionSpacePointWasMoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface
+final class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 

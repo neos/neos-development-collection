@@ -54,7 +54,7 @@ use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\LegacyNodeMigration\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
 /** @codingStandardsIgnoreEnd */
 use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;

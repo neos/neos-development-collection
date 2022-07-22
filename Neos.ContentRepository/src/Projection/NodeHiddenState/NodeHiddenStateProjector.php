@@ -95,7 +95,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
                     hidden
                 )
                 SELECT
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
+                  "' . (string)$event->contentStreamIdentifier . '" AS contentstreamidentifier,
                   nodeaggregateidentifier,
                   dimensionspacepoint,
                   dimensionspacepointhash,
@@ -104,7 +104,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
                     neos_contentrepository_projection_nodehiddenstate h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
-                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+                'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamIdentifier
             ]);
         });
     }

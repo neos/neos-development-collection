@@ -21,7 +21,7 @@ use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIde
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]

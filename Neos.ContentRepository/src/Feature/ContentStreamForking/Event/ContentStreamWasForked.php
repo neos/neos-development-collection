@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\ContentStreamForking\Event;
 
 /*
@@ -12,56 +13,41 @@ namespace Neos\ContentRepository\Feature\ContentStreamForking\Event;
  * source code.
  */
 
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class ContentStreamWasForked implements DomainEventInterface
+final class ContentStreamWasForked implements EventInterface
 {
-    /**
-     * Content stream identifier for the new content stream
-     */
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private ContentStreamIdentifier $sourceContentStreamIdentifier;
-
-    private int $versionOfSourceContentStream;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        ContentStreamIdentifier $sourceContentStreamIdentifier,
-        int $versionOfSourceContentStream,
-        UserIdentifier $initiatingUserIdentifier
-    ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
-        $this->versionOfSourceContentStream = $versionOfSourceContentStream;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        /**
+         * Content stream identifier for the new content stream
+         */
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
+        public readonly int $versionOfSourceContentStream,
+        public readonly UserIdentifier $initiatingUserIdentifier
+    )
+    {
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public static function fromArray(array $values): self
     {
-        return $this->contentStreamIdentifier;
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($values['sourceContentStreamIdentifier']),
+            $values['versionOfSourceContentStream'],
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+        );
     }
 
-    public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
+    public function jsonSerialize(): array
     {
-        return $this->sourceContentStreamIdentifier;
-    }
-
-    public function getVersionOfSourceContentStream(): int
-    {
-        return $this->versionOfSourceContentStream;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'sourceContentStreamIdentifier' => $this->sourceContentStreamIdentifier,
+            'versionOfSourceContentStream' => $this->versionOfSourceContentStream,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }

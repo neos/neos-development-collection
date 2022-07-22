@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Feature\ContentStreamCreation\Command;
  * source code.
  */
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
@@ -19,27 +20,11 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * CreateContentStream for creating the FIRST content stream.
  * All other content streams will be FORKED from this FIRST content stream.
  */
-final class CreateContentStream
+final class CreateContentStream implements CommandInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
     }
 }

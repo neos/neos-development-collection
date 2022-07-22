@@ -12,38 +12,27 @@ namespace Neos\ContentRepository\Feature\ContentStreamForking\Command;
  * source code.
  */
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
- *
- * @Flow\Proxy(false)
  */
-final class ForkContentStream
+final class ForkContentStream implements CommandInterface
 {
-    /**
-     * TODO: TargetContentStreamIdentifier??
-     *
-     * Content stream identifier for the new content stream
-     *
-     * @var ContentStreamIdentifier
-     */
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private ContentStreamIdentifier $sourceContentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        ContentStreamIdentifier $sourceContentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier
+        /**
+         * TODO: TargetContentStreamIdentifier??
+         *
+         * Content stream identifier for the new content stream
+         *
+         * @var ContentStreamIdentifier
+         */
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -56,20 +45,5 @@ final class ForkContentStream
             ContentStreamIdentifier::fromString($array['sourceContentStreamIdentifier']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->sourceContentStreamIdentifier;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
     }
 }

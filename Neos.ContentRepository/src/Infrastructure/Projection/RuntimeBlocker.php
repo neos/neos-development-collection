@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Infrastructure\Projection;
 
 use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMappings;

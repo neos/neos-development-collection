@@ -39,7 +39,7 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPartia
 use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\Event\EventTypeResolverInterface;
 use Neos\Flow\Annotations as Flow;
 

@@ -44,7 +44,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectionManager;
@@ -478,12 +478,12 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash,
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+                  "' . (string)$event->contentStreamIdentifier . '" AS contentstreamidentifier
                 FROM
                     neos_contentgraph_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
-                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+                'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamIdentifier
             ]);
 
             //
@@ -497,7 +497,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                   affectednodeaggregateidentifier
                 )
                 SELECT
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
+                  "' . (string)$event->contentStreamIdentifier . '" AS contentstreamidentifier,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateidentifier,
                   r.affectednodeaggregateidentifier
@@ -505,7 +505,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                     neos_contentgraph_restrictionrelation r
                     WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
-                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+                'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamIdentifier
             ]);
 
             // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
@@ -523,7 +523,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                 WHERE
                     contentstreamidentifier = :contentStreamIdentifier
             ', [
-                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
             ]);
 
             // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
@@ -554,7 +554,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                 WHERE
                     contentstreamidentifier = :contentStreamIdentifier
             ', [
-                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
             ]);
         });
     }

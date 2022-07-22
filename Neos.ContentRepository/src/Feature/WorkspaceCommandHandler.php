@@ -65,7 +65,7 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -321,14 +321,14 @@ final class WorkspaceCommandHandler
             $this->eventStore->commit(
                 $baseWorkspaceContentStreamName->getEventStreamName(),
                 $events,
-                $contentStreamWasForked->getVersionOfSourceContentStream()
+                $contentStreamWasForked->versionOfSourceContentStream
             );
             return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
                 'The base workspace has been modified in the meantime; please rebase.'
                     . ' Expected version %d of source content stream %s',
-                $contentStreamWasForked->getVersionOfSourceContentStream(),
+                $contentStreamWasForked->versionOfSourceContentStream,
                 $baseContentStreamIdentifier
             ));
         }

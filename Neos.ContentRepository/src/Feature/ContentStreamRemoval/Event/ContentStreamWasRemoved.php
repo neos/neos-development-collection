@@ -14,33 +14,33 @@ namespace Neos\ContentRepository\Feature\ContentStreamRemoval\Event;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class ContentStreamWasRemoved implements DomainEventInterface
+final class ContentStreamWasRemoved implements EventInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public static function fromArray(array $values): self
     {
-        return $this->contentStreamIdentifier;
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+        );
     }
 
-    public function getInitiatingUserIdentifier(): UserIdentifier
+    public function jsonSerialize(): array
     {
-        return $this->initiatingUserIdentifier;
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }

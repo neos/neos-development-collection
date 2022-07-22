@@ -59,7 +59,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
     public function whenContentStreamWasCreated(ContentStreamWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
-            'contentStreamIdentifier' => $event->getContentStreamIdentifier(),
+            'contentStreamIdentifier' => $event->contentStreamIdentifier,
             'state' => ContentStreamFinder::STATE_CREATED,
         ]);
     }
@@ -87,8 +87,8 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
     public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
-            'contentStreamIdentifier' => $event->getContentStreamIdentifier(),
-            'sourceContentStreamIdentifier' => $event->getSourceContentStreamIdentifier(),
+            'contentStreamIdentifier' => $event->contentStreamIdentifier,
+            'sourceContentStreamIdentifier' => $event->sourceContentStreamIdentifier,
             'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
         ]);
     }
@@ -181,7 +181,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
             'removed' => true
         ], [
-            'contentStreamIdentifier' => $event->getContentStreamIdentifier()
+            'contentStreamIdentifier' => $event->contentStreamIdentifier
         ]);
     }
 

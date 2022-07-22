@@ -16,13 +16,13 @@ namespace Neos\ContentRepository\Feature\WorkspacePublication\Event;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-class WorkspaceWasPublished implements DomainEventInterface
+class WorkspaceWasPublished implements EventInterface
 {
     /**
      * From which workspace have changes been published?

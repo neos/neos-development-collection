@@ -107,8 +107,8 @@ final class AssetUsageProjector implements ProjectorInterface
     public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->repository->copyContentStream(
-            $event->getSourceContentStreamIdentifier(),
-            $event->getContentStreamIdentifier()
+            $event->sourceContentStreamIdentifier,
+            $event->contentStreamIdentifier
         );
     }
 
@@ -139,7 +139,7 @@ final class AssetUsageProjector implements ProjectorInterface
 
     public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
-        $this->repository->removeContentStream($event->getContentStreamIdentifier());
+        $this->repository->removeContentStream($event->contentStreamIdentifier);
     }
 
 

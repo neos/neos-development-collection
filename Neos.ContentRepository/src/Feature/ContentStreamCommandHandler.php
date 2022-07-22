@@ -17,55 +17,37 @@ namespace Neos\ContentRepository\Feature;
 use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
+use Neos\ContentRepository\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStore;
-use Ramsey\Uuid\Uuid;
 
 /**
  * INTERNALS. Only to be used from WorkspaceCommandHandler!!!
  *
- * @Flow\Scope("singleton")
  * ContentStreamCommandHandler
  */
 final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
-    private ContentStreamRepository $contentStreamRepository;
-
-    private EventStore $eventStore;
-
-    private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
-    private RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
-        ContentStreamRepository $contentStreamRepository,
-        EventStore $eventStore,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker
+        private readonly ContentStreamRepository $contentStreamRepository,
+        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
     ) {
-        $this->contentStreamRepository = $contentStreamRepository;
-        $this->eventStore = $eventStore;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     public function canHandle(CommandInterface $command): bool
     {
         return $command instanceof CreateContentStream
             || $command instanceof ForkContentStream
-            || $command instanceof RemoveContentStream
             || $command instanceof RemoveContentStream;
     }
 
@@ -75,6 +57,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             return $this->handleCreateContentStream($command);
         } elseif ($command instanceof ForkContentStream) {
             return $this->handleForkContentStream($command);
+        } elseif ($command instanceof RemoveContentStream) {
+            return $this->handleRemoveContentStream($command);
         }
     }
 
@@ -85,78 +69,73 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+        $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new \Neos\ContentRepository\Feature\ContentStreamCreation\Event\ContentStreamWasCreated(
-                    $command->getContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
-                ),
-                Uuid::uuid4()->toString()
-            )
-        );
-        $this->eventStore->commit($streamName, $events);
 
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasCreated(
+                    $command->contentStreamIdentifier,
+                    $command->initiatingUserIdentifier
+                )
+            ),
+            ExpectedVersion::NO_STREAM()
+        );
     }
 
     /**
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
-    private function handleForkContentStream(ForkContentStream $command): CommandResult
+    private function handleForkContentStream(ForkContentStream $command): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $this->requireContentStreamToExist($command->getSourceContentStreamIdentifier());
-        $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->sourceContentStreamIdentifier);
+        $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier);
 
         $sourceContentStream = $this->contentStreamRepository->findContentStream(
-            $command->getSourceContentStreamIdentifier()
+            $command->sourceContentStreamIdentifier
         );
         $sourceContentStreamVersion = $sourceContentStream !== null ? $sourceContentStream->getVersion() : -1;
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new \Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked(
-                    $command->getContentStreamIdentifier(),
-                    $command->getSourceContentStreamIdentifier(),
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasForked(
+                    $command->contentStreamIdentifier,
+                    $command->sourceContentStreamIdentifier,
                     $sourceContentStreamVersion,
-                    $command->getInitiatingUserIdentifier()
+                    $command->initiatingUserIdentifier
                 ),
-                Uuid::uuid4()->toString()
-            )
+            ),
+            ExpectedVersion::ANY()
         );
-        $this->eventStore->commit($streamName, $events);
-
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
-    public function handleRemoveContentStream(RemoveContentStream $command): CommandResult
+    private function handleRemoveContentStream(RemoveContentStream $command): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $command->getContentStreamIdentifier()
+            $command->contentStreamIdentifier
         )->getEventStreamName();
 
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new \Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved(
-                    $command->getContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasRemoved(
+                    $command->contentStreamIdentifier,
+                    $command->initiatingUserIdentifier
                 ),
-                Uuid::uuid4()->toString()
-            )
+            ),
+            ExpectedVersion::ANY()
         );
-        $this->eventStore->commit($streamName, $events);
-
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     /**

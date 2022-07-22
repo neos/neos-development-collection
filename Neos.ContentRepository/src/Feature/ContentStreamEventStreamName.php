@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Feature;
  */
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\Model\Event\StreamName;
 
 /**
  * A content stream's event stream name
