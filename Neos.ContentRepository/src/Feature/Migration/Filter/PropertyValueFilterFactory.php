@@ -27,8 +27,7 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
      */
     public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
-        return new class($settings['propertyName'], $settings['serializedValue']) implements NodeBasedFilterInterface {
-
+        return new class ($settings['propertyName'], $settings['serializedValue']) implements NodeBasedFilterInterface {
             public function __construct(
                 /**
                  * The property name to be checked

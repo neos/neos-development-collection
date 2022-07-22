@@ -18,9 +18,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class NodeTypeManagerObjectFactory
 {
 

@@ -17,9 +17,7 @@ namespace Neos\CliSetup\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class WelcomeCommandController extends CommandController
 {
 

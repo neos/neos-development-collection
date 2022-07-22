@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command;
  * source code.
  */
 
-use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;

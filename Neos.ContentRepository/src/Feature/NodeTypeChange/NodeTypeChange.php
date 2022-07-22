@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\NodeTypeChange;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\NodeTypeChange;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\NodeTypeChange;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\Events;
@@ -33,9 +34,6 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguou
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
-/** @codingStandardsIgnoreStart */
-use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-/** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
@@ -48,6 +46,10 @@ use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Ramsey\Uuid\Uuid;
+
+/** @codingStandardsIgnoreStart */
+use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 
 trait NodeTypeChange
 {
@@ -309,11 +311,14 @@ trait NodeTypeChange
         foreach ($childNodeAggregates as $childNodeAggregate) {
             // the "parent" of the $childNode is $node; so we use $newNodeType
             // (the target node type of $node after the operation) here.
-            if (!$childNodeAggregate->isTethered() && !$this->areNodeTypeConstraintsImposedByParentValid(
-                $newNodeType,
-                $childNodeAggregate->getNodeName(),
-                $this->requireNodeType($childNodeAggregate->getNodeTypeName())
-            )) {
+            if (
+                !$childNodeAggregate->isTethered()
+                && !$this->areNodeTypeConstraintsImposedByParentValid(
+                    $newNodeType,
+                    $childNodeAggregate->getNodeName(),
+                    $this->requireNodeType($childNodeAggregate->getNodeTypeName())
+                )
+            ) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                 // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
@@ -341,7 +346,8 @@ trait NodeTypeChange
                 // we do not need to test for the parent of grandchild (=child),
                 // as we do not change the child's node type.
                 // we however need to check for the grandparent node type.
-                if ($childNodeAggregate->getNodeName() !== null
+                if (
+                    $childNodeAggregate->getNodeName() !== null
                     && !$this->areNodeTypeConstraintsImposedByGrandparentValid(
                         $newNodeType, // the grandparent node type changes
                         $childNodeAggregate->getNodeName(),
@@ -436,8 +442,9 @@ trait NodeTypeChange
                 VisibilityConstraints::withoutRestrictions()
             );
             $parentNode = $subgraph->findParentNode($childNodeAggregate->getIdentifier());
-            if ($parentNode && $parentNode->getNodeAggregateIdentifier()
-                    ->equals($parentNodeAggregate->getIdentifier())
+            if (
+                $parentNode
+                && $parentNode->getNodeAggregateIdentifier()->equals($parentNodeAggregate->getIdentifier())
             ) {
                 $points[] = $coveredDimensionSpacePoint;
             }

@@ -1,21 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Feature\StructureAdjustment\LoadNodeTypeTrait;
-use Neos\ContentRepository\Feature\StructureAdjustment\RemoveNodeAggregateTrait;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
 use Neos\EventSourcing\EventStore\EventStore;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class UnknownNodeTypeAdjustment
 {
     use RemoveNodeAggregateTrait;

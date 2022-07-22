@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\NodeTypeChange\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Feature\NodeTypeChange\Event;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\NodeTypeChange\Event;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -26,29 +28,11 @@ final class NodeAggregateTypeWasChanged implements
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
-
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
-
-    /**
-     * @var NodeTypeName
-     */
-    private $newNodeTypeName;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeTypeName $newNodeTypeName
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeTypeName $newNodeTypeName
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->newNodeTypeName = $newNodeTypeName;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -59,11 +43,6 @@ final class NodeAggregateTypeWasChanged implements
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
-    }
-
-    public function getNewNodeTypeName(): NodeTypeName
-    {
-        return $this->newNodeTypeName;
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self

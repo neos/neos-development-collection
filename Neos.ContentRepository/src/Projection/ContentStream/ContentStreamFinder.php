@@ -23,9 +23,9 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Internal - implementation detail of {@see ContentStreamPruner}
  *
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope('singleton')]
 final class ContentStreamFinder
 {
     public const STATE_CREATED = 'CREATED';

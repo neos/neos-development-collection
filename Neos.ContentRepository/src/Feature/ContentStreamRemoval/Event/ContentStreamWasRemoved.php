@@ -17,9 +17,6 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
 final class ContentStreamWasRemoved implements EventInterface
 {
     public function __construct(

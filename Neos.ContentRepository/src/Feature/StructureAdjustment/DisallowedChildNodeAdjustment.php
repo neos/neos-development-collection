@@ -12,8 +12,6 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Feature\StructureAdjustment\LoadNodeTypeTrait;
-use Neos\ContentRepository\Feature\StructureAdjustment\RemoveNodeAggregateTrait;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
@@ -24,11 +22,10 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
@@ -113,8 +110,11 @@ class DisallowedChildNodeAdjustment
 
                 $allowedByGrandparent = false;
                 $grandparentNodeType = null;
-                if ($parentNode !== null && $grandparentNode != null
-                    && $parentNode->isTethered() && !is_null($parentNode->getNodeName())
+                if (
+                    $parentNode !== null
+                    && $grandparentNode != null
+                    && $parentNode->isTethered()
+                    && !is_null($parentNode->getNodeName())
                 ) {
                     $grandparentNodeType = $this->loadNodeType($grandparentNode->getNodeTypeName());
                     if ($grandparentNodeType !== null) {

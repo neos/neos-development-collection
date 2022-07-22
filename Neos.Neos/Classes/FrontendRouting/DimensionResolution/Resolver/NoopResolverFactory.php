@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
@@ -26,8 +27,13 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
  */
 final class NoopResolverFactory implements DimensionResolverFactoryInterface
 {
-    public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface
-    {
+    /**
+     * @param array<string,mixed> $dimensionResolverOptions
+     */
+    public function create(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        array $dimensionResolverOptions
+    ): DimensionResolverInterface {
         return new NoopResolver();
     }
 }

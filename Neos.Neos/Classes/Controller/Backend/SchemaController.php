@@ -19,9 +19,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class SchemaController extends ActionController
 {
     /**

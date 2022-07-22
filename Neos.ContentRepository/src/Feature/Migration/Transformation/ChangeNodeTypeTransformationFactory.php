@@ -18,11 +18,13 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-/** @codingStandardsIgnoreStart */ use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-/** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+
+/** @codingStandardsIgnoreStart */
+use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 
 /**
  * Change the node type.
@@ -57,8 +59,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                  * The new Node Type to use as a string
                  */
                 private readonly string $newType,
-                private readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
-                $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
+                private readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
                 private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
             ) {
             }
@@ -71,7 +72,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                     $contentStreamForWriting,
                     $nodeAggregate->getIdentifier(),
                     NodeTypeName::fromString($this->newType),
-                    $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
+                    $this->strategy,
                     UserIdentifier::forSystemUser()
                 ));
             }

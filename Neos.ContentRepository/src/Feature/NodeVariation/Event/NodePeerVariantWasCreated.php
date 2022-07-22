@@ -36,7 +36,7 @@ final class NodePeerVariantWasCreated implements
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $peerOrigin,
         public readonly DimensionSpacePointSet $peerCoverage,
-        public readonly  UserIdentifier $initiatingUserIdentifier
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
 

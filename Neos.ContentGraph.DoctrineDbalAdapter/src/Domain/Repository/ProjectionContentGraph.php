@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -12,6 +9,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
+
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
@@ -20,7 +22,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -38,11 +39,10 @@ use Neos\Flow\Annotations as Flow;
  */
 class ProjectionContentGraph
 {
-
-    public function __construct(private readonly DbalClientInterface $client)
-    {
+    public function __construct(
+        private readonly DbalClientInterface $client
+    ) {
     }
-
 
     /**
      * @return bool
@@ -347,17 +347,19 @@ class ProjectionContentGraph
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
         $relations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-                      WHERE h.parentnodeanchor = :parentAnchorPoint
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.dimensionspacepointhash = :dimensionSpacePointHash',
-            [
-                'parentAnchorPoint' => (string)$parentAnchorPoint,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash
-            ]
-        )->fetchAll() as $relationData) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery(
+                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                          WHERE h.parentnodeanchor = :parentAnchorPoint
+                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.dimensionspacepointhash = :dimensionSpacePointHash',
+                [
+                    'parentAnchorPoint' => (string)$parentAnchorPoint,
+                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                ]
+            )->fetchAllAssociative() as $relationData
+        ) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -377,17 +379,19 @@ class ProjectionContentGraph
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
         $relations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-                      WHERE h.childnodeanchor = :childAnchorPoint
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.dimensionspacepointhash = :dimensionSpacePointHash',
-            [
-                'childAnchorPoint' => (string)$childAnchorPoint,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash
-            ]
-        )->fetchAll() as $relationData) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery(
+                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                          WHERE h.childnodeanchor = :childAnchorPoint
+                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.dimensionspacepointhash = :dimensionSpacePointHash',
+                [
+                    'childAnchorPoint' => (string)$childAnchorPoint,
+                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                ]
+            )->fetchAllAssociative() as $relationData
+        ) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -422,8 +426,10 @@ class ProjectionContentGraph
             $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
             $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
         }
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
-                     ->fetchAll() as $relationData) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+                ->fetchAllAssociative() as $relationData
+        ) {
             $relations[$relationData['dimensionspacepointhash']] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -458,8 +464,10 @@ class ProjectionContentGraph
             $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
             $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
         }
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
-                     ->fetchAll() as $relationData) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+                 ->fetchAllAssociative() as $relationData
+        ) {
             $relations[$relationData['dimensionspacepointhash']] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -479,21 +487,23 @@ class ProjectionContentGraph
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
         $relations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
- INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
-            [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
-            ],
-            [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
-        )->fetchAll() as $relationData) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery(
+                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+     INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
+     WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+     AND h.contentstreamidentifier = :contentStreamIdentifier
+     AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
+                [
+                    'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
+                ],
+                [
+                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                ]
+            )->fetchAllAssociative() as $relationData
+        ) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -531,8 +541,10 @@ class ProjectionContentGraph
             $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
         }
 
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
-                     ->fetchAll() as $relationData) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+                ->fetchAllAssociative() as $relationData
+        ) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -547,14 +559,16 @@ class ProjectionContentGraph
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
     ): array {
         $contentStreamIdentifiers = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT DISTINCT h.contentstreamidentifier
-                      FROM neos_contentgraph_hierarchyrelation h
-                      WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
-            [
-                'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
-            ]
-        )->fetchAllAssociative() as $row) {
+        foreach (
+            $this->getDatabaseConnection()->executeQuery(
+                'SELECT DISTINCT h.contentstreamidentifier
+                          FROM neos_contentgraph_hierarchyrelation h
+                          WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
+                [
+                    'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+                ]
+            )->fetchAllAssociative() as $row
+        ) {
             $contentStreamIdentifiers[] = ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
         }
 

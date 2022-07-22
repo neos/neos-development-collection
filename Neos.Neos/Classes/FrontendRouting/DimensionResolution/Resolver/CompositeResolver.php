@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
@@ -37,13 +38,14 @@ final class CompositeResolver implements DimensionResolverInterface
     }
 
     public static function create(
-        DimensionResolverInterface...$contentDimensionResolvers
+        DimensionResolverInterface ...$contentDimensionResolvers
     ): self {
         return new self($contentDimensionResolvers);
     }
 
-    public function fromRequestToDimensionSpacePoint(RequestToDimensionSpacePointContext $context): RequestToDimensionSpacePointContext
-    {
+    public function fromRequestToDimensionSpacePoint(
+        RequestToDimensionSpacePointContext $context
+    ): RequestToDimensionSpacePointContext {
         foreach ($this->resolvers as $resolver) {
             assert($resolver instanceof DimensionResolverInterface);
             $context = $resolver->fromRequestToDimensionSpacePoint($context);
@@ -51,11 +53,18 @@ final class CompositeResolver implements DimensionResolverInterface
         return $context;
     }
 
-    public function fromDimensionSpacePointToUriConstraints(DimensionSpacePoint $dimensionSpacePoint, SiteNodeName $targetSiteIdentifier, UriConstraints $uriConstraints): UriConstraints
-    {
+    public function fromDimensionSpacePointToUriConstraints(
+        DimensionSpacePoint $dimensionSpacePoint,
+        SiteNodeName $targetSiteIdentifier,
+        UriConstraints $uriConstraints
+    ): UriConstraints {
         foreach (array_reverse($this->resolvers) as $resolver) {
             assert($resolver instanceof DimensionResolverInterface);
-            $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints($dimensionSpacePoint, $targetSiteIdentifier, $uriConstraints);
+            $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints(
+                $dimensionSpacePoint,
+                $targetSiteIdentifier,
+                $uriConstraints
+            );
         }
         return $uriConstraints;
     }

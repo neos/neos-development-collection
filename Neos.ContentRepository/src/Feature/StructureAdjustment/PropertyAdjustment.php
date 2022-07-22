@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -21,7 +22,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class PropertyAdjustment
 {
     use LoadNodeTypeTrait;

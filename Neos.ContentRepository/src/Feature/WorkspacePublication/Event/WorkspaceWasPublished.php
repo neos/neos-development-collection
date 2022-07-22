@@ -17,11 +17,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
 class WorkspaceWasPublished implements EventInterface
 {
     /**

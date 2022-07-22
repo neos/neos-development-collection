@@ -12,9 +12,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class DocumentUriPathFinder
 {
     private Connection $dbal;

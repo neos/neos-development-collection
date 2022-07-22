@@ -217,8 +217,9 @@ trait NodeCreation
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
 
-        foreach ($descendantNodeAggregateIdentifiers
-                     ->getNodeAggregateIdentifiers() as $descendantNodeAggregateIdentifier) {
+        foreach (
+            $descendantNodeAggregateIdentifiers->getNodeAggregateIdentifiers() as $descendantNodeAggregateIdentifier
+        ) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $command->contentStreamIdentifier,
                 $descendantNodeAggregateIdentifier

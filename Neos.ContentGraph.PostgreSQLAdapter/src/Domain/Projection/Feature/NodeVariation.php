@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
@@ -317,11 +318,13 @@ trait NodeVariation
         NodeRelationAnchorPoint $newChildAnchor,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        foreach ($this->getProjectionHyperGraph()->findIngoingHierarchyHyperrelationRecords(
-            $contentStreamIdentifier,
-            $oldChildAnchor,
-            $affectedDimensionSpacePoints
-        ) as $ingoingHierarchyHyperrelationRecord) {
+        foreach (
+            $this->getProjectionHyperGraph()->findIngoingHierarchyHyperrelationRecords(
+                $contentStreamIdentifier,
+                $oldChildAnchor,
+                $affectedDimensionSpacePoints
+            ) as $ingoingHierarchyHyperrelationRecord
+        ) {
             $ingoingHierarchyHyperrelationRecord->replaceChildNodeAnchor(
                 $oldChildAnchor,
                 $newChildAnchor,
@@ -339,11 +342,13 @@ trait NodeVariation
         NodeRelationAnchorPoint $newParentAnchor,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        foreach ($this->getProjectionHyperGraph()->findOutgoingHierarchyHyperrelationRecords(
-            $contentStreamIdentifier,
-            $oldParentAnchor,
-            $affectedDimensionSpacePoints
-        ) as $outgoingHierarchyHyperrelationRecord) {
+        foreach (
+            $this->getProjectionHyperGraph()->findOutgoingHierarchyHyperrelationRecords(
+                $contentStreamIdentifier,
+                $oldParentAnchor,
+                $affectedDimensionSpacePoints
+            ) as $outgoingHierarchyHyperrelationRecord
+        ) {
             $outgoingHierarchyHyperrelationRecord->replaceParentNodeAnchor(
                 $newParentAnchor,
                 $this->getDatabaseConnection()

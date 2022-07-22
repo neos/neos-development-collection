@@ -24,9 +24,7 @@ use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Exception\AssetVariantGeneratorException;
 use Neos\Utility\ObjectAccess;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class AssetVariantGenerator
 {
     /**

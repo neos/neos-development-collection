@@ -29,7 +29,7 @@ class NodeNameFilterFactory implements FilterFactoryInterface
     {
         $nodeName = NodeName::fromString($settings['nodeName']);
 
-        return new class($nodeName) implements NodeAggregateBasedFilterInterface {
+        return new class ($nodeName) implements NodeAggregateBasedFilterInterface {
             public function __construct(
                 /**
                  * The node name to match on.

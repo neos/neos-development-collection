@@ -17,9 +17,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class NodeTypeConstraintObjectFactory
 {
 

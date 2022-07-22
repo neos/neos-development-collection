@@ -23,7 +23,7 @@ use Neos\Utility\PositionalArraySorter;
 /**
  * @internal
  */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class NodeAccessorChainFactory
 {
     /**

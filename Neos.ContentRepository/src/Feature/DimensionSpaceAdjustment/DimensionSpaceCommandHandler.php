@@ -133,8 +133,7 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
     protected function requireDimensionSpacePointToBeEmptyInContentStream(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentStreamIdentifier $contentStreamIdentifier
-    ): void
-    {
+    ): void {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
@@ -152,12 +151,13 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
     private function requireDimensionSpacePointToBeSpecialization(
         DimensionSpacePoint $target,
         DimensionSpacePoint $source
-    ): void
-    {
-        if ($this->interDimensionalVariationGraph->getVariantType(
+    ): void {
+        if (
+            $this->interDimensionalVariationGraph->getVariantType(
                 $target,
                 $source
-            ) !== VariantType::TYPE_SPECIALIZATION) {
+            ) !== VariantType::TYPE_SPECIALIZATION
+        ) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
     }

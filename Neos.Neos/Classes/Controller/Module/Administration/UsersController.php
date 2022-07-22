@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\Controller\Module\Administration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
@@ -132,8 +133,11 @@ class UsersController extends AbstractModuleController
      * @param string $sortDirection
      * @return void
      */
-    public function indexAction(string $searchTerm = '', string $sortBy = 'accounts.accountIdentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): void
-    {
+    public function indexAction(
+        string $searchTerm = '',
+        string $sortBy = 'accounts.accountIdentifier',
+        string $sortDirection = QueryInterface::ORDER_ASCENDING
+    ): void {
         if (empty($searchTerm)) {
             $users = $this->domainUserService->getUsers($sortBy, $sortDirection);
         } else {

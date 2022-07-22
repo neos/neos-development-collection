@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver;
@@ -17,12 +18,12 @@ final class SegmentMapping implements \IteratorAggregate, \Countable
      */
     private array $elements;
 
-    private function __construct(SegmentMappingElement...$elements)
+    private function __construct(SegmentMappingElement ...$elements)
     {
         $this->elements = $elements;
     }
 
-    public static function create(SegmentMappingElement...$elements): self
+    public static function create(SegmentMappingElement ...$elements): self
     {
         return new self(...$elements);
     }

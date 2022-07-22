@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\SiteDetection;
@@ -57,7 +58,10 @@ final class SiteDetectionResult
         $contentRepositoryIdentifier = $routeParameters->getValue(self::ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER);
 
         if ($siteIdentifier === null || $contentRepositoryIdentifier === null) {
-            throw new \RuntimeException('Current site and content repository could not be extracted from the Request. SiteDetectionMiddleware must run before calling this method!');
+            throw new \RuntimeException(
+                'Current site and content repository could not be extracted from the Request.'
+                    . ' SiteDetectionMiddleware must run before calling this method!'
+            );
         }
         assert($siteIdentifier instanceof SiteNodeName);
         assert($contentRepositoryIdentifier instanceof ContentRepositoryIdentifier);

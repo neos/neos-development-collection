@@ -12,7 +12,8 @@ use Neos\EventSourcing\EventListener\AppliedEventsStorage\DoctrineAppliedEventsS
 use Neos\EventSourcing\EventStore\EventEnvelope;
 
 /**
- * Abstract base class for projections, for implementing the blocking mechanism (see {@see CommandResult} for explanation)
+ * Abstract base class for projections, for implementing the blocking mechanism
+ * (see {@see CommandResult} for explanation)
  * @internal
  */
 abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsAwareProjectorInterface

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -12,17 +13,17 @@ use Neos\ContentRepository\Projection\Content\NodeInterface;
 #[Flow\Proxy(false)]
 class StructureAdjustment extends Message
 {
-    const TETHERED_NODE_MISSING = 'TETHERED_NODE_MISSING';
-    const NODE_IS_NOT_TETHERED_BUT_SHOULD_BE = 'NODE_IS_NOT_TETHERED_BUT_SHOULD_BE';
-    const TETHERED_NODE_TYPE_WRONG = 'TETHERED_NODE_TYPE_WRONG';
-    const DISALLOWED_TETHERED_NODE = 'DISALLOWED_TETHERED_NODE';
-    const NODE_TYPE_MISSING = 'NODE_TYPE_MISSING';
-    const DISALLOWED_CHILD_NODE = 'DISALLOWED_CHILD_NODE';
-    const OBSOLETE_PROPERTY = 'OBSOLETE_PROPERTY';
-    const MISSING_DEFAULT_VALUE = 'MISSING_DEFAULT_VALUE';
-    const NON_DESERIALIZABLE_PROPERTY = 'NON_DESERIALIZABLE_PROPERTY';
-    const TETHERED_NODE_WRONGLY_ORDERED = 'TETHERED_NODE_WRONGLY_ORDERED';
-    const NODE_COVERS_GENERALIZATION_OR_PEERS = 'NODE_COVERS_GENERALIZATION_OR_PEERS';
+    public const TETHERED_NODE_MISSING = 'TETHERED_NODE_MISSING';
+    public const NODE_IS_NOT_TETHERED_BUT_SHOULD_BE = 'NODE_IS_NOT_TETHERED_BUT_SHOULD_BE';
+    public const TETHERED_NODE_TYPE_WRONG = 'TETHERED_NODE_TYPE_WRONG';
+    public const DISALLOWED_TETHERED_NODE = 'DISALLOWED_TETHERED_NODE';
+    public const NODE_TYPE_MISSING = 'NODE_TYPE_MISSING';
+    public const DISALLOWED_CHILD_NODE = 'DISALLOWED_CHILD_NODE';
+    public const OBSOLETE_PROPERTY = 'OBSOLETE_PROPERTY';
+    public const MISSING_DEFAULT_VALUE = 'MISSING_DEFAULT_VALUE';
+    public const NON_DESERIALIZABLE_PROPERTY = 'NON_DESERIALIZABLE_PROPERTY';
+    public const TETHERED_NODE_WRONGLY_ORDERED = 'TETHERED_NODE_WRONGLY_ORDERED';
+    public const NODE_COVERS_GENERALIZATION_OR_PEERS = 'NODE_COVERS_GENERALIZATION_OR_PEERS';
 
     private ?\Closure $adjustment;
 
@@ -30,7 +31,7 @@ class StructureAdjustment extends Message
 
     /**
      * @param string $message An english error message which is used if no other error message can be resolved
-     * @param integer|null $code A unique error code
+     * @param int|null $code A unique error code
      * @param array<string,mixed> $arguments Array of arguments to be replaced in message
      * @api
      */

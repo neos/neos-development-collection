@@ -25,9 +25,7 @@ use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\Exception\DisabledModuleException;
 use Neos\Party\Domain\Service\PartyService;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class ModuleController extends ActionController
 {
     use BackendUserTranslationTrait;

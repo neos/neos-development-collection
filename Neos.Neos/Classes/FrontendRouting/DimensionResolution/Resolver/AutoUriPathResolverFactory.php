@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,21 +10,26 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
+
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\AutoUriPathResolverConfigurationException;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMapping;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
+/** @codingStandardsIgnoreStart */
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\AutoUriPathResolverConfigurationException;
+/** @codingStandardsIgnoreEnd */
+
 /**
- *
- *
  * @api
  */
 final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterface
@@ -37,11 +39,19 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
     ) {
     }
 
-    public function create(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $dimensionResolverOptions): DimensionResolverInterface
-    {
+    /**
+     * @param array<string,mixed> $dimensionResolverOptions
+     */
+    public function create(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        array $dimensionResolverOptions
+    ): DimensionResolverInterface {
         $contentDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
         if (count($contentDimensions) >= 2) {
-            throw new AutoUriPathResolverConfigurationException('The AutoUriPathResolverFactory is only meant for single-dimension use cases. For everything more advanced, please manually configure UriPathResolver in Settings.yaml.');
+            throw new AutoUriPathResolverConfigurationException(
+                'The AutoUriPathResolverFactory is only meant for single-dimension use cases.'
+                    . ' For everything more advanced, please manually configure UriPathResolver in Settings.yaml.'
+            );
         }
 
         $contentDimension = reset($contentDimensions);

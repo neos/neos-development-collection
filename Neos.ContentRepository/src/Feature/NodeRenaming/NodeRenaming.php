@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\NodeRenaming;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Feature\NodeRenaming;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\NodeRenaming;
 
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;

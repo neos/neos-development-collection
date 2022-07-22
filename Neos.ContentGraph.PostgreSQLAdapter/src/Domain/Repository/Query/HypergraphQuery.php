@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
@@ -39,8 +40,8 @@ final class HypergraphQuery implements HypergraphQueryInterface
                 n.nodetypename, n.classification, n.properties, n.nodename,
                 h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
                 r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
-            JOIN ' . NodeRecord::TABLE_NAME .' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinRestrictionRelations
                 ? '
             LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r

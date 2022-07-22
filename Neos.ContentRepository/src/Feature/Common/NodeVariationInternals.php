@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Common;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -39,10 +41,12 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents {
-        return match ($this->getInterDimensionalVariationGraph()->getVariantType(
-            $targetOrigin->toDimensionSpacePoint(),
-            $sourceOrigin->toDimensionSpacePoint()
-        )) {
+        return match (
+            $this->getInterDimensionalVariationGraph()->getVariantType(
+                $targetOrigin->toDimensionSpacePoint(),
+                $sourceOrigin->toDimensionSpacePoint()
+            )
+        ) {
             DimensionSpace\VariantType::TYPE_SPECIALIZATION => $this->handleCreateNodeSpecializationVariant(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -113,10 +117,12 @@ trait NodeVariationInternals
             Uuid::uuid4()->toString()
         );
 
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
-            $contentStreamIdentifier,
-            $nodeAggregate->getIdentifier()
-        ) as $tetheredChildNodeAggregate) {
+        foreach (
+            $this->getContentGraph()->findTetheredChildNodeAggregates(
+                $contentStreamIdentifier,
+                $nodeAggregate->getIdentifier()
+            ) as $tetheredChildNodeAggregate
+        ) {
             $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -177,10 +183,12 @@ trait NodeVariationInternals
             Uuid::uuid4()->toString()
         );
 
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
-            $contentStreamIdentifier,
-            $nodeAggregate->getIdentifier()
-        ) as $tetheredChildNodeAggregate) {
+        foreach (
+            $this->getContentGraph()->findTetheredChildNodeAggregates(
+                $contentStreamIdentifier,
+                $nodeAggregate->getIdentifier()
+            ) as $tetheredChildNodeAggregate
+        ) {
             $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -241,10 +249,12 @@ trait NodeVariationInternals
             Uuid::uuid4()->toString()
         );
 
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
-            $contentStreamIdentifier,
-            $nodeAggregate->getIdentifier()
-        ) as $tetheredChildNodeAggregate) {
+        foreach (
+            $this->getContentGraph()->findTetheredChildNodeAggregates(
+                $contentStreamIdentifier,
+                $nodeAggregate->getIdentifier()
+            ) as $tetheredChildNodeAggregate
+        ) {
             $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -266,9 +276,11 @@ trait NodeVariationInternals
         $specializations = $this->getInterDimensionalVariationGraph()
             ->getIndexedSpecializations($targetOrigin->toDimensionSpacePoint());
         $excludedSet = new DimensionSpacePointSet([]);
-        foreach ($specializations->getIntersection(
-            $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
-        ) as $occupiedSpecialization) {
+        foreach (
+            $specializations->getIntersection(
+                $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
+            ) as $occupiedSpecialization
+        ) {
             $excludedSet = $excludedSet->getUnion(
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization)
             );

@@ -29,9 +29,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class StructureAdjustmentObjectFactory
 {
     public function __construct(
