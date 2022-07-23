@@ -91,32 +91,6 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return new self($values);
     }
 
-    public static function defaultForReferenceFromFromNodeType(PropertyName $referenceName, NodeType $nodeType): self
-    {
-        $values = [];
-        $referencePropertiesConfiguration
-            = $nodeType->getFullConfiguration()['properties'][(string)$referenceName]['properties'];
-        foreach ($referencePropertiesConfiguration as $referencePropertyName => $referencePropertyConfiguration) {
-            if (is_string($referencePropertyName) && isset($referencePropertyConfiguration['defaultValue'])) {
-                $propertyTypeFromSchema = $referencePropertyConfiguration['type'] ?? '';
-                if ($propertyTypeFromSchema === '') {
-                    continue;
-                }
-                self::assertTypeIsNoReference($propertyTypeFromSchema);
-
-                $defaultValue = match ($propertyTypeFromSchema) {
-                    'DateTimeImmutable', 'DateTime'
-                        => json_encode(new \DateTimeImmutable($referencePropertyConfiguration['defaultValue'])),
-                    default => $referencePropertyConfiguration['defaultValue'],
-                };
-
-                $values[$referencePropertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
-            }
-        }
-
-        return new self($values);
-    }
-
     public static function fromJsonString(string $jsonString): self
     {
         return self::fromArray(\json_decode($jsonString, true));
