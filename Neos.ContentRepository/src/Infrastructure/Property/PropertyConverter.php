@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Infrastructure\Property;
 
+use Neos\ContentRepository\Feature\Common\Exception\PropertyTypeIsInvalid;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\Flow\Annotations as Flow;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Serializer;
@@ -48,10 +48,28 @@ final class PropertyConverter
             // so we need to trigger another method beforehand.
             $nodeType->getOptions();
 
-            $propertyType = PropertyType::fromNodeTypeDeclaration(
+            $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 $nodeType->getPropertyType($propertyName),
                 PropertyName::fromString($propertyName),
-                NodeTypeName::fromString($nodeType->getName())
+                NodeTypeName::fromString($nodeType->getName()),
+                $propertyValue
+            );
+        }
+
+        return SerializedPropertyValues::fromArray($serializedPropertyValues);
+    }
+
+    private function serializePropertyValue(
+        string $declaredType,
+        PropertyName $propertyName,
+        NodeTypeName $nodeTypeName,
+        mixed $propertyValue
+    ): ?SerializedPropertyValue {
+        try {
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $declaredType,
+                $propertyName,
+                $nodeTypeName
             );
 
             if ($propertyValue !== null) {
@@ -65,22 +83,24 @@ final class PropertyConverter
                     );
                 }
 
-                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(
+                return new SerializedPropertyValue(
                     $propertyValue,
                     (string)$propertyType
                 );
             } else {
-                if (array_key_exists($propertyName, $nodeType->getProperties())) {
-                    // $propertyValue == null and defined in node types -> we want to set the $propertyName to NULL
-                    $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(null, (string)$propertyType);
-                } else {
-                    // $propertyValue == null and not defined in NodeTypes -> we want to unset $propertyName!
-                    $serializedPropertyValues[$propertyName] = null;
-                }
+                // $propertyValue == null and defined in node types (we have a resolved type)
+                // -> we want to set the $propertyName to NULL
+                return new SerializedPropertyValue(null, (string)$propertyType);
+            }
+        } catch (PropertyTypeIsInvalid $exception) {
+            if ($exception->getCode() === 1630063406 && $propertyValue === null) {
+                // undeclared property
+                // $propertyValue == null and not defined in NodeTypes -> we want to unset $propertyName!
+                return null;
+            } else {
+                throw $exception;
             }
         }
-
-        return SerializedPropertyValues::fromArray($serializedPropertyValues);
     }
 
     public function serializeReferencePropertyValues(
@@ -91,40 +111,14 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
-            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-            // so we need to trigger another method beforehand.
-            $nodeType->getOptions();
+            $declaredType = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]['type'];
 
-            $propertyType = PropertyType::fromNodeTypeDeclaration(
-                $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]['type'],
+            $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
+                $declaredType,
                 PropertyName::fromString($propertyName),
-                NodeTypeName::fromString($nodeType->getName())
+                NodeTypeName::fromString($nodeType->getName()),
+                $propertyValue
             );
-
-            if ($propertyValue !== null) {
-                try {
-                    $propertyValue = $this->serializer->normalize($propertyValue);
-                } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                    throw new \RuntimeException(
-                        'TODO: There was a problem serializing ' . get_class($propertyValue),
-                        1594842314,
-                        $e
-                    );
-                }
-
-                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(
-                    $propertyValue,
-                    (string)$propertyType
-                );
-            } else {
-                if (array_key_exists($propertyName, $nodeType->getProperties())) {
-                    // $propertyValue == null and defined in node types -> we want to set the $propertyName to NULL
-                    $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(null, (string)$propertyType);
-                } else {
-                    // $propertyValue == null and not defined in NodeTypes -> we want to unset $propertyName!
-                    $serializedPropertyValues[$propertyName] = null;
-                }
-            }
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);

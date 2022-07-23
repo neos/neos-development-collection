@@ -50,6 +50,9 @@ final class PropertyType
         $this->isNullable = $isNullable;
     }
 
+    /**
+     * @throws PropertyTypeIsInvalid
+     */
     public static function fromNodeTypeDeclaration(
         string $declaration,
         PropertyName $propertyName,

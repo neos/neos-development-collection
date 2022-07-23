@@ -27,6 +27,13 @@ Feature: Node References without Dimensions
               type: string
             postalAddress:
               type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
+        referencesPropertyWithProperty:
+          type: references
+          properties:
+            text:
+              type: string
+            postalAddress:
+              type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -68,7 +75,7 @@ Feature: Node References without Dimensions
       | Name              | Node                               | Properties |
       | referenceProperty | cs-identifier;source-nodandaise;{} | null       |
 
-  Scenario: Ensure that a single reference between nodes can be set and read with properties
+  Scenario: Ensure that a single reference with properties between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                                                                     |
       | sourceNodeAggregateIdentifier | "source-nodandaise"                                                                                       |
@@ -87,7 +94,7 @@ Feature: Node References without Dimensions
       | Name                          | Node                               | Properties                                                |
       | referencePropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
 
-  Scenario: Ensure that references between nodes can be set and read
+  Scenario: Ensure that multiple references between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                         |
       | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
@@ -112,30 +119,30 @@ Feature: Node References without Dimensions
       | Name               | Node                               | Properties |
       | referencesProperty | cs-identifier;source-nodandaise;{} | null       |
 
-  Scenario: Ensure that references between nodes can be set and read
+  Scenario: Ensure that multiple references with properties between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
-      | Key                           | Value                                                         |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
-      | referenceName                 | "referencesProperty"                                          |
-      | references                    | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
-      | initiatingUserIdentifier      | "user"                                                        |
+      | Key                           | Value                                                                                                                                                                                                                    |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"                                                                                                                                                                                                      |
+      | referenceName                 | "referencesPropertyWithProperty"                                                                                                                                                                                                     |
+      | references                    | [{"target":"berta-destinode", "properties":{"text":"my text", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"}}] |
+      | initiatingUserIdentifier      | "user"                                                                                                                                                                                                                   |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
-      | Name               | Node                             | Properties |
-      | referencesProperty | cs-identifier;berta-destinode;{} | null       |
-      | referencesProperty | cs-identifier;carl-destinode;{}  | null       |
+      | Name                          | Node                             | Properties                                                             |
+      | referencesPropertyWithProperty | cs-identifier;berta-destinode;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"}              |
+      | referencesPropertyWithProperty | cs-identifier;carl-destinode;{}  | {"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"} |
 
     And I expect node aggregate identifier "berta-destinode" to lead to node cs-identifier;berta-destinode;{}
     And I expect this node to be referenced by:
-      | Name               | Node                               | Properties |
-      | referencesProperty | cs-identifier;source-nodandaise;{} | null       |
+      | Name                          | Node                               | Properties                                                |
+      | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
 
     And I expect node aggregate identifier "carl-destinode" to lead to node cs-identifier;carl-destinode;{}
     And I expect this node to be referenced by:
-      | Name               | Node                               | Properties |
-      | referencesProperty | cs-identifier;source-nodandaise;{} | null       |
+      | Name                          | Node                               | Properties                                                             |
+      | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"} |
 
   Scenario: Ensure that references between nodes can be set and overwritten
     When the command SetNodeReferences is executed with payload:
