@@ -176,6 +176,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         } elseif ($command instanceof ChangeNodeAggregateName) {
             return $this->handleChangeNodeAggregateName($command);
         }
+
+        throw new \RuntimeException('Could not handle command');
     }
 
     protected function getContentGraph(): ContentGraphInterface

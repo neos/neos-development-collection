@@ -212,9 +212,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                     n.nodeaggregateidentifier = :nodeAggregateIdentifier
                     and h.contentstreamidentifier = :contentStreamIdentifier
             ', [
-                'newName' => (string)$event->getNewNodeName(),
-                'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                'newName' => (string)$event->newNodeName,
+                'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
             ]);
         });
     }

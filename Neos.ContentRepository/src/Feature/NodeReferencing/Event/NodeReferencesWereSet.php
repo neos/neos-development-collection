@@ -13,14 +13,12 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A named reference from source to destination node was created
  */
-#[Flow\Proxy(false)]
 final class NodeReferencesWereSet implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -60,5 +58,29 @@ final class NodeReferencesWereSet implements
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->sourceNodeAggregateIdentifier;
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['sourceNodeAggregateIdentifier']),
+            OriginDimensionSpacePoint::fromArray($values['sourceOriginDimensionSpacePoint']),
+            NodeAggregateIdentifiers::fromArray($values['destinationNodeAggregateIdentifiers']),
+            PropertyName::fromString($values['referenceName']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
+            'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
+            'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
+            'referenceName' => $this->referenceName,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
     }
 }

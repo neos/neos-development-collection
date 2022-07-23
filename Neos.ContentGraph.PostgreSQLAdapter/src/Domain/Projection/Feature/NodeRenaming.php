@@ -34,15 +34,15 @@ trait NodeRenaming
         $this->transactional(function () use ($event) {
             foreach (
                 $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier()
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier
                 ) as $originNode
             ) {
                 $this->copyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamIdentifier,
                     $originNode,
                     function (NodeRecord $nodeRecord) use ($event) {
-                        $nodeRecord->nodeName = $event->getNewNodeName();
+                        $nodeRecord->nodeName = $event->newNodeName;
                     }
                 );
             }

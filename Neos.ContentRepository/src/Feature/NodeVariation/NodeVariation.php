@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeVariation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
@@ -26,9 +27,8 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyExists
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeVariation
 {
@@ -39,8 +39,6 @@ trait NodeVariation
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
@@ -50,7 +48,7 @@ trait NodeVariation
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
-    public function handleCreateNodeVariant(CreateNodeVariant $command): CommandResult
+    private function handleCreateNodeVariant(CreateNodeVariant $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -83,14 +81,15 @@ trait NodeVariation
             $command->initiatingUserIdentifier
         );
 
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $events) {
-            $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier(
                 $command->contentStreamIdentifier
-            );
-
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand($streamName->getEventStreamName(), $events);
-        });
-
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+            )->getEventStreamName(),
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 }

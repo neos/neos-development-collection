@@ -14,19 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeVariation\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Create a variant of a node in a content stream
  *
  * Copy a node to another dimension space point respecting further variation mechanisms
  */
-#[Flow\Proxy(false)]
-final class CreateNodeVariant implements \JsonSerializable
+final class CreateNodeVariant implements CommandInterface, \JsonSerializable
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,

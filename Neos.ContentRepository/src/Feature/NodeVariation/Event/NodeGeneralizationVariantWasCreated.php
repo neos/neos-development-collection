@@ -22,14 +22,12 @@ use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterf
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A node generalization variant was created
  */
-#[Flow\Proxy(false)]
 final class NodeGeneralizationVariantWasCreated implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -64,5 +62,29 @@ final class NodeGeneralizationVariantWasCreated implements
             $this->generalizationCoverage,
             $this->initiatingUserIdentifier
         );
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
+            OriginDimensionSpacePoint::fromArray($values['generalizationOrigin']),
+            DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'sourceOrigin' => $this->sourceOrigin,
+            'generalizationOrigin' => $this->generalizationOrigin,
+            'generalizationCoverage' => $this->generalizationCoverage,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
     }
 }

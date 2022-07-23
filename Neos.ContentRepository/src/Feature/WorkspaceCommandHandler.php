@@ -301,7 +301,7 @@ final class WorkspaceCommandHandler
         foreach ($workspaceContentStream as $eventEnvelope) {
             $event = $eventEnvelope->getDomainEvent();
             if ($event instanceof PublishableToOtherContentStreamsInterface) {
-                /** @var DomainEventInterface $copiedEvent */
+                /** @var EventInterface $copiedEvent */
                 $copiedEvent = $event->createCopyForContentStream($baseContentStreamIdentifier);
                 $events = $events->appendEvent(
                 // We need to add the event metadata here for rebasing in nested workspace situations

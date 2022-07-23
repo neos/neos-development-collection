@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Feature\NodeRemoval;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
@@ -25,12 +27,8 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguou
 use Neos\ContentRepository\Feature\Common\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeRemoval
 {
@@ -42,16 +40,14 @@ trait NodeRemoval
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
     /**
      * @param RemoveNodeAggregate $command
-     * @return CommandResult
+     * @return EventsToPublish
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      */
-    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
+    private function handleRemoveNodeAggregate(RemoveNodeAggregate $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -73,42 +69,34 @@ trait NodeRemoval
             );
         }
 
-        $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand(
-            $command,
-            function () use ($command, $nodeAggregate, &$events) {
-                $events = DomainEvents::withSingleEvent(
-                    DecoratedEvent::addIdentifier(
-                        new NodeAggregateWasRemoved(
-                            $command->contentStreamIdentifier,
-                            $command->nodeAggregateIdentifier,
-                            $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
-                                $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
-                                $nodeAggregate,
-                                $this->getInterDimensionalVariationGraph()
-                            ),
-                            $command->nodeVariantSelectionStrategy->resolveAffectedDimensionSpacePoints(
-                                $command->coveredDimensionSpacePoint,
-                                $nodeAggregate,
-                                $this->getInterDimensionalVariationGraph()
-                            ),
-                            $command->initiatingUserIdentifier,
-                            $command->removalAttachmentPoint
-                        ),
-                        Uuid::uuid4()->toString()
-                    )
-                );
-
-                $this->getNodeAggregateEventPublisher()->enrichWithCommand(
-                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
-                        ->getEventStreamName(),
-                    $events
-                );
-            }
+        $events = Events::with(
+            new NodeAggregateWasRemoved(
+                $command->contentStreamIdentifier,
+                $command->nodeAggregateIdentifier,
+                $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
+                    $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
+                    $nodeAggregate,
+                    $this->getInterDimensionalVariationGraph()
+                ),
+                $command->nodeVariantSelectionStrategy->resolveAffectedDimensionSpacePoints(
+                    $command->coveredDimensionSpacePoint,
+                    $nodeAggregate,
+                    $this->getInterDimensionalVariationGraph()
+                ),
+                $command->initiatingUserIdentifier,
+                $command->removalAttachmentPoint
+            )
         );
-        /** @var DomainEvents $events */
 
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
+            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 
     protected function requireNodeAggregateNotToBeTethered(ReadableNodeAggregateInterface $nodeAggregate): void
