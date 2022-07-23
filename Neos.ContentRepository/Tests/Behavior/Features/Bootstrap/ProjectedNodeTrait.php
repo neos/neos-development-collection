@@ -316,7 +316,7 @@ trait ProjectedNodeTrait
                 }
         }
 
-        return \json_decode($serializedPropertyValue, true, 512, JSON_THROW_ON_ERROR);
+        return \json_decode($serializedPropertyValue, true) ?: $serializedPropertyValue;
     }
 
     /**

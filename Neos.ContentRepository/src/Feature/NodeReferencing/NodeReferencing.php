@@ -71,9 +71,10 @@ trait NodeReferencing
                 fn (NodeReferenceToWrite $reference): SerializedNodeReference => new SerializedNodeReference(
                     $reference->targetNodeAggregateIdentifier,
                     $reference->properties
-                        ? $this->getPropertyConverter()->serializePropertyValues(
+                        ? $this->getPropertyConverter()->serializeReferencePropertyValues(
                             $reference->properties,
-                            $this->requireNodeType($nodeTypeName)
+                            $this->requireNodeType($nodeTypeName),
+                            $command->referenceName
                         )
                         : null
                 ),

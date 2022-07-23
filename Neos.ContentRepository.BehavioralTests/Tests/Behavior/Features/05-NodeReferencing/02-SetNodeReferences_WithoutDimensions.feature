@@ -20,6 +20,13 @@ Feature: Node References without Dimensions
             nodeTypes:
               '*': false
               'Neos.ContentRepository.Testing:NodeWithReferences': true
+        referencePropertyWithProperty:
+          type: reference
+          properties:
+            text:
+              type: string
+            postalAddress:
+              type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -42,7 +49,7 @@ Feature: Node References without Dimensions
       | berta-destinode         | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | carl-destinode          | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
 
-  Scenario: Ensure that a reference between nodes can be set and read
+  Scenario: Ensure that a single reference between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
       | sourceNodeAggregateIdentifier | "source-nodandaise"               |
@@ -60,6 +67,25 @@ Feature: Node References without Dimensions
     And I expect this node to be referenced by:
       | Name              | Node                               | Properties |
       | referenceProperty | cs-identifier;source-nodandaise;{} | null       |
+
+  Scenario: Ensure that a single reference between nodes can be set and read with properties
+    When the command SetNodeReferences is executed with payload:
+      | Key                           | Value                                                                                                     |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"                                                                                       |
+      | referenceName                 | "referencePropertyWithProperty"                                                                           |
+      | references                    | [{"target": "anthony-destinode", "properties":{"text":"my text", "postalAddress":"PostalAddress:dummy"}}] |
+      | initiatingUserIdentifier      | "user"                                                                                                    |
+    And the graph projection is fully up to date
+
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
+    And I expect this node to have the following references:
+      | Name                          | Node                               | Properties                                                |
+      | referencePropertyWithProperty | cs-identifier;anthony-destinode;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
+    And I expect this node to be referenced by:
+      | Name                          | Node                               | Properties                                                |
+      | referencePropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
 
   Scenario: Ensure that references between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
