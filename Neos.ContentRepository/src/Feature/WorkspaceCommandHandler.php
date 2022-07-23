@@ -14,10 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\DecoratedEvent;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
+use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
 use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
@@ -25,21 +30,9 @@ use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasFo
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
-use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
-use Neos\ContentRepository\Feature\NodeDuplication\Command\CopyNodesRecursively;
-use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
@@ -61,58 +54,67 @@ use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
-use Neos\EventSourcing\EventStore\StreamName;
-use Ramsey\Uuid\Uuid;
+use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * WorkspaceCommandHandler
  */
-final class WorkspaceCommandHandler
+final class WorkspaceCommandHandler implements CommandHandlerInterface
 {
-    protected EventStore $eventStore;
-
     protected WorkspaceFinder $workspaceFinder;
-
-    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
-
-    protected ContentStreamCommandHandler $contentStreamCommandHandler;
-
-    protected NodeDuplicationCommandHandler $nodeDuplicationCommandHandler;
 
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
     protected ContentGraphInterface $contentGraph;
 
-    protected RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
-        EventStore $eventStore,
         WorkspaceFinder $workspaceFinder,
-        NodeAggregateCommandHandler $nodeAggregateCommandHandler,
-        ContentStreamCommandHandler $contentStreamCommandHandler,
-        NodeDuplicationCommandHandler $nodeDuplicationCommandHandler,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         ContentGraphInterface $contentGraph,
-        RuntimeBlocker $runtimeBlocker
     ) {
-        $this->eventStore = $eventStore;
         $this->workspaceFinder = $workspaceFinder;
-        $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
-        $this->contentStreamCommandHandler = $contentStreamCommandHandler;
-        $this->nodeDuplicationCommandHandler = $nodeDuplicationCommandHandler;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->contentGraph = $contentGraph;
-        $this->runtimeBlocker = $runtimeBlocker;
+    }
+
+
+    public function canHandle(CommandInterface $command): bool
+    {
+        return $command instanceof CreateWorkspace
+            || $command instanceof CreateRootWorkspace
+            || $command instanceof PublishWorkspace
+            || $command instanceof RebaseWorkspace
+            || $command instanceof PublishIndividualNodesFromWorkspace
+            || $command instanceof DiscardIndividualNodesFromWorkspace
+            || $command instanceof DiscardWorkspace;
+    }
+
+    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        if ($command instanceof CreateWorkspace) {
+            return $this->handleCreateWorkspace($command, $contentRepository);
+        } elseif ($command instanceof CreateRootWorkspace) {
+            return $this->handleCreateRootWorkspace($command, $contentRepository);
+        } elseif ($command instanceof PublishWorkspace) {
+            return $this->handlePublishWorkspace($command, $contentRepository);
+        } elseif ($command instanceof RebaseWorkspace) {
+            return $this->handleRebaseWorkspace($command, $contentRepository);
+        } elseif ($command instanceof PublishIndividualNodesFromWorkspace) {
+            return $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository);
+        } elseif ($command instanceof DiscardIndividualNodesFromWorkspace) {
+            return $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository);
+        } elseif ($command instanceof DiscardWorkspace) {
+            return $this->handleDiscardWorkspace($command, $contentRepository);
+        }
+
+        throw new \RuntimeException('invalid command');
     }
 
     /**
@@ -121,103 +123,92 @@ final class WorkspaceCommandHandler
      * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceAlreadyExists
      */
-    public function handleCreateWorkspace(CreateWorkspace $command): CommandResult
+    private function handleCreateWorkspace(CreateWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $existingWorkspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        $existingWorkspace = $this->workspaceFinder->findOneByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
-                $command->getWorkspaceName()
+                $command->workspaceName
             ), 1505830958921);
         }
 
-        $baseWorkspace = $this->workspaceFinder->findOneByName($command->getBaseWorkspaceName());
+        $baseWorkspace = $this->workspaceFinder->findOneByName($command->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf(
                 'The workspace %s (base workspace of %s) does not exist',
-                $command->getBaseWorkspaceName(),
-                $command->getWorkspaceName()
+                $command->baseWorkspaceName,
+                $command->workspaceName
             ), 1513890708);
         }
 
         // When the workspace is created, we first have to fork the content stream
-        $commandResult = CommandResult::createEmpty();
-        $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
+        $contentRepository->handle(
             new ForkContentStream(
-                $command->getNewContentStreamIdentifier(),
+                $command->newContentStreamIdentifier,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
-        ));
+        )->block(); // TODO: we did not block here before, but we need to do this now. Is this a problem? I guess not
 
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new WorkspaceWasCreated(
-                    $command->getWorkspaceName(),
-                    $command->getBaseWorkspaceName(),
-                    $command->getWorkspaceTitle(),
-                    $command->getWorkspaceDescription(),
-                    $command->getInitiatingUserIdentifier(),
-                    $command->getNewContentStreamIdentifier(),
-                    $command->getWorkspaceOwner()
-                ),
-                Uuid::uuid4()->toString()
-            )
+        $events = Events::with(
+            new WorkspaceWasCreated(
+                $command->workspaceName,
+                $command->baseWorkspaceName,
+                $command->workspaceTitle,
+                $command->workspaceDescription,
+                $command->initiatingUserIdentifier,
+                $command->newContentStreamIdentifier,
+                $command->workspaceOwner
+            ),
         );
 
-        $this->eventStore->commit($streamName, $events);
-        $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events, $this->runtimeBlocker));
-        return $commandResult;
+        return new EventsToPublish(
+            StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName),
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
      * @param CreateRootWorkspace $command
-     * @return CommandResult
+     * @return EventsToPublish
      * @throws WorkspaceAlreadyExists
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateRootWorkspace(CreateRootWorkspace $command): CommandResult
+    public function handleCreateRootWorkspace(CreateRootWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $existingWorkspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        $existingWorkspace = $this->workspaceFinder->findOneByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
-                $command->getWorkspaceName()
+                $command->workspaceName
             ), 1505848624450);
         }
 
-        $commandResult = CommandResult::createEmpty();
-        $contentStreamIdentifier = $command->getNewContentStreamIdentifier();
-        $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleCreateContentStream(
+        $contentStreamIdentifier = $command->newContentStreamIdentifier;
+        $contentRepository->handle(
             new CreateContentStream(
                 $contentStreamIdentifier,
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
-        ));
+        )->block(); // TODO: we did not block here before, but we need to do this now. Is this a problem? I guess not
 
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new RootWorkspaceWasCreated(
-                    $command->getWorkspaceName(),
-                    $command->getWorkspaceTitle(),
-                    $command->getWorkspaceDescription(),
-                    $command->getInitiatingUserIdentifier(),
-                    $contentStreamIdentifier
-                ),
-                Uuid::uuid4()->toString()
+        $events = Events::with(
+            new RootWorkspaceWasCreated(
+                $command->workspaceName,
+                $command->workspaceTitle,
+                $command->workspaceDescription,
+                $command->initiatingUserIdentifier,
+                $contentStreamIdentifier
             )
         );
 
-        $this->eventStore->commit($streamName, $events);
-        $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events, $this->runtimeBlocker));
-
-        return $commandResult;
+        return new EventsToPublish(
+            StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName),
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
@@ -229,13 +220,12 @@ final class WorkspaceCommandHandler
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handlePublishWorkspace(PublishWorkspace $command): CommandResult
+    public function handlePublishWorkspace(PublishWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         $workspace = $this->requireWorkspace($command->getWorkspaceName());
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
+        // TODO!!!
         $commandResult = $this->publishContentStream(
             $workspace->getCurrentContentStreamIdentifier(),
             $baseWorkspace->getCurrentContentStreamIdentifier()
@@ -243,33 +233,30 @@ final class WorkspaceCommandHandler
 
         // After publishing a workspace, we need to again fork from Base.
         $newContentStream = ContentStreamIdentifier::create();
-        $commandResult = $commandResult->merge(
-            $this->contentStreamCommandHandler->handleForkContentStream(
-                new ForkContentStream(
-                    $newContentStream,
-                    $baseWorkspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
-                )
+        $contentRepository->handle(
+            new ForkContentStream(
+                $newContentStream,
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
-        );
-        $commandResult->blockUntilProjectionsAreUpToDate();
+        )->block();
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new WorkspaceWasPublished(
-                    $command->getWorkspaceName(),
-                    $baseWorkspace->getWorkspaceName(),
-                    $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
-                ),
-                Uuid::uuid4()->toString()
+        $events = Events::with(
+            new WorkspaceWasPublished(
+                $command->getWorkspaceName(),
+                $baseWorkspace->getWorkspaceName(),
+                $newContentStream,
+                $workspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
@@ -278,8 +265,9 @@ final class WorkspaceCommandHandler
      */
     private function publishContentStream(
         ContentStreamIdentifier $contentStreamIdentifier,
-        ContentStreamIdentifier $baseContentStreamIdentifier
-    ): CommandResult {
+        ContentStreamIdentifier $baseContentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): void {
         $contentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $baseContentStreamIdentifier
@@ -292,33 +280,39 @@ final class WorkspaceCommandHandler
         // - ensure that no other changes have been done in the meantime in the base content stream
 
 
-        $streamName = StreamName::fromString((string)$contentStreamName->getEventStreamName());
+        $streamName = $contentStreamName->getEventStreamName();
 
         /** @var array<int,EventEnvelope> $workspaceContentStream */
+        // TODO: HOW TO DO THIS? (EVENT STORE LOAD!)
         $workspaceContentStream = iterator_to_array($this->eventStore->load($streamName));
 
-        $events = DomainEvents::createEmpty();
+        $events = [];
         foreach ($workspaceContentStream as $eventEnvelope) {
-            $event = $eventEnvelope->getDomainEvent();
+            assert($eventEnvelope instanceof EventEnvelope);
+            // TODO: How to trigger deserialization here properly?
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
             if ($event instanceof PublishableToOtherContentStreamsInterface) {
                 /** @var EventInterface $copiedEvent */
                 $copiedEvent = $event->createCopyForContentStream($baseContentStreamIdentifier);
-                $events = $events->appendEvent(
                 // We need to add the event metadata here for rebasing in nested workspace situations
                 // (and for exporting)
-                    DecoratedEvent::addIdentifier(
-                        DecoratedEvent::addMetadata(
-                            $copiedEvent,
-                            $eventEnvelope->getRawEvent()->getMetadata()
-                        ),
-                        Uuid::uuid4()->toString()
-                    )
+                $events[] = DecoratedEvent::withMetadata(
+                    $copiedEvent,
+                    $eventEnvelope->event->metadata
                 );
             }
         }
 
         $contentStreamWasForked = self::extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
+            // TODO: HOW TO PERSIST TO EVENT STORE??
+            // TODO: We cannot easily return EventsToPublish, because publishContentStream() is the low-level
+            // TODO: API which is used MULTIPLE times during a publishing. So we'd need a way to trigger
+            // TODO: ContentRepository::handle WITHOUT the actual command handling logic.
+            // TODO:
+            // TODO: It's also not really practical to create a new command just for this usecase, because
+            // TODO: we are operating directly on events here and copy them over to the base event stream
+            // TODO: if nothing has changed in the meantime.
             $this->eventStore->commit(
                 $baseWorkspaceContentStreamName->getEventStreamName(),
                 $events,
@@ -326,6 +320,7 @@ final class WorkspaceCommandHandler
             );
             return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
         } catch (ConcurrencyException $e) {
+            // TODO: and I'd love to keep this useful exception in here.
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
                 'The base workspace has been modified in the meantime; please rebase.'
                     . ' Expected version %d of source content stream %s',
@@ -343,7 +338,8 @@ final class WorkspaceCommandHandler
     {
         /** @var array<int,EventEnvelope> $contentStreamWasForkedEvents */
         $contentStreamWasForkedEvents = array_filter($stream, function (EventEnvelope $eventEnvelope) {
-            return $eventEnvelope->getDomainEvent() instanceof ContentStreamWasForked;
+            // TODO: is this so good? at least it is performant
+            return $eventEnvelope->event->type->value === 'ContentStreamWasForked';
         });
 
         if (count($contentStreamWasForkedEvents) !== 1) {
@@ -356,6 +352,7 @@ final class WorkspaceCommandHandler
         /** @var EventEnvelope $primaryEventEnvelope cannot be false because there is exactly one event inside */
         $primaryEventEnvelope = reset($contentStreamWasForkedEvents);
         /** @var ContentStreamWasForked $primaryDomainEvent */
+        // TODO: somehow convert to the domain event
         $primaryDomainEvent = $primaryEventEnvelope->getDomainEvent();
 
         $firstEventEnvelope = reset($stream);
@@ -377,10 +374,8 @@ final class WorkspaceCommandHandler
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleRebaseWorkspace(RebaseWorkspace $command): CommandResult
+    public function handleRebaseWorkspace(RebaseWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         $workspace = $this->requireWorkspace($command->getWorkspaceName());
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
@@ -388,13 +383,13 @@ final class WorkspaceCommandHandler
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $rebasedContentStream = $command->getRebasedContentStreamIdentifier();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $contentRepository->handle(
             new ForkContentStream(
                 $rebasedContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        )->block();
 
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $workspace->getCurrentContentStreamIdentifier()
@@ -413,7 +408,7 @@ final class WorkspaceCommandHandler
             // try to apply the command on the rebased content stream
             $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
             try {
-                $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
+                $contentRepository->handle($commandToRebase)->block();
                 // if we came this far, we know the command was applied successfully.
                 $rebaseStatistics->commandRebaseSuccess();
             } catch (\Exception $e) {
@@ -444,38 +439,38 @@ final class WorkspaceCommandHandler
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if (!$rebaseStatistics->hasErrors()) {
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new WorkspaceWasRebased(
-                        $command->getWorkspaceName(),
-                        $rebasedContentStream,
-                        $workspace->getCurrentContentStreamIdentifier(),
-                        $command->getInitiatingUserIdentifier()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
+            $events = Events::with(
+                new WorkspaceWasRebased(
+                    $command->getWorkspaceName(),
+                    $rebasedContentStream,
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
+                ),
             );
-            $this->eventStore->commit($streamName, $events);
 
-            return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+            return new EventsToPublish(
+                $streamName,
+                $events,
+                ExpectedVersion::ANY()
+            );
         } else {
             // an error occurred during the rebase; so we need to record this using a "WorkspaceRebaseFailed" event.
 
-            $event = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new WorkspaceRebaseFailed(
-                        $command->getWorkspaceName(),
-                        $rebasedContentStream,
-                        $workspace->getCurrentContentStreamIdentifier(),
-                        $command->getInitiatingUserIdentifier(),
-                        $rebaseStatistics->getErrors()
-                    ),
-                    Uuid::uuid4()->toString()
+            $event = Events::with(
+                new WorkspaceRebaseFailed(
+                    $command->getWorkspaceName(),
+                    $rebasedContentStream,
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier(),
+                    $rebaseStatistics->getErrors()
                 )
             );
-            $this->eventStore->commit($streamName, $event);
 
-            return CommandResult::fromPublishedEvents($event, $this->runtimeBlocker);
+            return new EventsToPublish(
+                $streamName,
+                $event,
+                ExpectedVersion::ANY()
+            );
         }
     }
 
@@ -509,52 +504,6 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @throws \Neos\ContentRepository\Feature\Common\NodeConstraintException
-     * @throws \Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException
-     * @throws ContentStreamDoesNotExistYet
-     * @throws NodeNameIsAlreadyOccupied
-     * @throws NodeAggregatesTypeIsAmbiguous
-     * @throws DimensionSpacePointNotFound
-     */
-    private function applyCommand(object $command): CommandResult
-    {
-        // TODO: try catch logic around applyCommand -> blockUntilProjectionsAreUpToDate.
-        // TODO: then put it into special error stream; and be sure to ABORT the outer logic correctly!
-
-        // TODO: Add this logic to the NodeAggregateCommandHandler; so that we the command can be applied.
-        switch (get_class($command)) {
-            case ChangeNodeAggregateName::class:
-                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
-            case CreateNodeAggregateWithNodeAndSerializedProperties::class:
-                return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNodeAndSerializedProperties(
-                    $command
-                );
-            case MoveNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command);
-            case SetSerializedNodeProperties::class:
-                return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties($command);
-            case DisableNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);
-            case EnableNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
-            case SetNodeReferences::class:
-                return $this->nodeAggregateCommandHandler->handleSetNodeReferences($command);
-            case RemoveNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command);
-            case ChangeNodeAggregateType::class:
-                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command);
-            case CopyNodesRecursively::class:
-                return $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command);
-            default:
-                throw new \Exception(sprintf(
-                    'TODO: Command %s is not supported by handleRebaseWorkspace() currently...'
-                        . ' Please implement it there.',
-                    get_class($command)
-                ));
-        }
-    }
-
-    /**
      * This method is like a combined Rebase and Publish!
      *
      * @throws BaseWorkspaceDoesNotExist
@@ -565,10 +514,9 @@ final class WorkspaceCommandHandler
      * @throws \Exception
      */
     public function handlePublishIndividualNodesFromWorkspace(
-        \Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace $command
-    ): CommandResult {
-        $this->readSideMemoryCacheManager->disableCache();
-
+        \Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->getWorkspaceName());
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
@@ -600,13 +548,13 @@ final class WorkspaceCommandHandler
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
         $matchingContentStream = $command->getContentStreamIdentifierForMatchingPart();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $contentRepository->handle(
             new ForkContentStream(
                 $matchingContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        )->block();
 
         foreach ($matchingCommands as $matchingCommand) {
             if (!($matchingCommand instanceof RebasableToOtherContentStreamsInterface)) {
@@ -616,19 +564,18 @@ final class WorkspaceCommandHandler
                 );
             }
 
-            $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))
-                ->blockUntilProjectionsAreUpToDate();
+            $contentRepository->handle($matchingCommand->createCopyForContentStream($matchingContentStream))->block();
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
         $remainingContentStream = $command->getContentStreamIdentifierForRemainingPart();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $contentRepository->handle(
             new ForkContentStream(
                 $remainingContentStream,
                 $matchingContentStream,
                 $command->getInitiatingUserIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        )->block();
 
         foreach ($remainingCommands as $remainingCommand) {
             if (!$remainingCommand instanceof RebasableToOtherContentStreamsInterface) {
@@ -638,11 +585,12 @@ final class WorkspaceCommandHandler
                     1645393626
                 );
             }
-            $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))
-                ->blockUntilProjectionsAreUpToDate();
+            $contentRepository->handle($remainingCommand->createCopyForContentStream($remainingContentStream))
+                ->block();
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
+        // TODO - MAKE THIS WORK!!
         $commandResult = $this->publishContentStream(
             $matchingContentStream,
             $baseWorkspace->getCurrentContentStreamIdentifier()
@@ -653,24 +601,23 @@ final class WorkspaceCommandHandler
         // 6) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new WorkspaceWasPartiallyPublished(
-                    $command->getWorkspaceName(),
-                    $baseWorkspace->getWorkspaceName(),
-                    $remainingContentStream,
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
-                ),
-                Uuid::uuid4()->toString()
-            )
+        $events = Events::with(
+            new WorkspaceWasPartiallyPublished(
+                $command->getWorkspaceName(),
+                $baseWorkspace->getWorkspaceName(),
+                $remainingContentStream,
+                $workspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
+            ),
         );
-        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $this->eventStore->commit($streamName, $events);
 
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
-        return $commandResult->merge(CommandResult::fromPublishedEvents($events, $this->runtimeBlocker));
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
@@ -684,10 +631,9 @@ final class WorkspaceCommandHandler
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function handleDiscardIndividualNodesFromWorkspace(
-        DiscardIndividualNodesFromWorkspace $command
-    ): CommandResult {
-        $this->readSideMemoryCacheManager->disableCache();
-
+        DiscardIndividualNodesFromWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->getWorkspaceName());
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
@@ -715,13 +661,13 @@ final class WorkspaceCommandHandler
 
         // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
         $newContentStream = $command->getNewContentStreamIdentifier();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        )->block();
 
         foreach ($commandsToKeep as $commandToKeep) {
             if (!$commandToKeep instanceof RebasableToOtherContentStreamsInterface) {
@@ -731,29 +677,29 @@ final class WorkspaceCommandHandler
                     1645393476
                 );
             }
-            $this->applyCommand($commandToKeep->createCopyForContentStream($newContentStream))
-                ->blockUntilProjectionsAreUpToDate();
+            $contentRepository->handle($commandToKeep->createCopyForContentStream($newContentStream))
+                ->block();
         }
 
         // 3) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new WorkspaceWasPartiallyDiscarded(
-                    $command->getWorkspaceName(),
-                    $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
-                ),
-                Uuid::uuid4()->toString()
+        $events = Events::with(
+            new WorkspaceWasPartiallyDiscarded(
+                $command->getWorkspaceName(),
+                $newContentStream,
+                $workspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         );
-        $this->eventStore->commit($streamName, $events);
 
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
@@ -775,41 +721,38 @@ final class WorkspaceCommandHandler
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handleDiscardWorkspace(DiscardWorkspace $command): CommandResult
+    public function handleDiscardWorkspace(DiscardWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         $workspace = $this->requireWorkspace($command->getWorkspaceName());
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         $newContentStream = $command->getNewContentStreamIdentifier();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        )->block();
 
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new WorkspaceWasDiscarded(
-                    $command->getWorkspaceName(),
-                    $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
-                ),
-                Uuid::uuid4()->toString()
+        $events = Events::with(
+            new WorkspaceWasDiscarded(
+                $command->getWorkspaceName(),
+                $newContentStream,
+                $workspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         );
 
-        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $this->eventStore->commit($streamName, $events);
-
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     /**
