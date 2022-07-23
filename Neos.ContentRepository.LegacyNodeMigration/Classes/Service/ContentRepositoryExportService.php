@@ -458,9 +458,6 @@ class ContentRepositoryExportService
         $properties = [];
         $nodeTypeName = $nodeDataRow['nodetype'];
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $nodeType->getFullConfiguration();
 
         foreach ($this->decodePropertyValues($nodeDataRow['properties']) as $propertyName => $propertyValue) {
             $type = $nodeType->getPropertyType($propertyName);
@@ -497,9 +494,6 @@ class ContentRepositoryExportService
 
         $nodeTypeName = $nodeDataRow['nodetype'];
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $nodeType->getFullConfiguration();
         foreach (json_decode($nodeDataRow['properties'], true) as $propertyName => $propertyValue) {
             try {
                 $type = $nodeType->getPropertyType($propertyName);

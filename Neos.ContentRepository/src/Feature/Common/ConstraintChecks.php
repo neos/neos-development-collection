@@ -374,11 +374,6 @@ trait ConstraintChecks
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): bool {
-        // WORKAROUND: $nodeType->hasAutoCreatedChildNode() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $grandParentsNodeType->getFullConfiguration();
-        $nodeType->getFullConfiguration();
-
         if (
             $parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)

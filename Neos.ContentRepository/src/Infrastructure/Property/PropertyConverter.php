@@ -44,10 +44,6 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
-            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-            // so we need to trigger another method beforehand.
-            $nodeType->getOptions();
-
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 $nodeType->getPropertyType($propertyName),
                 PropertyName::fromString($propertyName),
