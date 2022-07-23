@@ -86,7 +86,6 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -120,7 +119,6 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphQuery::create($contentStreamIdentifier, true);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
@@ -178,7 +176,6 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphParentQuery::create($contentStreamIdentifier);
         $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
@@ -199,7 +196,6 @@ final class ContentHypergraph implements ContentGraphInterface
             $parentNodeAggregateIdentifier
         );
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
@@ -222,7 +218,6 @@ final class ContentHypergraph implements ContentGraphInterface
         );
         $query = $query->withChildNodeName($name);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
@@ -241,7 +236,6 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
         $query = $query->withOnlyTethered();
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
@@ -264,7 +258,6 @@ final class ContentHypergraph implements ContentGraphInterface
             ->withDimensionSpacePoints($dimensionSpacePointsToCheck);
 
         $occupiedDimensionSpacePoints = [];
-        /** @phpstan-ignore-next-line @todo check actual return type */
         foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $row) {
             $occupiedDimensionSpacePoints[$row['dimensionspacepointhash']]
                 = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);

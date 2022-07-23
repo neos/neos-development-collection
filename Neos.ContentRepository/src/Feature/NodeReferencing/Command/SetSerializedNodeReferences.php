@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeModification\Command;
+namespace Neos\ContentRepository\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -23,7 +23,6 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 
 /**
@@ -41,9 +40,8 @@ final class SetSerializedNodeReferences implements
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public readonly NodeAggregateIdentifiers $destinationNodeAggregateIdentifiers,
         public readonly PropertyName $referenceName,
-        public readonly SerializedPropertyValues $propertyValues,
+        public readonly SerializedNodeReferences $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -57,9 +55,8 @@ final class SetSerializedNodeReferences implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
-            NodeAggregateIdentifiers::fromArray($array['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($array['referenceName']),
-            SerializedPropertyValues::fromArray($array['propertyValues']),
+            SerializedNodeReferences::fromArray($array['references']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
@@ -74,9 +71,8 @@ final class SetSerializedNodeReferences implements
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
             'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
-            'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
             'referenceName' => $this->referenceName,
-            'propertyValues' => $this->propertyValues,
+            'references' => $this->references,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
@@ -87,9 +83,8 @@ final class SetSerializedNodeReferences implements
             $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
-            $this->destinationNodeAggregateIdentifiers,
             $this->referenceName,
-            $this->propertyValues,
+            $this->references,
             $this->initiatingUserIdentifier
         );
     }

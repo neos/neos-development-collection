@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -409,8 +410,10 @@ class ContentRepositoryExportService
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-                    NodeAggregateIdentifiers::fromArray($references),
                     PropertyName::fromString($propertyName),
+                    NodeReferencesToWrite::fromNodeAggregateIdentifiers(
+                        NodeAggregateIdentifiers::fromArray($references)
+                    ),
                     UserIdentifier::forSystemUser()
                 );
             }

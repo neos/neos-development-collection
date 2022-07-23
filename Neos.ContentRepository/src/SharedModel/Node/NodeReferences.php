@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\Node;
 
 use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\Content\References;
 
 /**
  * @implements \IteratorAggregate<string,NodeReference>
@@ -80,7 +81,7 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
     /**
      * @todo what is this supposed to do?
      */
-    public static function fromNodes(Nodes $nodeReferences): self
+    public static function fromReferences(References $nodeReferences): self
     {
         $values = [];
 

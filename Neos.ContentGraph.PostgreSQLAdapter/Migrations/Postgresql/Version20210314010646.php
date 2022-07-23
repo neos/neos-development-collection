@@ -80,14 +80,16 @@ class Version20210314010646 extends AbstractMigration
 
     private function createReferenceSchema(): void
     {
-        $this->addSql(/** @lang PostgreSQL */'CREATE TABLE neos_contentgraph_referencehyperrelation(
+        $this->addSql(/** @lang PostgreSQL */'CREATE TABLE neos_contentgraph_referencerelation(
     originnodeanchor uuid NOT NULL,
     name varchar(255) NOT NULL,
-    destinationNodeAggregateIdentifiers varchar(255)[] NOT NULL,
-    PRIMARY KEY(originnodeanchor, name)
+    position smallint NOT NULL,
+    properties jsonb NULL,
+    destinationNodeAggregateIdentifier varchar(255) NOT NULL,
+    PRIMARY KEY(originnodeanchor, name, position)
 )');
-        $this->addSql('CREATE INDEX REFERENCE_ORIGIN ON neos_contentgraph_referencehyperrelation (originnodeanchor);');
-        $this->addSql(/** @lang PostgreSQL */'CREATE INDEX REFERENCE_DESTINATION ON neos_contentgraph_referencehyperrelation USING GIN (destinationNodeAggregateIdentifiers);');
+        $this->addSql('CREATE INDEX REFERENCE_ORIGIN ON neos_contentgraph_referencerelation (originnodeanchor);');
+        $this->addSql(/** @lang PostgreSQL */'CREATE INDEX REFERENCE_DESTINATION ON neos_contentgraph_referencerelation (destinationNodeAggregateIdentifier);');
     }
 
     public function down(Schema $schema): void
@@ -100,6 +102,6 @@ class Version20210314010646 extends AbstractMigration
         $this->addSql('DROP TABLE IF EXISTS neos_contentgraph_node');
         $this->addSql('DROP TABLE IF EXISTS neos_contentgraph_hierarchyhyperrelation');
         $this->addSql('DROP TABLE IF EXISTS neos_contentgraph_restrictionhyperrelation');
-        $this->addSql('DROP TABLE IF EXISTS neos_contentgraph_referencehyperrelation');
+        $this->addSql('DROP TABLE IF EXISTS neos_contentgraph_referencerelation');
     }
 }

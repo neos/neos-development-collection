@@ -91,43 +91,35 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return new self($values);
     }
 
-    public static function fromJsonString(string $jsonString): self
-    {
-        return self::fromArray(\json_decode($jsonString, true));
-    }
-
-
-    public static function defaultFromNodeType(NodeType $nodeType, PropertyName $referenceName): self
+    public static function defaultForReferenceFromFromNodeType(PropertyName $referenceName, NodeType $nodeType): self
     {
         $values = [];
         $referencePropertiesConfiguration
             = $nodeType->getFullConfiguration()['properties'][(string)$referenceName]['properties'];
         foreach ($referencePropertiesConfiguration as $referencePropertyName => $referencePropertyConfiguration) {
             if (is_string($referencePropertyName) && isset($referencePropertyConfiguration['defaultValue'])) {
-                $type = $referencePropertyConfiguration['type'] ?? '';
-                $values[$referencePropertyName] = match ($type) {
+                $propertyTypeFromSchema = $referencePropertyConfiguration['type'] ?? '';
+                if ($propertyTypeFromSchema === '') {
+                    continue;
+                }
+                self::assertTypeIsNoReference($propertyTypeFromSchema);
+
+                $defaultValue = match ($propertyTypeFromSchema) {
                     'DateTimeImmutable', 'DateTime'
-                    => new \DateTimeImmutable($referencePropertyConfiguration['defaultValue']),
-                    'reference', 'references' => throw new \InvalidArgumentException(
-                        'Cannot use references as reference properties',
-                        1655650930
-                    ),
+                        => json_encode(new \DateTimeImmutable($referencePropertyConfiguration['defaultValue'])),
                     default => $referencePropertyConfiguration['defaultValue'],
                 };
-            }
-        }
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            if ($defaultValue instanceof \DateTimeInterface) {
-                $defaultValue = json_encode($defaultValue);
-            }
 
-            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
-
-            $values[$propertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
+                $values[$referencePropertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
+            }
         }
 
         return new self($values);
+    }
+
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true));
     }
 
     private static function assertTypeIsNoReference(string $propertyTypeFromSchema): void

@@ -34,10 +34,10 @@ Feature: Remove NodeAggregate
       | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
       | nodingers-cat           | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | pet      |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                    |
-      | sourceNodeAggregateIdentifier       | "sir-david-nodenborough" |
-      | destinationNodeAggregateIdentifiers | ["nodingers-cat"]        |
-      | referenceName                       | "references"             |
+      | Key                           | Value                         |
+      | sourceNodeAggregateIdentifier | "sir-david-nodenborough"      |
+      | referenceName                 | "references"                  |
+      | references                    | [{"target": "nodingers-cat"}] |
 
   Scenario: Remove a node aggregate
     When the command RemoveNodeAggregate is executed with payload:

@@ -21,7 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -364,17 +364,21 @@ trait NodeVariation
         // since if it doesn't, it already didn't match the source's coverage before
 
         $this->getDatabaseConnection()->executeStatement('
-                INSERT INTO ' . ReferenceHyperrelationRecord::TABLE_NAME . ' (
+                INSERT INTO ' . ReferenceRelationRecord::TABLE_NAME . ' (
                   originnodeanchor,
                   name,
-                  destinationnodeaggregateidentifiers
+                  position,
+                  properties,
+                  destinationnodeaggregateidentifier
                 )
                 SELECT
                   :destinationRelationAnchorPoint AS originnodeanchor,
                   ref.name,
-                  ref.destinationnodeaggregateidentifiers
+                  ref.position,
+                  ref.properties,
+                  ref.destinationnodeaggregateidentifier
                 FROM
-                    ' . ReferenceHyperrelationRecord::TABLE_NAME . ' ref
+                    ' . ReferenceRelationRecord::TABLE_NAME . ' ref
                     WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,

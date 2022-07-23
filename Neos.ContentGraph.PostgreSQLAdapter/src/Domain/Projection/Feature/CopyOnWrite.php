@@ -125,8 +125,7 @@ trait CopyOnWrite
                 $originRelationAnchorPoint
             ) as $outgoingReferenceRelation
         ) {
-            $copiedReferenceRelation = clone $outgoingReferenceRelation;
-            $copiedReferenceRelation->originNodeAnchor = $targetRelationAnchorPoint;
+            $copiedReferenceRelation = $outgoingReferenceRelation->withOriginNodeAnchor($targetRelationAnchorPoint);
             $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());
         }
     }

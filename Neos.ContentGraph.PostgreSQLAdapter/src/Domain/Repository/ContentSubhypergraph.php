@@ -27,6 +27,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\Content\References;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
@@ -90,7 +91,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -122,7 +122,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes(
@@ -146,16 +145,15 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
         }
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchNumeric();
 
-        return $result[0];
+        return $result ? $result[0] : 0;
     }
 
     public function findReferencedNodes(
         NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes {
+    ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
             'destn.*, desth.contentstreamidentifier, desth.dimensionspacepoint'
@@ -163,21 +161,28 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withOriginNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
             ->withDestinationRestriction($this->visibilityConstraints);
+
+        $orderings = [];
         if ($name) {
             $query = $query->withReferenceName($name);
+        } else {
+            $orderings[] = 'r.name';
         }
-        $query = $query->ordered();
+        $orderings[] = 'r.position';
+        $query = $query->orderedBy($orderings);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
+            $this->visibilityConstraints
+        );
     }
 
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes {
+    ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
             'orgn.*, orgh.contentstreamidentifier, orgh.dimensionspacepoint'
@@ -185,16 +190,21 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withDestinationNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withOriginRestriction($this->visibilityConstraints);
+
+        $orderings = [];
         if ($name) {
             $query = $query->withReferenceName($name);
+        } else {
+            $orderings[] = 'r.name';
         }
-        $query = $query->ordered();
+        $orderings[] = 'r.position';
+        $orderings[] = 'orgn.nodeaggregateidentifier';
+        $query = $query->orderedBy($orderings);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
-        $referencedNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes(
-            $referencedNodeRows,
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
             $this->visibilityConstraints
         );
     }
@@ -205,7 +215,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -250,7 +259,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeName($edgeName);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
@@ -330,7 +338,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);

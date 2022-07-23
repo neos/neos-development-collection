@@ -17,6 +17,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Projection\Content\Reference;
+use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -115,6 +118,36 @@ final class NodeFactory
         }
 
         return Nodes::fromArray($nodes);
+    }
+
+    /**
+     * @param array<int,array<string,string>> $referenceRows
+     */
+    public function mapReferenceRowsToReferences(
+        array $referenceRows,
+        VisibilityConstraints $visibilityConstraints,
+        ContentStreamIdentifier $contentStreamIdentifier = null
+    ): References {
+        $references = [];
+        foreach ($referenceRows as $referenceRow) {
+            $references[] = new Reference(
+                $this->mapNodeRowToNode(
+                    $referenceRow,
+                    $visibilityConstraints,
+                    null,
+                    $contentStreamIdentifier
+                ),
+                PropertyName::fromString($referenceRow['referencename']),
+                $referenceRow['referenceproperties']
+                    ? new PropertyCollection(
+                        SerializedPropertyValues::fromJsonString($referenceRow['referenceproperties']),
+                        $this->propertyConverter
+                    )
+                    : null
+            );
+        }
+
+        return References::fromArray($references);
     }
 
     /**
@@ -217,7 +250,7 @@ final class NodeFactory
     }
 
     /**
-     * @param array<string,mixed> $nodeRows
+     * @param array<int,array<string,mixed>> $nodeRows
      * @return iterable<int,\Neos\ContentRepository\Projection\Content\NodeAggregate>
      */
     public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable

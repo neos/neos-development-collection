@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing\Command;
 
-use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
+use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\NodeAddress;
@@ -29,9 +28,8 @@ final class SetNodeReferences implements
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public readonly NodeAggregateIdentifiers $destinationNodeAggregateIdentifiers,
         public readonly PropertyName $referenceName,
-        public readonly PropertyValuesToWrite $propertyValues,
+        public readonly NodeReferencesToWrite $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -45,9 +43,8 @@ final class SetNodeReferences implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
-            NodeAggregateIdentifiers::fromArray($array['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($array['referenceName']),
-            PropertyValuesToWrite::fromArray($array['propertyValues']),
+            NodeReferencesToWrite::fromArray($array['references']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
@@ -61,9 +58,8 @@ final class SetNodeReferences implements
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
             'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
-            'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
             'referenceName' => $this->referenceName,
-            'propertyValues' => $this->propertyValues,
+            'references' => $this->references,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
@@ -74,9 +70,8 @@ final class SetNodeReferences implements
             $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
-            $this->destinationNodeAggregateIdentifiers,
             $this->referenceName,
-            $this->propertyValues,
+            $this->references,
             $this->initiatingUserIdentifier
         );
     }

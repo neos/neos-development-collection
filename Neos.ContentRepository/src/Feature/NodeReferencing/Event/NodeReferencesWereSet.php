@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing\Event;
 
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A named reference from source to destination node was created
+ * Named references with optional properties were created from source node to destination node(s)
  */
 #[Flow\Proxy(false)]
 final class NodeReferencesWereSet implements
@@ -28,17 +27,11 @@ final class NodeReferencesWereSet implements
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
-        public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public readonly NodeAggregateIdentifiers $destinationNodeAggregateIdentifiers,
+        public readonly OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,
         public readonly PropertyName $referenceName,
-        public readonly SerializedPropertyValues $propertyValues,
+        public readonly SerializedNodeReferences $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
@@ -46,12 +39,16 @@ final class NodeReferencesWereSet implements
         return new self(
             $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
-            $this->sourceOriginDimensionSpacePoint,
-            $this->destinationNodeAggregateIdentifiers,
+            $this->affectedSourceOriginDimensionSpacePoints,
             $this->referenceName,
-            $this->propertyValues,
+            $this->references,
             $this->initiatingUserIdentifier
         );
+    }
+
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
     }
 
     /**

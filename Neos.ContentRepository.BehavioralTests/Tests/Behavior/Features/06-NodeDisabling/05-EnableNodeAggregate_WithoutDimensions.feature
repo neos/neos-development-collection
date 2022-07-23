@@ -30,16 +30,16 @@ Feature: Enable a node aggregate
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName |
-      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
-      | succeeding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
-      | nody-mc-nodeface  | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document |
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName            |
+      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
+      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document            |
+      | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
+      | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document      |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "preceding-nodenborough"   |
-      | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
-      | referenceName                       | "references"               |
+      | Key                           | Value                                  |
+      | sourceNodeAggregateIdentifier | "preceding-nodenborough"               |
+      | referenceName                 | "references"                           |
+      | references                    | [{"target": "sir-david-nodenborough"}] |
     And the graph projection is fully up to date
 
   Scenario: Enable a previously disabled node with arbitrary strategy since dimensions are not involved
@@ -96,8 +96,8 @@ Feature: Enable a node aggregate
       | cs-identifier;sir-david-nodenborough;{}  |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to have the following references:
-      | Key        | Value                                       |
-      | references | ["cs-identifier;sir-david-nodenborough;{}"] |
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -107,8 +107,8 @@ Feature: Enable a node aggregate
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to be referenced by:
-      | Key        | Value                                       |
-      | references | ["cs-identifier;preceding-nodenborough;{}"] |
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -126,9 +126,9 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface"       |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+      | Key                          | Value              |
+      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
@@ -174,8 +174,8 @@ Feature: Enable a node aggregate
       | cs-identifier;sir-david-nodenborough;{}  |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to have the following references:
-      | Key        | Value                                       |
-      | references | ["cs-identifier;sir-david-nodenborough;{}"] |
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -185,8 +185,8 @@ Feature: Enable a node aggregate
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to be referenced by:
-      | Key        | Value                                       |
-      | references | ["cs-identifier;preceding-nodenborough;{}"] |
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -203,9 +203,9 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
+      | Key                          | Value              |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
