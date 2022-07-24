@@ -6,6 +6,7 @@
     ],
     "require": {
         "neos/eventstore": "*",
+        "neos/eventstore-doctrineadapter": "*",
         "neos/content-repository-dimensionspace": "*",
         "php": "^8.1",
         "neos/cache": "*",
