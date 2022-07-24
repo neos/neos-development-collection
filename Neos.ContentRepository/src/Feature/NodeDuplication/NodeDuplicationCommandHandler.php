@@ -190,7 +190,7 @@ final class NodeDuplicationCommandHandler
             ContentStreamEventStreamName::fromContentStreamIdentifier(
                 $command->getContentStreamIdentifier()
             )->getEventStreamName(),
-            $this->nodeAggregateEventPublisher->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events)
             ),

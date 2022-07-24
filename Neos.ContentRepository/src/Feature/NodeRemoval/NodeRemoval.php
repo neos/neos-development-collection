@@ -34,8 +34,6 @@ trait NodeRemoval
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
@@ -91,7 +89,7 @@ trait NodeRemoval
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                 ->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),

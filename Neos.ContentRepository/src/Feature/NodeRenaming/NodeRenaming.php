@@ -27,8 +27,6 @@ trait NodeRenaming
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
@@ -48,7 +46,7 @@ trait NodeRenaming
             ContentStreamEventStreamName::fromContentStreamIdentifier(
                 $command->contentStreamIdentifier
             )->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),

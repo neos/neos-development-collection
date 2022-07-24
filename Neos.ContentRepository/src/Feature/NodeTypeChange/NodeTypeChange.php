@@ -49,8 +49,6 @@ trait NodeTypeChange
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function getContentGraph(): ContentGraphInterface;
 
     abstract protected function requireProjectedNodeAggregate(
@@ -223,7 +221,7 @@ trait NodeTypeChange
             ContentStreamEventStreamName::fromContentStreamIdentifier(
                 $command->getContentStreamIdentifier()
             )->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events),
             ),

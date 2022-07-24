@@ -37,8 +37,6 @@ trait NodeVariation
 
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
@@ -85,7 +83,7 @@ trait NodeVariation
             ContentStreamEventStreamName::fromContentStreamIdentifier(
                 $command->contentStreamIdentifier
             )->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),

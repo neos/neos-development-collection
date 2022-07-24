@@ -32,10 +32,6 @@ trait NodeReferencing
 
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
     /**
      * @param SetNodeReferences $command
      * @return EventsToPublish
@@ -105,7 +101,7 @@ trait NodeReferencing
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                 ->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events)
             ),

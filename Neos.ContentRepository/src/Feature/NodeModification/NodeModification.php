@@ -35,16 +35,12 @@ trait NodeModification
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ReadableNodeAggregateInterface;
-
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     private function handleSetNodeProperties(SetNodeProperties $command): EventsToPublish
     {
@@ -109,7 +105,7 @@ trait NodeModification
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                 ->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events)
             ),

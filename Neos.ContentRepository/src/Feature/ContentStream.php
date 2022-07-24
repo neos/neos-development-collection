@@ -18,6 +18,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\EventStoreInterface;
 
 /**
  * A content stream to write events into
@@ -37,12 +38,12 @@ final class ContentStream
     private $streamName;
 
     /**
-     * @var EventStore
+     * @var EventStoreInterface
      */
     private $eventStore;
 
 
-    public function __construct(ContentStreamIdentifier $identifier, EventStore $eventStore)
+    public function __construct(ContentStreamIdentifier $identifier, EventStoreInterface $eventStore)
     {
         $this->identifier = $identifier;
         $this->streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($identifier)

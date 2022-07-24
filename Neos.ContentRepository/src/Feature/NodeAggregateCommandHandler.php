@@ -91,11 +91,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      */
     private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
 
-    /**
-     * Used for publishing events
-     */
-    private NodeAggregateEventPublisher $nodeEventPublisher;
-
     private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
     protected PropertyConverter $propertyConverter;
@@ -105,17 +100,13 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
-    private RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
         ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        NodeAggregateEventPublisher $nodeEventPublisher,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker,
         PropertyConverter $propertyConverter
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
@@ -123,9 +114,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
         $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->nodeEventPublisher = $nodeEventPublisher;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->runtimeBlocker = $runtimeBlocker;
         $this->propertyConverter = $propertyConverter;
     }
 
@@ -200,11 +189,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return $this->readSideMemoryCacheManager;
     }
 
-    protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher
-    {
-        return $this->nodeEventPublisher;
-    }
-
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
     {
         return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
@@ -218,11 +202,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected function areAncestorNodeTypeConstraintChecksEnabled(): bool
     {
         return $this->ancestorNodeTypeConstraintChecksEnabled;
-    }
-
-    public function getRuntimeBlocker(): RuntimeBlocker
-    {
-        return $this->runtimeBlocker;
     }
 
     public function getPropertyConverter(): PropertyConverter

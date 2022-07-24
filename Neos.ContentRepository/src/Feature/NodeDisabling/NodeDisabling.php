@@ -34,11 +34,7 @@ trait NodeDisabling
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
-
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param DisableNodeAggregate $command
@@ -85,7 +81,7 @@ trait NodeDisabling
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),
@@ -140,7 +136,7 @@ trait NodeDisabling
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand($command, $events),
+            NodeAggregateEventPublisher::enrichWithCommand($command, $events),
             ExpectedVersion::ANY()
         );
     }

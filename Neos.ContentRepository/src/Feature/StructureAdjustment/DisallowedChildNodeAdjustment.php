@@ -59,11 +59,6 @@ class DisallowedChildNodeAdjustment
         $this->runtimeBlocker = $runtimeBlocker;
     }
 
-    public function getRuntimeBlocker(): RuntimeBlocker
-    {
-        return $this->runtimeBlocker;
-    }
-
     /**
      * @return \Generator<int,StructureAdjustment>
      */

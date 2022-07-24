@@ -48,8 +48,6 @@ trait NodeCreation
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
@@ -63,8 +61,6 @@ trait NodeCreation
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
     abstract protected function getPropertyConverter(): PropertyConverter;
-
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     private function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): EventsToPublish
     {
@@ -248,7 +244,7 @@ trait NodeCreation
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand($command, Events::fromArray($events)),
+            NodeAggregateEventPublisher::enrichWithCommand($command, Events::fromArray($events)),
             ExpectedVersion::ANY()
         );
     }

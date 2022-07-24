@@ -53,6 +53,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         if ($command instanceof CreateContentStream) {
             return $this->handleCreateContentStream($command);
         } elseif ($command instanceof ForkContentStream) {
@@ -60,6 +62,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         } elseif ($command instanceof RemoveContentStream) {
             return $this->handleRemoveContentStream($command);
         }
+
+        throw new \RuntimeException('Unsupported command type');
     }
 
     /**
@@ -67,8 +71,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      */
     private function handleCreateContentStream(CreateContentStream $command): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
@@ -91,8 +93,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      */
     private function handleForkContentStream(ForkContentStream $command): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         $this->requireContentStreamToExist($command->sourceContentStreamIdentifier);
         $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier);
 

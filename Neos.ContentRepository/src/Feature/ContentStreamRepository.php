@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature;
 
+use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\EventSourcing\EventStore\EventStore;
 
 /**
  * A content stream to write events into
@@ -28,7 +28,7 @@ use Neos\EventSourcing\EventStore\EventStore;
 final class ContentStreamRepository
 {
     /**
-     * @var EventStore
+     * @var EventStoreInterface
      */
     private $eventStore;
 
@@ -44,7 +44,7 @@ final class ContentStreamRepository
     protected $contentStreams;
 
 
-    public function __construct(EventStore $eventStore)
+    public function __construct(EventStoreInterface $eventStore)
     {
         $this->eventStore = $eventStore;
     }

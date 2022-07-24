@@ -53,8 +53,6 @@ trait NodeMove
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function getContentGraph(): ContentGraphInterface;
@@ -65,8 +63,6 @@ trait NodeMove
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ReadableNodeAggregateInterface;
-
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param MoveNodeAggregate $command
@@ -194,7 +190,7 @@ trait NodeMove
 
         return new EventsToPublish(
             $contentStreamEventStreamName->getEventStreamName(),
-            $this->getNodeAggregateEventPublisher()->enrichWithCommand(
+            NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),
