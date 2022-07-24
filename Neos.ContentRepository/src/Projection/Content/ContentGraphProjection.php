@@ -20,59 +20,36 @@ use Neos\EventStore\ProvidesSetupInterface;
 final class ContentGraphProjection implements ProjectionInterface
 {
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
-        private readonly CheckpointStorageInterface $checkpointStorage,
+        private readonly ProjectionInterface $projectionImplementation
     ) {}
 
     public function setUp(): void
     {
-        if ($this->repository instanceof ProvidesSetupInterface) {
-            $this->repository->setup();
-        }
-        if ($this->checkpointStorage instanceof ProvidesSetupInterface) {
-            $this->checkpointStorage->setup();
-        }
+        $this->projectionImplementation->setUp();
     }
 
     public function reset(): void
     {
-        $this->repository->reset();
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        $this->projectionImplementation->reset();
     }
 
     public function canHandle(Event $event): bool
     {
-        return method_exists($this, 'when' . $event->type->value);
+        return $this->projectionImplementation->canHandle($event);
     }
 
-    private function whenNodeWasCreated(NodeWasCreated $event): void
+    public function getState(): ContentGraphInterface
     {
-        $this->repository->add($event->contentStreamId, $event->nodeId);
-    }
-
-    public function getState(): ContentGraph
-    {
-        return new ContentGraph($this->repository);
-    }
-
-    private function apply(EventEnvelope $eventEnvelope): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
-            return;
-        }
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-        $this->{'when' . $eventEnvelope->event->type->value}($eventInstance);
+        return $this->projectionImplementation->getState();
     }
 
     public function catchUp(EventStreamInterface $eventStream): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
+        $this->projectionImplementation->catchUp($eventStream);
     }
 
     public function getSequenceNumber(): SequenceNumber
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->projectionImplementation->getSequenceNumber();
     }
 }

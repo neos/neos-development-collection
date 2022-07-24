@@ -15,8 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Factory;
 
 
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\CommandHandler\CommandBus;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
@@ -30,12 +32,15 @@ use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\EventStoreInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 
 final class ContentRepositoryFactory
 {
@@ -45,6 +50,8 @@ final class ContentRepositoryFactory
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper, // TODO: check whether this is actually specified from outside
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph, // TODO: check whether this is actually specified from outside
+        private readonly ThrowableStorageInterface $throwableStorage, // TODO
+        private readonly string $tableNamePrefix
     )
     {
     }
@@ -134,7 +141,7 @@ final class ContentRepositoryFactory
         if (!$this->contentGraph) {
             $this->contentGraph = new ContentGraph(
                 $this->dbalClient,
-                new NodeFactory(
+                new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
                     $this->nodeTypeManager,
                     $this->buildPropertyConverter()
                 )
@@ -176,7 +183,26 @@ final class ContentRepositoryFactory
     {
         // TODO: PROJECTIONS
         return Projections::create()
-            ->with()
+            ->with(
+                new ContentGraphProjection(
+                    // TODO: dependent on doctrine or postgres
+                    new DoctrineDbalContentGraphProjection(
+                        $this->buildEventNormalizer(),
+                        $this->buildCheckpointStorage(),
+                        $this->dbalClient,
+                        new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
+                            $this->nodeTypeManager,
+                            $this->buildPropertyConverter()
+                        ),
+                        new ProjectionContentGraph(
+                            $this->dbalClient,
+                            $this->tableNamePrefix
+                        ),
+                        $this->throwableStorage,
+                        $this->tableNamePrefix
+                    )
+                )
+            );
     }
 
     private function buildEventNormalizer(): EventNormalizer
@@ -193,6 +219,11 @@ final class ContentRepositoryFactory
             $this->projectionCatchUpTrigger = TODO
         }
         return $this->projectionCatchUpTrigger;
+    }
+
+    private function buildCheckpointStorage(): CheckpointStorageInterface
+    {
+        // TODO
     }
 
 }
