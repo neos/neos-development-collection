@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\Workspace;
 
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -24,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-final class WorkspaceFinder
+final class WorkspaceFinder implements ProjectionStateInterface
 {
     private bool $cacheEnabled = true;
 

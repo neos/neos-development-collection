@@ -23,7 +23,7 @@ use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\LegacyNodeMigration\Service\ClosureEventPublisher;
@@ -59,7 +59,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var WorkspaceProjector
+     * @var WorkspaceProjection
      */
     protected $workspaceProjector;
 

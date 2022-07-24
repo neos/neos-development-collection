@@ -7,7 +7,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
 use Neos\ContentRepository\Projection\Changes\ChangeProjector;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageProjector;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,7 +45,7 @@ class CrCommandController extends CommandController
         } elseif ($projectionName === 'change') {
             $projector = $this->objectManager->get(ChangeProjector::class);
         } elseif ($projectionName === 'workspace') {
-            $projector = $this->objectManager->get(WorkspaceProjector::class);
+            $projector = $this->objectManager->get(WorkspaceProjection::class);
         } elseif ($projectionName === 'assetUsage') {
             $projector = $this->objectManager->get(AssetUsageProjector::class);
         } elseif ($projectionName === 'contentStream') {

@@ -202,7 +202,7 @@ class ContentStreamProjection implements ProjectionInterface
         return $this->contentStreamFinder;
     }
 
-    public function whenContentStreamWasCreated(ContentStreamWasCreated $event): void
+    private function whenContentStreamWasCreated(ContentStreamWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_contentstream', [
             'contentStreamIdentifier' => $event->contentStreamIdentifier,
@@ -210,7 +210,7 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         // the content stream is in use now
         $this->getDatabaseConnection()->update($this->tableNamePrefix . '_contentstream', [
@@ -220,7 +220,7 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
+    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
         // the content stream is in use now
         $this->getDatabaseConnection()->update($this->tableNamePrefix . '_contentstream', [
@@ -230,7 +230,7 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
+    private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_contentstream', [
             'contentStreamIdentifier' => $event->contentStreamIdentifier,
@@ -239,7 +239,7 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
+    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -254,7 +254,7 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
+    private function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -269,7 +269,7 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
+    private function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -284,7 +284,7 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
+    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -299,7 +299,7 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
+    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
@@ -314,7 +314,7 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
+    private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
         $this->updateStateForContentStream(
             $event->getCandidateContentStreamIdentifier(),
@@ -322,7 +322,7 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
+    private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
         $this->getDatabaseConnection()->update($this->tableNamePrefix . '_contentstream', [
             'removed' => true
@@ -340,15 +340,7 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    /**
-     * @throws \Throwable
-     */
-    protected function transactional(\Closure $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
-    }
-
-    protected function getDatabaseConnection(): Connection
+    private function getDatabaseConnection(): Connection
     {
         return $this->dbalClient->getConnection();
     }

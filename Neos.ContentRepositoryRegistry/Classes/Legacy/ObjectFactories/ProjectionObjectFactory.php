@@ -22,7 +22,7 @@ use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Scope('singleton')]
@@ -42,9 +42,9 @@ final class ProjectionObjectFactory
         return new WorkspaceFinder($this->dbalClient);
     }
 
-    public function buildWorkspaceProjector(): WorkspaceProjector
+    public function buildWorkspaceProjector(): WorkspaceProjection
     {
-        return new WorkspaceProjector($this->dbalClient, $this->workspaceProcessedEventsCache);
+        return new WorkspaceProjection($this->dbalClient, $this->workspaceProcessedEventsCache);
     }
 
     public function buildContentStreamProjector(): ContentStreamProjector

@@ -43,7 +43,7 @@ use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Projection\Changes\ChangeProjector;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjector;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMappings;
 use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
@@ -100,14 +100,14 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             EventToListenerMapping::create(DimensionSpacePointWasMoved::class, NodeHiddenStateProjector::class, []),
 
             // WorkspaceProjector
-            EventToListenerMapping::create(WorkspaceWasCreated::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(RootWorkspaceWasCreated::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(WorkspaceWasDiscarded::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(WorkspaceWasPartiallyDiscarded::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(WorkspaceWasPartiallyPublished::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(WorkspaceWasPublished::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(WorkspaceWasRebased::class, WorkspaceProjector::class, []),
-            EventToListenerMapping::create(WorkspaceRebaseFailed::class, WorkspaceProjector::class, []),
+            EventToListenerMapping::create(WorkspaceWasCreated::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(RootWorkspaceWasCreated::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(WorkspaceWasDiscarded::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(WorkspaceWasPartiallyDiscarded::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(WorkspaceWasPartiallyPublished::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(WorkspaceWasPublished::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(WorkspaceWasRebased::class, WorkspaceProjection::class, []),
+            EventToListenerMapping::create(WorkspaceRebaseFailed::class, WorkspaceProjection::class, []),
 
             // DBAL - MYSQL - GraphProjector
             // NodeVariation Trait

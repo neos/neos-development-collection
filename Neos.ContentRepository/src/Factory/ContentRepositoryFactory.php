@@ -37,6 +37,7 @@ use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -186,7 +187,7 @@ final class ContentRepositoryFactory
         return Projections::create()
             ->with(
                 new ContentGraphProjection(
-                    // TODO: dependent on doctrine or postgres
+                // TODO: dependent on doctrine or postgres
                     new DoctrineDbalContentGraphProjection(
                         $this->buildEventNormalizer(),
                         $this->buildCheckpointStorage(),
@@ -203,9 +204,15 @@ final class ContentRepositoryFactory
                         $this->tableNamePrefix . '_graph'
                     )
                 )
-            )
-            ->with(
+            )->with(
                 new ContentStreamProjection(
+                    $this->buildEventNormalizer(),
+                    $this->buildCheckpointStorage(),
+                    $this->dbalClient,
+                    $this->tableNamePrefix
+                )
+            )->with(
+                new WorkspaceProjection(
                     $this->buildEventNormalizer(),
                     $this->buildCheckpointStorage(),
                     $this->dbalClient,
