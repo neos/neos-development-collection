@@ -64,7 +64,7 @@ final class PropertyConverter
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName,
         mixed $propertyValue
-    ): ?SerializedPropertyValue {
+    ): SerializedPropertyValue {
         $propertyType = PropertyType::fromNodeTypeDeclaration(
             $declaredType,
             $propertyName,
