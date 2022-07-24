@@ -109,7 +109,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         // here, we skip null values
         return new self(array_filter(
-            array_merge($this->values, $other->getValues()),
+            array_merge($this->values, $other->values),
             fn ($value) => $value !== null
         ));
     }

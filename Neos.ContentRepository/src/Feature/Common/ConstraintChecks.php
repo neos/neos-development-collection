@@ -673,8 +673,6 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeName
     ): void {
         $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
-        // initialize node type
-        $nodeType->getOptions();
 
         foreach ($referenceProperties->getValues() as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]
