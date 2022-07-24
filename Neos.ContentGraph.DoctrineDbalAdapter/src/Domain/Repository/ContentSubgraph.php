@@ -218,9 +218,8 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c'
         );
         $query->addToQuery('ORDER BY h.position ASC');
@@ -289,9 +288,8 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
                     $this->getDimensionSpacePoint()->hash
                 );
 
-            $query = self::addRestrictionRelationConstraintsToQuery(
-                $query,
-                $this->visibilityConstraints
+            $query = $this->addRestrictionRelationConstraintsToQuery(
+                $query
             );
 
             $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
@@ -311,15 +309,14 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
         }
     }
 
-    private static function addRestrictionRelationConstraintsToQuery(
+    private function addRestrictionRelationConstraintsToQuery(
         SqlQueryBuilder $query,
-        VisibilityConstraints $visibilityConstraints,
         string $aliasOfNodeInQuery = 'n',
         string $aliasOfHierarchyEdgeInQuery = 'h',
         string $markerToReplaceInQuery = null
     ): SqlQueryBuilder {
         // TODO: make QueryBuilder immutable
-        if (!$visibilityConstraints->isDisabledContentShown()) {
+        if (!$this->visibilityConstraints->isDisabledContentShown()) {
             $query->addToQuery('
                 and not exists (
                     select
@@ -362,9 +359,8 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
                 $this->getDimensionSpacePoint()->hash
             );
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c'
         );
 
@@ -410,9 +406,8 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM ' . $this->tableNamePrefix 
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash)
             ->parameter('name', (string)$name);
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'd',
             'dh'
         );
@@ -480,9 +475,8 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM ' . $this->tableNamePrefix 
             $query->addToQuery('AND r.name = :name');
         }
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             's',
             'sh'
         );
@@ -542,9 +536,8 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM ' . $this->tableNamePrefix .
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'p'
         );
 
@@ -652,9 +645,8 @@ WHERE
                 )
                 ->parameter('edgeName', (string)$edgeName);
 
-            self::addRestrictionRelationConstraintsToQuery(
+            $this->addRestrictionRelationConstraintsToQuery(
                 $query,
-                $this->visibilityConstraints,
                 'c'
             );
 
@@ -750,7 +742,7 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
-        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
+        $this->addRestrictionRelationConstraintsToQuery($query);
 
         $query->addToQuery('
     AND h.position < (
@@ -805,7 +797,7 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
-        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
+        $this->addRestrictionRelationConstraintsToQuery($query);
 
         $query->addToQuery('
     AND h.position > (
@@ -1005,16 +997,14 @@ order by level asc, position asc;')
             '###NODE_TYPE_CONSTRAINTS###'
         );
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'n',
             'h',
             '###VISIBILITY_CONSTRAINTS_INITIAL###'
         );
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c',
             'h',
             '###VISIBILITY_CONSTRAINTS_RECURSION###'
@@ -1155,16 +1145,14 @@ order by level asc, position asc;')
             '###SEARCH_TERM_CONSTRAINTS###',
             ''
         );
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'n',
             'h',
             '###VISIBILITY_CONSTRAINTS_INITIAL###'
         );
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c',
             'h',
             '###VISIBILITY_CONSTRAINTS_RECURSION###'
