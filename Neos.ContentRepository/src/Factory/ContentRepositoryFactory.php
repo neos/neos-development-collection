@@ -235,6 +235,8 @@ final class ContentRepositoryFactory
             )
         );
 
+        // TODO: HOW TO BUILD OTHER PROJECTIONS HERE (not part of ES CR Core), which still need stuff like the SAME EventNormalizer?
+
         return $projections;
     }
 
