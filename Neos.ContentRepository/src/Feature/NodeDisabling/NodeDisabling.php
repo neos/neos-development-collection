@@ -27,14 +27,10 @@ use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeDisabling
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     /**
@@ -47,8 +43,6 @@ trait NodeDisabling
      */
     private function handleDisableNodeAggregate(DisableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
@@ -101,8 +95,6 @@ trait NodeDisabling
      */
     public function handleEnableNodeAggregate(EnableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(

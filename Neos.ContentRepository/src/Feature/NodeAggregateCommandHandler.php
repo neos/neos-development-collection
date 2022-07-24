@@ -131,30 +131,32 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         if ($command instanceof SetNodeProperties) {
-            return $this->handleSetNodeProperties($command);
+            return $this->handleSetNodeProperties($command, $contentRepository);
         } elseif ($command instanceof SetSerializedNodeProperties) {
-            return $this->handleSetSerializedNodeProperties($command);
+            return $this->handleSetSerializedNodeProperties($command, $contentRepository);
         } elseif ($command instanceof SetNodeReferences) {
-            return $this->handleSetNodeReferences($command);
+            return $this->handleSetNodeReferences($command, $contentRepository);
         } elseif ($command instanceof ChangeNodeAggregateType) {
-            return $this->handleChangeNodeAggregateType($command);
+            return $this->handleChangeNodeAggregateType($command, $contentRepository);
         } elseif ($command instanceof RemoveNodeAggregate) {
-            return $this->handleRemoveNodeAggregate($command);
+            return $this->handleRemoveNodeAggregate($command, $contentRepository);
         } elseif ($command instanceof CreateNodeAggregateWithNode) {
-            return $this->handleCreateNodeAggregateWithNode($command);
+            return $this->handleCreateNodeAggregateWithNode($command, $contentRepository);
         } elseif ($command instanceof CreateNodeAggregateWithNodeAndSerializedProperties) {
-            return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
+            return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository);
         } elseif ($command instanceof MoveNodeAggregate) {
-            return $this->handleMoveNodeAggregate($command);
+            return $this->handleMoveNodeAggregate($command, $contentRepository);
         } elseif ($command instanceof CreateNodeVariant) {
-            return $this->handleCreateNodeVariant($command);
+            return $this->handleCreateNodeVariant($command, $contentRepository);
         } elseif ($command instanceof CreateRootNodeAggregateWithNode) {
-            return $this->handleCreateRootNodeAggregateWithNode($command);
+            return $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository);
         } elseif ($command instanceof DisableNodeAggregate) {
-            return $this->handleDisableNodeAggregate($command);
+            return $this->handleDisableNodeAggregate($command, $contentRepository);
         } elseif ($command instanceof EnableNodeAggregate) {
-            return $this->handleEnableNodeAggregate($command);
+            return $this->handleEnableNodeAggregate($command, $contentRepository);
         } elseif ($command instanceof ChangeNodeAggregateName) {
             return $this->handleChangeNodeAggregateName($command);
         }

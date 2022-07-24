@@ -28,13 +28,10 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguou
 use Neos\ContentRepository\Feature\Common\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeRemoval
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
@@ -48,8 +45,6 @@ trait NodeRemoval
      */
     private function handleRemoveNodeAggregate(RemoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

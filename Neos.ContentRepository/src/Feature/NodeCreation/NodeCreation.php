@@ -39,16 +39,12 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeCreation
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
@@ -63,7 +59,7 @@ trait NodeCreation
 
     abstract protected function getPropertyConverter(): PropertyConverter;
 
-    private function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): EventsToPublish
+    private function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireNodeType($command->nodeTypeName);
         $this->validateProperties(
@@ -88,7 +84,7 @@ trait NodeCreation
             $command->tetheredDescendantNodeAggregateIdentifiers
         );
 
-        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand);
+        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $contentRepository);
     }
 
     private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
@@ -157,8 +153,6 @@ trait NodeCreation
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);

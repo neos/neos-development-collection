@@ -30,13 +30,10 @@ use Neos\ContentRepository\Feature\RootNodeCreation\Command\CreateRootNodeAggreg
 use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait RootNodeCreation
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
@@ -56,8 +53,6 @@ trait RootNodeCreation
      */
     private function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireProjectedNodeAggregateToNotExist(
             $command->contentStreamIdentifier,

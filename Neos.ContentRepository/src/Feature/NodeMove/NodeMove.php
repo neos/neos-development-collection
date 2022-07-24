@@ -41,13 +41,10 @@ use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeMove
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
@@ -69,8 +66,6 @@ trait NodeMove
      */
     private function handleMoveNodeAggregate(MoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $this->requireDimensionSpacePointToExist($command->getDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(

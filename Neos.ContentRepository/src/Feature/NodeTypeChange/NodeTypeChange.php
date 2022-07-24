@@ -38,7 +38,6 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /** @codingStandardsIgnoreStart */
@@ -47,8 +46,6 @@ use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChang
 
 trait NodeTypeChange
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -108,8 +105,6 @@ trait NodeTypeChange
      */
     private function handleChangeNodeAggregateType(ChangeNodeAggregateType $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         /**************
          * Constraint checks
          **************/
@@ -194,7 +189,7 @@ trait NodeTypeChange
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
                     $node->getContentStreamIdentifier(),
                     $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()

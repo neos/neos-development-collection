@@ -28,15 +28,12 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyExists
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeVariation
 {
     use NodeVariationInternals;
     use ConstraintChecks;
-
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     /**
      * @throws ContentStreamDoesNotExistYet
@@ -49,8 +46,6 @@ trait NodeVariation
      */
     private function handleCreateNodeVariant(CreateNodeVariant $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

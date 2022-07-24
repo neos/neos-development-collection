@@ -20,16 +20,13 @@ use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeRenaming
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish
     {
-        $this->getReadSideMemoryCacheManager()->disableCache();
+
         // TODO: check if CS exists
         // TODO: check if aggregate exists and delegate to it
         // TODO: check if aggregate is root
