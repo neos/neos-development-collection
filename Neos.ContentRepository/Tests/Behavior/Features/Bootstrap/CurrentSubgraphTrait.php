@@ -125,7 +125,6 @@ trait CurrentSubgraphTrait
     {
         $currentSubgraphs = [];
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
-            $contentGraph->disableCache();
             $currentSubgraphs[$adapterName] = $contentGraph->getSubgraphByIdentifier(
                 $this->contentStreamIdentifier,
                 $this->dimensionSpacePoint,
