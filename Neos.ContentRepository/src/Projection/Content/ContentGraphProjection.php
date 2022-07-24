@@ -3,16 +3,10 @@ declare(strict_types=1);
 // TODO: RENAME To ContentGraph
 namespace Neos\ContentRepository\Projection\Content;
 
-use Neos\ContentRepository\Event\NodeWasCreated;
-use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Projection\ProjectionInterface;
-use Neos\EventStore\CatchUp\CatchUp;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\Event;
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\EventStore\ProvidesSetupInterface;
 
 /**
  * @implements ProjectionInterface<ContentGraph>

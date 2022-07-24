@@ -76,6 +76,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     private bool $doingFullReplayOfProjection = false;
 
+    /**
+     * @var ContentGraph|null Cache for the content graph returned by {@see getState()}, so that always the same instance is returned
+     */
+    private ?ContentGraph $contentGraph = null;
+
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
@@ -112,7 +117,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         }
     }
 
-    public function setupTables(): SetupResult
+    private function setupTables(): SetupResult
     {
         $connection = $this->dbalClient->getConnection();
         $schemaManager = $connection->getSchemaManager();
@@ -185,6 +190,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         ]);
     }
 
+    public function catchUp(EventStreamInterface $eventStream): void
+    {
+        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
+        $catchUp->run($eventStream);
+    }
+
     private function apply(EventEnvelope $eventEnvelope): void
     {
         if (!$this->canHandle($eventEnvelope->event)) {
@@ -232,12 +243,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         }
     }
 
-    public function catchUp(EventStreamInterface $eventStream): void
-    {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
-    }
-
     public function getSequenceNumber(): SequenceNumber
     {
         return $this->checkpointStorage->getHighestAppliedSequenceNumber();
@@ -245,7 +250,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     public function getState(): ContentGraphInterface
     {
-        return new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix);
+        if (!$this->contentGraph) {
+            $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix);
+        }
+        return $this->contentGraph;
     }
 
 

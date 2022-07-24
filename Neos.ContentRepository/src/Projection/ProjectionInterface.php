@@ -53,6 +53,8 @@ interface ProjectionInterface
     public function getSequenceNumber(): SequenceNumber;
 
     /**
+     * NOTE: The ProjectionStateInterface returned must be ALWAYS THE SAME INSTANCE.
+     *
      * @return TState
      */
     public function getState(): ProjectionStateInterface;

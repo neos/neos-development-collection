@@ -33,6 +33,7 @@ use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
@@ -196,11 +197,19 @@ final class ContentRepositoryFactory
                         ),
                         new ProjectionContentGraph(
                             $this->dbalClient,
-                            $this->tableNamePrefix
+                            $this->tableNamePrefix . '_graph'
                         ),
                         $this->throwableStorage,
-                        $this->tableNamePrefix
+                        $this->tableNamePrefix . '_graph'
                     )
+                )
+            )
+            ->with(
+                new ContentStreamProjection(
+                    $this->buildEventNormalizer(),
+                    $this->buildCheckpointStorage(),
+                    $this->dbalClient,
+                    $this->tableNamePrefix
                 )
             );
     }

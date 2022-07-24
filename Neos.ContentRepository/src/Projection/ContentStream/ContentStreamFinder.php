@@ -16,17 +16,16 @@ namespace Neos\ContentRepository\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Service\ContentStreamPruner;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Internal - implementation detail of {@see ContentStreamPruner}
  *
  * @internal
  */
-#[Flow\Scope('singleton')]
-final class ContentStreamFinder
+final class ContentStreamFinder implements ProjectionStateInterface
 {
     public const STATE_CREATED = 'CREATED';
     public const STATE_IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
@@ -34,7 +33,10 @@ final class ContentStreamFinder
     public const STATE_REBASE_ERROR = 'REBASE_ERROR';
     public const STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
 
-    public function __construct(private readonly DbalClientInterface $client)
+    public function __construct(
+        private readonly DbalClientInterface $client,
+        private readonly string $tableNamePrefix,
+    )
     {
     }
 
@@ -46,7 +48,7 @@ final class ContentStreamFinder
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+            SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
             ',
         )->fetchAllAssociative();
 
@@ -66,7 +68,7 @@ final class ContentStreamFinder
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+            SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
                 WHERE removed = FALSE
                 AND state IN (:state)
             ',
@@ -99,7 +101,7 @@ final class ContentStreamFinder
         /* @var $state string|false */
         $state = $connection->executeQuery(
             '
-            SELECT state FROM neos_contentrepository_projection_contentstream_v1
+            SELECT state FROM ' . $this->tableNamePrefix . '_contentstream
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
                 AND removed = FALSE
             ',
@@ -125,23 +127,23 @@ final class ContentStreamFinder
             '
             WITH RECURSIVE transitiveUsedContentStreams (contentStreamIdentifier) AS (
                     -- initial case: find all content streams currently in direct use by a workspace
-                    SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+                    SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
                     WHERE
                         state = :inUseState
                         AND removed = false
                 UNION
                     -- now, when a content stream is in use by a workspace, its source content stream is
                     -- also "transitively" in use.
-                    SELECT sourceContentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+                    SELECT sourceContentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
                     JOIN transitiveUsedContentStreams
-                        ON neos_contentrepository_projection_contentstream_v1.contentStreamIdentifier
+                        ON ' . $this->tableNamePrefix . '_contentstream.contentStreamIdentifier
                             = transitiveUsedContentStreams.contentStreamIdentifier
                     WHERE
-                        neos_contentrepository_projection_contentstream_v1.sourceContentStreamIdentifier IS NOT NULL
+                        ' . $this->tableNamePrefix . '_contentstream.sourceContentStreamIdentifier IS NOT NULL
             )
 
             -- now, we check for removed content streams which we do not need anymore transitively
-            SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1 AS cs
+            SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream AS cs
                 WHERE removed = true
                 AND NOT EXISTS (
                     SELECT 1
