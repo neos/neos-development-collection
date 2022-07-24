@@ -280,6 +280,11 @@ trait EventSourcedTrait
                     $propertyValue = new Uri(\mb_substr($propertyValue, 4));
                 }
             }
+            try {
+                $propertyValue = \json_decode($propertyValue, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                // then don't, just keep the value
+            }
         }
 
         return PropertyValuesToWrite::fromArray($properties);
