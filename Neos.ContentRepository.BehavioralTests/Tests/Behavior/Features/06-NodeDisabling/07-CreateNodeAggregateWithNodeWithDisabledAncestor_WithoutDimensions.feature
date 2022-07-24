@@ -43,11 +43,7 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node aggregate to disable dimension space points []
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
 
-  Scenario: When a new node is created underneath a hidden node and that parent is enabled again, the node should become visible
-    When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName     |
-      | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
-    And the command EnableNodeAggregate is executed with payload:
+    When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateIdentifier      | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
