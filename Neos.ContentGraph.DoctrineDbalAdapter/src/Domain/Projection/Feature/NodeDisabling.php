@@ -12,10 +12,12 @@ use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
  */
 trait NodeDisabling
 {
+    abstract protected function getTableNamePrefix(): string;
+
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here;
@@ -23,7 +25,7 @@ trait NodeDisabling
             $this->getDatabaseConnection()->executeStatement(
                 '
 -- GraphProjector::whenNodeAggregateWasDisabled
-insert ignore into neos_contentgraph_restrictionrelation
+insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
 (
     -- we build a recursive tree
     with recursive tree as (
@@ -35,9 +37,9 @@ insert ignore into neos_contentgraph_restrictionrelation
             n.nodeaggregateidentifier,
             h.dimensionspacepointhash
          from
-            neos_contentgraph_node n
+            ' . $this->getTableNamePrefix() . '_node n
          -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
-         inner join neos_contentgraph_hierarchyrelation h
+         inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
             on h.childnodeanchor = n.relationanchorpoint
          where
             n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
@@ -53,9 +55,9 @@ insert ignore into neos_contentgraph_restrictionrelation
             h.dimensionspacepointhash
          from
             tree p
-         inner join neos_contentgraph_hierarchyrelation h
+         inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
             on h.parentnodeanchor = p.relationanchorpoint
-         inner join neos_contentgraph_node c
+         inner join ' . $this->getTableNamePrefix() . '_node c
             on h.childnodeanchor = c.relationanchorpoint
          where
             h.contentstreamidentifier = :contentStreamIdentifier

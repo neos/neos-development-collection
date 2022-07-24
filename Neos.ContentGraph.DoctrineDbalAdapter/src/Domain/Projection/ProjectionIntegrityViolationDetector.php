@@ -30,7 +30,8 @@ use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetect
 final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityViolationDetectorInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $client
+        private readonly DbalClientInterface $client,
+        private readonly string $tableNamePrefix
     ) {
     }
 
@@ -42,9 +43,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
 
         $disconnectedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-                LEFT JOIN neos_contentgraph_node p ON h.parentnodeanchor = p.relationanchorpoint
-                LEFT JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+            'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+                LEFT JOIN ' . $this->tableNamePrefix . '_node p ON h.parentnodeanchor = p.relationanchorpoint
+                LEFT JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
                 WHERE h.parentnodeanchor != :rootNodeAnchor
                 AND (
                     p.relationanchorpoint IS NULL
@@ -64,7 +65,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $invalidlyHashedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
-            'SELECT * FROM neos_contentgraph_hierarchyrelation
+            'SELECT * FROM ' . $this->tableNamePrefix . '_hierarchyrelation
                 WHERE dimensionspacepointhash != MD5(dimensionspacepoint)'
         )->fetchAll();
 
@@ -77,9 +78,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $hierarchyRelationRecordsAppearingMultipleTimes = $this->client->getConnection()->executeQuery(
-            'SELECT COUNT(*) as uniquenessCounter, h.* FROM neos_contentgraph_hierarchyrelation h
-                LEFT JOIN neos_contentgraph_node p ON h.parentnodeanchor = p.relationanchorpoint
-                LEFT JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+            'SELECT COUNT(*) as uniquenessCounter, h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+                LEFT JOIN ' . $this->tableNamePrefix . '_node p ON h.parentnodeanchor = p.relationanchorpoint
+                LEFT JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
                 WHERE h.parentnodeanchor != :rootNodeAnchor
                 GROUP BY p.nodeaggregateidentifier, c.nodeaggregateidentifier,
                          h.dimensionspacepointhash, h.contentstreamidentifier
@@ -110,7 +111,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $ambiguouslySortedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
             'SELECT *, COUNT(position)
-                    FROM neos_contentgraph_hierarchyrelation
+                    FROM ' . $this->tableNamePrefix . '_hierarchyrelation
                     GROUP BY position, parentnodeanchor, contentstreamidentifier, dimensionspacepointhash
                     HAVING COUNT(position) > 1'
         );
@@ -118,7 +119,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($ambiguouslySortedHierarchyRelationRecords as $hierarchyRelationRecord) {
             $ambiguouslySortedNodeRecords = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateidentifier
-                    FROM neos_contentgraph_node
+                    FROM ' . $this->tableNamePrefix . '_node
                     WHERE relationanchorpoint = :relationAnchorPoint',
                 [
                     'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']
@@ -145,8 +146,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         $unnamedTetheredNodeRecords = $this->client->getConnection()->executeQuery(
-            'SELECT n.nodeaggregateidentifier, h.contentstreamidentifier FROM neos_contentgraph_node n
-                INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT n.nodeaggregateidentifier, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . '_node n
+                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE n.classification = :tethered
               AND h.name IS NULL
               GROUP BY n.nodeaggregateidentifier, h.contentstreamidentifier',
@@ -175,16 +176,16 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
         $nodeRecordsWithMissingRestrictions = $this->client->getConnection()->executeQuery(
             'SELECT c.nodeaggregateidentifier, h.contentstreamidentifier, h.dimensionspacepoint
-            FROM neos_contentgraph_hierarchyrelation h
-            INNER JOIN neos_contentgraph_node p
+            FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+            INNER JOIN ' . $this->tableNamePrefix . '_node p
                 ON p.relationanchorpoint = h.parentnodeanchor
-            INNER JOIN neos_contentgraph_restrictionrelation pr
+            INNER JOIN ' . $this->tableNamePrefix . '_restrictionrelation pr
                 ON pr.affectednodeaggregateidentifier = p.nodeaggregateidentifier
                 AND pr.contentstreamidentifier = h.contentstreamidentifier
                 AND pr.dimensionspacepointhash = h.dimensionspacepointhash
-            INNER JOIN neos_contentgraph_node c
+            INNER JOIN ' . $this->tableNamePrefix . '_node c
                 ON c.relationanchorpoint = h.childnodeanchor
-            LEFT JOIN neos_contentgraph_restrictionrelation cr
+            LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation cr
                 ON cr.affectednodeaggregateidentifier = c.nodeaggregateidentifier
                 AND cr.contentstreamidentifier = h.contentstreamidentifier
                 AND cr.dimensionspacepointhash = h.dimensionspacepointhash
@@ -212,16 +213,16 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $restrictionRelationRecordsWithoutOriginOrAffectedNode = $this->client->getConnection()->executeQuery(
             '
-            SELECT r.* FROM neos_contentgraph_restrictionrelation r
+            SELECT r.* FROM ' . $this->tableNamePrefix . '_restrictionrelation r
                 LEFT JOIN (
-                    neos_contentgraph_node p
-                    INNER JOIN neos_contentgraph_hierarchyrelation ph ON p.relationanchorpoint = ph.childnodeanchor
+                    ' . $this->tableNamePrefix . '_node p
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON p.relationanchorpoint = ph.childnodeanchor
                 ) ON p.nodeaggregateidentifier = r.originnodeaggregateidentifier
                 AND ph.contentstreamidentifier = r.contentstreamidentifier
                 AND ph.dimensionspacepointhash = r.dimensionspacepointhash
                 LEFT JOIN (
-                    neos_contentgraph_node c
-                    INNER JOIN neos_contentgraph_hierarchyrelation ch ON c.relationanchorpoint = ch.childnodeanchor
+                    ' . $this->tableNamePrefix . '_node c
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON c.relationanchorpoint = ch.childnodeanchor
                 ) ON c.nodeaggregateidentifier = r.affectednodeaggregateidentifier
                 AND ch.contentstreamidentifier = r.contentstreamidentifier
                 AND ch.dimensionspacepointhash = r.dimensionspacepointhash
@@ -250,9 +251,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
 
         $referenceRelationRecordsDetachedFromSource = $this->client->getConnection()->executeQuery(
-            'SELECT * FROM neos_contentgraph_referencerelation
+            'SELECT * FROM ' . $this->tableNamePrefix . '_referencerelation
                 WHERE nodeanchorpoint NOT IN (
-                    SELECT relationanchorpoint FROM neos_contentgraph_node
+                    SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
                 )'
         )->fetchAll();
 
@@ -268,12 +269,12 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             'SELECT sh.contentstreamidentifier AS contentstreamIdentifier,
                     s.nodeaggregateidentifier AS sourceNodeAggregateIdentifier,
                     r.destinationnodeaggregateidentifier AS destinationNodeAggregateIdentifier
-                FROM neos_contentgraph_referencerelation r
-                INNER JOIN neos_contentgraph_node s ON r.nodeanchorpoint = s.relationanchorpoint
-                INNER JOIN neos_contentgraph_hierarchyrelation sh ON r.nodeanchorpoint = sh.childnodeanchor
+                FROM ' . $this->tableNamePrefix . '_referencerelation r
+                INNER JOIN ' . $this->tableNamePrefix . '_node s ON r.nodeanchorpoint = s.relationanchorpoint
+                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation sh ON r.nodeanchorpoint = sh.childnodeanchor
                 LEFT JOIN (
-                    neos_contentgraph_node d
-                    INNER JOIN neos_contentgraph_hierarchyrelation dh ON d.relationanchorpoint = dh.childnodeanchor
+                    ' . $this->tableNamePrefix . '_node d
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh ON d.relationanchorpoint = dh.childnodeanchor
                 ) ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
                     AND sh.contentstreamidentifier = dh.contentstreamidentifier
                     AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
@@ -317,7 +318,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     SELECT
      	h.childnodeanchor
     FROM
-        neos_contentgraph_hierarchyrelation h
+        ' . $this->tableNamePrefix . '_hierarchyrelation h
     WHERE
         h.parentnodeanchor = :rootAnchorPoint
         AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -330,14 +331,14 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         h.childnodeanchor
      FROM
         subgraph p
-	 INNER JOIN neos_contentgraph_hierarchyrelation h
+	 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
         on h.parentnodeanchor = p.childnodeanchor
 	 WHERE
 	 	h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
 )
-SELECT nodeaggregateidentifier FROM neos_contentgraph_node n
-INNER JOIN neos_contentgraph_hierarchyrelation h
+SELECT nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node n
+INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
     ON h.childnodeanchor = n.relationanchorpoint
 WHERE
     h.contentstreamidentifier = :contentStreamIdentifier
@@ -390,8 +391,8 @@ WHERE
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $ambiguousNodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT n.nodeaggregateidentifier, COUNT(n.relationanchorpoint)
-                    FROM neos_contentgraph_node n
-                    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    FROM ' . $this->tableNamePrefix . '_node n
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                     WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
                     GROUP BY n.nodeaggregateidentifier
@@ -426,8 +427,8 @@ WHERE
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeRecordsWithMultipleParents = $this->client->getConnection()->executeQuery(
                     'SELECT c.nodeaggregateidentifier
-                    FROM neos_contentgraph_node c
-                    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = c.relationanchorpoint
+                    FROM ' . $this->tableNamePrefix . '_node c
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = c.relationanchorpoint
                     WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
                     GROUP BY c.relationanchorpoint
@@ -465,8 +466,8 @@ WHERE
                 ) as $nodeAggregateIdentifier
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
-                    'SELECT DISTINCT n.nodetypename FROM neos_contentgraph_node n
-                        INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    'SELECT DISTINCT n.nodetypename FROM ' . $this->tableNamePrefix . '_node n
+                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                         WHERE h.contentstreamidentifier = :contentStreamIdentifier
                         AND n.nodeaggregateidentifier = :nodeAggregateIdentifier',
                     [
@@ -507,8 +508,8 @@ WHERE
                 ) as $nodeAggregateIdentifier
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
-                    'SELECT DISTINCT n.classification FROM neos_contentgraph_node n
-                        INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    'SELECT DISTINCT n.classification FROM ' . $this->tableNamePrefix . '_node n
+                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                         WHERE h.contentstreamidentifier = :contentStreamIdentifier
                         AND n.nodeaggregateidentifier = :nodeAggregateIdentifier',
                     [
@@ -544,9 +545,9 @@ WHERE
         $result = new Result();
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
             $excessivelyCoveringNodeRecords = $this->client->getConnection()->executeQuery(
-                'SELECT n.nodeaggregateidentifier, c.dimensionspacepoint FROM neos_contentgraph_hierarchyrelation c
-                    INNER JOIN neos_contentgraph_node n ON c.childnodeanchor = n.relationanchorpoint
-                    LEFT JOIN neos_contentgraph_hierarchyrelation p ON c.parentnodeanchor = p.childnodeanchor
+                'SELECT n.nodeaggregateidentifier, c.dimensionspacepoint FROM ' . $this->tableNamePrefix . '_hierarchyrelation c
+                    INNER JOIN ' . $this->tableNamePrefix . '_node n ON c.childnodeanchor = n.relationanchorpoint
+                    LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p ON c.parentnodeanchor = p.childnodeanchor
                     WHERE c.contentstreamidentifier = :contentStreamIdentifier
                     AND p.contentstreamidentifier = :contentStreamIdentifier
                     AND c.dimensionspacepointhash = p.dimensionspacepointhash
@@ -579,15 +580,15 @@ WHERE
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateidentifier, origindimensionspacepoint
-                    FROM neos_contentgraph_node n
-                    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    FROM ' . $this->tableNamePrefix . '_node n
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
                     AND nodeaggregateidentifier NOT IN (
                         -- this query finds all nodes whose origin *IS COVERED* by an incoming hierarchy relation.
                         SELECT n.nodeaggregateidentifier
-                        FROM neos_contentgraph_node n
-                        LEFT JOIN neos_contentgraph_hierarchyrelation p
+                        FROM ' . $this->tableNamePrefix . '_node n
+                        LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p
                             ON p.childnodeanchor = n.relationanchorpoint
                             AND p.dimensionspacepointhash = n.origindimensionspacepointhash
                             WHERE p.contentstreamidentifier = :contentStreamIdentifier
@@ -623,7 +624,7 @@ WHERE
         $connection = $this->client->getConnection();
 
         $rows = $connection->executeQuery(
-            'SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation'
+            'SELECT DISTINCT contentstreamidentifier FROM ' . $this->tableNamePrefix . '_hierarchyrelation'
         )->fetchAll();
 
         return array_map(function (array $row) {
@@ -639,7 +640,7 @@ WHERE
     protected function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
     {
         $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT dimensionspacepoint FROM neos_contentgraph_hierarchyrelation'
+            'SELECT DISTINCT dimensionspacepoint FROM ' . $this->tableNamePrefix . '_hierarchyrelation'
         )->fetchAll();
 
         $records = array_map(function (array $record) {
@@ -657,7 +658,7 @@ WHERE
         ContentStreamIdentifier $contentStreamIdentifier
     ): array {
         $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
+            'SELECT DISTINCT nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node'
         )->fetchAllAssociative();
 
         return array_map(function (array $record) {

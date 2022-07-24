@@ -18,14 +18,14 @@ use Psr\Log\LoggerInterface;
  */
 trait NodeRemoval
 {
-    protected ProjectionContentGraph $projectionContentGraph;
+    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
-    protected LoggerInterface $systemLogger;
+    abstract protected function getTableNamePrefix(): string;
 
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
@@ -36,7 +36,7 @@ trait NodeRemoval
                 $event->affectedCoveredDimensionSpacePoints
             );
 
-            $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+            $ingoingRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                 $event->contentStreamIdentifier,
                 $event->nodeAggregateIdentifier,
                 $event->affectedCoveredDimensionSpacePoints
@@ -54,10 +54,10 @@ trait NodeRemoval
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
         HierarchyRelation $ingoingRelation
     ): void {
-        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
+        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         foreach (
-            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
+            $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
                 $ingoingRelation->contentStreamIdentifier,
                 new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
@@ -69,9 +69,9 @@ trait NodeRemoval
         // remove node itself if it does not have any incoming hierarchy relations anymore
         $this->getDatabaseConnection()->executeUpdate(
             '
-            DELETE n FROM neos_contentgraph_node n
+            DELETE n FROM ' . $this->getTableNamePrefix() . '_node n
                 LEFT JOIN
-                    neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    ' . $this->getTableNamePrefix() . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     AND h.contentstreamidentifier IS NULL

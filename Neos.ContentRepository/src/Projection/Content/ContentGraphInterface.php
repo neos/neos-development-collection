@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\Content;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -33,7 +34,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  *
  * @api
  */
-interface ContentGraphInterface
+interface ContentGraphInterface extends ProjectionStateInterface
 {
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,

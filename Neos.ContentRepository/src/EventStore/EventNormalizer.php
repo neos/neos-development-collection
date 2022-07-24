@@ -101,10 +101,19 @@ final class EventNormalizer
         return $this->fullClassNameToShortEventType[$className] ?? throw new \RuntimeException('Event type ' . get_class($event) . ' not registered');
     }
 
+    /**
+     * @param Event $event
+     * @return class-string<EventInterface>
+     */
+    public function getEventClassName(Event $event): string
+    {
+        return $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(sprintf('Failed to denormalize event "%s" of type "%s"', $event->id->value, $event->type->value), 1651839705);
+    }
+
+
     public function denormalize(Event $event): EventInterface
     {
-        /** @var class-string<EventInterface> $eventClassName */
-        $eventClassName = $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(sprintf('Failed to denormalize event "%s" of type "%s"', $event->id->value, $event->type->value), 1651839705);
+        $eventClassName = $this->getEventClassName($event);
         try {
             $eventDataAsArray = json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {

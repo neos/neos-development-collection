@@ -40,7 +40,8 @@ use Neos\Flow\Annotations as Flow;
 class ProjectionContentGraph
 {
     public function __construct(
-        private readonly DbalClientInterface $client
+        private readonly DbalClientInterface $client,
+        private readonly string $tableNamePrefix
     ) {
     }
 
@@ -51,10 +52,10 @@ class ProjectionContentGraph
     public function isEmpty(): bool
     {
         return (int)$this->getDatabaseConnection()
-                ->executeQuery('SELECT count(*) FROM neos_contentgraph_node')
+                ->executeQuery('SELECT count(*) FROM ' . $this->tableNamePrefix . '_node')
                 ->fetch()['count'] > 0
             && (int)$this->getDatabaseConnection()
-                ->executeQuery('SELECT count(*) FROM neos_contentgraph_hierarchyrelation')
+                ->executeQuery('SELECT count(*) FROM ' . $this->tableNamePrefix . '_hierarchyrelation')
                 ->fetch()['count'] > 0;
     }
 
@@ -77,10 +78,10 @@ class ProjectionContentGraph
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, ph.contentstreamidentifier, ph.name FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+            'SELECT p.*, ph.contentstreamidentifier, ph.name FROM ' . $this->tableNamePrefix . '_node p
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
  WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
  AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND ph.contentstreamidentifier = :contentStreamIdentifier
@@ -107,8 +108,8 @@ class ProjectionContentGraph
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT n.*, h.name FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -135,8 +136,8 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT n.*, h.name FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -164,8 +165,8 @@ class ProjectionContentGraph
         ContentStreamIdentifier $contentStreamIdentifier
     ): ?NodeRelationAnchorPoint {
         $rows = $this->getDatabaseConnection()->executeQuery(
-            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT DISTINCT n.relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND h.contentstreamidentifier = :contentStreamIdentifier',
@@ -200,8 +201,8 @@ class ProjectionContentGraph
         ContentStreamIdentifier $contentStreamIdentifier
     ): iterable {
         $rows = $this->getDatabaseConnection()->executeQuery(
-            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT DISTINCT n.relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
@@ -224,7 +225,7 @@ class ProjectionContentGraph
     public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?NodeRecord
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
+            'SELECT n.* FROM ' . $this->tableNamePrefix . '_node n
  WHERE n.relationanchorpoint = :relationAnchorPoint',
             [
                 'relationAnchorPoint' => (string)$nodeRelationAnchorPoint,
@@ -258,7 +259,7 @@ class ProjectionContentGraph
         }
         if ($succeedingSiblingAnchorPoint) {
             $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :succeedingSiblingAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -273,7 +274,7 @@ class ProjectionContentGraph
             $parentAnchorPoint = $succeedingSiblingRelation['parentnodeanchor'];
 
             $precedingSiblingPosition = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
+                'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.parentnodeanchor = :anchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
@@ -297,7 +298,7 @@ class ProjectionContentGraph
         } else {
             if (!$parentAnchorPoint) {
                 $childHierarchyRelationData = $this->getDatabaseConnection()->executeQuery(
-                    'SELECT h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
+                    'SELECT h.parentnodeanchor FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       WHERE h.childnodeanchor = :childAnchorPoint
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -312,7 +313,7 @@ class ProjectionContentGraph
                 );
             }
             $rightmostSucceedingSiblingRelationData = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
+                'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       WHERE h.parentnodeanchor = :parentAnchorPoint
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -349,7 +350,7 @@ class ProjectionContentGraph
         $relations = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.parentnodeanchor = :parentAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -381,7 +382,7 @@ class ProjectionContentGraph
         $relations = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :childAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -411,7 +412,7 @@ class ProjectionContentGraph
         DimensionSpacePointSet $restrictToSet = null
     ): array {
         $relations = [];
-        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+        $query = 'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
     WHERE h.childnodeanchor = :childAnchorPoint
     AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -449,7 +450,7 @@ class ProjectionContentGraph
         DimensionSpacePointSet $restrictToSet = null
     ): array {
         $relations = [];
-        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+        $query = 'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
     WHERE h.parentnodeanchor = :parentAnchorPoint
     AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -489,8 +490,8 @@ class ProjectionContentGraph
         $relations = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-     INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+     INNER JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
      WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
      AND h.contentstreamidentifier = :contentStreamIdentifier
      AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
@@ -524,8 +525,8 @@ class ProjectionContentGraph
     ): array {
         $relations = [];
 
-        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-            INNER JOIN neos_contentgraph_node n ON h.childnodeanchor = n.relationanchorpoint
+        $query = 'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+            INNER JOIN ' . $this->tableNamePrefix . '_node n ON h.childnodeanchor = n.relationanchorpoint
             WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
             AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -562,7 +563,7 @@ class ProjectionContentGraph
         foreach (
             $this->getDatabaseConnection()->executeQuery(
                 'SELECT DISTINCT h.contentstreamidentifier
-                          FROM neos_contentgraph_hierarchyrelation h
+                          FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
                 [
                     'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
@@ -602,8 +603,8 @@ class ProjectionContentGraph
                        n.relationanchorpoint,
                        h.dimensionspacepointhash
                     FROM
-                        neos_contentgraph_node n
-                    INNER JOIN neos_contentgraph_hierarchyrelation h
+                        ' . $this->tableNamePrefix . '_node n
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         on h.childnodeanchor = n.relationanchorpoint
                     WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
                     AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -619,9 +620,9 @@ class ProjectionContentGraph
                        h.dimensionspacepointhash
                     FROM
                         nestedNodes p
-                    INNER JOIN neos_contentgraph_hierarchyrelation h
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         on h.parentnodeanchor = p.relationanchorpoint
-                    INNER JOIN neos_contentgraph_node c
+                    INNER JOIN ' . $this->tableNamePrefix . '_node c
                         on h.childnodeanchor = c.relationanchorpoint
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier

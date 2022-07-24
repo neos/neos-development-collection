@@ -86,7 +86,6 @@ final class ContentRepositoryFactory
                 new WorkspaceCommandHandler(
                     $this->buildWorkspaceFinder(),
                     $this->buildReadSideMemoryCacheManager(),
-                    $this->buildContentGraph()
                 ),
                 new NodeAggregateCommandHandler(
                     $this->buildContentStreamRepository(),

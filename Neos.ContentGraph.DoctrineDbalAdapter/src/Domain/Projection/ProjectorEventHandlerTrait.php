@@ -22,7 +22,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-trait ProjectorEventHandlerTrait
+trait ProjectorEventHandlerTrait // TODO how to adjust?
 {
     /**
      * @var array<callable> handlers to be executed in beforeInvoke

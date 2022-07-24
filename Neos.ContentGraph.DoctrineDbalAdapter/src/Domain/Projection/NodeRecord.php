@@ -47,9 +47,9 @@ final class NodeRecord
      * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert('neos_contentgraph_node', [
+        $databaseConnection->insert($tableNamePrefix . '_node', [
             'relationanchorpoint' => (string)$this->relationAnchorPoint,
             'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
@@ -64,10 +64,10 @@ final class NodeRecord
      * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function updateToDatabase(Connection $databaseConnection): void
+    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            'neos_contentgraph_node',
+            $tableNamePrefix . '_node',
             [
                 'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
@@ -87,9 +87,9 @@ final class NodeRecord
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete('neos_contentgraph_node', [
+        $databaseConnection->delete($tableNamePrefix . '_node', [
             'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }

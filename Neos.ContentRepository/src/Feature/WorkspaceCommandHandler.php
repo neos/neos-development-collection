@@ -70,16 +70,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    protected ContentGraphInterface $contentGraph;
-
     public function __construct(
         WorkspaceFinder $workspaceFinder,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        ContentGraphInterface $contentGraph,
     ) {
         $this->workspaceFinder = $workspaceFinder;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->contentGraph = $contentGraph;
     }
 
 

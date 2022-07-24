@@ -51,7 +51,7 @@ final class NodeFactory
     }
 
     /**
-     * @param array<string,string> $nodeRow Node Row from projection (neos_contentgraph_node table)
+     * @param array<string,string> $nodeRow Node Row from projection (<prefix>_node table)
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowToNode(
