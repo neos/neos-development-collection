@@ -480,7 +480,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash,
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+                  "' . $event->getContentStreamIdentifier() . '" AS contentstreamidentifier
                 FROM
                     neos_contentgraph_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
@@ -499,7 +499,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                   affectednodeaggregateidentifier
                 )
                 SELECT
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
+                  "' . $event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateidentifier,
                   r.affectednodeaggregateidentifier
@@ -596,7 +596,6 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                         1658580583
                     );
                 }
-
 
                 $this->updateNodeRecordWithCopyOnWrite(
                     $event->contentStreamIdentifier,
