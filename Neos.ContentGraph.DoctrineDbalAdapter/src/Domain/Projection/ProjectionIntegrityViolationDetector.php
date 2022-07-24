@@ -66,7 +66,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $invalidlyHashedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
             'SELECT * FROM neos_contentgraph_hierarchyrelation
                 WHERE dimensionspacepointhash != MD5(dimensionspacepoint)'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($invalidlyHashedHierarchyRelationRecords as $record) {
             $result->addError(new Error(
@@ -88,7 +88,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             [
                 'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($hierarchyRelationRecordsAppearingMultipleTimes as $record) {
             $result->addError(new Error(
@@ -123,7 +123,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 [
                     'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']
                 ]
-            )->fetchAll();
+            )->fetchAllAssociative();
 
             $result->addError(new Error(
                 'Siblings ' . implode(', ', array_map(function (array $record) {
@@ -153,7 +153,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             [
                 'tethered' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($unnamedTetheredNodeRecords as $unnamedTetheredNodeRecord) {
             $result->addError(new Error(
@@ -189,7 +189,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 AND cr.contentstreamidentifier = h.contentstreamidentifier
                 AND cr.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE cr.affectednodeaggregateidentifier IS NULL'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($nodeRecordsWithMissingRestrictions as $nodeRecord) {
             $result->addError(new Error(
@@ -227,7 +227,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 AND ch.dimensionspacepointhash = r.dimensionspacepointhash
             WHERE p.nodeaggregateidentifier IS NULL
             OR c.nodeaggregateidentifier IS NULL'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($restrictionRelationRecordsWithoutOriginOrAffectedNode as $relationRecord) {
             $result->addError(new Error(
@@ -254,7 +254,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 WHERE nodeanchorpoint NOT IN (
                     SELECT relationanchorpoint FROM neos_contentgraph_node
                 )'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($referenceRelationRecordsDetachedFromSource as $record) {
             $result->addError(new Error(
@@ -279,7 +279,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
                 WHERE d.nodeaggregateidentifier IS NULL
                 GROUP BY s.nodeaggregateidentifier'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         foreach ($referenceRelationRecordsWithInvalidTarget as $record) {
             $result->addError(new Error(
@@ -348,7 +348,7 @@ WHERE
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
-                )->fetchAll();
+                )->fetchAllAssociative();
 
                 if (!empty($nodeAggregateIdentifiersInCycles)) {
                     $nodeAggregateIdentifiersInCycles = array_map(function (array $record) {
@@ -400,7 +400,7 @@ WHERE
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
-                )->fetchAll();
+                )->fetchAllAssociative();
 
                 foreach ($ambiguousNodeAggregateRecords as $ambiguousRecord) {
                     $result->addError(new Error(
@@ -436,7 +436,7 @@ WHERE
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
-                )->fetchAll();
+                )->fetchAllAssociative();
 
                 foreach ($nodeRecordsWithMultipleParents as $record) {
                     $result->addError(new Error(
@@ -473,7 +473,7 @@ WHERE
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                         'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
                     ]
-                )->fetchAll();
+                )->fetchAllAssociative();
 
                 if (count($nodeAggregateRecords) > 1) {
                     $result->addError(new Error(
@@ -515,7 +515,7 @@ WHERE
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                         'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
                     ]
-                )->fetchAll();
+                )->fetchAllAssociative();
 
                 if (count($nodeAggregateRecords) > 1) {
                     $result->addError(new Error(
@@ -554,7 +554,7 @@ WHERE
                 [
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier
                 ]
-            )->fetchAll();
+            )->fetchAllAssociative();
 
             foreach ($excessivelyCoveringNodeRecords as $excessivelyCoveringNodeRecord) {
                 $result->addError(new Error(
@@ -597,7 +597,7 @@ WHERE
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
                 ]
-            )->fetchAll();
+            )->fetchAllAssociative();
 
             foreach ($nodeRecordsWithMissingOriginCoverage as $nodeRecord) {
                 $result->addError(new Error(
@@ -624,7 +624,7 @@ WHERE
 
         $rows = $connection->executeQuery(
             'SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         return array_map(function (array $row) {
             return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
@@ -640,7 +640,7 @@ WHERE
     {
         $records = $this->client->getConnection()->executeQuery(
             'SELECT DISTINCT dimensionspacepoint FROM neos_contentgraph_hierarchyrelation'
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $records = array_map(function (array $record) {
             return DimensionSpacePoint::fromJsonString($record['dimensionspacepoint']);

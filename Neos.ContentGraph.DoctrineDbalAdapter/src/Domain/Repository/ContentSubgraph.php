@@ -226,7 +226,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
         $query->addToQuery('ORDER BY h.position ASC');
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeData) {
             $node = $this->nodeFactory->mapNodeRowToNode(
                 $nodeData,
                 $this->getDimensionSpacePoint(),
@@ -428,7 +428,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, r.name AS referencename, r.prop
             );
         }
 
-        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAll();
+        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $referenceRows,
@@ -492,7 +492,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name, r.name AS referencename, r.prop
             );
         }
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAll();
+        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $nodeRows,
@@ -550,7 +550,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
             'p'
         );
 
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -662,7 +662,7 @@ WHERE
 
             $query->addToQuery('ORDER BY h.position LIMIT 1');
 
-            $nodeData = $query->execute($this->getDatabaseConnection())->fetch();
+            $nodeData = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
             if ($nodeData) {
                 $node = $this->nodeFactory->mapNodeRowToNode(
@@ -720,7 +720,7 @@ WHERE
         }
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -775,7 +775,7 @@ WHERE
         }
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -830,7 +830,7 @@ WHERE
         }
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -897,7 +897,7 @@ WHERE
                 'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->hash,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $nodePathSegments = [];
 
@@ -1022,7 +1022,7 @@ order by level asc, position asc;')
             '###VISIBILITY_CONSTRAINTS_RECURSION###'
         );
 
-        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
+        $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         $subtreesByNodeIdentifier = [];
         $subtreesByNodeIdentifier['ROOT'] = new Subtree(0);
@@ -1174,7 +1174,7 @@ order by level asc, position asc;')
 
         // TODO: maybe make Nodes lazy-capable as well (so we can yield the results inside the foreach loop)
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -1200,7 +1200,9 @@ SELECT COUNT(*) FROM neos_contentgraph_node n
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
-        return (int) $query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
+        $row = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+
+        return $row ? (int)$row['COUNT(*)'] : 0;
     }
 
     public function getInMemoryCache(): InMemoryCache

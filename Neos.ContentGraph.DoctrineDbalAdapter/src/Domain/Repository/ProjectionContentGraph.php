@@ -27,35 +27,18 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The read only content graph for use by the {@see GraphProjector}. This is the class for low-level operations
  * within the projector, where implementation details of the graph structure are known.
  *
  * This is NO PUBLIC API in any way.
- *
- * @Flow\Scope("singleton")
  */
 class ProjectionContentGraph
 {
     public function __construct(
         private readonly DbalClientInterface $client
     ) {
-    }
-
-    /**
-     * @return bool
-     * @throws DBALException
-     */
-    public function isEmpty(): bool
-    {
-        return (int)$this->getDatabaseConnection()
-                ->executeQuery('SELECT count(*) FROM neos_contentgraph_node')
-                ->fetch()['count'] > 0
-            && (int)$this->getDatabaseConnection()
-                ->executeQuery('SELECT count(*) FROM neos_contentgraph_hierarchyrelation')
-                ->fetch()['count'] > 0;
     }
 
     /**
@@ -88,7 +71,7 @@ class ProjectionContentGraph
  AND ph.dimensionspacepointhash = :originDimensionSpacePointHash
  AND ch.dimensionspacepointhash = :originDimensionSpacePointHash',
             $params
-        )->fetch();
+        )->fetchAssociative();
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
     }
@@ -117,7 +100,7 @@ class ProjectionContentGraph
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
     }
@@ -146,7 +129,7 @@ class ProjectionContentGraph
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
     }
@@ -174,7 +157,7 @@ class ProjectionContentGraph
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         if (count($rows) > 1) {
             throw new \Exception(
@@ -208,7 +191,7 @@ class ProjectionContentGraph
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         return array_map(
             fn ($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']),
@@ -229,7 +212,7 @@ class ProjectionContentGraph
             [
                 'relationAnchorPoint' => (string)$nodeRelationAnchorPoint,
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
     }
@@ -257,6 +240,7 @@ class ProjectionContentGraph
             );
         }
         if ($succeedingSiblingAnchorPoint) {
+            /** @var array<string,mixed> $succeedingSiblingRelation */
             $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
                           WHERE h.childnodeanchor = :succeedingSiblingAnchorPoint
@@ -267,12 +251,12 @@ class ProjectionContentGraph
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
-            )->fetch();
+            )->fetchAssociative();
 
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
             $parentAnchorPoint = $succeedingSiblingRelation['parentnodeanchor'];
 
-            $precedingSiblingPosition = $this->getDatabaseConnection()->executeQuery(
+            $precedingSiblingData = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
                           WHERE h.parentnodeanchor = :anchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -284,7 +268,8 @@ class ProjectionContentGraph
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     'position' => $succeedingSiblingPosition
                 ]
-            )->fetch()['position'] ?? null;
+            )->fetchAssociative();
+            $precedingSiblingPosition = $precedingSiblingData ? ($precedingSiblingData['position'] ?? null) : null;
             if (!is_null($precedingSiblingPosition)) {
                 $precedingSiblingPosition = (int) $precedingSiblingPosition;
             }
@@ -296,6 +281,7 @@ class ProjectionContentGraph
             }
         } else {
             if (!$parentAnchorPoint) {
+                /** @var array<string,mixed> $childHierarchyRelationData */
                 $childHierarchyRelationData = $this->getDatabaseConnection()->executeQuery(
                     'SELECT h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
                       WHERE h.childnodeanchor = :childAnchorPoint
@@ -306,7 +292,7 @@ class ProjectionContentGraph
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
-                )->fetch();
+                )->fetchAssociative();
                 $parentAnchorPoint = NodeRelationAnchorPoint::fromString(
                     $childHierarchyRelationData['parentnodeanchor']
                 );
@@ -321,7 +307,7 @@ class ProjectionContentGraph
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
-            )->fetch();
+            )->fetchAssociative();
 
             if ($rightmostSucceedingSiblingRelationData) {
                 $position = ((int)$rightmostSucceedingSiblingRelationData['position'])
@@ -637,7 +623,7 @@ class ProjectionContentGraph
             [
                 'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $nodeAggregateIdentifiers = [];
         foreach ($rows as $row) {
