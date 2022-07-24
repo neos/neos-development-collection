@@ -42,6 +42,8 @@ use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
+use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
+use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 
@@ -147,7 +149,8 @@ final class ContentRepositoryFactory
                 new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
                     $this->nodeTypeManager,
                     $this->buildPropertyConverter()
-                )
+                ),
+                $this->tableNamePrefix
             );
         }
         return $this->contentGraph;
@@ -177,7 +180,10 @@ final class ContentRepositoryFactory
     private function buildEventStore(): EventStoreInterface
     {
         if (!$this->eventStore) {
-            $this->eventStore = // TODO IMPLEMENT
+            $this->eventStore = new DoctrineEventStore(
+                $this->dbalClient->getConnection(),
+                $this->tableNamePrefix . '_eventstore' // TODO: Naming conventions for projections vs event store? (p_ prefix?)
+            );
         }
         return $this->eventStore;
     }
@@ -191,7 +197,7 @@ final class ContentRepositoryFactory
             // TODO: dependent on doctrine or postgres
                 new DoctrineDbalContentGraphProjection(
                     $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage(),
+                    $this->buildCheckpointStorage('DoctrineDbalContentGraphProjection'),
                     $this->dbalClient,
                     new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
                         $this->nodeTypeManager,
@@ -209,7 +215,7 @@ final class ContentRepositoryFactory
         $projections = $projections->with(
             new ContentStreamProjection(
                 $this->buildEventNormalizer(),
-                $this->buildCheckpointStorage(),
+                $this->buildCheckpointStorage('ContentStreamProjection'),
                 $this->dbalClient,
                 $this->tableNamePrefix
             )
@@ -217,7 +223,7 @@ final class ContentRepositoryFactory
         $projections = $projections->with(
             new WorkspaceProjection(
                 $this->buildEventNormalizer(),
-                $this->buildCheckpointStorage(),
+                $this->buildCheckpointStorage('WorkspaceProjection'),
                 $this->dbalClient,
                 $this->tableNamePrefix
             )
@@ -228,7 +234,7 @@ final class ContentRepositoryFactory
         $projections = $projections->with(
             new ChangeProjection(
                 $this->buildEventNormalizer(),
-                $this->buildCheckpointStorage(),
+                $this->buildCheckpointStorage('ChangeProjection'),
                 $this->dbalClient,
                 $workspaceFinder,
                 $this->tableNamePrefix
@@ -256,9 +262,12 @@ final class ContentRepositoryFactory
         return $this->projectionCatchUpTrigger;
     }
 
-    private function buildCheckpointStorage(): CheckpointStorageInterface
+    private function buildCheckpointStorage(string $subscriberId): CheckpointStorageInterface
     {
-        // TODO
+        new DoctrineCheckpointStorage(
+            $this->dbalClient->getConnection(),
+            $this->tableNamePrefix . 'checkpoint',
+            $subscriberId
+        );
     }
-
 }
