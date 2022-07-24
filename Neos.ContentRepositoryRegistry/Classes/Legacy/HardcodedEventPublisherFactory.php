@@ -40,7 +40,7 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPartia
 use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Projection\Changes\ChangeProjector;
+use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
@@ -72,13 +72,13 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
     {
         $this->mappings = EventToListenerMappings::fromArray([
             // ChangeProjector
-            EventToListenerMapping::create(NodeAggregateWasMoved::class, ChangeProjector::class, []),
-            EventToListenerMapping::create(NodePropertiesWereSet::class, ChangeProjector::class, []),
-            EventToListenerMapping::create(NodeAggregateWithNodeWasCreated::class, ChangeProjector::class, []),
-            EventToListenerMapping::create(NodeAggregateWasDisabled::class, ChangeProjector::class, []),
-            EventToListenerMapping::create(NodeAggregateWasEnabled::class, ChangeProjector::class, []),
-            EventToListenerMapping::create(NodeAggregateWasRemoved::class, ChangeProjector::class, []),
-            EventToListenerMapping::create(DimensionSpacePointWasMoved::class, ChangeProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateWasMoved::class, ChangeProjection::class, []),
+            EventToListenerMapping::create(NodePropertiesWereSet::class, ChangeProjection::class, []),
+            EventToListenerMapping::create(NodeAggregateWithNodeWasCreated::class, ChangeProjection::class, []),
+            EventToListenerMapping::create(NodeAggregateWasDisabled::class, ChangeProjection::class, []),
+            EventToListenerMapping::create(NodeAggregateWasEnabled::class, ChangeProjection::class, []),
+            EventToListenerMapping::create(NodeAggregateWasRemoved::class, ChangeProjection::class, []),
+            EventToListenerMapping::create(DimensionSpacePointWasMoved::class, ChangeProjection::class, []),
 
             // ContentStreamProjector
             EventToListenerMapping::create(ContentStreamWasCreated::class, ContentStreamProjector::class, []),

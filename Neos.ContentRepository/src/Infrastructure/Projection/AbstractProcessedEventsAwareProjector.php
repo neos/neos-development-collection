@@ -16,7 +16,7 @@ use Neos\EventSourcing\EventStore\EventEnvelope;
  * (see {@see CommandResult} for explanation)
  * @internal
  */
-abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsAwareProjectorInterface
+abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsAwareProjectorInterface // TODO: REMOVE ME HERE
 {
     private bool $assumeProjectorRunsSynchronously = false;
 

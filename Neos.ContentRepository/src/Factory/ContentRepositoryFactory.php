@@ -31,6 +31,7 @@ use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
@@ -184,41 +185,57 @@ final class ContentRepositoryFactory
     private function buildProjections(): Projections
     {
         // TODO: PROJECTIONS
-        return Projections::create()
-            ->with(
-                new ContentGraphProjection(
-                // TODO: dependent on doctrine or postgres
-                    new DoctrineDbalContentGraphProjection(
-                        $this->buildEventNormalizer(),
-                        $this->buildCheckpointStorage(),
+        $projections = Projections::create();
+        $projections = $projections->with(
+            new ContentGraphProjection(
+            // TODO: dependent on doctrine or postgres
+                new DoctrineDbalContentGraphProjection(
+                    $this->buildEventNormalizer(),
+                    $this->buildCheckpointStorage(),
+                    $this->dbalClient,
+                    new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
+                        $this->nodeTypeManager,
+                        $this->buildPropertyConverter()
+                    ),
+                    new ProjectionContentGraph(
                         $this->dbalClient,
-                        new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
-                            $this->nodeTypeManager,
-                            $this->buildPropertyConverter()
-                        ),
-                        new ProjectionContentGraph(
-                            $this->dbalClient,
-                            $this->tableNamePrefix . '_graph'
-                        ),
-                        $this->throwableStorage,
-                        $this->tableNamePrefix . '_graph'
-                    )
-                )
-            )->with(
-                new ContentStreamProjection(
-                    $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage(),
-                    $this->dbalClient,
+                        $this->tableNamePrefix
+                    ),
+                    $this->throwableStorage,
                     $this->tableNamePrefix
                 )
-            )->with(
-                new WorkspaceProjection(
-                    $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage(),
-                    $this->dbalClient,
-                    $this->tableNamePrefix
-                )
-            );
+            )
+        );
+        $projections = $projections->with(
+            new ContentStreamProjection(
+                $this->buildEventNormalizer(),
+                $this->buildCheckpointStorage(),
+                $this->dbalClient,
+                $this->tableNamePrefix
+            )
+        );
+        $projections = $projections->with(
+            new WorkspaceProjection(
+                $this->buildEventNormalizer(),
+                $this->buildCheckpointStorage(),
+                $this->dbalClient,
+                $this->tableNamePrefix
+            )
+        );
+
+        $workspaceFinder = $projections->get(WorkspaceProjection::class)->getState();
+        assert($workspaceFinder instanceof WorkspaceFinder);
+        $projections = $projections->with(
+            new ChangeProjection(
+                $this->buildEventNormalizer(),
+                $this->buildCheckpointStorage(),
+                $this->dbalClient,
+                $workspaceFinder,
+                $this->tableNamePrefix
+            )
+        );
+
+        return $projections;
     }
 
     private function buildEventNormalizer(): EventNormalizer

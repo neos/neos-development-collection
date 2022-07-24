@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
-use Neos\ContentRepository\Projection\Changes\ChangeProjector;
+use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
@@ -43,7 +43,7 @@ class CrCommandController extends CommandController
         } elseif ($projectionName === 'documentUriPath') {
             $projector = $this->objectManager->get(DocumentUriPathProjector::class);
         } elseif ($projectionName === 'change') {
-            $projector = $this->objectManager->get(ChangeProjector::class);
+            $projector = $this->objectManager->get(ChangeProjection::class);
         } elseif ($projectionName === 'workspace') {
             $projector = $this->objectManager->get(WorkspaceProjection::class);
         } elseif ($projectionName === 'assetUsage') {

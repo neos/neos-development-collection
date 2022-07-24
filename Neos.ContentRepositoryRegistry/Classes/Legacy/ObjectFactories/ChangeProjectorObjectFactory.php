@@ -13,7 +13,7 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
  */
 
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\Changes\ChangeProjector;
+use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 
 final class ChangeProjectorObjectFactory
@@ -25,9 +25,9 @@ final class ChangeProjectorObjectFactory
     {
     }
 
-    public function buildChangeProjector(): ChangeProjector
+    public function buildChangeProjector(): ChangeProjection
     {
-        return new ChangeProjector(
+        return new ChangeProjection(
             $this->dbalClient,
             $this->workspaceFinder,
         );

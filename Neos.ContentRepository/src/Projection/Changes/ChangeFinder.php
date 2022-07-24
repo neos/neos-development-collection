@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\Changes;
 
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -25,12 +26,15 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-final class ChangeFinder
+final class ChangeFinder implements ProjectionStateInterface
 {
     /**
      * @param DbalClientInterface $client
      */
-    public function __construct(private readonly DbalClientInterface $client)
+    public function __construct(
+        private readonly DbalClientInterface $client,
+        private readonly string $tableNamePrefix
+    )
     {
     }
 
@@ -43,7 +47,7 @@ final class ChangeFinder
         $connection = $this->client->getConnection();
         $changeRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_change
+                SELECT * FROM ' . $this->tableNamePrefix . '_change
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
             ',
             [
@@ -62,7 +66,7 @@ final class ChangeFinder
         $connection = $this->client->getConnection();
         return (int)$connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_change
+                SELECT * FROM ' . $this->tableNamePrefix . '_change
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
             ',
             [

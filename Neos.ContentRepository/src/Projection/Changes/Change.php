@@ -86,9 +86,9 @@ class Change
     /**
      * @param Connection $databaseConnection
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert('neos_contentrepository_projection_change', [
+        $databaseConnection->insert($tableNamePrefix . '_change', [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
@@ -100,10 +100,10 @@ class Change
         ]);
     }
 
-    public function updateToDatabase(Connection $databaseConnection): void
+    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            'neos_contentrepository_projection_change',
+            $tableNamePrefix . '_change',
             [
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,

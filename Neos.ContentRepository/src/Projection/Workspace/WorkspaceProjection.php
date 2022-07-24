@@ -58,7 +58,6 @@ class WorkspaceProjection implements ProjectionInterface
     ) {
     }
 
-
     public function setUp(): void
     {
         $this->setupTables();
@@ -113,7 +112,6 @@ class WorkspaceProjection implements ProjectionInterface
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_workspace');
     }
-
 
     public function canHandle(Event $event): bool
     {
