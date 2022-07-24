@@ -85,11 +85,11 @@ class Version20210314010646 extends AbstractMigration
     name varchar(255) NOT NULL,
     position smallint NOT NULL,
     properties jsonb NULL,
-    destinationNodeAggregateIdentifier varchar(255) NOT NULL,
+    targetnodeaggregateidentifier varchar(255) NOT NULL,
     PRIMARY KEY(originnodeanchor, name, position)
 )');
         $this->addSql('CREATE INDEX REFERENCE_ORIGIN ON neos_contentgraph_referencerelation (originnodeanchor);');
-        $this->addSql(/** @lang PostgreSQL */'CREATE INDEX REFERENCE_DESTINATION ON neos_contentgraph_referencerelation (destinationNodeAggregateIdentifier);');
+        $this->addSql(/** @lang PostgreSQL */'CREATE INDEX REFERENCE_TARGET ON neos_contentgraph_referencerelation (targetnodeaggregateidentifier);');
     }
 
     public function down(Schema $schema): void

@@ -156,11 +156,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
-            'destn.*, desth.contentstreamidentifier, desth.dimensionspacepoint'
+            'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint'
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withOriginNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
-            ->withDestinationRestriction($this->visibilityConstraints);
+            ->withTargetRestriction($this->visibilityConstraints);
 
         $orderings = [];
         if ($name) {
@@ -188,7 +188,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             'orgn.*, orgh.contentstreamidentifier, orgh.dimensionspacepoint'
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withDestinationNodeAggregateIdentifier($nodeAggregateIdentifier)
+            ->withTargetNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withOriginRestriction($this->visibilityConstraints);
 
         $orderings = [];

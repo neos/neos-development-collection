@@ -358,7 +358,7 @@ trait NodeVariation
 
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $destinationRelationAnchorPoint
+        NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         // we don't care whether the target node aggregate covers the variant's origin
         // since if it doesn't, it already didn't match the source's coverage before
@@ -369,20 +369,20 @@ trait NodeVariation
                   name,
                   position,
                   properties,
-                  destinationnodeaggregateidentifier
+                  targetnodeaggregateidentifier
                 )
                 SELECT
-                  :destinationRelationAnchorPoint AS originnodeanchor,
+                  :targetRelationAnchorPoint AS originnodeanchor,
                   ref.name,
                   ref.position,
                   ref.properties,
-                  ref.destinationnodeaggregateidentifier
+                  ref.targetnodeaggregateidentifier
                 FROM
                     ' . ReferenceRelationRecord::TABLE_NAME . ' ref
                     WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
-            'destinationRelationAnchorPoint' => $destinationRelationAnchorPoint->value
+            'targetRelationAnchorPoint' => $targetRelationAnchorPoint->value
         ]);
     }
 }

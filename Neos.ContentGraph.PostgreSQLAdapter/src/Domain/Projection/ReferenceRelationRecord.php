@@ -32,7 +32,7 @@ final class ReferenceRelationRecord
         public readonly PropertyName $name,
         public readonly int $position,
         public readonly ?SerializedPropertyValues $properties,
-        public readonly NodeAggregateIdentifier $destinationNodeAggregateIdentifier
+        public readonly NodeAggregateIdentifier $targetNodeAggregateIdentifier
     ) {
     }
 
@@ -48,7 +48,7 @@ final class ReferenceRelationRecord
             $databaseRow['properties']
                 ? SerializedPropertyValues::fromJsonString($databaseRow['properties'])
                 : null,
-            NodeAggregateIdentifier::fromString($databaseRow['destinationnodeaggregateidentifier'])
+            NodeAggregateIdentifier::fromString($databaseRow['targetnodeaggregateidentifier'])
         );
     }
 
@@ -64,7 +64,7 @@ final class ReferenceRelationRecord
             'properties' => $this->properties
                 ? \json_encode($this->properties)
                 : null,
-            'destinationnodeaggregateidentifier' => (string)$this->destinationNodeAggregateIdentifier
+            'targetnodeaggregateidentifier' => (string)$this->targetNodeAggregateIdentifier
         ]);
     }
 
@@ -75,7 +75,7 @@ final class ReferenceRelationRecord
             $this->name,
             $this->position,
             $this->properties,
-            $this->destinationNodeAggregateIdentifier
+            $this->targetNodeAggregateIdentifier
         );
     }
 }
