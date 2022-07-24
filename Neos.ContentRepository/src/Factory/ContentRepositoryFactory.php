@@ -113,7 +113,13 @@ final class ContentRepositoryFactory
                     $this->contentDimensionZookeeper,
                     $this->interDimensionalVariationGraph
                 ),
-                new NodeDuplicationCommandHandler() // TODO
+                new NodeDuplicationCommandHandler(
+                    $this->buildContentStreamRepository(),
+                    $this->nodeTypeManager,
+                    $this->buildReadSideMemoryCacheManager(),
+                    $this->contentDimensionZookeeper,
+                    $this->interDimensionalVariationGraph
+                )
             );
         }
         return $this->commandBus;

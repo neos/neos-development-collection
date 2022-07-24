@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeDuplication;
 
+use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -32,57 +34,22 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\CopyNodesRecursively;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Ramsey\Uuid\Uuid;
 
-final class NodeDuplicationCommandHandler
+final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
 
-    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
-
-    protected ContentGraphInterface $contentGraph;
-
-    protected ContentStreamRepository $contentStreamRepository;
-
-    protected NodeTypeManager $nodeTypeManager;
-
-    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
-    protected NodeAggregateEventPublisher $nodeAggregateEventPublisher;
-
-    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
-    protected RuntimeBlocker $runtimeBlocker;
-
-    private ContentDimensionZookeeper $contentDimensionZookeeper;
-
     public function __construct(
-        NodeAggregateCommandHandler $nodeAggregateCommandHandler,
-        ContentGraphInterface $contentGraph,
-        ContentStreamRepository $contentStreamRepository,
-        NodeTypeManager $nodeTypeManager,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        NodeAggregateEventPublisher $nodeAggregateEventPublisher,
-        ContentDimensionZookeeper $contentDimensionZookeeper,
-        InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        RuntimeBlocker $runtimeBlocker
+        private readonly ContentStreamRepository $contentStreamRepository,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
     ) {
-        $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
-        $this->contentGraph = $contentGraph;
-        $this->contentStreamRepository = $contentStreamRepository;
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->nodeAggregateEventPublisher = $nodeAggregateEventPublisher;
-        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     protected function getContentStreamRepository(): ContentStreamRepository
@@ -100,13 +67,28 @@ final class NodeDuplicationCommandHandler
         return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
     }
 
+
+    public function canHandle(CommandInterface $command): bool
+    {
+        return $command instanceof CopyNodesRecursively;
+    }
+
+    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        if ($command instanceof CopyNodesRecursively) {
+            return $this->handleCopyNodesRecursively($command, $contentRepository);
+        }
+
+        throw new \RuntimeException('Command not supported');
+    }
+
     /**
      * @throws NodeConstraintException
      */
     private function handleCopyNodesRecursively(CopyNodesRecursively $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $this->requireDimensionSpacePointToExist(

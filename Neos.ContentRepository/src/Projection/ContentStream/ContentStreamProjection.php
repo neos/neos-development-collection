@@ -66,6 +66,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @internal
+ * @implements ProjectionInterface<ContentStreamFinder>
  */
 class ContentStreamProjection implements ProjectionInterface
 {
@@ -196,7 +197,8 @@ class ContentStreamProjection implements ProjectionInterface
     {
         if (!$this->contentStreamFinder) {
             $this->contentStreamFinder = new ContentStreamFinder(
-                $this->dbalClient
+                $this->dbalClient,
+                $this->tableNamePrefix
             );
         }
         return $this->contentStreamFinder;
