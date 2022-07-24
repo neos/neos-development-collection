@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Feature\NodeDisabling;
  * source code.
  */
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\EventStore\Events;
@@ -44,7 +45,7 @@ trait NodeDisabling
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    private function handleDisableNodeAggregate(DisableNodeAggregate $command): EventsToPublish
+    private function handleDisableNodeAggregate(DisableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -52,7 +53,8 @@ trait NodeDisabling
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
@@ -97,7 +99,7 @@ trait NodeDisabling
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function handleEnableNodeAggregate(EnableNodeAggregate $command): EventsToPublish
+    public function handleEnableNodeAggregate(EnableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -105,7 +107,8 @@ trait NodeDisabling
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,

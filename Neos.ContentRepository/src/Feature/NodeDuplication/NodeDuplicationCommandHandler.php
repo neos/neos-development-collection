@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeDuplication;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
@@ -84,11 +85,6 @@ final class NodeDuplicationCommandHandler
         $this->runtimeBlocker = $runtimeBlocker;
     }
 
-    protected function getContentGraph(): ContentGraphInterface
-    {
-        return $this->contentGraph;
-    }
-
     protected function getContentStreamRepository(): ContentStreamRepository
     {
         return $this->contentStreamRepository;
@@ -107,7 +103,7 @@ final class NodeDuplicationCommandHandler
     /**
      * @throws NodeConstraintException
      */
-    private function handleCopyNodesRecursively(CopyNodesRecursively $command): EventsToPublish
+    private function handleCopyNodesRecursively(CopyNodesRecursively $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -126,24 +122,28 @@ final class NodeDuplicationCommandHandler
             $command->getContentStreamIdentifier(),
             $nodeType,
             $command->getTargetNodeName(),
-            [$command->getTargetParentNodeAggregateIdentifier()]
+            [$command->getTargetParentNodeAggregateIdentifier()],
+            $contentRepository
         );
 
         // Constraint: The new nodeAggregateIdentifiers are not allowed to exist yet.
         $this->requireNewNodeAggregateIdentifiersToNotExist(
             $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifierMapping()
+            $command->getNodeAggregateIdentifierMapping(),
+            $contentRepository
         );
 
         // Constraint: the parent node must exist in the command's DimensionSpacePoint as well
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),
-            $command->getTargetParentNodeAggregateIdentifier()
+            $command->getTargetParentNodeAggregateIdentifier(),
+            $contentRepository
         );
         if ($command->getTargetSucceedingSiblingNodeAggregateIdentifier()) {
             $this->requireProjectedNodeAggregate(
                 $command->getContentStreamIdentifier(),
-                $command->getTargetSucceedingSiblingNodeAggregateIdentifier()
+                $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
+                $contentRepository
             );
         }
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -167,7 +167,8 @@ final class NodeDuplicationCommandHandler
                 $command->getTargetNodeName(),
                 $command->getTargetParentNodeAggregateIdentifier(),
                 $command->getTargetDimensionSpacePoint(),
-                $coveredDimensionSpacePoints
+                $coveredDimensionSpacePoints,
+                $contentRepository
             );
         }
 
@@ -200,10 +201,11 @@ final class NodeDuplicationCommandHandler
 
     private function requireNewNodeAggregateIdentifiersToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
+        ContentRepository $contentRepository
     ): void {
         foreach ($nodeAggregateIdentifierMapping->getAllNewNodeAggregateIdentifiers() as $nodeAggregateIdentifier) {
-            $this->requireProjectedNodeAggregateToNotExist($contentStreamIdentifier, $nodeAggregateIdentifier);
+            $this->requireProjectedNodeAggregateToNotExist($contentStreamIdentifier, $nodeAggregateIdentifier, $contentRepository);
         }
     }
 

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeModification;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -39,16 +40,18 @@ trait NodeModification
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface;
 
-    private function handleSetNodeProperties(SetNodeProperties $command): EventsToPublish
+    private function handleSetNodeProperties(SetNodeProperties $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $nodeTypeName = $nodeAggregate->getNodeTypeName();
@@ -69,7 +72,7 @@ trait NodeModification
         return $this->handleSetSerializedNodeProperties($lowLevelCommand);
     }
 
-    private function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): EventsToPublish
+    private function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -77,7 +80,8 @@ trait NodeModification
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);

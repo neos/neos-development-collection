@@ -50,7 +50,6 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Exception\BaseWorkspaceH
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceHasNoBaseWorkspaceName;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -71,10 +70,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
     public function __construct(
-        WorkspaceFinder $workspaceFinder,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
     ) {
-        $this->workspaceFinder = $workspaceFinder;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
@@ -121,7 +118,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleCreateWorkspace(CreateWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $existingWorkspace = $this->workspaceFinder->findOneByName($command->workspaceName);
+        $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
@@ -129,7 +126,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             ), 1505830958921);
         }
 
-        $baseWorkspace = $this->workspaceFinder->findOneByName($command->baseWorkspaceName);
+        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf(
                 'The workspace %s (base workspace of %s) does not exist',
@@ -174,7 +171,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     public function handleCreateRootWorkspace(CreateRootWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $existingWorkspace = $this->workspaceFinder->findOneByName($command->workspaceName);
+        $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
@@ -218,7 +215,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     public function handlePublishWorkspace(PublishWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // TODO!!!
@@ -372,7 +369,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     public function handleRebaseWorkspace(RebaseWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // TODO: please check the code below in-depth. it does:
@@ -513,7 +510,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         \Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 1) separate commands in two halves - the ones MATCHING the nodes from the command, and the REST
@@ -630,7 +627,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 1) filter commands, only keeping the ones NOT MATCHING the nodes from the command
@@ -719,7 +716,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     public function handleDiscardWorkspace(DiscardWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName());
+        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         $newContentStream = $command->getNewContentStreamIdentifier();
@@ -754,9 +751,9 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @throws WorkspaceDoesNotExist
      */
-    private function requireWorkspace(WorkspaceName $workspaceName): Workspace
+    private function requireWorkspace(WorkspaceName $workspaceName, ContentRepository $contentRepository): Workspace
     {
-        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }

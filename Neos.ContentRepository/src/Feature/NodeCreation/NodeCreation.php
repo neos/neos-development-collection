@@ -13,6 +13,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeCreation;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
@@ -153,7 +154,8 @@ trait NodeCreation
      * @throws \Neos\Flow\Security\Exception
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
-        CreateNodeAggregateWithNodeAndSerializedProperties $command
+        CreateNodeAggregateWithNodeAndSerializedProperties $command,
+        ContentRepository $contentRepository
     ): EventsToPublish {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -169,21 +171,25 @@ trait NodeCreation
                 $command->contentStreamIdentifier,
                 $nodeType,
                 $command->nodeName,
-                [$command->parentNodeAggregateIdentifier]
+                [$command->parentNodeAggregateIdentifier],
+                $contentRepository
             );
         }
         $this->requireProjectedNodeAggregateToNotExist(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->parentNodeAggregateIdentifier
+            $command->parentNodeAggregateIdentifier,
+            $contentRepository
         );
         if ($command->succeedingSiblingNodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
-                $command->succeedingSiblingNodeAggregateIdentifier
+                $command->succeedingSiblingNodeAggregateIdentifier,
+                $contentRepository
             );
         }
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -202,7 +208,8 @@ trait NodeCreation
                 $command->nodeName,
                 $command->parentNodeAggregateIdentifier,
                 $command->originDimensionSpacePoint,
-                $coveredDimensionSpacePoints
+                $coveredDimensionSpacePoints,
+                $contentRepository
             );
         }
         $descendantNodeAggregateIdentifiers = self::populateNodeAggregateIdentifiers(
@@ -218,7 +225,8 @@ trait NodeCreation
         ) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $command->contentStreamIdentifier,
-                $descendantNodeAggregateIdentifier
+                $descendantNodeAggregateIdentifier,
+                $contentRepository
             );
         }
 

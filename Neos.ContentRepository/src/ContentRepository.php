@@ -22,10 +22,16 @@ use Neos\ContentRepository\CommandHandler\PendingProjections;
 use Neos\ContentRepository\EventStore\DecoratedEvent;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
@@ -53,7 +59,8 @@ final class ContentRepository
         private readonly EventNormalizer $eventNormalizer,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
     )
-    {}
+    {
+    }
 
     /**
      * The only API to send commands (mutation intentions) to the system.
@@ -72,7 +79,7 @@ final class ContentRepository
 
         // the following logic could also be done in an AppEventStore::commit method (being called directly from the individual
         // Command Handlers).
-        $normalizedEvents = Events::fromArray($eventsToPublish->events->map(fn (EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event)));
+        $normalizedEvents = Events::fromArray($eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event)));
         $commitResult = $this->eventStore->commit($eventsToPublish->streamName, $normalizedEvents, $eventsToPublish->expectedVersion);
         // for performance reasons, we do not want to update ALL projections all the time; but instead only
         // the projections which are interested in the events from above.
@@ -149,5 +156,19 @@ final class ContentRepository
     }
 
     /** TODO  public function getNodeTypeManager() */
-    /** TODO  public function getContentGraph() */
+
+    public function getContentGraph(): ContentGraphInterface
+    {
+        return $this->projectionState(ContentGraphProjection::class);
+    }
+
+    public function getWorkspaceFinder(): WorkspaceFinder
+    {
+        return $this->projectionState(WorkspaceProjection::class);
+    }
+
+    public function getContentStreamFinder(): ContentStreamFinder
+    {
+        return $this->projectionState(ContentStreamProjection::class);
+    }
 }

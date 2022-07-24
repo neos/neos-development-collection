@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeVariation;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
@@ -46,14 +47,15 @@ trait NodeVariation
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
-    private function handleCreateNodeVariant(CreateNodeVariant $command): EventsToPublish
+    private function handleCreateNodeVariant(CreateNodeVariant $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
         $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
@@ -64,7 +66,8 @@ trait NodeVariation
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier,
-            $command->sourceOrigin
+            $command->sourceOrigin,
+            $contentRepository
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $parentNodeAggregate,
@@ -76,7 +79,8 @@ trait NodeVariation
             $command->sourceOrigin,
             $command->targetOrigin,
             $nodeAggregate,
-            $command->initiatingUserIdentifier
+            $command->initiatingUserIdentifier,
+            $contentRepository
         );
 
         return new EventsToPublish(

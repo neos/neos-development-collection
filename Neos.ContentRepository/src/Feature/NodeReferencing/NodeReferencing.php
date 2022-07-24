@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -39,7 +40,7 @@ trait NodeReferencing
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    private function handleSetNodeReferences(SetNodeReferences $command): EventsToPublish
+    private function handleSetNodeReferences(SetNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -49,7 +50,8 @@ trait NodeReferencing
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->sourceNodeAggregateIdentifier
+            $command->sourceNodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint(
@@ -60,7 +62,8 @@ trait NodeReferencing
         foreach ($command->destinationNodeAggregateIdentifiers as $destinationNodeAggregateIdentifier) {
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
-                $destinationNodeAggregateIdentifier
+                $destinationNodeAggregateIdentifier,
+                $contentRepository
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
             $this->requireNodeAggregateToCoverDimensionSpacePoint(

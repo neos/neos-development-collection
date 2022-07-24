@@ -28,6 +28,7 @@ use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
@@ -46,6 +47,7 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Symfony\Component\Serializer\Serializer;
 
 final class ContentRepositoryFactory
 {
@@ -56,7 +58,9 @@ final class ContentRepositoryFactory
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper, // TODO: check whether this is actually specified from outside
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph, // TODO: check whether this is actually specified from outside
         private readonly ThrowableStorageInterface $throwableStorage, // TODO
-        private readonly string $tableNamePrefix
+        private readonly Serializer $propertySerializer,
+        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger, // TODO implement
+        private readonly string $tableNamePrefix,
     )
     {
     }
@@ -67,11 +71,9 @@ final class ContentRepositoryFactory
     private ?EventStoreInterface $eventStore = null;
     private ?ContentStreamRepository $contentStreamRepository = null;
     private ?ReadSideMemoryCacheManager $readSideMemoryCacheManager = null;
-    private ?WorkspaceFinder $workspaceFinder = null;
     private ?PropertyConverter $propertyConverter = null;
-    private ?ContentGraphInterface $contentGraph = null;
     private ?EventNormalizer $eventNormalizer = null;
-    private ?ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger = null;
+    private ?Projections $projections = null;
 
     public function build(): ContentRepository
     {
@@ -81,7 +83,7 @@ final class ContentRepositoryFactory
                 $this->buildEventStore(),
                 $this->buildProjections(),
                 $this->buildEventNormalizer(),
-                $this->buildProjectionCatchUpTrigger(),
+                $this->projectionCatchUpTrigger,
             );
         }
         return $this->contentRepository;
@@ -96,24 +98,22 @@ final class ContentRepositoryFactory
                     $this->buildReadSideMemoryCacheManager(),
                 ),
                 new WorkspaceCommandHandler(
-                    $this->buildWorkspaceFinder(),
                     $this->buildReadSideMemoryCacheManager(),
                 ),
                 new NodeAggregateCommandHandler(
                     $this->buildContentStreamRepository(),
                     $this->nodeTypeManager,
                     $this->contentDimensionZookeeper,
-                    $this->buildContentGraph(),
                     $this->interDimensionalVariationGraph,
                     $this->buildReadSideMemoryCacheManager(),
                     $this->buildPropertyConverter()
                 ),
                 new DimensionSpaceCommandHandler(
                     $this->buildReadSideMemoryCacheManager(),
-                    $this->buildContentGraph(),
                     $this->contentDimensionZookeeper,
                     $this->interDimensionalVariationGraph
-                )
+                ),
+                new NodeDuplicationCommandHandler() // TODO
             );
         }
         return $this->commandBus;
@@ -132,46 +132,21 @@ final class ContentRepositoryFactory
     private function buildReadSideMemoryCacheManager(): ReadSideMemoryCacheManager
     {
         if (!$this->readSideMemoryCacheManager) {
+            $projections = $this->buildProjections();
+
             $this->readSideMemoryCacheManager = new ReadSideMemoryCacheManager(
-                $this->buildContentGraph(),
-                $this->buildWorkspaceFinder()
+                $projections->get(ContentGraphProjection::class)->getState(),
+                $projections->get(WorkspaceProjection::class)->getState()
             );
         }
         return $this->readSideMemoryCacheManager;
     }
 
-    private function buildContentGraph(): ContentGraphInterface
-    {
-        // TODO: Dependent on implementation
-        if (!$this->contentGraph) {
-            $this->contentGraph = new ContentGraph(
-                $this->dbalClient,
-                new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
-                    $this->nodeTypeManager,
-                    $this->buildPropertyConverter()
-                ),
-                $this->tableNamePrefix
-            );
-        }
-        return $this->contentGraph;
-    }
-
-    private function buildWorkspaceFinder(): WorkspaceFinder
-    {
-        if (!$this->workspaceFinder) {
-            $this->workspaceFinder = new WorkspaceFinder(
-                $this->dbalClient
-            );
-        }
-        return $this->workspaceFinder;
-    }
-
-
     private function buildPropertyConverter(): PropertyConverter
     {
         if (!$this->propertyConverter) {
             $this->propertyConverter = new PropertyConverter(
-                new Serializer() // TODO
+                $this->propertySerializer
             );
         }
         return $this->propertyConverter;
@@ -191,59 +166,63 @@ final class ContentRepositoryFactory
     private function buildProjections(): Projections
     {
         // TODO: PROJECTIONS
-        $projections = Projections::create();
-        $projections = $projections->with(
-            new ContentGraphProjection(
-            // TODO: dependent on doctrine or postgres
-                new DoctrineDbalContentGraphProjection(
-                    $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage('DoctrineDbalContentGraphProjection'),
-                    $this->dbalClient,
-                    new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
-                        $this->nodeTypeManager,
-                        $this->buildPropertyConverter()
-                    ),
-                    new ProjectionContentGraph(
+        if (!$this->projections) {
+            $projections = Projections::create();
+            $projections = $projections->with(
+                new ContentGraphProjection(
+                // TODO: dependent on doctrine or postgres
+                    new DoctrineDbalContentGraphProjection(
+                        $this->buildEventNormalizer(),
+                        $this->buildCheckpointStorage('DoctrineDbalContentGraphProjection'),
                         $this->dbalClient,
+                        new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
+                            $this->nodeTypeManager,
+                            $this->buildPropertyConverter()
+                        ),
+                        new ProjectionContentGraph(
+                            $this->dbalClient,
+                            $this->tableNamePrefix
+                        ),
+                        $this->throwableStorage,
                         $this->tableNamePrefix
-                    ),
-                    $this->throwableStorage,
+                    )
+                )
+            );
+            $projections = $projections->with(
+                new ContentStreamProjection(
+                    $this->buildEventNormalizer(),
+                    $this->buildCheckpointStorage('ContentStreamProjection'),
+                    $this->dbalClient,
                     $this->tableNamePrefix
                 )
-            )
-        );
-        $projections = $projections->with(
-            new ContentStreamProjection(
-                $this->buildEventNormalizer(),
-                $this->buildCheckpointStorage('ContentStreamProjection'),
-                $this->dbalClient,
-                $this->tableNamePrefix
-            )
-        );
-        $projections = $projections->with(
-            new WorkspaceProjection(
-                $this->buildEventNormalizer(),
-                $this->buildCheckpointStorage('WorkspaceProjection'),
-                $this->dbalClient,
-                $this->tableNamePrefix
-            )
-        );
+            );
+            $projections = $projections->with(
+                new WorkspaceProjection(
+                    $this->buildEventNormalizer(),
+                    $this->buildCheckpointStorage('WorkspaceProjection'),
+                    $this->dbalClient,
+                    $this->tableNamePrefix
+                )
+            );
 
-        $workspaceFinder = $projections->get(WorkspaceProjection::class)->getState();
-        assert($workspaceFinder instanceof WorkspaceFinder);
-        $projections = $projections->with(
-            new ChangeProjection(
-                $this->buildEventNormalizer(),
-                $this->buildCheckpointStorage('ChangeProjection'),
-                $this->dbalClient,
-                $workspaceFinder,
-                $this->tableNamePrefix
-            )
-        );
+            $workspaceFinder = $projections->get(WorkspaceProjection::class)->getState();
+            assert($workspaceFinder instanceof WorkspaceFinder);
+            $projections = $projections->with(
+                new ChangeProjection(
+                    $this->buildEventNormalizer(),
+                    $this->buildCheckpointStorage('ChangeProjection'),
+                    $this->dbalClient,
+                    $workspaceFinder,
+                    $this->tableNamePrefix
+                )
+            );
+
+            $this->projections = $projections;
+        }
 
         // TODO: HOW TO BUILD OTHER PROJECTIONS HERE (not part of ES CR Core), which still need stuff like the SAME EventNormalizer?
 
-        return $projections;
+        return $this->projections;
     }
 
     private function buildEventNormalizer(): EventNormalizer
@@ -254,17 +233,9 @@ final class ContentRepositoryFactory
         return $this->eventNormalizer;
     }
 
-    private function buildProjectionCatchUpTrigger(): ProjectionCatchUpTriggerInterface
-    {
-        if (!$this->projectionCatchUpTrigger) {
-            $this->projectionCatchUpTrigger = TODO
-        }
-        return $this->projectionCatchUpTrigger;
-    }
-
     private function buildCheckpointStorage(string $subscriberId): CheckpointStorageInterface
     {
-        new DoctrineCheckpointStorage(
+        return new DoctrineCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableNamePrefix . 'checkpoint',
             $subscriberId

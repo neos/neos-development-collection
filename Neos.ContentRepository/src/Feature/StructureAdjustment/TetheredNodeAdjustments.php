@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
@@ -54,7 +55,8 @@ class TetheredNodeAdjustments
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         ContentGraphInterface $contentGraph,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker
+        RuntimeBlocker $runtimeBlocker,
+        private readonly ContentRepository $contentRepository
     ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
@@ -115,7 +117,8 @@ class TetheredNodeAdjustments
                                     $tetheredNodeName,
                                     null,
                                     $expectedTetheredNodeType,
-                                    UserIdentifier::forSystemUser()
+                                    UserIdentifier::forSystemUser(),
+                                    $this->contentRepository
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
@@ -226,11 +229,6 @@ class TetheredNodeAdjustments
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
     {
         return $this->interDimensionalVariationGraph;
-    }
-
-    protected function getContentGraph(): ContentGraphInterface
-    {
-        return $this->contentGraph;
     }
 
     protected function getEventStore(): EventStore

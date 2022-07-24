@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeRemoval;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\EventStore\Events;
@@ -45,14 +46,15 @@ trait NodeRemoval
      * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      */
-    private function handleRemoveNodeAggregate(RemoveNodeAggregate $command): EventsToPublish
+    private function handleRemoveNodeAggregate(RemoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
@@ -63,7 +65,8 @@ trait NodeRemoval
         if ($command->removalAttachmentPoint instanceof NodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
-                $command->removalAttachmentPoint
+                $command->removalAttachmentPoint,
+                $contentRepository
             );
         }
 

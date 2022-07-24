@@ -16,30 +16,19 @@ namespace Neos\ContentRepository\Service\Infrastructure;
 
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A central place to enable / disable all caches in the read side. Called inside each CommandHandler.
  *
- * @Flow\Scope("singleton")
  * @internal
  */
 class ReadSideMemoryCacheManager
 {
-    /**
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    public function __construct(ContentGraphInterface $contentGraph, WorkspaceFinder $workspaceFinder)
+    public function __construct(
+        private readonly ContentGraphInterface $contentGraph,
+        private readonly WorkspaceFinder $workspaceFinder
+    )
     {
-        $this->contentGraph = $contentGraph;
-        $this->workspaceFinder = $workspaceFinder;
     }
 
     public function enableCache(): void

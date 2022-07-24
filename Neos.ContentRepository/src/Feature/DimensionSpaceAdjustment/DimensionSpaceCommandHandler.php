@@ -45,7 +45,6 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 
     public function __construct(
         private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        private readonly ContentGraphInterface $contentGraph,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
     )
@@ -61,21 +60,22 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
         if ($command instanceof MoveDimensionSpacePoint) {
-            return $this->handleMoveDimensionSpacePoint($command);
+            return $this->handleMoveDimensionSpacePoint($command, $contentRepository);
         } elseif ($command instanceof AddDimensionShineThrough) {
-            return $this->handleAddDimensionShineThrough($command);
+            return $this->handleAddDimensionShineThrough($command, $contentRepository);
         }
     }
 
-    private function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command): EventsToPublish
+    private function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
-        $this->requireDimensionSpacePointToBeEmptyInContentStream(
+        self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $command->contentStreamIdentifier
+            $command->contentStreamIdentifier,
+            $contentRepository->getContentGraph()
         );
         $this->requireDimensionSpacePointToExistInConfiguration($command->target);
 
@@ -92,17 +92,18 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-    private function handleAddDimensionShineThrough(AddDimensionShineThrough $command): EventsToPublish
+    private function handleAddDimensionShineThrough(AddDimensionShineThrough $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->readSideMemoryCacheManager->disableCache();
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
-        $this->requireDimensionSpacePointToBeEmptyInContentStream(
-            $command->getTarget(),
-            $command->contentStreamIdentifier
+        self::requireDimensionSpacePointToBeEmptyInContentStream(
+            $command->target,
+            $command->contentStreamIdentifier,
+            $contentRepository->getContentGraph()
         );
-        $this->requireDimensionSpacePointToExistInConfiguration($command->getTarget());
+        $this->requireDimensionSpacePointToExistInConfiguration($command->target);
 
         $this->requireDimensionSpacePointToBeSpecialization($command->target, $command->source);
 
@@ -130,11 +131,12 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         }
     }
 
-    protected function requireDimensionSpacePointToBeEmptyInContentStream(
+    static private function requireDimensionSpacePointToBeEmptyInContentStream(
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentStreamIdentifier $contentStreamIdentifier
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentGraphInterface $contentGraph
     ): void {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $subgraph = $contentGraph->getSubgraphByIdentifier(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

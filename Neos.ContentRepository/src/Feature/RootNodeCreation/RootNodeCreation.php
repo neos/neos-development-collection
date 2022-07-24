@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\RootNodeCreation;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
@@ -53,14 +54,15 @@ trait RootNodeCreation
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
      */
-    private function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command): EventsToPublish
+    private function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireProjectedNodeAggregateToNotExist(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);

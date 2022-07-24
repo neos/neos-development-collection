@@ -77,11 +77,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     private NodeTypeManager $nodeTypeManager;
 
     /**
-     * The graph projection used for soft constraint checks
-     */
-    private ContentGraphInterface $contentGraph;
-
-    /**
      * Used for variation resolution from the current outside state of content dimensions
      */
     private DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
@@ -104,7 +99,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
-        ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         PropertyConverter $propertyConverter
@@ -112,7 +106,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->propertyConverter = $propertyConverter;
@@ -167,11 +160,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         }
 
         throw new \RuntimeException('Could not handle command');
-    }
-
-    protected function getContentGraph(): ContentGraphInterface
-    {
-        return $this->contentGraph;
     }
 
     protected function getContentStreamRepository(): ContentStreamRepository
@@ -231,15 +219,16 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     /**
      * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
      */
-    protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier()
+            $command->getNodeAggregateIdentifier(),
+            $contentRepository
         );
         $newNodeType = $this->requireNodeType($command->getNewNodeTypeName());
         foreach (
-            $this->contentGraph->findParentNodeAggregates(
+            $contentRepository->getContentGraph()->findParentNodeAggregates(
                 $command->getContentStreamIdentifier(),
                 $command->getNodeAggregateIdentifier()
             ) as $parentAggregate
@@ -263,7 +252,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 );
             }
             foreach (
-                $this->contentGraph->findParentNodeAggregates(
+                $contentRepository->getContentGraph()->findParentNodeAggregates(
                     $command->getContentStreamIdentifier(),
                     $parentAggregate->getIdentifier()
                 ) as $grandParentAggregate
@@ -296,12 +285,12 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      */
-    protected function checkConstraintsImposedOnAlreadyPresentDescendants(ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedOnAlreadyPresentDescendants(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
 
         foreach (
-            $this->contentGraph->findChildNodeAggregates(
+            $contentRepository->getContentGraph()->findChildNodeAggregates(
                 $command->getContentStreamIdentifier(),
                 $command->getNodeAggregateIdentifier()
             ) as $childAggregate
@@ -323,7 +312,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 && $newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())
             ) {
                 foreach (
-                    $this->contentGraph->findChildNodeAggregates(
+                    $contentRepository->getContentGraph()->findChildNodeAggregates(
                         $command->getContentStreamIdentifier(),
                         $childAggregate->getIdentifier()
                     ) as $grandChildAggregate

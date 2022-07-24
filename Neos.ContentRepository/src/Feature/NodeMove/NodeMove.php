@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\EventStore\Events;
@@ -36,18 +37,12 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Projection\Content\Nodes;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Ramsey\Uuid\Uuid;
 
 trait NodeMove
 {
@@ -55,13 +50,12 @@ trait NodeMove
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    abstract protected function getContentGraph(): ContentGraphInterface;
-
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface;
 
     /**
@@ -73,7 +67,7 @@ trait NodeMove
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
      */
-    private function handleMoveNodeAggregate(MoveNodeAggregate $command): EventsToPublish
+    private function handleMoveNodeAggregate(MoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
@@ -81,7 +75,8 @@ trait NodeMove
         $this->requireDimensionSpacePointToExist($command->getDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier()
+            $command->getNodeAggregateIdentifier(),
+            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
@@ -98,19 +93,22 @@ trait NodeMove
                 $command->getContentStreamIdentifier(),
                 $this->requireNodeType($nodeAggregate->getNodeTypeName()),
                 $nodeAggregate->getNodeName(),
-                [$command->getNewParentNodeAggregateIdentifier()]
+                [$command->getNewParentNodeAggregateIdentifier()],
+                $contentRepository
             );
 
             $this->requireNodeNameToBeUncovered(
                 $command->getContentStreamIdentifier(),
                 $nodeAggregate->getNodeName(),
                 $command->getNewParentNodeAggregateIdentifier(),
-                $affectedDimensionSpacePoints
+                $affectedDimensionSpacePoints,
+                $contentRepository
             );
 
             $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
                 $command->getContentStreamIdentifier(),
-                $command->getNewParentNodeAggregateIdentifier()
+                $command->getNewParentNodeAggregateIdentifier(),
+                $contentRepository
             );
 
             $this->requireNodeAggregateToCoverDimensionSpacePoints(
@@ -121,20 +119,23 @@ trait NodeMove
             $this->requireNodeAggregateToNotBeDescendant(
                 $command->getContentStreamIdentifier(),
                 $newParentNodeAggregate,
-                $nodeAggregate
+                $nodeAggregate,
+                $contentRepository
             );
         }
 
         if ($command->getNewPrecedingSiblingNodeAggregateIdentifier()) {
             $this->requireProjectedNodeAggregate(
                 $command->getContentStreamIdentifier(),
-                $command->getNewPrecedingSiblingNodeAggregateIdentifier()
+                $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
+                $contentRepository
             );
         }
         if ($command->getNewSucceedingSiblingNodeAggregateIdentifier()) {
             $this->requireProjectedNodeAggregate(
                 $command->getContentStreamIdentifier(),
-                $command->getNewSucceedingSiblingNodeAggregateIdentifier()
+                $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
+                $contentRepository
             );
         }
 
@@ -150,7 +151,8 @@ trait NodeMove
                 $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
                 $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
                 $occupiedDimensionSpacePoint,
-                $affectedDimensionSpacePoints
+                $affectedDimensionSpacePoints,
+                $contentRepository
             );
             $parentAssignments[$occupiedDimensionSpacePoint->hash] = $this->resolveNewParentAssignments(
                 $command->getContentStreamIdentifier(),
@@ -158,7 +160,8 @@ trait NodeMove
                 $command->getNewParentNodeAggregateIdentifier(),
                 $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash],
                 $occupiedDimensionSpacePoint,
-                $affectedDimensionSpacePoints
+                $affectedDimensionSpacePoints,
+                $contentRepository
             );
         }
 
@@ -215,7 +218,8 @@ trait NodeMove
         NodeVariantAssignments $succeedingSiblingAssignments,
         /** A dimension space point occupied by the node aggregate to be moved */
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
+        DimensionSpacePointSet $affectedDimensionSpacePoints,
+        ContentRepository $contentRepository
     ): NodeVariantAssignments
     {
         $parents = NodeVariantAssignments::create();
@@ -238,7 +242,7 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        $originSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
+        $originSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
             $contentStreamIdentifier,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
@@ -255,7 +259,7 @@ trait NodeMove
         foreach ($succeedingSiblingAssignments as $coveredDimensionSpacePointHash => $succeedingSiblingAssignment) {
             /** @var DimensionSpace\DimensionSpacePoint $affectedDimensionSpacePoint */
             $affectedDimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
-            $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
+            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
                 $contentStreamIdentifier,
                 $affectedDimensionSpacePoint,
                 $visibilityConstraints
@@ -325,7 +329,8 @@ trait NodeMove
         /** A dimension space point occupied by the node aggregate to be moved */
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         /** The dimension space points affected by the move operation */
-        DimensionSpacePointSet $affectedDimensionSpacePoints
+        DimensionSpacePointSet $affectedDimensionSpacePoints,
+        ContentRepository $contentRepository
     ): NodeVariantAssignments
     {
         $succeedingSiblings = NodeVariantAssignments::create();
@@ -334,7 +339,7 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        $originContentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
+        $originContentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
             $contentStreamIdentifier,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
@@ -343,7 +348,7 @@ trait NodeMove
             $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
-            $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
+            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
                 $visibilityConstraints

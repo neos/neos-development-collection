@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -30,14 +31,13 @@ trait TetheredNodeInternals
 {
     use NodeVariationInternals;
 
-    abstract protected function getContentGraph(): ContentGraphInterface;
-
     abstract protected function createEventsForVariations(
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
     ): Events;
 
     /**
@@ -54,9 +54,10 @@ trait TetheredNodeInternals
         NodeName $tetheredNodeName,
         ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
-        UserIdentifier $initiatingUserIdentifier
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
     ): Events {
-        $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName(
+        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
             $parentNode->getContentStreamIdentifier(),
             $parentNode->getNodeAggregateIdentifier(),
             $tetheredNodeName
