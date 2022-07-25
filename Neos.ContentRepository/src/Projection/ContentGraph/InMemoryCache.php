@@ -12,13 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Content;
+namespace Neos\ContentRepository\Projection\ContentGraph;
 
-use Neos\ContentRepository\Projection\Content\InMemoryCache\AllChildNodesByNodeIdentifierCache;
-use Neos\ContentRepository\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
-use Neos\ContentRepository\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
-use Neos\ContentRepository\Projection\Content\InMemoryCache\NodePathCache;
-use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
+use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\AllChildNodesByNodeIdentifierCache;
+use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
+use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\NodeByNodeAggregateIdentifierCache;
+use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\NodePathCache;
+use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
 /**
  * Accessors to in Memory Cache

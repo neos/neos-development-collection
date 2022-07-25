@@ -17,7 +17,7 @@ namespace Neos\Neos\View;
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;

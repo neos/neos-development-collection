@@ -13,7 +13,7 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;

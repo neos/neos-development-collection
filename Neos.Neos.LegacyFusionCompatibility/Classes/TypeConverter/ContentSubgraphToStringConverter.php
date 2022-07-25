@@ -12,7 +12,7 @@ namespace Neos\Neos\LegacyFusionCompatibility\TypeConverter;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;

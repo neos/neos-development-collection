@@ -13,7 +13,7 @@ use Neos\ContentRepository\Feature\Migration\Transformation\TransformationsFacto
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;

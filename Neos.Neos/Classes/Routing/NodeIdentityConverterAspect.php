@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Routing;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;

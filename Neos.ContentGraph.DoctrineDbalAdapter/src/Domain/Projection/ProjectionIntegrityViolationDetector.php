@@ -22,7 +22,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectorInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
 
 /**
  * The Doctrine database backend implementation for projection invariant checks

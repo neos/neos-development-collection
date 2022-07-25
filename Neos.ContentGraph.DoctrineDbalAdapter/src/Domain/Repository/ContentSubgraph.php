@@ -18,15 +18,15 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -132,7 +132,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     protected static function addSearchTermConstraintsToQuery(
         SqlQueryBuilder $query,
-        ?\Neos\ContentRepository\Projection\Content\SearchTerm $searchTerm,
+        ?\Neos\ContentRepository\Projection\ContentGraph\SearchTerm $searchTerm,
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
@@ -1059,7 +1059,7 @@ order by level asc, position asc;')
     public function findDescendants(
         array $entryNodeAggregateIdentifiers,
         NodeTypeConstraints $nodeTypeConstraints,
-        ?\Neos\ContentRepository\Projection\Content\SearchTerm $searchTerm
+        ?\Neos\ContentRepository\Projection\ContentGraph\SearchTerm $searchTerm
     ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery('

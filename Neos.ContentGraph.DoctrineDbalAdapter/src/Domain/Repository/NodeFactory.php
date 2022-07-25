@@ -17,8 +17,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Projection\Content\Reference;
-use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\Projection\ContentGraph\Reference;
+use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -32,10 +32,10 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Projection\ContentGraph\Exception\NodeImplementationClassNameIsInvalid;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
@@ -186,7 +186,7 @@ final class NodeFactory
         /** @var NodeInterface $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
 
-        return new \Neos\ContentRepository\Projection\Content\NodeAggregate(
+        return new \Neos\ContentRepository\Projection\ContentGraph\NodeAggregate(
             $primaryNode->getContentStreamIdentifier(),
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
             NodeAggregateClassification::from($rawNodeAggregateClassification),
@@ -204,7 +204,7 @@ final class NodeFactory
 
     /**
      * @param iterable<int,array<string,string>> $nodeRows
-     * @return iterable<int,\Neos\ContentRepository\Projection\Content\NodeAggregate>
+     * @return iterable<int,\Neos\ContentRepository\Projection\ContentGraph\NodeAggregate>
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowsToNodeAggregates(
@@ -274,7 +274,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
             /** @var string $rawNodeAggregateIdentifier */
-            yield new \Neos\ContentRepository\Projection\Content\NodeAggregate(
+            yield new \Neos\ContentRepository\Projection\ContentGraph\NodeAggregate(
                 // this line is safe because a nodeAggregate only exists if it at least contains one node.
                 current($nodes)->getContentStreamIdentifier(),
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),

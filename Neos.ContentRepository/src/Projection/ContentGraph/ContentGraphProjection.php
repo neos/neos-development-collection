@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-// TODO: RENAME To ContentGraph
-namespace Neos\ContentRepository\Projection\Content;
+namespace Neos\ContentRepository\Projection\ContentGraph;
 
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\EventStore\Model\Event;

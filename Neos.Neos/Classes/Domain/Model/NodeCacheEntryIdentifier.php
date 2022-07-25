@@ -16,7 +16,7 @@ namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
 /**
  * The cache entry identifier data transfer object for nodes

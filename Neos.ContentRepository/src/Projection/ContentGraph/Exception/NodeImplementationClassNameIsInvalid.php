@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Content\Exception;
+namespace Neos\ContentRepository\Projection\ContentGraph\Exception;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

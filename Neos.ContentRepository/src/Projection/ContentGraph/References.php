@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Content;
+namespace Neos\ContentRepository\Projection\ContentGraph;
 
 /**
  * An immutable, type-safe collection of Reference objects

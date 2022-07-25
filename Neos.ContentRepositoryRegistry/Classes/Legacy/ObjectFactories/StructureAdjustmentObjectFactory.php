@@ -22,7 +22,7 @@ use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentServic
 use Neos\ContentRepository\Feature\StructureAdjustment\TetheredNodeAdjustments;
 use Neos\ContentRepository\Feature\StructureAdjustment\UnknownNodeTypeAdjustment;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;

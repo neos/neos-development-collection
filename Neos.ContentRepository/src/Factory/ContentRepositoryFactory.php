@@ -29,7 +29,7 @@ use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler
 use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;

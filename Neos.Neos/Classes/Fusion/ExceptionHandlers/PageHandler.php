@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 use GuzzleHttp\Psr7\Message;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;

@@ -42,7 +42,7 @@ use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Feature\SubtreeInterface;

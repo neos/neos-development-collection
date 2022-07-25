@@ -14,7 +14,7 @@ namespace Neos\ContentRepositoryRegistry\Legacy\ObjectFactories;
 
 use Neos\ContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorCollection;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepositoryRegistry\Legacy\HardcodedEventPublisherFactory;

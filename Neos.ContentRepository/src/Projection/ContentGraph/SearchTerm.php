@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Content;
+namespace Neos\ContentRepository\Projection\ContentGraph;
 
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

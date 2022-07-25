@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;

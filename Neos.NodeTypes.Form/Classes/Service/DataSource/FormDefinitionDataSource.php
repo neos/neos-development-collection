@@ -11,7 +11,7 @@ namespace Neos\NodeTypes\Form\Service\DataSource;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Neos\Flow\Annotations as Flow;
 

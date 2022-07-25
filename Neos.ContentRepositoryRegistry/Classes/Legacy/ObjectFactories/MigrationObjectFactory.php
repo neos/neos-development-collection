@@ -33,7 +33,7 @@ use Neos\ContentRepository\Feature\Migration\Transformation\StripTagsOnPropertyT
 use Neos\ContentRepository\Feature\Migration\Transformation\TransformationsFactory;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;

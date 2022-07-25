@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeLabel;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeLabelGeneratorInterface;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;

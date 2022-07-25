@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
 /**
  * Filter nodes by origin dimension space point. Normally, check for exact matches; but if includeSpecializations=TRUE,

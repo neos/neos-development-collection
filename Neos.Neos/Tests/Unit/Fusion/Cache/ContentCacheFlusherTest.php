@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\Fusion\Cache;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Flow\Tests\UnitTestCase;

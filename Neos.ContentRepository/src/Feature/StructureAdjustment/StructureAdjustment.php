@@ -8,7 +8,7 @@ use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\Error\Messages\Message;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
 #[Flow\Proxy(false)]
 class StructureAdjustment extends Message

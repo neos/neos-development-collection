@@ -13,15 +13,15 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\Reference;
+use Neos\ContentRepository\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\Projection\Content\SearchTerm;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 /**

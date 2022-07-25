@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Content\InMemoryCache;
+namespace Neos\ContentRepository\Projection\ContentGraph\InMemoryCache;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
 /**
  * NodeAggregateIdentifier -> Node cache

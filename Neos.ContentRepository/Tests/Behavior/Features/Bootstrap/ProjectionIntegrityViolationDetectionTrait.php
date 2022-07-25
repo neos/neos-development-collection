@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner;
+use Neos\ContentRepository\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 

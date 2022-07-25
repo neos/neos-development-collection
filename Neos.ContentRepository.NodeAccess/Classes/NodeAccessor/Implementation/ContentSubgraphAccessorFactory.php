@@ -20,7 +20,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\Exception\InvalidAccessorConfiguration;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 
 #[Flow\Scope('singleton')]
 final class ContentSubgraphAccessorFactory implements NodeAccessorFactoryInterface
