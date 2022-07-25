@@ -34,7 +34,6 @@ final class DoctrineDbalContentGraphProjectionFactory
                     $this->dbalClient,
                     $tableNamePrefix
                 ),
-                $projectionFactoryDependencies->throwableStorage,
                 $tableNamePrefix
             )
         );

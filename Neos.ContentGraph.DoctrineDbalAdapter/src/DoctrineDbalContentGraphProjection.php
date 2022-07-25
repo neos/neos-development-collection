@@ -56,7 +56,6 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\Flow\Log\ThrowableStorageInterface;
 
 /**
  * @implements ProjectionInterface<ContentGraph>
@@ -88,8 +87,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
         private readonly ProjectionContentGraph $projectionContentGraph,
-
-        private readonly ThrowableStorageInterface $throwableStorage, // TODO
 
         private readonly string $tableNamePrefix,
     )
@@ -149,13 +146,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
-
-    //public function resetForTests(): void
-    //{
-    //    // TODO??
-    //    $this->truncateDatabaseTables();
-    //}
-
 
     private function truncateDatabaseTables(): void
     {
@@ -258,31 +248,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix);
         }
         return $this->contentGraph;
-    }
-
-
-    public function beforeInvoke(EventEnvelope $eventEnvelope): void // TODO Implement
-    {
-        throw new \RuntimeException('TODO IMPL');
-        $this->triggerBeforeInvokeHandlers(
-            $eventEnvelope,
-            $this->doingFullReplayOfProjection
-        );
-    }
-
-    public function afterInvoke(EventEnvelope $eventEnvelope): void // TODO implement
-    {
-        throw new \RuntimeException('TODO IMPL');
-        try {
-            $this->triggerAfterInvokeHandlers(
-                $eventEnvelope,
-                $this->doingFullReplayOfProjection
-            );
-        } catch (\Throwable $e) {
-            $this->systemLogger->critical($this->throwableStorage->logThrowable($e));
-        }
-
-        parent::afterInvoke($eventEnvelope);
     }
 
     /**

@@ -53,7 +53,6 @@ final class ContentRepositoryFactory
         NodeTypeManager $nodeTypeManager,
         ContentDimensionZookeeper $contentDimensionZookeeper, // TODO: check whether this is actually specified from outside
         InterDimensionalVariationGraph $interDimensionalVariationGraph, // TODO: check whether this is actually specified from outside
-        ThrowableStorageInterface $throwableStorage, // TODO
         Serializer $propertySerializer,
         ProjectionsFactory $projectionsFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger // TODO implement
@@ -67,7 +66,6 @@ final class ContentRepositoryFactory
             $nodeTypeManager,
             $contentDimensionZookeeper,
             $interDimensionalVariationGraph,
-            $throwableStorage,
             new PropertyConverter($propertySerializer)
         );
 
