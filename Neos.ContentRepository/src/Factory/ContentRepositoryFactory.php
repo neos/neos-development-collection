@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Factory;
 
-
 use Neos\ContentRepository\CommandHandler\CommandBus;
 use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\EventStore\EventNormalizer;
@@ -26,7 +26,6 @@ use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\ContentRepository\Feature\StructureAdjustment\ProjectedNodeIterator;
 use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
@@ -38,7 +37,6 @@ use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
-use Neos\Flow\Log\ThrowableStorageInterface;
 use Symfony\Component\Serializer\Serializer;
 
 final class ContentRepositoryFactory
@@ -51,14 +49,16 @@ final class ContentRepositoryFactory
         ContentRepositoryIdentifier $contentRepositoryIdentifier,
         EventStoreInterface $eventStore,
         NodeTypeManager $nodeTypeManager,
-        ContentDimensionZookeeper $contentDimensionZookeeper, // TODO: check whether this is actually specified from outside
-        InterDimensionalVariationGraph $interDimensionalVariationGraph, // TODO: check whether this is actually specified from outside
+        ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsFactory $projectionsFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger // TODO implement
 
     )
     {
+        $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
+        $interDimensionalVariationGraph = new InterDimensionalVariationGraph($contentDimensionSource, $contentDimensionZookeeper);
+
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryIdentifier,
             $eventStore,
