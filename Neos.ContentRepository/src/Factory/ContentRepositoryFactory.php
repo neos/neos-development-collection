@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Factory;
 
 
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\CommandHandler\CommandBus;
@@ -24,6 +23,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
@@ -33,7 +33,6 @@ use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Projection\Changes\ChangeProjection;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
@@ -74,6 +73,7 @@ final class ContentRepositoryFactory
     private ?PropertyConverter $propertyConverter = null;
     private ?EventNormalizer $eventNormalizer = null;
     private ?Projections $projections = null;
+    private ?EventPersister $eventPersister = null;
 
     public function build(): ContentRepository
     {
@@ -82,8 +82,7 @@ final class ContentRepositoryFactory
                 $this->buildCommandBus(),
                 $this->buildEventStore(),
                 $this->buildProjections(),
-                $this->buildEventNormalizer(),
-                $this->projectionCatchUpTrigger,
+                $this->buildEventPersister(),
             );
         }
         return $this->contentRepository;
@@ -99,6 +98,9 @@ final class ContentRepositoryFactory
                 ),
                 new WorkspaceCommandHandler(
                     $this->buildReadSideMemoryCacheManager(),
+                    $this->buildEventPersister(),
+                    $this->buildEventStore(),
+                    $this->buildEventNormalizer()
                 ),
                 new NodeAggregateCommandHandler(
                     $this->buildContentStreamRepository(),
@@ -246,5 +248,18 @@ final class ContentRepositoryFactory
             $this->tableNamePrefix . 'checkpoint',
             $subscriberId
         );
+    }
+
+    private function buildEventPersister(): EventPersister
+    {
+        if (!$this->eventPersister) {
+            $this->eventPersister = new EventPersister(
+                $this->buildEventStore(),
+                $this->projectionCatchUpTrigger,
+                $this->buildEventNormalizer(),
+                $this->buildProjections()
+            );
+        }
+        return $this->eventPersister;
     }
 }

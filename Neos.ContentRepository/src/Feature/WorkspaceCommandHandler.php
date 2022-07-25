@@ -16,8 +16,11 @@ namespace Neos\ContentRepository\Feature;
 
 use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\DecoratedEvent;
+use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
@@ -51,12 +54,14 @@ use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyE
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Feature\Common\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -65,16 +70,13 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 final class WorkspaceCommandHandler implements CommandHandlerInterface
 {
-    protected WorkspaceFinder $workspaceFinder;
-
-    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
     public function __construct(
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        private readonly EventPersister $eventPersister,
+        private readonly EventStoreInterface $eventStore,
+        private readonly EventNormalizer $eventNormalizer,
     ) {
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
-
 
     public function canHandle(CommandInterface $command): bool
     {
@@ -142,7 +144,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
                 $command->initiatingUserIdentifier
             )
-        )->block(); // TODO: we did not block here before, but we need to do this now. Is this a problem? I guess not
+        )->block();
 
         $events = Events::with(
             new WorkspaceWasCreated(
@@ -185,7 +187,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $contentStreamIdentifier,
                 $command->initiatingUserIdentifier
             )
-        )->block(); // TODO: we did not block here before, but we need to do this now. Is this a problem? I guess not
+        )->block();
 
         $events = Events::with(
             new RootWorkspaceWasCreated(
@@ -216,13 +218,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     public function handlePublishWorkspace(PublishWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
         $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
-        // TODO!!!
-        $commandResult = $this->publishContentStream(
+        $this->publishContentStream(
             $workspace->getCurrentContentStreamIdentifier(),
             $baseWorkspace->getCurrentContentStreamIdentifier()
-        );
+        )->block();
 
         // After publishing a workspace, we need to again fork from Base.
         $newContentStream = ContentStreamIdentifier::create();
@@ -258,9 +259,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function publishContentStream(
         ContentStreamIdentifier $contentStreamIdentifier,
-        ContentStreamIdentifier $baseContentStreamIdentifier,
-        ContentRepository $contentRepository
-    ): void {
+        ContentStreamIdentifier $baseContentStreamIdentifier
+    ): CommandResult {
         $contentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $baseContentStreamIdentifier
@@ -276,15 +276,20 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $streamName = $contentStreamName->getEventStreamName();
 
         /** @var array<int,EventEnvelope> $workspaceContentStream */
-        // TODO: HOW TO DO THIS? (EVENT STORE LOAD!)
         $workspaceContentStream = iterator_to_array($this->eventStore->load($streamName));
 
         $events = [];
+        $contentStreamWasForkedEvent = null;
         foreach ($workspaceContentStream as $eventEnvelope) {
             assert($eventEnvelope instanceof EventEnvelope);
-            // TODO: How to trigger deserialization here properly?
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            if ($event instanceof PublishableToOtherContentStreamsInterface) {
+
+            if ($event instanceof ContentStreamWasForked) {
+                if ($contentStreamWasForkedEvent !== null) {
+                    throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier . '" has two forked events.', 1658740373);
+                }
+                $contentStreamWasForkedEvent = $event;
+            } elseif ($event instanceof PublishableToOtherContentStreamsInterface) {
                 /** @var EventInterface $copiedEvent */
                 $copiedEvent = $event->createCopyForContentStream($baseContentStreamIdentifier);
                 // We need to add the event metadata here for rebasing in nested workspace situations
@@ -296,68 +301,26 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             }
         }
 
-        $contentStreamWasForked = self::extractSingleForkedContentStreamEvent($workspaceContentStream);
+        if ($contentStreamWasForkedEvent === null) {
+            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier . '" has NO forked event.', 1658740407);
+        }
+
         try {
-            // TODO: HOW TO PERSIST TO EVENT STORE??
-            // TODO: We cannot easily return EventsToPublish, because publishContentStream() is the low-level
-            // TODO: API which is used MULTIPLE times during a publishing. So we'd need a way to trigger
-            // TODO: ContentRepository::handle WITHOUT the actual command handling logic.
-            // TODO:
-            // TODO: It's also not really practical to create a new command just for this usecase, because
-            // TODO: we are operating directly on events here and copy them over to the base event stream
-            // TODO: if nothing has changed in the meantime.
-            $this->eventStore->commit(
-                $baseWorkspaceContentStreamName->getEventStreamName(),
-                $events,
-                $contentStreamWasForked->versionOfSourceContentStream
+            return $this->eventPersister->publishEvents(
+                new EventsToPublish(
+                    $baseWorkspaceContentStreamName->getEventStreamName(),
+                    Events::fromArray($events),
+                    ExpectedVersion::fromVersion(Version::fromInteger($contentStreamWasForkedEvent->versionOfSourceContentStream)) // TODO
+                )
             );
-            return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
         } catch (ConcurrencyException $e) {
-            // TODO: and I'd love to keep this useful exception in here.
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
                 'The base workspace has been modified in the meantime; please rebase.'
                     . ' Expected version %d of source content stream %s',
-                $contentStreamWasForked->versionOfSourceContentStream,
+                $contentStreamWasForkedEvent->versionOfSourceContentStream,
                 $baseContentStreamIdentifier
             ));
         }
-    }
-
-    /**
-     * @param array<int,EventEnvelope> $stream
-     * @throws \Exception
-     */
-    private static function extractSingleForkedContentStreamEvent(array $stream): ContentStreamWasForked
-    {
-        /** @var array<int,EventEnvelope> $contentStreamWasForkedEvents */
-        $contentStreamWasForkedEvents = array_filter($stream, function (EventEnvelope $eventEnvelope) {
-            // TODO: is this so good? at least it is performant
-            return $eventEnvelope->event->type->value === 'ContentStreamWasForked';
-        });
-
-        if (count($contentStreamWasForkedEvents) !== 1) {
-            throw new \Exception(sprintf(
-                'TODO: only can publish a content stream which has exactly one ContentStreamWasForked; we found %d',
-                count($contentStreamWasForkedEvents)
-            ));
-        }
-
-        /** @var EventEnvelope $primaryEventEnvelope cannot be false because there is exactly one event inside */
-        $primaryEventEnvelope = reset($contentStreamWasForkedEvents);
-        /** @var ContentStreamWasForked $primaryDomainEvent */
-        // TODO: somehow convert to the domain event
-        $primaryDomainEvent = $primaryEventEnvelope->getDomainEvent();
-
-        $firstEventEnvelope = reset($stream);
-
-        if (!$firstEventEnvelope || $primaryDomainEvent !== $firstEventEnvelope->getDomainEvent()) {
-            throw new \Exception(sprintf(
-                'TODO: stream has to start with a single ContentStreamWasForked event, found %s',
-                $firstEventEnvelope ? get_class($firstEventEnvelope->getDomainEvent()) : 'nothing'
-            ));
-        }
-
-        return $primaryDomainEvent;
     }
 
     /**
@@ -370,7 +333,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     public function handleRebaseWorkspace(RebaseWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
         $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
@@ -476,8 +439,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspaceContentStream = $this->eventStore->load($workspaceContentStreamName->getEventStreamName());
 
         $commands = [];
-        foreach ($workspaceContentStream as $eventAndRawEvent) {
-            $metadata = $eventAndRawEvent->getRawEvent()->getMetadata();
+        foreach ($workspaceContentStream as $eventEnvelope) {
+            $metadata = $eventEnvelope->event->metadata->value;
             // TODO: Add this logic to the NodeAggregateCommandHandler;
             // so that we can be sure these can be parsed again.
             if (isset($metadata['commandClass'])) {
@@ -511,7 +474,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // 1) separate commands in two halves - the ones MATCHING the nodes from the command, and the REST
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
@@ -583,11 +546,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
-        // TODO - MAKE THIS WORK!!
-        $commandResult = $this->publishContentStream(
+        $this->publishContentStream(
             $matchingContentStream,
             $baseWorkspace->getCurrentContentStreamIdentifier()
-        );
+        )->block();
 
         // 5) TODO Re-target base workspace
 
@@ -628,7 +590,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // 1) filter commands, only keeping the ones NOT MATCHING the nodes from the command
         // (i.e. the modifications we want to keep)
@@ -717,7 +679,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     public function handleDiscardWorkspace(DiscardWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
         $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         $newContentStream = $command->getNewContentStreamIdentifier();
         $contentRepository->handle(
@@ -765,13 +727,13 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws BaseWorkspaceDoesNotExist
      */
-    private function requireBaseWorkspace(Workspace $workspace): Workspace
+    private function requireBaseWorkspace(Workspace $workspace, ContentRepository $contentRepository): Workspace
     {
         if (is_null($workspace->getBaseWorkspaceName())) {
             throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->getWorkspaceName());
         }
 
-        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace->getBaseWorkspaceName());
         if ($baseWorkspace === null) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->getWorkspaceName());
         }
