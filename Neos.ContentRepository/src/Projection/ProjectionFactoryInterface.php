@@ -2,17 +2,9 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Projection;
 
-use Neos\ContentRepository\ValueObject\ContentRepositoryId;
+use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 
-/**
- * Common interface for all projections
- */
 interface ProjectionFactoryInterface
 {
-    /**
-     * @param ContentRepositoryId $contentRepositoryId
-     * @param array<mixed> $options
-     * @return ProjectionInterface<ProjectionStateInterface>
-     */
-    public function create(ContentRepositoryId $contentRepositoryId, array $options): ProjectionInterface;
+    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, Projections $projectionsSoFar): ProjectionInterface;
 }

@@ -33,12 +33,11 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublis
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\CatchUp\CatchUp;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
+use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
-use Neos\EventStore\ProvidesSetupInterface;
 
 /**
  * @internal
@@ -49,22 +48,24 @@ class WorkspaceProjection implements ProjectionInterface
      * @var WorkspaceFinder|null Cache for the workspace finder returned by {@see getState()}, so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
+    private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
-        private readonly CheckpointStorageInterface $checkpointStorage,
         private readonly DbalClientInterface $dbalClient,
-        private readonly string $tableNamePrefix,
+        private readonly string $tableName,
     ) {
+        $this->checkpointStorage = new DoctrineCheckpointStorage(
+            $this->dbalClient->getConnection(),
+            $this->tableName . '_checkpoint',
+            self::class
+        );
     }
 
     public function setUp(): void
     {
         $this->setupTables();
-
-        if ($this->checkpointStorage instanceof ProvidesSetupInterface) {
-            $this->checkpointStorage->setup();
-        }
+        $this->checkpointStorage->setup();
     }
 
     private function setupTables(): void
@@ -76,7 +77,7 @@ class WorkspaceProjection implements ProjectionInterface
         }
 
         $schema = new Schema();
-        $workspaceTable = $schema->createTable($this->tableNamePrefix . '_workspace')
+        $workspaceTable = $schema->createTable($this->tableName)
             ->addOption('collate', 'utf8mb4_unicode_ci');
         $workspaceTable->addColumn('workspacename', Types::STRING)
             ->setLength(255)
@@ -110,7 +111,7 @@ class WorkspaceProjection implements ProjectionInterface
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_workspace');
+        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
     }
 
     public function canHandle(Event $event): bool
@@ -172,7 +173,8 @@ class WorkspaceProjection implements ProjectionInterface
     {
         if (!$this->workspaceFinder) {
             $this->workspaceFinder = new WorkspaceFinder(
-                $this->dbalClient
+                $this->dbalClient,
+                $this->tableName
             );
         }
         return $this->workspaceFinder;
@@ -180,7 +182,7 @@ class WorkspaceProjection implements ProjectionInterface
 
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
-        $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_workspace', [
+        $this->getDatabaseConnection()->insert($this->tableName, [
             'workspaceName' => $event->getWorkspaceName(),
             'baseWorkspaceName' => $event->getBaseWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
@@ -193,7 +195,7 @@ class WorkspaceProjection implements ProjectionInterface
 
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
-        $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_workspace', [
+        $this->getDatabaseConnection()->insert($this->tableName, [
             'workspaceName' => $event->getWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
@@ -266,7 +268,7 @@ class WorkspaceProjection implements ProjectionInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         WorkspaceName $workspaceName
     ): void {
-        $this->getDatabaseConnection()->update($this->tableNamePrefix . '_workspace', [
+        $this->getDatabaseConnection()->update($this->tableName, [
             'currentContentStreamIdentifier' => $contentStreamIdentifier
         ], [
             'workspaceName' => $workspaceName
@@ -276,7 +278,7 @@ class WorkspaceProjection implements ProjectionInterface
     private function markWorkspaceAsUpToDate(WorkspaceName $workspaceName): void
     {
         $this->getDatabaseConnection()->executeUpdate('
-            UPDATE ' . $this->tableNamePrefix . '_workspace
+            UPDATE ' . $this->tableName . '
             SET status = :upToDate
             WHERE
                 workspacename = :workspaceName
@@ -289,7 +291,7 @@ class WorkspaceProjection implements ProjectionInterface
     private function markDependentWorkspacesAsOutdated(WorkspaceName $baseWorkspaceName): void
     {
         $this->getDatabaseConnection()->executeUpdate('
-            UPDATE ' . $this->tableNamePrefix . '_workspace
+            UPDATE ' . $this->tableName . '
             SET status = :outdated
             WHERE
                 baseworkspacename = :baseWorkspaceName
@@ -302,7 +304,7 @@ class WorkspaceProjection implements ProjectionInterface
     private function markWorkspaceAsOutdatedConflict(WorkspaceName $workspaceName): void
     {
         $this->getDatabaseConnection()->executeUpdate('
-            UPDATE ' . $this->tableNamePrefix . '_workspace
+            UPDATE ' . $this->tableName . '
             SET
                 status = :outdatedConflict,
                 foo = bar

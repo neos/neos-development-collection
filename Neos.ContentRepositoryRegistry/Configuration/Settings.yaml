@@ -41,6 +41,23 @@ Neos:
     #  fallbackNodeType: 'Some.Package:SomeNodeType'
     #fallbackNodeType: null
   ContentRepositoryRegistry:
+    presets:
+      'default':
+        eventStore:
+          factoryObjectName: Neos\ContentRepository\DoctrineAdapters\Factories\DoctrineEventStoreFactory
+        projectionCatchUpTrigger:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factories\JobQueueProjectionCatchUpTriggerFactory
+        projections:
+          'Neos.ContentRepository:ContentStream':
+            factoryObjectName: Neos\ContentRepository\DoctrineAdapters\Factories\ContentStreamProjectionFactory
+          'Neos.ContentRepository:ContentGraph':
+            factoryObjectName: Neos\ContentRepository\DoctrineAdapters\Factories\ContentGraphProjectionFactory
+            tableNamePrefix: '<contenreppsitoryID>'
+
+
+
+
+
     propertyConverters:
       ScalarNormalizer:
         className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ScalarNormalizer

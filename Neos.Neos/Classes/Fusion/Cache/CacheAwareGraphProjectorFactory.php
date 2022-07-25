@@ -61,7 +61,7 @@ class CacheAwareGraphProjectorFactory
         ProjectionContentGraph $projectionContentGraph,
         ThrowableStorageInterface $throwableStorageInterface
     ): GraphProjector {
-        $graphProjector = new GraphProjector(
+        $graphProjector = new GraphProjection(
             $eventStorageDatabaseClient,
             $processedEventsCache,
             $projectionContentGraph,

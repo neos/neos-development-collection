@@ -13,17 +13,15 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\ValueObject;
-use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class ContentRepositoryIdentifier implements \Stringable, CacheAwareInterface
+final class ContentRepositoryIdentifier
 {
     private function __construct(
-        private readonly string $value
+        public readonly string $value
     ) {
+        if (!preg_match('/^[a-z][a-z\d_]*[a-z]$/', $this->value)) {
+            throw new \InvalidArgumentException('Content Repository identifiers must be only lowercase and with _ and 0-9. This is to ensure this works inside a database table name properly');
+        }
     }
 
     public static function fromString(string $value): self
@@ -37,16 +35,6 @@ final class ContentRepositoryIdentifier implements \Stringable, CacheAwareInterf
     }
 
     public function __toString(): string
-    {
-        return $this->value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function getCacheEntryIdentifier(): string
     {
         return $this->value;
     }

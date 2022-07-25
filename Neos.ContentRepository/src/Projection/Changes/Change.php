@@ -86,9 +86,9 @@ class Change
     /**
      * @param Connection $databaseConnection
      */
-    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
-        $databaseConnection->insert($tableNamePrefix . '_change', [
+        $databaseConnection->insert($tableName, [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
@@ -100,10 +100,10 @@ class Change
         ]);
     }
 
-    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function updateToDatabase(Connection $databaseConnection, string $tableName): void
     {
         $databaseConnection->update(
-            $tableNamePrefix . '_change',
+            $tableName,
             [
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,

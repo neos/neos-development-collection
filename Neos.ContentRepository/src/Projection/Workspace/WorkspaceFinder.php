@@ -39,7 +39,10 @@ final class WorkspaceFinder implements ProjectionStateInterface
      */
     private array $cachedWorkspacesByContentStreamIdentifier = [];
 
-    public function __construct(private readonly DbalClientInterface $client)
+    public function __construct(
+        private readonly DbalClientInterface $client,
+        private readonly string $tableName
+    )
     {
     }
 
@@ -67,7 +70,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
             '
-            SELECT * FROM neos_contentrepository_projection_workspace_v1
+            SELECT * FROM ' . $this->tableName . '
             WHERE workspaceName = :workspaceName
         ',
             [
@@ -101,7 +104,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
             '
-            SELECT * FROM neos_contentrepository_projection_workspace_v1
+            SELECT * FROM ' . $this->tableName . '
             WHERE currentContentStreamIdentifier = :currentContentStreamIdentifier
         ',
             [
@@ -132,7 +135,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
                 WHERE workspaceName LIKE :workspaceNameLike
             ',
             [
@@ -160,7 +163,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
                 WHERE baseWorkspaceName = :workspaceName
             ',
             [
@@ -182,7 +185,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
                 WHERE workspaceOwner = :workspaceOwner
             ',
             [
@@ -207,7 +210,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
             '
         )->fetchAllAssociative();
 
@@ -232,7 +235,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1 WHERE status = :outdated
+                SELECT * FROM ' . $this->tableName . ' WHERE status = :outdated
             ',
             [
                 'outdated' => Workspace::STATUS_OUTDATED

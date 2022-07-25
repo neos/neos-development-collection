@@ -15,9 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Factory;
 
 
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\CommandHandler\CommandBus;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
@@ -30,20 +27,14 @@ use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceComman
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -51,28 +42,41 @@ use Symfony\Component\Serializer\Serializer;
 final class ContentRepositoryFactory
 {
 
+    private ProjectionFactoryDependencies $projectionFactoryDependencies;
+    private Projections $projections;
+
     private function __construct(
-        private readonly DbalClientInterface $dbalClient,
-        private readonly NodeTypeManager $nodeTypeManager,
-        private readonly ContentDimensionZookeeper $contentDimensionZookeeper, // TODO: check whether this is actually specified from outside
-        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph, // TODO: check whether this is actually specified from outside
-        private readonly ThrowableStorageInterface $throwableStorage, // TODO
-        private readonly Serializer $propertySerializer,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger, // TODO implement
-        private readonly string $tableNamePrefix,
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        EventStoreInterface $eventStore,
+        NodeTypeManager $nodeTypeManager,
+        ContentDimensionZookeeper $contentDimensionZookeeper, // TODO: check whether this is actually specified from outside
+        InterDimensionalVariationGraph $interDimensionalVariationGraph, // TODO: check whether this is actually specified from outside
+        ThrowableStorageInterface $throwableStorage, // TODO
+        Serializer $propertySerializer,
+        ProjectionsFactory $projectionsFactory,
+        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger // TODO implement
+
     )
     {
+        $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
+            $contentRepositoryIdentifier,
+            $eventStore,
+            new EventNormalizer(),
+            $nodeTypeManager,
+            $contentDimensionZookeeper,
+            $interDimensionalVariationGraph,
+            $throwableStorage,
+            new PropertyConverter($propertySerializer)
+        );
+
+        $this->projections = $projectionsFactory->build($this->projectionFactoryDependencies);
     }
 
     // The following properties store "singleton" references of objects for this content repository
     private ?ContentRepository $contentRepository = null;
     private ?CommandBus $commandBus = null;
-    private ?EventStoreInterface $eventStore = null;
     private ?ContentStreamRepository $contentStreamRepository = null;
     private ?ReadSideMemoryCacheManager $readSideMemoryCacheManager = null;
-    private ?PropertyConverter $propertyConverter = null;
-    private ?EventNormalizer $eventNormalizer = null;
-    private ?Projections $projections = null;
     private ?EventPersister $eventPersister = null;
 
     public function build(): ContentRepository
@@ -80,8 +84,8 @@ final class ContentRepositoryFactory
         if (!$this->contentRepository) {
             $this->contentRepository = new ContentRepository(
                 $this->buildCommandBus(),
-                $this->buildEventStore(),
-                $this->buildProjections(),
+                $this->projectionFactoryDependencies->eventStore,
+                $this->projections,
                 $this->buildEventPersister(),
             );
         }
@@ -99,28 +103,28 @@ final class ContentRepositoryFactory
                 new WorkspaceCommandHandler(
                     $this->buildReadSideMemoryCacheManager(),
                     $this->buildEventPersister(),
-                    $this->buildEventStore(),
-                    $this->buildEventNormalizer()
+                    $this->projectionFactoryDependencies->eventStore,
+                    $this->projectionFactoryDependencies->eventNormalizer
                 ),
                 new NodeAggregateCommandHandler(
                     $this->buildContentStreamRepository(),
-                    $this->nodeTypeManager,
-                    $this->contentDimensionZookeeper,
-                    $this->interDimensionalVariationGraph,
+                    $this->projectionFactoryDependencies->nodeTypeManager,
+                    $this->projectionFactoryDependencies->contentDimensionZookeeper,
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                     $this->buildReadSideMemoryCacheManager(),
-                    $this->buildPropertyConverter()
+                    $this->projectionFactoryDependencies->propertyConverter
                 ),
                 new DimensionSpaceCommandHandler(
                     $this->buildReadSideMemoryCacheManager(),
-                    $this->contentDimensionZookeeper,
-                    $this->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->contentDimensionZookeeper,
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
                 ),
                 new NodeDuplicationCommandHandler(
                     $this->buildContentStreamRepository(),
-                    $this->nodeTypeManager,
+                    $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->buildReadSideMemoryCacheManager(),
-                    $this->contentDimensionZookeeper,
-                    $this->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->contentDimensionZookeeper,
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
                 )
             );
         }
@@ -131,7 +135,7 @@ final class ContentRepositoryFactory
     {
         if (!$this->contentStreamRepository) {
             $this->contentStreamRepository = new ContentStreamRepository(
-                $this->buildEventStore()
+                $this->projectionFactoryDependencies->eventStore
             );
         }
         return $this->contentStreamRepository;
@@ -140,124 +144,23 @@ final class ContentRepositoryFactory
     private function buildReadSideMemoryCacheManager(): ReadSideMemoryCacheManager
     {
         if (!$this->readSideMemoryCacheManager) {
-            $projections = $this->buildProjections();
 
             $this->readSideMemoryCacheManager = new ReadSideMemoryCacheManager(
-                $projections->get(ContentGraphProjection::class)->getState(),
-                $projections->get(WorkspaceProjection::class)->getState()
+                $this->projections->get(ContentGraphProjection::class)->getState(),
+                $this->projections->get(WorkspaceProjection::class)->getState()
             );
         }
         return $this->readSideMemoryCacheManager;
-    }
-
-    private function buildPropertyConverter(): PropertyConverter
-    {
-        if (!$this->propertyConverter) {
-            $this->propertyConverter = new PropertyConverter(
-                $this->propertySerializer
-            );
-        }
-        return $this->propertyConverter;
-    }
-
-    private function buildEventStore(): EventStoreInterface
-    {
-        if (!$this->eventStore) {
-            $this->eventStore = new DoctrineEventStore(
-                $this->dbalClient->getConnection(),
-                $this->tableNamePrefix . '_eventstore' // TODO: Naming conventions for projections vs event store? (p_ prefix?)
-            );
-        }
-        return $this->eventStore;
-    }
-
-    private function buildProjections(): Projections
-    {
-        // TODO: PROJECTIONS
-        if (!$this->projections) {
-            $projections = Projections::create();
-            $projections = $projections->with(
-                new ContentGraphProjection(
-                // TODO: dependent on doctrine or postgres
-                    new DoctrineDbalContentGraphProjection(
-                        $this->buildEventNormalizer(),
-                        $this->buildCheckpointStorage('DoctrineDbalContentGraphProjection'),
-                        $this->dbalClient,
-                        new NodeFactory( // TODO: No singleton (but here not needed). Is this a problem?
-                            $this->nodeTypeManager,
-                            $this->buildPropertyConverter()
-                        ),
-                        new ProjectionContentGraph(
-                            $this->dbalClient,
-                            $this->tableNamePrefix
-                        ),
-                        $this->throwableStorage,
-                        $this->tableNamePrefix
-                    )
-                )
-            );
-            $projections = $projections->with(
-                new ContentStreamProjection(
-                    $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage('ContentStreamProjection'),
-                    $this->dbalClient,
-                    $this->tableNamePrefix
-                )
-            );
-            $projections = $projections->with(
-                new WorkspaceProjection(
-                    $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage('WorkspaceProjection'),
-                    $this->dbalClient,
-                    $this->tableNamePrefix
-                )
-            );
-
-            $workspaceFinder = $projections->get(WorkspaceProjection::class)->getState();
-            assert($workspaceFinder instanceof WorkspaceFinder);
-            $projections = $projections->with(
-                new ChangeProjection(
-                    $this->buildEventNormalizer(),
-                    $this->buildCheckpointStorage('ChangeProjection'),
-                    $this->dbalClient,
-                    $workspaceFinder,
-                    $this->tableNamePrefix
-                )
-            );
-
-            $this->projections = $projections;
-        }
-
-        // TODO: HOW TO BUILD OTHER PROJECTIONS HERE (not part of ES CR Core), which still need stuff like the SAME EventNormalizer?
-
-        return $this->projections;
-    }
-
-    private function buildEventNormalizer(): EventNormalizer
-    {
-        if (!$this->eventNormalizer) {
-            $this->eventNormalizer = new EventNormalizer();
-        }
-        return $this->eventNormalizer;
-    }
-
-    private function buildCheckpointStorage(string $subscriberId): CheckpointStorageInterface
-    {
-        return new DoctrineCheckpointStorage(
-            $this->dbalClient->getConnection(),
-            $this->tableNamePrefix . 'checkpoint',
-            $subscriberId
-        );
     }
 
     private function buildEventPersister(): EventPersister
     {
         if (!$this->eventPersister) {
             $this->eventPersister = new EventPersister(
-                $this->buildEventStore(),
+                $this->projectionFactoryDependencies->eventStore,
                 $this->projectionCatchUpTrigger,
-                $this->buildEventNormalizer(),
-                $this->buildProjections()
+                $this->projectionFactoryDependencies->eventNormalizer,
+                $this->projections
             );
         }
         return $this->eventPersister;

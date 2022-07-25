@@ -33,7 +33,7 @@ final class ChangeFinder implements ProjectionStateInterface
      */
     public function __construct(
         private readonly DbalClientInterface $client,
-        private readonly string $tableNamePrefix
+        private readonly string $tableName
     )
     {
     }
@@ -47,7 +47,7 @@ final class ChangeFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $changeRows = $connection->executeQuery(
             '
-                SELECT * FROM ' . $this->tableNamePrefix . '_change
+                SELECT * FROM ' . $this->tableName . '
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
             ',
             [
@@ -66,7 +66,7 @@ final class ChangeFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         return (int)$connection->executeQuery(
             '
-                SELECT * FROM ' . $this->tableNamePrefix . '_change
+                SELECT * FROM ' . $this->tableName . '
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
             ',
             [

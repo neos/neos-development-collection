@@ -9,7 +9,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
- * @implements ProjectionInterface<ContentGraph>
+ * @implements ProjectionInterface<ContentGraphInterface>
  */
 final class ContentGraphProjection implements ProjectionInterface
 {

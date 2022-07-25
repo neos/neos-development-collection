@@ -35,12 +35,11 @@ use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\CatchUp\CatchUp;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
+use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
-use Neos\EventStore\ProvidesSetupInterface;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -52,24 +51,26 @@ class ChangeProjection implements ProjectionInterface
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()}, so that always the same instance is returned
      */
     private ?ChangeFinder $changeFinder = null;
+    private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
-        private readonly CheckpointStorageInterface $checkpointStorage,
         private readonly DbalClientInterface $dbalClient,
         private readonly WorkspaceFinder $workspaceFinder,
-        private readonly string $tableNamePrefix,
+        private readonly string $tableName,
     ) {
+        $this->checkpointStorage = new DoctrineCheckpointStorage(
+            $this->dbalClient->getConnection(),
+            $this->tableName . '_checkpoint',
+            self::class
+        );
     }
 
 
     public function setUp(): void
     {
         $this->setupTables();
-
-        if ($this->checkpointStorage instanceof ProvidesSetupInterface) {
-            $this->checkpointStorage->setup();
-        }
+        $this->checkpointStorage->setup();
     }
 
     private function setupTables(): void
@@ -81,7 +82,7 @@ class ChangeProjection implements ProjectionInterface
         }
 
         $schema = new Schema();
-        $changeTable = $schema->createTable($this->tableNamePrefix . '_change')
+        $changeTable = $schema->createTable($this->tableName)
             ->addOption('collate', 'utf8mb4_unicode_ci');
         $changeTable->addColumn('contentStreamIdentifier', Types::STRING)
             ->setLength(255)
@@ -115,7 +116,7 @@ class ChangeProjection implements ProjectionInterface
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_change');
+        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
     }
 
     public function canHandle(Event $event): bool
@@ -175,7 +176,7 @@ class ChangeProjection implements ProjectionInterface
         if (!$this->changeFinder) {
             $this->changeFinder = new ChangeFinder(
                 $this->dbalClient,
-                $this->tableNamePrefix
+                $this->tableName
             );
         }
         return $this->changeFinder;
@@ -252,7 +253,7 @@ class ChangeProjection implements ProjectionInterface
             }
 
             $this->getDatabaseConnection()->executeUpdate(
-                'DELETE FROM ' . $this->tableNamePrefix . '_change
+                'DELETE FROM ' . $this->tableName . '
                     WHERE
                         contentStreamIdentifier = :contentStreamIdentifier
                         AND nodeAggregateIdentifier = :nodeAggregateIdentifier
@@ -271,7 +272,7 @@ class ChangeProjection implements ProjectionInterface
 
             foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
-                    'INSERT INTO ' . $this->tableNamePrefix . '_change
+                    'INSERT INTO ' . $this->tableName . '
                             (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint,
                              originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
@@ -302,7 +303,7 @@ class ChangeProjection implements ProjectionInterface
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeStatement(
                 '
-                UPDATE ' . $this->tableNamePrefix . '_change c
+                UPDATE ' . $this->tableName . ' c
                     SET
                         c.originDimensionSpacePoint = :newDimensionSpacePoint,
                         c.originDimensionSpacePointHash = :newDimensionSpacePointHash
@@ -352,10 +353,10 @@ class ChangeProjection implements ProjectionInterface
                     false,
                     false
                 );
-                $change->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
             } else {
                 $change->changed = true;
-                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
             }
         });
     }
@@ -389,10 +390,10 @@ class ChangeProjection implements ProjectionInterface
                     true,
                     false
                 );
-                $change->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
             } else {
                 $change->moved = true;
-                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
             }
         });
     }
@@ -403,7 +404,7 @@ class ChangeProjection implements ProjectionInterface
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?Change {
         $changeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM ' . $this->tableNamePrefix . '_change n
+            'SELECT n.* FROM ' . $this->tableName . ' n
 WHERE n.contentStreamIdentifier = :contentStreamIdentifier
 AND n.nodeAggregateIdentifier = :nodeAggregateIdentifier
 AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',

@@ -50,7 +50,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\CatchUp\CatchUp;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
+use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
@@ -81,10 +81,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
      */
     private ?ContentGraph $contentGraph = null;
 
+    private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
-        private readonly CheckpointStorageInterface $checkpointStorage,
 
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
@@ -95,6 +95,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         private readonly string $tableNamePrefix,
     )
     {
+        $this->checkpointStorage = new DoctrineCheckpointStorage(
+            $this->dbalClient->getConnection(),
+            $this->tableNamePrefix . '_checkpoint',
+            self::class
+        );
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -107,14 +112,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         return $this->tableNamePrefix;
     }
 
-
     public function setUp(): void
     {
         $this->setupTables();
-
-        if ($this->checkpointStorage instanceof ProvidesSetupInterface) {
-            $this->checkpointStorage->setup();
-        }
+        $this->checkpointStorage->setup();
     }
 
     private function setupTables(): SetupResult
@@ -204,6 +205,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
+        // TODO: BEFORE HOOK
+
         if ($eventInstance instanceof RootNodeAggregateWithNodeWasCreated) {
             $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWithNodeWasCreated) {
@@ -241,6 +244,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         } else {
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
+
+        // TODO: AFTER HOOK
     }
 
     public function getSequenceNumber(): SequenceNumber

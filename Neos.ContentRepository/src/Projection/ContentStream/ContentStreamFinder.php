@@ -35,7 +35,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
 
     public function __construct(
         private readonly DbalClientInterface $client,
-        private readonly string $tableNamePrefix,
+        private readonly string $tableName,
     )
     {
     }
@@ -48,7 +48,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
+            SELECT contentStreamIdentifier FROM ' . $this->tableName . '
             ',
         )->fetchAllAssociative();
 
@@ -68,7 +68,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
+            SELECT contentStreamIdentifier FROM ' . $this->tableName . '
                 WHERE removed = FALSE
                 AND state IN (:state)
             ',
@@ -101,7 +101,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
         /* @var $state string|false */
         $state = $connection->executeQuery(
             '
-            SELECT state FROM ' . $this->tableNamePrefix . '_contentstream
+            SELECT state FROM ' . $this->tableName . '
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
                 AND removed = FALSE
             ',
@@ -127,23 +127,23 @@ final class ContentStreamFinder implements ProjectionStateInterface
             '
             WITH RECURSIVE transitiveUsedContentStreams (contentStreamIdentifier) AS (
                     -- initial case: find all content streams currently in direct use by a workspace
-                    SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
+                    SELECT contentStreamIdentifier FROM ' . $this->tableName . '
                     WHERE
                         state = :inUseState
                         AND removed = false
                 UNION
                     -- now, when a content stream is in use by a workspace, its source content stream is
                     -- also "transitively" in use.
-                    SELECT sourceContentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream
+                    SELECT sourceContentStreamIdentifier FROM ' . $this->tableName . '
                     JOIN transitiveUsedContentStreams
-                        ON ' . $this->tableNamePrefix . '_contentstream.contentStreamIdentifier
+                        ON ' . $this->tableName . '.contentStreamIdentifier
                             = transitiveUsedContentStreams.contentStreamIdentifier
                     WHERE
-                        ' . $this->tableNamePrefix . '_contentstream.sourceContentStreamIdentifier IS NOT NULL
+                        ' . $this->tableName . '.sourceContentStreamIdentifier IS NOT NULL
             )
 
             -- now, we check for removed content streams which we do not need anymore transitively
-            SELECT contentStreamIdentifier FROM ' . $this->tableNamePrefix . '_contentstream AS cs
+            SELECT contentStreamIdentifier FROM ' . $this->tableName . ' AS cs
                 WHERE removed = true
                 AND NOT EXISTS (
                     SELECT 1
