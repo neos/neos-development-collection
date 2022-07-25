@@ -10,7 +10,7 @@
         "neos/fluid-adaptor": "*",
         "neos/kickstarter": "*",
 
-        "neos/content-repository": "self.version"
+        "neos/contentrepository": "self.version"
     },
     "replace": {
         "typo3/neos-kickstarter": "self.version"

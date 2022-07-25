@@ -11,7 +11,7 @@ If you dare to use it anyways, you can install this package via composer:
 {
     # ...
     "require": {
-        "neos/content-repository": "9.0.x-dev"
+        "neos/contentrepository": "9.0.x-dev"
         # ...
     }
 }
