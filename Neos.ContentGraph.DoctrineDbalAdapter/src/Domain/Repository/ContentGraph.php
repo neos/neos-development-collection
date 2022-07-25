@@ -47,10 +47,6 @@ final class ContentGraph implements ContentGraphInterface
      */
     private array $subgraphs = [];
 
-    /**
-     * @param DbalClientInterface $client
-     * @param NodeFactory $nodeFactory
-     */
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
@@ -102,7 +98,7 @@ final class ContentGraph implements ContentGraphInterface
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -133,7 +129,7 @@ final class ContentGraph implements ContentGraphInterface
             'nodeTypeName' => (string)$nodeTypeName,
         ];
 
-        $nodeRow = $connection->executeQuery($query, $parameters)->fetch();
+        $nodeRow = $connection->executeQuery($query, $parameters)->fetchAssociative();
 
         if (!is_array($nodeRow)) {
             throw new \RuntimeException('Root Node Aggregate not found');
@@ -200,7 +196,7 @@ final class ContentGraph implements ContentGraphInterface
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 
-        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
@@ -239,7 +235,7 @@ final class ContentGraph implements ContentGraphInterface
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 
-        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -286,7 +282,7 @@ final class ContentGraph implements ContentGraphInterface
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash,
         ];
 
-        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
@@ -311,7 +307,7 @@ final class ContentGraph implements ContentGraphInterface
             'contentStreamIdentifier' => (string) $contentStreamIdentifier
         ];
 
-        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -339,7 +335,7 @@ final class ContentGraph implements ContentGraphInterface
             'relationName' => (string)$name
         ];
 
-        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -366,7 +362,7 @@ final class ContentGraph implements ContentGraphInterface
             'tetheredClassification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
         ];
 
-        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -447,14 +443,18 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
         $query = 'SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node';
 
-        return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
+        $row = $connection->executeQuery($query)->fetchAssociative();
+
+        return $row ? (int)$row['COUNT(*)'] : 0;
     }
 
     public function findUsedNodeTypeNames(): iterable
     {
         $connection = $this->client->getConnection();
 
-        $rows = $connection->executeQuery('SELECT DISTINCT nodetypename FROM ' . $this->tableNamePrefix . '_node')->fetchAll();
+        $rows = $connection->executeQuery('SELECT DISTINCT nodetypename FROM ' . $this->tableNamePrefix . '_node')
+            ->fetchAllAssociative();
+
         return array_map(function (array $row) {
             return NodeTypeName::fromString($row['nodetypename']);
         }, $rows);

@@ -322,22 +322,22 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: set two node references in USER workspace
-    When the command "SetNodeReferences" is executed with payload:
-      | Key                                 | Value                          |
-      | contentStreamIdentifier             | "user-cs-identifier"           |
-      | sourceNodeAggregateIdentifier       | "sir-david-nodenborough"       |
-      | sourceOriginDimensionSpacePoint     | {}                             |
-      | referenceName                       | "referenceProperty"            |
-      | destinationNodeAggregateIdentifiers | ["sir-nodeward-nodington-iii"] |
-      | initiatingUserIdentifier            | "initiating-user-identifier"   |
-    And the command "SetNodeReferences" is executed with payload:
-      | Key                                 | Value                          |
-      | contentStreamIdentifier             | "user-cs-identifier"           |
-      | sourceNodeAggregateIdentifier       | "nody-mc-nodeface"             |
-      | sourceOriginDimensionSpacePoint     | {}                             |
-      | referenceName                       | "referenceProperty"            |
-      | destinationNodeAggregateIdentifiers | ["sir-nodeward-nodington-iii"] |
-      | initiatingUserIdentifier            | "initiating-user-identifier"   |
+    When the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                     |
+      | contentStreamIdentifier         | "user-cs-identifier"                      |
+      | sourceNodeAggregateIdentifier   | "sir-david-nodenborough"                  |
+      | sourceOriginDimensionSpacePoint | {}                                        |
+      | referenceName                   | "referenceProperty"                       |
+      | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
+      | initiatingUserIdentifier        | "initiating-user-identifier"              |
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                     |
+      | contentStreamIdentifier         | "user-cs-identifier"                      |
+      | sourceNodeAggregateIdentifier   | "nody-mc-nodeface"                        |
+      | sourceOriginDimensionSpacePoint | {}                                        |
+      | referenceName                   | "referenceProperty"                       |
+      | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
+      | initiatingUserIdentifier        | "initiating-user-identifier"              |
     And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
@@ -351,29 +351,30 @@ Feature: Publishing hide/show scenario of nodes
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following references:
-      | Key               | Value                                           |
-      | referenceProperty | ["cs-identifier;sir-nodeward-nodington-iii;{}"] |
+      | Name              | Node                                        | Properties |
+      | referenceProperty | cs-identifier;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have no references
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have no references
     And I expect this node to be referenced by:
-      | Key               | Value                                       |
-      | referenceProperty | ["cs-identifier;sir-david-nodenborough;{}"] |
+      | Name              | Node                                    | Properties |
+      | referenceProperty | cs-identifier;sir-david-nodenborough;{} | null       |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{}
     And I expect this node to have the following references:
-      | Key               | Value                                                         |
-      | referenceProperty | ["user-cs-identifier-modified;sir-nodeward-nodington-iii;{}"] |
+      | Name              | Node                                                      | Properties |
+      | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following references:
-      | Key               | Value                                                         |
-      | referenceProperty | ["user-cs-identifier-modified;sir-nodeward-nodington-iii;{}"] |
+      | Name              | Node                                                      | Properties |
+      | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
     And I expect this node to be referenced by:
-      | Key               | Value                                                                                                       |
-      | referenceProperty | ["user-cs-identifier-modified;sir-david-nodenborough;{}","user-cs-identifier-modified;nody-mc-nodeface;{}"] |
+      | Name              | Node                                                  | Properties |
+      | referenceProperty | user-cs-identifier-modified;nody-mc-nodeface;{}       | null       |
+      | referenceProperty | user-cs-identifier-modified;sir-david-nodenborough;{} | null       |
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:

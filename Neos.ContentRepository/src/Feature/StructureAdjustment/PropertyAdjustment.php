@@ -133,9 +133,6 @@ class PropertyAdjustment
 
     protected function addProperty(NodeInterface $node, string $propertyKey, mixed $defaultValue): CommandResult
     {
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $node->getNodeType()->getFullConfiguration();
         $propertyType = $node->getNodeType()->getPropertyType($propertyKey);
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
             $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)

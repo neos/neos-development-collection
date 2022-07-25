@@ -100,22 +100,18 @@ class PropertyOperation extends AbstractOperation
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
-                // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-                // so we need to trigger another method beforehand.
-                $element->getNodeType()->getFullConfiguration();
                 if ($element->getNodeType()->getPropertyType($propertyPath) === 'reference') {
-                    $tmp = $nodeAccessor->findReferencedNodes($element, PropertyName::fromString($propertyPath));
-                    $references = [];
-                    foreach ($tmp as $reference) {
-                        $references[] = $reference;
-                    }
-                    if (count($references) === 0) {
-                        return null;
-                    } else {
-                        return $references[0];
-                    }
+                    return (
+                        $nodeAccessor->findReferencedNodes(
+                            $element,
+                            PropertyName::fromString($propertyPath)
+                        )[0] ?? null
+                    )?->node;
                 } elseif ($element->getNodeType()->getPropertyType($propertyPath) === 'references') {
-                    return $nodeAccessor->findReferencedNodes($element, PropertyName::fromString($propertyPath));
+                    return $nodeAccessor->findReferencedNodes(
+                        $element,
+                        PropertyName::fromString($propertyPath)
+                    )->getNodes();
                 } else {
                     return $element->getProperty($propertyPath);
                 }

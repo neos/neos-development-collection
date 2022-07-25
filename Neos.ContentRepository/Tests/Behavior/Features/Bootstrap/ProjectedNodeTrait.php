@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Projection\Content\References;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -315,7 +316,12 @@ trait ProjectedNodeTrait
                 }
         }
 
-        return \json_decode($serializedPropertyValue, true, 512, JSON_THROW_ON_ERROR);
+        try {
+            return \json_decode($serializedPropertyValue, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            // no JSON string, just return the value
+            return $serializedPropertyValue;
+        }
     }
 
     /**
@@ -337,15 +343,11 @@ trait ProjectedNodeTrait
      */
     public function iExpectThisNodeToHaveTheFollowingReferences(TableNode $expectedReferences): void
     {
-        $expectedReferences = $this->readPayloadTable($expectedReferences);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedReferences) {
-            foreach ($expectedReferences as $propertyName => $serializedDiscriminators) {
-                $expectedDiscriminators = NodeDiscriminators::fromArray($serializedDiscriminators);
-                $destinationNodes = $this->getCurrentSubgraphs()[$adapterName]
-                    ->findReferencedNodes($currentNode->getNodeAggregateIdentifier(), PropertyName::fromString($propertyName));
-                $actualDiscriminators = NodeDiscriminators::fromNodes($destinationNodes);
-                Assert::assertTrue($expectedDiscriminators->equal($actualDiscriminators), 'Node references ' . $propertyName . ' do not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedDiscriminators) . '; Actual: ' . json_encode($actualDiscriminators));
-            }
+            $actualReferences = $this->getCurrentSubgraphs()[$adapterName]
+                ->findReferencedNodes($currentNode->getNodeAggregateIdentifier());
+
+            $this->assertReferencesMatch($expectedReferences, $actualReferences, $adapterName);
         });
     }
 
@@ -356,9 +358,10 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToHaveNoReferences(): void
     {
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) {
-            $destinationNodes = $this->getCurrentSubgraphs()[$adapterName]
+            $references = $this->getCurrentSubgraphs()[$adapterName]
                 ->findReferencedNodes($currentNode->getNodeAggregateIdentifier());
-            Assert::assertCount(0, $destinationNodes, 'No references were expected in adapter "' . $adapterName . '".');
+
+            Assert::assertCount(0, $references, 'No references were expected in adapter "' . $adapterName . '".');
         });
     }
 
@@ -369,18 +372,77 @@ trait ProjectedNodeTrait
      */
     public function iExpectThisNodeToBeReferencedBy(TableNode $expectedReferences): void
     {
-        $expectedReferences = $this->readPayloadTable($expectedReferences);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedReferences) {
-            foreach ($expectedReferences as $propertyName => $serializedDiscriminators) {
-                $expectedDiscriminators = NodeDiscriminators::fromArray($serializedDiscriminators);
-                $originNodes = $this->getCurrentSubgraphs()[$adapterName]
-                    ->findReferencingNodes($currentNode->getNodeAggregateIdentifier(), PropertyName::fromString($propertyName));
-                $actualDiscriminators = NodeDiscriminators::fromNodes($originNodes);
+            $actualReferences = $this->getCurrentSubgraphs()[$adapterName]
+                ->findReferencingNodes($currentNode->getNodeAggregateIdentifier());
 
-                // since the order on the target side is not defined we sort expectation and result before comparison
-                Assert::assertTrue($expectedDiscriminators->areSimilarTo($actualDiscriminators), 'Node references ' . $propertyName . ' do not match. Expected: ' . json_encode($expectedDiscriminators) . '; Actual: ' . json_encode($actualDiscriminators));
-            }
+            $this->assertReferencesMatch($expectedReferences, $actualReferences, $adapterName);
         });
+    }
+
+    private function assertReferencesMatch(TableNode $expectedReferencesTable, References $actualReferences, string $adapterName): void
+    {
+        $expectedReferences = $expectedReferencesTable->getHash();
+        Assert::assertSame(
+            $actualReferences->count(),
+            count($expectedReferences),
+            'Node reference count does not match. Expected: ' . count($expectedReferences)
+                . ', actual: ' . $actualReferences->count() . ' in adapter ' . $adapterName
+        );
+
+        foreach ($expectedReferences as $index => $row) {
+            Assert::assertSame(
+                PropertyName::fromString($row['Name'])->value,
+                $actualReferences[$index]->name->value
+            );
+            $expectedReferenceDiscriminator = NodeDiscriminator::fromShorthand($row['Node']);
+            $actualReferenceDiscriminator = NodeDiscriminator::fromNode($actualReferences[$index]->node);
+            Assert::assertTrue(
+                $expectedReferenceDiscriminator->equals($actualReferenceDiscriminator),
+                'Reference discriminator does not match in adapter "' . $adapterName . '".'
+                    . ' Expected was ' . json_encode($expectedReferenceDiscriminator)
+                    . ', given was ' . json_encode($actualReferenceDiscriminator)
+            );
+
+            if (isset($row['Properties'])) {
+                $actualProperties = $actualReferences[$index]->properties;
+                $rawExpectedProperties = \json_decode($row['Properties'], true, 512, JSON_THROW_ON_ERROR);
+                if (is_null($rawExpectedProperties)) {
+                    Assert::assertNull(
+                        $actualProperties,
+                        'Reference properties for reference ' . $index
+                            . ' are not null as expected in adapter ' . $adapterName
+                    );
+                } else {
+                    foreach ($rawExpectedProperties as $propertyName => $rawExpectedPropertyValue) {
+                        Assert::assertTrue(
+                            $actualProperties->offsetExists($propertyName),
+                            'Reference property "' . $propertyName . '" not found in adapter "' . $adapterName . '"'
+                        );
+                        $expectedPropertyValue = $this->resolvePropertyValue($rawExpectedPropertyValue);
+                        $actualPropertyValue = $actualProperties->offsetGet($propertyName);
+                        if ($rawExpectedPropertyValue === 'Date:now') {
+                            // we accept 10s offset for the projector to be fine
+                            Assert::assertLessThan(
+                                $actualPropertyValue,
+                                $expectedPropertyValue->sub(new \DateInterval('PT10S')),
+                                'Reference property ' . $propertyName . ' does not match. Expected: '
+                                . json_encode($expectedPropertyValue) . '; Actual: '
+                                . json_encode($actualPropertyValue) . ' in adapter "' . $adapterName . '"'
+                            );
+                        } else {
+                            Assert::assertEquals(
+                                $expectedPropertyValue,
+                                $actualPropertyValue,
+                                'Reference property ' . $propertyName . ' does not match. Expected: '
+                                . json_encode($expectedPropertyValue) . '; Actual: '
+                                . json_encode($actualPropertyValue) . ' in adapter "' . $adapterName . '"'
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -576,6 +638,7 @@ trait ProjectedNodeTrait
 
     protected function expectCurrentNodes(): void
     {
+        Assert::assertNotNull($this->currentNodes, 'No current nodes present');
         foreach ($this->currentNodes as $adapterName => $currentNode) {
             Assert::assertNotNull($currentNode, 'No current node present for adapter "' . $adapterName . '"');
         }

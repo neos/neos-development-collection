@@ -432,6 +432,8 @@ class NodeType
      */
     public function getPropertyType(string $propertyName): string
     {
+        $this->initialize();
+
         if (
             !isset($this->fullConfiguration['properties'])
             || !isset($this->fullConfiguration['properties'][$propertyName])
@@ -500,6 +502,7 @@ class NodeType
      */
     public function hasAutoCreatedChildNode(NodeName $nodeName): bool
     {
+        $this->initialize();
         return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
     }
 

@@ -21,7 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -358,27 +358,31 @@ trait NodeVariation
 
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $destinationRelationAnchorPoint
+        NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         // we don't care whether the target node aggregate covers the variant's origin
         // since if it doesn't, it already didn't match the source's coverage before
 
         $this->getDatabaseConnection()->executeStatement('
-                INSERT INTO ' . ReferenceHyperrelationRecord::TABLE_NAME . ' (
+                INSERT INTO ' . ReferenceRelationRecord::TABLE_NAME . ' (
                   originnodeanchor,
                   name,
-                  destinationnodeaggregateidentifiers
+                  position,
+                  properties,
+                  targetnodeaggregateidentifier
                 )
                 SELECT
-                  :destinationRelationAnchorPoint AS originnodeanchor,
+                  :targetRelationAnchorPoint AS originnodeanchor,
                   ref.name,
-                  ref.destinationnodeaggregateidentifiers
+                  ref.position,
+                  ref.properties,
+                  ref.targetnodeaggregateidentifier
                 FROM
-                    ' . ReferenceHyperrelationRecord::TABLE_NAME . ' ref
+                    ' . ReferenceRelationRecord::TABLE_NAME . ' ref
                     WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
-            'destinationRelationAnchorPoint' => $destinationRelationAnchorPoint->value
+            'targetRelationAnchorPoint' => $targetRelationAnchorPoint->value
         ]);
     }
 }

@@ -29,6 +29,7 @@ use Neos\ContentRepository\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
@@ -117,6 +118,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return $command instanceof SetNodeProperties
             || $command instanceof SetSerializedNodeProperties
             || $command instanceof SetNodeReferences
+            || $command instanceof SetSerializedNodeReferences
             || $command instanceof ChangeNodeAggregateType
             || $command instanceof RemoveNodeAggregate
             || $command instanceof CreateNodeAggregateWithNode
@@ -139,6 +141,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             return $this->handleSetSerializedNodeProperties($command, $contentRepository);
         } elseif ($command instanceof SetNodeReferences) {
             return $this->handleSetNodeReferences($command, $contentRepository);
+        } elseif ($command instanceof SetSerializedNodeReferences) {
+            return $this->handleSetSerializedNodeReferences($command, $contentRepository);
         } elseif ($command instanceof ChangeNodeAggregateType) {
             return $this->handleChangeNodeAggregateType($command, $contentRepository);
         } elseif ($command instanceof RemoveNodeAggregate) {

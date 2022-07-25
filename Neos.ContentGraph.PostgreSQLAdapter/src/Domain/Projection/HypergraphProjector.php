@@ -67,7 +67,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
             $this->getDatabaseConnection()->executeQuery(
                 'TRUNCATE table ' . RestrictionHyperrelationRecord::TABLE_NAME
             );
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . ReferenceHyperrelationRecord::TABLE_NAME);
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . ReferenceRelationRecord::TABLE_NAME);
         });
     }
 

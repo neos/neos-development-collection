@@ -14,11 +14,14 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
+use Neos\ContentRepository\Feature\Common\NodeReferenceToWrite;
+use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
+use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
@@ -40,6 +43,8 @@ trait NodeReferencing
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
+    abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
+
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
@@ -59,13 +64,24 @@ trait NodeReferencing
         $sourceOriginDimensionSpacePoint = isset($commandArguments['sourceOriginDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['sourceOriginDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
+        $references = NodeReferencesToWrite::fromReferences(
+            array_map(
+                fn (array $referenceData): NodeReferenceToWrite => new NodeReferenceToWrite(
+                    NodeAggregateIdentifier::fromString($referenceData['target']),
+                    isset($referenceData['properties'])
+                        ? $this->deserializeProperties($referenceData['properties'])
+                        : null
+                ),
+                $commandArguments['references']
+            )
+        );
 
         $command = new SetNodeReferences(
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['sourceNodeAggregateIdentifier']),
             $sourceOriginDimensionSpacePoint,
-            NodeAggregateIdentifiers::fromArray($commandArguments['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($commandArguments['referenceName']),
+            $references,
             $initiatingUserIdentifier
         );
 
@@ -97,9 +113,6 @@ trait NodeReferencing
         $eventPayload = $this->readPayloadTable($payloadTable);
         if (!isset($eventPayload['contentStreamIdentifier'])) {
             $eventPayload['contentStreamIdentifier'] = (string)$this->getCurrentContentStreamIdentifier();
-        }
-        if (!isset($eventPayload['sourceOriginDimensionSpacePoint'])) {
-            $eventPayload['sourceOriginDimensionSpacePoint'] = json_encode($this->getCurrentDimensionSpacePoint());
         }
         if (!isset($eventPayload['initiatingUserIdentifier'])) {
             $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();

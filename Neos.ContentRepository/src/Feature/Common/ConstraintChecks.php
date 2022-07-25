@@ -18,6 +18,8 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Feature\Common\Exception\PropertyCannotBeSet;
+use Neos\ContentRepository\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -372,11 +374,6 @@ trait ConstraintChecks
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): bool {
-        // WORKAROUND: $nodeType->hasAutoCreatedChildNode() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $grandParentsNodeType->getFullConfiguration();
-        $nodeType->getFullConfiguration();
-
         if (
             $parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
@@ -674,6 +671,41 @@ trait ConstraintChecks
                     . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.',
                 1555179563
             );
+        }
+    }
+
+    protected function validateReferenceProperties(
+        PropertyName $referenceName,
+        PropertyValuesToWrite $referenceProperties,
+        NodeTypeName $nodeTypeName
+    ): void {
+        $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
+
+        foreach ($referenceProperties->getValues() as $propertyName => $propertyValue) {
+            $referencePropertyConfig = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]
+                ?? null;
+
+            if (is_null($referencePropertyConfig)) {
+                throw ReferenceCannotBeSet::becauseTheItDoesNotDeclareAProperty(
+                    $referenceName,
+                    $nodeTypeName,
+                    PropertyName::fromString($propertyName)
+                );
+            }
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $referencePropertyConfig['type'],
+                PropertyName::fromString($propertyName),
+                $nodeTypeName
+            );
+            if (!$propertyType->isMatchedBy($propertyValue)) {
+                throw ReferenceCannotBeSet::becauseAPropertyDoesNotMatchTheDeclaredType(
+                    $referenceName,
+                    $nodeTypeName,
+                    PropertyName::fromString($propertyName),
+                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                    $propertyType->getValue()
+                );
+            }
         }
     }
 }

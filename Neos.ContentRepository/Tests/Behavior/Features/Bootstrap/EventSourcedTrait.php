@@ -278,6 +278,12 @@ trait EventSourcedTrait
                     $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
                 } elseif (\mb_strpos($propertyValue, 'URI:') === 0) {
                     $propertyValue = new Uri(\mb_substr($propertyValue, 4));
+                } else {
+                    try {
+                        $propertyValue = \json_decode($propertyValue, true, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException) {
+                        // then don't, just keep the value
+                    }
                 }
             }
         }

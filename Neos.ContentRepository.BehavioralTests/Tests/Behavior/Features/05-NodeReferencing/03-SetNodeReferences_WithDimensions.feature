@@ -42,28 +42,28 @@ Feature: Node References with Dimensions
 
   Scenario: Create a reference and check whether they can be read in the different subgraphs
     When the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                 |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | referenceName                       | "referenceProperty"   |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | Key                           | Value                             |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | referenceName                 | "referenceProperty"               |
+      | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
-      | Key               | Value                                                      |
-      | referenceProperty | ["cs-identifier;anthony-destinode;{\"language\": \"de\"}"] |
+      | Name              | Node                                               | Properties |
+      | referenceProperty | cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
-      | Key               | Value                                                      |
-      | referenceProperty | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
+      | Name              | Node                                               | Properties |
+      | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
-      | Key               | Value                                                      |
-      | referenceProperty | ["cs-identifier;anthony-destinode;{\"language\": \"de\"}"] |
+      | Name              | Node                                               | Properties |
+      | referenceProperty | cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
-      | Key               | Value                                                      |
-      | referenceProperty | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
+      | Name              | Node                                               | Properties |
+      | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |

@@ -17,26 +17,84 @@ namespace Neos\ContentRepository\Feature\NodeReferencing;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Feature\Common\NodeReferenceToWrite;
+use Neos\ContentRepository\Feature\Common\SerializedNodeReference;
+use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\PropertyScope;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeReferencing
 {
     use ConstraintChecks;
 
+    abstract protected function requireProjectedNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
+    ): ReadableNodeAggregateInterface;
+
+
+    private function handleSetNodeReferences(SetNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
+        $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->sourceNodeAggregateIdentifier,
+            $contentRepository
+        );
+        $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
+        $nodeTypeName = $sourceNodeAggregate->getNodeTypeName();
+
+        foreach ($command->references as $reference) {
+            if ($reference->properties) {
+                $this->validateReferenceProperties(
+                    $command->referenceName,
+                    $reference->properties,
+                    $nodeTypeName
+                );
+            }
+        }
+
+        $lowLevelCommand = new SetSerializedNodeReferences(
+            $command->contentStreamIdentifier,
+            $command->sourceNodeAggregateIdentifier,
+            $command->sourceOriginDimensionSpacePoint,
+            $command->referenceName,
+            SerializedNodeReferences::fromReferences(array_map(
+                fn (NodeReferenceToWrite $reference): SerializedNodeReference => new SerializedNodeReference(
+                    $reference->targetNodeAggregateIdentifier,
+                    $reference->properties
+                        ? $this->getPropertyConverter()->serializeReferencePropertyValues(
+                            $reference->properties,
+                            $this->requireNodeType($nodeTypeName),
+                            $command->referenceName
+                        )
+                        : null
+                ),
+                $command->references->references
+            )),
+            $command->initiatingUserIdentifier
+        );
+
+        return $this->handleSetSerializedNodeReferences($lowLevelCommand, $contentRepository);
+    }
+
     /**
-     * @param SetNodeReferences $command
-     * @return EventsToPublish
      * @throws \Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    private function handleSetNodeReferences(SetNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleSetSerializedNodeReferences(SetSerializedNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamIdentifier);
         $this->requireDimensionSpacePointToExist(
@@ -53,10 +111,11 @@ trait NodeReferencing
             $command->sourceOriginDimensionSpacePoint
         );
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->referenceName);
-        foreach ($command->destinationNodeAggregateIdentifiers as $destinationNodeAggregateIdentifier) {
+
+        foreach ($command->references as $reference) {
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
-                $destinationNodeAggregateIdentifier,
+                $reference->targetNodeAggregateIdentifier,
                 $contentRepository
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
@@ -71,36 +130,33 @@ trait NodeReferencing
             );
         }
 
-        $events = [];
         $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
-        $declaration = $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? null;
-        if (is_string($declaration)) {
-            $scope = PropertyScope::from($declaration);
-        } else {
-            $scope = PropertyScope::SCOPE_NODE;
-        }
+        $scopeDeclaration = $sourceNodeType->getProperties()[(string)$command->referenceName]['scope'] ?? '';
+        $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
+
         $affectedOrigins = $scope->resolveAffectedOrigins(
             $command->sourceOriginDimensionSpacePoint,
             $sourceNodeAggregate,
             $this->interDimensionalVariationGraph
         );
-        foreach ($affectedOrigins as $originDimensionSpacePoint) {
-            $events[] = new NodeReferencesWereSet(
+
+        $events = Events::with(
+            new NodeReferencesWereSet(
                 $command->contentStreamIdentifier,
                 $command->sourceNodeAggregateIdentifier,
-                $originDimensionSpacePoint,
-                $command->destinationNodeAggregateIdentifiers,
+                $affectedOrigins,
                 $command->referenceName,
+                $command->references,
                 $command->initiatingUserIdentifier
-            );
-        }
+            )
+        );
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
-                Events::fromArray($events)
+                $events
             ),
             ExpectedVersion::ANY()
         );

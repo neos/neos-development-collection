@@ -23,6 +23,13 @@ Feature: Constraint checks on SetNodeReferences
           constraints:
             nodeTypes:
               'Neos.ContentRepository.Testing:NodeWithReferences': false
+        referencePropertyWithProperties:
+          type: reference
+          properties:
+            text:
+              type: string
+            postalAddress:
+              type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -47,72 +54,72 @@ Feature: Constraint checks on SetNodeReferences
   # checks for contentStreamIdentifier
   Scenario: Try to reference nodes in a non-existent content stream
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "i-do-not-exist"      |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "referenceProperty"   |
+      | Key                           | Value                           |
+      | contentStreamIdentifier       | "i-do-not-exist"                |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"             |
+      | referenceName                 | "referenceProperty"             |
+      | references                    | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1521386692
 
   # checks for sourceNodeAggregateIdentifier
   Scenario: Try to reference nodes in a non-existent node aggregate
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                 |
-      | sourceNodeAggregateIdentifier       | "i-do-not-exist"      |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "referenceProperty"   |
+      | Key                           | Value                            |
+      | sourceNodeAggregateIdentifier | "i-do-not-exist"                 |
+      | referenceName                 | "referenceProperty"              |
+      | references                    | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist" with code 1541678486
 
   Scenario: Try to reference nodes in a root node aggregate
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                    |
-      | sourceNodeAggregateIdentifier       | "lady-eleonode-rootford" |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]    |
-      | referenceName                       | "referenceProperty"      |
+      | Key                           | Value                            |
+      | sourceNodeAggregateIdentifier | "lady-eleonode-rootford"         |
+      | referenceName                 | "referenceProperty"              |
+      | references                    | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   # checks for sourceOriginDimensionSpacePoint
   Scenario: Try to reference nodes in an origin dimension space point that does not exist
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"        |
-      | sourceOriginDimensionSpacePoint     | {"undeclared":"undefined"} |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]      |
-      | referenceName                       | "referenceProperty"        |
+      | Key                             | Value                            |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"              |
+      | sourceOriginDimensionSpacePoint | {"undeclared":"undefined"}       |
+      | referenceName                   | "referenceProperty"              |
+      | references                      | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound" with code 1505929456
 
   Scenario: Try to reference nodes in an origin dimension space point the source node aggregate does not occupy
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                 |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | sourceOriginDimensionSpacePoint     | {"language":"en"}     |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "referenceProperty"   |
+      | Key                             | Value                            |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"              |
+      | sourceOriginDimensionSpacePoint | {"language":"en"}                |
+      | referenceName                   | "referenceProperty"              |
+      | references                      | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied" with code 1552595396
 
   # checks for destinationNodeAggregateIdentifiers
   Scenario: Try to reference a non-existent node aggregate
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value               |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise" |
-      | destinationNodeAggregateIdentifiers | ["i-do-not-exist"]  |
-      | referenceName                       | "referenceProperty" |
+      | Key                           | Value                         |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"           |
+      | referenceName                 | "referenceProperty"           |
+      | references                    | [{"target":"i-do-not-exist"}] |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist" with code 1541678486
 
   Scenario: Try to reference a root node aggregate
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"        |
-      | destinationNodeAggregateIdentifiers | ["lady-eleonode-rootford"] |
-      | referenceName                       | "referenceProperty"        |
+      | Key                           | Value                                 |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"                   |
+      | referenceName                 | "referenceProperty"                   |
+      | references                    | [{"target":"lady-eleonode-rootford"}] |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to reference a node aggregate of a type not matching the constraints
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                          |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"            |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]          |
-      | referenceName                       | "constrainedReferenceProperty" |
+      | Key                           | Value                            |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"              |
+      | referenceName                 | "constrainedReferenceProperty"   |
+      | references                    | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1648502149
 
   Scenario: Try to reference a node aggregate which does not cover the source origin
@@ -125,27 +132,44 @@ Feature: Constraint checks on SetNodeReferences
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"        |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}         |
-      | referenceName                       | "referenceProperty"        |
-      | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
+      | Key                             | Value                                 |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"                   |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                    |
+      | referenceName                   | "referenceProperty"                   |
+      | references                      | [{"target":"sir-david-nodenborough"}] |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   # checks for referenceName
   Scenario: Try to reference nodes in an undefined property:
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                 |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "i-do-not-exist"      |
+      | Key                           | Value                            |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"              |
+      | referenceName                 | "i-do-not-exist"                 |
+      | references                    | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1618670106
 
   Scenario: Try to reference nodes in a property that is not of type reference(s):
     When the command SetNodeReferences is executed with payload and exceptions are caught:
-      | Key                                 | Value                  |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"    |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]  |
-      | referenceName                       | "nonReferenceProperty" |
+      | Key                           | Value                            |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"              |
+      | referenceName                 | "nonReferenceProperty"           |
+      | references                    | [{"target":"anthony-destinode"}] |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1618670106
 
+  Scenario: Try to reference a node aggregate using a property the reference does not declare
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                           | Value                                                                         |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                            |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"                                                           |
+      | referenceName                 | "referencePropertyWithProperties"                                             |
+      | references                    | [{"target":"anthony-destinode", "properties":{"i-do-not-exist": "whatever"}}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1658406662
+
+  Scenario: Try to set a property with a value of a wrong type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                           | Value                                                                                          |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                             |
+      | sourceNodeAggregateIdentifier | "source-nodandaise"                                                                            |
+      | referenceName                 | "referencePropertyWithProperties"                                                              |
+      | references                    | [{"target":"anthony-destinode", "properties":{"postalAddress": "28 31st of February Street"}}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1658406762

@@ -119,8 +119,6 @@ trait NodeCreation
         }
 
         $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
-        // initialize node type
-        $nodeType->getOptions();
         foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(

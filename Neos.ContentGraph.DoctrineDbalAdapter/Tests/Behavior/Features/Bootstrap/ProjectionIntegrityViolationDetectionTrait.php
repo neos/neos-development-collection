@@ -264,7 +264,7 @@ trait ProjectionIntegrityViolationDetectionTrait
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         return $nodeRecord['relationanchorpoint'];
     }
