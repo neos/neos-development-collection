@@ -4,47 +4,27 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\EventSourcing\EventStore\EventStore;
-use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope('singleton')]
 class PropertyAdjustment
 {
     use LoadNodeTypeTrait;
 
-    protected EventStore $eventStore;
-    protected ProjectedNodeIterator $projectedNodeIterator;
-    protected NodeTypeManager $nodeTypeManager;
-    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-    protected RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
-        EventStore $eventStore,
-        ProjectedNodeIterator $projectedNodeIterator,
-        NodeTypeManager $nodeTypeManager,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker,
+        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly NodeTypeManager $nodeTypeManager
     ) {
-        $this->eventStore = $eventStore;
-        $this->projectedNodeIterator = $projectedNodeIterator;
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     /**
@@ -76,7 +56,6 @@ class PropertyAdjustment
                             'The property "' . $propertyKey
                                 . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
                             function () use ($node, $propertyKey) {
-                                $this->readSideMemoryCacheManager->disableCache();
                                 return $this->removeProperty($node, $propertyKey);
                             }
                         );
@@ -97,7 +76,6 @@ class PropertyAdjustment
                             StructureAdjustment::NON_DESERIALIZABLE_PROPERTY,
                             $message,
                             function () use ($node, $propertyKey) {
-                                $this->readSideMemoryCacheManager->disableCache();
                                 return $this->removeProperty($node, $propertyKey);
                             }
                         );
@@ -115,7 +93,6 @@ class PropertyAdjustment
                             StructureAdjustment::MISSING_DEFAULT_VALUE,
                             'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.',
                             function () use ($node, $propertyKey, $defaultValue) {
-                                $this->readSideMemoryCacheManager->disableCache();
                                 return $this->addProperty($node, $propertyKey, $defaultValue);
                             }
                         );
@@ -125,13 +102,13 @@ class PropertyAdjustment
         }
     }
 
-    protected function removeProperty(NodeInterface $node, string $propertyKey): CommandResult
+    private function removeProperty(NodeInterface $node, string $propertyKey): EventsToPublish
     {
         $serializedPropertyValues = SerializedPropertyValues::fromArray([$propertyKey => null]);
         return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
     }
 
-    protected function addProperty(NodeInterface $node, string $propertyKey, mixed $defaultValue): CommandResult
+    private function addProperty(NodeInterface $node, string $propertyKey, mixed $defaultValue): EventsToPublish
     {
         $propertyType = $node->getNodeType()->getPropertyType($propertyKey);
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
@@ -141,27 +118,26 @@ class PropertyAdjustment
         return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
     }
 
-    protected function publishNodePropertiesWereSet(
+    private function publishNodePropertiesWereSet(
         NodeInterface $node,
         SerializedPropertyValues $serializedPropertyValues
-    ): CommandResult {
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new NodePropertiesWereSet(
-                    $node->getContentStreamIdentifier(),
-                    $node->getNodeAggregateIdentifier(),
-                    $node->getOriginDimensionSpacePoint(),
-                    $serializedPropertyValues,
-                    UserIdentifier::forSystemUser()
-                ),
-                Uuid::uuid4()->toString()
+    ): EventsToPublish {
+        $events = Events::with(
+            new NodePropertiesWereSet(
+                $node->getContentStreamIdentifier(),
+                $node->getNodeAggregateIdentifier(),
+                $node->getOriginDimensionSpacePoint(),
+                $serializedPropertyValues,
+                UserIdentifier::forSystemUser()
             )
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
-        $this->eventStore->commit($streamName->getEventStreamName(), $events);
-
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName->getEventStreamName(),
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
 use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
@@ -13,9 +15,7 @@ use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignments;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -25,14 +25,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStore;
-use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope('singleton')]
 class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
@@ -40,36 +33,12 @@ class TetheredNodeAdjustments
     use LoadNodeTypeTrait;
     use TetheredNodeInternals;
 
-    protected EventStore $eventStore;
-    protected ProjectedNodeIterator $projectedNodeIterator;
-    protected NodeTypeManager $nodeTypeManager;
-    protected DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
-    protected ContentGraphInterface $contentGraph;
-    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-    protected RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
-        EventStore $eventStore,
-        ProjectedNodeIterator $projectedNodeIterator,
-        NodeTypeManager $nodeTypeManager,
-        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        ContentGraphInterface $contentGraph,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker,
-        private readonly ContentRepository $contentRepository
+        private readonly ContentRepository $contentRepository,
+        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
     ) {
-        $this->eventStore = $eventStore;
-        $this->projectedNodeIterator = $projectedNodeIterator;
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->contentGraph = $contentGraph;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->runtimeBlocker = $runtimeBlocker;
-    }
-
-    public function getRuntimeBlocker(): RuntimeBlocker
-    {
-        return $this->runtimeBlocker;
     }
 
     /**
@@ -91,7 +60,7 @@ class TetheredNodeAdjustments
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
                         $node->getContentStreamIdentifier(),
                         $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
@@ -109,8 +78,6 @@ class TetheredNodeAdjustments
                             StructureAdjustment::TETHERED_NODE_MISSING,
                             'The tethered child node "' . $tetheredNodeName . '" is missing.',
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
-                                $this->readSideMemoryCacheManager->disableCache();
-
                                 $events = $this->createEventsForMissingTetheredNode(
                                     $nodeAggregate,
                                     $node,
@@ -124,8 +91,11 @@ class TetheredNodeAdjustments
                                 $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
                                     $node->getContentStreamIdentifier()
                                 );
-                                $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
-                                return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+                                return new EventsToPublish(
+                                    $streamName->getEventStreamName(),
+                                    $events,
+                                    ExpectedVersion::ANY()
+                                );
                             }
                         );
                     } else {
@@ -136,7 +106,7 @@ class TetheredNodeAdjustments
             }
 
             // find disallowed tethered nodes
-            $tetheredNodeAggregates = $this->contentGraph->findTetheredChildNodeAggregates(
+            $tetheredNodeAggregates = $this->contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $nodeAggregate->getContentStreamIdentifier(),
                 $nodeAggregate->getIdentifier()
             );
@@ -149,7 +119,6 @@ class TetheredNodeAdjustments
                         'The tethered child node "'
                             . $tetheredNodeAggregate->getNodeName() . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
-                            $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
                         }
                     );
@@ -159,7 +128,7 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($nodeAggregate->getNodes() as $node) {
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
                         $node->getContentStreamIdentifier(),
                         $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
@@ -184,7 +153,6 @@ class TetheredNodeAdjustments
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
-                                $this->readSideMemoryCacheManager->disableCache();
                                 return $this->reorderNodes(
                                     $node->getContentStreamIdentifier(),
                                     $actualTetheredChildNodes,
@@ -231,11 +199,6 @@ class TetheredNodeAdjustments
         return $this->interDimensionalVariationGraph;
     }
 
-    protected function getEventStore(): EventStore
-    {
-        return $this->eventStore;
-    }
-
     protected function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
@@ -251,8 +214,8 @@ class TetheredNodeAdjustments
         ContentStreamIdentifier $contentStreamIdentifier,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
-    ): CommandResult {
-        $events = DomainEvents::createEmpty();
+    ): EventsToPublish {
+        $events = [];
 
         // we move from back to front through the expected ordering; as we always specify the **succeeding** sibling.
         $succeedingSiblingNodeName = array_pop($expectedNodeOrdering);
@@ -263,28 +226,23 @@ class TetheredNodeAdjustments
             /* @var $succeedingNode NodeInterface */
             $succeedingNode = $actualTetheredChildNodes[$succeedingSiblingNodeName];
 
-            $events = $events->appendEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeAggregateWasMoved(
-                        $contentStreamIdentifier,
-                        $nodeToMove->getNodeAggregateIdentifier(),
-                        NodeMoveMappings::fromArray([
-                            new NodeMoveMapping(
-                                $nodeToMove->getOriginDimensionSpacePoint(),
-                                NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
-                                NodeVariantAssignments::createFromArray([
-                                    $nodeToMove->getOriginDimensionSpacePoint()->hash => new NodeVariantAssignment(
-                                        $succeedingNode->getNodeAggregateIdentifier(),
-                                        $succeedingNode->getOriginDimensionSpacePoint()
-                                    )
-                                ])
+            $events[] = new NodeAggregateWasMoved(
+                $contentStreamIdentifier,
+                $nodeToMove->getNodeAggregateIdentifier(),
+                NodeMoveMappings::fromArray([
+                    new NodeMoveMapping(
+                        $nodeToMove->getOriginDimensionSpacePoint(),
+                        NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
+                        NodeVariantAssignments::createFromArray([
+                            $nodeToMove->getOriginDimensionSpacePoint()->hash => new NodeVariantAssignment(
+                                $succeedingNode->getNodeAggregateIdentifier(),
+                                $succeedingNode->getOriginDimensionSpacePoint()
                             )
-                        ]),
-                        new DimensionSpace\DimensionSpacePointSet([]),
-                        UserIdentifier::forSystemUser()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
+                        ])
+                    )
+                ]),
+                new DimensionSpace\DimensionSpacePointSet([]),
+                UserIdentifier::forSystemUser()
             );
 
             // now, go one step left.
@@ -292,8 +250,10 @@ class TetheredNodeAdjustments
         }
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-        $this->eventStore->commit($streamName->getEventStreamName(), $events);
-
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName->getEventStreamName(),
+            Events::fromArray($events),
+            ExpectedVersion::ANY()
+        );
     }
 }

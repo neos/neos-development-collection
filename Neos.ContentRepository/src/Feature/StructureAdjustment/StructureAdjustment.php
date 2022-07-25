@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\Error\Messages\Message;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
@@ -25,8 +25,6 @@ class StructureAdjustment extends Message
     public const TETHERED_NODE_WRONGLY_ORDERED = 'TETHERED_NODE_WRONGLY_ORDERED';
     public const NODE_COVERS_GENERALIZATION_OR_PEERS = 'NODE_COVERS_GENERALIZATION_OR_PEERS';
 
-    private ?\Closure $adjustment;
-
     private string $type;
 
     /**
@@ -40,10 +38,9 @@ class StructureAdjustment extends Message
         ?int $code = null,
         array $arguments = [],
         string $type = '',
-        ?\Closure $adjustment = null
+        public readonly ?\Closure $remediation = null
     ) {
         parent::__construct($message, $code, $arguments);
-        $this->adjustment = $adjustment;
         $this->type = $type;
     }
 
@@ -88,16 +85,12 @@ class StructureAdjustment extends Message
         );
     }
 
-    public function fix(): CommandResult
+    public function fix(): void
     {
-        if ($this->adjustment === null) {
-            return CommandResult::createEmpty();
-        }
-
-        $adjustment = $this->adjustment;
+        $adjustment = $this->remediation;
         $commandResult = $adjustment();
         assert($commandResult instanceof CommandResult);
-        return $commandResult;
+        $commandResult->block();
     }
 
     public function getType(): string

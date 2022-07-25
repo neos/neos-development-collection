@@ -52,8 +52,7 @@ final class StructureAdjustmentsCommandController extends CommandController
         foreach ($errors as $error) {
             assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
-            // TODO: HOW TO ADJUST THIS WITH NEW CR??
-            $error->fix()->blockUntilProjectionsAreUpToDate();
+            $this->structureAdjustmentService->fixError($error);
         }
         $this->outputLine('Fixed all.');
     }

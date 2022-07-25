@@ -56,7 +56,6 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\EventStore\ProvidesSetupInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 
 /**

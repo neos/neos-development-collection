@@ -26,6 +26,8 @@ use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\ContentRepository\Feature\StructureAdjustment\ProjectedNodeIterator;
+use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
@@ -90,6 +92,18 @@ final class ContentRepositoryFactory
             );
         }
         return $this->contentRepository;
+    }
+
+    // TODO: Should this be public, or part of ContentRepository API??
+    public function buildStructureAdjustmentService(): StructureAdjustmentService
+    {
+        return new StructureAdjustmentService(
+            $this->build(),
+            $this->eventPersister,
+            $this->projectionFactoryDependencies->nodeTypeManager,
+            $this->projectionFactoryDependencies->interDimensionalVariationGraph,
+            $this->buildReadSideMemoryCacheManager()
+        );
     }
 
     private function buildCommandBus(): CommandBus

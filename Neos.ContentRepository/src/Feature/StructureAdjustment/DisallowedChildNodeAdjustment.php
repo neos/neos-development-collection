@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\EventStore\EventPersister;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
@@ -13,50 +17,23 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\EventSourcing\EventStore\EventStore;
-use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope('singleton')]
 class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
     use LoadNodeTypeTrait;
 
-    protected EventStore $eventStore;
-
-    protected ProjectedNodeIterator $projectedNodeIterator;
-
-    protected NodeTypeManager $nodeTypeManager;
-
-    protected ContentGraphInterface $contentGraph;
-
-    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
-    protected RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
-        EventStore $eventStore,
-        ProjectedNodeIterator $projectedNodeIterator,
-        NodeTypeManager $nodeTypeManager,
-        ContentGraphInterface $contentGraph,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker
+        private readonly ContentRepository $contentRepository,
+        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly NodeTypeManager $nodeTypeManager,
     ) {
-        $this->eventStore = $eventStore;
-        $this->projectedNodeIterator = $projectedNodeIterator;
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->contentGraph = $contentGraph;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     /**
@@ -82,7 +59,7 @@ class DisallowedChildNodeAdjustment
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
@@ -143,7 +120,6 @@ class DisallowedChildNodeAdjustment
                         StructureAdjustment::DISALLOWED_CHILD_NODE,
                         $message,
                         function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
-                            $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeInSingleDimensionSpacePoint(
                                 $nodeAggregate,
                                 $coveredDimensionSpacePoint
@@ -155,37 +131,32 @@ class DisallowedChildNodeAdjustment
         }
     }
 
-    protected function getEventStore(): EventStore
-    {
-        return $this->eventStore;
-    }
-
     private function removeNodeInSingleDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): CommandResult {
+    ): EventsToPublish {
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new NodeAggregateWasRemoved(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier(),
-                    $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
-                        ? new OriginDimensionSpacePointSet([$referenceOrigin])
-                        : new OriginDimensionSpacePointSet([]),
-                    new DimensionSpacePointSet([$dimensionSpacePoint]),
-                    UserIdentifier::forSystemUser()
-                ),
-                Uuid::uuid4()->toString()
+        $events = Events::with(
+            new NodeAggregateWasRemoved(
+                $nodeAggregate->getContentStreamIdentifier(),
+                $nodeAggregate->getIdentifier(),
+                $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
+                    ? new OriginDimensionSpacePointSet([$referenceOrigin])
+                    : new OriginDimensionSpacePointSet([]),
+                new DimensionSpacePointSet([$dimensionSpacePoint]),
+                UserIdentifier::forSystemUser()
             )
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $nodeAggregate->getContentStreamIdentifier()
         );
-        $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
 
-        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+        return new EventsToPublish(
+            $streamName->getEventStreamName(),
+            $events,
+            ExpectedVersion::ANY()
+        );
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

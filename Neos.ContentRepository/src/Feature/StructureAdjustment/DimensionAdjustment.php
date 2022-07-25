@@ -6,10 +6,8 @@ namespace Neos\ContentRepository\Feature\StructureAdjustment;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
-#[Flow\Scope('singleton')]
 class DimensionAdjustment
 {
     protected ProjectedNodeIterator $projectedNodeIterator;
