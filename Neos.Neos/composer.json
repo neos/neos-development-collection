@@ -19,7 +19,8 @@
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/fluid-adaptor": "*",
         "behat/transliterator": "~1.0",
-        "neos/media": "*"
+        "neos/media": "*",
+        "flowpack/jobqueue-common": "*"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
