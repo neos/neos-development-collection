@@ -35,10 +35,10 @@ Feature: Disable a node aggregate
       | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
       | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document      |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "preceding-nodenborough"   |
-      | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
-      | referenceName                       | "references"               |
+      | Key                           | Value                                  |
+      | sourceNodeAggregateIdentifier | "preceding-nodenborough"               |
+      | referenceName                 | "references"                           |
+      | references                    | [{"target": "sir-david-nodenborough"}] |
     And the graph projection is fully up to date
 
   Scenario: Restore a hidden node by removing and recreating it

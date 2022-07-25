@@ -35,17 +35,17 @@ Feature: Disable a node aggregate
       | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
       | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document      |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "preceding-nodenborough"   |
-      | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
-      | referenceName                       | "references"               |
+      | Key                           | Value                                  |
+      | sourceNodeAggregateIdentifier | "preceding-nodenborough"               |
+      | referenceName                 | "references"                           |
+      | references                    | [{"target": "sir-david-nodenborough"}] |
     And the graph projection is fully up to date
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                        |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"     |
-      | nodeVariantSelectionStrategy | "allVariants"                |
+      | Key                          | Value                    |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 7 is of type "NodeAggregateWasDisabled" with payload:
@@ -90,8 +90,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{}  |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to have the following references:
-      | Key        | Value                                       |
-      | references | ["cs-identifier;sir-david-nodenborough;{}"] |
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -101,8 +101,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to be referenced by:
-      | Key        | Value                                       |
-      | references | ["cs-identifier;preceding-nodenborough;{}"] |
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:

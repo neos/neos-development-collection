@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\Content\References;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -75,9 +76,9 @@ interface NodeAccessorInterface
 
     // Nodes implements IteratorAggregate oÄ
 
-    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): Nodes;
+    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): References;
 
-    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): Nodes;
+    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): References;
 
     public function findParentNode(NodeInterface $childNode): ?NodeInterface;
 

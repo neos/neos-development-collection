@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\Content\References;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
@@ -225,7 +226,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
         $query->addToQuery('ORDER BY h.position ASC');
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeData) {
             $node = $this->nodeFactory->mapNodeRowToNode(
                 $nodeData,
                 $this->getDimensionSpacePoint(),
@@ -293,7 +294,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
                 $this->visibilityConstraints
             );
 
-            $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
+            $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
             if ($nodeRow === false) {
                 $cache->rememberNonExistingNodeAggregateIdentifier($nodeAggregateIdentifier);
                 return null;
@@ -376,20 +377,18 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     }
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findReferencedNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes {
+    ): References {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
             '
 -- ContentSubgraph::findReferencedNodes
-SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchyrelation sh
+SELECT d.*, dh.contentstreamidentifier, dh.name, r.name AS referencename, r.properties AS referenceproperties
+ FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint
  INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
  INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
@@ -429,33 +428,28 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
             );
         }
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode(
-                $nodeData,
-                $this->getDimensionSpacePoint(),
-                $this->visibilityConstraints
-            );
-        }
+        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return Nodes::fromArray($result);
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes {
+    ): References {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
             '
 -- ContentSubgraph::findReferencingNodes
-SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchyrelation sh
+SELECT s.*, sh.contentstreamidentifier, sh.name, r.name AS referencename, r.properties AS referenceproperties
+ FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint
  INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
  INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
@@ -486,16 +480,25 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
             'sh'
         );
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode(
-                $nodeData,
-                $this->getDimensionSpacePoint(),
-                $this->visibilityConstraints
+        if ($name) {
+            $query->addToQuery(
+                '
+ ORDER BY r.position, s.nodeaggregateidentifier'
+            );
+        } else {
+            $query->addToQuery(
+                '
+ ORDER BY r.name, r.position, s.nodeaggregateidentifier'
             );
         }
 
-        return Nodes::fromArray($result);
+        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $nodeRows,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     /**
@@ -547,7 +550,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
             'p'
         );
 
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -659,7 +662,7 @@ WHERE
 
             $query->addToQuery('ORDER BY h.position LIMIT 1');
 
-            $nodeData = $query->execute($this->getDatabaseConnection())->fetch();
+            $nodeData = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
             if ($nodeData) {
                 $node = $this->nodeFactory->mapNodeRowToNode(
@@ -717,7 +720,7 @@ WHERE
         }
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -772,7 +775,7 @@ WHERE
         }
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -827,7 +830,7 @@ WHERE
         }
 
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -894,7 +897,7 @@ WHERE
                 'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->hash,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $nodePathSegments = [];
 
@@ -1019,7 +1022,7 @@ order by level asc, position asc;')
             '###VISIBILITY_CONSTRAINTS_RECURSION###'
         );
 
-        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
+        $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         $subtreesByNodeIdentifier = [];
         $subtreesByNodeIdentifier['ROOT'] = new Subtree(0);
@@ -1171,7 +1174,7 @@ order by level asc, position asc;')
 
         // TODO: maybe make Nodes lazy-capable as well (so we can yield the results inside the foreach loop)
         $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode(
                 $nodeRecord,
                 $this->getDimensionSpacePoint(),
@@ -1197,7 +1200,9 @@ SELECT COUNT(*) FROM neos_contentgraph_node n
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
-        return (int) $query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
+        $row = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+
+        return $row ? (int)$row['COUNT(*)'] : 0;
     }
 
     public function getInMemoryCache(): InMemoryCache

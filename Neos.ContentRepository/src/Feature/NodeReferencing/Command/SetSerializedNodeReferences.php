@@ -1,25 +1,37 @@
 <?php
 
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing\Command;
 
-use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\NodeAddress;
 
 /**
- * Create a named reference from source to destination node
+ * Set property values for a given node (internal implementation).
+ *
+ * The property values contain the serialized types already, and include type information.
  */
 #[Flow\Proxy(false)]
-final class SetNodeReferences implements
+final class SetSerializedNodeReferences implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
@@ -29,7 +41,7 @@ final class SetNodeReferences implements
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly PropertyName $referenceName,
-        public readonly NodeReferencesToWrite $references,
+        public readonly SerializedNodeReferences $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -44,13 +56,14 @@ final class SetNodeReferences implements
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
             PropertyName::fromString($array['referenceName']),
-            NodeReferencesToWrite::fromArray($array['references']),
+            SerializedNodeReferences::fromArray($array['references']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
     /**
-     * @return array<string,\JsonSerializable>
+     * @internal
+     * @return array<string,mixed>
      */
     public function jsonSerialize(): array
     {

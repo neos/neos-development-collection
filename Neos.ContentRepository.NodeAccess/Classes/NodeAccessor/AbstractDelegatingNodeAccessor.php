@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\Content\Reference;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -54,7 +55,7 @@ abstract class AbstractDelegatingNodeAccessor
     }
 
     /**
-     * @return iterable<int,NodeInterface>
+     * @return iterable<int,Reference>
      */
     public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): iterable
     {
@@ -62,7 +63,7 @@ abstract class AbstractDelegatingNodeAccessor
     }
 
     /**
-     * @return iterable<int,NodeInterface>
+     * @return iterable<int,Reference>
      */
     public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): iterable
     {

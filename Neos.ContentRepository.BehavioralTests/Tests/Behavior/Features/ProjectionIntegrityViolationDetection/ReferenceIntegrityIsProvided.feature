@@ -40,12 +40,12 @@ Feature: Run integrity violation detection regarding reference relations
 
   Scenario: Reference a non-existing node aggregate
     When the event NodeReferencesWereSet was published with payload:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "cs-identifier"       |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | sourceOriginDimensionSpacePoint     | {"language":"de"}     |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "referenceProperty"   |
+      | Key                                      | Value                                                                      |
+      | contentStreamIdentifier                  | "cs-identifier"                                                            |
+      | sourceNodeAggregateIdentifier            | "source-nodandaise"                                                        |
+      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
+      | referenceName                            | "referenceProperty"                                                        |
+      | references                               | [{"targetNodeAggregateIdentifier":"anthony-destinode", "properties":null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
@@ -62,12 +62,12 @@ Feature: Run integrity violation detection regarding reference relations
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeReferencesWereSet was published with payload:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "cs-identifier"       |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | sourceOriginDimensionSpacePoint     | {"language":"de"}     |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "referenceProperty"   |
+      | Key                                      | Value                                                                      |
+      | contentStreamIdentifier                  | "cs-identifier"                                                            |
+      | sourceNodeAggregateIdentifier            | "source-nodandaise"                                                        |
+      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
+      | referenceName                            | "referenceProperty"                                                        |
+      | references                               | [{"targetNodeAggregateIdentifier":"anthony-destinode", "properties":null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error

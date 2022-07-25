@@ -64,7 +64,7 @@ final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
      */
     public static function fromJsonString(string $jsonString): self
     {
-        return self::instance(json_decode($jsonString, true));
+        return self::instance(json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
     public static function fromDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self

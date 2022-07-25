@@ -23,12 +23,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The alternate reality-aware projection-time hypergraph for the PostgreSQL backend via Doctrine DBAL
- * @Flow\Proxy(false)
  */
 final class ProjectionHypergraph
 {
@@ -269,7 +266,7 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @return array|ReferenceHyperrelationRecord[]
+     * @return array|ReferenceRelationRecord[]
      * @throws DBALException
      */
     public function findOutgoingReferenceHyperrelationRecords(
@@ -277,7 +274,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
-            FROM ' . ReferenceHyperrelationRecord::TABLE_NAME . ' r
+            FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
             WHERE r.originnodeanchor = :originNodeAnchor';
 
         $parameters = [
@@ -286,7 +283,7 @@ final class ProjectionHypergraph
 
         $referenceHyperrelations = [];
         foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
-            $referenceHyperrelations[] = ReferenceHyperrelationRecord::fromDatabaseRow($row);
+            $referenceHyperrelations[] = ReferenceRelationRecord::fromDatabaseRow($row);
         }
 
         return $referenceHyperrelations;
@@ -603,26 +600,6 @@ final class ProjectionHypergraph
         return array_map(function (array $nodeAggregateIdentifiers) {
             return NodeAggregateIdentifiers::fromArray($nodeAggregateIdentifiers);
         }, $nodeAggregateIdentifiersByDimensionSpacePoint);
-    }
-
-    public function findReferenceRelationByOrigin(
-        NodeRelationAnchorPoint $origin,
-        PropertyName $name
-    ): ?ReferenceHyperrelationRecord {
-        $query = /** @lang PostgreSQL */
-            'SELECT ref.*
-            FROM ' . ReferenceHyperrelationRecord::TABLE_NAME . ' ref
-            WHERE ref.originnodeanchor = :originNodeAnchor
-            AND ref.name = :name';
-
-        $parameters = [
-            'originNodeAnchor' => (string)$origin,
-            'name' => (string)$name
-        ];
-
-        $row = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
-
-        return $row ? ReferenceHyperrelationRecord::fromDatabaseRow($row) : null;
     }
 
     public function countContentStreamCoverage(NodeRelationAnchorPoint $anchorPoint): int

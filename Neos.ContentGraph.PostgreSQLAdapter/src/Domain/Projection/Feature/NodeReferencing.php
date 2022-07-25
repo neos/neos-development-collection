@@ -16,10 +16,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeAggregateIdentifiers;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 
 /**
@@ -35,38 +34,43 @@ trait NodeReferencing
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
-            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                $event->contentStreamIdentifier,
-                $event->sourceOriginDimensionSpacePoint,
-                $event->sourceNodeAggregateIdentifier
-            );
-
-            if ($nodeRecord) {
-                $anchorPoint = $this->copyOnWrite(
+            foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
+                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
                     $event->contentStreamIdentifier,
-                    $nodeRecord,
-                    function (NodeRecord $node) {
+                    $originDimensionSpacePoint,
+                    $event->sourceNodeAggregateIdentifier
+                );
+
+                if ($nodeRecord) {
+                    $anchorPoint = $this->copyOnWrite(
+                        $event->contentStreamIdentifier,
+                        $nodeRecord,
+                        function (NodeRecord $node) {
+                        }
+                    );
+
+                    // remove old
+                    $this->getDatabaseConnection()->delete(ReferenceRelationRecord::TABLE_NAME, [
+                        'originnodeanchor' => $anchorPoint,
+                        'name' => $event->referenceName
+                    ]);
+
+                    // set new
+                    $position = 0;
+                    foreach ($event->references as $reference) {
+                        $referenceRecord = new ReferenceRelationRecord(
+                            $anchorPoint,
+                            $event->referenceName,
+                            $position,
+                            $reference->properties,
+                            $reference->targetNodeAggregateIdentifier
+                        );
+                        $referenceRecord->addToDatabase($this->getDatabaseConnection());
+                        $position++;
                     }
-                );
-                $existingReferenceRelation = $this->getProjectionHypergraph()->findReferenceRelationByOrigin(
-                    $anchorPoint,
-                    $event->referenceName
-                );
-                if ($existingReferenceRelation) {
-                    $existingReferenceRelation->setDestinationNodeAggregateIdentifiers(
-                        NodeAggregateIdentifiers::fromCollection($event->destinationNodeAggregateIdentifiers),
-                        $this->getDatabaseConnection()
-                    );
                 } else {
-                    $referenceRelation = new ReferenceHyperrelationRecord(
-                        $anchorPoint,
-                        $event->referenceName,
-                        NodeAggregateIdentifiers::fromCollection($event->destinationNodeAggregateIdentifiers)
-                    );
-                    $referenceRelation->addToDatabase($this->getDatabaseConnection());
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
                 }
-            } else {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
         });
     }

@@ -17,6 +17,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Projection\Content\Reference;
+use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -77,16 +80,48 @@ final class NodeFactory
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
-            new PropertyCollection(
-                SerializedPropertyValues::fromJsonString($nodeRow['properties']),
-                $this->propertyConverter
-            ),
+            $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             NodeAggregateClassification::from($nodeRow['classification']),
             $dimensionSpacePoint,
             $visibilityConstraints
         );
 
         return $node;
+    }
+
+    public function createPropertyCollectionFromJsonString(string $jsonString): PropertyCollection
+    {
+        return new PropertyCollection(
+            SerializedPropertyValues::fromJsonString($jsonString),
+            $this->propertyConverter
+        );
+    }
+
+    /**
+     * @param array<int,array<string,mixed>> $nodeRows
+     */
+    public function mapReferenceRowsToReferences(
+        array $nodeRows,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
+    ): References {
+        $result = [];
+        foreach ($nodeRows as $nodeRow) {
+            $node = $this->mapNodeRowToNode(
+                $nodeRow,
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            );
+            $result[] = new Reference(
+                $node,
+                PropertyName::fromString($nodeRow['referencename']),
+                $nodeRow['referenceproperties']
+                    ? $this->createPropertyCollectionFromJsonString($nodeRow['referenceproperties'])
+                    : null
+            );
+        }
+
+        return References::fromArray($result);
     }
 
     /**

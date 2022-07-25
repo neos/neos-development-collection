@@ -46,4 +46,31 @@ final class ReferenceCannotBeSet extends \DomainException
             1648502149
         );
     }
+
+    public static function becauseTheItDoesNotDeclareAProperty(
+        PropertyName $referenceName,
+        NodeTypeName $nodeTypeName,
+        PropertyName $propertyName
+    ): self {
+        return new self(
+            'Reference "' . $referenceName . '" cannot be set for node type "'
+            . $nodeTypeName . '" because it does not declare given property "' . $propertyName . '"',
+            1658406662
+        );
+    }
+
+    public static function becauseAPropertyDoesNotMatchTheDeclaredType(
+        PropertyName $referenceName,
+        NodeTypeName $nodeTypeName,
+        PropertyName $propertyName,
+        string $attemptedType,
+        string $configuredType
+    ): self {
+        return new self(
+            'Reference "' . $referenceName . '" cannot be set for node type "' . $nodeTypeName
+            . '" because its property "' . $propertyName . '" cannot be set to a value of type "' . $attemptedType
+            . '", must be of type "' . $configuredType . '".',
+            1658406762
+        );
+    }
 }

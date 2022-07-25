@@ -125,7 +125,7 @@ interface ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        OriginDimensionSpacePoint $parentNodeOriginOriginDimensionSpacePoint,
+        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet;
 

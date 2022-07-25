@@ -66,20 +66,15 @@ interface ContentSubgraphInterface extends \JsonSerializable
         int $offset = null
     ): Nodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
-     * @param PropertyName|null $name
-     * @return Nodes
-     */
     public function findReferencedNodes(
         NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes;
+    ): References;
 
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes;
+    ): References;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier

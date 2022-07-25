@@ -50,8 +50,8 @@ class CrCommandController extends CommandController
             $projector = $this->objectManager->get(AssetUsageProjector::class);
         } elseif ($projectionName === 'contentStream') {
             $projector = $this->objectManager->get(ContentStreamProjector::class);
-        //} elseif ($projectionName === 'hypergraph') {
-        //    $projector = $this->objectManager->get(HypergraphProjector::class);
+        } elseif ($projectionName === 'hypergraph') {
+            $projector = $this->objectManager->get(HypergraphProjector::class);
         } else {
             throw new \RuntimeException('Wrong $projectionName given. Supported are: graph, nodeHiddenState, documentUriPath, change, workspace, assetUsage, contentStream');
         }

@@ -77,7 +77,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->getNodeName(),
             $sourceNode->getClassification(),
             $properties->serialized(),
-            NodeReferences::fromNodes($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
+            NodeReferences::fromReferences($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
             $childNodes
         );
     }

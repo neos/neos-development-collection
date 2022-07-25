@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -409,8 +410,10 @@ class ContentRepositoryExportService
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-                    NodeAggregateIdentifiers::fromArray($references),
                     PropertyName::fromString($propertyName),
+                    NodeReferencesToWrite::fromNodeAggregateIdentifiers(
+                        NodeAggregateIdentifiers::fromArray($references)
+                    ),
                     UserIdentifier::forSystemUser()
                 );
             }
@@ -455,9 +458,6 @@ class ContentRepositoryExportService
         $properties = [];
         $nodeTypeName = $nodeDataRow['nodetype'];
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $nodeType->getFullConfiguration();
 
         foreach ($this->decodePropertyValues($nodeDataRow['properties']) as $propertyName => $propertyValue) {
             $type = $nodeType->getPropertyType($propertyName);
@@ -494,9 +494,6 @@ class ContentRepositoryExportService
 
         $nodeTypeName = $nodeDataRow['nodetype'];
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $nodeType->getFullConfiguration();
         foreach (json_decode($nodeDataRow['properties'], true) as $propertyName => $propertyValue) {
             try {
                 $type = $nodeType->getPropertyType($propertyName);
