@@ -14,12 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Content dimension constraints across multiple dimensions
  */
-#[Flow\Proxy(false)]
 final class ContentDimensionConstraints
 {
     public function __construct(

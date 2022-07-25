@@ -14,14 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * A set of content dimension constraints, indexed by dimension identifier
  *
  * @implements \IteratorAggregate<string,ContentDimensionConstraints>
  */
-#[Flow\Proxy(false)]
 final class ContentDimensionConstraintSet implements \IteratorAggregate
 {
     /**

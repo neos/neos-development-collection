@@ -401,6 +401,7 @@ class NodeType
                 /** @var ExpressionBasedNodeLabelGenerator $nodeLabelGenerator */
                 $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
             } else {
+                // TODO
                 /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
                 $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
             }

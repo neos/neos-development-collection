@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content dimension identifier value object
  */
-#[Flow\Proxy(false)]
 final class ContentDimensionIdentifier implements \JsonSerializable, \Stringable
 {
     /**

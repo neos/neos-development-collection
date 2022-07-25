@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\Utility\Arrays;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content dimension domain model
  */
-#[Flow\Proxy(false)]
 final class ContentDimension
 {
     /**

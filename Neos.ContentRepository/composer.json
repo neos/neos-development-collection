@@ -1,24 +1,18 @@
 {
-    "name": "neos/content-repository",
-    "description": "Content repository based on Flow, specifically made for Neos.",
+    "name": "neos/contentrepository",
+    "description": "Content repository based on Flow, specifically made for Neos, but also usable standalone.",
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
         "neos/eventstore": "*",
         "neos/eventstore-doctrineadapter": "*",
-        "neos/content-repository-dimensionspace": "*",
+        "neos/contentrepository-dimensionspace": "*",
         "php": "^8.1",
-        "neos/cache": "*",
-        "neos/eel": "*",
         "neos/error-messages": "*",
-        "neos/fluid-adaptor": "*",
         "neos/utility-objecthandling": "*",
-        "neos/utility-files": "*",
         "neos/utility-arrays": "*",
-        "doctrine/orm": "^2.6",
-        "gedmo/doctrine-extensions": "^3.5",
-        "behat/transliterator": "^1.0",
+        "doctrine/dbal": "^2.6",
         "symfony/serializer": "*"
     },
     "require-dev": {
@@ -28,7 +22,8 @@
         "phpunit/phpunit": "^9.0"
     },
     "replace": {
-        "typo3/typo3cr": "self.version"
+        "typo3/typo3cr": "self.version",
+        "neos/content-repository": "self.version"
     },
     "autoload": {
         "psr-4": {

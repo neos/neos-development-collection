@@ -14,7 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
-use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueIsInvalid;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreInvalid;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 
 /**
  * The configuration based content dimension source
@@ -44,11 +47,10 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     }
 
     /**
-     * @throws Exception\ContentDimensionIdentifierIsInvalid
-     * @throws Exception\ContentDimensionValueIsInvalid
-     * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws Exception\ContentDimensionValuesAreInvalid
-     * @throws Exception\ContentDimensionDefaultValueIsMissing
+     * @throws ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionValueIsInvalid
+     * @throws ContentDimensionValueSpecializationDepthIsInvalid
+     * @throws ContentDimensionValuesAreInvalid
      */
     protected function initializeDimensions(): void
     {
@@ -88,9 +90,9 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
 
     /**
      * @param array<string,ContentDimensionValue> &$values
-     * @param array<int,VariationEdge> &$variationEdges
+     * @param array<int,ContentDimensionValueVariationEdge> &$variationEdges
      * @param array<string,mixed> $configuration
-     * @throws Exception\ContentDimensionValueIsInvalid
+     * @throws ContentDimensionValueIsInvalid
      */
     protected function extractDimensionValuesAndVariations(
         string $rawValue,
@@ -165,11 +167,10 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     }
 
     /**
-     * @throws Exception\ContentDimensionIdentifierIsInvalid
-     * @throws Exception\ContentDimensionValueIsInvalid
-     * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws Exception\ContentDimensionValuesAreInvalid
-     * @throws Exception\ContentDimensionDefaultValueIsMissing
+     * @throws ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionValueIsInvalid
+     * @throws ContentDimensionValueSpecializationDepthIsInvalid
+     * @throws ContentDimensionValuesAreInvalid
      */
     public function getDimension(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimension
     {
@@ -182,11 +183,10 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
 
     /**
      * @return array<string,ContentDimension>
-     * @throws Exception\ContentDimensionIdentifierIsInvalid
-     * @throws Exception\ContentDimensionValueIsInvalid
-     * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws Exception\ContentDimensionValuesAreInvalid
-     * @throws Exception\ContentDimensionDefaultValueIsMissing
+     * @throws ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionValueIsInvalid
+     * @throws ContentDimensionValueSpecializationDepthIsInvalid
+     * @throws ContentDimensionValuesAreInvalid
      */
     public function getContentDimensionsOrderedByPriority(): array
     {
