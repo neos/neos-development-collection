@@ -24,8 +24,6 @@ use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphProjection;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
@@ -165,10 +163,5 @@ final class ContentRepository
     public function getWorkspaceFinder(): WorkspaceFinder
     {
         return $this->projectionState(WorkspaceProjection::class);
-    }
-
-    public function getContentStreamFinder(): ContentStreamFinder
-    {
-        return $this->projectionState(ContentStreamProjection::class);
     }
 }

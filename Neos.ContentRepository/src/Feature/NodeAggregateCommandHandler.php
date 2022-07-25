@@ -48,10 +48,7 @@ use Neos\ContentRepository\Feature\NodeRenaming\NodeRenaming;
 use Neos\ContentRepository\Feature\NodeTypeChange\NodeTypeChange;
 use Neos\ContentRepository\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
@@ -135,37 +132,22 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        if ($command instanceof SetNodeProperties) {
-            return $this->handleSetNodeProperties($command, $contentRepository);
-        } elseif ($command instanceof SetSerializedNodeProperties) {
-            return $this->handleSetSerializedNodeProperties($command, $contentRepository);
-        } elseif ($command instanceof SetNodeReferences) {
-            return $this->handleSetNodeReferences($command, $contentRepository);
-        } elseif ($command instanceof SetSerializedNodeReferences) {
-            return $this->handleSetSerializedNodeReferences($command, $contentRepository);
-        } elseif ($command instanceof ChangeNodeAggregateType) {
-            return $this->handleChangeNodeAggregateType($command, $contentRepository);
-        } elseif ($command instanceof RemoveNodeAggregate) {
-            return $this->handleRemoveNodeAggregate($command, $contentRepository);
-        } elseif ($command instanceof CreateNodeAggregateWithNode) {
-            return $this->handleCreateNodeAggregateWithNode($command, $contentRepository);
-        } elseif ($command instanceof CreateNodeAggregateWithNodeAndSerializedProperties) {
-            return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository);
-        } elseif ($command instanceof MoveNodeAggregate) {
-            return $this->handleMoveNodeAggregate($command, $contentRepository);
-        } elseif ($command instanceof CreateNodeVariant) {
-            return $this->handleCreateNodeVariant($command, $contentRepository);
-        } elseif ($command instanceof CreateRootNodeAggregateWithNode) {
-            return $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository);
-        } elseif ($command instanceof DisableNodeAggregate) {
-            return $this->handleDisableNodeAggregate($command, $contentRepository);
-        } elseif ($command instanceof EnableNodeAggregate) {
-            return $this->handleEnableNodeAggregate($command, $contentRepository);
-        } elseif ($command instanceof ChangeNodeAggregateName) {
-            return $this->handleChangeNodeAggregateName($command);
-        }
-
-        throw new \RuntimeException('Could not handle command');
+        return match (get_class($command)) {
+            SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
+            SetSerializedNodeProperties::class => $this->handleSetSerializedNodeProperties($command, $contentRepository),
+            SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
+            SetSerializedNodeReferences::class => $this->handleSetSerializedNodeReferences($command, $contentRepository),
+            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
+            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
+            CreateNodeAggregateWithNode::class => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            CreateNodeAggregateWithNodeAndSerializedProperties::class => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
+            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
+            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
+            CreateRootNodeAggregateWithNode::class => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
+            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
+        };
     }
 
     protected function getContentStreamRepository(): ContentStreamRepository
@@ -176,11 +158,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
-    }
-
-    protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager
-    {
-        return $this->readSideMemoryCacheManager;
     }
 
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
