@@ -13,8 +13,8 @@ namespace Neos\ContentRepository\NodeAccess\Command;
  */
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustment;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 

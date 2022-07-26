@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\StructureAdjustment;
+namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -21,7 +21,6 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
  *
  * You should not need this class in your own code.
  */
-#[Flow\Scope('singleton')]
 class ProjectedNodeIterator
 {
     protected WorkspaceFinder $workspaceFinder;

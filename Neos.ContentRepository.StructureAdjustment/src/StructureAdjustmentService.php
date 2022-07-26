@@ -2,17 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\StructureAdjustment;
+namespace Neos\ContentRepository\StructureAdjustment;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\DisallowedChildNodeAdjustment;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\ProjectedNodeIterator;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\PropertyAdjustment;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\TetheredNodeAdjustments;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustment;
 
-class StructureAdjustmentService
+class StructureAdjustmentService implements ContentRepositoryServiceInterface
 {
     protected TetheredNodeAdjustments $tetheredNodeAdjustments;
     protected UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment;

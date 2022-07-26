@@ -48,14 +48,16 @@ trait NodeTypeChange
 {
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface;
 
     abstract protected function requireConstraintsImposedByAncestorsAreMet(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        array $parentNodeAggregateIdentifiers
+        array $parentNodeAggregateIdentifiers,
+        ContentRepository $contentRepository
     ): void;
 
     abstract protected function requireNodeTypeConstraintsImposedByParentToBeMet(
@@ -94,7 +96,8 @@ trait NodeTypeChange
         NodeName $tetheredNodeName,
         NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
-        UserIdentifier $initiatingUserIdentifier
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
     ): Events;
 
     /**

@@ -1,10 +1,13 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Factory\ProjectionsFactory;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
@@ -31,7 +34,17 @@ final class ContentRepositoryRegistry
     /**
      * @var array<string, ContentRepository>
      */
-    private static array $instances = [];
+    private array $contentRepositoryInstances = [];
+
+    /**
+     * @var array<string, array<string, ContentRepositoryServiceInterface>>
+     */
+    private array $contentRepositoryServiceInstances = [];
+
+    /**
+     * @var array<string, ContentRepositoryFactory>
+     */
+    private array $factoryInstances = [];
 
     /**
      * @param array<mixed> $settings
@@ -39,23 +52,52 @@ final class ContentRepositoryRegistry
     public function __construct(
         private readonly array $settings,
         private readonly ObjectManagerInterface $objectManager
-    ) {}
+    )
+    {
+    }
 
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
     public function get(ContentRepositoryIdentifier $contentRepositoryId): ContentRepository
     {
-        if (!array_key_exists($contentRepositoryId->value, self::$instances)) {
-            self::$instances[$contentRepositoryId->value] = $this->buildInstance($contentRepositoryId);
+        if (!array_key_exists($contentRepositoryId->value, $this->contentRepositoryInstances)) {
+            $this->contentRepositoryInstances[$contentRepositoryId->value] = $this->getFactory($contentRepositoryId)->build();
         }
-        return self::$instances[$contentRepositoryId->value];
+        return $this->contentRepositoryInstances[$contentRepositoryId->value];
+    }
+
+    /**
+     * @param ContentRepositoryServiceFactoryInterface<T> $contentRepositoryServiceFactory
+     * @return T
+     * @throws ContentRepositoryNotFound | InvalidConfigurationException
+     * @template T of ContentRepositoryServiceInterface
+     */
+    public function getService(ContentRepositoryIdentifier $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
+    {
+        if (!isset($this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)])) {
+            $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)] = $this->buildFactory($contentRepositoryId)->buildService($contentRepositoryServiceFactory);
+        }
+        return $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)]
     }
 
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    private function buildInstance(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepository
+    private function getFactory(ContentRepositoryIdentifier $contentRepositoryId): ContentRepositoryFactory
+    {
+        // This cache is CRUCIAL, because it ensures that the same CR always deals with the same objects internally, even if multiple services
+        // are called on the same CR.
+        if (!array_key_exists($contentRepositoryId->value, $this->factoryInstances)) {
+            $this->factoryInstances[$contentRepositoryId->value] = $this->buildFactory($contentRepositoryId);
+        }
+        return $this->factoryInstances[$contentRepositoryId->value];
+    }
+
+    /**
+     * @throws ContentRepositoryNotFound | InvalidConfigurationException
+     */
+    private function buildFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepositoryFactory
     {
         assert(is_array($this->settings['contentRepositories']));
         assert(isset($this->settings['contentRepositories'][$contentRepositoryIdentifier->value]) && is_array($this->settings['contentRepositories'][$contentRepositoryIdentifier->value]), ContentRepositoryNotFound::notConfigured($contentRepositoryIdentifier));
@@ -66,7 +108,7 @@ final class ContentRepositoryRegistry
             $contentRepositorySettings = Arrays::arrayMergeRecursiveOverrule($this->settings['presets'][$contentRepositorySettings['preset']], $contentRepositorySettings);
         }
         try {
-            $contentRepositoryFactory = new ContentRepositoryFactory(
+            return new ContentRepositoryFactory(
                 $contentRepositoryIdentifier,
                 $this->buildEventStore($contentRepositoryIdentifier, $contentRepositorySettings),
                 $this->buildNodeTypeManager($contentRepositoryIdentifier, $contentRepositorySettings),
@@ -75,7 +117,6 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionsFactory($contentRepositorySettings),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryIdentifier, $contentRepositorySettings),
             );
-            return $contentRepositoryFactory->build();
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryIdentifier, $exception);
         }

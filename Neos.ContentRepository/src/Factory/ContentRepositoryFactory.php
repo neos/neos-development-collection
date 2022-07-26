@@ -26,7 +26,7 @@ use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustmentService;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
@@ -79,6 +79,11 @@ final class ContentRepositoryFactory
     private ?ReadSideMemoryCacheManager $readSideMemoryCacheManager = null;
     private ?EventPersister $eventPersister = null;
 
+    /**
+     * Builds and returns the content repository. If it is already built, returns the same instance.
+     *
+     * @return ContentRepository
+     */
     public function build(): ContentRepository
     {
         if (!$this->contentRepository) {
@@ -92,16 +97,24 @@ final class ContentRepositoryFactory
         return $this->contentRepository;
     }
 
-    // TODO: Should this be public, or part of ContentRepository API??
-    public function buildStructureAdjustmentService(): StructureAdjustmentService
+    /**
+     * A service is a high-level "application part" which builds upon the CR internals.
+     *
+     * You don't usually need this yourself, except if you extend the CR core.
+     *
+     * @template T of ContentRepositoryServiceInterface
+     * @param ContentRepositoryServiceFactoryInterface<T> $serviceFactory
+     * @return T
+     */
+    public function buildService(ContentRepositoryServiceFactoryInterface $serviceFactory): ContentRepositoryServiceInterface
     {
-        return new StructureAdjustmentService(
+        $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
+            $this->projectionFactoryDependencies,
             $this->build(),
-            $this->eventPersister,
-            $this->projectionFactoryDependencies->nodeTypeManager,
-            $this->projectionFactoryDependencies->interDimensionalVariationGraph,
-            $this->buildReadSideMemoryCacheManager()
+            $this->readSideMemoryCacheManager,
+            $this->eventPersister
         );
+        return $serviceFactory->build($serviceFactoryDependencies);
     }
 
     private function buildCommandBus(): CommandBus

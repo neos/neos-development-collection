@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration;
 
+use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
+use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Migration\Filter\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\Feature\Migration\MigrationException;
@@ -51,9 +58,11 @@ use Neos\Flow\Annotations as Flow;
  * you'll operate on the result state of all *previous* submigrations;
  * but you do not see the modified state of the current submigration while you are running it.
  *
+ * TODO: MOVE OUTSIDE CORE PACKAGE
+ *
  * @Flow\Scope("singleton")
  */
-class MigrationCommandHandler
+class MigrationCommandHandler implements CommandHandlerInterface
 {
     protected WorkspaceFinder $workspaceFinder;
     protected WorkspaceCommandHandler $workspaceCommandHandler;
@@ -67,7 +76,8 @@ class MigrationCommandHandler
         ContentGraphInterface $contentGraph,
         FiltersFactory $filterFactory,
         TransformationsFactory $transformationFactory
-    ) {
+    )
+    {
         $this->workspaceFinder = $workspaceFinder;
         $this->workspaceCommandHandler = $workspaceCommandHandler;
         $this->contentGraph = $contentGraph;
@@ -75,9 +85,24 @@ class MigrationCommandHandler
         $this->transformationFactory = $transformationFactory;
     }
 
-    public function handleExecuteMigration(ExecuteMigration $command): void
+
+    public function canHandle(CommandInterface $command): bool
     {
-        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        return $command instanceof ExecuteMigration;
+    }
+
+    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        match (get_class($command)) {
+            ExecuteMigration::class => $this->handleExecuteMigration($command, $contentRepository)
+        };
+    }
+
+    private function handleExecuteMigration(ExecuteMigration $command, ContentRepository $contentRepository): void
+    {
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
@@ -89,7 +114,7 @@ class MigrationCommandHandler
         // TODO: I believe the logic for submigrations is not yet fully working
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
             $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
-            $this->workspaceCommandHandler->handleCreateWorkspace(
+            $contentRepository->handle(
                 new CreateWorkspace(
                     WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
                     $workspace->getWorkspaceName(),
@@ -98,7 +123,7 @@ class MigrationCommandHandler
                     UserIdentifier::forSystemUser(),
                     $contentStreamForWriting,
                 )
-            )->blockUntilProjectionsAreUpToDate();
+            )->block();
             /** array $migrationDescription */
             $this->executeSubMigration(
                 $migrationDescription,
@@ -121,7 +146,8 @@ class MigrationCommandHandler
         array $migrationDescription,
         ContentStreamIdentifier $contentStreamForReading,
         ContentStreamIdentifier $contentStreamForWriting
-    ): CommandResult {
+    ): CommandResult
+    {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
         $transformations = $this->transformationFactory->buildTransformation(
             $migrationDescription['transformations'] ?? []
