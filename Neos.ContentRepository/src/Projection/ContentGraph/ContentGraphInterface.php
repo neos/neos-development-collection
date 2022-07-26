@@ -36,6 +36,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  */
 interface ContentGraphInterface extends ProjectionStateInterface
 {
+    // TODO: getSubgraph
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,

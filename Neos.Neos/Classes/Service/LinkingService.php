@@ -242,9 +242,7 @@ class LinkingService
                         );
                     }
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $contextNode->getContentStreamIdentifier(),
-                        $contextNode->getDimensionSpacePoint(),
-                        $contextNode->getVisibilityConstraints()
+                        $contextNode->getSubgraphIdentity()
                     );
 
                     return $nodeAccessor->findByIdentifier(
@@ -341,9 +339,7 @@ class LinkingService
                     );
                 }
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $baseNode->getContentStreamIdentifier(),
-                    $baseNode->getDimensionSpacePoint(),
-                    $baseNode->getVisibilityConstraints()
+                    $baseNode->getSubgraphIdentity()
                 );
 
                 $node = $nodeAccessor->findNodeByPath(NodePath::fromString($nodeString), $baseNode);
@@ -367,11 +363,11 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-            $node->getContentStreamIdentifier()
+            $node->getSubgraphIdentity()->contentStreamIdentifier
         );
         $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
+            $node->getSubgraphIdentity()->contentStreamIdentifier,
+            $node->getSubgraphIdentity()->dimensionSpacePoint,
             $node->getNodeAggregateIdentifier()
         );
 

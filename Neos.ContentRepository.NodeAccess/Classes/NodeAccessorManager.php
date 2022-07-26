@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\NodeAccess;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorChainFactory;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -25,7 +26,7 @@ use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 class NodeAccessorManager
 {
     /**
-     * Accessors indexed by ContentStreamIdentifier, DimensionSpacePoint and VisibilityConstraints.
+     * Accessors indexed by ContentRepositoryIdentifier, ContentStreamIdentifier, DimensionSpacePoint and VisibilityConstraints.
      *
      * For each of the above combinations, only one accessor chain exists.
      *
@@ -40,13 +41,12 @@ class NodeAccessorManager
     protected $nodeAccessorChainFactory;
 
     public function accessorFor(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints
+        ContentSubgraphIdentity $contentSubgraphIdentity
     ): NodeAccessorInterface {
-        $index = $contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
+        $index = $contentSubgraphIdentity->contentRepositoryIdentifier . '-' . $contentSubgraphIdentity->contentStreamIdentifier . '-' . $contentSubgraphIdentity->dimensionSpacePoint->hash . '-' . $contentSubgraphIdentity->visibilityConstraints->getHash();
         if (!isset($this->accessors[$index])) {
             $this->accessors[$index] = $this->nodeAccessorChainFactory->build(
+                // TODO
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
                 $visibilityConstraints

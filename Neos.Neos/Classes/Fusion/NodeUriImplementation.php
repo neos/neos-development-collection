@@ -15,7 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -28,15 +29,9 @@ class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
-     * @var NodeSiteResolvingService
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeSiteResolvingService;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\ContentRepository\SharedModel\NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
@@ -126,7 +121,9 @@ class NodeUriImplementation extends AbstractFusionObject
     {
         $node = $this->getNode();
         if ($node instanceof NodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+            $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+            $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } else {
             return '';
         }

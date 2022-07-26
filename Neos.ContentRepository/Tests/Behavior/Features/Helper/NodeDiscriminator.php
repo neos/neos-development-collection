@@ -60,7 +60,7 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
     public static function fromNode(NodeInterface $node): self
     {
         return new NodeDiscriminator(
-            $node->getContentStreamIdentifier(),
+            $node->getSubgraphIdentity()->contentStreamIdentifier,
             $node->getNodeAggregateIdentifier(),
             $node->getOriginDimensionSpacePoint()
         );

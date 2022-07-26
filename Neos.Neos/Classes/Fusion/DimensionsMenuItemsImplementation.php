@@ -56,7 +56,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $menuItems = [];
 
-        $currentDimensionSpacePoint = $this->currentNode->getDimensionSpacePoint();
+        $currentDimensionSpacePoint = $this->currentNode->getSubgraphIdentity()->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
         foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
             $variant = null;
@@ -65,9 +65,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                     $variant = $this->currentNode;
                 } else {
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $this->currentNode->getContentStreamIdentifier(),
-                        $dimensionSpacePoint,
-                        VisibilityConstraints::frontend()
+                        $this->currentNode->getSubgraphIdentity(),
                     );
                     $variant = $nodeAccessor->findByIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
@@ -122,11 +120,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         return !$this->getContentDimensionIdentifierToLimitTo() // no limit to one dimension, so all DSPs are relevant
             // always include the current variant
-            || $dimensionSpacePoint->equals($this->currentNode->getDimensionSpacePoint())
+            || $dimensionSpacePoint->equals($this->currentNode->getSubgraphIdentity()->dimensionSpacePoint)
             // include all direct variants in the dimension we're limited to unless their values
             // in that dimension are missing in the specified list
             || $dimensionSpacePoint->isDirectVariantInDimension(
-                $this->currentNode->getDimensionSpacePoint(),
+                $this->currentNode->getSubgraphIdentity()->dimensionSpacePoint,
                 $this->getContentDimensionIdentifierToLimitTo()
             )
             && (
@@ -151,9 +149,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)
             ) {
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $this->currentNode->getContentStreamIdentifier(),
-                    $generalization,
-                    VisibilityConstraints::frontend()
+                    $this->currentNode->getSubgraphIdentity(),
                 );
                 $variant = $nodeAccessor->findByIdentifier($nodeAggregateIdentifier);
                 if ($variant) {

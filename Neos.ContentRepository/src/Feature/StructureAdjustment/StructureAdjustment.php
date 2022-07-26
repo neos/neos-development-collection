@@ -55,7 +55,7 @@ class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $node->getContentStreamIdentifier()->jsonSerialize(),
+                'contentStream' => $node->getSubgraphIdentity()->contentStreamIdentifier->jsonSerialize(),
                 'dimensionSpacePoint' => json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
                 'isAutoFixable' => ($remediation !== null)

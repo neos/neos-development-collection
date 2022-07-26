@@ -142,7 +142,7 @@ class NodePrivilegeContext
     public function isInWorkspace(array $workspaceNames): bool
     {
         $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-            $this->node->getContentStreamIdentifier()
+            $this->node->getSubgraphIdentity()->contentStreamIdentifier
         );
         return !is_null($workspace) && in_array((string)$workspace->getWorkspaceName(), $workspaceNames);
     }
@@ -166,7 +166,7 @@ class NodePrivilegeContext
         }
 
         return in_array(
-            $this->node->getDimensionSpacePoint()->getCoordinate(
+            $this->node->getSubgraphIdentity()->dimensionSpacePoint->getCoordinate(
                 new ContentDimensionIdentifier($dimensionName)
             ),
             $presets
@@ -202,9 +202,7 @@ class NodePrivilegeContext
     {
         if (is_null($this->nodeAccessor)) {
             $this->nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->node->getContentStreamIdentifier(),
-                $this->node->getDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                $this->node->getSubgraphIdentity()
             );
         }
 

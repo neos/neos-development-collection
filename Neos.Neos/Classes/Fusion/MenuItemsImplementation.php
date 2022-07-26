@@ -161,9 +161,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if (!is_null($this->getItemCollection())) {
             $menuLevelCollection = $this->getItemCollection();
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->getContentStreamIdentifier(),
-                $this->currentNode->getDimensionSpacePoint(),
-                VisibilityConstraints::frontend()
+                $this->currentNode->getSubgraphIdentity()
             );
             $childSubtree = $nodeAccessor->findSubtrees(
                 $menuLevelCollection,
@@ -177,9 +175,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->getContentStreamIdentifier(),
-                $this->currentNode->getDimensionSpacePoint(),
-                VisibilityConstraints::frontend()
+                $this->currentNode->getSubgraphIdentity()
             );
             $childSubtree = $nodeAccessor->findSubtrees(
                 [$entryParentNode],
@@ -317,9 +313,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         do {
             $shouldContinueTraversal = $callback($node);
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             );
             $node = $nodeAccessor->findParentNode($node);
         } while ($shouldContinueTraversal !== false && $node !== null);

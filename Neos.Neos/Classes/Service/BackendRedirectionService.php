@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -184,9 +185,12 @@ class BackendRedirectionService
             );
 
             return $this->nodeAccessorManager->accessorFor(
-                $workspace->getCurrentContentStreamIdentifier(),
-                $lastVisitedNode->getDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                new ContentSubgraphIdentity(
+                    // TODO: Current CR
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $lastVisitedNode->getSubgraphIdentity()->dimensionSpacePoint,
+                    VisibilityConstraints::withoutRestrictions()
+                )
             )->findByIdentifier($lastVisitedNode->getNodeAggregateIdentifier());
         } catch (\Exception $exception) {
             return null;

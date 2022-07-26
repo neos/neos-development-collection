@@ -187,7 +187,7 @@ final class NodeFactory
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
 
         return new \Neos\ContentRepository\Projection\ContentGraph\NodeAggregate(
-            $primaryNode->getContentStreamIdentifier(),
+            $primaryNode->getSubgraphIdentity()->contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
             NodeAggregateClassification::from($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),

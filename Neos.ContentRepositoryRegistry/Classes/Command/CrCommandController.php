@@ -8,7 +8,7 @@ use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageProjector;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageProjection;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
@@ -47,7 +47,7 @@ class CrCommandController extends CommandController
         } elseif ($projectionName === 'workspace') {
             $projector = $this->objectManager->get(WorkspaceProjection::class);
         } elseif ($projectionName === 'assetUsage') {
-            $projector = $this->objectManager->get(AssetUsageProjector::class);
+            $projector = $this->objectManager->get(AssetUsageProjection::class);
         } elseif ($projectionName === 'contentStream') {
             $projector = $this->objectManager->get(ContentStreamProjector::class);
         } elseif ($projectionName === 'hypergraph') {

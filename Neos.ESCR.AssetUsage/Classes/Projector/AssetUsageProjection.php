@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Projector;
 
+use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
@@ -18,8 +20,9 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublis
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\EventSourcing\EventStore\RawEvent;
-use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
@@ -27,7 +30,7 @@ use Neos\Utility\TypeHandling;
 // NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider in
 // Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.
 // See Neos.ContentRepositoryRegistry/Configuration/Settings.hacks.yaml for further details.
-final class AssetUsageProjector implements ProjectorInterface
+final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMENT
 {
 
     public function __construct(
@@ -197,5 +200,30 @@ final class AssetUsageProjector implements ProjectorInterface
             $assetIdentifiers[] = $this->extractAssetIdentifiers($parsedType['elementType'], $elementValue);
         }
         return array_merge(...$assetIdentifiers);
+    }
+
+    public function setUp(): void
+    {
+        // TODO: Implement setUp() method.
+    }
+
+    public function canHandle(Event $event): bool
+    {
+        // TODO: Implement canHandle() method.
+    }
+
+    public function catchUp(EventStreamInterface $eventStream): void
+    {
+        // TODO: Implement catchUp() method.
+    }
+
+    public function getSequenceNumber(): SequenceNumber
+    {
+        // TODO: Implement getSequenceNumber() method.
+    }
+
+    public function getState(): ProjectionStateInterface
+    {
+        // TODO: Implement getState() method.
     }
 }

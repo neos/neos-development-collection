@@ -87,9 +87,7 @@ class ChildrenOperation extends AbstractOperation
         /** @var NodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
+                $contextNode->getSubgraphIdentity()
             )->findChildNodes($contextNode);
             foreach ($childNodes as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
@@ -150,9 +148,7 @@ class ChildrenOperation extends AbstractOperation
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             $resolvedNode = $this->nodeAccessorManager->accessorFor(
-                                $resolvedNode->getContentStreamIdentifier(),
-                                $resolvedNode->getDimensionSpacePoint(),
-                                $resolvedNode->getVisibilityConstraints()
+                                $resolvedNode->getSubgraphIdentity()
                             )->findChildNodeConnectedThroughEdgeName(
                                 $resolvedNode,
                                 NodeName::fromString($nodePathSegment)
@@ -175,9 +171,7 @@ class ChildrenOperation extends AbstractOperation
                     foreach ($flowQuery->getContext() as $contextNode) {
                         /** @var NodeInterface $childNode */
                         $childNodes = $this->nodeAccessorManager->accessorFor(
-                            $contextNode->getContentStreamIdentifier(),
-                            $contextNode->getDimensionSpacePoint(),
-                            $contextNode->getVisibilityConstraints()
+                            $contextNode->getSubgraphIdentity()
                         )->findChildNodes(
                             $contextNode,
                             $this->nodeTypeConstraintFactory->parseFilterString(

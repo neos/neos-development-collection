@@ -22,6 +22,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -116,7 +117,7 @@ class ContentController extends ActionController
     protected NodeAccessorManager $nodeAccessorManager;
 
     #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected WorkspaceFinder $workspaceFinder;
@@ -419,7 +420,8 @@ class ContentController extends ActionController
                 if ($documentNode === null) {
                     continue;
                 }
-                $documentAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+                $contentRepository = $this->contentRepositoryRegistry->get($documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+                $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
                 $uri = $this->uriBuilder
                     ->reset()
                     ->uriFor('show', ['node' => $documentAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos');
@@ -491,9 +493,7 @@ class ContentController extends ActionController
     protected function findParentNode(NodeInterface $node): ?NodeInterface
     {
         return $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         )->findParentNode($node);
     }
 

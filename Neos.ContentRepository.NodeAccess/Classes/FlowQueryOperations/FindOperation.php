@@ -132,7 +132,7 @@ class FindOperation extends AbstractOperation
         /** @todo fetch them $elsewhere (fusion runtime?) */
         $firstContextNode = reset($contextNodes);
         assert($firstContextNode instanceof NodeInterface);
-        $visibilityConstraints = $firstContextNode->getVisibilityConstraints();
+        $visibilityConstraints = $firstContextNode->getSubgraphIdentity()->visibilityConstraints;
 
         $entryPoints = $this->getEntryPoints($contextNodes, $visibilityConstraints);
         foreach ($parsedFilter['Filters'] as $filter) {
@@ -175,8 +175,8 @@ class FindOperation extends AbstractOperation
         $usedKeys = [];
         foreach ($result as $item) {
             $identifier = (string) new NodeAddress(
-                $item->getContentStreamIdentifier(),
-                $item->getDimensionSpacePoint(),
+                $item->getSubgraphIdentity()->contentStreamIdentifier,
+                $item->getSubgraphIdentity()->dimensionSpacePoint,
                 $item->getNodeAggregateIdentifier(),
                 null
             );

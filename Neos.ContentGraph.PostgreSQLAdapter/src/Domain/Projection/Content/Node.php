@@ -100,11 +100,6 @@ final class Node implements NodeInterface
         return $this->classification->isTethered();
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
@@ -171,20 +166,9 @@ final class Node implements NodeInterface
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->perspectiveDimensionSpacePoint;
-    }
-
-    public function getVisibilityConstraints(): VisibilityConstraints
-    {
-        return $this->perspectiveVisibilityConstraints;
-    }
-
     public function equals(NodeInterface $other): bool
     {
-        return $this->getContentStreamIdentifier()->equals($other->getContentStreamIdentifier())
-            && $this->getDimensionSpacePoint()->equals($other->getDimensionSpacePoint())
+        return $this->getSubgraphIdentity()->equals($other->getSubgraphIdentity())
             && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
     }
 }

@@ -100,9 +100,7 @@ class HasOperation extends AbstractOperation
             foreach ($elements as $element) {
                 if ($element instanceof NodeInterface) {
                     $accessor = $this->nodeAccessorManager->accessorFor(
-                        $element->getContentStreamIdentifier(),
-                        $element->getDimensionSpacePoint(),
-                        $element->getVisibilityConstraints()
+                        $element->getSubgraphIdentity()
                     );
                     $parent = $accessor->findParentNode($element);
                     if (!is_null($parent)) {

@@ -103,9 +103,7 @@ class ParentsUntilOperation extends AbstractOperation
         $node = $contextNode;
         do {
             $node = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             )->findParentNode($node);
             if ($node === null) {
                 // no parent found

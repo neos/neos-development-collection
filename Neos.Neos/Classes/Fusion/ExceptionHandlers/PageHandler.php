@@ -87,7 +87,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
         if (!is_null($documentNode)) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-                $documentNode->getContentStreamIdentifier()
+                $documentNode->getSubgraphIdentity()->contentStreamIdentifier
             );
             if (
                 $workspace && !$workspace->getWorkspaceName()->isLive()

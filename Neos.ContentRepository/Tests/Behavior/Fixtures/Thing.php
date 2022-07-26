@@ -86,11 +86,6 @@ final class Thing implements NodeInterface
         return $this->classification->isTethered();
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
@@ -148,16 +143,6 @@ final class Thing implements NodeInterface
     public function getLabel(): string
     {
         throw new \RuntimeException('Not supported');
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        // TODO!!!
-        return $this->dimensionSpacePoint;
-    }
-
-    public function getVisibilityConstraints(): VisibilityConstraints
-    {
     }
 
     public function getClassification(): NodeAggregateClassification

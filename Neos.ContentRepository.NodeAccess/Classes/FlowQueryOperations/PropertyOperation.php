@@ -91,9 +91,7 @@ class PropertyOperation extends AbstractOperation
             /* @var $element NodeInterface */
             $element = $context[0];
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $element->getContentStreamIdentifier(),
-                $element->getDimensionSpacePoint(),
-                $element->getVisibilityConstraints()
+                $element->getSubgraphIdentity()
             );
             if ($propertyPath === '_path') {
                 return (string)$nodeAccessor->findNodePath($element);

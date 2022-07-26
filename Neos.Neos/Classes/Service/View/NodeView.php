@@ -21,6 +21,7 @@ use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\View\JsonView;
@@ -66,9 +67,9 @@ class NodeView extends JsonView
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -116,9 +117,11 @@ class NodeView extends JsonView
             if (!$node->getClassification()->isRoot()) {
                 $closestDocumentNode = $this->findClosestDocumentNode($node);
                 if ($closestDocumentNode !== null) {
+                    $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+                    $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
                     $data[] = [
-                        'nodeContextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                        'documentNodeContextPath' => $this->nodeAddressFactory->createFromNode($closestDocumentNode)
+                        'nodeContextPath' => $nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                        'documentNodeContextPath' => $nodeAddressFactory->createFromNode($closestDocumentNode)
                             ->serializeForUri(),
                     ];
                 } else {
@@ -138,9 +141,7 @@ class NodeView extends JsonView
     private function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
 
         $documentNode = $node;
@@ -270,9 +271,7 @@ class NodeView extends JsonView
         $recursionPointer = 1
     ) {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
         $nodeTypeConstraints = $nodeTypeFilter
             ? $this->nodeTypeConstraintsFactory->parseFilterString($nodeTypeFilter)
@@ -300,7 +299,9 @@ class NodeView extends JsonView
 
             switch ($this->outputStyle) {
                 case self::STYLE_LIST:
-                    $childNodeAddress = $this->nodeAddressFactory->createFromNode($childNode);
+                    $contentRepository = $this->contentRepositoryRegistry->get($childNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+                    $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+                    $childNodeAddress = $nodeAddressFactory->createFromNode($childNode);
                     $properties = $childNode->getProperties();
                     $properties['__contextNodePath'] = $childNodeAddress->serializeForUri();
                     $properties['__workspaceName'] = $childNodeAddress->workspaceName;
@@ -346,18 +347,14 @@ class NodeView extends JsonView
     public function collectParentNodeData(NodeInterface $rootNode, Nodes $nodes): array
     {
         $rootNodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $rootNode->getContentStreamIdentifier(),
-            $rootNode->getDimensionSpacePoint(),
-            $rootNode->getVisibilityConstraints()
+            $rootNode->getSubgraphIdentity()
         );
         $rootNodePath = (string)$rootNodeAccessor->findNodePath($rootNode);
         $nodeCollection = [];
 
         $addNode = function (NodeInterface $node, bool $matched) use ($rootNodePath, &$nodeCollection) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             );
             $nodePath = (string)$nodeAccessor->findNodePath($node);
             $path = str_replace('/', '.children.', substr($nodePath, strlen($rootNodePath) + 1));
@@ -371,9 +368,7 @@ class NodeView extends JsonView
 
         $findParent = function (NodeInterface $node) use (&$findParent, &$addNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             );
             $parent = $nodeAccessor->findParentNode($node);
             if ($parent !== null) {
@@ -428,7 +423,9 @@ class NodeView extends JsonView
         bool $hasChildNodes = false,
         bool $matched = false
     ): array {
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $nodeAddress = $nodeAddressFactory->createFromNode($node);
         $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,

@@ -124,7 +124,7 @@ class PropertyAdjustment
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
-                $node->getContentStreamIdentifier(),
+                $node->getSubgraphIdentity()->contentStreamIdentifier,
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
                 $serializedPropertyValues,
@@ -132,7 +132,7 @@ class PropertyAdjustment
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getSubgraphIdentity()->contentStreamIdentifier);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             $events,

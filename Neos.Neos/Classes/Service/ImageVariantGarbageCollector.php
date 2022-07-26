@@ -77,7 +77,7 @@ class ImageVariantGarbageCollector
                 // If the result contains exactly the node that got a new ImageVariant assigned
                 // then we are safe to remove the asset here.
                 if (
-                    $usageItem->contentStreamIdentifier === $node->getContentStreamIdentifier()
+                    $usageItem->contentStreamIdentifier === $node->getSubgraphIdentity()->contentStreamIdentifier
                     && $usageItem->originDimensionSpacePoint === $node->getOriginDimensionSpacePoint()->hash
                     && $usageItem->nodeAggregateIdentifier === $node->getNodeAggregateIdentifier()
                 ) {

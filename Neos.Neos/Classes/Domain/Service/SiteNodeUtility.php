@@ -40,9 +40,7 @@ final class SiteNodeUtility
     {
         $previousNode = null;
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {

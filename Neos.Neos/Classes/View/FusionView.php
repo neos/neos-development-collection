@@ -179,9 +179,7 @@ class FusionView extends AbstractView
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             $node = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                $node->getSubgraphIdentity()
             )->findParentNode($node);
         }
 

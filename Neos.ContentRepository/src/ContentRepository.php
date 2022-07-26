@@ -26,6 +26,7 @@ use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -124,5 +125,9 @@ final class ContentRepository
     public function getWorkspaceFinder(): WorkspaceFinder
     {
         return $this->projectionState(WorkspaceProjection::class);
+    }
+
+    public function getNodeAddressFactory(): NodeAddressFactory {
+
     }
 }

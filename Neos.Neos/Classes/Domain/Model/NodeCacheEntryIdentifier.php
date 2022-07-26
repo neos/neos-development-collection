@@ -32,8 +32,8 @@ final class NodeCacheEntryIdentifier implements CacheAwareInterface
 
     public static function fromNode(NodeInterface $node): self
     {
-        return new self('Node_' . $node->getContentStreamIdentifier()->getValue()
-            . '_' . $node->getDimensionSpacePoint()->hash
+        return new self('Node_' . $node->getSubgraphIdentity()->contentStreamIdentifier->getValue()
+            . '_' . $node->getSubgraphIdentity()->dimensionSpacePoint->hash
             . '_' .  $node->getNodeAggregateIdentifier()->getValue());
     }
 

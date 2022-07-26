@@ -74,26 +74,6 @@ Neos\Neos\Controller\LoginController:
             value: Neos_Neos_LoginTokenCache
 
 
-'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector':
-  scope: singleton
-  factoryObjectName: Neos\Neos\Fusion\Cache\CacheAwareGraphProjectorFactory
-  factoryMethodName: build
-  arguments:
-    1:
-      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
-    2:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents
-    3:
-      object: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph'
-    4:
-      object: 'Neos\Flow\Log\ThrowableStorageInterface'
-
-
 Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectorFactory:
   arguments:
     3:

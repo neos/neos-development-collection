@@ -17,6 +17,7 @@ namespace Neos\Neos\Aspects;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Mvc\ActionRequest;
@@ -46,7 +47,7 @@ class PluginUriAspect
     protected $pluginService;
 
     #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
@@ -82,9 +83,7 @@ class PluginUriAspect
         $documentNode = null;
         if ($targetNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $targetNode->getContentStreamIdentifier(),
-                $targetNode->getDimensionSpacePoint(),
-                $targetNode->getVisibilityConstraints()
+                $targetNode->getSubgraphIdentity()
             );
             $documentNode = $targetNode;
             while ($documentNode instanceof NodeInterface) {
@@ -141,7 +140,9 @@ class PluginUriAspect
     {
         // store original node path to restore it after generating the uri
         $originalNodePath = $request->getMainRequest()->getArgument('node');
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $nodeAddress = $nodeAddressFactory->createFromNode($node);
 
         // generate the uri for the given node
         $request->getMainRequest()->setArgument('node', $nodeAddress->serializeForUri());

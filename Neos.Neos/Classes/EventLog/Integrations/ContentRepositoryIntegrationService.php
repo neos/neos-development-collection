@@ -20,6 +20,7 @@ use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
@@ -54,7 +55,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
     protected $persistenceManager;
 
     #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
@@ -416,9 +417,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         }
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
         $documentNode = $node;
         while ($documentNode !== null && !$documentNode->getNodeType()->isAggregate()) {
@@ -428,9 +427,10 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         if ($documentNode === null) {
             return;
         }
-
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-        $documentNodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $nodeAddress = $nodeAddressFactory->createFromNode($node);
+        $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
 
         $this->scheduledNodeEventUpdates[$documentNodeAddress->serializeForUri()] = [
             'workspaceName' => $nodeAddress->workspaceName,

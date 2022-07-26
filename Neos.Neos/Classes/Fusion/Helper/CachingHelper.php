@@ -53,7 +53,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         foreach ($nodes as $node) {
             if ($node instanceof NodeInterface) {
                 $prefixedNodeIdentifiers[] = $prefix . '_'
-                    . $this->renderContentStreamIdentifierTag($node->getContentStreamIdentifier())
+                    . $this->renderContentStreamIdentifierTag($node->getSubgraphIdentity()->contentStreamIdentifier)
                     . '_' . $node->getNodeAggregateIdentifier();
             } else {
                 throw new Exception(sprintf(
@@ -97,7 +97,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $contentStreamTag = '';
         if ($contextNode instanceof NodeInterface) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag(
-                $contextNode->getContentStreamIdentifier()
+                $contextNode->getSubgraphIdentity()->contentStreamIdentifier
             ) . '_';
         }
 
@@ -140,7 +140,7 @@ class CachingHelper implements ProtectedContextAwareInterface
 
         if ($contextNode instanceof NodeInterface) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag(
-                $contextNode->getContentStreamIdentifier()
+                $contextNode->getSubgraphIdentity()->contentStreamIdentifier
             ) . '_';
         }
 

@@ -71,9 +71,7 @@ class PluginViewImplementation extends PluginImplementation
 
         // Set the node to render this to the master plugin node
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $this->pluginViewNode->getContentStreamIdentifier(),
-            $this->pluginViewNode->getDimensionSpacePoint(),
-            $this->pluginViewNode->getVisibilityConstraints()
+            $this->pluginViewNode->getSubgraphIdentity()
         );
         $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($pluginNodeIdentifier));
         $this->node = $node;

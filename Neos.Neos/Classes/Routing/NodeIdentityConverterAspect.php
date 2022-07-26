@@ -17,6 +17,7 @@ namespace Neos\Neos\Routing;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 
@@ -33,7 +34,7 @@ use Neos\Flow\Aop\JoinPointInterface;
 class NodeIdentityConverterAspect
 {
     #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Convert the object to its context path, if we deal with ContentRepository nodes.
@@ -46,7 +47,9 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromNode($objectArgument);
+            $contentRepository = $this->contentRepositoryRegistry->get($objectArgument->getSubgraphIdentity()->contentRepositoryIdentifier);
+            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+            $nodeAddress = $nodeAddressFactory->createFromNode($objectArgument);
             return ['__contextNodePath' => $nodeAddress->serializeForUri()];
         } elseif ($objectArgument instanceof NodeAddress) {
             return ['__contextNodePath' => $objectArgument->serializeForUri()];

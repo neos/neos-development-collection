@@ -9,6 +9,8 @@ use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -33,6 +35,9 @@ use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -40,7 +45,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 // NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider
 // in Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.
 // See Neos.ContentRepositoryRegistry/Configuration/Settings.hacks.yaml for further details.
-final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
+final class DocumentUriPathProjector implements ProjectionInterface// TODO , BeforeInvokeInterface, AfterInvokeInterface
 {
     public const TABLE_NAME_DOCUMENT_URIS = 'neos_neos_projection_document_uri';
     public const TABLE_NAME_LIVE_CONTENT_STREAMS = 'neos_neos_projection_document_uri_livecontentstreams';
@@ -834,5 +839,30 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         NodePropertiesWereSet $event,
         RawEvent $rawEvent
     ): void {
+    }
+
+    public function setUp(): void
+    {
+        // TODO: Implement setUp() method.
+    }
+
+    public function canHandle(Event $event): bool
+    {
+        // TODO: Implement canHandle() method.
+    }
+
+    public function catchUp(EventStreamInterface $eventStream): void
+    {
+        // TODO: Implement catchUp() method.
+    }
+
+    public function getSequenceNumber(): SequenceNumber
+    {
+        // TODO: Implement getSequenceNumber() method.
+    }
+
+    public function getState(): ProjectionStateInterface
+    {
+        // TODO: Implement getState() method.
     }
 }

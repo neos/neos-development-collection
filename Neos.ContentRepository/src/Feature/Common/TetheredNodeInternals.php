@@ -58,7 +58,7 @@ trait TetheredNodeInternals
         ContentRepository $contentRepository
     ): Events {
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $parentNode->getContentStreamIdentifier(),
+            $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
             $parentNode->getNodeAggregateIdentifier(),
             $tetheredNodeName
         );
@@ -74,7 +74,7 @@ trait TetheredNodeInternals
             // there is no tethered child node aggregate already; let's create it!
             return Events::with(
                 new NodeAggregateWithNodeWasCreated(
-                    $parentNode->getContentStreamIdentifier(),
+                    $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
                     $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
                     NodeTypeName::fromString($expectedTetheredNodeType->getName()),
                     $parentNode->getOriginDimensionSpacePoint(),
@@ -104,7 +104,7 @@ trait TetheredNodeInternals
             }
             /** @var NodeInterface $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNode->getContentStreamIdentifier(),
+                $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
                 $childNodeSource->getOriginDimensionSpacePoint(),
                 $parentNode->getOriginDimensionSpacePoint(),
                 $parentNodeAggregate,

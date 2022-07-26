@@ -69,9 +69,7 @@ class ParentOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /* @var $contextNode NodeInterface */
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
+                $contextNode->getSubgraphIdentity()
             );
 
             $parentNode = $nodeAccessor->findParentNode($contextNode);

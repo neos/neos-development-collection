@@ -22,6 +22,7 @@ use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -78,7 +79,7 @@ class NodeController extends AbstractServiceController
     protected $domainRepository;
 
     #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
@@ -392,9 +393,9 @@ class NodeController extends AbstractServiceController
         $closestDocumentNode = $this->findClosestDocumentNode($node);
 
         $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
-            $node->getContentStreamIdentifier(),
+            $node->getSubgraphIdentity()->contentStreamIdentifier,
             $node->getNodeAggregateIdentifier(),
-            $node->getDimensionSpacePoint(),
+            $node->getSubgraphIdentity()->dimensionSpacePoint,
             NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS,
             $userIdentifier
         ));
@@ -410,10 +411,10 @@ class NodeController extends AbstractServiceController
     protected function redirectToRenderNode(NodeInterface $node, string $fusionPath): void
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
+            $node->getSubgraphIdentity()
         );
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
         $ancestor = $node;
         $closestContentCollection = null;
@@ -430,30 +431,11 @@ class NodeController extends AbstractServiceController
         $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', [
             'node' => $closestDocumentNode,
             '__nodeContextPath' => $closestContentCollection
-                ? $this->nodeAddressFactory->createFromNode($closestContentCollection)->serializeForUri()
+                ? $nodeAddressFactory->createFromNode($closestContentCollection)->serializeForUri()
                 : null,
-            '__affectedNodeContextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+            '__affectedNodeContextPath' => $nodeAddressFactory->createFromNode($node)->serializeForUri(),
             '__fusionPath' => $fusionPath
         ], 0, 303, 'html');
-    }
-
-    /**
-     * Returns an array with the data needed by for example the frontend editing
-     * link plugins to represent the passed Node instance.
-     *
-     * @param NodeInterface $node
-     * @return array<string,mixed>
-     */
-    protected function processNodeForEditorPlugins(NodeInterface $node)
-    {
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-
-        return [
-            'id' => $nodeAddress->serializeForUri(),
-            'name' => $node->getLabel(),
-            'url' => $this->getNodeUri($node),
-            'type' => 'neos/internal-link'
-        ];
     }
 
     private function getNodeUri(NodeInterface $node): string
@@ -469,9 +451,7 @@ class NodeController extends AbstractServiceController
     private function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
 
         $ancestor = $node;

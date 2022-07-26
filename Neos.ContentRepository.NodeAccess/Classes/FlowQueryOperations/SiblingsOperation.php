@@ -72,9 +72,7 @@ class SiblingsOperation extends AbstractOperation
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
+                $contextNode->getSubgraphIdentity()
             );
 
             $parentNode = $nodeAccessor->findParentNode($contextNode);

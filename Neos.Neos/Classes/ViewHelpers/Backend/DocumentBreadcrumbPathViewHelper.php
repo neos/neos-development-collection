@@ -47,9 +47,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
         assert($node instanceof NodeInterface);
         $documentNodes = [];
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
         $currentNode = $node;
         while ($currentNode instanceof NodeInterface) {

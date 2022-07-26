@@ -147,6 +147,7 @@ class NodeController extends ActionController
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
         }
+
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(

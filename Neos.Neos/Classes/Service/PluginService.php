@@ -103,9 +103,7 @@ class PluginService
     protected function getNodes(NodeInterface $siteNode, NodeTypeNames $nodeTypeNames): Nodes
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $siteNode->getContentStreamIdentifier(),
-            $siteNode->getDimensionSpacePoint(),
-            $siteNode->getVisibilityConstraints()
+            $siteNode->getSubgraphIdentity()
         );
 
         return $nodeAccessor->findDescendants(

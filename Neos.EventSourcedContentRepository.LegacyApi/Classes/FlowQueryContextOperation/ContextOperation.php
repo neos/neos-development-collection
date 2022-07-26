@@ -96,7 +96,7 @@ class ContextOperation extends AbstractOperation
             // we start modifying the subgraph step-by-step.
             $nodeAccessor = $this->getSubgraphFromNode($contextNode);
 
-            $visibilityConstraints = $contextNode->getVisibilityConstraints();
+            $visibilityConstraints = $contextNode->getSubgraphIdentity()->visibilityConstraints;
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
@@ -131,12 +131,11 @@ class ContextOperation extends AbstractOperation
         $flowQuery->setContext(array_values($output));
     }
 
+    // TODO REMOVE
     private function getSubgraphFromNode(NodeInterface $contextNode): NodeAccessorInterface
     {
         return $this->nodeAccessorManager->accessorFor(
-            $contextNode->getContentStreamIdentifier(),
-            $contextNode->getDimensionSpacePoint(),
-            $contextNode->getVisibilityConstraints()
+            $contextNode->getSubgraphIdentity()
         );
     }
 }
