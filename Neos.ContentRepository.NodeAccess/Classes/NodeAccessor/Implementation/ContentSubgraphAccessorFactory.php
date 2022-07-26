@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor\Implementation;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorFactoryInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -27,14 +29,12 @@ final class ContentSubgraphAccessorFactory implements NodeAccessorFactoryInterfa
 {
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var ContentRepositoryRegistry
      */
-    protected $contentGraph;
+    protected $contentRepositoryRegistry;
 
     public function build(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints,
+        ContentSubgraphIdentity $contentSubgraphIdentity,
         ?NodeAccessorInterface $nextAccessor = null
     ): NodeAccessorInterface {
         if ($nextAccessor !== null) {
@@ -46,12 +46,14 @@ final class ContentSubgraphAccessorFactory implements NodeAccessorFactoryInterfa
             );
         }
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $contentStreamIdentifier,
-            $dimensionSpacePoint,
-            $visibilityConstraints
+        $contentRepository = $this->contentRepositoryRegistry->get($contentSubgraphIdentity->contentRepositoryIdentifier);
+        $contentGraph = $contentRepository->getContentGraph();
+        $subgraph = $contentGraph->getSubgraphByIdentifier(
+            $contentSubgraphIdentity->contentStreamIdentifier,
+            $contentSubgraphIdentity->dimensionSpacePoint,
+            $contentSubgraphIdentity->visibilityConstraints
         );
 
-        return new ContentSubgraphAccessor($subgraph);
+        return new ContentSubgraphAccessor($subgraph, $contentGraph);
     }
 }

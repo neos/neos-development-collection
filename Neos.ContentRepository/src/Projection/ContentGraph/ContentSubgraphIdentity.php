@@ -3,6 +3,7 @@
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 
@@ -26,11 +27,7 @@ use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
  * instead of the Origin DimensionSpacePoint.
  *
  *
- * @return DimensionSpacePoint
- * @deprecated // TODO
- */
-public function getDimensionSpacePoint(): DimensionSpacePoint;
-
+ * // TODO: DESCRIBE PROPERLY
  */
 final class ContentSubgraphIdentity
 {

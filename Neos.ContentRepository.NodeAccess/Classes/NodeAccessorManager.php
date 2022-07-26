@@ -46,10 +46,7 @@ class NodeAccessorManager
         $index = $contentSubgraphIdentity->contentRepositoryIdentifier . '-' . $contentSubgraphIdentity->contentStreamIdentifier . '-' . $contentSubgraphIdentity->dimensionSpacePoint->hash . '-' . $contentSubgraphIdentity->visibilityConstraints->getHash();
         if (!isset($this->accessors[$index])) {
             $this->accessors[$index] = $this->nodeAccessorChainFactory->build(
-                // TODO
-                $contentStreamIdentifier,
-                $dimensionSpacePoint,
-                $visibilityConstraints
+                $contentSubgraphIdentity
             );
         }
 

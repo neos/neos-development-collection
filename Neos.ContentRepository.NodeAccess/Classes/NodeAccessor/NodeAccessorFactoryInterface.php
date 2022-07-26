@@ -13,16 +13,12 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 
 interface NodeAccessorFactoryInterface
 {
     public function build(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints,
+        ContentSubgraphIdentity $contentSubgraphIdentity,
         ?NodeAccessorInterface $nextAccessor = null
     ): NodeAccessorInterface;
 }

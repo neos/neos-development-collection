@@ -14,16 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceRebase\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Rebase a workspace
  */
-#[Flow\Proxy(false)]
-final class RebaseWorkspace
+final class RebaseWorkspace implements CommandInterface
 {
     private WorkspaceName $workspaceName;
 

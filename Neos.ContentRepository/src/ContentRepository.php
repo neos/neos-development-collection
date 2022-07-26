@@ -21,6 +21,8 @@ use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
@@ -127,7 +129,8 @@ final class ContentRepository
         return $this->projectionState(WorkspaceProjection::class);
     }
 
-    public function getNodeAddressFactory(): NodeAddressFactory {
-
+    public function getContentStreamFinder(): ContentStreamFinder
+    {
+        return $this->projectionState(ContentStreamProjection::class);
     }
 }
