@@ -1,6 +1,6 @@
 {
-    "name": "neos/contentrepository-structureadjustment",
-    "description": "Structure Adjustment Service (node repair)",
+    "name": "neos/contentrepository-nodemigration",
+    "description": "Node Migration",
     "license": [
         "GPL-3.0-or-later"
     ],
@@ -11,12 +11,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\StructureAdjustment\\": "src"
+            "Neos\\ContentRepository\\NodeMigration\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ContentRepository\\StructureAdjustment\\Tests\\": "Tests"
+            "Neos\\ContentRepository\\NodeMigration\\Tests\\": "Tests"
         }
     },
     "suggest": {

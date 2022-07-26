@@ -15,9 +15,9 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Feature\Migration\Command\ExecuteMigration;
-use Neos\ContentRepository\Feature\Migration\MigrationCommandHandler;
-use Neos\ContentRepository\Feature\Migration\Command\MigrationConfiguration;
+use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
+use Neos\ContentRepository\NodeMigration\NodeMigrationService;
+use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -27,7 +27,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait MigrationsTrait
 {
-    protected MigrationCommandHandler $migrationCommandHandler;
+    protected NodeMigrationService $migrationCommandHandler;
 
     /**
      * @return ObjectManagerInterface
@@ -36,7 +36,7 @@ trait MigrationsTrait
 
     protected function setupMigrationsTrait(): void
     {
-        $this->migrationCommandHandler = $this->getObjectManager()->get(MigrationCommandHandler::class);
+        $this->migrationCommandHandler = $this->getObjectManager()->get(NodeMigrationService::class);
     }
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:
