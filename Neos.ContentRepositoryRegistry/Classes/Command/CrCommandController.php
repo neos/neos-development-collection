@@ -17,7 +17,7 @@ use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 class CrCommandController extends CommandController
 {
@@ -41,7 +41,7 @@ class CrCommandController extends CommandController
         } elseif ($projectionName === 'nodeHiddenState') {
             $projector = $this->objectManager->get(NodeHiddenStateProjector::class);
         } elseif ($projectionName === 'documentUriPath') {
-            $projector = $this->objectManager->get(DocumentUriPathProjector::class);
+            $projector = $this->objectManager->get(DocumentUriPathProjection::class);
         } elseif ($projectionName === 'change') {
             $projector = $this->objectManager->get(ChangeProjection::class);
         } elseif ($projectionName === 'workspace') {

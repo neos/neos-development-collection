@@ -6,8 +6,8 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/neos": "*",
-        "neos/neos-ui": "*"
+        "neos/flow": "*",
+        "neos/contentrepository": "*"
     },
     "autoload": {
         "psr-4": {

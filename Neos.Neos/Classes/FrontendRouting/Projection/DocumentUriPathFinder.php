@@ -6,22 +6,21 @@ namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
-#[Flow\Scope('singleton')]
-final class DocumentUriPathFinder
+final class DocumentUriPathFinder implements ProjectionStateInterface
 {
-    private Connection $dbal;
-
     private ?ContentStreamIdentifier $liveContentStreamIdentifierRuntimeCache = null;
 
-    public function __construct(Connection $dbal)
+    public function __construct(
+        private readonly Connection $dbal,
+        private readonly string $tableNamePrefix
+    )
     {
-        $this->dbal = $dbal;
     }
 
     /**
@@ -168,8 +167,8 @@ final class DocumentUriPathFinder
     {
         try {
             $iterator = $this->dbal->executeQuery(
-                'SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS
-                    . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier',
+                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
+                     WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier',
                 ['nodeAggregateIdentifier' => $nodeAggregateIdentifier]
             );
         } catch (DBALException $e) {
@@ -190,7 +189,7 @@ final class DocumentUriPathFinder
             try {
                 $contentStreamIdentifier = $this->dbal->fetchColumn(
                     'SELECT contentStreamIdentifier FROM '
-                        . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS . ' LIMIT 1'
+                        . $this->tableNamePrefix. '_livecontentstreams LIMIT 1'
                 );
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf(
@@ -221,10 +220,10 @@ final class DocumentUriPathFinder
         # since Connection::fetchAssoc() only returns the first result anyways
         try {
             $row = $this->dbal->fetchAssoc(
-                'SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS
-                    . ' WHERE ' . $where . ' LIMIT 1',
+                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
+                     WHERE ' . $where . ' LIMIT 1',
                 $parameters,
-                DocumentUriPathProjector::COLUMN_TYPES_DOCUMENT_URIS
+                DocumentUriPathProjection::COLUMN_TYPES_DOCUMENT_URIS
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(

@@ -7,10 +7,12 @@ namespace Neos\Neos\FrontendRouting\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Projection\ProjectionInterface;
-use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -30,52 +32,138 @@ use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariant
 use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\EventSourcing\EventListener\AfterInvokeInterface;
-use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
-use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcing\EventStore\RawEvent;
-use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\EventStore\CatchUp\CatchUp;
+use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
-// NOTE: as workaround, we cannot reflect this class (because of an overly eager DefaultEventToListenerMappingProvider
-// in Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for this class.
-// See Neos.ContentRepositoryRegistry/Configuration/Settings.hacks.yaml for further details.
-final class DocumentUriPathProjector implements ProjectionInterface// TODO , BeforeInvokeInterface, AfterInvokeInterface
+/**
+ * @implements ProjectionInterface<DocumentUriPathFinder>
+ */
+final class DocumentUriPathProjection implements ProjectionInterface
 {
-    public const TABLE_NAME_DOCUMENT_URIS = 'neos_neos_projection_document_uri';
-    public const TABLE_NAME_LIVE_CONTENT_STREAMS = 'neos_neos_projection_document_uri_livecontentstreams';
     public const COLUMN_TYPES_DOCUMENT_URIS = [
         'shortcutTarget' => Types::JSON,
     ];
 
-    private NodeTypeManager $nodeTypeManager;
-
-    private DocumentUriPathFinder $documentUriPathFinder;
-
-    private Connection $dbal;
+    private DoctrineCheckpointStorage $checkpointStorage;
+    private ?DocumentUriPathFinder $stateAccessor = null;
 
     public function __construct(
-        NodeTypeManager $nodeTypeManager,
-        DocumentUriPathFinder $documentUriPathFinder,
-        Connection $dbal
+        private readonly EventNormalizer $eventNormalizer,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly Connection $dbal,
+        private readonly string $tableNamePrefix,
     ) {
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->documentUriPathFinder = $documentUriPathFinder;
-        $this->dbal = $dbal;
+        $this->checkpointStorage = new DoctrineCheckpointStorage(
+            $this->dbal,
+            $this->tableNamePrefix . '_checkpoint',
+            self::class
+        );
     }
 
-    public function beforeInvoke(EventEnvelope $_): void
+    public function setUp(): void
     {
+        $this->setupTables();
+        $this->checkpointStorage->setup();
+    }
+
+    private function setupTables(): SetupResult
+    {
+        $connection = $this->dbal;
+        $schemaManager = $connection->getSchemaManager();
+        if (!$schemaManager instanceof AbstractSchemaManager) {
+            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
+        }
+
+        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema();
+
+        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
+        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
+            $connection->executeStatement($statement);
+        }
+        return SetupResult::success('');
+    }
+
+
+    public function reset(): void
+    {
+        $this->truncateDatabaseTables();
+        $this->checkpointStorage->acquireLock();
+        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+    }
+
+    private function truncateDatabaseTables(): void
+    {
+        try {
+            $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_uri');
+            $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to truncate tables: %s', $e->getMessage()), 1599655382, $e);
+        }
+    }
+
+
+    public function canHandle(Event $event): bool
+    {
+        $eventClassName = $this->eventNormalizer->getEventClassName($event);
+        return in_array($eventClassName, [
+            RootWorkspaceWasCreated::class,
+            RootNodeAggregateWithNodeWasCreated::class,
+            NodeAggregateWithNodeWasCreated::class,
+            NodeAggregateTypeWasChanged::class,
+            NodePeerVariantWasCreated::class,
+            NodeGeneralizationVariantWasCreated::class,
+            NodeSpecializationVariantWasCreated::class,
+            NodeAggregateWasDisabled::class,
+            NodeAggregateWasEnabled::class,
+            NodeAggregateWasRemoved::class,
+            NodePropertiesWereSet::class,
+            NodeAggregateWasMoved::class,
+            DimensionSpacePointWasMoved::class,
+            DimensionShineThroughWasAdded::class,
+        ]);
+    }
+
+    public function catchUp(EventStreamInterface $eventStream): void
+    {
+        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
+        $catchUp->run($eventStream);
+    }
+
+    private function apply(\Neos\EventStore\Model\EventEnvelope $eventEnvelope): void
+    {
+        if (!$this->canHandle($eventEnvelope->event)) {
+            return;
+        }
+
+        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
+
         $this->dbal->beginTransaction();
-    }
 
-    public function afterInvoke(EventEnvelope $_): void
-    {
+        match(get_class($eventInstance)) {
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($eventInstance),
+            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($eventInstance),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($eventInstance),
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($eventInstance),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($eventInstance),
+            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($eventInstance),
+            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($eventInstance),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($eventInstance),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($eventInstance, $eventEnvelope),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($eventInstance),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($eventInstance),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($eventInstance),
+        };
+
         try {
             $this->dbal->commit();
         } catch (ConnectionException $e) {
@@ -87,10 +175,23 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    public function getSequenceNumber(): SequenceNumber
+    {
+        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+    }
+
+    public function getState(): DocumentUriPathFinder
+    {
+        if (!$this->stateAccessor) {
+            $this->stateAccessor = new DocumentUriPathFinder($this->dbal, $this->tableNamePrefix);
+        }
+        return $this->stateAccessor;
+    }
+
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         try {
-            $this->dbal->insert(self::TABLE_NAME_LIVE_CONTENT_STREAMS, [
+            $this->dbal->insert($this->tableNamePrefix. '_livecontentstreams', [
                 'contentStreamIdentifier' => $event->getNewContentStreamIdentifier(),
                 'workspaceName' => $event->getWorkspaceName(),
             ]);
@@ -103,7 +204,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
+    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -118,7 +219,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
+    private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -139,7 +240,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
 
         foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->parentNodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
@@ -151,7 +252,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
             $precedingNode = null;
 
             if ($event->succeedingNodeAggregateIdentifier === null) {
-                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode(
+                $precedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
                     $parentNode->getNodeAggregateIdentifier(),
                     $dimensionSpacePoint->hash
                 ));
@@ -163,7 +264,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
                     ]);
                 }
             } else {
-                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode(
+                $precedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
                     $event->succeedingNodeAggregateIdentifier,
                     $parentNode->getNodeAggregateIdentifier(),
                     $dimensionSpacePoint->hash
@@ -208,7 +309,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
+    private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -230,7 +331,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
+    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -243,7 +344,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         );
     }
 
-    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
+    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -256,7 +357,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         );
     }
 
-    public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -275,7 +376,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         OriginDimensionSpacePoint $targetOrigin,
         DimensionSpacePointSet $coveredSpacePoints
     ): void {
-        $sourceNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $sourceNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $nodeAggregateIdentifier,
             $sourceOrigin->hash
         ));
@@ -297,13 +398,13 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
@@ -328,13 +429,13 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
@@ -359,13 +460,13 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
         }
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateIdentifier,
                 $dimensionSpacePoint->hash
             ));
@@ -388,7 +489,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         }
     }
 
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, RawEvent $rawEvent): void
+    private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
         if (!$this->isLiveContentStream($event->contentStreamIdentifier)) {
             return;
@@ -405,7 +506,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         // TODO Can there be more affected dimension space points and how to determine them?
         // see https://github.com/neos/contentrepository-development-collection/issues/163
 
-        $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateIdentifier,
             $event->originDimensionSpacePoint->hash
         ));
@@ -456,10 +557,10 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
             ]
         );
         $this->dbal->commit();
-        $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $rawEvent);
+        $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $eventEnvelope);
     }
 
-    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
+    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
@@ -467,7 +568,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         if (!is_null($event->getNodeMoveMappings())) {
             foreach ($event->getNodeMoveMappings() as $moveMapping) {
                 foreach (
-                    $this->documentUriPathFinder->getNodeVariantsById(
+                    $this->getState()->getNodeVariantsById(
                         $event->getNodeAggregateIdentifier()
                     ) as $node
                 ) {
@@ -501,7 +602,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         if ($newParentNodeAggregateIdentifier->equals($node->getParentNodeAggregateIdentifier())) {
             return;
         }
-        $newParentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $newParentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $newParentNodeAggregateIdentifier,
             $node->getDimensionSpacePointHash()
         ));
@@ -539,22 +640,12 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         );
     }
 
-    public function reset(): void
-    {
-        try {
-            $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME_DOCUMENT_URIS);
-            $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME_LIVE_CONTENT_STREAMS);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to truncate tables: %s', $e->getMessage()), 1599655382, $e);
-        }
-    }
-
     private function isNodeExplicitlyDisabled(DocumentNodeInfo $node): bool
     {
         if (!$node->isDisabled()) {
             return false;
         }
-        $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $node->getParentNodeAggregateIdentifier(),
             $node->getDimensionSpacePointHash()
         ));
@@ -580,7 +671,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
 
     private function isLiveContentStream(ContentStreamIdentifier $contentStreamIdentifier): bool
     {
-        return $contentStreamIdentifier->equals($this->documentUriPathFinder->getLiveContentStreamIdentifier());
+        return $contentStreamIdentifier->equals($this->getState()->getLiveContentStreamIdentifier());
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
@@ -599,7 +690,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     private function insertNode(array $data): void
     {
         try {
-            $this->dbal->insert(self::TABLE_NAME_DOCUMENT_URIS, $data, self::COLUMN_TYPES_DOCUMENT_URIS);
+            $this->dbal->insert($this->tableNamePrefix . '_uri', $data, self::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to insert node: %s', $e->getMessage()), 1599646694, $e);
         }
@@ -627,7 +718,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     ): void {
         try {
             $this->dbal->update(
-                self::TABLE_NAME_DOCUMENT_URIS,
+                $this->tableNamePrefix . '_uri',
                 $data,
                 compact('nodeAggregateIdentifier', 'dimensionSpacePointHash'),
                 self::COLUMN_TYPES_DOCUMENT_URIS
@@ -648,7 +739,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     {
         try {
             $this->dbal->executeQuery(
-                'UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' ' . $query,
+                'UPDATE ' . $this->tableNamePrefix . '_uri ' . $query,
                 $parameters,
                 self::COLUMN_TYPES_DOCUMENT_URIS
             );
@@ -666,7 +757,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     ): void {
         try {
             $this->dbal->delete(
-                self::TABLE_NAME_DOCUMENT_URIS,
+                $this->tableNamePrefix . '_uri',
                 compact('nodeAggregateIdentifier', 'dimensionSpacePointHash'),
                 self::COLUMN_TYPES_DOCUMENT_URIS
             );
@@ -686,7 +777,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     {
         try {
             $this->dbal->executeQuery(
-                'DELETE FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' ' . $query,
+                'DELETE FROM ' . $this->tableNamePrefix . '_uri ' . $query,
                 $parameters,
                 self::COLUMN_TYPES_DOCUMENT_URIS
             );
@@ -726,7 +817,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         ?NodeAggregateIdentifier $newSucceedingNodeAggregateIdentifier
     ): void {
         if ($newSucceedingNodeAggregateIdentifier !== null) {
-            $newPrecedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode(
+            $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
                 $newSucceedingNodeAggregateIdentifier,
                 $parentNodeAggregateIdentifier,
                 $node->getDimensionSpacePointHash()
@@ -739,7 +830,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
                 ['precedingNodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()]
             );
         } else {
-            $newPrecedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode(
+            $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
                 $parentNodeAggregateIdentifier,
                 $node->getDimensionSpacePointHash()
             ));
@@ -760,7 +851,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     }
 
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
+    private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         if ($this->isLiveContentStream($event->contentStreamIdentifier)) {
             $this->updateNodeQuery(
@@ -784,11 +875,11 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
     }
 
 
-    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
+    private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         if ($this->isLiveContentStream($event->contentStreamIdentifier)) {
             try {
-                $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME_DOCUMENT_URIS . ' (
+                $this->dbal->executeStatement('INSERT INTO ' . $this->tableNamePrefix . '_uri (
                     nodeaggregateidentifier,
                     uripath,
                     nodeaggregateidentifierpath,
@@ -814,7 +905,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
                     succeedingnodeaggregateidentifier,
                     shortcuttarget
                 FROM
-                    ' . self::TABLE_NAME_DOCUMENT_URIS . '
+                    ' . $this->tableNamePrefix . '_uri
                 WHERE
                     dimensionSpacePointHash = :sourceDimensionSpacePointHash
                 ', [
@@ -837,32 +928,7 @@ final class DocumentUriPathProjector implements ProjectionInterface// TODO , Bef
         string $oldUriPath,
         string $newUriPath,
         NodePropertiesWereSet $event,
-        RawEvent $rawEvent
+        EventEnvelope $eventEnvelope
     ): void {
-    }
-
-    public function setUp(): void
-    {
-        // TODO: Implement setUp() method.
-    }
-
-    public function canHandle(Event $event): bool
-    {
-        // TODO: Implement canHandle() method.
-    }
-
-    public function catchUp(EventStreamInterface $eventStream): void
-    {
-        // TODO: Implement catchUp() method.
-    }
-
-    public function getSequenceNumber(): SequenceNumber
-    {
-        // TODO: Implement getSequenceNumber() method.
-    }
-
-    public function getState(): ProjectionStateInterface
-    {
-        // TODO: Implement getState() method.
     }
 }

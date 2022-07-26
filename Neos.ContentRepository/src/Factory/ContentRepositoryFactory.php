@@ -45,7 +45,7 @@ final class ContentRepositoryFactory
     private ProjectionFactoryDependencies $projectionFactoryDependencies;
     private Projections $projections;
 
-    private function __construct(
+    public function __construct(
         ContentRepositoryIdentifier $contentRepositoryIdentifier,
         EventStoreInterface $eventStore,
         NodeTypeManager $nodeTypeManager,

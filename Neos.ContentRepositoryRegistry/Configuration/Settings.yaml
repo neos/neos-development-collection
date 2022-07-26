@@ -41,46 +41,64 @@ Neos:
     #  fallbackNodeType: 'Some.Package:SomeNodeType'
     #fallbackNodeType: null
   ContentRepositoryRegistry:
+    contentRepositories:
+      default:
+        preset: default
+        contentDimensionSource:
+          options:
+            #dimensions:
+            # NOTE: Dimensions Config follows here
+            # TODO: Dimensions Config follows here - is this good? (I guess yes)
+
     presets:
       'default':
         eventStore:
-          factoryObjectName: Neos\ContentRepository\DoctrineAdapters\Factories\DoctrineEventStoreFactory
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+          # options:
+          #   eventTableName: (overridden event table name)
+        nodeTypeManager:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
+          options:
+            fallbackNodeTypeName: Neos.Neos:FallbackNode
+        contentDimensionSource:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
+          # options:
+          #   dimensions: (Dimensions Config)
         projectionCatchUpTrigger:
-          factoryObjectName: Neos\ContentRepositoryRegistry\Factories\JobQueueProjectionCatchUpTriggerFactory
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
+        propertyConverters:
+          DateTimeNormalizer:
+            className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+          ScalarNormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ScalarNormalizer
+          ArrayNormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ArrayNormalizer
+          UriNormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\UriNormalizer
+          ValueObjectArrayDenormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
+          ValueObjectBoolDenormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
+          ValueObjectFloatDenormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
+          ValueObjectIntDenormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
+          ValueObjectStringDenormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
+          DoctrinePersistentObjectNormalizer:
+            className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+          CollectionTypeDenormalizer:
+            className: Neos\ContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
+          # TODO!!!
+          #ProxyAwareObjectNormalizer:
+          #  className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+
         projections:
           'Neos.ContentRepository:ContentStream':
-            factoryObjectName: Neos\ContentRepository\DoctrineAdapters\Factories\ContentStreamProjectionFactory
-          'Neos.ContentRepository:ContentGraph':
-            factoryObjectName: Neos\ContentRepository\DoctrineAdapters\Factories\ContentGraphProjectionFactory
-            tableNamePrefix: '<contenreppsitoryID>'
+            factoryObjectName: Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory
 
 
 
 
 
-    propertyConverters:
-      ScalarNormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ScalarNormalizer
-      ArrayNormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ArrayNormalizer
-      DateTimeNormalizer:
-        className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
-        position: 'start'
-      UriNormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\UriNormalizer
-      ValueObjectArrayDenormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
-      ValueObjectBoolDenormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
-      ValueObjectFloatDenormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
-      ValueObjectIntDenormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
-      ValueObjectStringDenormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
-      DoctrinePersistentObjectNormalizer:
-        className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
-      CollectionTypeDenormalizer:
-        className: Neos\ContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
-      ProxyAwareObjectNormalizer:
-        className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+

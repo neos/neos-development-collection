@@ -46,7 +46,7 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
@@ -170,8 +170,8 @@ trait RoutingTrait
         $eventStore = $eventStoreFactory->create('ContentRepository');
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->getObjectManager()->get(EntityManagerInterface::class);
-        /** @var DocumentUriPathProjector $projector */
-        $projector = $this->getObjectManager()->get(DocumentUriPathProjector::class);
+        /** @var DocumentUriPathProjection $projector */
+        $projector = $this->getObjectManager()->get(DocumentUriPathProjection::class);
         (new EventListenerInvoker($eventStore, $projector, $entityManager->getConnection()))->catchUp();
     }
 

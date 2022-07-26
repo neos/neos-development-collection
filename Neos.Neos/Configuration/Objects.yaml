@@ -72,17 +72,3 @@ Neos\Neos\Controller\LoginController:
         arguments:
           1:
             value: Neos_Neos_LoginTokenCache
-
-
-Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectorFactory:
-  arguments:
-    3:
-      object:
-        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
-        factoryMethodName: 'getConnection'
-
-
-Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector:
-  scope: singleton
-  factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectorFactory
-  factoryMethodName: build

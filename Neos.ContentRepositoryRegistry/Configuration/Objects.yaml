@@ -1,0 +1,4 @@
+Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
+  arguments:
+    1:
+      setting: Neos.ContentRepositoryRegistry

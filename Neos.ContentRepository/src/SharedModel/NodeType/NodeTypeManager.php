@@ -47,6 +47,7 @@ class NodeTypeManager
     protected array $fullNodeTypeConfigurations;
 
     public function __construct(
+        // TODO: decouple NodeTypeManager from Flow ConfigurationManager and ObjectManagerInterface!!
         private readonly ConfigurationManager $configurationManager,
         private readonly ObjectManagerInterface $objectManager,
         private readonly ?string $fallbackNodeTypeName

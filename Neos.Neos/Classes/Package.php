@@ -28,7 +28,7 @@ use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Fusion\Core\Cache\ContentCache;
@@ -153,7 +153,7 @@ class Package extends BasePackage
         );
 
         $dispatcher->connect(
-            DocumentUriPathProjector::class,
+            DocumentUriPathProjection::class,
             'documentUriPathChanged',
             function (string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event) use ($bootstrap) {
                 /** @var RouterCachingService $routerCachingService */
