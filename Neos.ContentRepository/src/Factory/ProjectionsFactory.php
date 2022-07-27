@@ -2,6 +2,8 @@
 
 namespace Neos\ContentRepository\Factory;
 
+use Neos\ContentRepository\Projection\CatchUpHandlerFactories;
+use Neos\ContentRepository\Projection\CatchUpHandlerFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\Projections;
 
@@ -12,9 +14,18 @@ final class ProjectionsFactory
 
     public function registerFactory(ProjectionFactoryInterface $factory, array $options): void
     {
-        $this->factories[] = [
+        $this->factories[get_class($factory)] = [
             'factory' => $factory,
-            'options' => $options
+            'options' => $options,
+            'catchUpHandlers' => []
+        ];
+    }
+
+    public function registerCatchUpHandlerFactory(ProjectionFactoryInterface $factory, CatchUpHandlerFactoryInterface $catchUpHandlerFactory, array $options): void
+    {
+        $this->factories[get_class($factory)]['catchUpHandlers'][] = [
+            'catchUpHandlerFactory' => $catchUpHandlerFactory,
+            'options' => $options,
         ];
     }
 
@@ -26,7 +37,15 @@ final class ProjectionsFactory
             $options = $factoryDefinition['options'];
             assert($factory instanceof ProjectionFactoryInterface);
 
-            $projections = $projections->with($factory->build($projectionFactoryDependencies, $options, $projections));
+            $catchUpHandlerFactories = CatchUpHandlerFactories::create();
+            foreach ($factoryDefinition['catchUpHandlers'] as $catchUpHandlerDefinition) {
+                $catchUpHandlerFactory = $catchUpHandlerDefinition['catchUpHandlerFactory'];
+                $catchUpHandlerOptions = $catchUpHandlerDefinition['options'];
+                assert($catchUpHandlerFactory instanceof CatchUpHandlerFactoryInterface);
+                $catchUpHandlerFactories = $catchUpHandlerFactories->with($catchUpHandlerFactory, $catchUpHandlerOptions);
+            }
+
+            $projections = $projections->with($factory->build($projectionFactoryDependencies, $options, $catchUpHandlerFactories, $projections));
         }
 
         return $projections;

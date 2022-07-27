@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Projection\ContentStream;
 
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\CatchUpHandlerFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
@@ -27,7 +28,7 @@ class ContentStreamProjectionFactory implements ProjectionFactoryInterface
     ) {
     }
 
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, Projections $projectionsSoFar): ProjectionInterface
+    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHandlerFactoryInterface $catchUpHandlerFactory, Projections $projectionsSoFar): ProjectionInterface
     {
         return new ContentStreamProjection(
             $projectionFactoryDependencies->eventNormalizer,

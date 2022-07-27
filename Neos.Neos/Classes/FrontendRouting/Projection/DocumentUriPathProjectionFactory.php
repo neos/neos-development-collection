@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Projection\CatchUpHandlerFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Projection\ProjectionInterface;
@@ -17,7 +18,7 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
     ) {
     }
 
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, Projections $projectionsSoFar): ProjectionInterface
+    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHandlerFactoryInterface $catchUpHandlerFactory, Projections $projectionsSoFar): ProjectionInterface
     {
         return new DocumentUriPathProjection(
             $projectionFactoryDependencies->eventNormalizer,

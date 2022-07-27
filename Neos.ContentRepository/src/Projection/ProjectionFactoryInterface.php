@@ -6,5 +6,5 @@ use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 
 interface ProjectionFactoryInterface
 {
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, Projections $projectionsSoFar): ProjectionInterface;
+    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHandlerFactoryInterface $catchUpHandlerFactory, Projections $projectionsSoFar): ProjectionInterface;
 }

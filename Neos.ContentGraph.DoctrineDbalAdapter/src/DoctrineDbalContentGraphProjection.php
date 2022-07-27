@@ -41,7 +41,8 @@ use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Projection\CatchUpHandlerFactoryInterface;
+use Neos\ContentRepository\Projection\CatchUpHandlerInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
@@ -88,6 +89,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
         private readonly ProjectionContentGraph $projectionContentGraph,
+        private readonly CatchUpHandlerFactoryInterface $catchUpHandlerFactory,
 
         private readonly string $tableNamePrefix,
     )
@@ -97,11 +99,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->tableNamePrefix . '_checkpoint',
             self::class
         );
-    }
-
-    public function disableRuntimeCache(): void
-    {
-        $this->runtimeCacheActivationHolder->disableRuntimeCache();
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -188,11 +185,16 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function catchUp(EventStreamInterface $eventStream): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
+        $catchUpHandler = $this->catchUpHandlerFactory->build();
+        $catchUpHandler->onBeforeCatchUp();
+        $catchUp = CatchUp::create(function(EventEnvelope $eventEnvelope) use ($catchUpHandler) {
+            $this->apply($eventEnvelope, $catchUpHandler);
+        }, $this->checkpointStorage);
         $catchUp->run($eventStream);
+        $catchUpHandler->onAfterCatchUp();
     }
 
-    private function apply(EventEnvelope $eventEnvelope): void
+    private function apply(EventEnvelope $eventEnvelope, CatchUpHandlerInterface $catchUpHandler): void
     {
         if (!$this->canHandle($eventEnvelope->event)) {
             return;
@@ -200,7 +202,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
-        // TODO: BEFORE HOOK
+        $catchUpHandler->onBeforeEvent($eventInstance);
 
         if ($eventInstance instanceof RootNodeAggregateWithNodeWasCreated) {
             $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance);
@@ -240,7 +242,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
 
-        // TODO: AFTER HOOK
+        $catchUpHandler->onAfterEvent($eventInstance);
     }
 
     public function getSequenceNumber(): SequenceNumber
@@ -251,7 +253,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function getState(): ContentGraph
     {
         if (!$this->contentGraph) {
-            $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix, $this->runtimeCacheActivationHolder);
+            $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix);
         }
         return $this->contentGraph;
     }
