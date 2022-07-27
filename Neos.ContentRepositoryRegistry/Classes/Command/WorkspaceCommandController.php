@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\NodeAccess\Command;
+namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Service\WorkspaceMaintenanceService;
 use Neos\Flow\Annotations as Flow;

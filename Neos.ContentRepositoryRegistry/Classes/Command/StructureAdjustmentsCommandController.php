@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\NodeAccess\Command;
+namespace Neos\ContentRepositoryRegistry\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.

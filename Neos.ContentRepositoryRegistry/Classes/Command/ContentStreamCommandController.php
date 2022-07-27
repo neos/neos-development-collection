@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\NodeAccess\Command;
+namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Service\ContentStreamPruner;
