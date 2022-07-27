@@ -36,7 +36,6 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  */
 interface ContentGraphInterface extends ProjectionStateInterface
 {
-    // TODO: getSubgraph
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
@@ -140,14 +139,4 @@ interface ContentGraphInterface extends ProjectionStateInterface
      */
     public function findUsedNodeTypeNames(): iterable;
 
-    /**
-     * Enable all caches. All READ requests should enable the cache.
-     * By default, caches are enabled!
-     */
-    public function enableCache(): void;
-
-    /**
-     * Disable all caches. All WRITE requests should disable the cache.
-     */
-    public function disableCache(): void;
 }

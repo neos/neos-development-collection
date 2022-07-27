@@ -14,6 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
+use Neos\ContentGraph\DoctrineDbalAdapter\Service\InMemoryCacheAccessor;
+use Neos\ContentGraph\DoctrineDbalAdapter\Service\InMemoryCacheAccessorFactory;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
@@ -25,8 +30,10 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
@@ -40,6 +47,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\View\FusionView;
 
 /**
@@ -52,6 +60,12 @@ class NodeController extends ActionController
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -148,9 +162,12 @@ class NodeController extends ActionController
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
         }
 
-        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
+        $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+
+        $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
@@ -161,12 +178,15 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $siteDetectionResult->contentRepositoryIdentifier);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
+            new ContentSubgraphIdentity(
+                $siteDetectionResult->contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                $visibilityConstraints
+            )
         );
         $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
@@ -215,18 +235,20 @@ class NodeController extends ActionController
      */
     public function showAction(string $node, bool $showInvisible = false): void
     {
+        $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
+
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+        if (!$nodeAddress->isInLiveWorkspace()) {
+            throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
+        }
+
         $visibilityConstraints = VisibilityConstraints::frontend();
         if ($showInvisible && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
         }
 
-
-        $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
-        if (!$nodeAddress->isInLiveWorkspace()) {
-            throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
-        }
-
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
@@ -237,12 +259,15 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $siteDetectionResult->contentRepositoryIdentifier);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
+            new ContentSubgraphIdentity(
+                $siteDetectionResult->contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                $visibilityConstraints
+            )
         );
         $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
@@ -329,16 +354,22 @@ class NodeController extends ActionController
         $this->redirectToUri($resolvedUri);
     }
 
-    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress): void
+    private function fillCacheWithContentNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentSubgraphInterface $subgraph, ContentRepositoryIdentifier $contentRepositoryIdentifier): void
     {
+        if (!$subgraph instanceof ContentSubgraph) {
+            // wrong subgraph implementation
+            return;
+        }
+        $inMemoryCache = $subgraph->inMemoryCache;
+
         $subtree = $subgraph->findSubtrees(
-            NodeAggregateIdentifiers::fromArray([$nodeAddress->nodeAggregateIdentifier]),
+            NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]),
             10,
             $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document')
         );
         $subtree = $subtree->getChildren()[0];
 
-        $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
+        $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $currentDocumentNode = $subtree->getNode();
         if (is_null($currentDocumentNode)) {
@@ -353,7 +384,7 @@ class NodeController extends ActionController
                 $childSubtree,
                 $currentDocumentNode,
                 $nodePathOfDocumentNode,
-                $subgraph->getInMemoryCache()
+                $inMemoryCache
             );
         }
     }
@@ -363,7 +394,8 @@ class NodeController extends ActionController
         NodeInterface $parentNode,
         NodePath $parentNodePath,
         InMemoryCache $inMemoryCache
-    ): void {
+    ): void
+    {
         $node = $subtree->getNode();
         if (is_null($node)) {
             return;

@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\ContentGraph\InMemoryCache;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 

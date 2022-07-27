@@ -25,7 +25,6 @@ use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\LegacyNodeMigration\Service\ClosureEventPublisher;
 use Neos\ContentRepository\LegacyNodeMigration\Service\ContentRepositoryExportService;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
@@ -101,12 +100,6 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var ReadSideMemoryCacheManager
-     */
-    protected $readSideMemoryCacheManager;
-
-    /**
-     * @Flow\Inject(lazy=false)
      * @var RuntimeBlocker
      */
     protected $runtimeBlocker;
@@ -157,7 +150,6 @@ class ContentRepositoryMigrateCommandController extends CommandController
             $this->interDimensionalVariationGraph,
             // the nodeAggregateEventPublisher contains the custom EventStore from above
             $nodeAggregateEventPublisher,
-            $this->readSideMemoryCacheManager,
             $this->runtimeBlocker,
             $this->propertyConverter
         );

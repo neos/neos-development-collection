@@ -16,7 +16,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Service\InMemoryCacheAccessor;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
@@ -460,17 +462,11 @@ final class ContentGraph implements ContentGraphInterface
         }, $rows);
     }
 
-    public function enableCache(): void
-    {
-        foreach ($this->subgraphs as $subgraph) {
-            $subgraph->getInMemoryCache()->enable();
-        }
-    }
-
-    public function disableCache(): void
-    {
-        foreach ($this->subgraphs as $subgraph) {
-            $subgraph->getInMemoryCache()->disable();
-        }
+    /**
+     * @return ContentSubgraph[]
+     * @internal only used for {@see InMemoryCacheAccessor} and as implementation detail of {@see DoctrineDbalContentGraphProjection}
+     */
+    public function getSubgraphs(): array {
+        return $this->subgraphs;
     }
 }

@@ -19,12 +19,12 @@ class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $options): NodeTypeManager
+    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $nodeTypeManagerSettings): NodeTypeManager
     {
         return new NodeTypeManager(
             $this->configurationManager,
             $this->objectManager,
-            $options['fallbackNodeTypeName']
+            $nodeTypeManagerSettings['options']['fallbackNodeTypeName']
         );
     }
 }

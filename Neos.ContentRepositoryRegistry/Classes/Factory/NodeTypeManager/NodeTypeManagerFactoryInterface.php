@@ -7,5 +7,5 @@ use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 
 interface NodeTypeManagerFactoryInterface
 {
-    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $options): NodeTypeManager;
+    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $nodeTypeManagerSettings): NodeTypeManager;
 }

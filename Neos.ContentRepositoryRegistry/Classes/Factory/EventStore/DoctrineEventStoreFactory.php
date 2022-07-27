@@ -15,11 +15,11 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $options): EventStoreInterface
+    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $eventStoreSettings): EventStoreInterface
     {
         return new DoctrineEventStore(
             $this->connection,
-            $options['eventTableName'] ?? sprintf('neos_cr_%s_events', $contentRepositoryIdentifier)
+            $eventStoreSettings['options']['eventTableName'] ?? sprintf('neos_cr_%s_events', $contentRepositoryIdentifier)
         );
     }
 }

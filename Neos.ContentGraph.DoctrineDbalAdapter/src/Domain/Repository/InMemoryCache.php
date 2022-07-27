@@ -12,13 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\ContentGraph;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\AllChildNodesByNodeIdentifierCache;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\NodeByNodeAggregateIdentifierCache;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\NodePathCache;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\AllChildNodesByNodeIdentifierCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodeByNodeAggregateIdentifierCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodePathCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
 /**
  * Accessors to in Memory Cache

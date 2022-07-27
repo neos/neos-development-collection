@@ -20,11 +20,13 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 
+/**
+ * Implementation detail of {@see ContentRepositoryServiceFactoryInterface}
+ */
 final class ContentRepositoryServiceFactoryDependencies
 {
     private function __construct(
@@ -41,7 +43,6 @@ final class ContentRepositoryServiceFactoryDependencies
         // we don't need Projections, because this is included in ContentRepository->getState()
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         // I am unsure about ContentStreamRepository; but this is a kinda dirty class right now; so I don't want to expose it right now until we need it outside
-        public readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         public readonly EventPersister $eventPersister,
     )
     {
@@ -50,7 +51,6 @@ final class ContentRepositoryServiceFactoryDependencies
     public static function create(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         ContentRepository $contentRepository,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         EventPersister $eventPersister,
     ): self {
         return new self(
@@ -62,7 +62,6 @@ final class ContentRepositoryServiceFactoryDependencies
             $projectionFactoryDependencies->interDimensionalVariationGraph,
             $projectionFactoryDependencies->propertyConverter,
             $contentRepository,
-            $readSideMemoryCacheManager,
             $eventPersister
         );
     }

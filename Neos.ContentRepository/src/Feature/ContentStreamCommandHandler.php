@@ -29,7 +29,6 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
 /**
  * INTERNALS. Only to be used from WorkspaceCommandHandler!!!
@@ -40,7 +39,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly ContentStreamRepository $contentStreamRepository,
-        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
     ) {
     }
 
@@ -53,8 +51,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         if ($command instanceof CreateContentStream) {
             return $this->handleCreateContentStream($command);
         } elseif ($command instanceof ForkContentStream) {

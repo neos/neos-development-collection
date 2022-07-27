@@ -32,7 +32,6 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
@@ -222,7 +221,6 @@ trait GenericCommandExecutionAndEventPublication
         $event = $this->getEventNormalizer()->denormalize($eventPayload, $eventType);
         $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
         $events = DomainEvents::withSingleEvent($event);
-        $this->getObjectManager()->get(ReadSideMemoryCacheManager::class)->disableCache();
         $this->getEventStore()->commit($streamName, $events);
         $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }

@@ -34,7 +34,6 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -46,7 +45,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     public function __construct(
         private readonly ContentStreamRepository $contentStreamRepository,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
     ) {
@@ -75,8 +73,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         if ($command instanceof CopyNodesRecursively) {
             return $this->handleCopyNodesRecursively($command, $contentRepository);
         }

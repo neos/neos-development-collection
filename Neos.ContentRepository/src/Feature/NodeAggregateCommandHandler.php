@@ -50,7 +50,6 @@ use Neos\ContentRepository\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
 final class NodeAggregateCommandHandler implements CommandHandlerInterface
 {
@@ -84,8 +83,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      */
     private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
 
-    private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
     protected PropertyConverter $propertyConverter;
 
     /**
@@ -98,14 +95,12 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         PropertyConverter $propertyConverter
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->propertyConverter = $propertyConverter;
     }
 
@@ -130,8 +125,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         return match (get_class($command)) {
             SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
             SetSerializedNodeProperties::class => $this->handleSetSerializedNodeProperties($command, $contentRepository),

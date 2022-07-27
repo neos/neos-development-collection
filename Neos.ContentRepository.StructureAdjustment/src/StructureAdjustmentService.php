@@ -9,7 +9,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
@@ -33,7 +32,6 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
     )
     {
         $projectedNodeIterator = new ProjectedNodeIterator(
@@ -96,7 +94,6 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $remediation = $adjustment->remediation;
             $eventsToPublish = $remediation();
             assert($eventsToPublish instanceof EventsToPublish);
-            $this->readSideMemoryCacheManager->disableCache();
             $this->eventPersister->publishEvents($eventsToPublish)->block(); // TODO: block or not?
         }
     }

@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\NodeMigration;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
@@ -52,7 +51,6 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
 {
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         private readonly FiltersFactory $filterFactory,
         private readonly TransformationsFactory $transformationFactory
     )
@@ -61,8 +59,6 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
 
     public function executeMigration(ExecuteMigration $command): void
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(

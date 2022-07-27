@@ -43,6 +43,7 @@ use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithN
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -60,7 +61,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 /**
  * @implements ProjectionInterface<ContentGraph>
  */
-final class DoctrineDbalContentGraphProjection implements ProjectionInterface
+final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     use NodeVariation;
     use NodeDisabling;
@@ -96,6 +97,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $this->tableNamePrefix . '_checkpoint',
             self::class
         );
+    }
+
+    public function disableRuntimeCache(): void
+    {
+        $this->runtimeCacheActivationHolder->disableRuntimeCache();
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -242,12 +248,20 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         return $this->checkpointStorage->getHighestAppliedSequenceNumber();
     }
 
-    public function getState(): ContentGraphInterface
+    public function getState(): ContentGraph
     {
         if (!$this->contentGraph) {
-            $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix);
+            $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix, $this->runtimeCacheActivationHolder);
         }
         return $this->contentGraph;
+    }
+
+    public function markStale(): void
+    {
+        $contentGraph = $this->getState();
+        foreach ($contentGraph->getSubgraphs() as $subgraph) {
+            $subgraph->inMemoryCache->disable();
+        }
     }
 
     /**

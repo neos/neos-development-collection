@@ -33,9 +33,7 @@ use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
 /**
  * ContentStreamCommandHandler
@@ -44,7 +42,6 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 {
 
     public function __construct(
-        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
     )
@@ -68,7 +65,6 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 
     private function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
@@ -94,7 +90,6 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 
     private function handleAddDimensionShineThrough(AddDimensionShineThrough $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 

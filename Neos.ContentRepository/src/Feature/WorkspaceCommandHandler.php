@@ -56,7 +56,6 @@ use Neos\ContentRepository\Feature\Common\Exception\WorkspaceHasNoBaseWorkspaceN
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
@@ -71,7 +70,6 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 final class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         private readonly EventPersister $eventPersister,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
@@ -91,8 +89,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->readSideMemoryCacheManager->disableCache();
-
         if ($command instanceof CreateWorkspace) {
             return $this->handleCreateWorkspace($command, $contentRepository);
         } elseif ($command instanceof CreateRootWorkspace) {

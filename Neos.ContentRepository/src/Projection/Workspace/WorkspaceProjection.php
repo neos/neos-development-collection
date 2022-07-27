@@ -22,6 +22,7 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
@@ -42,13 +43,14 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 /**
  * @internal
  */
-class WorkspaceProjection implements ProjectionInterface
+class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     /**
      * @var WorkspaceFinder|null Cache for the workspace finder returned by {@see getState()}, so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
     private DoctrineCheckpointStorage $checkpointStorage;
+    private WorkspaceRuntimeCache $workspaceRuntimeCache;
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
@@ -60,6 +62,7 @@ class WorkspaceProjection implements ProjectionInterface
             $this->tableName . '_checkpoint',
             self::class
         );
+        $this->workspaceRuntimeCache = new WorkspaceRuntimeCache();
     }
 
     public function setUp(): void
@@ -174,10 +177,16 @@ class WorkspaceProjection implements ProjectionInterface
         if (!$this->workspaceFinder) {
             $this->workspaceFinder = new WorkspaceFinder(
                 $this->dbalClient,
+                $this->workspaceRuntimeCache,
                 $this->tableName
             );
         }
         return $this->workspaceFinder;
+    }
+
+    public function markStale(): void
+    {
+        $this->workspaceRuntimeCache->disableCache();
     }
 
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void

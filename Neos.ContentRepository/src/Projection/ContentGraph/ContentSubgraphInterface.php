@@ -200,6 +200,4 @@ interface ContentSubgraphInterface extends \JsonSerializable
     ): Nodes;
 
     public function countNodes(): int;
-
-    public function getInMemoryCache(): InMemoryCache;
 }

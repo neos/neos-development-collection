@@ -25,7 +25,6 @@ class NodeMigrationServiceFactory implements ContentRepositoryServiceFactoryInte
     {
         return new NodeMigrationService(
             $serviceFactoryDependencies->contentRepository,
-            $serviceFactoryDependencies->readSideMemoryCacheManager,
             new FiltersFactory($this->container),
             new TransformationsFactory($this->container)
         );

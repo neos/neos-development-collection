@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
 use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\Projection\WithMarkStaleInterface;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -10,10 +11,10 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 /**
  * @implements ProjectionInterface<ContentGraphInterface>
  */
-final class ContentGraphProjection implements ProjectionInterface
+final class ContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     public function __construct(
-        private readonly ProjectionInterface $projectionImplementation
+        private readonly ProjectionInterface&WithMarkStaleInterface $projectionImplementation
     ) {}
 
     public function setUp(): void
@@ -44,5 +45,10 @@ final class ContentGraphProjection implements ProjectionInterface
     public function getSequenceNumber(): SequenceNumber
     {
         return $this->projectionImplementation->getSequenceNumber();
+    }
+
+    public function markStale(): void
+    {
+        $this->projectionImplementation->markStale();
     }
 }

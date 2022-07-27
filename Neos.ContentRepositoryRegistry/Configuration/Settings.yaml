@@ -44,11 +44,9 @@ Neos:
     contentRepositories:
       default:
         preset: default
-        contentDimensionSource:
-          options:
-            #dimensions:
+        contentDimensions:
+          dimensions: # TODO NAMING HERE?
             # NOTE: Dimensions Config follows here
-            # TODO: Dimensions Config follows here - is this good? (I guess yes)
 
     presets:
       'default':
@@ -60,10 +58,9 @@ Neos:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
           options:
             fallbackNodeTypeName: Neos.Neos:FallbackNode
-        contentDimensionSource:
+        contentDimensions:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
-          # options:
-          #   dimensions: (Dimensions Config)
+          # dimensions: (Dimensions Config)
         projectionCatchUpTrigger:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
         propertyConverters:

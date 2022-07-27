@@ -26,14 +26,10 @@ use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
@@ -76,7 +72,6 @@ final class ContentRepositoryFactory
     private ?ContentRepository $contentRepository = null;
     private ?CommandBus $commandBus = null;
     private ?ContentStreamRepository $contentStreamRepository = null;
-    private ?ReadSideMemoryCacheManager $readSideMemoryCacheManager = null;
     private ?EventPersister $eventPersister = null;
 
     /**
@@ -100,7 +95,9 @@ final class ContentRepositoryFactory
     /**
      * A service is a high-level "application part" which builds upon the CR internals.
      *
-     * You don't usually need this yourself, except if you extend the CR core.
+     * You don't usually need this yourself, but it is usually enough to simply use the {@see ContentRepository}
+     * instance. If you want to extend the CR core and need to hook deeply into CR internals, this is what the
+     * {@see ContentRepositoryServiceInterface} is for.
      *
      * @template T of ContentRepositoryServiceInterface
      * @param ContentRepositoryServiceFactoryInterface<T> $serviceFactory
@@ -111,7 +108,6 @@ final class ContentRepositoryFactory
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->build(),
-            $this->readSideMemoryCacheManager,
             $this->eventPersister
         );
         return $serviceFactory->build($serviceFactoryDependencies);
@@ -123,10 +119,8 @@ final class ContentRepositoryFactory
             $this->commandBus = new CommandBus(
                 new ContentStreamCommandHandler(
                     $this->buildContentStreamRepository(),
-                    $this->buildReadSideMemoryCacheManager(),
                 ),
                 new WorkspaceCommandHandler(
-                    $this->buildReadSideMemoryCacheManager(),
                     $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
                     $this->projectionFactoryDependencies->eventNormalizer
@@ -136,18 +130,15 @@ final class ContentRepositoryFactory
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph,
-                    $this->buildReadSideMemoryCacheManager(),
                     $this->projectionFactoryDependencies->propertyConverter
                 ),
                 new DimensionSpaceCommandHandler(
-                    $this->buildReadSideMemoryCacheManager(),
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph
                 ),
                 new NodeDuplicationCommandHandler(
                     $this->buildContentStreamRepository(),
                     $this->projectionFactoryDependencies->nodeTypeManager,
-                    $this->buildReadSideMemoryCacheManager(),
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph
                 )
@@ -164,18 +155,6 @@ final class ContentRepositoryFactory
             );
         }
         return $this->contentStreamRepository;
-    }
-
-    private function buildReadSideMemoryCacheManager(): ReadSideMemoryCacheManager
-    {
-        if (!$this->readSideMemoryCacheManager) {
-
-            $this->readSideMemoryCacheManager = new ReadSideMemoryCacheManager(
-                $this->projections->get(ContentGraphProjection::class)->getState(),
-                $this->projections->get(WorkspaceProjection::class)->getState()
-            );
-        }
-        return $this->readSideMemoryCacheManager;
     }
 
     private function buildEventPersister(): EventPersister

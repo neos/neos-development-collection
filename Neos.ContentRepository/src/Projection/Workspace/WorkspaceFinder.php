@@ -27,44 +27,20 @@ use Neos\Flow\Annotations as Flow;
  */
 final class WorkspaceFinder implements ProjectionStateInterface
 {
-    private bool $cacheEnabled = true;
-
-    /**
-     * @var array<string,Workspace>
-     */
-    private array $cachedWorkspacesByName = [];
-
-    /**
-     * @var array<string,Workspace>
-     */
-    private array $cachedWorkspacesByContentStreamIdentifier = [];
-
     public function __construct(
         private readonly DbalClientInterface $client,
+        private readonly WorkspaceRuntimeCache $workspaceRuntimeCache,
         private readonly string $tableName
     )
     {
     }
 
 
-    public function disableCache(): void
-    {
-        $this->cacheEnabled = false;
-        $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamIdentifier = [];
-    }
-
-    public function enableCache(): void
-    {
-        $this->cacheEnabled = true;
-        $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamIdentifier = [];
-    }
-
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
-        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByName[(string)$name])) {
-            return $this->cachedWorkspacesByName[(string)$name];
+        $workspace = $this->workspaceRuntimeCache->getWorkspaceByName($name);
+        if ($workspace !== null) {
+            return $workspace;
         }
 
         $connection = $this->client->getConnection();
@@ -84,9 +60,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
         $workspace = Workspace::fromDatabaseRow($workspaceRow);
 
-        if ($this->cacheEnabled === true) {
-            $this->cachedWorkspacesByName[(string)$name] = $workspace;
-        }
+        $this->workspaceRuntimeCache->setWorkspaceByName($workspace);
 
         return $workspace;
     }

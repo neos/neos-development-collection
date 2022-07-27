@@ -128,7 +128,7 @@ final class ContentRepositoryRegistry
         if (!$eventStoreFactory instanceof EventStoreFactoryInterface) {
             throw new \RuntimeException(sprintf('eventStore.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, EventStoreFactoryInterface::class, get_debug_type($eventStoreFactory)));
         }
-        return $eventStoreFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['eventStore']['options'] ?? []);
+        return $eventStoreFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['eventStore'] ?? []);
     }
 
     private function buildNodeTypeManager(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings): NodeTypeManager
@@ -137,7 +137,7 @@ final class ContentRepositoryRegistry
         if (!$nodeTypeManagerFactory instanceof NodeTypeManagerFactoryInterface) {
             throw new \RuntimeException(sprintf('nodeTypeManager.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, NodeTypeManagerFactoryInterface::class, get_debug_type($nodeTypeManagerFactory)));
         }
-        return $nodeTypeManagerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['nodeTypeManager']['options'] ?? []);
+        return $nodeTypeManagerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['nodeTypeManager'] ?? []);
     }
 
     private function buildContentDimensionSource(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings): ContentDimensionSourceInterface
@@ -146,7 +146,7 @@ final class ContentRepositoryRegistry
         if (!$contentDimensionSourceFactory instanceof ContentDimensionSourceFactoryInterface) {
             throw new \RuntimeException(sprintf('contentDimensionSource.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, NodeTypeManagerFactoryInterface::class, get_debug_type($contentDimensionSourceFactory)));
         }
-        return $contentDimensionSourceFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['contentDimensionSource']['options'] ?? []);
+        return $contentDimensionSourceFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['contentDimensionSource'] ?? []);
 
     }
 
@@ -194,6 +194,6 @@ final class ContentRepositoryRegistry
         if (!$projectionCatchUpTriggerFactory instanceof ProjectionCatchUpTriggerFactoryInterface) {
             throw new \RuntimeException(sprintf('projectionCatchUpTrigger.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ProjectionCatchUpTriggerFactoryInterface::class, get_debug_type($projectionCatchUpTriggerFactory)));
         }
-        return $projectionCatchUpTriggerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['projectionCatchUpTrigger']['options'] ?? []);
+        return $projectionCatchUpTriggerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['projectionCatchUpTrigger'] ?? []);
     }
 }

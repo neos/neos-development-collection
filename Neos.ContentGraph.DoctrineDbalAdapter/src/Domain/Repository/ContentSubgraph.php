@@ -24,7 +24,7 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
@@ -57,7 +57,7 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
  */
 final class ContentSubgraph implements ContentSubgraphInterface
 {
-    protected InMemoryCache $inMemoryCache;
+    public readonly InMemoryCache $inMemoryCache;
 
     public function __construct(
         private readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -1024,7 +1024,7 @@ order by level asc, position asc;')
                 $this->getDimensionSpacePoint(),
                 $this->visibilityConstraints
             );
-            $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add(
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
                 $node->getNodeAggregateIdentifier(),
                 $node
             );
@@ -1041,7 +1041,7 @@ order by level asc, position asc;')
             /* @var $parentSubtree Subtree */
             $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
             if ($parentSubtree->getNode() !== null) {
-                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add(
+                $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache()->add(
                     $node->getNodeAggregateIdentifier(),
                     $parentSubtree->getNode()->getNodeAggregateIdentifier()
                 );
@@ -1192,10 +1192,5 @@ SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node n
         $row = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $row ? (int)$row['COUNT(*)'] : 0;
-    }
-
-    public function getInMemoryCache(): InMemoryCache
-    {
-        return $this->inMemoryCache;
     }
 }

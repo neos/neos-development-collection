@@ -33,7 +33,6 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\ContentGraph\InMemoryCache;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
@@ -451,11 +450,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric();
 
         return $result ? $result[0] : 0;
-    }
-
-    public function getInMemoryCache(): InMemoryCache
-    {
-        return new InMemoryCache();
     }
 
     private function getDatabaseConnection(): DatabaseConnection

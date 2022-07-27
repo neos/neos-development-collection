@@ -6,6 +6,7 @@ use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\CommandHandler\PendingProjections;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
+use Neos\ContentRepository\Projection\WithMarkStaleInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
@@ -45,6 +46,12 @@ final class EventPersister
         // the projections which are interested in the events from above.
         // Further details can be found in the docs of PendingProjections.
         $pendingProjections = PendingProjections::fromProjectionsAndEventsAndSequenceNumber($this->projections, $normalizedEvents, $commitResult->highestCommittedSequenceNumber);
+
+        foreach ($pendingProjections->projections as $projection) {
+            if ($projection instanceof WithMarkStaleInterface) {
+                $projection->markStale();
+            }
+        }
         $this->projectionCatchUpTrigger->triggerCatchUp($pendingProjections->projections);
 
         // The CommandResult can be used to block until projections are up to date.
