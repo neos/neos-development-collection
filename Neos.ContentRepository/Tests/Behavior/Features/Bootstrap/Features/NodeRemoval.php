@@ -19,7 +19,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcing\EventStore\StreamName;
 

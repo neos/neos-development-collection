@@ -110,7 +110,7 @@ Feature: Remove Nodes
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
-  Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "onlyGivenVariant"
+  Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "allSpecializations"
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -129,7 +129,7 @@ Feature: Remove Nodes
           -
             type: 'RemoveNode'
             settings:
-              strategy: 'onlyGivenVariant'
+              strategy: 'allSpecializations'
     """
 
     # the original content stream has not been touched

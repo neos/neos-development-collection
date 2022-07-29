@@ -21,7 +21,7 @@ use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service\Controller;
 
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
@@ -395,7 +395,7 @@ class NodeController extends AbstractServiceController
             $node->getContentStreamIdentifier(),
             $node->getNodeAggregateIdentifier(),
             $node->getDimensionSpacePoint(),
-            NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS,
+            NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS,
             $userIdentifier
         ));
 
