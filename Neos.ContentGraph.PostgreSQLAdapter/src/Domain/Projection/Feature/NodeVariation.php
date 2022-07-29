@@ -65,21 +65,42 @@ trait NodeVariation
                 $event->specializationOrigin->toDimensionSpacePoint(),
                 $event->nodeAggregateIdentifier
             );
-            if (is_null($oldCoveringNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+            if ($oldCoveringNode instanceof NodeRecord) {
+                $this->assignNewChildNodeToAffectedHierarchyRelations(
+                    $event->contentStreamIdentifier,
+                    $oldCoveringNode->relationAnchorPoint,
+                    $specializedNode->relationAnchorPoint,
+                    $event->specializationCoverage
+                );
+                $this->assignNewParentNodeToAffectedHierarchyRelations(
+                    $event->contentStreamIdentifier,
+                    $oldCoveringNode->relationAnchorPoint,
+                    $specializedNode->relationAnchorPoint,
+                    $event->specializationCoverage
+                );
+            } else {
+                // the dimension space point is not yet covered by the node aggregate,
+                // but it is known that the source's parent node aggregate does
+                $parentNodeAggregateIdentifier = $this->projectionHypergraph->findParentNodeRecordByOrigin(
+                    $event->contentStreamIdentifier,
+                    $event->sourceOrigin,
+                    $event->nodeAggregateIdentifier
+                )->nodeAggregateIdentifier;
+                foreach ($event->specializationCoverage as $specializedDimensionSpacePoint) {
+                    $parentRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
+                        $event->contentStreamIdentifier,
+                        $specializedDimensionSpacePoint,
+                        $this->projectionHypergraph->findNodeRecordByCoverage(
+                            $event->contentStreamIdentifier,
+                            $specializedDimensionSpacePoint,
+                            $parentNodeAggregateIdentifier
+                        )->relationAnchorPoint
+                    );
+
+                    $parentRelation->addChildNodeAnchor($specializedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
+                }
             }
-            $this->assignNewChildNodeToAffectedHierarchyRelations(
-                $event->contentStreamIdentifier,
-                $oldCoveringNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint,
-                $event->specializationCoverage
-            );
-            $this->assignNewParentNodeToAffectedHierarchyRelations(
-                $event->contentStreamIdentifier,
-                $oldCoveringNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint,
-                $event->specializationCoverage
-            );
+
             $this->copyReferenceRelations(
                 $sourceNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint

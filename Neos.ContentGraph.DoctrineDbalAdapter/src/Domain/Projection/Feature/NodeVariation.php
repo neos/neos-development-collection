@@ -52,6 +52,7 @@ trait NodeVariation
                 $event->specializationOrigin
             );
 
+            $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
             foreach (
                 $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamIdentifier,
@@ -63,7 +64,40 @@ trait NodeVariation
                     $specializedNode->relationAnchorPoint,
                     $this->getDatabaseConnection()
                 );
+                unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
             }
+            if (!empty($uncoveredDimensionSpacePoints)) {
+                $parentNodeAggregateIdentifier = $this->projectionContentGraph->findParentNode(
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
+                    $event->sourceOrigin,
+                )->nodeAggregateIdentifier;
+                foreach ($uncoveredDimensionSpacePoints as $uncoveredDimensionSpacePoint) {
+                    $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+                        $event->contentStreamIdentifier,
+                        $parentNodeAggregateIdentifier,
+                        $uncoveredDimensionSpacePoint
+                    );
+
+                    $hierarchyRelation = new HierarchyRelation(
+                        $parentNode->relationAnchorPoint,
+                        $specializedNode->relationAnchorPoint,
+                        $sourceNode->nodeName,
+                        $event->contentStreamIdentifier,
+                        $uncoveredDimensionSpacePoint,
+                        $uncoveredDimensionSpacePoint->hash,
+                        $this->projectionContentGraph->determineHierarchyRelationPosition(
+                            $parentNode->relationAnchorPoint,
+                            $specializedNode->relationAnchorPoint,
+                            null,
+                            $event->contentStreamIdentifier,
+                            $uncoveredDimensionSpacePoint
+                        )
+                    );
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                }
+            }
+
             foreach (
                 $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamIdentifier,
