@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Psr\Log\LoggerInterface;
@@ -18,8 +17,6 @@ use Psr\Log\LoggerInterface;
  */
 trait NodeRemoval
 {
-    protected ProjectionContentGraph $projectionContentGraph;
-
     protected LoggerInterface $systemLogger;
 
     /**
@@ -41,6 +38,7 @@ trait NodeRemoval
                 $event->nodeAggregateIdentifier,
                 $event->affectedCoveredDimensionSpacePoints
             );
+
             foreach ($ingoingRelations as $ingoingRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation);
             }
@@ -67,9 +65,11 @@ trait NodeRemoval
         }
 
         // remove node itself if it does not have any incoming hierarchy relations anymore
-        $this->getDatabaseConnection()->executeUpdate(
+        // also remove outbound reference relations
+        $this->getDatabaseConnection()->executeStatement(
             '
-            DELETE n FROM neos_contentgraph_node n
+            DELETE n, r FROM neos_contentgraph_node n
+                LEFT JOIN neos_contentgraph_referencerelation r ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN
                     neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE

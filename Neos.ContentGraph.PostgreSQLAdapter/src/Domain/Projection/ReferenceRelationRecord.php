@@ -78,4 +78,13 @@ final class ReferenceRelationRecord
             $this->targetNodeAggregateIdentifier
         );
     }
+
+    public static function removeFromDatabaseForSource(
+        NodeRelationAnchorPoint $sourceNodeAnchor,
+        Connection $databaseConnection
+    ): void {
+        $databaseConnection->delete(self::TABLE_NAME, [
+            'sourcenodeanchor' => $sourceNodeAnchor
+        ]);
+    }
 }

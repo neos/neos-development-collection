@@ -78,6 +78,10 @@ trait NodeRemoval
             }
             foreach ($nodeRecordsToBeRemoved as $nodeRecord) {
                 $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
+                ReferenceRelationRecord::removeFromDatabaseForSource(
+                    $nodeRecord->relationAnchorPoint,
+                    $this->getDatabaseConnection()
+                );
             }
         });*/
     }
@@ -107,6 +111,10 @@ trait NodeRemoval
                     ->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
                 if (empty($ingoingHierarchyRelations)) {
                     $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
+                    ReferenceRelationRecord::removeFromDatabaseForSource(
+                        $nodeRecord->relationAnchorPoint,
+                        $this->getDatabaseConnection()
+                    );
                 }
                 $this->removeFromRestrictions(
                     $contentStreamIdentifier,
