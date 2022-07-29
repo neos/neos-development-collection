@@ -65,9 +65,11 @@ trait NodeRemoval
                     $event->getNodeAggregateIdentifier()
                 );
 
-                if ($event->affectedCoveredDimensionSpacePoints->contains(
-                    $nodeRecord->originDimensionSpacePoint->toDimensionSpacePoint()
-                )) {
+                if (
+                    $event->affectedCoveredDimensionSpacePoints->contains(
+                        $nodeRecord->originDimensionSpacePoint->toDimensionSpacePoint()
+                    )
+                ) {
                     $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->hash] = $nodeRecord;
                 }
 

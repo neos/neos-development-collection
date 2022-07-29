@@ -81,23 +81,43 @@ trait NodeVariation
             } else {
                 // the dimension space point is not yet covered by the node aggregate,
                 // but it is known that the source's parent node aggregate does
-                $parentNodeAggregateIdentifier = $this->projectionHypergraph->findParentNodeRecordByOrigin(
+                $sourceParent = $this->projectionHypergraph->findParentNodeRecordByOrigin(
                     $event->contentStreamIdentifier,
                     $event->sourceOrigin,
                     $event->nodeAggregateIdentifier
-                )->nodeAggregateIdentifier;
+                );
+                if (is_null($sourceParent)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(
+                        (get_class($event))
+                    );
+                }
                 foreach ($event->specializationCoverage as $specializedDimensionSpacePoint) {
+                    $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
+                        $event->contentStreamIdentifier,
+                        $specializedDimensionSpacePoint,
+                        $sourceParent->nodeAggregateIdentifier
+                    );
+                    if (is_null($parentNode)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            (get_class($event))
+                        );
+                    }
                     $parentRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
                         $event->contentStreamIdentifier,
                         $specializedDimensionSpacePoint,
-                        $this->projectionHypergraph->findNodeRecordByCoverage(
-                            $event->contentStreamIdentifier,
-                            $specializedDimensionSpacePoint,
-                            $parentNodeAggregateIdentifier
-                        )->relationAnchorPoint
+                        $parentNode->relationAnchorPoint
                     );
+                    if (is_null($parentRelation)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
+                            (get_class($event))
+                        );
+                    }
 
-                    $parentRelation->addChildNodeAnchor($specializedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
+                    $parentRelation->addChildNodeAnchor(
+                        $specializedNode->relationAnchorPoint,
+                        null,
+                        $this->getDatabaseConnection()
+                    );
                 }
             }
 
