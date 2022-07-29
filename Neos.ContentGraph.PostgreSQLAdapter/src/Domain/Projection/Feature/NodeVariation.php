@@ -358,31 +358,31 @@ trait NodeVariation
 
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $targetRelationAnchorPoint
+        NodeRelationAnchorPoint $newSourceRelationAnchorPoint
     ): void {
         // we don't care whether the target node aggregate covers the variant's origin
         // since if it doesn't, it already didn't match the source's coverage before
 
         $this->getDatabaseConnection()->executeStatement('
                 INSERT INTO ' . ReferenceRelationRecord::TABLE_NAME . ' (
-                  originnodeanchor,
+                  sourcenodeanchor,
                   name,
                   position,
                   properties,
                   targetnodeaggregateidentifier
                 )
                 SELECT
-                  :targetRelationAnchorPoint AS originnodeanchor,
+                  :newSourceRelationAnchorPoint AS sourcenodeanchor,
                   ref.name,
                   ref.position,
                   ref.properties,
                   ref.targetnodeaggregateidentifier
                 FROM
                     ' . ReferenceRelationRecord::TABLE_NAME . ' ref
-                    WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
+                    WHERE ref.sourcenodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
-            'targetRelationAnchorPoint' => $targetRelationAnchorPoint->value
+            'newSourceRelationAnchorPoint' => $newSourceRelationAnchorPoint->value
         ]);
     }
 }

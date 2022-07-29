@@ -28,7 +28,7 @@ final class ReferenceRelationRecord
     public const TABLE_NAME = 'neos_contentgraph_referencerelation';
 
     public function __construct(
-        public readonly NodeRelationAnchorPoint $originNodeAnchor,
+        public readonly NodeRelationAnchorPoint $sourceNodeAnchor,
         public readonly PropertyName $name,
         public readonly int $position,
         public readonly ?SerializedPropertyValues $properties,
@@ -42,7 +42,7 @@ final class ReferenceRelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            NodeRelationAnchorPoint::fromString($databaseRow['originnodeanchor']),
+            NodeRelationAnchorPoint::fromString($databaseRow['sourcenodeanchor']),
             PropertyName::fromString($databaseRow['name']),
             $databaseRow['position'],
             $databaseRow['properties']
@@ -58,7 +58,7 @@ final class ReferenceRelationRecord
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert(self::TABLE_NAME, [
-            'originnodeanchor' => (string)$this->originNodeAnchor,
+            'sourcenodeanchor' => (string)$this->sourceNodeAnchor,
             'name' => (string)$this->name,
             'position' => $this->position,
             'properties' => $this->properties
@@ -68,10 +68,10 @@ final class ReferenceRelationRecord
         ]);
     }
 
-    public function withOriginNodeAnchor(NodeRelationAnchorPoint $originNodeAnchor): self
+    public function withSourceNodeAnchor(NodeRelationAnchorPoint $sourceNodeAnchor): self
     {
         return new self(
-            $originNodeAnchor,
+            $sourceNodeAnchor,
             $this->name,
             $this->position,
             $this->properties,
