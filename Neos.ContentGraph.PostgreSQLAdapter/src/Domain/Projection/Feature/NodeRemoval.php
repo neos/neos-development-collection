@@ -20,6 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelation
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -35,9 +36,9 @@ trait NodeRemoval
      */
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        /* $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event) {
             $nodeRecordsToBeRemoved = [];
-            foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
+            foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePoint,
@@ -47,7 +48,7 @@ trait NodeRemoval
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
                 }
 
-                @var HierarchyHyperrelationRecord $ingoingHierarchyRelation
+                /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordByChildNodeAnchor(
                         $event->getContentStreamIdentifier(),
@@ -64,8 +65,8 @@ trait NodeRemoval
                     $event->getNodeAggregateIdentifier()
                 );
 
-                if ($event->getAffectedOccupiedDimensionSpacePoints()->contains(
-                    $nodeRecord->originDimensionSpacePoint
+                if ($event->affectedCoveredDimensionSpacePoints->contains(
+                    $nodeRecord->originDimensionSpacePoint->toDimensionSpacePoint()
                 )) {
                     $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->hash] = $nodeRecord;
                 }
@@ -83,7 +84,7 @@ trait NodeRemoval
                     $this->getDatabaseConnection()
                 );
             }
-        });*/
+        });
     }
 
     /**
