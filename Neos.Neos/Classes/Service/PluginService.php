@@ -18,18 +18,18 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Neos;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 
 /**
@@ -46,12 +46,6 @@ use Neos\Neos\Domain\Service\SiteNodeUtility;
 class PluginService
 {
     /**
-     * @var NodeTypeManager
-     * @Flow\Inject
-     */
-    protected $nodeTypeManager;
-
-    /**
      * @Flow\Inject
      * @var Context
      */
@@ -61,10 +55,11 @@ class PluginService
     protected NodeAccessorManager $nodeAccessorManager;
 
     #[Flow\Inject]
-    protected SiteNodeUtility $siteNodeUtility;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    protected SiteNodeUtility $siteNodeUtility;
+
 
     /**
      * Returns an array of all plugin nodes with View Definitions
@@ -73,20 +68,24 @@ class PluginService
      */
     public function getPluginNodesWithViewDefinitions(
         WorkspaceName $workspaceName,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepositoryIdentifier $contentRepositoryIdentifier
     ): Nodes {
-        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
             throw new \InvalidArgumentException('Could not find workspace "' . $workspaceName . '"');
         }
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
+            $contentRepositoryIdentifier,
             $workspace->getCurrentContentStreamIdentifier(),
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
 
-        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
+        $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Plugin', false);
 
         return $this->getNodes(
             $siteNode,
@@ -152,7 +151,7 @@ class PluginService
         string $controllerObjectName,
         string $actionName
     ): ?NodeInterface {
-        $viewDefinition = $this->getPluginViewDefinitionByAction($controllerObjectName, $actionName);
+        $viewDefinition = $this->getPluginViewDefinitionByAction($currentNode->getSubgraphIdentity()->contentRepositoryIdentifier, $controllerObjectName, $actionName);
 
         if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView') && $viewDefinition) {
             $masterPluginNode = $this->getPluginViewNodeByMasterPlugin($currentNode, $viewDefinition->getName());
@@ -177,9 +176,10 @@ class PluginService
      * @param string $actionName
      * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
      */
-    public function getPluginViewDefinitionByAction($controllerObjectName, $actionName): ?PluginViewDefinition
+    public function getPluginViewDefinitionByAction(ContentRepositoryIdentifier $contentRepositoryIdentifier, $controllerObjectName, $actionName): ?PluginViewDefinition
     {
-        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Plugin', false);
 
         $matchingPluginViewDefinitions = [];
         foreach ($pluginNodeTypes as $pluginNodeType) {

@@ -16,6 +16,7 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -45,6 +46,7 @@ use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 
@@ -118,9 +120,6 @@ class ContentController extends ActionController
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -384,16 +383,22 @@ class ContentController extends ActionController
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
         $this->response->setContentType('application/json');
 
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if (is_null($workspace)) {
             throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
         }
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $workspace->getCurrentContentStreamIdentifier(),
-            DimensionSpacePoint::fromArray($dimensions),
-            VisibilityConstraints::withoutRestrictions()
+            new ContentSubgraphIdentity(
+                $contentRepositoryIdentifier,
+                $workspace->getCurrentContentStreamIdentifier(),
+                DimensionSpacePoint::fromArray($dimensions),
+                VisibilityConstraints::withoutRestrictions()
+            )
         );
         $node = $identifier
             ? $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($identifier))
@@ -402,7 +407,8 @@ class ContentController extends ActionController
         $views = [];
         if ($node instanceof NodeInterface) {
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->getNodeType()
+                $node->getNodeType(),
+                $contentRepositoryIdentifier
             );
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();
@@ -449,11 +455,14 @@ class ContentController extends ActionController
      */
     public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+
         $this->response->setContentType('application/json');
 
         $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions(
             WorkspaceName::fromString($workspaceName),
-            DimensionSpacePoint::fromArray($dimensions)
+            DimensionSpacePoint::fromArray($dimensions),
+            $contentRepositoryIdentifier
         );
 
         $masterPlugins = [];

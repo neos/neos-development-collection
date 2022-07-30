@@ -14,34 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspacePublication\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Publish a workspace
- *
- * @Flow\Proxy(false)
  */
-final class PublishWorkspace
+final class PublishWorkspace implements CommandInterface
 {
-    private WorkspaceName $workspaceName;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    public function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(
+        public readonly WorkspaceName $workspaceName,
+        public readonly UserIdentifier $initiatingUserIdentifier
+    )
     {
-        $this->workspaceName = $workspaceName;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-    }
-
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
     }
 }

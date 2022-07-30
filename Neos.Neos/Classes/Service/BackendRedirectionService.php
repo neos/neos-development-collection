@@ -17,9 +17,9 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -33,6 +33,7 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\Arrays;
 
 #[Flow\Scope('singleton')]
@@ -43,12 +44,6 @@ class BackendRedirectionService
      * @var SessionInterface
      */
     protected $session;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceRepository;
 
     /**
      * @Flow\Inject
@@ -99,7 +94,7 @@ class BackendRedirectionService
     protected $preferedStartModules;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
@@ -159,7 +154,7 @@ class BackendRedirectionService
      */
     public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest): ?string
     {
-        $lastVisitedNode = $this->getLastVisitedNode('live');
+        $lastVisitedNode = $this->getLastVisitedNode('live', $actionRequest);
         if ($lastVisitedNode === null) {
             return null;
         }
@@ -171,9 +166,11 @@ class BackendRedirectionService
         return $uriBuilder->uriFor('show', ['node' => $lastVisitedNode], 'Frontend\\Node', 'Neos.Neos');
     }
 
-    protected function getLastVisitedNode(string $workspaceName): ?NodeInterface
+    protected function getLastVisitedNode(string $workspaceName, ActionRequest $actionRequest): ?NodeInterface
     {
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($actionRequest->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if (!$workspace || !$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;
         }
@@ -186,7 +183,7 @@ class BackendRedirectionService
 
             return $this->nodeAccessorManager->accessorFor(
                 new ContentSubgraphIdentity(
-                    // TODO: Current CR
+                    $contentRepositoryIdentifier,
                     $workspace->getCurrentContentStreamIdentifier(),
                     $lastVisitedNode->getSubgraphIdentity()->dimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()

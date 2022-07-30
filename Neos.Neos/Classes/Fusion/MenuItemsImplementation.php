@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
@@ -30,7 +30,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintFactory
+     * @var NodeTypeConstraintParser
      */
     protected $nodeTypeConstraintFactory;
 

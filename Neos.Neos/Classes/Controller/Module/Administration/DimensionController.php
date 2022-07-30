@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Module\AbstractModuleController;
-use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
-use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
  * The Neos Dimension module controller
@@ -27,31 +25,13 @@ use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
 class DimensionController extends AbstractModuleController
 {
     #[Flow\Inject]
-    protected ContentDimensionSourceInterface $contentDimensionSource;
-
-    #[Flow\Inject]
-    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function indexAction(string $type = 'intraDimension', string $dimensionSpacePointHash = null): void
     {
-        $dimensionSpacePoint = $dimensionSpacePointHash
-            ? $this->interDimensionalVariationGraph->getDimensionSpacePoints()[$dimensionSpacePointHash]
-            : null;
-        $graph = match ($type) {
-            'intraDimension' => VisualIntraDimensionalVariationGraph::fromContentDimensionSource(
-                $this->contentDimensionSource
-            ),
-            'interDimension' => $dimensionSpacePoint
-                ? VisualInterDimensionalVariationGraph::forInterDimensionalVariationSubgraph(
-                    $this->interDimensionalVariationGraph,
-                    $dimensionSpacePoint
-                )
-                : VisualInterDimensionalVariationGraph::forInterDimensionalVariationGraph(
-                    $this->interDimensionalVariationGraph,
-                    $this->contentDimensionSource
-                ),
-            default => null,
-        };
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $dimensionControllerInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new DimensionControllerInternalsFactory());
+        $graph = $dimensionControllerInternals->loadGraph($type, $dimensionSpacePointHash);
 
         $this->view->assignMultiple([
             'availableGraphTypes' => ['intraDimension', 'interDimension'],

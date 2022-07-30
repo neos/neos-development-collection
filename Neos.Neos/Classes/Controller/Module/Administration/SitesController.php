@@ -24,6 +24,8 @@ use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -44,6 +46,7 @@ use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
@@ -69,18 +72,6 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
     protected $assetCollectionRepository;
@@ -92,7 +83,7 @@ class SitesController extends AbstractModuleController
     protected $packageManager;
 
     /**
-     * @Flow\Inject
+     * __Flow\Inject
      * @var SiteImportService
      */
     protected $siteImportService;
@@ -113,10 +104,7 @@ class SitesController extends AbstractModuleController
     protected UserService $domainUserService;
 
     #[Flow\Inject]
-    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
-
-    #[Flow\Inject]
-    protected ContentGraphInterface $contentGraph;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @return void
@@ -199,8 +187,15 @@ class SitesController extends AbstractModuleController
         if ($site->getNodeName() !== $newSiteNodeName) {
             $this->redirect('index');
         }
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+            $site->getConfiguration()['contentRepository']
+            ?? throw new \RuntimeException(
+            'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+            . ' Neos.Neos.sites.*.contentRepository')
+        );
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
-        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
+        $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
         if (!$liveWorkspace instanceof Workspace) {
             throw new \InvalidArgumentException(
                 'Cannot update a site without the live workspace being present.',
@@ -209,7 +204,7 @@ class SitesController extends AbstractModuleController
         }
 
         try {
-            $sitesNode = $this->contentGraph->findRootNodeAggregateByType(
+            $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
                 $liveWorkspace->getCurrentContentStreamIdentifier(),
                 NodeTypeName::fromString('Neos.Neos:Sites')
             );
@@ -228,16 +223,16 @@ class SitesController extends AbstractModuleController
             );
         }
 
-        foreach ($this->workspaceFinder->findAll() as $workspace) {
+        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
             // technically, due to the name being the "identifier", there might be more than one :/
-            $siteNodeAggregates = $this->contentGraph->findChildNodeAggregatesByName(
+            $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
                 $workspace->getCurrentContentStreamIdentifier(),
                 $sitesNode->getIdentifier(),
                 $site->getNodeName()->toNodeName()
             );
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName(new ChangeNodeAggregateName(
+                $contentRepository->handle(new ChangeNodeAggregateName(
                     $workspace->getCurrentContentStreamIdentifier(),
                     $siteNodeAggregate->getIdentifier(),
                     NodeName::fromString($newSiteNodeName),
@@ -268,8 +263,13 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(Site $site = null)
     {
+        // This is not 100% correct, but it is as good as we can get it to work right now
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
+
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
-        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
+        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Document', false);
 
         $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
         $generatorServices = [];

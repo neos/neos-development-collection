@@ -213,7 +213,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     public function handlePublishWorkspace(PublishWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         $this->publishContentStream(
@@ -227,18 +227,18 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         )->block();
 
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName);
         $events = Events::with(
             new WorkspaceWasPublished(
-                $command->getWorkspaceName(),
+                $command->workspaceName,
                 $baseWorkspace->getWorkspaceName(),
                 $newContentStream,
                 $workspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
@@ -469,7 +469,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         \Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // 1) separate commands in two halves - the ones MATCHING the nodes from the command, and the REST
@@ -491,7 +491,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     1645393655
                 );
             }
-            if ($this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
+            if ($this->commandMatchesNodeAddresses($originalCommand, $command->nodeAddresses)) {
                 $matchingCommands[] = $originalCommand;
             } else {
                 $remainingCommands[] = $originalCommand;
@@ -499,12 +499,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
-        $matchingContentStream = $command->getContentStreamIdentifierForMatchingPart();
+        $matchingContentStream = $command->contentStreamIdentifierForMatchingPart;
         $contentRepository->handle(
             new ForkContentStream(
                 $matchingContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         )->block();
 
@@ -520,12 +520,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
-        $remainingContentStream = $command->getContentStreamIdentifierForRemainingPart();
+        $remainingContentStream = $command->contentStreamIdentifierForRemainingPart;
         $contentRepository->handle(
             new ForkContentStream(
                 $remainingContentStream,
                 $matchingContentStream,
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         )->block();
 
@@ -551,14 +551,14 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 6) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName);
         $events = Events::with(
             new WorkspaceWasPartiallyPublished(
-                $command->getWorkspaceName(),
+                $command->workspaceName,
                 $baseWorkspace->getWorkspaceName(),
                 $remainingContentStream,
                 $workspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             ),
         );
 
@@ -585,7 +585,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // 1) filter commands, only keeping the ones NOT MATCHING the nodes from the command
@@ -605,18 +605,18 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     1645393476
                 );
             }
-            if (!$this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
+            if (!$this->commandMatchesNodeAddresses($originalCommand, $command->nodeAddresses)) {
                 $commandsToKeep[] = $originalCommand;
             }
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
-        $newContentStream = $command->getNewContentStreamIdentifier();
+        $newContentStream = $command->newContentStreamIdentifier;
         $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         )->block();
 
@@ -634,13 +634,13 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 3) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName);
         $events = Events::with(
             new WorkspaceWasPartiallyDiscarded(
-                $command->getWorkspaceName(),
+                $command->workspaceName,
                 $newContentStream,
                 $workspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         );
 
@@ -674,26 +674,26 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     public function handleDiscardWorkspace(DiscardWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
-        $newContentStream = $command->getNewContentStreamIdentifier();
+        $newContentStream = $command->newContentStreamIdentifier;
         $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         )->block();
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName);
         $events = Events::with(
             new WorkspaceWasDiscarded(
-                $command->getWorkspaceName(),
+                $command->workspaceName,
                 $newContentStream,
                 $workspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         );
 

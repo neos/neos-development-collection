@@ -15,12 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Frontend;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
-use Neos\ContentGraph\DoctrineDbalAdapter\Service\InMemoryCacheAccessor;
-use Neos\ContentGraph\DoctrineDbalAdapter\Service\InMemoryCacheAccessorFactory;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
@@ -28,12 +27,9 @@ use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
@@ -57,21 +53,9 @@ class NodeController extends ActionController
 {
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
@@ -96,12 +80,6 @@ class NodeController extends ActionController
      * @var SecurityContext
      */
     protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
 
     /**
      * @Flow\Inject
@@ -130,12 +108,6 @@ class NodeController extends ActionController
      * @var FusionView
      */
     protected $view;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeConstraintFactory
-     */
-    protected $nodeTypeConstraintFactory;
 
     /**
      * @Flow\Inject
@@ -173,12 +145,12 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
+        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress, $siteDetectionResult->contentRepositoryIdentifier);
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $siteDetectionResult->contentRepositoryIdentifier);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $contentRepository);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             new ContentSubgraphIdentity(
@@ -254,12 +226,12 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
+        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress, $siteDetectionResult->contentRepositoryIdentifier);
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $siteDetectionResult->contentRepositoryIdentifier);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $contentRepository);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             new ContentSubgraphIdentity(
@@ -354,7 +326,7 @@ class NodeController extends ActionController
         $this->redirectToUri($resolvedUri);
     }
 
-    private function fillCacheWithContentNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentSubgraphInterface $subgraph, ContentRepositoryIdentifier $contentRepositoryIdentifier): void
+    private function fillCacheWithContentNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentSubgraphInterface $subgraph, ContentRepository $contentRepository): void
     {
         if (!$subgraph instanceof ContentSubgraph) {
             // wrong subgraph implementation
@@ -365,7 +337,7 @@ class NodeController extends ActionController
         $subtree = $subgraph->findSubtrees(
             NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]),
             10,
-            $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document')
+            NodeTypeConstraintParser::create($contentRepository)->parseFilterString('!Neos.Neos:Document')
         );
         $subtree = $subtree->getChildren()[0];
 

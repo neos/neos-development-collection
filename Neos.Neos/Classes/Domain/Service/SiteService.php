@@ -14,37 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
-use Neos\Neos\Domain\Exception\LiveWorkspaceIsMissing;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
-use Neos\Neos\Domain\Exception\SitesNodeIsMissing;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -56,11 +35,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
  */
 class SiteService
 {
-    /**
-     * This is the node path of the root for all sites in neos.
-     */
-    public const SITES_ROOT_PATH = '/sites';
-
     /**
      * @Flow\Inject
      * @var DomainRepository
@@ -75,9 +49,9 @@ class SiteService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceRepository;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -92,31 +66,7 @@ class SiteService
     protected $assetCollectionRepository;
 
     #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
-
-    #[Flow\Inject]
-    protected ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    #[Flow\Inject]
-    protected ContentStreamFinder $contentStreamFinder;
-
-    #[Flow\Inject]
-    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
-
-    #[Flow\Inject]
     protected SiteNodeUtility $siteNodeUtility;
-
-    #[Flow\Inject]
-    protected ContentGraphInterface $contentGraph;
-
-    #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
-
-    #[Flow\Inject]
-    protected NodeTypeManager $nodeTypeManager;
-
-    #[Flow\Inject]
-    protected InterDimensionalVariationGraph $variationGraph;
 
     #[Flow\Inject]
     protected UserService $domainUserService;
@@ -126,7 +76,15 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $this->removeSiteNode($site->getNodeName()->toNodeName());
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+            $site->getConfiguration()['contentRepository']
+            ?? throw new \RuntimeException(
+            'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+            . ' Neos.Neos.sites.*.contentRepository')
+        );
+        $siteServiceInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new SiteServiceInternalsFactory());
+        $siteServiceInternals->removeSiteNode($site->getNodeName());
+
         $site->setPrimaryDomain(null);
         $this->siteRepository->update($site);
 
@@ -141,46 +99,7 @@ class SiteService
         $this->emitSitePruned($site);
     }
 
-    private function removeSiteNode(NodeName $nodeName): void
-    {
-        $dimensionSpacePoints = $this->contentDimensionZookeeper->getAllowedDimensionSubspace()->points;
-        $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints) ?: null;
-        if (!$arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
-            throw new \InvalidArgumentException(
-                'Cannot prune site "' . $nodeName . '" due to the dimension space being empty',
-                1651921482
-            );
-        }
-        foreach ($this->contentStreamFinder->findAllIdentifiers() as $contentStreamIdentifier) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contentStreamIdentifier,
-                $arbitraryDimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
-            try {
-                $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
-            } catch (\InvalidArgumentException) {
-                // no sites node, so nothing to do
-                continue;
-            }
-            $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
-                $sitesNode,
-                $nodeName
-            );
-            if (!$siteNode) {
-                // no site node, so nothing to do
-                continue;
-            }
 
-            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
-                $contentStreamIdentifier,
-                $siteNode->getNodeAggregateIdentifier(),
-                $arbitraryDimensionSpacePoint,
-                NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
-                UserIdentifier::forSystemUser()
-            ));
-        }
-    }
 
     /**
      * Remove all sites and their respective nodes and domains
@@ -240,72 +159,12 @@ class SiteService
         string $nodeTypeName,
         ?string $nodeName = null,
         bool $inactive = false
-    ): Site {
+    ): Site
+    {
         $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
-        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
-        if (!$liveWorkspace instanceof Workspace) {
-            throw LiveWorkspaceIsMissing::butWasRequested();
-        }
-        try {
-            $sitesNode = $this->contentGraph->findRootNodeAggregateByType(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
-                NodeTypeNameFactory::forSites()
-            );
-        } catch (\Exception $exception) {
-            throw SitesNodeIsMissing::butWasRequested();
-        }
-
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
-            throw new NodeTypeNotFoundException(
-                'Cannot create a site using a non-existing node type.',
-                1412372375
-            );
-        }
 
         if ($this->siteRepository->findOneByNodeName($siteNodeName->jsonSerialize())) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
-        }
-
-        $rootDimensionSpacePoints = $this->variationGraph->getRootGeneralizations();
-        if (empty($rootDimensionSpacePoints)) {
-            throw new \InvalidArgumentException(
-                'The dimension space is empty, please check your configuration.',
-                1651957153
-            );
-        }
-        $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
-
-        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
-        if (is_null($currentUserIdentifier)) {
-            $currentUserIdentifier = UserIdentifier::forSystemUser();
-        }
-
-        $siteNodeAggregateIdentifier = NodeAggregateIdentifier::create();
-        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(
-            $liveWorkspace->getCurrentContentStreamIdentifier(),
-            $siteNodeAggregateIdentifier,
-            NodeTypeName::fromString($nodeTypeName),
-            OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
-            $currentUserIdentifier,
-            $sitesNode->getIdentifier(),
-            null,
-            $siteNodeName,
-            PropertyValuesToWrite::fromArray([
-                'title' => $siteName
-            ])
-        ))->blockUntilProjectionsAreUpToDate();
-
-        // Handle remaining root dimension space points by creating peer variants
-        foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
-            $this->nodeAggregateCommandHandler->handleCreateNodeVariant(new CreateNodeVariant(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
-                $siteNodeAggregateIdentifier,
-                OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
-                OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),
-                $currentUserIdentifier
-            ));
         }
 
         // @todo use node aggregate identifier instead of node name
@@ -314,6 +173,20 @@ class SiteService
         $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
         $site->setName($siteName);
         $this->siteRepository->add($site);
+
+        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+        if (is_null($currentUserIdentifier)) {
+            $currentUserIdentifier = UserIdentifier::forSystemUser();
+        }
+
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+            $site->getConfiguration()['contentRepository']
+            ?? throw new \RuntimeException(
+            'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+            . ' Neos.Neos.sites.*.contentRepository')
+        );
+        $siteServiceInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new SiteServiceInternalsFactory());
+        $siteServiceInternals->createSiteNode($site, $nodeTypeName, $currentUserIdentifier);
 
         return $site;
     }

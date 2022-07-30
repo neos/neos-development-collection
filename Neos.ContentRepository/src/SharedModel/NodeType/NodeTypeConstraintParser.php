@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -22,13 +24,19 @@ use Neos\Utility\Arrays;
  *
  * This factory resolves node type inheritance to a flat node type list.
  *
- * TODO: what is the difference between NodeTypeConstraintFactory and NodeTypeConstraintsFactory
+ * TODO: what is the difference between NodeTypeConstraintParser and NodeTypeConstraintsFactory
  */
-class NodeTypeConstraintFactory
+class NodeTypeConstraintParser implements ContentRepositoryServiceInterface
 {
-    public function __construct(
+    private function __construct(
         private readonly NodeTypeManager $nodeTypeManager
-    ) {
+    )
+    {
+    }
+
+    static public function create(ContentRepository $contentRepository): self
+    {
+        return new self($contentRepository->getNodeTypeManager());
     }
 
     /**

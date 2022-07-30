@@ -361,7 +361,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
-            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress);
+            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress, $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',

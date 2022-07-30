@@ -39,11 +39,12 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
     #[Flow\Inject]
     protected AssetUsageRepository $assetUsageRepository;
 
-    #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    // TODO FIX ME
+    //#[Flow\Inject]
+    //protected WorkspaceFinder $workspaceFinder;
 
-    #[Flow\Inject]
-    protected ContentDimensionZookeeper $contentDimensionZookeeper;
+    //#[Flow\Inject]
+    //protected ContentDimensionZookeeper $contentDimensionZookeeper;
 
     /**
      * Returns an array of usage reference objects.

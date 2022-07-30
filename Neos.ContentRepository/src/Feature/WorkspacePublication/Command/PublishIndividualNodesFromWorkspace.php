@@ -14,26 +14,25 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspacePublication\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Publish a set of nodes in a workspace
  */
-#[Flow\Proxy(false)]
-final class PublishIndividualNodesFromWorkspace
+final class PublishIndividualNodesFromWorkspace implements CommandInterface
 {
-    private WorkspaceName $workspaceName;
+    public readonly WorkspaceName $workspaceName;
 
     /**
      * @var array<int,NodeAddress>
      */
-    private array $nodeAddresses;
+    public readonly array $nodeAddresses;
 
-    private UserIdentifier $initiatingUserIdentifier;
+    public readonly UserIdentifier $initiatingUserIdentifier;
 
     /**
      * during the publish process, we sort the events so that the events we want to publish
@@ -45,7 +44,7 @@ final class PublishIndividualNodesFromWorkspace
      * This property contains the identifier of the first content stream, so that this command
      * can run fully deterministic - we need this for the test cases.
      */
-    private ContentStreamIdentifier $contentStreamIdentifierForMatchingPart;
+    public readonly ContentStreamIdentifier $contentStreamIdentifierForMatchingPart;
 
     /**
      * See the description of {@see $contentStreamIdentifierForMatchingPart}.
@@ -53,7 +52,7 @@ final class PublishIndividualNodesFromWorkspace
      * This property contains the identifier of the second content stream, so that this command
      * can run fully deterministic - we need this for the test cases.
      */
-    private ContentStreamIdentifier $contentStreamIdentifierForRemainingPart;
+    public readonly ContentStreamIdentifier $contentStreamIdentifierForRemainingPart;
 
     /**
      * @param array<int,NodeAddress> $nodeAddresses
@@ -107,40 +106,5 @@ final class PublishIndividualNodesFromWorkspace
             $contentStreamIdentifierForMatchingPart,
             $contentStreamIdentifierForRemainingPart
         );
-    }
-
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    /**
-     * @return array|NodeAddress[]
-     */
-    public function getNodeAddresses(): array
-    {
-        return $this->nodeAddresses;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-
-    /**
-     * @return ContentStreamIdentifier
-     */
-    public function getContentStreamIdentifierForMatchingPart(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifierForMatchingPart;
-    }
-
-    /**
-     * @return ContentStreamIdentifier
-     */
-    public function getContentStreamIdentifierForRemainingPart(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifierForRemainingPart;
     }
 }

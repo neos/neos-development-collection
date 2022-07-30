@@ -15,20 +15,22 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\View\Service\NodeJsonView;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
@@ -40,12 +42,6 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 class NodesController extends ActionController
 {
     use BackendUserTranslationTrait;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
@@ -64,23 +60,12 @@ class NodesController extends ActionController
      * @var NodeAccessorManager
      */
     protected $nodeAccessorManager;
-    /**
-     * @Flow\Inject
-     * @var NodeTypeConstraintFactory
-     */
-    protected $nodeTypeConstraintFactory;
 
     /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
+     * @Flow\Inject()
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
+    protected $contentRepositoryRegistry;
 
     /**
      * @var array<string,string>
@@ -121,10 +106,14 @@ class NodesController extends ActionController
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null
     ): void {
-        $nodeAddress = $contextNode ? $this->nodeAddressFactory->createFromUriString($contextNode) : null;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
+
+        $nodeAddress = $contextNode ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode) : null;
         unset($contextNode);
         if (is_null($nodeAddress)) {
-            $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
             if (is_null($workspace)) {
                 throw new \InvalidArgumentException(
                     'Could not resolve a node address for the given parameters.',
@@ -132,15 +121,21 @@ class NodesController extends ActionController
                 );
             }
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $workspace->getCurrentContentStreamIdentifier(),
-                DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
-                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+                new ContentSubgraphIdentity(
+                    $contentRepositoryIdentifier,
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
+                    VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+                )
             );
         } else {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+                new ContentSubgraphIdentity(
+                    $contentRepositoryIdentifier,
+                    $nodeAddress->contentStreamIdentifier,
+                    $nodeAddress->dimensionSpacePoint,
+                    VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+                )
             );
         }
 
@@ -148,7 +143,7 @@ class NodesController extends ActionController
             $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
             $nodes = !is_null($entryNode) ? $nodeAccessor->findDescendants(
                 [$entryNode],
-                $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $nodeTypes)),
+                NodeTypeConstraintParser::create($contentRepository)->parseFilterString(implode(',', $nodeTypes)),
                 SearchTerm::fulltext($searchTerm)
             ) : [];
         } else {

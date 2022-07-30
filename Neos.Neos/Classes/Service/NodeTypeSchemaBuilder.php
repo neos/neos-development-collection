@@ -14,23 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands;
  * additionally pre-calculating node constraints
- *
- * @Flow\Scope("singleton")
  */
-class NodeTypeSchemaBuilder
+class NodeTypeSchemaBuilder implements ContentRepositoryServiceInterface
 {
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
+
+    public function __construct(
+        private readonly NodeTypeManager $nodeTypeManager,
+    )
+    {
+    }
 
     /**
      * The preprocessed node type schema contains everything we need for the UI:

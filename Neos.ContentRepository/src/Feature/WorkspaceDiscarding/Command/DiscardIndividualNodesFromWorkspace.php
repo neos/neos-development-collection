@@ -14,45 +14,32 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceDiscarding\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Discard a set of nodes in a workspace
  */
-#[Flow\Proxy(false)]
-final class DiscardIndividualNodesFromWorkspace
+final class DiscardIndividualNodesFromWorkspace implements CommandInterface
 {
-    private WorkspaceName $workspaceName;
-
-    /**
-     * @var array<int,NodeAddress>
-     */
-    private array $nodeAddresses;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    /**
-     * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
-     */
-    private ContentStreamIdentifier $newContentStreamIdentifier;
-
     /**
      * @param array<int,NodeAddress> $nodeAddresses
      */
     private function __construct(
-        WorkspaceName $workspaceName,
-        array $nodeAddresses,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $newContentStreamIdentifier
+        public readonly WorkspaceName $workspaceName,
+        /**
+         * @var array<int,NodeAddress>
+         */
+        public readonly array $nodeAddresses,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+        /**
+         * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
+         */
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->nodeAddresses = $nodeAddresses;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
 
     /**
@@ -82,32 +69,5 @@ final class DiscardIndividualNodesFromWorkspace
         ContentStreamIdentifier $newContentStreamIdentifier
     ): self {
         return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, $newContentStreamIdentifier);
-    }
-
-
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    /**
-     * @return array|NodeAddress[]
-     */
-    public function getNodeAddresses(): array
-    {
-        return $this->nodeAddresses;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    /**
-     * @return ContentStreamIdentifier
-     */
-    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->newContentStreamIdentifier;
     }
 }

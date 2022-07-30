@@ -15,10 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Scope('singleton')]
@@ -26,24 +27,21 @@ class NodeSiteResolvingService
 {
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
      * @var NodeAccessorManager
      */
     protected $nodeAccessorManager;
 
-    public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress): ?NodeInterface
+    public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress, ContentRepositoryIdentifier $contentRepositoryIdentifier): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            $nodeAddress->isInLiveWorkspace()
-                ? VisibilityConstraints::frontend()
-                : VisibilityConstraints::withoutRestrictions()
+            new ContentSubgraphIdentity(
+                $contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                $nodeAddress->isInLiveWorkspace()
+                    ? VisibilityConstraints::frontend()
+                    : VisibilityConstraints::withoutRestrictions()
+            )
         );
         $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         if (is_null($node)) {

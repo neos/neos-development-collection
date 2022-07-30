@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
@@ -65,12 +67,6 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
      * @var UserLocaleService
      */
     protected $userLocaleService;
@@ -81,6 +77,11 @@ class ContentElementWrappingService
      */
     protected $nodeInfoHelper;
 
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -102,7 +103,7 @@ class ContentElementWrappingService
      */
     protected $nonRenderedContentNodeMetadata;
 
-    public function __construct(private readonly ContentRepositoryRegistry $contentRepositoryRegistry)
+    public function __construct()
     {
     }
 
@@ -118,10 +119,9 @@ class ContentElementWrappingService
         string $fusionPath,
         array $additionalAttributes = []
     ): ?string {
-        $cr = $this->contentRepositoryRegistry->byId($node->getContentRepositoryIdentifier());
-        NodeAddressFactory::create($cr);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
 
-        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier)) {
+        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)) {
             return $content;
         }
 
@@ -130,7 +130,8 @@ class ContentElementWrappingService
         //    return $content;
         //}
 
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
         $attributes = $additionalAttributes;
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
@@ -164,7 +165,8 @@ class ContentElementWrappingService
         array $additionalAttributes = [],
         ?NodeInterface $siteNode = null
     ): string {
-        if ($this->needsMetadata($node, true) === false) {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        if ($this->needsMetadata($node, $contentRepository, true) === false) {
             return $content;
         }
 
@@ -173,7 +175,7 @@ class ContentElementWrappingService
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
-        $attributes = $this->addDocumentMetadata($attributes, $node, $siteNode);
+        $attributes = $this->addDocumentMetadata($contentRepository, $attributes, $node, $siteNode);
         $attributes = $this->addCssClasses($attributes, $node, []);
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
@@ -281,9 +283,10 @@ class ContentElementWrappingService
      * @param array<string,mixed> $attributes
      * @return array<string,mixed>
      */
-    protected function addDocumentMetadata(array $attributes, NodeInterface $node, ?NodeInterface $siteNode): array
+    protected function addDocumentMetadata(ContentRepository $contentRepository, array $attributes, NodeInterface $node, ?NodeInterface $siteNode): array
     {
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $nodeAddress = $nodeAddressFactory->createFromNode($node);
         if (!$siteNode instanceof NodeInterface) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $node->getSubgraphIdentity()
@@ -300,7 +303,7 @@ class ContentElementWrappingService
         }
         $siteNodeAddress = null;
         if ($siteNode instanceof NodeInterface) {
-            $siteNodeAddress = $this->nodeAddressFactory->createFromNode($siteNode);
+            $siteNodeAddress = $nodeAddressFactory->createFromNode($siteNode);
         }
         $attributes['data-neos-site-name'] = $siteNode?->getNodeName();
         $attributes['data-neos-site-node-context-path'] = $siteNodeAddress?->serializeForUri();
@@ -347,13 +350,16 @@ class ContentElementWrappingService
      */
     protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode): void
     {
-        if ($this->isContentStreamOfLiveWorkspace($documentNode->getSubgraphIdentity()->contentStreamIdentifier)) {
+        $contentRepository = $this->contentRepositoryRegistry->get($documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+        if ($this->isContentStreamOfLiveWorkspace($documentNode->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)) {
             return;
         }
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $documentNode->getSubgraphIdentity()
         );
+
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
         foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
             if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
@@ -362,7 +368,7 @@ class ContentElementWrappingService
 
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
-                $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+                $nodeContextPath = $nodeAddressFactory->createFromNode($node)->serializeForUri();
                 /** @codingStandardsIgnoreStart */
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
                 /** @codingStandardsIgnoreEnd */
@@ -423,16 +429,16 @@ class ContentElementWrappingService
         return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value) ?: '', '-'));
     }
 
-    protected function needsMetadata(NodeInterface $node, bool $renderCurrentDocumentMetadata): bool
+    protected function needsMetadata(NodeInterface $node, ContentRepository $contentRepository, bool $renderCurrentDocumentMetadata): bool
     {
-        return $this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier)
+        return $this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)
              && ($renderCurrentDocumentMetadata === true
                 || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true);
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
+    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): bool
     {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
             ?->getWorkspaceName()->isLive() ?: false;
     }
 }

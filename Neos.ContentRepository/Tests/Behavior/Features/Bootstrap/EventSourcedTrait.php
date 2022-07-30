@@ -32,7 +32,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -116,7 +116,7 @@ trait EventSourcedTrait
     private $workspaceFinder;
 
     /**
-     * @var NodeTypeConstraintFactory
+     * @var NodeTypeConstraintParser
      */
     private $nodeTypeConstraintFactory;
 
@@ -165,7 +165,7 @@ trait EventSourcedTrait
         }
         $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
-        $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
+        $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintParser::class);
 
         foreach ($configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,

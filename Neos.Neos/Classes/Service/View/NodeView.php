@@ -17,10 +17,10 @@ namespace Neos\Neos\Service\View;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -71,17 +71,8 @@ class NodeView extends JsonView
      */
     protected $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var NodeHiddenStateFinder
-     */
-    protected $nodeHiddenStateFinder;
-
     #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
-
-    #[Flow\Inject]
-    protected NodeTypeConstraintFactory $nodeTypeConstraintsFactory;
 
     /**
      * Assigns a node to the NodeView.
@@ -273,8 +264,11 @@ class NodeView extends JsonView
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $node->getSubgraphIdentity()
         );
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $nodeTypeConstraintParser = NodeTypeConstraintParser::create($contentRepository);
+
         $nodeTypeConstraints = $nodeTypeFilter
-            ? $this->nodeTypeConstraintsFactory->parseFilterString($nodeTypeFilter)
+            ? $nodeTypeConstraintParser->parseFilterString($nodeTypeFilter)
             : null;
         foreach ($nodeAccessor->findChildNodes($node, $nodeTypeConstraints) as $childNode) {
             if (!$this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($childNode))) {
@@ -426,7 +420,8 @@ class NodeView extends JsonView
         $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
-        $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjector::class);
+        $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $nodeAddress->nodeAggregateIdentifier

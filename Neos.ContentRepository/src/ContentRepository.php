@@ -29,6 +29,7 @@ use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -50,6 +51,7 @@ final class ContentRepository
         private readonly EventStoreInterface $eventStore,
         private readonly Projections $projections,
         private readonly EventPersister $eventPersister,
+        private readonly NodeTypeManager $nodeTypeManager,
     )
     {
     }
@@ -128,7 +130,11 @@ final class ContentRepository
     }
 
 
-    /** TODO  public function getNodeTypeManager() */
+    public function getNodeTypeManager(): NodeTypeManager
+    {
+        // TODO: we want this, right?
+        return $this->nodeTypeManager;
+    }
 
     public function getContentGraph(): ContentGraphInterface
     {

@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -53,12 +53,6 @@ class ContentElementEditableService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
@@ -68,7 +62,9 @@ class ContentElementEditableService
      */
     public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {
-        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier)) {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+
+        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)) {
             return $content;
         }
 
@@ -77,7 +73,6 @@ class ContentElementEditableService
         //    return $content;
         //}
 
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
         $attributes = [
             'data-__neos-property' => $property,
             'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)->createFromNode($node)->serializeForUri()
@@ -86,9 +81,9 @@ class ContentElementEditableService
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
+    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): bool
     {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
             ?->getWorkspaceName()->isLive() ?: false;
     }
 }

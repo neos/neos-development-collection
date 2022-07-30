@@ -15,13 +15,14 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
@@ -36,6 +37,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -121,16 +123,10 @@ class LinkingService
     protected $baseUriProvider;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
-
-    #[Flow\Inject]
-    protected NodeHiddenStateFinder $nodeHiddenStateFinder;
-
-    #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
-
-    #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @param string|UriInterface $uri
@@ -319,16 +315,22 @@ class LinkingService
                 throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
             }
             try {
-                $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
+                // if we get a node string, we need to assume it links to the current site
+                $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($controllerContext->getRequest()->getHttpRequest())->contentRepositoryIdentifier;
+                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+                $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $nodeAddress->workspaceName
-                    ? $this->workspaceFinder->findOneByName($nodeAddress->workspaceName)
+                    ? $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName)
                     : null;
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $nodeAddress->contentStreamIdentifier,
-                    $nodeAddress->dimensionSpacePoint,
-                    $workspace && !$workspace->isPublicWorkspace()
-                        ? VisibilityConstraints::withoutRestrictions()
-                        : VisibilityConstraints::frontend()
+                    new ContentSubgraphIdentity(
+                        $contentRepositoryIdentifier,
+                        $nodeAddress->contentStreamIdentifier,
+                        $nodeAddress->dimensionSpacePoint,
+                        $workspace && !$workspace->isPublicWorkspace()
+                            ? VisibilityConstraints::withoutRestrictions()
+                            : VisibilityConstraints::frontend()
+                    )
                 );
                 $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
             } catch (\Throwable $exception) {
@@ -362,10 +364,11 @@ class LinkingService
         }
         $this->lastLinkedNode = $node;
 
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
             $node->getSubgraphIdentity()->contentStreamIdentifier
         );
-        $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
+        $hiddenState = $contentRepository->projectionState(NodeHiddenStateProjector::class)->findHiddenState(
             $node->getSubgraphIdentity()->contentStreamIdentifier,
             $node->getSubgraphIdentity()->dimensionSpacePoint,
             $node->getNodeAggregateIdentifier()

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Factory;
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\EventStore\EventNormalizer;
@@ -29,6 +30,7 @@ final class ProjectionFactoryDependencies
         public readonly EventStoreInterface $eventStore,
         public readonly EventNormalizer $eventNormalizer,
         public readonly NodeTypeManager $nodeTypeManager,
+        public readonly ContentDimensionSourceInterface $contentDimensionSource,
         public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public readonly PropertyConverter $propertyConverter,

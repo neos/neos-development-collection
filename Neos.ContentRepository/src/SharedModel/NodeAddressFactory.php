@@ -36,7 +36,6 @@ class NodeAddressFactory
         return new self($contentRepository);
     }
 
-    // TODO: ContentRepository??
     public function createFromNode(NodeInterface $node): NodeAddress
     {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(

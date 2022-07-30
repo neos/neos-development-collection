@@ -48,8 +48,7 @@ final class ContentRepositoryFactory
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsFactory $projectionsFactory,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger // TODO implement
-
+        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger
     )
     {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
@@ -60,6 +59,7 @@ final class ContentRepositoryFactory
             $eventStore,
             new EventNormalizer(),
             $nodeTypeManager,
+            $contentDimensionSource,
             $contentDimensionZookeeper,
             $interDimensionalVariationGraph,
             new PropertyConverter($propertySerializer)
@@ -87,6 +87,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projections,
                 $this->buildEventPersister(),
+                $this->projectionFactoryDependencies->nodeTypeManager
             );
         }
         return $this->contentRepository;

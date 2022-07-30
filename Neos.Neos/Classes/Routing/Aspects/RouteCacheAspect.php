@@ -25,7 +25,8 @@ use Neos\ContentRepository\Service\NodePaths;
 
 /**
  * @Flow\Scope("singleton")
- * @Flow\Aspect
+ * __Flow\Aspect
+ * TODO: DISABLED RIGHT NOW
  */
 class RouteCacheAspect
 {
@@ -35,8 +36,8 @@ class RouteCacheAspect
      */
     protected $securityContext;
 
-    #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
+    //#[Flow\Inject]
+    //protected NodeAddressFactory $nodeAddressFactory;
 
     #[Flow\Inject]
     protected NodeAccessorManager $nodeAccessorManager;
@@ -69,6 +70,7 @@ class RouteCacheAspect
         $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values) {
             $nodeAddress = $this->nodeAddressFactory->createFromContextPath($values['node']);
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()

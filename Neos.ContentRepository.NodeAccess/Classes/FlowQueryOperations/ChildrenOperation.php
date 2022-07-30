@@ -11,8 +11,9 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -43,9 +44,9 @@ class ChildrenOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeConstraintFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -169,12 +170,13 @@ class ChildrenOperation extends AbstractOperation
                     }, $instanceOfFilters);
                     /** @var NodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
+                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
                         /** @var NodeInterface $childNode */
                         $childNodes = $this->nodeAccessorManager->accessorFor(
                             $contextNode->getSubgraphIdentity()
                         )->findChildNodes(
                             $contextNode,
-                            $this->nodeTypeConstraintFactory->parseFilterString(
+                            NodeTypeConstraintParser::create($contentRepository)->parseFilterString(
                                 implode(',', $allowedNodeTypes)
                             )
                         );

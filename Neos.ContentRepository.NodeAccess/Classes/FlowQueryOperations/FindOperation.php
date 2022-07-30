@@ -11,10 +11,14 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParserFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
@@ -82,10 +86,9 @@ class FindOperation extends AbstractOperation
     protected $nodeAccessorManager;
 
     /**
-     * @Flow\Inject
-     * @var NodeTypeConstraintFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeConstraintFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -132,9 +135,9 @@ class FindOperation extends AbstractOperation
         /** @todo fetch them $elsewhere (fusion runtime?) */
         $firstContextNode = reset($contextNodes);
         assert($firstContextNode instanceof NodeInterface);
-        $visibilityConstraints = $firstContextNode->getSubgraphIdentity()->visibilityConstraints;
+        $contentRepository = $this->contentRepositoryRegistry->get($firstContextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
 
-        $entryPoints = $this->getEntryPoints($contextNodes, $visibilityConstraints);
+        $entryPoints = $this->getEntryPoints($contextNodes);
         foreach ($parsedFilter['Filters'] as $filter) {
             $filterResults = [];
             $generatedNodes = false;
@@ -150,7 +153,7 @@ class FindOperation extends AbstractOperation
 
             if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
                 $nodeTypeName = NodeTypeName::fromString($filter['AttributeFilters'][0]['Operand']);
-                $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults);
+                $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults, $contentRepository);
                 unset($filter['AttributeFilters'][0]);
                 $generatedNodes = true;
             }
@@ -193,14 +196,12 @@ class FindOperation extends AbstractOperation
      * @param array<int,NodeInterface> $contextNodes
      * @return array<string,mixed>
      */
-    protected function getEntryPoints(array $contextNodes, VisibilityConstraints $visibilityConstraints): array
+    protected function getEntryPoints(array $contextNodes): array
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $visibilityConstraints
+                $contextNode->getSubgraphIdentity()
             );
             $subgraphIdentifier = md5($nodeAccessor->getContentStreamIdentifier()
                 . '@' . $nodeAccessor->getDimensionSpacePoint());
@@ -275,17 +276,16 @@ class FindOperation extends AbstractOperation
      * @param array<int,NodeInterface> $result
      * @return array<int,NodeInterface>
      */
-    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
+    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result, ContentRepository $contentRepository): array
     {
+        $nodeTypeFilter = NodeTypeConstraintParser::create($contentRepository)->parseFilterString($nodeTypeName->jsonSerialize());
         foreach ($entryPoints as $entryPoint) {
             /** @var NodeAccessorInterface $nodeAccessor */
             $nodeAccessor = $entryPoint['subgraph'];
 
             foreach ($nodeAccessor->findDescendants(
                 $entryPoint['nodes'],
-                $this->nodeTypeConstraintFactory->parseFilterString(
-                    $nodeTypeName->jsonSerialize()
-                ),
+                $nodeTypeFilter,
                 null
             ) as $descendant) {
                 $result[] = $descendant;
