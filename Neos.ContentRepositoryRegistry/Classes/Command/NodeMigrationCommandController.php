@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepositoryRegistry\Command;
 
 /*
@@ -11,14 +12,17 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\NodeAccess\Migration\Factory\MigrationFactory;
+use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
-use Neos\ContentRepository\NodeMigration\NodeMigrationService;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Migration\Factory\MigrationFactory;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * Command controller for tasks related to node migration.
@@ -26,17 +30,15 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Scope('singleton')]
 class NodeMigrationCommandController extends CommandController
 {
-    /**
-     * @Flow\Inject
-     * @var MigrationFactory
-     */
-    protected $migrationFactory;
 
-    /**
-     * @Flow\Inject
-     * @var NodeMigrationService
-     */
-    protected $migrationCommandHandler;
+    public function __construct(
+        private readonly MigrationFactory $migrationFactory,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly ObjectManagerInterface $container
+    )
+    {
+        parent::__construct();
+    }
 
     /**
      * Do the configured migrations in the given migration.
@@ -49,10 +51,12 @@ class NodeMigrationCommandController extends CommandController
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      * @see neos.contentrepository.migration:node:migrationstatus
      */
-    public function migrateCommand(string $version, $workspace = 'live', bool $force = false)
+    public function migrateCommand(string $version, $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default')
     {
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+
         try {
-            $migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration();
+            $migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version);
 
             $this->outputCommentsAndWarnings($migrationConfiguration);
             if ($migrationConfiguration->hasWarnings() && $force === false) {
@@ -62,8 +66,13 @@ class NodeMigrationCommandController extends CommandController
                 $this->quit(1);
             }
 
-            $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspace));
-            $this->migrationCommandHandler->handleExecuteMigration($command);
+            $nodeMigrationService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new NodeMigrationServiceFactory($this->container));
+            $nodeMigrationService->handleExecuteMigration(
+                new ExecuteMigration(
+                    $migrationConfiguration,
+                    WorkspaceName::fromString($workspace)
+                )
+            );
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');
         } catch (MigrationException $e) {

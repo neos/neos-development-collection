@@ -59,12 +59,12 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    public function get(ContentRepositoryIdentifier $contentRepositoryId): ContentRepository
+    public function get(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepository
     {
-        if (!array_key_exists($contentRepositoryId->value, $this->contentRepositoryInstances)) {
-            $this->contentRepositoryInstances[$contentRepositoryId->value] = $this->getFactory($contentRepositoryId)->build();
+        if (!array_key_exists($contentRepositoryIdentifier->value, $this->contentRepositoryInstances)) {
+            $this->contentRepositoryInstances[$contentRepositoryIdentifier->value] = $this->getFactory($contentRepositoryIdentifier)->build();
         }
-        return $this->contentRepositoryInstances[$contentRepositoryId->value];
+        return $this->contentRepositoryInstances[$contentRepositoryIdentifier->value];
     }
 
     /**
@@ -73,25 +73,25 @@ final class ContentRepositoryRegistry
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      * @template T of ContentRepositoryServiceInterface
      */
-    public function getService(ContentRepositoryIdentifier $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
+    public function getService(ContentRepositoryIdentifier $contentRepositoryIdentifier, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
     {
-        if (!isset($this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)])) {
-            $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)] = $this->getFactory($contentRepositoryId)->buildService($contentRepositoryServiceFactory);
+        if (!isset($this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)])) {
+            $this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)] = $this->getFactory($contentRepositoryIdentifier)->buildService($contentRepositoryServiceFactory);
         }
-        return $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)];
+        return $this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)];
     }
 
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    private function getFactory(ContentRepositoryIdentifier $contentRepositoryId): ContentRepositoryFactory
+    private function getFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepositoryFactory
     {
         // This cache is CRUCIAL, because it ensures that the same CR always deals with the same objects internally, even if multiple services
         // are called on the same CR.
-        if (!array_key_exists($contentRepositoryId->value, $this->factoryInstances)) {
-            $this->factoryInstances[$contentRepositoryId->value] = $this->buildFactory($contentRepositoryId);
+        if (!array_key_exists($contentRepositoryIdentifier->value, $this->factoryInstances)) {
+            $this->factoryInstances[$contentRepositoryIdentifier->value] = $this->buildFactory($contentRepositoryIdentifier);
         }
-        return $this->factoryInstances[$contentRepositoryId->value];
+        return $this->factoryInstances[$contentRepositoryIdentifier->value];
     }
 
     /**

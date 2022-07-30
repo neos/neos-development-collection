@@ -117,6 +117,17 @@ final class ContentRepository
         }
     }
 
+    /**
+     * @template T of ProjectionState
+     * @param class-string<ProjectionInterface<T>> $projectionClassName
+     */
+    public function resetProjectionState(string $projectionClassName): void
+    {
+        $projection = $this->projections->get($projectionClassName);
+        $projection->reset();
+    }
+
+
     /** TODO  public function getNodeTypeManager() */
 
     public function getContentGraph(): ContentGraphInterface

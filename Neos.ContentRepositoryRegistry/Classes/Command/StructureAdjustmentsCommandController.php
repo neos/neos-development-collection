@@ -12,9 +12,12 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustment;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
+use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 
@@ -22,37 +25,43 @@ final class StructureAdjustmentsCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var StructureAdjustmentService
+     * @var ContentRepositoryRegistry
      */
-    protected $structureAdjustmentService;
+    protected $contentRepositoryRegistry;
 
-    public function detectCommand(string $nodeType = null): void
+    public function detectCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new StructureAdjustmentServiceFactory());
+
         if ($nodeType !== null) {
-            $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(
+            $errors = $structureAdjustmentService->findAdjustmentsForNodeType(
                 NodeTypeName::fromString($nodeType)
             );
         } else {
-            $errors = $this->structureAdjustmentService->findAllAdjustments();
+            $errors = $structureAdjustmentService->findAllAdjustments();
         }
 
         $this->printErrors($errors);
     }
 
-    public function fixCommand(string $nodeType = null): void
+    public function fixCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new StructureAdjustmentServiceFactory());
+
         if ($nodeType !== null) {
-            $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(
+            $errors = $structureAdjustmentService->findAdjustmentsForNodeType(
                 NodeTypeName::fromString($nodeType)
             );
         } else {
-            $errors = $this->structureAdjustmentService->findAllAdjustments();
+            $errors = $structureAdjustmentService->findAllAdjustments();
         }
 
         foreach ($errors as $error) {
             assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
-            $this->structureAdjustmentService->fixError($error);
+            $structureAdjustmentService->fixError($error);
         }
         $this->outputLine('Fixed all.');
     }

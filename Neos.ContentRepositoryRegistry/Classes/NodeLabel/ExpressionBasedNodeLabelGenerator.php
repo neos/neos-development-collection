@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\NodeAccess\NodeLabel;
+namespace Neos\ContentRepositoryRegistry\NodeLabel;
 
 /*
  * This file is part of the Neos.ContentRepository package.

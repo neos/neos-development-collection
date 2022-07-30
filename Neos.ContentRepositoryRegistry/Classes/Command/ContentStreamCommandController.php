@@ -1,79 +1,31 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
-use Neos\ContentRepository\Service\ContentStreamPruner;
-use Neos\EventSourcing\Event\EventTypeResolver;
-use Neos\EventSourcing\Projection\ProjectionManager;
+use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventNormalizer;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Cli\CommandController;
-use Neos\Utility\ObjectAccess;
 
 class ContentStreamCommandController extends CommandController
 {
     /**
-     * @var EventStore
-     */
-    private $contentRepositoryEventStore;
-
-    /**
      * @Flow\Inject
-     * @var ProjectionManager
+     * @var ContentRepositoryRegistry
      */
-    protected $projectionManager;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceCommandHandler
-     */
-    protected $workspaceCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var ContentStreamPruner
-     */
-    protected $contentStreamPruner;
-
-
-    public function __construct(EventStore $contentRepositoryEventStore)
-    {
-        $this->contentRepositoryEventStore = $contentRepositoryEventStore;
-        parent::__construct();
-    }
+    protected $contentRepositoryRegistry;
 
     /**
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function exportCommand(string $contentStreamIdentifier, int $startSequenceNumber = 0): void
+    public function exportCommand(string $contentStreamIdentifier, string $contentRepositoryIdentifier = 'default', int $startSequenceNumber = 0): void
     {
-        $events = $this->contentRepositoryEventStore->load(
-            StreamName::fromString($contentStreamIdentifier),
-            $startSequenceNumber
-        );
-
-        $this->outputLine('[');
-        $i = 0;
-        foreach ($events as $eventEvelope) {
-            $prepend = $i > 0 ? ',' : '';
-            $properties = ObjectAccess::getGettableProperties($eventEvelope->getRawEvent());
-            $this->outputLine(
-                $prepend . json_encode($properties)
-            );
-            $i++;
-        }
-        $this->outputLine(']');
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        throw new \RuntimeException('TODO IMPL??');
+        // TODO??$events = $this->contentRepositoryEventStore->load(
+        //    StreamName::fromString($contentStreamIdentifier),
+        //    $startSequenceNumber
+        //);
     }
 
     /**
@@ -87,75 +39,77 @@ class ContentStreamCommandController extends CommandController
      */
     public function importCommand(string $contentStreamIdentifier, string $file = null): void
     {
-        if ($file !== null) {
-            $fileStream = fopen($file, 'r');
-            $this->outputLine('Reading from file: "%s"', [$file]);
-        } else {
-            $fileStream = fopen('php://stdin', 'r');
-            $this->outputLine('Reading import data from standard in.');
-        }
-        if (!$fileStream) {
-            throw new \InvalidArgumentException('Failed to open file ' . $file);
-        }
-        $normalizer = new EventNormalizer(new EventTypeResolver());
-
-        $contentStreamToImportTo = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)
-            ->getEventStreamName();
-
-        $this->outputLine('Clearing workspace projection to create the workspace to import to.');
-        $workspaceProjection = $this->projectionManager->getProjection('workspace');
-        $this->projectionManager->replay($workspaceProjection->getIdentifier());
-
-        $commandResult = $this->workspaceCommandHandler->handleCreateRootWorkspace(
-            new CreateRootWorkspace(
-                WorkspaceName::forLive(),
-                WorkspaceTitle::fromString('Live'),
-                WorkspaceDescription::fromString(''),
-                UserIdentifier::forSystemUser(),
-                $contentStreamToImportTo
-            )
-        );
-
-        $this->outputLine('Created workspace "Live" for the given content stream identifier');
-
-        $i = 0;
-        $domainEvents = DomainEvents::createEmpty();
-
-        $this->outputLine('starting import');
-        $this->output->progressStart();
-        for ($line = fgets($fileStream); $line !== false; $line = fgets($fileStream)) {
-            $this->output->progressAdvance();
-            $i++;
-            if ($line === '[' || $line === ']') {
-                continue;
-            }
-
-            $rawEventLine = ltrim($line, ',');
-            $rawEventProperties = json_decode($rawEventLine, true);
-            if (!is_array($rawEventProperties)) {
-                continue;
-            }
-
-            $domainEvent = $normalizer->denormalize($rawEventProperties['payload'], $rawEventProperties['type']);
-            $domainEvent = DecoratedEvent::addMetadata($domainEvent, $rawEventProperties['metadata']);
-
-            $domainEvents = $domainEvents->appendEvent($domainEvent);
-
-            if ($i === 10) {
-                $this->contentRepositoryEventStore->commit($eventStreamName, $domainEvents);
-                $domainEvents = DomainEvents::createEmpty();
-                $i = 0;
-            }
-        }
-        $this->output->progressFinish();
-
-        $this->contentRepositoryEventStore->commit($eventStreamName, $domainEvents);
-        fclose($fileStream);
-        $this->outputLine('');
-        $this->outputLine('Finished importing events.');
-        $this->outputLine('Your events and projections are probably out of sync now,'
-            . ' <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
+        throw new \RuntimeException('TODO IMPL??');
+        // TODO
+//        if ($file !== null) {
+//            $fileStream = fopen($file, 'r');
+//            $this->outputLine('Reading from file: "%s"', [$file]);
+//        } else {
+//            $fileStream = fopen('php://stdin', 'r');
+//            $this->outputLine('Reading import data from standard in.');
+//        }
+//        if (!$fileStream) {
+//            throw new \InvalidArgumentException('Failed to open file ' . $file);
+//        }
+//        $normalizer = new EventNormalizer(new EventTypeResolver());
+//
+//        $contentStreamToImportTo = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+//        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)
+//            ->getEventStreamName();
+//
+//        $this->outputLine('Clearing workspace projection to create the workspace to import to.');
+//        $workspaceProjection = $this->projectionManager->getProjection('workspace');
+//        $this->projectionManager->replay($workspaceProjection->getIdentifier());
+//
+//        $commandResult = $this->workspaceCommandHandler->handleCreateRootWorkspace(
+//            new CreateRootWorkspace(
+//                WorkspaceName::forLive(),
+//                WorkspaceTitle::fromString('Live'),
+//                WorkspaceDescription::fromString(''),
+//                UserIdentifier::forSystemUser(),
+//                $contentStreamToImportTo
+//            )
+//        );
+//
+//        $this->outputLine('Created workspace "Live" for the given content stream identifier');
+//
+//        $i = 0;
+//        $domainEvents = DomainEvents::createEmpty();
+//
+//        $this->outputLine('starting import');
+//        $this->output->progressStart();
+//        for ($line = fgets($fileStream); $line !== false; $line = fgets($fileStream)) {
+//            $this->output->progressAdvance();
+//            $i++;
+//            if ($line === '[' || $line === ']') {
+//                continue;
+//            }
+//
+//            $rawEventLine = ltrim($line, ',');
+//            $rawEventProperties = json_decode($rawEventLine, true);
+//            if (!is_array($rawEventProperties)) {
+//                continue;
+//            }
+//
+//            $domainEvent = $normalizer->denormalize($rawEventProperties['payload'], $rawEventProperties['type']);
+//            $domainEvent = DecoratedEvent::addMetadata($domainEvent, $rawEventProperties['metadata']);
+//
+//            $domainEvents = $domainEvents->appendEvent($domainEvent);
+//
+//            if ($i === 10) {
+//                $this->contentRepositoryEventStore->commit($eventStreamName, $domainEvents);
+//                $domainEvents = DomainEvents::createEmpty();
+//                $i = 0;
+//            }
+//        }
+//        $this->output->progressFinish();
+//
+//        $this->contentRepositoryEventStore->commit($eventStreamName, $domainEvents);
+//        fclose($fileStream);
+//        $this->outputLine('');
+//        $this->outputLine('Finished importing events.');
+//        $this->outputLine('Your events and projections are probably out of sync now,'
+//            . ' <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
     }
 
     /**
@@ -167,9 +121,12 @@ class ContentStreamCommandController extends CommandController
      *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
      *       `./flow contentStream:prune`.
      */
-    public function pruneCommand(): void
+    public function pruneCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $unusedContentStreams = $this->contentStreamPruner->prune();
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new ContentStreamPrunerFactory());
+
+        $unusedContentStreams = $contentStreamPruner->prune();
         $unusedContentStreamsPresent = false;
         foreach ($unusedContentStreams as $contentStream) {
             $this->outputFormatted('Removed %s', [$contentStream]);
@@ -183,9 +140,12 @@ class ContentStreamCommandController extends CommandController
     /**
      * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
      */
-    public function pruneRemovedFromEventStreamCommand(): void
+    public function pruneRemovedFromEventStreamCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $unusedContentStreams = $this->contentStreamPruner->pruneRemovedFromEventStream();
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new ContentStreamPrunerFactory());
+
+        $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();
         $unusedContentStreamsPresent = false;
         foreach ($unusedContentStreams as $contentStream) {
             $this->outputFormatted('Removed events for %s', [$contentStream]);

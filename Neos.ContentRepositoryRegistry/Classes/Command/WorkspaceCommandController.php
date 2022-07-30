@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentRepository\Service\WorkspaceMaintenanceService;
+use Neos\ContentRepository\Service\WorkspaceMaintenanceServiceFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
 class WorkspaceCommandController extends CommandController
 {
     #[Flow\Inject]
-    protected WorkspaceMaintenanceService $workspaceMaintenanceService;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Rebase all outdated content streams
      */
-    public function rebaseOutdatedCommand(): void
+    public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $outdatedWorkspaces = $this->workspaceMaintenanceService->rebaseOutdatedWorkspaces();
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new WorkspaceMaintenanceServiceFactory());
+        $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces();
 
         if (!count($outdatedWorkspaces)) {
             $this->outputLine('There are no outdated workspaces.');

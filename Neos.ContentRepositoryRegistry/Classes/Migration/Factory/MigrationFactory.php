@@ -11,9 +11,9 @@ namespace Neos\ContentRepositoryRegistry\Migration\Factory;
  * source code.
  */
 
+use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
+use Neos\ContentRepositoryRegistry\Migration\Configuration\ConfigurationInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\NodeAccess\Migration\Configuration\ConfigurationInterface;
-use Neos\ContentRepository\Migration\Domain\Model\Migration;
 
 /**
  * Migration factory.
@@ -27,24 +27,8 @@ class MigrationFactory
      */
     protected $migrationConfiguration;
 
-    /**
-     * @param string $version
-     * @return Migration
-     */
-    public function getMigrationForVersion($version)
+    public function getMigrationForVersion($version): MigrationConfiguration
     {
-        $migrationConfiguration = $this->migrationConfiguration->getMigrationVersion($version);
-        $migration = new Migration($version, $migrationConfiguration);
-        return $migration;
-    }
-
-    /**
-     * Return array of all available migrations with the current configuration type
-     *
-     * @return array
-     */
-    public function getAvailableMigrationsForCurrentConfigurationType()
-    {
-        return $this->migrationConfiguration->getAvailableVersions();
+        return new MigrationConfiguration($this->migrationConfiguration->getMigrationVersion($version));
     }
 }

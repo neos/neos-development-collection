@@ -8,10 +8,10 @@ use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
+use Neos\EventStore\EventStoreInterface;
 
 /**
  * @api
@@ -22,7 +22,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly DbalClientInterface $dbalClient
+        private readonly EventStoreInterface $eventStore
     ) {
     }
 
@@ -66,17 +66,13 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function pruneRemovedFromEventStream(): iterable
     {
+
         $removedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedAndRemovedContentStreams();
 
         foreach ($removedContentStreams as $removedContentStream) {
-            $this->dbalClient->getConnection()->executeUpdate(
-                // TODO: TABLE NAME????
-                'DELETE FROM neos_contentrepository_events WHERE stream = :stream',
-                [
-                    'stream' => (string)ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)
-                        ->getEventStreamName()
-                ]
-            );
+            $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)
+                ->getEventStreamName();
+            $this->eventStore->deleteStream($streamName);
         }
 
         return $removedContentStreams;
