@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -52,7 +52,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
     protected $environment;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Handle an exception by displaying an error message inside the Neos backend,
@@ -86,7 +86,9 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $contentRepositoryIdentifier = $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
                 $documentNode->getSubgraphIdentity()->contentStreamIdentifier
             );
             if (

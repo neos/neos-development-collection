@@ -185,7 +185,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function catchUp(EventStreamInterface $eventStream): void
     {
-        $catchUpHandler = $this->catchUpHandlerFactory->build();
+        $catchUpHandler = $this->catchUpHandlerFactory->build($this->getState());
         $catchUpHandler->onBeforeCatchUp();
         $catchUp = CatchUp::create(function(EventEnvelope $eventEnvelope) use ($catchUpHandler) {
             $this->apply($eventEnvelope, $catchUpHandler);

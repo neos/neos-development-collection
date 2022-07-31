@@ -14,16 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -65,15 +65,9 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
+    protected $contentRepositoryRegistry;
 
     /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
@@ -83,10 +77,11 @@ class ContentCacheFlusher
      * @return void
      */
     public function flushNodeAggregate(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): void {
-        $doFlushContentCache = $this->scheduleFlushNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
+        $doFlushContentCache = $this->scheduleFlushNodeAggregate($contentRepositoryIdentifier, $contentStreamIdentifier, $nodeAggregateIdentifier);
         $doFlushContentCache();
     }
 
@@ -103,15 +98,17 @@ class ContentCacheFlusher
      * @return callable execute this function to actually trigger the content cache flushing
      */
     public function scheduleFlushNodeAggregate(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): callable {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $this->registerChangeOnNodeIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier, $tagsToFlush);
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
         );
@@ -125,12 +122,13 @@ class ContentCacheFlusher
             $nodeAggregate->getNodeTypeName(),
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
-            $tagsToFlush
+            $tagsToFlush,
+            $contentRepository
         );
 
         $parentNodeAggregates = [];
         foreach (
-            $this->contentGraph->findParentNodeAggregates(
+            $contentRepository->getContentGraph()->findParentNodeAggregates(
                 $contentStreamIdentifier,
                 $nodeAggregateIdentifier
             ) as $parentNodeAggregate
@@ -159,7 +157,7 @@ class ContentCacheFlusher
             );
 
             foreach (
-                $this->contentGraph->findParentNodeAggregates(
+                $contentRepository->getContentGraph()->findParentNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
                 ) as $parentNodeAggregate
@@ -223,11 +221,12 @@ class ContentCacheFlusher
         NodeTypeName $nodeTypeName,
         ContentStreamIdentifier $contentStreamIdentifier,
         ?NodeAggregateIdentifier $referenceNodeIdentifier,
-        array &$tagsToFlush
+        array &$tagsToFlush,
+        ContentRepository $contentRepository
     ): void {
         try {
             $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
-                $this->nodeTypeManager->getNodeType((string)$nodeTypeName)
+                $contentRepository->getNodeTypeManager()->getNodeType((string)$nodeTypeName)
             );
         } catch (NodeTypeNotFoundException $e) {
             // as a fallback, we flush the single NodeType

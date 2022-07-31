@@ -170,7 +170,7 @@ class NodeController extends ActionController
         }
 
         if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
-            $this->handleShortcutNode($nodeAddress);
+            $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
         $this->view->assignMultiple([
@@ -248,7 +248,7 @@ class NodeController extends ActionController
         }
 
         if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
-            $this->handleShortcutNode($nodeAddress);
+            $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
         $this->view->assignMultiple([
@@ -296,10 +296,10 @@ class NodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
-    protected function handleShortcutNode(NodeAddress $nodeAddress): void
+    protected function handleShortcutNode(NodeAddress $nodeAddress, ContentRepository $contentRepository): void
     {
         try {
-            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
+            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress, $contentRepository);
         } catch (InvalidShortcutException $e) {
             throw new NodeNotFoundException(sprintf(
                 'The shortcut node target of node "%s" could not be resolved: %s',

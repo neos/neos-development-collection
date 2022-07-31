@@ -37,9 +37,9 @@ final class CatchUpHandlerFactories implements CatchUpHandlerFactoryInterface
         return array_key_exists($catchUpHandlerFactoryClassName, $this->catchUpHandlerFactories);
     }
 
-    public function build(): CatchUpHandlerInterface
+    public function build(ProjectionStateInterface $projectionState): CatchUpHandlerInterface
     {
-        $catchUpHandlers = array_map(fn(CatchUpHandlerFactoryInterface $catchUpHandlerFactory) => $catchUpHandlerFactory->build(), $this->catchUpHandlerFactories);
+        $catchUpHandlers = array_map(fn(CatchUpHandlerFactoryInterface $catchUpHandlerFactory) => $catchUpHandlerFactory->build($projectionState), $this->catchUpHandlerFactories);
         return new DelegatingCatchUpHandler(...$catchUpHandlers);
     }
 }

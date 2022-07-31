@@ -15,16 +15,17 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -36,18 +37,14 @@ use Psr\Http\Message\UriInterface;
  */
 class NodeShortcutResolver
 {
-    private DocumentUriPathFinder $documentUriPathFinder;
-
     private AssetRepository $assetRepository;
 
     private ResourceManager $resourceManager;
 
     public function __construct(
-        DocumentUriPathFinder $documentUriPathFinder,
         AssetRepository $assetRepository,
         ResourceManager $resourceManager
     ) {
-        $this->documentUriPathFinder = $documentUriPathFinder;
         $this->assetRepository = $assetRepository;
         $this->resourceManager = $resourceManager;
     }
@@ -64,13 +61,14 @@ class NodeShortcutResolver
      * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException
      * @throws NodeNotFoundException
      */
-    public function resolveShortcutTarget(NodeAddress $nodeAddress)
+    public function resolveShortcutTarget(NodeAddress $nodeAddress, ContentRepository $contentRepository)
     {
-        $documentNodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
+        $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateIdentifier,
             $nodeAddress->dimensionSpacePoint->hash
         );
-        $resolvedTarget = $this->resolveNode($documentNodeInfo);
+        $resolvedTarget = $this->resolveNode($documentNodeInfo, $contentRepository);
         if ($resolvedTarget instanceof UriInterface) {
             return $resolvedTarget;
         }
@@ -93,8 +91,9 @@ class NodeShortcutResolver
      * or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException
      */
-    public function resolveNode(DocumentNodeInfo $documentNodeInfo): DocumentNodeInfo|UriInterface
+    public function resolveNode(DocumentNodeInfo $documentNodeInfo, ContentRepository $contentRepository): DocumentNodeInfo|UriInterface
     {
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
         $shortcutRecursionLevel = 0;
         while ($documentNodeInfo->isShortcut()) {
             if (++$shortcutRecursionLevel > 50) {
@@ -106,7 +105,7 @@ class NodeShortcutResolver
             switch ($documentNodeInfo->getShortcutMode()) {
                 case 'parentNode':
                     try {
-                        $documentNodeInfo = $this->documentUriPathFinder->getParentNode($documentNodeInfo);
+                        $documentNodeInfo = $documentUriPathFinder->getParentNode($documentNodeInfo);
                     } catch (NodeNotFoundException $e) {
                         throw new InvalidShortcutException(sprintf(
                             'Shortcut Node "%s" points to a non-existing parent node "%s"',
@@ -124,7 +123,7 @@ class NodeShortcutResolver
                     continue 2;
                 case 'firstChildNode':
                     try {
-                        $documentNodeInfo = $this->documentUriPathFinder->getFirstEnabledChildNode(
+                        $documentNodeInfo = $documentUriPathFinder->getFirstEnabledChildNode(
                             $documentNodeInfo->getNodeAggregateIdentifier(),
                             $documentNodeInfo->getDimensionSpacePointHash()
                         );
@@ -149,7 +148,7 @@ class NodeShortcutResolver
                     if ($targetUri->getScheme() === 'node') {
                         $targetNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($targetUri->getHost());
                         try {
-                            $documentNodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+                            $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                                 $targetNodeAggregateIdentifier,
                                 $documentNodeInfo->getDimensionSpacePointHash()
                             );

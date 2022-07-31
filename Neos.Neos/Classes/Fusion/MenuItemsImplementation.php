@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,9 +30,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintParser
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeConstraintFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * Hard limit for the maximum number of levels supported by this menu
@@ -297,7 +297,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function getNodeTypeConstraints(): NodeTypeConstraints
     {
         if (!$this->nodeTypeConstraints) {
-            $this->nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($this->getFilter());
+            $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $this->nodeTypeConstraints = NodeTypeConstraintParser::create($contentRepository)->parseFilterString($this->getFilter());
         }
 
         return $this->nodeTypeConstraints;

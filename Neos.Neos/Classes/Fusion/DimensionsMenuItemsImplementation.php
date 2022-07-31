@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -32,13 +29,7 @@ use Neos\Flow\Annotations as Flow;
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     #[Flow\Inject]
-    protected ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    #[Flow\Inject]
-    protected ContentDimensionSourceInterface $contentDimensionSource;
-
-    #[Flow\Inject]
-    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @return array<mixed>
@@ -55,10 +46,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function buildItems(): array
     {
         $menuItems = [];
+        $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+        $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new DimensionsMenuItemsImplementationInternalsFactory());
+        assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
 
         $currentDimensionSpacePoint = $this->currentNode->getSubgraphIdentity()->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
-        foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
+        foreach ($dimensionMenuItemsImplementationInternals->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
@@ -74,11 +68,12 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
-                        $this->currentNode->getNodeAggregateIdentifier()
+                        $this->currentNode->getNodeAggregateIdentifier(),
+                        $dimensionMenuItemsImplementationInternals
                     );
                 }
 
-                $metadata = $this->determineMetadata($dimensionSpacePoint);
+                $metadata = $this->determineMetadata($dimensionSpacePoint, $dimensionMenuItemsImplementationInternals);
 
                 if ($variant === null || !$this->isNodeHidden($variant)) {
                     $menuItems[] = [
@@ -139,9 +134,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function findClosestGeneralizationMatchingDimensionValue(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentDimensionIdentifier $contentDimensionIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals
     ): ?NodeInterface {
-        $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
+        $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
             if (
@@ -164,14 +160,14 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * @return array<string,mixed>
      */
-    protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint): array
+    protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint, DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals): array
     {
         $metadata = $dimensionSpacePoint->coordinates;
-        array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier) {
+        array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier, $dimensionMenuItemsImplementationInternals) {
             $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
             $dimensionValue = [
                 'value' => $dimensionValue,
-                'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)
+                'label' => $dimensionMenuItemsImplementationInternals->contentDimensionSource->getDimension($dimensionIdentifier)
                     ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
                 'isPinnedDimension' => (
                     !$this->getContentDimensionIdentifierToLimitTo()

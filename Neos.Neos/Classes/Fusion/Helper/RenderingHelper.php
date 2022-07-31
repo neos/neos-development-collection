@@ -29,13 +29,12 @@ use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 class RenderingHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
+     * __ TODO FIX ME Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
-    #[Flow\Inject]
-    protected ContentDimensionSourceInterface $contentDimensionSource;
+    // TODO FIX ME protected ContentDimensionSourceInterface $contentDimensionSource;
 
     /**
      * Render a human-readable description for the passed $dimensions

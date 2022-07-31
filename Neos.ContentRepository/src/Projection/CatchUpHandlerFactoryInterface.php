@@ -4,5 +4,5 @@ namespace Neos\ContentRepository\Projection;
 
 interface CatchUpHandlerFactoryInterface
 {
-    public function build(): CatchUpHandlerInterface;
+    public function build(ProjectionStateInterface $projectionState): CatchUpHandlerInterface;
 }
