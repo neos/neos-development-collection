@@ -9,6 +9,8 @@ use Neos\ContentRepository\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Factory\ProjectionsFactory;
+use Neos\ContentRepository\Projection\CatchUpHookFactories;
+use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -102,57 +104,57 @@ final class ContentRepositoryRegistry
         assert(is_array($this->settings['contentRepositories']));
         assert(isset($this->settings['contentRepositories'][$contentRepositoryIdentifier->value]) && is_array($this->settings['contentRepositories'][$contentRepositoryIdentifier->value]), ContentRepositoryNotFound::notConfigured($contentRepositoryIdentifier));
         $contentRepositorySettings = $this->settings['contentRepositories'][$contentRepositoryIdentifier->value];
-        if (isset($contentRepositorySettings['preset'])) {
-            assert(isset($this->settings['presets']) && is_array($this->settings['presets']), InvalidConfigurationException::fromMessage('Content repository settings "%s" refer to a preset "%s", but there are not presets configured', $contentRepositoryIdentifier->value, $contentRepositorySettings['preset']));
-            assert(isset($this->settings['presets'][$contentRepositorySettings['preset']]) && is_array($this->settings['presets'][$contentRepositorySettings['preset']]), InvalidConfigurationException::missingPreset($contentRepositoryIdentifier, $contentRepositorySettings['preset']));
-            $contentRepositorySettings = Arrays::arrayMergeRecursiveOverrule($this->settings['presets'][$contentRepositorySettings['preset']], $contentRepositorySettings);
-        }
+        assert(is_string($contentRepositorySettings['preset']));
+
+        assert(isset($this->settings['presets']) && is_array($this->settings['presets']), InvalidConfigurationException::fromMessage('Content repository settings "%s" refer to a preset "%s", but there are not presets configured', $contentRepositoryIdentifier->value, $contentRepositorySettings['preset']));
+        assert(isset($this->settings['presets'][$contentRepositorySettings['preset']]) && is_array($this->settings['presets'][$contentRepositorySettings['preset']]), InvalidConfigurationException::missingPreset($contentRepositoryIdentifier, $contentRepositorySettings['preset']));
+        $contentRepositoryPreset = $this->settings['presets'][$contentRepositorySettings['preset']];
         try {
             return new ContentRepositoryFactory(
                 $contentRepositoryIdentifier,
-                $this->buildEventStore($contentRepositoryIdentifier, $contentRepositorySettings),
-                $this->buildNodeTypeManager($contentRepositoryIdentifier, $contentRepositorySettings),
-                $this->buildContentDimensionSource($contentRepositoryIdentifier, $contentRepositorySettings),
-                $this->buildPropertySerializer($contentRepositorySettings),
-                $this->buildProjectionsFactory($contentRepositorySettings),
-                $this->buildProjectionCatchUpTrigger($contentRepositoryIdentifier, $contentRepositorySettings),
+                $this->buildEventStore($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
+                $this->buildNodeTypeManager($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
+                $this->buildContentDimensionSource($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
+                $this->buildPropertySerializer($contentRepositoryPreset),
+                $this->buildProjectionsFactory($contentRepositoryIdentifier, $contentRepositoryPreset),
+                $this->buildProjectionCatchUpTrigger($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryIdentifier, $exception);
         }
     }
 
-    private function buildEventStore(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings): EventStoreInterface
+    private function buildEventStore(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): EventStoreInterface
     {
-        $eventStoreFactory = $this->objectManager->get($contentRepositorySettings['eventStore']['factoryObjectName']);
+        $eventStoreFactory = $this->objectManager->get($contentRepositoryPreset['eventStore']['factoryObjectName']);
         if (!$eventStoreFactory instanceof EventStoreFactoryInterface) {
             throw new \RuntimeException(sprintf('eventStore.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, EventStoreFactoryInterface::class, get_debug_type($eventStoreFactory)));
         }
-        return $eventStoreFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['eventStore'] ?? []);
+        return $eventStoreFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['eventStore']);
     }
 
-    private function buildNodeTypeManager(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings): NodeTypeManager
+    private function buildNodeTypeManager(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): NodeTypeManager
     {
-        $nodeTypeManagerFactory = $this->objectManager->get($contentRepositorySettings['nodeTypeManager']['factoryObjectName']);
+        $nodeTypeManagerFactory = $this->objectManager->get($contentRepositoryPreset['nodeTypeManager']['factoryObjectName']);
         if (!$nodeTypeManagerFactory instanceof NodeTypeManagerFactoryInterface) {
             throw new \RuntimeException(sprintf('nodeTypeManager.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, NodeTypeManagerFactoryInterface::class, get_debug_type($nodeTypeManagerFactory)));
         }
-        return $nodeTypeManagerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['nodeTypeManager'] ?? []);
+        return $nodeTypeManagerFactory->build($contentRepositoryIdentifier,  $contentRepositorySettings, $contentRepositoryPreset['nodeTypeManager']);
     }
 
-    private function buildContentDimensionSource(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings): ContentDimensionSourceInterface
+    private function buildContentDimensionSource(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ContentDimensionSourceInterface
     {
-        $contentDimensionSourceFactory = $this->objectManager->get($contentRepositorySettings['contentDimensionSource']['factoryObjectName']);
+        $contentDimensionSourceFactory = $this->objectManager->get($contentRepositoryPreset['contentDimensionSource']['factoryObjectName']);
         if (!$contentDimensionSourceFactory instanceof ContentDimensionSourceFactoryInterface) {
             throw new \RuntimeException(sprintf('contentDimensionSource.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, NodeTypeManagerFactoryInterface::class, get_debug_type($contentDimensionSourceFactory)));
         }
-        return $contentDimensionSourceFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['contentDimensionSource'] ?? []);
+        return $contentDimensionSourceFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['contentDimensionSource']);
 
     }
 
-    private function buildPropertySerializer(array $contentRepositorySettings): Serializer
+    private function buildPropertySerializer(array $contentRepositoryPreset): Serializer
     {
-        $propertyConvertersConfiguration = (new PositionalArraySorter($contentRepositorySettings['propertyConverters']))
+        $propertyConvertersConfiguration = (new PositionalArraySorter($contentRepositoryPreset['propertyConverters']))
             ->toArray();
 
         $normalizers = [];
@@ -172,28 +174,36 @@ final class ContentRepositoryRegistry
         return new Serializer($normalizers);
     }
 
-    private function buildProjectionsFactory(array $contentRepositorySettings): ProjectionsFactory
+    private function buildProjectionsFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositoryPreset): ProjectionsFactory
     {
         $projectionsFactory = new ProjectionsFactory();
-        foreach ((new PositionalArraySorter($contentRepositorySettings['projections']))->toArray() as $projectionName => $projectionOptions) {
+        foreach ((new PositionalArraySorter($contentRepositoryPreset['projections']))->toArray() as $projectionName => $projectionOptions) {
             $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
-                throw new \RuntimeException(sprintf('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s in content repository "%s"', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory)));
+                throw new \RuntimeException(sprintf('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryIdentifier->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory)));
             }
             $projectionsFactory->registerFactory(
                 $projectionFactory,
                 $projectionOptions['options'] ?? []
             );
+
+            foreach ($projectionOptions['catchUpHooks'] as $catchUpHookOptions) {
+                $catchUpHookFactory = $this->objectManager->get($catchUpHookOptions['factoryObjectName']);
+                if (!$catchUpHookFactory instanceof CatchUpHookFactoryInterface) {
+                    throw new \RuntimeException(sprintf('CatchUpHook factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s', $projectionName, $contentRepositoryIdentifier->value, CatchUpHookFactoryInterface::class, get_debug_type($catchUpHookFactory)));
+                }
+                $projectionsFactory->registerCatchUpHookFactory($projectionFactory, $catchUpHookFactory);
+            }
         }
         return $projectionsFactory;
     }
 
-    private function buildProjectionCatchUpTrigger(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings): ProjectionCatchUpTriggerInterface
+    private function buildProjectionCatchUpTrigger(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ProjectionCatchUpTriggerInterface
     {
-        $projectionCatchUpTriggerFactory = $this->objectManager->get($contentRepositorySettings['projectionCatchUpTrigger']['factoryObjectName']);
+        $projectionCatchUpTriggerFactory = $this->objectManager->get($contentRepositoryPreset['projectionCatchUpTrigger']['factoryObjectName']);
         if (!$projectionCatchUpTriggerFactory instanceof ProjectionCatchUpTriggerFactoryInterface) {
             throw new \RuntimeException(sprintf('projectionCatchUpTrigger.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ProjectionCatchUpTriggerFactoryInterface::class, get_debug_type($projectionCatchUpTriggerFactory)));
         }
-        return $projectionCatchUpTriggerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['projectionCatchUpTrigger'] ?? []);
+        return $projectionCatchUpTriggerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['projectionCatchUpTrigger'] ?? []);
     }
 }
