@@ -4,7 +4,10 @@ namespace Neos\ContentRepository\Projection;
 
 use Neos\ContentRepository\EventStore\EventInterface;
 
-interface CatchUpHandlerInterface
+/**
+ * @internal
+ */
+interface CatchUpHookInterface
 {
 
     public function onBeforeCatchUp(): void;
@@ -12,6 +15,8 @@ interface CatchUpHandlerInterface
     public function onBeforeEvent(EventInterface $eventInstance): void;
 
     public function onAfterEvent(EventInterface $eventInstance): void;
+
+    public function onBeforeBatchCompleted(): void;
 
     public function onAfterCatchUp(): void;
 }

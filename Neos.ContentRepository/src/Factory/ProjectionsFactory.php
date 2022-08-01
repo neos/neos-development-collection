@@ -2,8 +2,8 @@
 
 namespace Neos\ContentRepository\Factory;
 
-use Neos\ContentRepository\Projection\CatchUpHandlerFactories;
-use Neos\ContentRepository\Projection\CatchUpHandlerFactoryInterface;
+use Neos\ContentRepository\Projection\CatchUpHookFactories;
+use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\Projections;
 
@@ -17,15 +17,14 @@ final class ProjectionsFactory
         $this->factories[get_class($factory)] = [
             'factory' => $factory,
             'options' => $options,
-            'catchUpHandlers' => []
+            'catchUpHooks' => []
         ];
     }
 
-    public function registerCatchUpHandlerFactory(ProjectionFactoryInterface $factory, CatchUpHandlerFactoryInterface $catchUpHandlerFactory, array $options): void
+    public function registerCatchUpHookFactory(ProjectionFactoryInterface $factory, CatchUpHookFactoryInterface $catchUpHookFactory): void
     {
-        $this->factories[get_class($factory)]['catchUpHandlers'][] = [
-            'catchUpHandlerFactory' => $catchUpHandlerFactory,
-            'options' => $options,
+        $this->factories[get_class($factory)]['catchUpHooks'][] = [
+            'catchUpHookFactory' => $catchUpHookFactory,
         ];
     }
 
@@ -37,15 +36,14 @@ final class ProjectionsFactory
             $options = $factoryDefinition['options'];
             assert($factory instanceof ProjectionFactoryInterface);
 
-            $catchUpHandlerFactories = CatchUpHandlerFactories::create();
-            foreach ($factoryDefinition['catchUpHandlers'] as $catchUpHandlerDefinition) {
-                $catchUpHandlerFactory = $catchUpHandlerDefinition['catchUpHandlerFactory'];
-                $catchUpHandlerOptions = $catchUpHandlerDefinition['options'];
-                assert($catchUpHandlerFactory instanceof CatchUpHandlerFactoryInterface);
-                $catchUpHandlerFactories = $catchUpHandlerFactories->with($catchUpHandlerFactory, $catchUpHandlerOptions);
+            $catchUpHookFactories = CatchUpHookFactories::create();
+            foreach ($factoryDefinition['catchUpHooks'] as $catchUpHookDefinition) {
+                $catchUpHookFactory = $catchUpHookDefinition['catchUpHookFactory'];
+                assert($catchUpHookFactory instanceof CatchUpHookFactoryInterface);
+                $catchUpHookFactories = $catchUpHookFactories->with($catchUpHookFactory);
             }
 
-            $projections = $projections->with($factory->build($projectionFactoryDependencies, $options, $catchUpHandlerFactories, $projections));
+            $projections = $projections->with($factory->build($projectionFactoryDependencies, $options, $catchUpHookFactories, $projections));
         }
 
         return $projections;

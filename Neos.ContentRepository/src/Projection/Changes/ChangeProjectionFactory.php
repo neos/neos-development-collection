@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Projection\Change;
 
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\CatchUpHandlerFactoryInterface;
+use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
@@ -32,7 +32,7 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
     ) {
     }
 
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHandlerFactoryInterface $catchUpHandlerFactory, Projections $projectionsSoFar): ProjectionInterface
+    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHookFactoryInterface $catchUpHookFactory, Projections $projectionsSoFar): ProjectionInterface
     {
         $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
         assert($workspaceFinder instanceof WorkspaceFinder);
