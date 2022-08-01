@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository;
 
-
 use Neos\ContentRepository\CommandHandler\CommandBus;
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\CommandHandler\CommandResult;
@@ -28,7 +27,6 @@ use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\EventStore\SetupResult;
@@ -129,10 +127,8 @@ final class ContentRepository
         $projection->reset();
     }
 
-
     public function getNodeTypeManager(): NodeTypeManager
     {
-        // TODO: we want this, right?
         return $this->nodeTypeManager;
     }
 
