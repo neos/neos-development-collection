@@ -22,7 +22,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
@@ -71,7 +70,6 @@ final class ContentRepositoryFactory
     // The following properties store "singleton" references of objects for this content repository
     private ?ContentRepository $contentRepository = null;
     private ?CommandBus $commandBus = null;
-    private ?ContentStreamRepository $contentStreamRepository = null;
     private ?EventPersister $eventPersister = null;
 
     /**
@@ -119,7 +117,6 @@ final class ContentRepositoryFactory
         if (!$this->commandBus) {
             $this->commandBus = new CommandBus(
                 new ContentStreamCommandHandler(
-                    $this->buildContentStreamRepository(),
                 ),
                 new WorkspaceCommandHandler(
                     $this->buildEventPersister(),
@@ -127,7 +124,6 @@ final class ContentRepositoryFactory
                     $this->projectionFactoryDependencies->eventNormalizer
                 ),
                 new NodeAggregateCommandHandler(
-                    $this->buildContentStreamRepository(),
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph,
@@ -138,7 +134,6 @@ final class ContentRepositoryFactory
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph
                 ),
                 new NodeDuplicationCommandHandler(
-                    $this->buildContentStreamRepository(),
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph
@@ -146,16 +141,6 @@ final class ContentRepositoryFactory
             );
         }
         return $this->commandBus;
-    }
-
-    private function buildContentStreamRepository(): ContentStreamRepository
-    {
-        if (!$this->contentStreamRepository) {
-            $this->contentStreamRepository = new ContentStreamRepository(
-                $this->projectionFactoryDependencies->eventStore
-            );
-        }
-        return $this->contentStreamRepository;
     }
 
     private function buildEventPersister(): EventPersister

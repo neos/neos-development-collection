@@ -43,7 +43,7 @@ trait NodeDisabling
      */
     private function handleDisableNodeAggregate(DisableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
@@ -95,7 +95,7 @@ trait NodeDisabling
      */
     public function handleEnableNodeAggregate(EnableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

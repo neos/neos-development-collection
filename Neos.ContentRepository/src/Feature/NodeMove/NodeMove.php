@@ -66,7 +66,7 @@ trait NodeMove
      */
     private function handleMoveNodeAggregate(MoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
         $this->requireDimensionSpacePointToExist($command->getDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),

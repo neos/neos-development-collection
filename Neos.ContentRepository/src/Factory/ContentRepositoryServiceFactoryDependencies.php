@@ -44,7 +44,6 @@ final class ContentRepositoryServiceFactoryDependencies
         public readonly ContentRepository $contentRepository,
         // we don't need Projections, because this is included in ContentRepository->getState()
         // we don't need CommandBus, because this is included in ContentRepository->handle()
-        // I am unsure about ContentStreamRepository; but this is a kinda dirty class right now; so I don't want to expose it right now until we need it outside
         public readonly EventPersister $eventPersister,
     )
     {

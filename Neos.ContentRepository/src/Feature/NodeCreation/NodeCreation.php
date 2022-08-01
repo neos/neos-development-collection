@@ -151,7 +151,7 @@ trait NodeCreation
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
@@ -240,6 +240,8 @@ trait NodeCreation
             $coveredDimensionSpacePoints,
             $command->nodeAggregateIdentifier,
             $descendantNodeAggregateIdentifiers,
+            null,
+            $contentRepository
         )));
 
         return new EventsToPublish(
@@ -285,7 +287,8 @@ trait NodeCreation
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
-        NodePath $nodePath = null
+        ?NodePath $nodePath,
+        ContentRepository $contentRepository,
     ): Events {
         $events = [];
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
@@ -297,7 +300,7 @@ trait NodeCreation
                 ?? NodeAggregateIdentifier::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
 
-            $this->requireContentStreamToExist($command->contentStreamIdentifier);
+            $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
             $events[] = $this->createTetheredWithNode(
                 $command,
                 $childNodeAggregateIdentifier,
@@ -314,7 +317,8 @@ trait NodeCreation
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateIdentifier,
                 $nodeAggregateIdentifiers,
-                $childNodePath
+                $childNodePath,
+                $contentRepository
             )));
         }
 

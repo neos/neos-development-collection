@@ -25,7 +25,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -53,8 +52,6 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 trait ConstraintChecks
 {
-    abstract protected function getContentStreamRepository(): ContentStreamRepository;
-
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
@@ -63,12 +60,11 @@ trait ConstraintChecks
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier): void
+    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): void
     {
-        $contentStream = $this->getContentStreamRepository()->findContentStream($contentStreamIdentifier);
-        if (!$contentStream) {
+        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamIdentifier . " does not exist yet.",
+                'Content stream "' . $contentStreamIdentifier . '" does not exist yet.',
                 1521386692
             );
         }

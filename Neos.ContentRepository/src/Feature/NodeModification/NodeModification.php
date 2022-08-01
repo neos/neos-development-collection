@@ -42,7 +42,7 @@ trait NodeModification
 
     private function handleSetNodeProperties(SetNodeProperties $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

@@ -27,6 +27,8 @@ final class ContentStreamEventStreamName
      */
     protected $eventStreamName;
 
+    public const EVENT_STREAM_NAME_PREFIX = 'Neos.ContentRepository:ContentStream:';
+
     protected function __construct(string $eventStreamName)
     {
         $this->eventStreamName = $eventStreamName;
@@ -34,7 +36,7 @@ final class ContentStreamEventStreamName
 
     public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): self
     {
-        return new ContentStreamEventStreamName('Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier);
+        return new ContentStreamEventStreamName(self::EVENT_STREAM_NAME_PREFIX . $contentStreamIdentifier);
     }
 
     public function getEventStreamName(): StreamName

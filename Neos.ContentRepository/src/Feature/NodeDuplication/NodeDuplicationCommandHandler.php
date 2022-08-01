@@ -27,7 +27,6 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
@@ -43,16 +42,10 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     use ConstraintChecks;
 
     public function __construct(
-        private readonly ContentStreamRepository $contentStreamRepository,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
     ) {
-    }
-
-    protected function getContentStreamRepository(): ContentStreamRepository
-    {
-        return $this->contentStreamRepository;
     }
 
     protected function getNodeTypeManager(): NodeTypeManager
@@ -86,7 +79,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     private function handleCopyNodesRecursively(CopyNodesRecursively $command, ContentRepository $contentRepository): EventsToPublish
     {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint()
         );

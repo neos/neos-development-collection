@@ -19,6 +19,8 @@ use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Service\ContentStreamPruner;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\EventStore\Model\Event\Version;
+use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * Internal - implementation detail of {@see ContentStreamPruner}
@@ -163,5 +165,43 @@ final class ContentStreamFinder implements ProjectionStateInterface
         }
 
         return $contentStreams;
+    }
+
+    public function findVersionForContentStream(ContentStreamIdentifier $contentStreamIdentifier): MaybeVersion
+    {
+        $connection = $this->client->getConnection();
+        /* @var $state string|false */
+        $version = $connection->executeQuery(
+            '
+            SELECT version FROM ' . $this->tableName . '
+                WHERE contentStreamIdentifier = :contentStreamIdentifier
+            ',
+            [
+                'contentStreamIdentifier' => $contentStreamIdentifier->jsonSerialize()
+            ]
+        )->fetchOne();
+
+        if ($version === false) {
+            return MaybeVersion::fromVersionOrNull(null);
+        }
+
+        return MaybeVersion::fromVersionOrNull($version);
+    }
+
+    public function hasContentStream(ContentStreamIdentifier $contentStreamIdentifier): bool
+    {
+        $connection = $this->client->getConnection();
+        /* @var $state string|false */
+        $version = $connection->executeQuery(
+            '
+            SELECT version FROM ' . $this->tableName . '
+                WHERE contentStreamIdentifier = :contentStreamIdentifier
+            ',
+            [
+                'contentStreamIdentifier' => $contentStreamIdentifier->jsonSerialize()
+            ]
+        )->fetchOne();
+
+        return $version !== false;
     }
 }

@@ -112,7 +112,7 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
         $newNodeType = $this->requireNodeType($command->getNewNodeTypeName());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),

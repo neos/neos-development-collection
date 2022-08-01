@@ -45,7 +45,7 @@ trait NodeReferencing
 
     private function handleSetNodeReferences(SetNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
@@ -96,7 +96,7 @@ trait NodeReferencing
      */
     private function handleSetSerializedNodeReferences(SetSerializedNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );

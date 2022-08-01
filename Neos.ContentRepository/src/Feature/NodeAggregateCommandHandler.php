@@ -66,8 +66,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use NodeVariation;
     use TetheredNodeInternals;
 
-    private ContentStreamRepository $contentStreamRepository;
-
     /**
      * Used for constraint checks against the current outside configuration state of node types
      */
@@ -91,13 +89,11 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
-        ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         PropertyConverter $propertyConverter
     ) {
-        $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
@@ -141,11 +137,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
         };
-    }
-
-    protected function getContentStreamRepository(): ContentStreamRepository
-    {
-        return $this->contentStreamRepository;
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

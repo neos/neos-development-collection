@@ -46,7 +46,7 @@ trait NodeVariation
      */
     private function handleCreateNodeVariant(CreateNodeVariant $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier,

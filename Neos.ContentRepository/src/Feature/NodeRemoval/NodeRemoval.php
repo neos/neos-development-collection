@@ -45,7 +45,7 @@ trait NodeRemoval
      */
     private function handleRemoveNodeAggregate(RemoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier,

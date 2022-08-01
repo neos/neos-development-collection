@@ -20,6 +20,8 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
@@ -87,6 +89,8 @@ class ContentStreamProjection implements ProjectionInterface
         $contentStreamTable->addColumn('contentStreamIdentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
+        $contentStreamTable->addColumn('version', Types::INTEGER)
+            ->setNotnull(true);
         $contentStreamTable->addColumn('sourceContentStreamIdentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
@@ -96,7 +100,6 @@ class ContentStreamProjection implements ProjectionInterface
         $contentStreamTable->addColumn('removed', Types::BOOLEAN)
             ->setDefault(false)
             ->setNotnull(false);
-
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);
@@ -111,19 +114,21 @@ class ContentStreamProjection implements ProjectionInterface
     public function canHandle(Event $event): bool
     {
         $eventClassName = $this->eventNormalizer->getEventClassName($event);
+
         return in_array($eventClassName, [
-            ContentStreamWasCreated::class,
-            RootWorkspaceWasCreated::class,
-            WorkspaceWasCreated::class,
-            ContentStreamWasForked::class,
-            WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class,
-            WorkspaceWasPartiallyPublished::class,
-            WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class,
-            WorkspaceRebaseFailed::class,
-            ContentStreamWasRemoved::class,
-        ]);
+                ContentStreamWasCreated::class,
+                RootWorkspaceWasCreated::class,
+                WorkspaceWasCreated::class,
+                ContentStreamWasForked::class,
+                WorkspaceWasDiscarded::class,
+                WorkspaceWasPartiallyDiscarded::class,
+                WorkspaceWasPartiallyPublished::class,
+                WorkspaceWasPublished::class,
+                WorkspaceWasRebased::class,
+                WorkspaceRebaseFailed::class,
+                ContentStreamWasRemoved::class,
+            ])
+            || is_subclass_of($eventClassName, EmbedsContentStreamAndNodeAggregateIdentifier::class);
     }
 
     public function catchUp(EventStreamInterface $eventStream): void
@@ -141,27 +146,29 @@ class ContentStreamProjection implements ProjectionInterface
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
         if ($eventInstance instanceof ContentStreamWasCreated) {
-            $this->whenContentStreamWasCreated($eventInstance);
+            $this->whenContentStreamWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof RootWorkspaceWasCreated) {
-            $this->whenRootWorkspaceWasCreated($eventInstance);
+            $this->whenRootWorkspaceWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceWasCreated) {
-            $this->whenWorkspaceWasCreated($eventInstance);
+            $this->whenWorkspaceWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof ContentStreamWasForked) {
-            $this->whenContentStreamWasForked($eventInstance);
+            $this->whenContentStreamWasForked($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceWasDiscarded) {
-            $this->whenWorkspaceWasDiscarded($eventInstance);
+            $this->whenWorkspaceWasDiscarded($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceWasPartiallyDiscarded) {
-            $this->whenWorkspaceWasPartiallyDiscarded($eventInstance);
+            $this->whenWorkspaceWasPartiallyDiscarded($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceWasPartiallyPublished) {
-            $this->whenWorkspaceWasPartiallyPublished($eventInstance);
+            $this->whenWorkspaceWasPartiallyPublished($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceWasPublished) {
-            $this->whenWorkspaceWasPublished($eventInstance);
+            $this->whenWorkspaceWasPublished($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceWasRebased) {
-            $this->whenWorkspaceWasRebased($eventInstance);
+            $this->whenWorkspaceWasRebased($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof WorkspaceRebaseFailed) {
-            $this->whenWorkspaceRebaseFailed($eventInstance);
+            $this->whenWorkspaceRebaseFailed($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof ContentStreamWasRemoved) {
-            $this->whenContentStreamWasRemoved($eventInstance);
+            $this->whenContentStreamWasRemoved($eventInstance, $eventEnvelope);
+        } elseif ($eventInstance instanceof EmbedsContentStreamAndNodeAggregateIdentifier) {
+            $this->updateContentStreamVersion($eventInstance, $eventEnvelope);
         } else {
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
@@ -183,10 +190,11 @@ class ContentStreamProjection implements ProjectionInterface
         return $this->contentStreamFinder;
     }
 
-    private function whenContentStreamWasCreated(ContentStreamWasCreated $event): void
+    private function whenContentStreamWasCreated(ContentStreamWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
             'contentStreamIdentifier' => $event->contentStreamIdentifier,
+            'version' => self::extractVersion($eventEnvelope),
             'state' => ContentStreamFinder::STATE_CREATED,
         ]);
     }
@@ -211,10 +219,11 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    private function whenContentStreamWasForked(ContentStreamWasForked $event): void
+    private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
             'contentStreamIdentifier' => $event->contentStreamIdentifier,
+            'version' => self::extractVersion($eventEnvelope),
             'sourceContentStreamIdentifier' => $event->sourceContentStreamIdentifier,
             'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
         ]);
@@ -303,10 +312,11 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
+    private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->update($this->tableName, [
-            'removed' => true
+            'removed' => true,
+            'version' => self::extractVersion($eventEnvelope),
         ], [
             'contentStreamIdentifier' => $event->contentStreamIdentifier
         ]);
@@ -326,4 +336,21 @@ class ContentStreamProjection implements ProjectionInterface
         return $this->dbalClient->getConnection();
     }
 
+    private function updateContentStreamVersion(EmbedsContentStreamAndNodeAggregateIdentifier $eventInstance, EventEnvelope $eventEnvelope)
+    {
+        $this->getDatabaseConnection()->update($this->tableName, [
+            'version' => self::extractVersion($eventEnvelope),
+        ], [
+            'contentStreamIdentifier' => $eventInstance->getContentStreamIdentifier()
+        ]);
+    }
+
+
+    private static function extractVersion(EventEnvelope $eventEnvelope): int
+    {
+        if (!str_starts_with($eventEnvelope->streamName->value, ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX)) {
+            throw new \RuntimeException('Cannot extract version number, as it was projected on wrong stream "' . $eventEnvelope->streamName->value . '", but needs to start with ' . ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX);
+        }
+        return $eventEnvelope->version->value;
+    }
 }

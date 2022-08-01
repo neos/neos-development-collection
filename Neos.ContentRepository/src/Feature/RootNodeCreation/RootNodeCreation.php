@@ -53,7 +53,7 @@ trait RootNodeCreation
      */
     private function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireProjectedNodeAggregateToNotExist(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier,
