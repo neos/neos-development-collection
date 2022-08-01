@@ -17,7 +17,7 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
@@ -368,7 +368,7 @@ class LinkingService
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
             $node->getSubgraphIdentity()->contentStreamIdentifier
         );
-        $hiddenState = $contentRepository->projectionState(NodeHiddenStateProjector::class)->findHiddenState(
+        $hiddenState = $contentRepository->projectionState(NodeHiddenStateProjection::class)->findHiddenState(
             $node->getSubgraphIdentity()->contentStreamIdentifier,
             $node->getSubgraphIdentity()->dimensionSpacePoint,
             $node->getNodeAggregateIdentifier()

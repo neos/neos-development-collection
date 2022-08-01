@@ -17,7 +17,7 @@ namespace Neos\Neos\Service\View;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
@@ -420,7 +420,7 @@ class NodeView extends JsonView
         $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
-        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjector::class);
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,

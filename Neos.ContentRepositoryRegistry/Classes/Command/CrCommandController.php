@@ -7,7 +7,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
 use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjector;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
@@ -41,7 +41,7 @@ class CrCommandController extends CommandController
         if ($projectionName === 'graph') {
             $projectionName = ContentGraphProjection::class;
         } elseif ($projectionName === 'nodeHiddenState') {
-            $projectionName = NodeHiddenStateProjector::class;  // TODO
+            $projectionName = NodeHiddenStateProjection::class;  // TODO
         } elseif ($projectionName === 'documentUriPath') {
             $projectionName = DocumentUriPathProjection::class;
         } elseif ($projectionName === 'change') {

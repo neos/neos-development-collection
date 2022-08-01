@@ -108,7 +108,6 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
     }
 
-
     public function canHandle(Event $event): bool
     {
         $eventClassName = $this->eventNormalizer->getEventClassName($event);
