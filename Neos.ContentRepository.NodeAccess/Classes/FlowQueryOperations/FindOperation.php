@@ -278,7 +278,7 @@ class FindOperation extends AbstractOperation
      */
     protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result, ContentRepository $contentRepository): array
     {
-        $nodeTypeFilter = NodeTypeConstraintParser::create($contentRepository)->parseFilterString($nodeTypeName->jsonSerialize());
+        $nodeTypeFilter = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString($nodeTypeName->jsonSerialize());
         foreach ($entryPoints as $entryPoint) {
             /** @var NodeAccessorInterface $nodeAccessor */
             $nodeAccessor = $entryPoint['subgraph'];

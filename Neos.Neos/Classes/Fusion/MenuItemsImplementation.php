@@ -299,7 +299,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if (!$this->nodeTypeConstraints) {
             $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-            $this->nodeTypeConstraints = NodeTypeConstraintParser::create($contentRepository)->parseFilterString($this->getFilter());
+            $this->nodeTypeConstraints = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString($this->getFilter());
         }
 
         return $this->nodeTypeConstraints;

@@ -143,7 +143,7 @@ class NodesController extends ActionController
             $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
             $nodes = !is_null($entryNode) ? $nodeAccessor->findDescendants(
                 [$entryNode],
-                NodeTypeConstraintParser::create($contentRepository)->parseFilterString(implode(',', $nodeTypes)),
+                NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(implode(',', $nodeTypes)),
                 SearchTerm::fulltext($searchTerm)
             ) : [];
         } else {

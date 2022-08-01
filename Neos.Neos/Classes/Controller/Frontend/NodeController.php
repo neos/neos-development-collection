@@ -337,7 +337,7 @@ class NodeController extends ActionController
         $subtree = $subgraph->findSubtrees(
             NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]),
             10,
-            NodeTypeConstraintParser::create($contentRepository)->parseFilterString('!Neos.Neos:Document')
+            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString('!Neos.Neos:Document')
         );
         $subtree = $subtree->getChildren()[0];
 

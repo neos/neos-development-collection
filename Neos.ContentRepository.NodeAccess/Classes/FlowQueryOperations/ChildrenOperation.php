@@ -176,7 +176,7 @@ class ChildrenOperation extends AbstractOperation
                             $contextNode->getSubgraphIdentity()
                         )->findChildNodes(
                             $contextNode,
-                            NodeTypeConstraintParser::create($contentRepository)->parseFilterString(
+                            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
                                 implode(',', $allowedNodeTypes)
                             )
                         );

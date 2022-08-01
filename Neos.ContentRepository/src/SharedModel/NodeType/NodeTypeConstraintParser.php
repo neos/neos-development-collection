@@ -26,7 +26,7 @@ use Neos\Utility\Arrays;
  *
  * TODO: what is the difference between NodeTypeConstraintParser and NodeTypeConstraintsFactory
  */
-class NodeTypeConstraintParser implements ContentRepositoryServiceInterface
+class NodeTypeConstraintParser
 {
     private function __construct(
         private readonly NodeTypeManager $nodeTypeManager
@@ -34,9 +34,9 @@ class NodeTypeConstraintParser implements ContentRepositoryServiceInterface
     {
     }
 
-    static public function create(ContentRepository $contentRepository): self
+    static public function create(NodeTypeManager $nodeTypeManager): self
     {
-        return new self($contentRepository->getNodeTypeManager());
+        return new self($nodeTypeManager);
     }
 
     /**

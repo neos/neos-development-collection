@@ -265,7 +265,7 @@ class NodeView extends JsonView
             $node->getSubgraphIdentity()
         );
         $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
-        $nodeTypeConstraintParser = NodeTypeConstraintParser::create($contentRepository);
+        $nodeTypeConstraintParser = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager());
 
         $nodeTypeConstraints = $nodeTypeFilter
             ? $nodeTypeConstraintParser->parseFilterString($nodeTypeFilter)
