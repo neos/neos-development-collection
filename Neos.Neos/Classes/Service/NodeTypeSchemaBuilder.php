@@ -22,13 +22,18 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
  * Renders the Node Type Schema in a format the User Interface understands;
  * additionally pre-calculating node constraints
  */
-class NodeTypeSchemaBuilder implements ContentRepositoryServiceInterface
+class NodeTypeSchemaBuilder
 {
 
-    public function __construct(
+    private function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
     )
     {
+    }
+
+    public static function create(NodeTypeManager $nodeTypeManager): self
+    {
+        return new self($nodeTypeManager);
     }
 
     /**

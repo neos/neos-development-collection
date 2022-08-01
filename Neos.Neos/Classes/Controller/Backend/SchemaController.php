@@ -26,12 +26,6 @@ use Neos\Neos\Service\NodeTypeSchemaBuilderFactory;
 class SchemaController extends ActionController
 {
     /**
-     * @var NodeTypeSchemaBuilder
-     * @Flow\Inject
-     */
-    protected $nodeTypeSchemaBuilder;
-
-    /**
      * @Flow\Inject
      * @var VariableFrontend
      */
@@ -65,7 +59,8 @@ class SchemaController extends ActionController
 
         $nodeTypeSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
         if (!$nodeTypeSchema) {
-            $nodeTypeSchemaBuilder = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new NodeTypeSchemaBuilderFactory());
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $nodeTypeSchemaBuilder = NodeTypeSchemaBuilder::create($contentRepository->getNodeTypeManager());
             $nodeTypeSchema = json_encode($nodeTypeSchemaBuilder->generateNodeTypeSchema());
             $this->nodeTypeSchemaCache->flushByTag('nodeType');
             $this->nodeTypeSchemaCache->set($cacheIdentifier, $nodeTypeSchema, ['nodeType']);
