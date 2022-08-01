@@ -10,6 +10,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeep
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
+/**
+ * @deprecated really un-nice :D
+ */
 class DimensionsMenuItemsImplementationInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(

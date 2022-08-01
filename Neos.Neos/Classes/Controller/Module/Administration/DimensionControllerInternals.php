@@ -20,6 +20,9 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
 use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
 
+/**
+ * @deprecated really un-nice :D
+ */
 class DimensionControllerInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(

@@ -18,6 +18,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
+/**
+ * @deprecated really un-nice :D
+ */
 class FusionExceptionViewInternals implements ContentRepositoryServiceInterface
 {
 

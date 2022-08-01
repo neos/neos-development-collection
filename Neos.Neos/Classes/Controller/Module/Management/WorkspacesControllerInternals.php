@@ -17,6 +17,9 @@ namespace Neos\Neos\Controller\Module\Management;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
+/**
+ * @deprecated really un-nice :D
+ */
 class WorkspacesControllerInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
