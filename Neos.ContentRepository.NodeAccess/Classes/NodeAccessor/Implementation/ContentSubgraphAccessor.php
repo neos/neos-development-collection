@@ -53,16 +53,6 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         );
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->subgraph->getContentStreamIdentifier();
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->subgraph->getDimensionSpacePoint();
-    }
-
     public function findByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
     {
         return $this->subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
@@ -126,7 +116,7 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
     public function findRootNodeByType(NodeTypeName $nodeTypeName): NodeInterface
     {
         $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType(
-            $this->getContentStreamIdentifier(),
+            $this->subgraph->getContentStreamIdentifier(),
             $nodeTypeName
         );
 

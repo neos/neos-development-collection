@@ -58,11 +58,6 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
  */
 interface NodeAccessorInterface
 {
-    // IDENTITY of this NodeAccessor.
-    public function getContentStreamIdentifier(): ContentStreamIdentifier;
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint;
-
     // Find by ID
     public function findByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
 
