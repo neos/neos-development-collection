@@ -18,8 +18,8 @@
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "symfony/serializer": "*",
-        "webmozart/assert": "^1.10",
         "neos/flow": "*",
+        "webmozart/assert": "^1.10",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -55,7 +55,9 @@
         "neos/contentrepository-dimensionspace": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
+        "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-security": "self.version",
+        "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
@@ -140,14 +142,20 @@
             "Neos\\ContentRepository\\NodeAccess\\": [
                 "Neos.ContentRepository.NodeAccess/Classes"
             ],
+            "Neos\\ContentRepository\\NodeMigration\\": [
+                "Neos.ContentRepository.NodeMigration/src"
+            ],
             "Neos\\ContentRepository\\Security\\": [
                 "Neos.ContentRepository.Security/Classes"
             ],
-            "Neos\\ContentRepository\\": [
-                "Neos.ContentRepository/src"
+            "Neos\\ContentRepository\\StructureAdjustment\\": [
+                "Neos.ContentRepository.StructureAdjustment/src"
             ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
+            ],
+            "Neos\\ContentRepository\\": [
+                "Neos.ContentRepository/src"
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
@@ -239,6 +247,12 @@
             ],
             "Neos\\ContentRepository\\NodeAccess\\Tests\\": [
                 "Neos.ContentRepository.NodeAccess/Tests"
+            ],
+            "Neos\\ContentRepository\\NodeMigration\\Tests\\": [
+                "Neos.ContentRepository.NodeMigration/Tests"
+            ],
+            "Neos\\ContentRepository\\StructureAdjustment\\Tests\\": [
+                "Neos.ContentRepository.StructureAdjustment/Tests"
             ],
             "Neos\\ContentRepository\\Tests\\": [
                 "Neos.ContentRepository/Tests"
