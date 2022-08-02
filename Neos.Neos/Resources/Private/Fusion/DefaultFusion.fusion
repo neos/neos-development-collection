@@ -110,6 +110,6 @@ error = Neos.Fusion:Case {
 # of entry identifier pieces in order to make sure that a specific combination of workspaces has its own content cache entry.
 #
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-  workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
-  editPreviewMode = ${documentNode.context.currentRenderingMode.name}
+  workspaceChain = ${Array.join(Array.keys(Neos.Caching.getWorkspaceChain(documentNode)), ',')}
+  editPreviewMode = ${editPreviewMode}
 }

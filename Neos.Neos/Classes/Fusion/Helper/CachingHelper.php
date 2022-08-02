@@ -14,7 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
@@ -26,6 +29,12 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
  */
 class CachingHelper implements ProtectedContextAwareInterface
 {
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
+
     /**
      * Render a caching configuration for array of Nodes
      *
@@ -180,6 +189,35 @@ class CachingHelper implements ProtectedContextAwareInterface
     private function renderContentStreamIdentifierTag(ContentStreamIdentifier $contentStreamIdentifier)
     {
         return '%' . $contentStreamIdentifier . '%';
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @return array|Workspace
+     */
+    public function getWorkspaceChain(?NodeInterface $node): array
+    {
+        if ($node === null) {
+            return [];
+        }
+
+        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+
+
+        /** @var Workspace $currentWorkspace */
+        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
+            $node->getSubgraphIdentity()->contentStreamIdentifier
+        );
+        $workspaceChain = [];
+        // TODO: Maybe write CTE here
+        while ($currentWorkspace instanceof Workspace) {
+            $workspaceChain[(string)$currentWorkspace->getWorkspaceName()] = $currentWorkspace;
+            $currentWorkspace = $currentWorkspace->getBaseWorkspaceName()
+                ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->getBaseWorkspaceName())
+                : null;
+        }
+
+        return $workspaceChain;
     }
 
     /**
