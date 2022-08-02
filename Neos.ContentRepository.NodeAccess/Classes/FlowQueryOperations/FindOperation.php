@@ -203,8 +203,8 @@ class FindOperation extends AbstractOperation
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $contextNode->getSubgraphIdentity()
             );
-            $subgraphIdentifier = md5($nodeAccessor->getContentStreamIdentifier()
-                . '@' . $nodeAccessor->getDimensionSpacePoint());
+            $subgraphIdentifier = md5($contextNode->getSubgraphIdentity()->contentStreamIdentifier
+                . '@' . $contextNode->getSubgraphIdentity()->dimensionSpacePoint);
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
                     'subgraph' => $nodeAccessor,

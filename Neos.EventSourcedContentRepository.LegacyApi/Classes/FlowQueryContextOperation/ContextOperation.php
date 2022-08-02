@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\FlowQueryContextOperation;
 
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -41,9 +41,9 @@ class ContextOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -93,35 +93,39 @@ class ContextOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var NodeInterface $contextNode */
 
-            // we start modifying the subgraph step-by-step.
-            $nodeAccessor = $this->getSubgraphFromNode($contextNode);
-
-            $visibilityConstraints = $contextNode->getSubgraphIdentity()->visibilityConstraints;
+            $contentSubgraphIdentity = $contextNode->getSubgraphIdentity();
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
                 $visibilityConstraints = $invisibleContentShown
                     ? VisibilityConstraints::withoutRestrictions()
                     : VisibilityConstraints::frontend();
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $nodeAccessor->getContentStreamIdentifier(),
-                    $nodeAccessor->getDimensionSpacePoint(),
+                $contentSubgraphIdentity = new ContentSubgraphIdentity(
+                    $contentSubgraphIdentity->contentRepositoryIdentifier,
+                    $contentSubgraphIdentity->contentStreamIdentifier,
+                    $contentSubgraphIdentity->dimensionSpacePoint,
                     $visibilityConstraints
                 );
             }
 
             if (array_key_exists('workspaceName', $targetContext)) {
                 $workspaceName = WorkspaceName::fromString($targetContext['workspaceName']);
-                $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+                $contentRepository = $this->contentRepositoryRegistry->get($contextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+
+                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
                 if (!is_null($workspace)) {
-                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                    $contentSubgraphIdentity = new ContentSubgraphIdentity(
+                        $contentSubgraphIdentity->contentRepositoryIdentifier,
                         $workspace->getCurrentContentStreamIdentifier(),
-                        $nodeAccessor->getDimensionSpacePoint(),
-                        $visibilityConstraints
+                        $contentSubgraphIdentity->dimensionSpacePoint,
+                        $contentSubgraphIdentity->visibilityConstraints
                     );
                 }
             }
 
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $contentSubgraphIdentity
+            );
             $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->getNodeAggregateIdentifier());
             if ($nodeInModifiedSubgraph !== null) {
                 $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->__toString()] = $nodeInModifiedSubgraph;
@@ -129,13 +133,5 @@ class ContextOperation extends AbstractOperation
         }
 
         $flowQuery->setContext(array_values($output));
-    }
-
-    // TODO REMOVE
-    private function getSubgraphFromNode(NodeInterface $contextNode): NodeAccessorInterface
-    {
-        return $this->nodeAccessorManager->accessorFor(
-            $contextNode->getSubgraphIdentity()
-        );
     }
 }
