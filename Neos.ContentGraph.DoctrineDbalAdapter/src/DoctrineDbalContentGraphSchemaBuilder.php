@@ -94,6 +94,8 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('nodeanchorpoint', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
+        $table->addColumn('properties', Types::TEXT)
+            ->setNotnull(false);
         $table->addColumn('destinationnodeaggregateidentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);

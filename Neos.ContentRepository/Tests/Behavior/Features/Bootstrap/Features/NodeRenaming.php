@@ -32,8 +32,6 @@ trait NodeRenaming
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
 
-    abstract protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;

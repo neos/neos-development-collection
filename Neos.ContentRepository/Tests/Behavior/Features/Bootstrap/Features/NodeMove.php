@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -28,13 +29,13 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 trait NodeMove
 {
+    abstract protected function getContentRepository(): ContentRepository;
+
     abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -81,8 +82,7 @@ trait NodeMove
             $initiatingUserIdentifier
         );
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleMoveNodeAggregate($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**

@@ -315,7 +315,7 @@ trait EventSourcedTrait
         if ($this->lastCommandOrEventResult === null) {
             throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
         }
-        $this->lastCommandOrEventResult->blockUntilProjectionsAreUpToDate();
+        $this->lastCommandOrEventResult->block();
         $this->lastCommandOrEventResult = null;
     }
 
@@ -477,14 +477,6 @@ trait EventSourcedTrait
     {
         /** @var ContentStreamCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(ContentStreamCommandHandler::class);
-
-        return $commandHandler;
-    }
-
-    protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler
-    {
-        /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
         return $commandHandler;
     }

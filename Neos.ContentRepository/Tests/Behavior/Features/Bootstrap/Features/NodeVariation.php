@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -27,11 +28,11 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 trait NodeVariation
 {
+    abstract protected function getContentRepository(): ContentRepository;
+
     abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -59,8 +60,7 @@ trait NodeVariation
             OriginDimensionSpacePoint::fromArray($commandArguments['targetOrigin']),
             $initiatingUserIdentifier
         );
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeVariant($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**

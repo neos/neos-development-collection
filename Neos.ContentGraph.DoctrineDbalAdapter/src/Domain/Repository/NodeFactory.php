@@ -17,6 +17,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
@@ -41,16 +43,17 @@ use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
+ *
+ * @internal
  */
 final class NodeFactory
 {
-    private NodeTypeManager $nodeTypeManager;
-    private PropertyConverter $propertyConverter;
-
-    public function __construct(NodeTypeManager $nodeTypeManager, PropertyConverter $propertyConverter)
+    public function __construct(
+        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly PropertyConverter $propertyConverter
+    )
     {
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->propertyConverter = $propertyConverter;
     }
 
     /**
@@ -74,7 +77,12 @@ final class NodeFactory
         }
         /** @var NodeInterface $node */
         $node = new $nodeClassName(
-            ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+            new ContentSubgraphIdentity(
+                $this->contentRepositoryIdentifier,
+                ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            ),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
@@ -82,8 +90,6 @@ final class NodeFactory
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             NodeAggregateClassification::from($nodeRow['classification']),
-            $dimensionSpacePoint,
-            $visibilityConstraints
         );
 
         return $node;

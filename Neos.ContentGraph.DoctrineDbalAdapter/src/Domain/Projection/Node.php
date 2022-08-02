@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 
@@ -34,7 +32,7 @@ use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 final class Node implements NodeInterface
 {
     public function __construct(
-        private ContentStreamIdentifier $contentStreamIdentifier,
+        private ContentSubgraphIdentity $subgraphIdentity,
         private NodeAggregateIdentifier $nodeAggregateIdentifier,
         private OriginDimensionSpacePoint $originDimensionSpacePoint,
         private NodeTypeName $nodeTypeName,
@@ -43,8 +41,6 @@ final class Node implements NodeInterface
         /** @var PropertyCollectionInterface<string,mixed> $properties */
         private PropertyCollectionInterface $properties,
         private NodeAggregateClassification $classification,
-        private DimensionSpacePoint $dimensionSpacePoint,
-        private VisibilityConstraints $visibilityConstraints
     ) {
     }
 
@@ -127,5 +123,10 @@ final class Node implements NodeInterface
     {
         return $this->getSubgraphIdentity()->equals($other->getSubgraphIdentity())
             && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
+    }
+
+    public function getSubgraphIdentity(): ContentSubgraphIdentity
+    {
+        return $this->subgraphIdentity;
     }
 }

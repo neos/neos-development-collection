@@ -19,7 +19,6 @@ use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
-use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
@@ -27,20 +26,18 @@ use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
-use Ramsey\Uuid\Uuid;
 
 /**
  * The content stream forking feature trait for behavioral tests
@@ -237,13 +234,13 @@ trait GenericCommandExecutionAndEventPublication
 
         Assert::assertArrayHasKey($eventNumber, $this->currentEventStreamAsArray, 'Event at index does not exist');
 
-        /* @var $actualEvent EventEnvelope */
         $actualEvent = $this->currentEventStreamAsArray[$eventNumber];
+        assert($actualEvent instanceof EventEnvelope);
 
         Assert::assertNotNull($actualEvent, sprintf('Event with number %d not found', $eventNumber));
-        Assert::assertEquals($eventType, $actualEvent->getRawEvent()->getType(), 'Event Type does not match: "' . $actualEvent->getRawEvent()->getType() . '" !== "' . $eventType . '"');
+        Assert::assertEquals($eventType, $actualEvent->event->type->value, 'Event Type does not match: "' . $actualEvent->event->type->value . '" !== "' . $eventType . '"');
 
-        $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
+        $actualEventPayload = json_decode($actualEvent->event->data->value, true);
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
             $key = $assertionTableRow['Key'];

@@ -312,7 +312,7 @@ class ProjectionContentGraph
 
             if ($rightmostSucceedingSiblingRelationData) {
                 $position = ((int)$rightmostSucceedingSiblingRelationData['position'])
-                    + GraphProjector::RELATION_DEFAULT_OFFSET;
+                    + DoctrineDbalContentGraphProjection::RELATION_DEFAULT_OFFSET;
             } else {
                 $position = 0;
             }
