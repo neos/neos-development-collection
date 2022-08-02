@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos;
 
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\EventSourcedNeosAdjustments\Ui\EditorContentStreamZookeeper;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
@@ -32,6 +31,7 @@ use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Neos\Service\EditorContentStreamZookeeper;
 
 /**
  * The Neos Package

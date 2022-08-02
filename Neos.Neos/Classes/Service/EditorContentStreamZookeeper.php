@@ -12,18 +12,19 @@
 
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\Ui;
+namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Neos\Domain\Model\WorkspaceName as AdjustmentsWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -31,6 +32,7 @@ use Neos\Flow\Security\Authentication;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Domain\Model\User;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Party\Domain\Service\PartyService;
 
 /**
@@ -63,15 +65,15 @@ final class EditorContentStreamZookeeper
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var Bootstrap
      */
-    protected $workspaceFinder;
+    protected $bootstrap;
 
     /**
      * @Flow\Inject
-     * @var WorkspaceCommandHandler
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceCommandHandler;
+    protected $contentRepositoryRegistry;
 
     /**
      * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'),
@@ -86,6 +88,12 @@ final class EditorContentStreamZookeeper
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
+
+        $requestHandler = $this->bootstrap->getActiveRequestHandler();
+        assert($requestHandler instanceof HttpRequestHandlerInterface);
+        $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
+
         $isEditor = false;
         foreach ($token->getAccount()->getRoles() as $role) {
             /** @var Role $role */
@@ -101,22 +109,22 @@ final class EditorContentStreamZookeeper
                 $workspaceName = AdjustmentsWorkspaceName::fromAccountIdentifier(
                     $token->getAccount()->getAccountIdentifier()
                 );
-                $workspace = $this->workspaceFinder->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
+                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
 
                 $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {
                     // @todo: find base workspace for user
                     /** @var Workspace $baseWorkspace */
-                    $baseWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
+                    $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
                     $editorsNewContentStreamIdentifier = ContentStreamIdentifier::create();
-                    $similarlyNamedWorkspaces = $this->workspaceFinder->findByPrefix(
+                    $similarlyNamedWorkspaces = $contentRepository->getWorkspaceFinder()->findByPrefix(
                         $workspaceName->toContentRepositoryWorkspaceName()
                     );
                     if (!empty($similarlyNamedWorkspaces)) {
                         $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);
                     }
 
-                    $this->workspaceCommandHandler->handleCreateWorkspace(
+                    $contentRepository->handle(
                         new CreateWorkspace(
                             $workspaceName->toContentRepositoryWorkspaceName(),
                             $baseWorkspace->getWorkspaceName(),
@@ -126,14 +134,14 @@ final class EditorContentStreamZookeeper
                             $editorsNewContentStreamIdentifier,
                             $userIdentifier
                         )
-                    )->blockUntilProjectionsAreUpToDate();
+                    )->block();
                 } else {
-                    $this->workspaceCommandHandler->handleRebaseWorkspace(
+                    $contentRepository->handle(
                         RebaseWorkspace::create(
                             $workspace->getWorkspaceName(),
                             $userIdentifier
                         )
-                    )->blockUntilProjectionsAreUpToDate();
+                    )->block();
                 }
             }
         }
