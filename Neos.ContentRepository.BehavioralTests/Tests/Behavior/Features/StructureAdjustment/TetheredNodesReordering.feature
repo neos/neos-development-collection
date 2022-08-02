@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Tethered Nodes Reordering Structure changes
 
   As a user of the CR I want to be able to detect wrongly ordered tethered nodes, and fix them.

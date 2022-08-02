@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node aggregate with node
 
   As a user of the CR I want to create a new externally referencable node aggregate of a specific type with an initial node
@@ -37,6 +37,7 @@ Feature: Create node aggregate with node
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     And I am in dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:

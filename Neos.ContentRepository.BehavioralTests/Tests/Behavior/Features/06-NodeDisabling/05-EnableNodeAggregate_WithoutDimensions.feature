@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Enable a node aggregate
 
   As a user of the CR I want to enable a node aggregate and expect its descendants to also be enabled unless otherwise disabled.

@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Publishing and discard individual nodes (basics)
 
   Publishing an individual node works

@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node generalization
 
   As a user of the CR I want to create a copy of a node within an aggregate to a more general dimension space point.
@@ -30,6 +30,7 @@ Feature: Create node generalization
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |

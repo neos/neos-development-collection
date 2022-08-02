@@ -109,6 +109,8 @@ class ContentStreamProjection implements ProjectionInterface
     public function reset(): void
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
+        $this->checkpointStorage->acquireLock();
+        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
     public function canHandle(Event $event): bool
@@ -139,6 +141,7 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function apply(EventEnvelope $eventEnvelope): void
     {
+
         if (!$this->canHandle($eventEnvelope->event)) {
             return;
         }

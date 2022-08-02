@@ -53,7 +53,7 @@ trait NodeOperationsTrait
     abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
     /**
-     * @AfterScenario @fixtures
+     * @AfterScenario @contentrepository
      */
     public function resetCustomNodeTypes()
     {

@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Enable a node aggregate
 
   As a user of the CR I want to enable a disabled node and expect its descendants that have been directly disabled by this node to become enabled as well.

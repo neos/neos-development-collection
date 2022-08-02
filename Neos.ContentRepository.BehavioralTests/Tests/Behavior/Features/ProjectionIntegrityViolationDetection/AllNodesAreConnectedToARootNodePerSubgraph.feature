@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Run projection integrity violation detection regarding root connection
 
   As a user of the CR I want to be able to check whether there are nodes that are not connected to a root node.

@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Remove disallowed Child Nodes and grandchild nodes
 
   As a user of the CR I want to be able to detect and remove disallowed child nodes according to the constraints

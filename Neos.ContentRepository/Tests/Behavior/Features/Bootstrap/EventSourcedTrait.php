@@ -34,6 +34,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -208,8 +209,6 @@ trait EventSourcedTrait
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
-        $this->initCleanContentRepository();
-
         $adapterTagPrefix = 'adapters=';
         $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
         /** @var array<int,string> $adapterKeys */
@@ -233,8 +232,13 @@ trait EventSourcedTrait
         $this->currentNodeAggregates = null;
         $this->currentUserIdentifier = null;
         $this->currentNodes = null;
-
         $this->contentRepository->resetProjectionStates();
+
+        $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
+        // copied from DoctrineEventStoreFactory
+        $eventTableName = sprintf('neos_cr_%s_events', $this->contentRepositoryIdentifier);
+        $connection->executeStatement('TRUNCATE ' . $eventTableName);
+
     }
 
     /**

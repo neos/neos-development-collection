@@ -42,6 +42,8 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
     public function reset(): void
     {
         $this->repository->reset();
+        $this->checkpointStorage->acquireLock();
+        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
     public function whenNodeAggregateWithNodeWasCreated(

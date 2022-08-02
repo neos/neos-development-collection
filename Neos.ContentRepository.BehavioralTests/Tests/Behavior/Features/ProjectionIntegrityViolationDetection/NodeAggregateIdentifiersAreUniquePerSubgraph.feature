@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Create two nodes with the same node aggregate identifier in the same subgraph
 
   As a user of the CR I want to be able to check whether there are ambiguous node aggregates

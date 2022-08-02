@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: If content streams are not in use anymore by the workspace, they can be properly pruned - this is
   tested here.
 

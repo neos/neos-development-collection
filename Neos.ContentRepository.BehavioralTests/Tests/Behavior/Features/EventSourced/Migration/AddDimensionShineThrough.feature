@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Add Dimension Specialization
 
   This is needed if "de" exists, and you want to create a "de_CH" specialization:

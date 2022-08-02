@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Disable a node aggregate
 
   As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.
@@ -22,6 +22,7 @@ Feature: Disable a node aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |

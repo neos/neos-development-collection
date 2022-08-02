@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Unknown node types
 
   As a user of the CR I want to be able to detect and remove unknown node types

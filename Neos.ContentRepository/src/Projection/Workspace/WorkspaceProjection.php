@@ -115,6 +115,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     public function reset(): void
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
+        $this->checkpointStorage->acquireLock();
+        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
     public function canHandle(Event $event): bool

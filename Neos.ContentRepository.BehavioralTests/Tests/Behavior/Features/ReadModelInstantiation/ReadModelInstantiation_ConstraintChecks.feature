@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Provide and configure a custom read model
 
   As a user of the CR I want to provide and configure a custom node-based read model.
