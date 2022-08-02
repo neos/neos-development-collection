@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -66,7 +67,10 @@ use Neos\Flow\Property\PropertyMapper;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
-class ContentRepositoryExportService
+/**
+ * @Flow\Proxy(false)
+ */
+class ContentRepositoryExportService implements ContentRepositoryServiceInterface
 {
     /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
