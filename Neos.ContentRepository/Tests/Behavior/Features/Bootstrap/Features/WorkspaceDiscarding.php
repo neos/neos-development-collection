@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
@@ -26,9 +27,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
  */
 trait WorkspaceDiscarding
 {
+    abstract protected function getContentRepository(): ContentRepository;
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -53,8 +53,7 @@ trait WorkspaceDiscarding
             $newContentStreamIdentifier
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handleDiscardWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
 
@@ -83,7 +82,6 @@ trait WorkspaceDiscarding
             $newContentStreamIdentifier
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handleDiscardIndividualNodesFromWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 }

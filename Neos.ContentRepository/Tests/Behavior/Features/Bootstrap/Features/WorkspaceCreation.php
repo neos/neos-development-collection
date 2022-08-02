@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -30,9 +31,8 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 trait WorkspaceCreation
 {
+    abstract protected function getContentRepository(): ContentRepository;
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -59,8 +59,7 @@ trait WorkspaceCreation
             ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier'])
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handleCreateRootWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
     /**
      * @Given /^the event RootWorkspaceWasCreated was published with payload:$/
@@ -100,8 +99,7 @@ trait WorkspaceCreation
             isset($commandArguments['workspaceOwner']) ? UserIdentifier::fromString($commandArguments['workspaceOwner']) : null
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handleCreateWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
     }
 
 
@@ -127,7 +125,6 @@ trait WorkspaceCreation
             $rebasedContentStreamIdentifier,
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handleRebaseWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
     }
 }

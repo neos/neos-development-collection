@@ -84,6 +84,17 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * Useful for tests
+     * @internal
+     */
+    public function forgetInstances(): void
+    {
+        $this->contentRepositoryInstances = [];
+        $this->contentRepositoryServiceInstances = [];
+        $this->factoryInstances = [];
+    }
+
+    /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
     private function getFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepositoryFactory
@@ -141,7 +152,7 @@ final class ContentRepositoryRegistry
         if (!$nodeTypeManagerFactory instanceof NodeTypeManagerFactoryInterface) {
             throw new \RuntimeException(sprintf('nodeTypeManager.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, NodeTypeManagerFactoryInterface::class, get_debug_type($nodeTypeManagerFactory)));
         }
-        return $nodeTypeManagerFactory->build($contentRepositoryIdentifier,  $contentRepositorySettings, $contentRepositoryPreset['nodeTypeManager']);
+        return $nodeTypeManagerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['nodeTypeManager']);
     }
 
     private function buildContentDimensionSource(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ContentDimensionSourceInterface
@@ -192,7 +203,7 @@ final class ContentRepositoryRegistry
                 $projectionOptions['options'] ?? []
             );
 
-            foreach ($projectionOptions['catchUpHooks'] as $catchUpHookOptions) {
+            foreach (($projectionOptions['catchUpHooks'] ?? []) as $catchUpHookOptions) {
                 $catchUpHookFactory = $this->objectManager->get($catchUpHookOptions['factoryObjectName']);
                 if (!$catchUpHookFactory instanceof CatchUpHookFactoryInterface) {
                     throw new \RuntimeException(sprintf('CatchUpHook factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s', $projectionName, $contentRepositoryIdentifier->value, CatchUpHookFactoryInterface::class, get_debug_type($catchUpHookFactory)));

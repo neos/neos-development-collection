@@ -120,11 +120,6 @@ trait EventSourcedTrait
 
     protected ?NodeAggregateIdentifier $rootNodeAggregateIdentifier;
 
-    /**
-     * @var array|\Neos\EventSourcing\Projection\ProjectorInterface[]
-     */
-    private array $projectorsToBeReset = [];
-
     private ContentRepositoryIdentifier $contentRepositoryIdentifier;
     private ContentRepositoryRegistry $contentRepositoryRegistry;
     private ContentRepository $contentRepository;
@@ -132,11 +127,28 @@ trait EventSourcedTrait
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
-    protected function getContentRepository(): ContentRepository {
+
+    protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier
+    {
+        return $this->contentRepositoryIdentifier;
+    }
+
+    protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
+    {
+        return $this->contentRepositoryRegistry;
+    }
+
+    protected function getContentRepository(): ContentRepository
+    {
         return $this->contentRepository;
     }
 
-    protected function getContentRepositoryInternals(): ContentRepositoryInternals {
+    /**
+     * @return ContentRepositoryInternals
+     * @deprecated ideally we would not need this in tests
+     */
+    protected function getContentRepositoryInternals(): ContentRepositoryInternals
+    {
         return $this->contentRepositoryInternals;
     }
 
@@ -166,36 +178,28 @@ trait EventSourcedTrait
 
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
         $this->contentRepositoryRegistry = $this->getObjectManager()->get(ContentRepositoryRegistry::class);
+        $this->initCleanContentRepository();
+    }
+
+    private function initCleanContentRepository(): void
+    {
+        $this->contentRepositoryRegistry->forgetInstances();
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
-        $this->contentRepository->setUp();
+        $this->contentRepository->setUp(); // TODO: is this too slow for every test??
         $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryIdentifier, new ContentRepositoryInternalsFactory());
 
-
-        $activeContentGraphsConfig = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepository.unstableInternalWillChangeLater.testing.activeContentGraphs'
-        );
         $availableContentGraphs = [];
-        foreach ($activeContentGraphsConfig as $name => $className) {
-            if (is_string($className)) {
-                $availableContentGraphs[$name] = $this->getObjectManager()->get($className);
-            }
-        }
+        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
+        $availableContentGraphs['Postgres'] = null; // TODO: currently disabled
+
         if (count($availableContentGraphs) === 0) {
             throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
         }
         $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-        $this->nodeTypeConstraintFactory = NodeTypeConstraintParser::create($this->contentRepository);
+        $this->nodeTypeConstraintFactory = NodeTypeConstraintParser::create($this->contentRepository->getNodeTypeManager());
 
-        foreach ($configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepository.unstableInternalWillChangeLater.testing.projectorsToBeReset'
-        ) ?: [] as $projectorClassName => $toBeReset) {
-            if ($toBeReset) {
-                $this->projectorsToBeReset[] = $this->getObjectManager()->get($projectorClassName);
-            }
-        }
     }
+
 
     /**
      * @BeforeScenario
@@ -204,6 +208,8 @@ trait EventSourcedTrait
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
+        $this->initCleanContentRepository();
+
         $adapterTagPrefix = 'adapters=';
         $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
         /** @var array<int,string> $adapterKeys */
@@ -219,9 +225,7 @@ trait EventSourcedTrait
             ? $this->availableContentGraphs
             : $this->availableContentGraphs->reduceTo($adapterKeys);
 
-        foreach ($this->getAvailableContentGraphs() as $contentGraph) {
-            $contentGraph->enableCache();
-        }
+
         $this->visibilityConstraints = VisibilityConstraints::frontend();
         $this->dimensionSpacePoint = null;
         $this->rootNodeAggregateIdentifier = null;
@@ -229,13 +233,8 @@ trait EventSourcedTrait
         $this->currentNodeAggregates = null;
         $this->currentUserIdentifier = null;
         $this->currentNodes = null;
-        foreach ($this->projectorsToBeReset as $projector) {
-            if (method_exists($projector, 'resetForTests')) {
-                $projector->resetForTests();
-            } else {
-                $projector->reset();
-            }
-        }
+
+        $this->contentRepository->resetProjectionStates();
     }
 
     /**
@@ -368,7 +367,8 @@ trait EventSourcedTrait
         string $serializedNodeTypeConstraints,
         int $maximumLevels,
         TableNode $table
-    ): void {
+    ): void
+    {
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
@@ -473,14 +473,6 @@ trait EventSourcedTrait
         );
     }
 
-    protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler
-    {
-        /** @var WorkspaceCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(WorkspaceCommandHandler::class);
-
-        return $commandHandler;
-    }
-
     protected function getContentStreamCommandHandler(): ContentStreamCommandHandler
     {
         /** @var ContentStreamCommandHandler $commandHandler */
@@ -506,8 +498,8 @@ trait EventSourcedTrait
     }
 
     /**
-     * @deprecated
      * @return EventNormalizer
+     * @deprecated
      */
     protected function getEventNormalizer(): EventNormalizer
     {
@@ -515,8 +507,8 @@ trait EventSourcedTrait
     }
 
     /**
-     * @deprecated
      * @return EventStoreInterface
+     * @deprecated
      */
     protected function getEventStore(): EventStoreInterface
     {

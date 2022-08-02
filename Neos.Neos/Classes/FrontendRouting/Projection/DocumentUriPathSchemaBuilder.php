@@ -26,8 +26,7 @@ class DocumentUriPathSchemaBuilder
     private function createUriTable(Schema $schema): void
     {
 
-        $table = $schema->createTable($this->tableNamePrefix . '_uri')
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $table = $schema->createTable($this->tableNamePrefix . '_uri');
         $table->addColumn('nodeaggregateidentifier', Types::STRING)
             ->setLength(255)
             ->setDefault('')
@@ -78,8 +77,7 @@ class DocumentUriPathSchemaBuilder
 
     private function createLiveContentStreamsTable(Schema $schema): void
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_livecontentstreams')
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $table = $schema->createTable($this->tableNamePrefix . '_livecontentstreams');
         $table->addColumn('contentstreamidentifier', Types::STRING)
             ->setLength(255)
             ->setDefault('')

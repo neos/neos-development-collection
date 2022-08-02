@@ -30,7 +30,7 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
 
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHookFactoryInterface $catchUpHookFactory, Projections $projectionsSoFar): ProjectionInterface
     {
-        new WorkspaceProjection(
+        return new WorkspaceProjection(
             $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             sprintf('neos_cr_%s_projection_%s', $projectionFactoryDependencies->contentRepositoryIdentifier, strtolower(str_replace('Projection', '', (new \ReflectionClass(WorkspaceProjection::class))->getShortName()))),

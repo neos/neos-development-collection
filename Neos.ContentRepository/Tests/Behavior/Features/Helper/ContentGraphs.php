@@ -45,13 +45,13 @@ final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
             if (!is_string($adapterName) || empty($adapterName)) {
                 throw new \InvalidArgumentException('ContentGraphs must be indexed by adapter name', 1643488356);
             }
-            if (!$item instanceof ContentGraphInterface) {
+            if (!($item === null || $item instanceof ContentGraphInterface)) {
                 throw new \InvalidArgumentException('ContentGraphs can only consist of ' . ContentGraphInterface::class . ' objects.', 1618130675);
             }
             $contentGraphs[$adapterName] = $item;
         }
         $this->contentGraphs = $contentGraphs;
-        $this->iterator = new \ArrayIterator($contentGraphs);
+        $this->iterator = new \ArrayIterator(array_filter($contentGraphs, fn($el) => is_object($el)));
     }
 
     public function offsetGet(mixed $offset): ContentGraphInterface|null
@@ -89,7 +89,7 @@ final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
     {
         $reduction = [];
         foreach ($identifiers as $identifier) {
-            if (isset($this->contentGraphs[$identifier])) {
+            if (array_key_exists($identifier, $this->contentGraphs)) {
                 $reduction[$identifier] = $this->contentGraphs[$identifier];
             } else {
                 throw new \InvalidArgumentException('Unknown adapter "' . $identifier . '"', 1648406324);

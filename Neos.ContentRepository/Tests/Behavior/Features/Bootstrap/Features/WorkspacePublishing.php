@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -26,10 +27,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
  */
 trait WorkspacePublishing
 {
+    abstract protected function getContentRepository(): ContentRepository;
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
@@ -63,8 +62,7 @@ trait WorkspacePublishing
             $contentStreamIdentifierForRemainingPart
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handlePublishIndividualNodesFromWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
     }
 
     /**
@@ -84,8 +82,7 @@ trait WorkspacePublishing
             $initiatingUserIdentifier
         );
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handlePublishWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
     }
 
     /**

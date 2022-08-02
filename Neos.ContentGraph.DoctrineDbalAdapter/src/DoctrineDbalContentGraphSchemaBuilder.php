@@ -28,8 +28,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createNodeTable(Schema $schema): void
     {
 
-        $table = $schema->createTable($this->tableNamePrefix . '_node')
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $table = $schema->createTable($this->tableNamePrefix . '_node');
         $table->addColumn('relationanchorpoint', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
@@ -57,8 +56,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(Schema $schema): void
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_hierarchyrelation')
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $table = $schema->createTable($this->tableNamePrefix . '_hierarchyrelation');
         $table->addColumn('name', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
@@ -87,8 +85,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createReferenceRelationTable(Schema $schema)
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_referencerelation')
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $table = $schema->createTable($this->tableNamePrefix . '_referencerelation');
         $table->addColumn('name', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
@@ -107,8 +104,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createRestrictionRelationTable(Schema $schema)
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation')
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
         $table->addColumn('contentstreamidentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);

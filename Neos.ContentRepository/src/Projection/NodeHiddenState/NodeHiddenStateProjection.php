@@ -70,8 +70,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
         $schema = new Schema();
-        $contentStreamTable = $schema->createTable($this->tableName)
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $contentStreamTable = $schema->createTable($this->tableName);
         $contentStreamTable->addColumn('contentstreamidentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);

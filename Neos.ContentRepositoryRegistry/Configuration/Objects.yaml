@@ -2,3 +2,36 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
   arguments:
     1:
       setting: Neos.ContentRepositoryRegistry
+
+Neos\ContentRepository\Infrastructure\DbalClientInterface:
+  className: Neos\ContentRepositoryRegistry\Infrastructure\DbalClient
+
+Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  arguments:
+    1:
+      value: Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory
+    2:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+
+
+Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  arguments:
+    1:
+      value: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+    2:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+
+
+Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  arguments:
+    1:
+      value: Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory
+    2:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+

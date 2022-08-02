@@ -81,8 +81,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         }
 
         $schema = new Schema();
-        $workspaceTable = $schema->createTable($this->tableName)
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $workspaceTable = $schema->createTable($this->tableName);
         $workspaceTable->addColumn('workspacename', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
@@ -206,10 +205,10 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'workspaceName' => $event->getWorkspaceName(),
-            'workspaceTitle' => $event->getWorkspaceTitle(),
-            'workspaceDescription' => $event->getWorkspaceDescription(),
-            'currentContentStreamIdentifier' => $event->getNewContentStreamIdentifier(),
+            'workspaceName' => $event->workspaceName,
+            'workspaceTitle' => $event->workspaceTitle,
+            'workspaceDescription' => $event->workspaceDescription,
+            'currentContentStreamIdentifier' => $event->newContentStreamIdentifier,
             'status' => Workspace::STATUS_UP_TO_DATE
         ]);
     }

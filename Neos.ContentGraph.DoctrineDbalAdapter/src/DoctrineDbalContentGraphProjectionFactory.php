@@ -5,6 +5,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
@@ -17,12 +18,18 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
 {
     public function __construct(
         private readonly DbalClientInterface $dbalClient
-    ) {
+    )
+    {
+    }
+
+    public static function graphProjectionTableNamePrefix(ContentRepositoryIdentifier $contentRepositoryIdentifier): string
+    {
+        return sprintf('neos_cr_%s_projection_graph', $contentRepositoryIdentifier);
     }
 
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHookFactoryInterface $catchUpHookFactory, Projections $projectionsSoFar): ProjectionInterface
     {
-        $tableNamePrefix = sprintf('neos_cr_%s_projection_graph', $projectionFactoryDependencies->contentRepositoryIdentifier);
+        $tableNamePrefix = self::graphProjectionTableNamePrefix($projectionFactoryDependencies->contentRepositoryIdentifier);
 
         return new ContentGraphProjection(
             new DoctrineDbalContentGraphProjection(

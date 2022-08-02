@@ -193,13 +193,13 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         try {
             $this->dbal->insert($this->tableNamePrefix. '_livecontentstreams', [
-                'contentStreamIdentifier' => $event->getNewContentStreamIdentifier(),
-                'workspaceName' => $event->getWorkspaceName(),
+                'contentStreamIdentifier' => $event->newContentStreamIdentifier,
+                'workspaceName' => $event->workspaceName,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to insert root content stream identifier of the root workspace "%s": %s',
-                $event->getWorkspaceName(),
+                $event->workspaceName,
                 $e->getMessage()
             ), 1599646608, $e);
         }

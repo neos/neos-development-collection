@@ -13,10 +13,12 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -30,14 +32,12 @@ trait StructureAdjustmentsTrait
      */
     protected $structureAdjustmentService;
 
-    /**
-     * @return ObjectManagerInterface
-     */
-    abstract protected function getObjectManager();
+    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+    abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
-    protected function setupIntegrityViolationTrait(): void
+    protected function setupStructureAdjustmentTrait(): void
     {
-        $this->structureAdjustmentService = $this->getObjectManager()->get(StructureAdjustmentService::class);
+        $this->structureAdjustmentService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new StructureAdjustmentServiceFactory());
     }
 
     /**

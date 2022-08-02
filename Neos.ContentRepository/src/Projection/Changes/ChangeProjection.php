@@ -83,8 +83,7 @@ class ChangeProjection implements ProjectionInterface
         }
 
         $schema = new Schema();
-        $changeTable = $schema->createTable($this->tableName)
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $changeTable = $schema->createTable($this->tableName);
         $changeTable->addColumn('contentStreamIdentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);

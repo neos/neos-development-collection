@@ -14,11 +14,14 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\PyStringNode;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -27,16 +30,15 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait MigrationsTrait
 {
-    protected NodeMigrationService $migrationCommandHandler;
+    protected NodeMigrationService $nodeMigrationService;
 
-    /**
-     * @return ObjectManagerInterface
-     */
-    abstract protected function getObjectManager();
+    abstract protected function getObjectManager(): ObjectManagerInterface;
+    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+    abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     protected function setupMigrationsTrait(): void
     {
-        $this->migrationCommandHandler = $this->getObjectManager()->get(NodeMigrationService::class);
+        $this->nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new NodeMigrationServiceFactory($this->getObjectManager()));
     }
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:
@@ -46,7 +48,7 @@ trait MigrationsTrait
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
         $contentStreamIdentifiers = array_map(fn (string $cs) => ContentStreamIdentifier::fromString($cs), explode(',', $contentStreams));
         $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIdentifiers);
-        $this->migrationCommandHandler->handleExecuteMigration($command);
+        $this->nodeMigrationService->executeMigration($command);
     }
 
     /**

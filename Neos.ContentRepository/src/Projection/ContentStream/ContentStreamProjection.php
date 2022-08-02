@@ -85,8 +85,7 @@ class ContentStreamProjection implements ProjectionInterface
         }
 
         $schema = new Schema();
-        $contentStreamTable = $schema->createTable($this->tableName)
-            ->addOption('collate', 'utf8mb4_unicode_ci');
+        $contentStreamTable = $schema->createTable($this->tableName);
         $contentStreamTable->addColumn('contentStreamIdentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
@@ -206,7 +205,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamIdentifier' => $event->getNewContentStreamIdentifier()
+            'contentStreamIdentifier' => $event->newContentStreamIdentifier
         ]);
     }
 
