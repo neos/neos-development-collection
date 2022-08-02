@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Projection\Workspace\Workspace;

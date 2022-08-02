@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\ValueObject;
+namespace Neos\ContentRepository\Factory;
 
 final class ContentRepositoryIdentifier
 {

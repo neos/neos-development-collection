@@ -3,7 +3,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 

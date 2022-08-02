@@ -4,7 +4,7 @@ namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
 interface ProjectionCatchUpTriggerFactoryInterface
 {

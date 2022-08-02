@@ -4,7 +4,7 @@ namespace Neos\ContentRepositoryRegistry\Factory\NodeTypeManager;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Configuration\ConfigurationManager;

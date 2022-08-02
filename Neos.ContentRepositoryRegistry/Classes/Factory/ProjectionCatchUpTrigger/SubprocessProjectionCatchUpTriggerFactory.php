@@ -4,7 +4,7 @@ namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepositoryRegistry\Command\SubprocessProjectionCatchUpCommandController;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
 /**
  * See {@see SubprocessProjectionCatchUpCommandController} for the inner part

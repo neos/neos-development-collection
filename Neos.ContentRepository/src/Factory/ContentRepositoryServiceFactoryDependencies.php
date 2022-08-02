@@ -22,7 +22,6 @@ use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 
 /**

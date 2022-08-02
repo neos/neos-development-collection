@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\EventStore;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
 

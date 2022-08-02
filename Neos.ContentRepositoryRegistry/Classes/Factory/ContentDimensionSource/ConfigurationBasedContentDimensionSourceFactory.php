@@ -4,7 +4,7 @@ namespace Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
 class ConfigurationBasedContentDimensionSourceFactory implements ContentDimensionSourceFactoryInterface
 {

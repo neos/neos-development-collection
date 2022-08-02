@@ -1,7 +1,7 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Exception;
 
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
 final class InvalidConfigurationException extends \RuntimeException
 {

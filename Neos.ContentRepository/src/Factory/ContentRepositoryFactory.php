@@ -30,7 +30,6 @@ use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
