@@ -6,20 +6,6 @@ Neos:
         ignoredClasses:
           Neos\\ContentRepository\\SharedModel\\NodeType\\NodeTypeManager: true
 
-  EventSourcing:
-    EventStore:
-      stores:
-        'ContentRepository':
-          # By default the DoctrineEventStorage adapter is used, but this can be changed with the following setting:
-          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
-
-          storageOptions:
-
-            # When using the DoctrineEventStorage adapter events are stored in a table called "neos_eventsourcing_eventstore_events" by default. This can be changed per Event Store:
-            eventTableName: 'neos_contentrepository_events'
-
-          eventPublisherFactory: 'Neos\ContentRepositoryRegistry\Legacy\HardcodedEventPublisherFactory'
-
   ContentRepository:
     unstableInternalWillChangeLater:
       testing:
@@ -58,9 +44,8 @@ Neos:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
           options:
             fallbackNodeTypeName: Neos.Neos:FallbackNode
-        contentDimensions:
+        contentDimensionSource:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
-          # dimensions: (Dimensions Config)
         projectionCatchUpTrigger:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
         propertyConverters:

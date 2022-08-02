@@ -22,7 +22,7 @@ use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
 
 /**

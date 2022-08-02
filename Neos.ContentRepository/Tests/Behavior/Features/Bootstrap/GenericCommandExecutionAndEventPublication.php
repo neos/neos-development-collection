@@ -13,8 +13,11 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
@@ -31,13 +34,10 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividua
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcing\EventStore\EventNormalizer;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
@@ -49,17 +49,14 @@ trait GenericCommandExecutionAndEventPublication
 {
     private ?array $currentEventStreamAsArray = null;
 
-    protected ?CommandResult $lastCommandOrEventResult = null;
+    protected CommandResult|null $lastCommandOrEventResult = null;
 
     protected ?\Exception $lastCommandException = null;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
-    abstract protected function getEventNormalizer(): EventNormalizer;
-
-    abstract protected function getEventStore(): EventStore;
+    abstract protected function getContentRepository(): ContentRepository;
+    abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
@@ -71,7 +68,7 @@ trait GenericCommandExecutionAndEventPublication
      */
     public function theCommandIsExecutedWithPayload(string $shortCommandName, TableNode $payloadTable = null, $commandArguments = null)
     {
-        list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
+        $commandClassName = self::resolveShortCommandName($shortCommandName);
         if ($commandArguments === null && $payloadTable !== null) {
             $commandArguments = $this->readPayloadTable($payloadTable);
         }
@@ -87,9 +84,7 @@ trait GenericCommandExecutionAndEventPublication
 
         $command = $commandClassName::fromArray($commandArguments);
 
-        $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
-
-        $this->lastCommandOrEventResult = $commandHandler->$commandHandlerMethod($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**
@@ -109,87 +104,35 @@ trait GenericCommandExecutionAndEventPublication
      * @return array
      * @throws \Exception
      */
-    protected static function resolveShortCommandName($shortCommandName): array
+    protected static function resolveShortCommandName($shortCommandName): string
     {
         switch ($shortCommandName) {
             case 'CreateRootWorkspace':
-                return [
-                    CreateRootWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handleCreateRootWorkspace'
-                ];
+                return CreateRootWorkspace::class;
             case 'CreateWorkspace':
-                return [
-                    CreateWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handleCreateWorkspace'
-                ];
+                return CreateWorkspace::class;
             case 'PublishWorkspace':
-                return [
-                    PublishWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handlePublishWorkspace'
-                ];
+                return PublishWorkspace::class;
             case 'PublishIndividualNodesFromWorkspace':
-                return [
-                    PublishIndividualNodesFromWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handlePublishIndividualNodesFromWorkspace'
-                ];
+                return PublishIndividualNodesFromWorkspace::class;
             case 'RebaseWorkspace':
-                return [
-                    RebaseWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handleRebaseWorkspace'
-                ];
+                return RebaseWorkspace::class;
             case 'CreateNodeAggregateWithNodeAndSerializedProperties':
-                return [
-                    CreateNodeAggregateWithNodeAndSerializedProperties::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleCreateNodeAggregateWithNode'
-                ];
+                return CreateNodeAggregateWithNodeAndSerializedProperties::class;
             case 'ForkContentStream':
-                return [
-                    ForkContentStream::class,
-                    ContentStreamCommandHandler::class,
-                    'handleForkContentStream'
-                ];
+                return ForkContentStream::class;
             case 'ChangeNodeAggregateName':
-                return [
-                    ChangeNodeAggregateName::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleChangeNodeAggregateName'
-                ];
+                return ChangeNodeAggregateName::class;
             case 'SetSerializedNodeProperties':
-                return [
-                    SetSerializedNodeProperties::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleSetSerializedNodeProperties'
-                ];
+                return SetSerializedNodeProperties::class;
             case 'DisableNodeAggregate':
-                return [
-                    DisableNodeAggregate::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleDisableNodeAggregate'
-                ];
+                return DisableNodeAggregate::class;
             case 'EnableNodeAggregate':
-                return [
-                    EnableNodeAggregate::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleEnableNodeAggregate'
-                ];
+                return EnableNodeAggregate::class;
             case 'MoveNodeAggregate':
-                return [
-                    MoveNodeAggregate::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleMoveNodeAggregate'
-                ];
+                return MoveNodeAggregate::class;
             case 'SetNodeReferences':
-                return [
-                    SetNodeReferences::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleSetNodeReferences'
-                ];
+                return SetNodeReferences::class;
 
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
@@ -218,11 +161,19 @@ trait GenericCommandExecutionAndEventPublication
      */
     protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void
     {
-        $event = $this->getEventNormalizer()->denormalize($eventPayload, $eventType);
-        $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
-        $events = DomainEvents::withSingleEvent($event);
-        $this->getEventStore()->commit($streamName, $events);
-        $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+        $artificiallyConstructedEvent = new Event(
+            Event\EventId::create(),
+            Event\EventType::fromString($eventType),
+            Event\EventData::fromString(json_encode($eventPayload)),
+            Event\EventMetadata::fromArray([])
+        );
+        $event = $this->getContentRepositoryInternals()->eventNormalizer->denormalize($artificiallyConstructedEvent);
+
+        $this->lastCommandOrEventResult = $this->getContentRepositoryInternals()->eventPersister->publishEvents(new EventsToPublish(
+            $streamName,
+            Events::with($event),
+            ExpectedVersion::ANY()
+        ));
     }
 
     /**

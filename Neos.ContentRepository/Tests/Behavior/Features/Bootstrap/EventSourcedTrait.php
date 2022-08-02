@@ -31,14 +31,15 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
@@ -68,11 +69,13 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeVariat
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
-use Neos\EventSourcing\EventStore\EventNormalizer;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\EventStoreFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -111,11 +114,6 @@ trait EventSourcedTrait
     protected ContentGraphs $activeContentGraphs;
 
     /**
-     * @var WorkspaceFinder
-     */
-    private $workspaceFinder;
-
-    /**
      * @var NodeTypeConstraintParser
      */
     private $nodeTypeConstraintFactory;
@@ -127,11 +125,28 @@ trait EventSourcedTrait
      */
     private array $projectorsToBeReset = [];
 
+    private ContentRepositoryIdentifier $contentRepositoryIdentifier;
+    private ContentRepositoryRegistry $contentRepositoryRegistry;
+    private ContentRepository $contentRepository;
+    private ContentRepositoryInternals $contentRepositoryInternals;
+
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
+    protected function getContentRepository(): ContentRepository {
+        return $this->contentRepository;
+    }
+
+    protected function getContentRepositoryInternals(): ContentRepositoryInternals {
+        return $this->contentRepositoryInternals;
+    }
+
+    /**
+     * @return WorkspaceFinder
+     * @deprecated
+     */
     protected function getWorkspaceFinder(): WorkspaceFinder
     {
-        return $this->workspaceFinder;
+        return $this->getContentRepository()->getWorkspaceFinder();
     }
 
     protected function getAvailableContentGraphs(): ContentGraphs
@@ -147,8 +162,14 @@ trait EventSourcedTrait
     protected function setupEventSourcedTrait()
     {
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
-        $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
         $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+
+        $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
+        $this->contentRepositoryRegistry = $this->getObjectManager()->get(ContentRepositoryRegistry::class);
+        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
+        $this->contentRepository->setUp();
+        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryIdentifier, new ContentRepositoryInternalsFactory());
+
 
         $activeContentGraphsConfig = $configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
@@ -164,8 +185,7 @@ trait EventSourcedTrait
             throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
         }
         $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-        $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
-        $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintParser::class);
+        $this->nodeTypeConstraintFactory = NodeTypeConstraintParser::create($this->contentRepository);
 
         foreach ($configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
@@ -175,9 +195,6 @@ trait EventSourcedTrait
                 $this->projectorsToBeReset[] = $this->getObjectManager()->get($projectorClassName);
             }
         }
-
-        $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
-        ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
     }
 
     /**
@@ -488,28 +505,22 @@ trait EventSourcedTrait
         return $commandHandler;
     }
 
+    /**
+     * @deprecated
+     * @return EventNormalizer
+     */
     protected function getEventNormalizer(): EventNormalizer
     {
-        /** @var EventNormalizer $eventNormalizer */
-        $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
-
-        return $eventNormalizer;
+        return $this->getContentRepositoryInternals()->eventNormalizer;
     }
 
-    protected function getEventStore(): EventStore
+    /**
+     * @deprecated
+     * @return EventStoreInterface
+     */
+    protected function getEventStore(): EventStoreInterface
     {
-        /* @var EventStoreFactory $eventStoreFactory */
-        $eventStoreFactory = $this->getObjectManager()->get(EventStoreFactory::class);
-
-        return $eventStoreFactory->create('ContentRepository');
-    }
-
-    protected function getRuntimeBlocker(): RuntimeBlocker
-    {
-        /** @var RuntimeBlocker $runtimeBlocker */
-        $runtimeBlocker = $this->getObjectManager()->get(RuntimeBlocker::class);
-
-        return $runtimeBlocker;
+        return $this->getContentRepositoryInternals()->eventStore;
     }
 
     protected function getRootNodeAggregateIdentifier(): ?NodeAggregateIdentifier
@@ -534,8 +545,7 @@ trait EventSourcedTrait
     public function theContentStreamHasState(string $contentStreamIdentifier, string $expectedState)
     {
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-        /** @var ContentStreamFinder $contentStreamFinder */
-        $contentStreamFinder = $this->getObjectManager()->get(ContentStreamFinder::class);
+        $contentStreamFinder = $this->getContentRepository()->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamIdentifier);
         Assert::assertEquals($expectedState, $actual);
@@ -554,6 +564,7 @@ trait EventSourcedTrait
      */
     public function iPruneUnusedContentStreams()
     {
+        $this->contentRepositoryFactory->
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
         $contentStreamPruner->prune();

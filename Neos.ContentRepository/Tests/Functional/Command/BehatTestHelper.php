@@ -47,8 +47,8 @@ class BehatTestHelper
 {
     use IsolatedBehatStepsTrait;
     use SecurityOperationsTrait;
-    use LegacyNodeOperationsTrait;
-    use NodeAuthorizationTrait;
+    // TODO use LegacyNodeOperationsTrait;
+    // TODO use NodeAuthorizationTrait;
 
     /**
      * @var Bootstrap
