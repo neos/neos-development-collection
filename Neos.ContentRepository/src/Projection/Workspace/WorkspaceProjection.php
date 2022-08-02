@@ -19,6 +19,7 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
@@ -132,7 +133,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream): void
+    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
     {
         $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
         $catchUp->run($eventStream);

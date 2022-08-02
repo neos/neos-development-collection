@@ -18,6 +18,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ProjectorEventHandle
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\EventInterface;
@@ -182,9 +183,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream): void
+    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
     {
-        $catchUpHook = $this->catchUpHookFactory->build($this->getState());
+        $catchUpHook = $this->catchUpHookFactory->build($contentRepository);
         $catchUpHook->onBeforeCatchUp();
         $catchUp = CatchUp::create(
             fn(EventEnvelope $eventEnvelope) => $this->apply($eventEnvelope, $catchUpHook),

@@ -43,9 +43,10 @@ interface ProjectionInterface
      * from {@see ProjectionCatchUpTriggerInterface}.
      *
      * @param EventStreamInterface $eventStream
+     * @param ContentRepository $contentRepository
      * @return void
      */
-    public function catchUp(EventStreamInterface $eventStream): void;
+    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void;
 
     /**
      * Part of the Blocking implementation of commands - usually delegates to an internal

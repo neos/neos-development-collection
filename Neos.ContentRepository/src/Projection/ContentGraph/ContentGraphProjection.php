@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\WithMarkStaleInterface;
 use Neos\EventStore\Model\Event;
@@ -37,9 +38,9 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         return $this->projectionImplementation->getState();
     }
 
-    public function catchUp(EventStreamInterface $eventStream): void
+    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
     {
-        $this->projectionImplementation->catchUp($eventStream);
+        $this->projectionImplementation->catchUp($eventStream, $contentRepository);
     }
 
     public function getSequenceNumber(): SequenceNumber

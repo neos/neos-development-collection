@@ -33,19 +33,10 @@ use Psr\Log\LoggerInterface;
 /**
  * This service flushes Fusion content caches triggered by node changes.
  *
- * It is called in two scenarios:
- *
- * - when the projection changes: In this case, it is triggered by {@see CacheAwareGraphProjectorFactory} which creates
- *   {@see CacheFlushJob} instances (which in turn flush the cache).
+ * It is called when the projection changes: In this case, it is triggered by {@see GraphProjectorCatchUpHookForCacheFlushing} which
+ * calls this method..
  *   This is the relevant case if publishing a workspace
- *   - where we f.e. need to flush the cache for Live asynchronously.
- *
- * - explicitly through a Backend API request when we change the projection, block, and then render new content. In this
- *   scenario, it is important to flush the caches BETWEEN updating the projection and rendering the new content - this
- *   only works through an explicit call to {@see ContentCacheFlusher::flushNodeAggregate()}
- *   or {@see ContentCacheFlusher::scheduleFlushNodeAggregate()}.
- *
- * The method registerNodeChange() is triggered manually in the respective UI packages.
+ *   - where we f.e. need to flush the cache for Live.
  *
  * @Flow\Scope("singleton")
  */
@@ -64,12 +55,6 @@ class ContentCacheFlusher
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
-
-    /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -77,32 +62,10 @@ class ContentCacheFlusher
      * @return void
      */
     public function flushNodeAggregate(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): void {
-        $doFlushContentCache = $this->scheduleFlushNodeAggregate($contentRepositoryIdentifier, $contentStreamIdentifier, $nodeAggregateIdentifier);
-        $doFlushContentCache();
-    }
-
-    /**
-     * Sometimes, you need to defer figuring out what to flush and the actual flushing to a later point in time.
-     * For example, when removing a node, we need to figure out what to flush while the node still exists,
-     * but do the flushing later when the node was removed.
-     *
-     * This can be done with this method: When calling this method, it *directly* finds out what needs to be flushed.
-     * The flushing itself, however, must then be triggered by calling the returned function.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return callable execute this function to actually trigger the content cache flushing
-     */
-    public function scheduleFlushNodeAggregate(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepository $contentRepository,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): callable {
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';

@@ -10,6 +10,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Projection\ProjectionInterface;
@@ -131,7 +132,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream): void
+    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
     {
         $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
         $catchUp->run($eventStream);

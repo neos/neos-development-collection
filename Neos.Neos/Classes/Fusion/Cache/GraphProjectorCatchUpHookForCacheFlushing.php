@@ -12,35 +12,22 @@ namespace Neos\Neos\Fusion\Cache;
  * source code.
  */
 
-use Flowpack\JobQueue\Common\Job\JobManager;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Projection\CatchUpHandlerInterface;
+use Neos\ContentRepository\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
-use Neos\Flow\Annotations as Flow;
 
 
-class GraphProjectorCatchUpHandlerForCacheFlushing implements CatchUpHandlerInterface
+class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 {
 
-    /**
-     * @Flow\Inject
-     * @var JobManager
-     */
-    protected $jobManager;
-
-    /**
-     * @Flow\InjectConfiguration("contentCacheFlusher.queueName")
-     * @var string
-     */
-    protected $queueName;
-
     public function __construct(
-        private readonly ContentGraphInterface $contentGraph
+        private readonly ContentRepository $contentRepository,
+        private readonly ContentCacheFlusher $contentCacheFlusher
     )
     {
     }
@@ -58,18 +45,19 @@ class GraphProjectorCatchUpHandlerForCacheFlushing implements CatchUpHandlerInte
         //     return;
         //}
         if ($eventInstance instanceof NodeAggregateWasRemoved) {
-            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
                 $eventInstance->getContentStreamIdentifier(),
                 $eventInstance->getNodeAggregateIdentifier()
             );
             if ($nodeAggregate) {
-                $parentNodeAggregates = $this->contentGraph->findParentNodeAggregates(
+                $parentNodeAggregates = $this->contentRepository->getContentGraph()->findParentNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
                 );
                 foreach ($parentNodeAggregates as $parentNodeAggregate) {
                     assert($parentNodeAggregate instanceof NodeAggregate);
                     $this->scheduleCacheFlushJobForNodeAggregate(
+                        $this->contentRepository,
                         $parentNodeAggregate->getContentStreamIdentifier(),
                         $parentNodeAggregate->getIdentifier()
                     );
@@ -91,47 +79,49 @@ class GraphProjectorCatchUpHandlerForCacheFlushing implements CatchUpHandlerInte
             !($eventInstance instanceof NodeAggregateWasRemoved)
             && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateIdentifier
         ) {
-            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
                 $eventInstance->getContentStreamIdentifier(),
                 $eventInstance->getNodeAggregateIdentifier()
             );
 
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
+                    $this->contentRepository,
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
                 );
             }
         }
     }
-
-    public function onAfterCatchUp(): void
-    {
-        $this->flushCache();
-    }
-
-
     /**
      * @var array<int,array<string,mixed>>
      */
     protected array $cacheFlushes = [];
 
     protected function scheduleCacheFlushJobForNodeAggregate(
+        ContentRepository $contentRepository,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): void {
-        $this->cacheFlushes[] = [
+        // we store this in an associative array deduplicate.
+        $this->cacheFlushes[$contentStreamIdentifier->getValue() . '__' . $nodeAggregateIdentifier->getValue()] = [
+            'cr' => $contentRepository,
             'csi' => $contentStreamIdentifier,
             'nai' => $nodeAggregateIdentifier
         ];
-        if (count($this->cacheFlushes) === 20) {
-            $this->flushCache();
-        }
     }
 
-    protected function flushCache(): void
+    public function onBeforeBatchCompleted(): void
     {
-        $this->jobManager->queue($this->queueName, new CacheFlushJob($this->cacheFlushes));
+        foreach ($this->cacheFlushes as $entry) {
+            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['csi'], $entry['nai']);
+        }
         $this->cacheFlushes = [];
+    }
+
+
+
+    public function onAfterCatchUp(): void
+    {
     }
 }

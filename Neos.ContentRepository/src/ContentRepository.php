@@ -92,7 +92,7 @@ final class ContentRepository
         // TODO allow custom stream name per projection
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
-        $projection->catchUp($eventStream);
+        $projection->catchUp($eventStream, $this);
     }
 
     public function setUp(): SetupResult

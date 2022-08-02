@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Projection;
 
+use Neos\ContentRepository\ContentRepository;
+
 final class CatchUpHookFactories implements CatchUpHookFactoryInterface
 {
     /**
@@ -34,9 +36,9 @@ final class CatchUpHookFactories implements CatchUpHookFactoryInterface
         return array_key_exists($catchUpHookFactoryClassName, $this->catchUpHookFactories);
     }
 
-    public function build(ProjectionStateInterface $projectionState): CatchUpHookInterface
+    public function build(ContentRepository $contentRepository): CatchUpHookInterface
     {
-        $catchUpHooks = array_map(fn(CatchUpHookFactoryInterface $catchUpHookFactory) => $catchUpHookFactory->build($projectionState), $this->catchUpHookFactories);
+        $catchUpHooks = array_map(fn(CatchUpHookFactoryInterface $catchUpHookFactory) => $catchUpHookFactory->build($contentRepository), $this->catchUpHookFactories);
         return new DelegatingCatchUpHook(...$catchUpHooks);
     }
 }

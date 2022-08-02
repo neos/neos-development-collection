@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Projector;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
@@ -212,7 +213,7 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
         // TODO: Implement canHandle() method.
     }
 
-    public function catchUp(EventStreamInterface $eventStream): void
+    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
     {
         // TODO: Implement catchUp() method.
     }
