@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
@@ -23,11 +24,11 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  */
 trait ContentStreamForking
 {
+    abstract protected function getContentRepository(): ContentRepository;
+
     abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getContentStreamCommandHandler(): ContentStreamCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -52,7 +53,6 @@ trait ContentStreamForking
             $initiatingUserIdentifier
         );
 
-        $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
-            ->handleForkContentStream($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 }

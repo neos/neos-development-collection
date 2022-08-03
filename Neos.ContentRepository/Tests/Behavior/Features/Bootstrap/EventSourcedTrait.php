@@ -45,15 +45,11 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\ContentStreamPruner;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -79,7 +75,6 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -328,9 +323,9 @@ trait EventSourcedTrait
      */
     public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
     {
-        $workspaceA = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
+        $workspaceA = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
         Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
+        $workspaceB = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
@@ -346,7 +341,7 @@ trait EventSourcedTrait
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
     {
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
     }
@@ -450,7 +445,7 @@ trait EventSourcedTrait
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             $nodeAggregateIdentifier,
-            $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
+            $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
         );
     }
 
@@ -473,33 +468,8 @@ trait EventSourcedTrait
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             $node->getNodeAggregateIdentifier(),
-            $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
+            $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
         );
-    }
-
-    protected function getContentStreamCommandHandler(): ContentStreamCommandHandler
-    {
-        /** @var ContentStreamCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(ContentStreamCommandHandler::class);
-
-        return $commandHandler;
-    }
-
-    protected function getNodeDuplicationCommandHandler(): NodeDuplicationCommandHandler
-    {
-        /** @var NodeDuplicationCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeDuplicationCommandHandler::class);
-
-        return $commandHandler;
-    }
-
-    /**
-     * @return EventNormalizer
-     * @deprecated
-     */
-    protected function getEventNormalizer(): EventNormalizer
-    {
-        return $this->getContentRepositoryInternals()->eventNormalizer;
     }
 
     /**

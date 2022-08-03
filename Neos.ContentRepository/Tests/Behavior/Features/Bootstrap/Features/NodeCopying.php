@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -30,6 +31,8 @@ use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodesByAdapter;
  */
 trait NodeCopying
 {
+    abstract protected function getContentRepository(): ContentRepository;
+
     abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
@@ -81,7 +84,6 @@ trait NodeCopying
         );
         $command = $command->withNodeAggregateIdentifierMapping(NodeAggregateIdentifierMapping::fromArray($commandArguments['nodeAggregateIdentifierMapping']));
 
-        $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
-            ->handleCopyNodesRecursively($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 }
