@@ -296,13 +296,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->getNewContentStreamIdentifier(),
+            $event->newContentStreamIdentifier,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->getPreviousContentStreamIdentifier(),
+            $event->previousContentStreamIdentifier,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }
@@ -310,7 +310,7 @@ class ContentStreamProjection implements ProjectionInterface
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
         $this->updateStateForContentStream(
-            $event->getCandidateContentStreamIdentifier(),
+            $event->candidateContentStreamIdentifier,
             ContentStreamFinder::STATE_REBASE_ERROR
         );
     }

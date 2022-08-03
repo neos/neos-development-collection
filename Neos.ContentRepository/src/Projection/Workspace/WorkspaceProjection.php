@@ -263,16 +263,16 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
-        $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
-        $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
+        $this->updateContentStreamIdentifier($event->newContentStreamIdentifier, $event->workspaceName);
+        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
 
         // When the rebase is successful, we can set the status of the workspace back to UP_TO_DATE.
-        $this->markWorkspaceAsUpToDate($event->getWorkspaceName());
+        $this->markWorkspaceAsUpToDate($event->workspaceName);
     }
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
-        $this->markWorkspaceAsOutdatedConflict($event->getWorkspaceName());
+        $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
     }
 
     private function updateContentStreamIdentifier(

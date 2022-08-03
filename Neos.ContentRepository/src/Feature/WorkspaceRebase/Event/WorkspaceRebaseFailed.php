@@ -18,74 +18,48 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-class WorkspaceRebaseFailed implements EventInterface
+final class WorkspaceRebaseFailed implements EventInterface
 {
-    private WorkspaceName $workspaceName;
-
-    /**
-     * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
-     */
-    private ContentStreamIdentifier $candidateContentStreamIdentifier;
-
-    /**
-     * The content stream which we tried to rebase
-     */
-    private ContentStreamIdentifier $sourceContentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    /**
-     * @var array<int,array<string,mixed>>
-     */
-    private array $errors;
-
     /**
      * @param array<int,array<string,mixed>> $errors
      */
     public function __construct(
-        WorkspaceName $workspaceName,
-        ContentStreamIdentifier $candidateContentStreamIdentifier,
-        ContentStreamIdentifier $sourceContentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier,
-        array $errors
+        public readonly WorkspaceName $workspaceName,
+
+        /**
+         * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
+         */
+        public readonly ContentStreamIdentifier $candidateContentStreamIdentifier,
+
+        /**
+         * The content stream which we tried to rebase
+         */
+        public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly array $errors
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->candidateContentStreamIdentifier = $candidateContentStreamIdentifier;
-        $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->errors = $errors;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public static function fromArray(array $values): self
     {
-        return $this->workspaceName;
+        return new self(
+            WorkspaceName::fromString($values['workspaceName']),
+            ContentStreamIdentifier::fromString($values['candidateContentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($values['sourceContentStreamIdentifier']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            $values['errors']
+        );
     }
 
-    public function getCandidateContentStreamIdentifier(): ContentStreamIdentifier
+    public function jsonSerialize(): array
     {
-        return $this->candidateContentStreamIdentifier;
-    }
-
-    public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->sourceContentStreamIdentifier;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    /**
-     * @return array<int,array<string,mixed>>
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
+        return [
+            'workspaceName' => $this->workspaceName,
+            'candidateContentStreamIdentifier' => $this->candidateContentStreamIdentifier,
+            'sourceContentStreamIdentifier' => $this->sourceContentStreamIdentifier,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'errors' => $this->errors
+        ];
     }
 }
