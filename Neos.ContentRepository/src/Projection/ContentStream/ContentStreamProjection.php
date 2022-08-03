@@ -281,13 +281,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->getNewSourceContentStreamIdentifier(),
+            $event->newSourceContentStreamIdentifier,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->getPreviousSourceContentStreamIdentifier(),
+            $event->previousSourceContentStreamIdentifier,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }

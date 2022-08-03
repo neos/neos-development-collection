@@ -249,16 +249,16 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         // TODO: How do we test this method?
         // It's hard to design a BDD testcase failing if this method is commented out...
         $this->updateContentStreamIdentifier(
-            $event->getNewSourceContentStreamIdentifier(),
-            $event->getSourceWorkspaceName()
+            $event->newSourceContentStreamIdentifier,
+            $event->sourceWorkspaceName
         );
 
-        $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
+        $this->markDependentWorkspacesAsOutdated($event->targetWorkspaceName);
 
         // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
-        $this->markWorkspaceAsUpToDate($event->getSourceWorkspaceName());
+        $this->markWorkspaceAsUpToDate($event->sourceWorkspaceName);
 
-        $this->markDependentWorkspacesAsOutdated($event->getSourceWorkspaceName());
+        $this->markDependentWorkspacesAsOutdated($event->sourceWorkspaceName);
     }
 
     private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
