@@ -185,7 +185,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
             return MaybeVersion::fromVersionOrNull(null);
         }
 
-        return MaybeVersion::fromVersionOrNull($version);
+        return MaybeVersion::fromVersionOrNull(Version::fromInteger($version));
     }
 
     public function hasContentStream(ContentStreamIdentifier $contentStreamIdentifier): bool
