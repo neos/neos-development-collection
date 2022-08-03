@@ -282,7 +282,7 @@ final class NodeFactory
             /** @var string $rawNodeAggregateIdentifier */
             yield new \Neos\ContentRepository\Projection\ContentGraph\NodeAggregate(
                 // this line is safe because a nodeAggregate only exists if it at least contains one node.
-                current($nodes)->getContentStreamIdentifier(),
+                current($nodes)->getSubgraphIdentity()->contentStreamIdentifier,
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
                 $nodeTypeNames[$rawNodeAggregateIdentifier],

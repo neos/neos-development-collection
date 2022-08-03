@@ -14,7 +14,8 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |

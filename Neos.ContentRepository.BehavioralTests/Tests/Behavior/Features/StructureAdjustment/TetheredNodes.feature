@@ -25,13 +25,14 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
