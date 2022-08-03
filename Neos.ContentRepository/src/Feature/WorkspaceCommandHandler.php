@@ -306,14 +306,14 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
-                    ExpectedVersion::fromVersion(Version::fromInteger($contentStreamWasForkedEvent->versionOfSourceContentStream)) // TODO
+                    ExpectedVersion::fromVersion($contentStreamWasForkedEvent->versionOfSourceContentStream)
                 )
             );
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
                 'The base workspace has been modified in the meantime; please rebase.'
                     . ' Expected version %d of source content stream %s',
-                $contentStreamWasForkedEvent->versionOfSourceContentStream,
+                $contentStreamWasForkedEvent->versionOfSourceContentStream->value,
                 $baseContentStreamIdentifier
             ));
         }

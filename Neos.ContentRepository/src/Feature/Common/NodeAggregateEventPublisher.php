@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\EventStore\Events;
+use Neos\EventStore\Model\Event\EventMetadata;
 
 /**
  * Ensure all invariants are held for Node-based events:
@@ -59,10 +60,10 @@ final class NodeAggregateEventPublisher
                         get_class($command)
                     ));
                 }
-                $metadata = [
+                $metadata = EventMetadata::fromArray([
                     'commandClass' => get_class($command),
                     'commandPayload' => $commandPayload
-                ];
+                ]);
                 $event = \Neos\ContentRepository\EventStore\DecoratedEvent::withMetadata($event, $metadata);
                 // we remember the 1st event's identifier as causation identifier for all the others
                 $causationIdentifier = $event->eventId;

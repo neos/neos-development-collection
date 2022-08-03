@@ -35,6 +35,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -522,9 +523,8 @@ trait EventSourcedTrait
      */
     public function iPruneUnusedContentStreams()
     {
-        $this->contentRepositoryFactory->
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
+        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
         $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
@@ -535,7 +535,7 @@ trait EventSourcedTrait
     public function iPruneRemovedContentStreamsFromTheEventStream()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
+        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new ContentStreamPrunerFactory());
         $contentStreamPruner->pruneRemovedFromEventStream();
     }
 }

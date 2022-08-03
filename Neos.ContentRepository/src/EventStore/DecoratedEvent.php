@@ -20,10 +20,10 @@ final class DecoratedEvent
     {
     }
 
-    public static function withMetadata(DecoratedEvent|EventInterface $event, array $metadata): self
+    public static function withMetadata(DecoratedEvent|EventInterface $event, EventMetadata $metadata): self
     {
         $event = self::wrapWithDecoratedEventIfNecessary($event);
-        return new self($event->innerEvent, $event->eventId, EventMetadata::fromArray($metadata));
+        return new self($event->innerEvent, $event->eventId, $metadata);
     }
 
     public static function withCausationIdentifier(DecoratedEvent|EventInterface $event, EventId $causationIdentifier): self

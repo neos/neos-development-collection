@@ -12,10 +12,6 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
  */
 class ContentStreamPrunerFactory implements ContentRepositoryServiceFactoryInterface
 {
-    public function __construct(
-    ) {
-    }
-
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentStreamPruner
     {
         return new ContentStreamPruner($serviceFactoryDependencies->contentRepository, $serviceFactoryDependencies->eventStore);

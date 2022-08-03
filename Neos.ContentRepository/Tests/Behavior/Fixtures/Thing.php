@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Fixtures;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -32,10 +33,6 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
  */
 final class Thing implements NodeInterface
 {
-    protected ContentStreamIdentifier $contentStreamIdentifier;
-
-    protected NodeAggregateIdentifier $nodeAggregateIdentifier;
-
     protected OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     protected NodeTypeName $nodeTypeName;
@@ -51,8 +48,8 @@ final class Thing implements NodeInterface
     protected PropertyCollection $properties;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        private readonly ContentSubgraphIdentity $contentSubgraphIdentity,
+        private readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
@@ -60,8 +57,6 @@ final class Thing implements NodeInterface
         PropertyCollection $propertyCollection,
         NodeAggregateClassification $classification
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
@@ -153,5 +148,10 @@ final class Thing implements NodeInterface
     public function equals(NodeInterface $other): bool
     {
         return false;
+    }
+
+    public function getSubgraphIdentity(): ContentSubgraphIdentity
+    {
+        return $this->contentSubgraphIdentity;
     }
 }

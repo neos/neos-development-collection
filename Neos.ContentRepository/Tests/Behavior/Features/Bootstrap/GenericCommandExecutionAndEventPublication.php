@@ -36,6 +36,7 @@ use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
 
@@ -213,7 +214,7 @@ trait GenericCommandExecutionAndEventPublication
      */
     public function iExpectExactlyEventToBePublishedOnStreamWithPrefix(int $numberOfEvents, string $streamName)
     {
-        $streamName = StreamName::forCategory($streamName);
+        $streamName = VirtualStreamName::forCategory($streamName);
 
         $stream = $this->getEventStore()->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
