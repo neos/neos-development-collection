@@ -32,7 +32,7 @@ final class RootWorkspaceWasCreated implements EventInterface
     ) {
     }
 
-    public static function fromArray(array $values): EventInterface
+    public static function fromArray(array $values): self
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),

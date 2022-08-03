@@ -120,7 +120,7 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
 
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
-        $this->repository->removeContentStream($event->getPreviousContentStreamIdentifier());
+        $this->repository->removeContentStream($event->previousContentStreamIdentifier);
     }
 
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void

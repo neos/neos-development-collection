@@ -20,12 +20,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-class WorkspaceWasCreated implements EventInterface
+final class WorkspaceWasCreated implements EventInterface
 {
     public function __construct(
         public readonly WorkspaceName $workspaceName,
@@ -38,7 +34,7 @@ class WorkspaceWasCreated implements EventInterface
     ) {
     }
 
-    public static function fromArray(array $values): EventInterface
+    public static function fromArray(array $values): self
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),

@@ -18,56 +18,43 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-class WorkspaceWasDiscarded implements EventInterface
+final class WorkspaceWasDiscarded implements EventInterface
 {
-    private WorkspaceName $workspaceName;
-
-    /**
-     * The new, empty, content stream
-     */
-    private ContentStreamIdentifier $newContentStreamIdentifier;
-
-    /**
-     * The old content stream (which contains the discarded data)
-     */
-    private ContentStreamIdentifier $previousContentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
-        WorkspaceName $workspaceName,
-        ContentStreamIdentifier $newContentStreamIdentifier,
-        ContentStreamIdentifier $previousContentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly WorkspaceName $workspaceName,
+
+        /**
+         * The new, empty, content stream
+         */
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
+
+        /**
+         * The old content stream (which contains the discarded data)
+         */
+        public readonly ContentStreamIdentifier $previousContentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
-        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public static function fromArray(array $values): self
     {
-        return $this->workspaceName;
+        return new self(
+            WorkspaceName::fromString($values['workspaceName']),
+            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($values['previousContentStreamIdentifier']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
     }
 
-    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
+    public function jsonSerialize(): array
     {
-        return $this->newContentStreamIdentifier;
-    }
-
-    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->previousContentStreamIdentifier;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
+        return [
+            'workspaceName' => $this->workspaceName,
+            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
+            'previousContentStreamIdentifier' => $this->previousContentStreamIdentifier,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }
