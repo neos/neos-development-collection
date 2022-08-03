@@ -189,11 +189,12 @@ trait NodeTypeChange
         // new tethered child nodes
         $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
         foreach ($nodeAggregate->getNodes() as $node) {
+            assert($node instanceof NodeInterface);
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
                 $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
-                    $node->getContentStreamIdentifier(),
+                    $node->getSubgraphIdentity()->contentStreamIdentifier,
                     $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );

@@ -57,11 +57,12 @@ class TetheredNodeAdjustments
             // find missing tethered nodes
             $foundMissingOrDisallowedTetheredNodes = false;
             foreach ($nodeAggregate->getNodes() as $node) {
+                assert($node instanceof NodeInterface);
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
-                        $node->getContentStreamIdentifier(),
+                        $node->getSubgraphIdentity()->contentStreamIdentifier,
                         $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
@@ -89,7 +90,7 @@ class TetheredNodeAdjustments
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-                                    $node->getContentStreamIdentifier()
+                                    $node->getSubgraphIdentity()->contentStreamIdentifier
                                 );
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
@@ -128,8 +129,9 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($nodeAggregate->getNodes() as $node) {
+                    assert($node instanceof NodeInterface);
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
-                        $node->getContentStreamIdentifier(),
+                        $node->getSubgraphIdentity()->contentStreamIdentifier,
                         $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
@@ -154,7 +156,7 @@ class TetheredNodeAdjustments
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 return $this->reorderNodes(
-                                    $node->getContentStreamIdentifier(),
+                                    $node->getSubgraphIdentity()->contentStreamIdentifier,
                                     $actualTetheredChildNodes,
                                     array_keys($expectedTetheredNodes)
                                 );

@@ -7,11 +7,9 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\Error\Messages\Message;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
-#[Flow\Proxy(false)]
-class StructureAdjustment extends Message
+final class StructureAdjustment extends Message
 {
     public const TETHERED_NODE_MISSING = 'TETHERED_NODE_MISSING';
     public const NODE_IS_NOT_TETHERED_BUT_SHOULD_BE = 'NODE_IS_NOT_TETHERED_BUT_SHOULD_BE';
@@ -83,14 +81,6 @@ class StructureAdjustment extends Message
             $type,
             $remediation
         );
-    }
-
-    public function fix(): void
-    {
-        $adjustment = $this->remediation;
-        $commandResult = $adjustment();
-        assert($commandResult instanceof CommandResult);
-        $commandResult->block();
     }
 
     public function getType(): string

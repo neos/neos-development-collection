@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A move mapping for a single node
@@ -18,8 +17,7 @@ use Neos\Flow\Annotations as Flow;
  * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings,
  *      depending on covered dimension space point
  */
-#[Flow\Proxy(false)]
-final class NodeMoveMapping
+final class NodeMoveMapping implements \JsonSerializable
 {
     private OriginDimensionSpacePoint $movedNodeOrigin;
 
@@ -62,5 +60,14 @@ final class NodeMoveMapping
     public function getNewSucceedingSiblingAssignments(): NodeVariantAssignments
     {
         return $this->newSucceedingSiblingAssignments;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'movedNodeOrigin' => $this->movedNodeOrigin,
+            'newParentAssignments' => $this->newParentAssignments,
+            'newSucceedingSiblingAssignments' => $this->newSucceedingSiblingAssignments
+        ];
     }
 }
