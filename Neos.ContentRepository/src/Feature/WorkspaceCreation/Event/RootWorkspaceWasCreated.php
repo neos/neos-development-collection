@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceCreation\Event;
 
+use Neos\ContentRepository\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
@@ -21,6 +22,12 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\EventStore\EventInterface;
 
+/**
+ * Event triggered to indicate that a root workspace, i.e. a workspace without base workspace, was created.
+ *
+ * NOTE: you can rely on the fact that an extra {@see ContentStreamWasCreated} event was persisted BEFORE
+ * this event for the actual content stream creation.
+ */
 final class RootWorkspaceWasCreated implements EventInterface
 {
     public function __construct(

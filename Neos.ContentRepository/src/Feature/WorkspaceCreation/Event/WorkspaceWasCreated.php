@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceCreation\Event;
 
+use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
@@ -21,6 +22,12 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\EventStore\EventInterface;
 
+/**
+ * Event triggered to indicate that a workspace was created, based on a base workspace.
+ *
+ * NOTE: you can rely on the fact that an extra {@see ContentStreamWasForked} event was persisted BEFORE
+ * this event for the actual content stream forking.
+ */
 final class WorkspaceWasCreated implements EventInterface
 {
     public function __construct(
