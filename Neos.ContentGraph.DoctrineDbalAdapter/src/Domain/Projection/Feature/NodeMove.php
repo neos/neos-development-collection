@@ -29,8 +29,8 @@ trait NodeMove
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
-            if ($event->getNodeMoveMappings()) {
-                foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
+            if ($event->nodeMoveMappings) {
+                foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                     // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
 
                     $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIdentifiers(
@@ -155,7 +155,7 @@ trait NodeMove
 
                         // NOTE: we do not need to re-build restriction relations because the hierarchy does not change.
                         } elseif (
-                            $event->getRepositionNodesWithoutAssignments()->contains($coveredDimensionSpacePoint)
+                            $event->repositionNodesWithoutAssignments->contains($coveredDimensionSpacePoint)
                         ) {
                             // CASE: we move to the end of all its siblings.
 

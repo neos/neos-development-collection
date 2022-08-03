@@ -188,13 +188,13 @@ class ChangeProjection implements ProjectionInterface
     {
         // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
         // @todo properly handle this
-        if (is_null($event->getNodeMoveMappings())) {
+        if (is_null($event->nodeMoveMappings)) {
             throw new \Exception(
                 'Could not apply NodeAggregateWasMoved to change projection due to missing nodeMoveMappings.',
                 1645382694
             );
         }
-        $mapping = iterator_to_array($event->getNodeMoveMappings());
+        $mapping = iterator_to_array($event->nodeMoveMappings);
 
         $this->markAsMoved(
             $event->getContentStreamIdentifier(),

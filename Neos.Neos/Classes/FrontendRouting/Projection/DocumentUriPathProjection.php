@@ -566,8 +566,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
-        if (!is_null($event->getNodeMoveMappings())) {
-            foreach ($event->getNodeMoveMappings() as $moveMapping) {
+        if (!is_null($event->nodeMoveMappings)) {
+            foreach ($event->nodeMoveMappings as $moveMapping) {
                 foreach (
                     $this->getState()->getNodeVariantsById(
                         $event->getNodeAggregateIdentifier()
