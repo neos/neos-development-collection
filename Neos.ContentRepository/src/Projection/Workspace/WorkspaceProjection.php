@@ -223,8 +223,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
-        $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
-        $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
+        $this->updateContentStreamIdentifier($event->newContentStreamIdentifier, $event->workspaceName);
+        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
     }
 
     private function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void

@@ -19,27 +19,9 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-class WorkspaceWasPartiallyDiscarded implements EventInterface
+final class WorkspaceWasPartiallyDiscarded implements EventInterface
 {
-    private WorkspaceName $workspaceName;
-
-    /**
-     * The new content stream; containing the data which we want to keep
-     */
-    private ContentStreamIdentifier $newContentStreamIdentifier;
-
-    /**
-     * The old content stream, which contains ALL the data (discarded and non-discarded)
-     */
-    private ContentStreamIdentifier $previousContentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     /**
      * TODO build
      * @var array<int,NodeAddress>
@@ -47,43 +29,37 @@ class WorkspaceWasPartiallyDiscarded implements EventInterface
     private array $discardedNodeAddresses;
 
     public function __construct(
-        WorkspaceName $workspaceName,
-        ContentStreamIdentifier $newContentStreamIdentifier,
-        ContentStreamIdentifier $previousContentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly WorkspaceName $workspaceName,
+        /**
+         * The new content stream; containing the data which we want to keep
+         */
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
+        /**
+         * The old content stream, which contains ALL the data (discarded and non-discarded)
+         */
+        public readonly ContentStreamIdentifier $previousContentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
-        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->discardedNodeAddresses = [];
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public static function fromArray(array $values): self
     {
-        return $this->workspaceName;
+        return new self(
+            WorkspaceName::fromString($values['workspaceName']),
+            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($values['previousContentStreamIdentifier']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
     }
 
-    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
+    public function jsonSerialize(): array
     {
-        return $this->newContentStreamIdentifier;
-    }
-
-    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->previousContentStreamIdentifier;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    /**
-     * @return array<int,NodeAddress>
-     */
-    public function getDiscardedNodeAddresses(): array
-    {
-        return $this->discardedNodeAddresses;
+        return [
+            'workspaceName' => $this->workspaceName,
+            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
+            'previousContentStreamIdentifier' => $this->previousContentStreamIdentifier,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }
