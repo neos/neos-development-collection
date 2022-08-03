@@ -71,9 +71,9 @@ final class NodeReferencesWereSet implements
         return new self(
             ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($values['sourceNodeAggregateIdentifier']),
-            OriginDimensionSpacePoint::fromArray($values['sourceOriginDimensionSpacePoint']),
-            NodeAggregateIdentifiers::fromArray($values['destinationNodeAggregateIdentifiers']),
+            OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),
             PropertyName::fromString($values['referenceName']),
+            SerializedNodeReferences::fromArray($values['references']),
             UserIdentifier::fromString($values['initiatingUserIdentifier'])
         );
     }
@@ -83,9 +83,9 @@ final class NodeReferencesWereSet implements
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
-            'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
-            'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
+            'affectedSourceOriginDimensionSpacePoints' => $this->affectedSourceOriginDimensionSpacePoints,
             'referenceName' => $this->referenceName,
+            'references' => $this->references,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
