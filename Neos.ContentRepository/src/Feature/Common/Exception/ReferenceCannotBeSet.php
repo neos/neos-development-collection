@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common\Exception;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
@@ -43,6 +44,33 @@ final class ReferenceCannotBeSet extends \DomainException
             'Reference "' . $referenceName . '" cannot be set for node type "'
             . $nodeTypeName . '" because the constraints do not allow nodes of type "' . $nameOfAttemptedType . '"',
             1648502149
+        );
+    }
+
+    public static function becauseTheItDoesNotDeclareAProperty(
+        PropertyName $referenceName,
+        NodeTypeName $nodeTypeName,
+        PropertyName $propertyName
+    ): self {
+        return new self(
+            'Reference "' . $referenceName . '" cannot be set for node type "'
+            . $nodeTypeName . '" because it does not declare given property "' . $propertyName . '"',
+            1658406662
+        );
+    }
+
+    public static function becauseAPropertyDoesNotMatchTheDeclaredType(
+        PropertyName $referenceName,
+        NodeTypeName $nodeTypeName,
+        PropertyName $propertyName,
+        string $attemptedType,
+        string $configuredType
+    ): self {
+        return new self(
+            'Reference "' . $referenceName . '" cannot be set for node type "' . $nodeTypeName
+            . '" because its property "' . $propertyName . '" cannot be set to a value of type "' . $attemptedType
+            . '", must be of type "' . $configuredType . '".',
+            1658406762
         );
     }
 }

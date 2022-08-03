@@ -19,9 +19,7 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class SettingsController extends ActionController
 {
     /**

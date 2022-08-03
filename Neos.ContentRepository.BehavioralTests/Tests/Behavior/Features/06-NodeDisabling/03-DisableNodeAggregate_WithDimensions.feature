@@ -7,8 +7,8 @@ Feature: Disable a node aggregate
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values                | Generalizations                     |
-      | language   | mul     | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
+      | Identifier | Values                | Generalizations                     |
+      | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
@@ -37,10 +37,10 @@ Feature: Disable a node aggregate
       | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
       | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document      |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                      |
-      | sourceNodeAggregateIdentifier       | "preceding-nodenborough"   |
-      | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
-      | referenceName                       | "references"               |
+      | Key                           | Value                                  |
+      | sourceNodeAggregateIdentifier | "preceding-nodenborough"               |
+      | referenceName                 | "references"                           |
+      | references                    | [{"target": "sir-david-nodenborough"}] |
     # We need both a real and a virtual specialization to test the different selection strategies
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value                    |
@@ -102,8 +102,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -113,8 +113,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -175,8 +175,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -186,8 +186,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -222,8 +222,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -233,8 +233,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -269,8 +269,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"ltz"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"ltz\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"ltz"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"ltz"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -280,8 +280,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -316,8 +316,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -327,8 +327,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -391,8 +391,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -402,8 +402,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -464,8 +464,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -475,8 +475,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -540,8 +540,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"ltz"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"ltz\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"ltz"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"ltz"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -551,8 +551,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -587,8 +587,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -598,8 +598,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -661,8 +661,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -672,8 +672,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -734,8 +734,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -745,8 +745,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -839,8 +839,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -850,8 +850,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -866,15 +866,15 @@ Feature: Disable a node aggregate
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "allVariants"     |
+      | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 9 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
-      | Key                          | Expected                                                    |
-      | contentStreamIdentifier      | "cs-identifier"                                             |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"                                    |
+      | Key                          | Expected                                                                                           |
+      | contentStreamIdentifier      | "cs-identifier"                                                                                    |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"                                                                           |
       | affectedDimensionSpacePoints | [{"language":"ltz"}, {"language":"mul"}, {"language":"de"}, {"language":"en"}, {"language":"gsw"}] |
-      | initiatingUserIdentifier     | "initiating-user-identifier"                                |
+      | initiatingUserIdentifier     | "initiating-user-identifier"                                                                       |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -913,8 +913,8 @@ Feature: Disable a node aggregate
       | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to have the following references:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;sir-david-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
@@ -924,8 +924,8 @@ Feature: Disable a node aggregate
       | NodeDiscriminator                                        |
       | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And I expect this node to be referenced by:
-      | Key        | Value                                                           |
-      | references | ["cs-identifier;preceding-nodenborough;{\"language\":\"mul\"}"] |
+      | Name       | Node                                                    | Properties |
+      | references | cs-identifier;preceding-nodenborough;{"language":"mul"} | null       |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:

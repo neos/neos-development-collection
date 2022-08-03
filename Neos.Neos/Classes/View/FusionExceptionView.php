@@ -94,11 +94,12 @@ class FusionExceptionView extends AbstractView
             ? $requestHandler->getHttpRequest()
             : ServerRequest::fromGlobals();
 
-        /** @var RouteParameters|null $routingParameters */
         $routingParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
-        $dimensionSpacePoint = $routingParameters !== null && $routingParameters->getValue('dimensionSpacePoint') ?? null;
+        assert($routingParameters instanceof RouteParameters);
+        $dimensionSpacePoint = $routingParameters->getValue('dimensionSpacePoint') ?? null;
 
         $currentSiteNode = null;
+        /** @phpstan-ignore-next-line */
         if ($dimensionSpacePoint instanceof DimensionSpacePoint) {
             $contentStreamIdentifier = $this->workspaceFinder->findOneByName(WorkspaceName::forLive())
                 ?->getCurrentContentStreamIdentifier();
@@ -128,10 +129,12 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
+        /** @phpstan-ignore-next-line */
         if ($currentSiteNode) {
             $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
             if ($dimensionSpacePoint) {
+                /** @phpstan-ignore-next-line */
                 $this->setFallbackRuleFromDimension($dimensionSpacePoint);
             }
 

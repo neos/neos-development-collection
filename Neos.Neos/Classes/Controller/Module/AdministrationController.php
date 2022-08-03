@@ -16,9 +16,7 @@ namespace Neos\Neos\Controller\Module;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class AdministrationController extends AbstractModuleController
 {
 }

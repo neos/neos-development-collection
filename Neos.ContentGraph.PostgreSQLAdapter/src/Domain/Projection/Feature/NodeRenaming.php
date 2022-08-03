@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
@@ -31,10 +32,12 @@ trait NodeRenaming
     public function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
-            foreach ($this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
-                $event->getContentStreamIdentifier(),
-                $event->getNodeAggregateIdentifier()
-            ) as $originNode) {
+            foreach (
+                $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
+                    $event->getContentStreamIdentifier(),
+                    $event->getNodeAggregateIdentifier()
+                ) as $originNode
+            ) {
                 $this->copyOnWrite(
                     $event->getContentStreamIdentifier(),
                     $originNode,

@@ -35,6 +35,13 @@ class Site
     public const STATE_OFFLINE = 2;
 
     /**
+     * @Flow\InjectConfiguration(path="sites")
+     * @var array
+     * @phpstan-var array<string,array<string,mixed>>
+     */
+    protected $sitesConfiguration = [];
+
+    /**
      * Name of the site
      *
      * @var string
@@ -111,7 +118,7 @@ class Site
      */
     public function __toString()
     {
-        return $this->getNodeName();
+        return $this->getNodeName()->value;
     }
 
     /**
@@ -143,12 +150,12 @@ class Site
      * If you need to fetch the root node for this site, use the content
      * context, do not use the NodeDataRepository!
      *
-     * @return string The node name
+     * @return SiteNodeName The node name
      * @api
      */
-    public function getNodeName()
+    public function getNodeName(): SiteNodeName
     {
-        return $this->nodeName;
+        return SiteNodeName::fromString($this->nodeName);
     }
 
     /**
@@ -158,8 +165,11 @@ class Site
      * @return void
      * @api
      */
-    public function setNodeName($nodeName)
+    public function setNodeName(string|SiteNodeName $nodeName)
     {
+        if ($nodeName instanceof SiteNodeName) {
+            $nodeName = $nodeName->value;
+        }
         $this->nodeName = $nodeName;
     }
 
@@ -357,5 +367,14 @@ class Site
      */
     public function emitSiteChanged()
     {
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function getConfiguration(): array
+    {
+        // without recursive merge
+        return $this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*'];
     }
 }

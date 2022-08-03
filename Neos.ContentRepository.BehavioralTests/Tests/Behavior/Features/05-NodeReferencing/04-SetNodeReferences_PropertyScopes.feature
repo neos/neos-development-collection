@@ -5,8 +5,8 @@ Feature: Set node properties with different scopes
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values       | Generalizations |
-      | language   | mul     | mul, de, gsw | gsw->de->mul    |
+      | Identifier | Values       | Generalizations |
+      | language   | mul, de, gsw | gsw->de->mul    |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
@@ -55,126 +55,126 @@ Feature: Set node properties with different scopes
       | source-nodandaise       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | anthony-destinode       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value              |
+      | Key                     | Value               |
       | nodeAggregateIdentifier | "source-nodandaise" |
-      | sourceOrigin            | {"language":"mul"} |
-      | targetOrigin            | {"language":"de"}  |
+      | sourceOrigin            | {"language":"mul"}  |
+      | targetOrigin            | {"language":"de"}   |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value              |
+      | Key                     | Value               |
       | nodeAggregateIdentifier | "source-nodandaise" |
-      | sourceOrigin            | {"language":"mul"} |
-      | targetOrigin            | {"language":"gsw"} |
+      | sourceOrigin            | {"language":"mul"}  |
+      | targetOrigin            | {"language":"gsw"}  |
     And the graph projection is fully up to date
 
   Scenario: Set node properties
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "cs-identifier"       |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | referenceName                       | "unscopedReference"   |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "unscopedReference"               |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "cs-identifier"       |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | referenceName                       | "unscopedReferences"  |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "unscopedReferences"              |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "cs-identifier"       |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | referenceName                       | "nodeScopedReference" |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "nodeScopedReference"             |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                  |
-      | contentStreamIdentifier             | "cs-identifier"        |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"    |
-      | referenceName                       | "nodeScopedReferences" |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}     |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]  |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "nodeScopedReferences"            |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                          |
-      | contentStreamIdentifier             | "cs-identifier"                |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"            |
-      | referenceName                       | "nodeAggregateScopedReference" |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}             |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]          |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "nodeAggregateScopedReference"    |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                           |
-      | contentStreamIdentifier             | "cs-identifier"                 |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"             |
-      | referenceName                       | "nodeAggregateScopedReferences" |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}              |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]           |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "nodeAggregateScopedReferences"   |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                            |
-      | contentStreamIdentifier             | "cs-identifier"                  |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"              |
-      | referenceName                       | "specializationsScopedReference" |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}               |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]            |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "specializationsScopedReference"  |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                             |
-      | contentStreamIdentifier             | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"               |
-      | referenceName                       | "specializationsScopedReferences" |
-      | sourceOriginDimensionSpacePoint     | {"language": "de"}                |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]             |
+      | Key                             | Value                             |
+      | contentStreamIdentifier         | "cs-identifier"                   |
+      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | referenceName                   | "specializationsScopedReferences" |
+      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | references                      | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}
     And I expect this node to have the following references:
-      | Key                           | Value                                                       |
-      | nodeAggregateScopedReference  | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | nodeAggregateScopedReferences | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
+      | Name                          | Node                                                | Properties |
+      | nodeAggregateScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
 
     And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
     And I expect this node to be referenced by:
-      | Key                           | Value                                                       |
-      | nodeAggregateScopedReference  | ["cs-identifier;source-nodandaise;{\"language\": \"mul\"}"] |
-      | nodeAggregateScopedReferences | ["cs-identifier;source-nodandaise;{\"language\": \"mul\"}"] |
+      | Name                          | Node                                                | Properties |
+      | nodeAggregateScopedReference  | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
-      | Key                             | Value                                                       |
-      | unscopedReference               | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | unscopedReferences              | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | nodeScopedReference             | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | nodeScopedReferences            | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | nodeAggregateScopedReference    | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | nodeAggregateScopedReferences   | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | specializationsScopedReference  | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | specializationsScopedReferences | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
+      | Name                            | Node                                                | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeScopedReference             | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeScopedReferences            | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | unscopedReference               | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | unscopedReferences              | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
     And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
     And I expect this node to be referenced by:
-      | Key                             | Value                                                       |
-      | unscopedReference               | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | unscopedReferences              | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | nodeScopedReference             | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | nodeScopedReferences            | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | nodeAggregateScopedReference    | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | nodeAggregateScopedReferences   | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | specializationsScopedReference  | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
-      | specializationsScopedReferences | ["cs-identifier;source-nodandaise;{\"language\": \"de\"}"] |
+      | Name                            | Node                                               | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | nodeScopedReference             | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | nodeScopedReferences            | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | unscopedReference               | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | unscopedReferences              | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "gsw"}
     And I expect this node to have the following references:
-      | Key                             | Value                                                       |
-      | nodeAggregateScopedReference    | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | nodeAggregateScopedReferences   | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | specializationsScopedReference  | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
-      | specializationsScopedReferences | ["cs-identifier;anthony-destinode;{\"language\": \"mul\"}"] |
+      | Name                            | Node                                                | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
     And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
     And I expect this node to be referenced by:
-      | Key                             | Value                                                       |
-      | nodeAggregateScopedReference    | ["cs-identifier;source-nodandaise;{\"language\": \"gsw\"}"] |
-      | nodeAggregateScopedReferences   | ["cs-identifier;source-nodandaise;{\"language\": \"gsw\"}"] |
-      | specializationsScopedReference  | ["cs-identifier;source-nodandaise;{\"language\": \"gsw\"}"] |
-      | specializationsScopedReferences | ["cs-identifier;source-nodandaise;{\"language\": \"gsw\"}"] |
+      | Name                            | Node                                                | Properties |
+      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |

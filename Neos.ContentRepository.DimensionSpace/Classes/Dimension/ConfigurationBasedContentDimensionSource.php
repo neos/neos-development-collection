@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
  */
 final class ConfigurationBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
-    const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
+    public const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
 
     /**
      * Needs to stay protected as long as we need to be able to reset it via ObjectAccess
@@ -59,9 +59,6 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                 $values = [];
                 $variationEdges = [];
                 $additionalConfiguration = $dimensionConfiguration;
-                if (!isset($dimensionConfiguration['defaultValue'])) {
-                    throw Exception\ContentDimensionDefaultValueIsMissing::becauseItIsUndeclared($dimensionIdentifier);
-                }
 
                 foreach ($dimensionConfiguration['values'] as $rawValue => $configuration) {
                     if (is_array($configuration)) {
@@ -75,19 +72,11 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                         );
                     }
                 }
-                if (!isset($values[$dimensionConfiguration['defaultValue']])) {
-                    throw Exception\ContentDimensionDefaultValueIsMissing::becauseItsDeclaredValueIsUndefined(
-                        $dimensionIdentifier,
-                        new ContentDimensionValue($dimensionConfiguration['defaultValue'])
-                    );
-                }
                 unset($additionalConfiguration['values']);
-                unset($additionalConfiguration['defaultValue']);
 
                 $this->contentDimensions[$rawDimensionIdentifier] = new ContentDimension(
                     $dimensionIdentifier,
                     new ContentDimensionValues($values),
-                    $values[$dimensionConfiguration['defaultValue']],
                     new ContentDimensionValueVariationEdges($variationEdges),
                     $additionalConfiguration
                 );

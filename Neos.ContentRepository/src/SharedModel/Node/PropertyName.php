@@ -16,6 +16,9 @@ namespace Neos\ContentRepository\SharedModel\Node;
 
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @api
+ */
 #[Flow\Proxy(false)]
 final class PropertyName implements \JsonSerializable, \Stringable
 {

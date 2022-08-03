@@ -17,10 +17,15 @@ namespace Neos\ContentRepository\Projection\Content;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 
 /**
- * In the mid-term, this interface should be merged to the parent interface
+ * @extends \ArrayAccess<string,mixed>
+ * @extends \IteratorAggregate<string,mixed>
+ *
+ * @api
  */
-interface PropertyCollectionInterface extends
-    \Neos\ContentRepository\SharedModel\Node\PropertyCollectionInterface
+interface PropertyCollectionInterface extends \ArrayAccess, \IteratorAggregate
 {
+    /**
+     * Retrieve the serialized property values
+     */
     public function serialized(): SerializedPropertyValues;
 }

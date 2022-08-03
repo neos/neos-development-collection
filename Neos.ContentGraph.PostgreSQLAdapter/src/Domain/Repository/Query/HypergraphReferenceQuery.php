@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,35 +10,34 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
+
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
 final class HypergraphReferenceQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
 
     public static function create(
         ContentStreamIdentifier $contentStreamIdentifier,
-        string $fieldsToFetch
+        string $nodeFieldsToFetch
     ): self {
-        $query = /** @lang PostgreSQL */'SELECT ' . $fieldsToFetch . ' FROM (
-     SELECT originnodeanchor, destinationnodeaggregateidentifier, ordinality, "name"
-     FROM neos_contentgraph_referencehyperrelation, unnest(destinationnodeaggregateidentifiers)
-         WITH ORDINALITY destinationnodeaggregateidentifier
-) r
-JOIN neos_contentgraph_node orgn ON orgn.relationanchorpoint = r.originnodeanchor
-JOIN neos_contentgraph_hierarchyhyperrelation orgh ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
-JOIN neos_contentgraph_node destn ON r.destinationnodeaggregateidentifier = destn.nodeaggregateidentifier
-JOIN neos_contentgraph_hierarchyhyperrelation desth ON destn.relationanchorpoint = ANY(desth.childnodeanchors)
-WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
-    AND desth.contentstreamidentifier = :contentStreamIdentifier';
+        $query = /** @lang PostgreSQL */'SELECT ' . $nodeFieldsToFetch
+            . ', r.name as referencename, r.properties AS referenceproperties
+     FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
+        JOIN neos_contentgraph_node orgn ON orgn.relationanchorpoint = r.originnodeanchor
+        JOIN neos_contentgraph_hierarchyhyperrelation orgh ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
+        JOIN neos_contentgraph_node tarn ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
+        JOIN neos_contentgraph_hierarchyhyperrelation tarh ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
+     WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
+     AND tarh.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
         ];
@@ -57,7 +53,7 @@ WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
         $query = $this->query;
         $query .= '
     AND orgh.dimensionspacepointhash = :dimensionSpacePointHash
-    AND desth.dimensionspacepointhash = :dimensionSpacePointHash';
+    AND tarh.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
@@ -77,15 +73,15 @@ WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
         return new self($query, $parameters, $this->types);
     }
 
-    public function withDestinationNodeAggregateIdentifier(
-        NodeAggregateIdentifier $destinationNodeAggregateIdentifier
+    public function withTargetNodeAggregateIdentifier(
+        NodeAggregateIdentifier $targetNodeAggregateIdentifier
     ): self {
         $query = $this->query;
         $query .= '
-    AND destn.nodeaggregateidentifier = :destinationNodeAggregateIdentifier';
+    AND tarn.nodeaggregateidentifier = :targetNodeAggregateIdentifier';
 
         $parameters = $this->parameters;
-        $parameters['destinationNodeAggregateIdentifier'] = (string)$destinationNodeAggregateIdentifier;
+        $parameters['targetNodeAggregateIdentifier'] = (string)$targetNodeAggregateIdentifier;
 
         return new self($query, $parameters, $this->types);
     }
@@ -109,18 +105,21 @@ WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
         return new self($query, $this->parameters, $this->types);
     }
 
-    public function withDestinationRestriction(VisibilityConstraints $visibilityConstraints): self
+    public function withTargetRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'dest');
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'tar');
 
         return new self($query, $this->parameters, $this->types);
     }
 
-    public function ordered(): self
+    /**
+     * @param array<string> $orderings
+     */
+    public function orderedBy(array $orderings): self
     {
         $query = $this->query;
         $query .= '
-    ORDER BY r.ordinality';
+    ORDER BY ' . implode(', ', $orderings);
 
         return new self($query, $this->parameters, $this->types);
     }

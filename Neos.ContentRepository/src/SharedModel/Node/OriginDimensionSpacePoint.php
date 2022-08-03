@@ -19,11 +19,15 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
 /**
- * A node's origin dimension space point. Defines in which point in the dimension space the node originates.
+ * A node's origin dimension space point. Defines in which point in the dimension space the node originates
+ * (= is "at home"). Every node has exactly ONE OriginDimensionSpacePoint, but one or more {@see DimensionSpacePoint}s
+ * where the node is visible.
  *
  * Example:
  * In a setup with dimension "language", a node that originates in English has English content,
  * but might be visible in other languages via fallback mechanisms.
+ *
+ * @api
  */
 #[Flow\Proxy(false)]
 final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
@@ -60,7 +64,7 @@ final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
      */
     public static function fromJsonString(string $jsonString): self
     {
-        return self::instance(json_decode($jsonString, true));
+        return self::instance(json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
     public static function fromDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self

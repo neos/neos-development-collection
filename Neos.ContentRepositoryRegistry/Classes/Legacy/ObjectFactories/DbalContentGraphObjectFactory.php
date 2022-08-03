@@ -12,11 +12,11 @@ use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class DbalContentGraphObjectFactory
 {
+    private ?ContentGraph $contentGraph = null;
+
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeTypeManager $nodeTypeManager,
@@ -37,7 +37,11 @@ class DbalContentGraphObjectFactory
 
     public function buildContentGraph(): ContentGraphInterface
     {
-        $nodeFactory = new NodeFactory($this->nodeTypeManager, $this->propertyConverter);
-        return new ContentGraph($this->dbalClient, $nodeFactory);
+        if (!$this->contentGraph) {
+            $nodeFactory = new NodeFactory($this->nodeTypeManager, $this->propertyConverter);
+            $this->contentGraph = new ContentGraph($this->dbalClient, $nodeFactory);
+        }
+
+        return $this->contentGraph;
     }
 }

@@ -61,7 +61,6 @@ class ContentDimensionTest extends UnitTestCase
         $this->subject = new Dimension\ContentDimension(
             $dimensionIdentifier,
             $this->values,
-            $this->values->getValue('world'),
             new Dimension\ContentDimensionValueVariationEdges([$euEdge, $deEdge, $usEdge])
         );
     }
@@ -72,7 +71,6 @@ class ContentDimensionTest extends UnitTestCase
         new Dimension\ContentDimension(
             new Dimension\ContentDimensionIdentifier('dimension'),
             new Dimension\ContentDimensionValues([]),
-            new Dimension\ContentDimensionValue('default'),
             Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );
     }

@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor\Implementation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\Content\References;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -67,12 +68,12 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         return $this->subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
     }
 
-    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): Nodes
+    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): References
     {
         return $this->subgraph->findReferencedNodes($node->getNodeAggregateIdentifier(), $name);
     }
 
-    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): Nodes
+    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): References
     {
         return $this->subgraph->findReferencingNodes($node->getNodeAggregateIdentifier(), $name);
     }

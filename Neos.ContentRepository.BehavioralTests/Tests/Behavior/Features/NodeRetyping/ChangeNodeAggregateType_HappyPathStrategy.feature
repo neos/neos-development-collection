@@ -6,8 +6,8 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
   # @todo change type to a type with a tethered child with the same name as one of the original one's but of different type
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values  | Generalizations |
-      | language   | de      | de, gsw | gsw->de         |
+      | Identifier | Values  | Generalizations |
+      | language   | de, gsw | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []

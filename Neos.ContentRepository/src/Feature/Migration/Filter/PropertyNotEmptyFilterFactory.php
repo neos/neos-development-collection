@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +9,10 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Migration\Filter;
 
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 
@@ -27,7 +28,7 @@ class PropertyNotEmptyFilterFactory implements FilterFactoryInterface
     {
         $propertyName = $settings['propertyName'];
 
-        return new class($propertyName) implements NodeBasedFilterInterface {
+        return new class ($propertyName) implements NodeBasedFilterInterface {
             public function __construct(
                 /**
                  * The property name to be checked for non-empty value

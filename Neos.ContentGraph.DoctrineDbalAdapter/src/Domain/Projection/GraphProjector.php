@@ -54,7 +54,7 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 /**
  * The alternate reality-aware graph projector for the general Doctrine DBAL backend
  */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class GraphProjector extends AbstractProcessedEventsAwareProjector implements BeforeInvokeInterface
 {
     use NodeVariation;
@@ -64,7 +64,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     use NodeMove;
     use ProjectorEventHandlerTrait;
 
-    const RELATION_DEFAULT_OFFSET = 128;
+    public const RELATION_DEFAULT_OFFSET = 128;
 
     protected ProjectionContentGraph $projectionContentGraph;
 
@@ -440,8 +440,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
-            if ($succeedingSiblingAnchorPoint
-                && (string)$relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint) {
+            if (
+                $succeedingSiblingAnchorPoint
+                && (string)$relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint
+            ) {
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
             }
@@ -478,7 +480,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash,
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+                  "' . $event->getContentStreamIdentifier() . '" AS contentstreamidentifier
                 FROM
                     neos_contentgraph_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
@@ -497,7 +499,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                   affectednodeaggregateidentifier
                 )
                 SELECT
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
+                  "' . $event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateidentifier,
                   r.affectednodeaggregateidentifier
@@ -577,32 +579,58 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) {
-            });
+            foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
+                $nodeAnchorPoint = $this->projectionContentGraph
+                    ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                        $event->sourceNodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        $event->contentStreamIdentifier
+                    );
 
-            $nodeAnchorPoint = $this->projectionContentGraph
-                ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                    $event->sourceNodeAggregateIdentifier,
-                    $event->sourceOriginDimensionSpacePoint,
-                    $event->contentStreamIdentifier
+                if (is_null($nodeAnchorPoint)) {
+                    throw new \InvalidArgumentException(
+                        'Could not apply event of type "' . get_class($event)
+                        . '" since no anchor point could be resolved for node '
+                        . $event->getNodeAggregateIdentifier() . ' in content stream '
+                        . $event->getContentStreamIdentifier(),
+                        1658580583
+                    );
+                }
+
+                $this->updateNodeRecordWithCopyOnWrite(
+                    $event->contentStreamIdentifier,
+                    $nodeAnchorPoint,
+                    function (NodeRecord $node) {
+                    }
                 );
 
-            // remove old
-            $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
-                'nodeanchorpoint' => $nodeAnchorPoint,
-                'name' => $event->referenceName
-            ]);
+                $nodeAnchorPoint = $this->projectionContentGraph
+                    ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                        $event->sourceNodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        $event->contentStreamIdentifier
+                    );
 
-            // set new
-            $position = 0;
-            foreach ($event->destinationNodeAggregateIdentifiers as $destinationNodeIdentifier) {
-                $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
-                    'name' => $event->referenceName,
-                    'position' => $position,
+                // remove old
+                $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
                     'nodeanchorpoint' => $nodeAnchorPoint,
-                    'destinationnodeaggregateidentifier' => $destinationNodeIdentifier,
+                    'name' => $event->referenceName
                 ]);
-                $position++;
+
+                // set new
+                $position = 0;
+                foreach ($event->references as $reference) {
+                    $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
+                        'name' => $event->referenceName,
+                        'position' => $position,
+                        'nodeanchorpoint' => $nodeAnchorPoint,
+                        'destinationnodeaggregateidentifier' => $reference->targetNodeAggregateIdentifier,
+                        'properties' => $reference->properties
+                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR)
+                            : null
+                    ]);
+                    $position++;
+                }
             }
         });
     }
@@ -765,16 +793,16 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     {
         $this->transactional(function () use ($event) {
             $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
-                $event->getNodeAggregateIdentifier(),
-                $event->getContentStreamIdentifier()
+                $event->nodeAggregateIdentifier,
+                $event->contentStreamIdentifier
             );
 
             foreach ($anchorPoints as $anchorPoint) {
                 $this->updateNodeRecordWithCopyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamIdentifier,
                     $anchorPoint,
                     function (NodeRecord $node) use ($event) {
-                        $node->nodeTypeName = $event->getNewNodeTypeName();
+                        $node->nodeTypeName = $event->newNodeTypeName;
                     }
                 );
             }
@@ -787,35 +815,26 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
      */
     protected function updateNodeWithCopyOnWrite(DomainEventInterface $event, callable $operations): mixed
     {
-        switch (get_class($event)) {
-            case NodeReferencesWereSet::class:
-                /** @var NodeReferencesWereSet $event */
-                $anchorPoint = $this->projectionContentGraph
-                    ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                        $event->sourceNodeAggregateIdentifier,
-                        $event->sourceOriginDimensionSpacePoint,
-                        $event->contentStreamIdentifier
-                    );
-                break;
-            default:
-                if (method_exists($event, 'getNodeAggregateIdentifier')
-                    && method_exists($event, 'getOriginDimensionSpacePoint')
-                    && method_exists($event, 'getContentStreamIdentifier')) {
-                    $anchorPoint = $this->projectionContentGraph
-                        ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                            $event->getNodeAggregateIdentifier(),
-                            $event->getOriginDimensionSpacePoint(),
-                            $event->getContentStreamIdentifier()
-                        );
-                } else {
-                    throw new \InvalidArgumentException(
-                        'Cannot update node with copy on write for events of type '
-                            . get_class($event) . ' since they provide no NodeAggregateIdentifier, '
-                            . 'OriginDimensionSpacePoint or ContentStreamIdentifier',
-                        1645303167
-                    );
-                }
+        if (
+            method_exists($event, 'getNodeAggregateIdentifier')
+            && method_exists($event, 'getOriginDimensionSpacePoint')
+            && method_exists($event, 'getContentStreamIdentifier')
+        ) {
+            $anchorPoint = $this->projectionContentGraph
+                ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                    $event->getNodeAggregateIdentifier(),
+                    $event->getOriginDimensionSpacePoint(),
+                    $event->getContentStreamIdentifier()
+                );
+        } else {
+            throw new \InvalidArgumentException(
+                'Cannot update node with copy on write for events of type '
+                    . get_class($event) . ' since they provide no NodeAggregateIdentifier, '
+                    . 'OriginDimensionSpacePoint or ContentStreamIdentifier',
+                1645303167
+            );
         }
+
         if (is_null($anchorPoint)) {
             throw new \InvalidArgumentException(
                 'Cannot update node with copy on write since no anchor point could be resolved for node '

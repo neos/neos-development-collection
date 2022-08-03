@@ -38,10 +38,6 @@ Neos:
           q: Neos\Eel\FlowQuery\FlowQuery::q
 
     unstableInternalWillChangeLater:
-      testing:
-        projectorsToBeReset: {}
-        # DoctrineDbal: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph
-        activeContentGraphs: {}
       projection:
         defaultProjectorsToBeBlocked:
           'Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector': true

@@ -16,12 +16,16 @@ namespace Neos\ContentRepository\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Service\ContentStreamPruner;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Scope("singleton")
+ * Internal - implementation detail of {@see ContentStreamPruner}
+ *
+ * @internal
  */
+#[Flow\Scope('singleton')]
 final class ContentStreamFinder
 {
     public const STATE_CREATED = 'CREATED';

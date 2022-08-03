@@ -51,21 +51,18 @@ use Neos\EventSourcing\EventPublisher\EventPublisherFactoryInterface;
 use Neos\EventSourcing\EventPublisher\EventPublisherInterface;
 use Neos\EventSourcing\EventPublisher\JobQueueEventPublisher;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 
-/**
- *
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class HardcodedEventPublisherFactory implements EventPublisherFactoryInterface
 {
-
     /**
      * A list of all initialized Event Publisher instances, indexed by the "Event Store identifier"
      *
      * @var EventPublisherInterface[]
      */
-    private $eventPublisherInstances;
+    private array $eventPublisherInstances = [];
+
     private EventToListenerMappings $mappings;
 
     public function __construct()

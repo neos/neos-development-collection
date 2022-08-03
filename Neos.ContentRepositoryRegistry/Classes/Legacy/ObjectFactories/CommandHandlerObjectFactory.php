@@ -19,9 +19,7 @@ use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class CommandHandlerObjectFactory
 {
     public function __construct(

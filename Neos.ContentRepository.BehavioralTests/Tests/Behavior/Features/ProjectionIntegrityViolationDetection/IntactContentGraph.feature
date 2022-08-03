@@ -5,8 +5,8 @@ Feature: Create an intact content graph and run integrity violation detection
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values  | Generalizations |
-      | language   | de      | de, gsw | gsw->de         |
+      | Identifier | Values  | Generalizations |
+      | language   | de, gsw | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
@@ -60,12 +60,12 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "tethered"                                |
     And the event NodeReferencesWereSet was published with payload:
-      | Key                                 | Value                      |
-      | contentStreamIdentifier             | "cs-identifier"            |
-      | sourceNodeAggregateIdentifier       | "nody-mc-nodeface"         |
-      | sourceOriginDimensionSpacePoint     | {"language":"de"}          |
-      | destinationNodeAggregateIdentifiers | ["sir-david-nodenborough"] |
-      | referenceName                       | "referenceProperty"        |
+      | Key                                      | Value                                                                           |
+      | contentStreamIdentifier                  | "cs-identifier"                                                                 |
+      | sourceNodeAggregateIdentifier            | "nody-mc-nodeface"                                                              |
+      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                             |
+      | referenceName                            | "referenceProperty"                                                             |
+      | references                               | [{"targetNodeAggregateIdentifier":"sir-david-nodenborough", "properties":null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors

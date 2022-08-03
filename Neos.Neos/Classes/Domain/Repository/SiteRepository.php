@@ -20,6 +20,7 @@ use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Model\SiteNodeName;
 
 /**
  * The Site Repository
@@ -80,7 +81,7 @@ class SiteRepository extends Repository
         return $site;
     }
 
-    public function findOneByNodeName(string $nodeName): ?Site
+    public function findOneByNodeName(string|SiteNodeName $nodeName): ?Site
     {
         $query = $this->createQuery();
         /** @var ?Site $site */

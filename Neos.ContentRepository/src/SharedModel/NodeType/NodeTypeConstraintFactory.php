@@ -28,8 +28,7 @@ class NodeTypeConstraintFactory
 {
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager
-    )
-    {
+    ) {
     }
 
     /**

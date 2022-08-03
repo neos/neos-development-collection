@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\Content;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -23,13 +24,31 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\Projection\Content\SearchTerm;
 
 /**
- * The interface to be implemented by content subgraphs
+ * This is the most important read model of a content repository.
+ *
+ * It is a "view" to the content graph, only showing a single dimension
+ * (e.g. "language=de,country=ch") - so this means this is effectively
+ * **a tree of nodes**.
+ *
+ * ## Accessing the Content Subgraph
+ *
+ * From the central Content Repository instance, you can fetch the singleton
+ * {@see ContentGraphInterface}. There, you can call
+ * {@see ContentGraphInterface::getSubgraphByIdentifier()} and pass in
+ * the {@see ContentStreamIdentifier}, {@see DimensionSpacePoint} and
+ * {@see VisibilityConstraints} you want to have.
+ *
+ *
+ * ## Why is this called "Subgraph" and not Tree?
+ *
+ * This is because a tree can have only a single root node, but the ContentSubgraph
+ * supports multiple root nodes. So the totally correct term would be a "Forest",
+ * but this is unknown terminology outside academia. This is why we go for "Subgraph"
+ * to show that this is a part of the Content Graph.
+ *
+ * @api
  */
 interface ContentSubgraphInterface extends \JsonSerializable
 {
@@ -47,20 +66,15 @@ interface ContentSubgraphInterface extends \JsonSerializable
         int $offset = null
     ): Nodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
-     * @param PropertyName|null $name
-     * @return Nodes
-     */
     public function findReferencedNodes(
         NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes;
+    ): References;
 
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ): Nodes;
+    ): References;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier

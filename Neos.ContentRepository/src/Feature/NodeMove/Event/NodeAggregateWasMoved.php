@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
 use JetBrains\PhpStorm\Internal\TentativeType;
@@ -8,7 +10,6 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -21,9 +22,8 @@ use Neos\Flow\Annotations as Flow;
  * You can move any amount of nodes in the aggregate.
  * The targets (new parents // new succeeding) for each node & dimension space point
  * are specified in {@see NodeMoveMappings}.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateWasMoved implements
     DomainEventInterface,
     PublishableToOtherContentStreamsInterface,
@@ -39,6 +39,15 @@ final class NodeAggregateWasMoved implements
      * a list of new parent NodeAggregateIdentifiers, and a list of new succeeding-sibling NodeAggregateIdentifiers.
      *
      * This happens between
+     * MoveNodeMappings
+     *   (list of MoveNodeMapping)
+     *   one MoveNodeMapping == one OriginDimensionSpacePoint we want to move.
+     *     -> new parents need to be specified (NodeVariantAssignments);
+     *        new succeeding siblings need to be specified (for order) (NodeVariantAssignments)
+     *     -> !!! this might be multiple DIFFERENT ones, because one OriginDimensionSpacePoint might shine through
+     *        into different covered dimensions, and there it might be at a different location.
+     *         the KEY here is the COVERED DSP Hash (!!!) - TODO should be fixed
+     *         the value is the Identifier + Origin Dimension Space Point OF THE PARENT
      *
      * @var NodeMoveMappings|null
      */

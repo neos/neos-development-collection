@@ -27,11 +27,12 @@ use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\EventSourcedRouting\Exception\InvalidShortcutException;
-use Neos\Neos\EventSourcedRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -39,7 +40,6 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\View\FusionView;
 
 /**

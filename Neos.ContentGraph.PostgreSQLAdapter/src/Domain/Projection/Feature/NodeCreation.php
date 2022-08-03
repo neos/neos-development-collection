@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
@@ -183,11 +184,13 @@ trait NodeCreation
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $affectedNodeAggregateIdentifier
     ): void {
-        foreach ($this->getProjectionHypergraph()->findIngoingRestrictionRelations(
-            $contentStreamIdentifier,
-            $dimensionSpacePoint,
-            $parentNodeAggregateIdentifier
-        ) as $ingoingRestrictionRelation) {
+        foreach (
+            $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                $parentNodeAggregateIdentifier
+            ) as $ingoingRestrictionRelation
+        ) {
             $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
                 $affectedNodeAggregateIdentifier,
                 $this->getDatabaseConnection()

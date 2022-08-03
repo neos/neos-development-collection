@@ -18,6 +18,8 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * This API will still change a bit.
+ *
  * @Flow\Proxy(false)
  */
 final class CommandResult

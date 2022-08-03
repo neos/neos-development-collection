@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\ContentStreamForking\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,15 +10,18 @@ namespace Neos\ContentRepository\Feature\ContentStreamForking\Command;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\ContentStreamForking\Command;
+
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ForkContentStream
 {
     /**

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Migration\Filter;
@@ -6,8 +7,6 @@ namespace Neos\ContentRepository\Feature\Migration\Filter;
 use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Feature\Migration\Filter\NodeAggregateBasedFilterInterface;
-use Neos\ContentRepository\Feature\Migration\Filter\NodeBasedFilterInterface;
 
 #[Flow\Proxy(false)]
 final class Filters

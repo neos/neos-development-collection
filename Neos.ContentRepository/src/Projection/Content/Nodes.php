@@ -19,6 +19,8 @@ namespace Neos\ContentRepository\Projection\Content;
  *
  * @implements \IteratorAggregate<int,NodeInterface>
  * @implements \ArrayAccess<int,NodeInterface>
+ *
+ * @api
  */
 final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 {
@@ -54,7 +56,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return new self($nodes);
     }
 
-    public static function empty(): self
+    public static function createEmpty(): self
     {
         return new self([]);
     }

@@ -31,8 +31,9 @@ use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwar
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Scope("singleton")
+ * @internal
  */
+#[Flow\Scope('singleton')]
 class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';

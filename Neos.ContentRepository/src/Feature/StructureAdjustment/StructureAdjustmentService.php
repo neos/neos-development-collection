@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -6,9 +7,8 @@ namespace Neos\ContentRepository\Feature\StructureAdjustment;
 use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\StructureAdjustment\StructureAdjustment;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class StructureAdjustmentService
 {
     protected ContentGraphInterface $contentGraph;

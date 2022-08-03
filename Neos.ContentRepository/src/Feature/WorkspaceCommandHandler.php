@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +10,13 @@ namespace Neos\ContentRepository\Feature;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
@@ -538,6 +540,8 @@ final class WorkspaceCommandHandler
                 return $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
             case SetNodeReferences::class:
                 return $this->nodeAggregateCommandHandler->handleSetNodeReferences($command);
+            case SetSerializedNodeReferences::class:
+                return $this->nodeAggregateCommandHandler->handleSetSerializedNodeReferences($command);
             case RemoveNodeAggregate::class:
                 return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command);
             case ChangeNodeAggregateType::class:

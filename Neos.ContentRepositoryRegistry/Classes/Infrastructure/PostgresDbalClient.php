@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Infrastructure;
 
 /*
- * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
+ * This file is part of the Neos.ContentRepositoryRegistry package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

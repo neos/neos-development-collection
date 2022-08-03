@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Domain\Repository;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,6 +9,10 @@ namespace Neos\Neos\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
@@ -26,7 +27,6 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class UserRepository extends Repository
 {
-
     /**
      * @return QueryResultInterface
      * @deprecated
@@ -36,12 +36,22 @@ class UserRepository extends Repository
         return $this->findAllOrdered('accounts.accountIdentifier');
     }
 
-    public function findAllOrdered(string $fieldName, string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
-    {
-        $allowedFieldNames = ['accounts.accountIdentifier', 'accounts.lastSuccessfulAuthenticationDate', 'name.fullName'];
+    public function findAllOrdered(
+        string $fieldName,
+        string $sortDirection = QueryInterface::ORDER_ASCENDING
+    ): QueryResultInterface {
+        $allowedFieldNames = [
+            'accounts.accountIdentifier',
+            'accounts.lastSuccessfulAuthenticationDate',
+            'name.fullName'
+        ];
 
         if (!in_array($fieldName, $allowedFieldNames)) {
-            throw new \InvalidArgumentException(sprintf('The field name "%s" is invalid, must be one of %s', $fieldName, implode(',', $allowedFieldNames)), 1651580413);
+            throw new \InvalidArgumentException(sprintf(
+                'The field name "%s" is invalid, must be one of %s',
+                $fieldName,
+                implode(',', $allowedFieldNames)
+            ), 1651580413);
         }
 
         return $this->createQuery()

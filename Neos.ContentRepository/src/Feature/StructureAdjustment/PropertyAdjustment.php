@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\StructureAdjustment;
@@ -21,7 +22,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 class PropertyAdjustment
 {
     use LoadNodeTypeTrait;
@@ -132,9 +133,6 @@ class PropertyAdjustment
 
     protected function addProperty(NodeInterface $node, string $propertyKey, mixed $defaultValue): CommandResult
     {
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
-        // so we need to trigger another method beforehand.
-        $node->getNodeType()->getFullConfiguration();
         $propertyType = $node->getNodeType()->getPropertyType($propertyKey);
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
             $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)

@@ -17,7 +17,7 @@ use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\EventSourcedRouting\Projection\DocumentUriPathProjector;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
 
 class CrCommandController extends CommandController
 {
@@ -50,8 +50,8 @@ class CrCommandController extends CommandController
             $projector = $this->objectManager->get(AssetUsageProjector::class);
         } elseif ($projectionName === 'contentStream') {
             $projector = $this->objectManager->get(ContentStreamProjector::class);
-        //} elseif ($projectionName === 'hypergraph') {
-        //    $projector = $this->objectManager->get(HypergraphProjector::class);
+        } elseif ($projectionName === 'hypergraph') {
+            $projector = $this->objectManager->get(HypergraphProjector::class);
         } else {
             throw new \RuntimeException('Wrong $projectionName given. Supported are: graph, nodeHiddenState, documentUriPath, change, workspace, assetUsage, contentStream');
         }

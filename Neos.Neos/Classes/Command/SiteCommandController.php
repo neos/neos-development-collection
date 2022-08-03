@@ -339,15 +339,15 @@ class SiteCommandController extends CommandController
             /** @var Site $site */
             array_push($availableSites, [
                 'name' => $site->getName(),
-                'nodeName' => $site->getNodeName(),
+                'nodeName' => $site->getNodeName()->value,
                 'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
             ]);
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
             }
-            if (strlen($site->getNodeName()) > $longestNodeName) {
-                $longestNodeName = strlen($site->getNodeName());
+            if (strlen($site->getNodeName()->value) > $longestNodeName) {
+                $longestNodeName = strlen($site->getNodeName()->value);
             }
             if (strlen($site->getSiteResourcesPackageKey()) > $longestSiteResource) {
                 $longestSiteResource = strlen($site->getSiteResourcesPackageKey());

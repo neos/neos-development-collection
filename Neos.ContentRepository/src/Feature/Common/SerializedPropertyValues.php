@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 
 /**
@@ -108,7 +109,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         // here, we skip null values
         return new self(array_filter(
-            array_merge($this->values, $other->getValues()),
+            array_merge($this->values, $other->values),
             fn ($value) => $value !== null
         ));
     }

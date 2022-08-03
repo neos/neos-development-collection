@@ -25,6 +25,8 @@ use Psr\Http\Message\UriInterface;
  * The property type value object as declared in a NodeType
  *
  * Only for use on the write side to enforce constraints
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final class PropertyType
@@ -48,6 +50,9 @@ final class PropertyType
         $this->isNullable = $isNullable;
     }
 
+    /**
+     * @throws PropertyTypeIsInvalid
+     */
     public static function fromNodeTypeDeclaration(
         string $declaration,
         PropertyName $propertyName,

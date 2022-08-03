@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -12,6 +9,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
@@ -26,7 +27,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class RestrictionHyperrelationRecord
 {
-    const TABLE_NAME = 'neos_contentgraph_restrictionhyperrelation';
+    public const TABLE_NAME = 'neos_contentgraph_restrictionhyperrelation';
 
     public ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -93,12 +94,21 @@ final class RestrictionHyperrelationRecord
      */
     public function addToDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
-            'contentstreamidentifier' => (string)$this->contentStreamIdentifier,
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'originnodeaggregateidentifier' => (string)$this->originNodeAggregateIdentifier,
-            'affectednodeaggregateidentifiers' => $this->affectedNodeAggregateIdentifiers->toDatabaseString()
-        ]);
+        $databaseConnection->executeStatement(
+            'INSERT INTO ' . self::TABLE_NAME . ' (
+                contentstreamidentifier,
+                dimensionspacepointhash,
+                originnodeaggregateidentifier,
+                affectednodeaggregateidentifiers
+            ) VALUES (?, ?, ?, ?)
+            ON CONFLICT DO NOTHING',
+            [
+                (string)$this->contentStreamIdentifier,
+                $this->dimensionSpacePointHash,
+                (string)$this->originNodeAggregateIdentifier,
+                $this->affectedNodeAggregateIdentifiers->toDatabaseString()
+            ]
+        );
     }
 
     /**

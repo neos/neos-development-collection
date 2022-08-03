@@ -18,11 +18,15 @@ use Neos\ContentRepository\Projection\Content\InMemoryCache\AllChildNodesByNodeI
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
 use Neos\ContentRepository\Projection\Content\InMemoryCache\NodePathCache;
-/** @codingStandardsIgnoreStart */ use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
-/** @codingStandardsIgnoreEnd */
+use Neos\ContentRepository\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
 /**
- * Accessors to In Memory Cache
+ * Accessors to in Memory Cache
+ *
+ * Detail for runtime performance improvement of the different implementations
+ * of {@see ContentSubgraphInterface}. You never need this externally.
+ *
+ * @internal
  */
 final class InMemoryCache
 {

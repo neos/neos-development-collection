@@ -5,8 +5,8 @@ Feature: Run integrity violation detection regarding reference relations
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations |
-      | language   | de      | de, gsw, fr | gsw->de         |
+      | Identifier | Values      | Generalizations |
+      | language   | de, gsw, fr | gsw->de         |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
@@ -56,8 +56,8 @@ Feature: Run integrity violation detection regarding reference relations
       | contentStreamIdentifier             | "cs-identifier"                        |
       | sourceOriginDimensionSpacePoint     | {"language":"de"}                      |
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                    |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]                  |
       | referenceName                       | "referenceProperty"                    |
+      | references                          | [{"target": "anthony-destinode"}]      |
       | initiatingUserIdentifier            | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
     And I detach the following reference relation from its source:

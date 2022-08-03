@@ -9,9 +9,7 @@ use Neos\Flow\Annotations as Flow;
 // Neos.EventSourcing - which will be refactored soon). That's why we need an extra factory for AssetUsageProjector.
 // See Neos.ContentRepositoryRegistry/Configuration/Settings.hacks.yaml for further details.
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class AssetUsageProjectorFactory
 {
 

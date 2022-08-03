@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 /*
  * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
@@ -13,6 +10,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
+
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
@@ -20,7 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -317,11 +318,13 @@ trait NodeVariation
         NodeRelationAnchorPoint $newChildAnchor,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        foreach ($this->getProjectionHyperGraph()->findIngoingHierarchyHyperrelationRecords(
-            $contentStreamIdentifier,
-            $oldChildAnchor,
-            $affectedDimensionSpacePoints
-        ) as $ingoingHierarchyHyperrelationRecord) {
+        foreach (
+            $this->getProjectionHyperGraph()->findIngoingHierarchyHyperrelationRecords(
+                $contentStreamIdentifier,
+                $oldChildAnchor,
+                $affectedDimensionSpacePoints
+            ) as $ingoingHierarchyHyperrelationRecord
+        ) {
             $ingoingHierarchyHyperrelationRecord->replaceChildNodeAnchor(
                 $oldChildAnchor,
                 $newChildAnchor,
@@ -339,11 +342,13 @@ trait NodeVariation
         NodeRelationAnchorPoint $newParentAnchor,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        foreach ($this->getProjectionHyperGraph()->findOutgoingHierarchyHyperrelationRecords(
-            $contentStreamIdentifier,
-            $oldParentAnchor,
-            $affectedDimensionSpacePoints
-        ) as $outgoingHierarchyHyperrelationRecord) {
+        foreach (
+            $this->getProjectionHyperGraph()->findOutgoingHierarchyHyperrelationRecords(
+                $contentStreamIdentifier,
+                $oldParentAnchor,
+                $affectedDimensionSpacePoints
+            ) as $outgoingHierarchyHyperrelationRecord
+        ) {
             $outgoingHierarchyHyperrelationRecord->replaceParentNodeAnchor(
                 $newParentAnchor,
                 $this->getDatabaseConnection()
@@ -353,27 +358,31 @@ trait NodeVariation
 
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $destinationRelationAnchorPoint
+        NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         // we don't care whether the target node aggregate covers the variant's origin
         // since if it doesn't, it already didn't match the source's coverage before
 
         $this->getDatabaseConnection()->executeStatement('
-                INSERT INTO ' . ReferenceHyperrelationRecord::TABLE_NAME . ' (
+                INSERT INTO ' . ReferenceRelationRecord::TABLE_NAME . ' (
                   originnodeanchor,
                   name,
-                  destinationnodeaggregateidentifiers
+                  position,
+                  properties,
+                  targetnodeaggregateidentifier
                 )
                 SELECT
-                  :destinationRelationAnchorPoint AS originnodeanchor,
+                  :targetRelationAnchorPoint AS originnodeanchor,
                   ref.name,
-                  ref.destinationnodeaggregateidentifiers
+                  ref.position,
+                  ref.properties,
+                  ref.targetnodeaggregateidentifier
                 FROM
-                    ' . ReferenceHyperrelationRecord::TABLE_NAME . ' ref
+                    ' . ReferenceRelationRecord::TABLE_NAME . ' ref
                     WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
-            'destinationRelationAnchorPoint' => $destinationRelationAnchorPoint->value
+            'targetRelationAnchorPoint' => $targetRelationAnchorPoint->value
         ]);
     }
 }

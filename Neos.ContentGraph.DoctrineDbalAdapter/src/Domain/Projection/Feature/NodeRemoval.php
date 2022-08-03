@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
@@ -55,11 +56,13 @@ trait NodeRemoval
     ): void {
         $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
 
-        foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
-            $ingoingRelation->childNodeAnchor,
-            $ingoingRelation->contentStreamIdentifier,
-            new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
-        ) as $outgoingRelation) {
+        foreach (
+            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
+                $ingoingRelation->childNodeAnchor,
+                $ingoingRelation->contentStreamIdentifier,
+                new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
+            ) as $outgoingRelation
+        ) {
             $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation);
         }
 

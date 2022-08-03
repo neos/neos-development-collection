@@ -11,6 +11,7 @@
  */
 
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\NodeCreation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -25,16 +26,8 @@ use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
-/** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-/** @codingStandardsIgnoreEnd */
-use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyExists;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsNotOfTypeRoot;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Feature\Common\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
@@ -133,8 +126,6 @@ trait NodeCreation
         }
 
         $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
-        // initialize node type
-        $nodeType->getOptions();
         foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
@@ -224,8 +215,9 @@ trait NodeCreation
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
 
-        foreach ($descendantNodeAggregateIdentifiers
-                     ->getNodeAggregateIdentifiers() as $descendantNodeAggregateIdentifier) {
+        foreach (
+            $descendantNodeAggregateIdentifiers->getNodeAggregateIdentifiers() as $descendantNodeAggregateIdentifier
+        ) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $command->contentStreamIdentifier,
                 $descendantNodeAggregateIdentifier

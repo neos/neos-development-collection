@@ -47,7 +47,6 @@ final class ContentDimension
     public function __construct(
         public readonly ContentDimensionIdentifier $identifier,
         public readonly ContentDimensionValues $values,
-        public readonly ContentDimensionValue $defaultValue,
         ContentDimensionValueVariationEdges $variationEdges,
         /** General configuration like UI, detection etc. */
         public readonly array $configuration = []

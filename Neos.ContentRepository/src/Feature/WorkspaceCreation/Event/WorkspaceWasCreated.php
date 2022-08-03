@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Feature\WorkspaceCreation\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Feature\WorkspaceCreation\Event;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\WorkspaceCreation\Event;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
@@ -87,7 +89,7 @@ class WorkspaceWasCreated implements DomainEventInterface
         return $this->newContentStreamIdentifier;
     }
 
-    public function getWorkspaceOwner() : ?UserIdentifier
+    public function getWorkspaceOwner(): ?UserIdentifier
     {
         return $this->workspaceOwner;
     }
