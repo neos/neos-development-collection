@@ -15,13 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 
@@ -34,7 +35,7 @@ final class SetSerializedNodeReferences implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeAddressInterface
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -89,12 +90,12 @@ final class SetSerializedNodeReferences implements
         );
     }
 
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->sourceOriginDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
-                && $this->sourceNodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
+            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
+                && $this->sourceOriginDimensionSpacePoint->equals($nodeIdentifierToPublish->dimensionSpacePoint)
+                && $this->sourceNodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
         );
     }
 }

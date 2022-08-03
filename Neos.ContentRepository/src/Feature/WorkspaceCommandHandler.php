@@ -23,6 +23,7 @@ use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -32,10 +33,9 @@ use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStrea
 use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
@@ -60,7 +60,6 @@ use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\StreamName;
-use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -219,7 +218,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $this->publishContentStream(
             $workspace->getCurrentContentStreamIdentifier(),
             $baseWorkspace->getCurrentContentStreamIdentifier()
-        )->block();
+        )?->block();
 
         // After publishing a workspace, we need to again fork from Base.
         $newContentStream = ContentStreamIdentifier::create();
@@ -256,7 +255,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     private function publishContentStream(
         ContentStreamIdentifier $contentStreamIdentifier,
         ContentStreamIdentifier $baseContentStreamIdentifier
-    ): CommandResult {
+    ): ?CommandResult {
         $contentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $baseContentStreamIdentifier
@@ -301,6 +300,9 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier . '" has NO forked event.', 1658740407);
         }
 
+        if (count($events) === 0) {
+            return null;
+        }
         try {
             return $this->eventPersister->publishEvents(
                 new EventsToPublish(
@@ -466,7 +468,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Exception
      */
     public function handlePublishIndividualNodesFromWorkspace(
-        \Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace $command,
+        PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
@@ -484,14 +486,14 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $remainingCommands = [];
 
         foreach ($originalCommands as $originalCommand) {
-            if (!$originalCommand instanceof MatchableWithNodeAddressInterface) {
+            if (!$originalCommand instanceof MatchableWithNodeIdentifierToPublishOrDiscardInterface) {
                 throw new \Exception(
                     'Command class ' . get_class($originalCommand) . ' does not implement '
-                        . MatchableWithNodeAddressInterface::class,
+                        . MatchableWithNodeIdentifierToPublishOrDiscardInterface::class,
                     1645393655
                 );
             }
-            if ($this->commandMatchesNodeAddresses($originalCommand, $command->nodeAddresses)) {
+            if ($this->commandMatchesAtLeastOneNode($originalCommand, $command->nodesToPublish)) {
                 $matchingCommands[] = $originalCommand;
             } else {
                 $remainingCommands[] = $originalCommand;
@@ -545,7 +547,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $this->publishContentStream(
             $matchingContentStream,
             $baseWorkspace->getCurrentContentStreamIdentifier()
-        )->block();
+        )?->block();
 
         // 5) TODO Re-target base workspace
 
@@ -558,6 +560,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $baseWorkspace->getWorkspaceName(),
                 $remainingContentStream,
                 $workspace->getCurrentContentStreamIdentifier(),
+                $command->nodesToPublish,
                 $command->initiatingUserIdentifier
             ),
         );
@@ -598,14 +601,14 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $commandsToKeep = [];
 
         foreach ($originalCommands as $originalCommand) {
-            if (!$originalCommand instanceof MatchableWithNodeAddressInterface) {
+            if (!$originalCommand instanceof MatchableWithNodeIdentifierToPublishOrDiscardInterface) {
                 throw new \Exception(
                     'Command class ' . get_class($originalCommand) . ' does not implement '
-                    . MatchableWithNodeAddressInterface::class,
+                    . MatchableWithNodeIdentifierToPublishOrDiscardInterface::class,
                     1645393476
                 );
             }
-            if (!$this->commandMatchesNodeAddresses($originalCommand, $command->nodeAddresses)) {
+            if (!$this->commandMatchesAtLeastOneNode($originalCommand, $command->nodesToDiscard)) {
                 $commandsToKeep[] = $originalCommand;
             }
         }
@@ -640,6 +643,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName,
                 $newContentStream,
                 $workspace->getCurrentContentStreamIdentifier(),
+                $command->nodesToDiscard,
                 $command->initiatingUserIdentifier
             )
         );
@@ -653,13 +657,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-    /**
-     * @param array<int,NodeAddress> $nodeAddresses
-     */
-    private function commandMatchesNodeAddresses(MatchableWithNodeAddressInterface $command, array $nodeAddresses): bool
+    private function commandMatchesAtLeastOneNode(MatchableWithNodeIdentifierToPublishOrDiscardInterface $command, NodeIdentifiersToPublishOrDiscard $nodeIdentifiers): bool
     {
-        foreach ($nodeAddresses as $nodeAddress) {
-            if ($command->matchesNodeAddress($nodeAddress)) {
+        foreach ($nodeIdentifiers as $nodeIdentifier) {
+            if ($command->matchesNodeIdentifier($nodeIdentifier)) {
                 return true;
             }
         }

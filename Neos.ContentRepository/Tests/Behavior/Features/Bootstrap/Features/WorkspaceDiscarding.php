@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
@@ -65,9 +66,7 @@ trait WorkspaceDiscarding
     public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $nodeAddresses = array_map(function (array $serializedNodeAddress) {
-            return NodeAddress::fromArray($serializedNodeAddress);
-        }, $commandArguments['nodeAddresses']);
+        $nodesToDiscard = NodeIdentifiersToPublishOrDiscard::fromArray($commandArguments['nodesToDiscard']);
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
@@ -77,7 +76,7 @@ trait WorkspaceDiscarding
 
         $command = DiscardIndividualNodesFromWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $nodeAddresses,
+            $nodesToDiscard,
             $initiatingUserIdentifier,
             $newContentStreamIdentifier
         );

@@ -109,7 +109,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                                   |
       | workspaceName                           | "user-test"                                                                                                                             |
-      | nodeAddresses                           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | nodesToPublish                          | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
       | initiatingUserIdentifier                | "user"                                                                                                                                  |
       | contentStreamIdentifierForRemainingPart | "user-cs-identifier-remaining"                                                                                                          |
     And the graph projection is fully up to date
@@ -146,7 +146,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                          |
       | workspaceName                           | "user-test"                    |
-      | nodeAddresses                           | []                             |
+      | nodesToPublish                          | []                             |
       | initiatingUserIdentifier                | "user"                         |
       | contentStreamIdentifierForRemainingPart | "user-cs-identifier-remaining" |
     And the graph projection is fully up to date
@@ -183,7 +183,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                                                                                                                                                                                                                                                                                                   |
       | workspaceName                           | "user-test"                                                                                                                                                                                                                                                                                                                                                                                             |
-      | nodeAddresses                           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | nodesToPublish                          | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
       | initiatingUserIdentifier                | "user"                                                                                                                                                                                                                                                                                                                                                                                                  |
       | contentStreamIdentifierForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                                                                                                                                                                          |
     And the graph projection is fully up to date
@@ -225,7 +225,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                        | Value                                                                                                                                   |
       | workspaceName              | "user-test"                                                                                                                             |
-      | nodeAddresses              | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard             | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
       | initiatingUserIdentifier   | "user"                                                                                                                                  |
       | newContentStreamIdentifier | "user-cs-identifier-new"                                                                                                                |
 
@@ -249,7 +249,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                        | Value                    |
       | workspaceName              | "user-test"              |
-      | nodeAddresses              | []                       |
+      | nodesToDiscard             | []                       |
       | initiatingUserIdentifier   | "user"                   |
       | newContentStreamIdentifier | "user-cs-identifier-new" |
     And the graph projection is fully up to date
@@ -272,7 +272,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                        | Value                                                                                                                                                                                                                                                                                                                                                                                                   |
       | workspaceName              | "user-test"                                                                                                                                                                                                                                                                                                                                                                                             |
-      | nodeAddresses              | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard             | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
       | initiatingUserIdentifier   | "user"                                                                                                                                                                                                                                                                                                                                                                                                  |
       | newContentStreamIdentifier | "user-cs-identifier-new"                                                                                                                                                                                                                                                                                                                                                                                |
     And the graph projection is fully up to date
@@ -296,7 +296,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                                   |
       | workspaceName            | "user-test"                                                                                                                             |
-      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
       | initiatingUserIdentifier | "user"                                                                                                                                  |
     And the graph projection is fully up to date
 

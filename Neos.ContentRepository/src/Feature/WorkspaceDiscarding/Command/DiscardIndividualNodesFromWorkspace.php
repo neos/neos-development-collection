@@ -15,25 +15,19 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\WorkspaceDiscarding\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 
 /**
  * Discard a set of nodes in a workspace
  */
 final class DiscardIndividualNodesFromWorkspace implements CommandInterface
 {
-    /**
-     * @param array<int,NodeAddress> $nodeAddresses
-     */
     private function __construct(
         public readonly WorkspaceName $workspaceName,
-        /**
-         * @var array<int,NodeAddress>
-         */
-        public readonly array $nodeAddresses,
+        public readonly NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
         public readonly UserIdentifier $initiatingUserIdentifier,
         /**
          * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
@@ -42,17 +36,14 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
     ) {
     }
 
-    /**
-     * @param array<int,NodeAddress> $nodeAddresses
-     */
     public static function create(
         WorkspaceName $workspaceName,
-        array $nodeAddresses,
+        NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
         UserIdentifier $initiatingUserIdentifier
     ): self {
         return new self(
             $workspaceName,
-            $nodeAddresses,
+            $nodesToDiscard,
             $initiatingUserIdentifier,
             ContentStreamIdentifier::create()
         );
@@ -60,14 +51,13 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
 
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
-     * @param array<int,NodeAddress> $nodeAddresses
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        array $nodeAddresses,
+        NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
         UserIdentifier $initiatingUserIdentifier,
         ContentStreamIdentifier $newContentStreamIdentifier
     ): self {
-        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, $newContentStreamIdentifier);
+        return new self($workspaceName, $nodesToDiscard, $initiatingUserIdentifier, $newContentStreamIdentifier);
     }
 }

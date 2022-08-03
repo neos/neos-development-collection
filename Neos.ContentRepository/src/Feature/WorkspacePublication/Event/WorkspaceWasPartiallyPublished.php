@@ -14,20 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspacePublication\Event;
 
+use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\EventStore\EventInterface;
 
 final class WorkspaceWasPartiallyPublished implements EventInterface
 {
-    /**
-     * TODO build
-     * @var array<int,NodeAddress>
-     */
-    private array $publishedNodeAddresses;
-
     public function __construct(
         /**
          * From which workspace have changes been partially published?
@@ -45,9 +39,9 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
         public readonly ContentStreamIdentifier $previousSourceContentStreamIdentifier,
+        public readonly NodeIdentifiersToPublishOrDiscard $publishedNodes,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->publishedNodeAddresses = [];
     }
 
     public static function fromArray(array $values): self
@@ -57,6 +51,7 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
             WorkspaceName::fromString($values['targetWorkspaceName']),
             ContentStreamIdentifier::fromString($values['newSourceContentStreamIdentifier']),
             ContentStreamIdentifier::fromString($values['previousSourceContentStreamIdentifier']),
+            NodeIdentifiersToPublishOrDiscard::fromArray($values['publishedNodes']),
             UserIdentifier::fromString($values['initiatingUserIdentifier'])
         );
     }
@@ -68,6 +63,7 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
             'targetWorkspaceName' => $this->targetWorkspaceName,
             'newSourceContentStreamIdentifier' => $this->newSourceContentStreamIdentifier,
             'previousSourceContentStreamIdentifier' => $this->previousSourceContentStreamIdentifier,
+            'publishedNodes' => $this->publishedNodes,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
         ];
     }

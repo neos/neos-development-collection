@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
-use Neos\ContentRepository\SharedModel\NodeAddress;
-
 /**
  * This interface must be implemented by all commands, such that they are filterable whether
- * they are applying their action to a NodeAddress.
+ * they are applying their action to a NodeIdentifierToPublish.
  *
- * This is needed to publish individual nodes.
+ * This is needed to publish and discard individual nodes.
  */
-interface MatchableWithNodeAddressInterface
+interface MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool;
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool;
 }

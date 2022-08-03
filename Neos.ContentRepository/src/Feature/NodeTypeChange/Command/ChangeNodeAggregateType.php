@@ -15,20 +15,21 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeTypeChange\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
 
 final class ChangeNodeAggregateType implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeAddressInterface
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -113,10 +114,10 @@ final class ChangeNodeAggregateType implements
         return $this->tetheredDescendantNodeAggregateIdentifiers;
     }
 
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
-        return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-            && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier);
+        return $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
+            && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier);
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self

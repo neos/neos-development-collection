@@ -14,19 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceDiscarding\Event;
 
+use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\EventStore\EventInterface;
 
 final class WorkspaceWasPartiallyDiscarded implements EventInterface
 {
-    /**
-     * TODO build
-     * @var array<int,NodeAddress>
-     */
-    private array $discardedNodeAddresses;
 
     public function __construct(
         public readonly WorkspaceName $workspaceName,
@@ -38,9 +33,9 @@ final class WorkspaceWasPartiallyDiscarded implements EventInterface
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
         public readonly ContentStreamIdentifier $previousContentStreamIdentifier,
+        public readonly NodeIdentifiersToPublishOrDiscard $discardedNodes,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->discardedNodeAddresses = [];
     }
 
     public static function fromArray(array $values): self
@@ -49,6 +44,7 @@ final class WorkspaceWasPartiallyDiscarded implements EventInterface
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
             ContentStreamIdentifier::fromString($values['previousContentStreamIdentifier']),
+            NodeIdentifiersToPublishOrDiscard::fromArray($values['discardedNodes']),
             UserIdentifier::fromString($values['initiatingUserIdentifier'])
         );
     }
@@ -59,6 +55,7 @@ final class WorkspaceWasPartiallyDiscarded implements EventInterface
             'workspaceName' => $this->workspaceName,
             'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
             'previousContentStreamIdentifier' => $this->previousContentStreamIdentifier,
+            'discardedNodes' => $this->discardedNodes,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
         ];
     }

@@ -15,11 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeRenaming\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
@@ -32,7 +33,7 @@ final class ChangeNodeAggregateName implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeAddressInterface
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -78,11 +79,11 @@ final class ChangeNodeAggregateName implements
         );
     }
 
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
+            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
+                && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
         );
     }
 }

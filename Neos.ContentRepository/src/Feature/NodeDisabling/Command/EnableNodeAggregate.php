@@ -16,10 +16,11 @@ namespace Neos\ContentRepository\Feature\NodeDisabling\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -32,7 +33,7 @@ final class EnableNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeAddressInterface
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -84,12 +85,12 @@ final class EnableNodeAggregate implements
         );
     }
 
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
-                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
+            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
+                && $this->coveredDimensionSpacePoint === $nodeIdentifierToPublish->dimensionSpacePoint
+                && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
         );
     }
 }
