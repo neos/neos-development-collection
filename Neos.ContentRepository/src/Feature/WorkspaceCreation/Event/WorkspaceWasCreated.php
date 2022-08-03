@@ -27,70 +27,40 @@ use Neos\Flow\Annotations as Flow;
  */
 class WorkspaceWasCreated implements EventInterface
 {
-    private WorkspaceName $workspaceName;
-
-    private WorkspaceName $baseWorkspaceName;
-
-    private WorkspaceTitle $workspaceTitle;
-
-    private WorkspaceDescription $workspaceDescription;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    private ContentStreamIdentifier $newContentStreamIdentifier;
-
-    private ?UserIdentifier $workspaceOwner;
-
     public function __construct(
-        WorkspaceName $workspaceName,
-        WorkspaceName $baseWorkspaceName,
-        WorkspaceTitle $workspaceTitle,
-        WorkspaceDescription $workspaceDescription,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $newContentStreamIdentifier,
-        UserIdentifier $workspaceOwner = null
+        public readonly WorkspaceName $workspaceName,
+        public readonly WorkspaceName $baseWorkspaceName,
+        public readonly WorkspaceTitle $workspaceTitle,
+        public readonly WorkspaceDescription $workspaceDescription,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
+        public readonly ?UserIdentifier $workspaceOwner = null
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->baseWorkspaceName = $baseWorkspaceName;
-        $this->workspaceTitle = $workspaceTitle;
-        $this->workspaceDescription = $workspaceDescription;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
-        $this->workspaceOwner = $workspaceOwner;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public static function fromArray(array $values): EventInterface
     {
-        return $this->workspaceName;
+        return new self(
+            WorkspaceName::fromString($values['workspaceName']),
+            WorkspaceName::fromString($values['baseWorkspaceName']),
+            WorkspaceTitle::fromString($values['workspaceTitle']),
+            WorkspaceDescription::fromString($values['workspaceDescription']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
+            $values['workspaceOwner'] ? UserIdentifier::fromString($values['workspaceOwner']) : null
+        );
     }
 
-    public function getBaseWorkspaceName(): WorkspaceName
+    public function jsonSerialize(): array
     {
-        return $this->baseWorkspaceName;
-    }
-
-    public function getWorkspaceTitle(): WorkspaceTitle
-    {
-        return $this->workspaceTitle;
-    }
-
-    public function getWorkspaceDescription(): WorkspaceDescription
-    {
-        return $this->workspaceDescription;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->newContentStreamIdentifier;
-    }
-
-    public function getWorkspaceOwner(): ?UserIdentifier
-    {
-        return $this->workspaceOwner;
+        return [
+            'workspaceName' => $this->workspaceName,
+            'baseWorkspaceName' => $this->baseWorkspaceName,
+            'workspaceTitle' => $this->workspaceTitle,
+            'workspaceDescription' => $this->workspaceDescription,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
+            'workspaceOwner' => $this->workspaceOwner
+        ];
     }
 }

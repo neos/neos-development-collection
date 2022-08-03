@@ -194,12 +194,12 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'workspaceName' => $event->getWorkspaceName(),
-            'baseWorkspaceName' => $event->getBaseWorkspaceName(),
-            'workspaceTitle' => $event->getWorkspaceTitle(),
-            'workspaceDescription' => $event->getWorkspaceDescription(),
-            'workspaceOwner' => $event->getWorkspaceOwner(),
-            'currentContentStreamIdentifier' => $event->getNewContentStreamIdentifier(),
+            'workspaceName' => $event->workspaceName,
+            'baseWorkspaceName' => $event->baseWorkspaceName,
+            'workspaceTitle' => $event->workspaceTitle,
+            'workspaceDescription' => $event->workspaceDescription,
+            'workspaceOwner' => $event->workspaceOwner,
+            'currentContentStreamIdentifier' => $event->newContentStreamIdentifier,
             'status' => Workspace::STATUS_UP_TO_DATE
         ]);
     }

@@ -218,7 +218,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamIdentifier' => $event->getNewContentStreamIdentifier()
+            'contentStreamIdentifier' => $event->newContentStreamIdentifier
         ]);
     }
 
