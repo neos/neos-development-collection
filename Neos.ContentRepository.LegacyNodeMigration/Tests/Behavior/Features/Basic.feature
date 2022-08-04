@@ -16,8 +16,8 @@ Feature: Simple migrations without content dimensions
       | Identifier    | Path             | Node Type                 | Properties      |
       | sites-node-id | /sites           | unstructured              |                 |
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"text": "foo"} |
-    And I run the migration for content stream "cs-id"
-    Then I expect the following events
+    And I run the event migration for content stream "cs-id"
+    Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                  |
       | RootNodeAggregateWithNodeWasCreated | {"contentStreamIdentifier": "cs-id", "nodeAggregateIdentifier": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"}                                                                                                                                                               |
       | NodeAggregateWithNodeWasCreated     | {"contentStreamIdentifier": "cs-id", "nodeAggregateIdentifier": "site-node-id", "nodeTypeName": "Some.Package:SomeNodeType", "nodeName": "test-site", "parentNodeAggregateIdentifier": "sites-node-id", "nodeAggregateClassification": "regular", "initialPropertyValues": {"text": {"type": "string", "value": "foo"}}} |

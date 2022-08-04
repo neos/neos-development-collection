@@ -21,8 +21,8 @@ Feature: Exceptional cases during migrations
       | sites-node-id | /sites           | unstructured                   |                      |
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType      | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeOtherNodeType | {"language": ["en"]} |
-    And I run the migration
-    Then I expect a MigrationException with the message
+    And I run the event migration
+    Then I expect a MigrationError with the message
     """
     Node aggregate with id "site-node-id" has a type of "Some.Package:SomeOtherNodeType" in content dimension [{"language":"en"}]. I was visited previously for content dimension [{"language":"de"}] with the type "Some.Package:SomeNodeType". Node variants must not have different types
     """
@@ -34,8 +34,8 @@ Feature: Exceptional cases during migrations
       | sites      | /sites     |
       | a          | /sites/a   |
       | c          | /sites/b/c |
-    And I run the migration
-    Then I expect a MigrationException with the message
+    And I run the event migration
+    Then I expect a MigrationError with the message
     """
     Failed to find parent node for node with id "c" and dimensions: []
     """
@@ -49,8 +49,8 @@ Feature: Exceptional cases during migrations
       | a          | /sites/a   |
       | c          | /sites/b/c |
       | b          | /sites/b   |
-    And I run the migration
-    Then I expect a MigrationException with the message
+    And I run the event migration
+    Then I expect a MigrationError with the message
     """
     Failed to find parent node for node with id "c" and dimensions: []
     """
@@ -63,8 +63,8 @@ Feature: Exceptional cases during migrations
       | Identifier | Path     | Dimension Values          |
       | sites      | /sites   |                           |
       | a          | /sites/a | {"language": ["unknown"]} |
-    And I run the migration
-    Then I expect a MigrationException
+    And I run the event migration
+    Then I expect a MigrationError
 
   Scenario: Invalid dimension configuration (no json)
     Given I have no content dimensions
@@ -72,8 +72,8 @@ Feature: Exceptional cases during migrations
       | Identifier | Path     | Dimension Values |
       | sites      | /sites   |                  |
       | a          | /sites/a | not json         |
-    And I run the migration
-    Then I expect a MigrationException
+    And I run the event migration
+    Then I expect a MigrationError
 
   Scenario: Invalid node properties (no JSON)
     Given I have no content dimensions
@@ -81,8 +81,8 @@ Feature: Exceptional cases during migrations
       | Identifier | Path     | Properties | Node Type                 |
       | sites      | /sites   |            |                           |
       | a          | /sites/a | not json   | Some.Package:SomeNodeType |
-    And I run the migration
-    Then I expect a MigrationException with the message
+    And I run the event migration
+    Then I expect a MigrationError with the message
     """
     Failed to decode properties "not json" of node "a" (type: "Some.Package:SomeNodeType")
     """
@@ -97,8 +97,8 @@ Feature: Exceptional cases during migrations
       | site-node-id  | /sites/test-site | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | {"language": ["ch"]} |
       | site-node-id  | /sites/test-site | {"language": ["ch"]} |
-    And I run the migration
-    Then I expect a MigrationException with the message
+    And I run the event migration
+    Then I expect a MigrationError with the message
     """
     Node "site-node-id" with dimension space point "{"language":"ch"}" was already visited before
     """
@@ -112,8 +112,8 @@ Feature: Exceptional cases during migrations
       | sites-node-id | /sites           |                      |
       | site-node-id  | /sites/test-site | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | {"language": ["de"]} |
-    And I run the migration
-    Then I expect a MigrationException with the message
+    And I run the event migration
+    Then I expect a MigrationError with the message
     """
     Node "site-node-id" for dimension {"language":"de"} was already created previously
     """

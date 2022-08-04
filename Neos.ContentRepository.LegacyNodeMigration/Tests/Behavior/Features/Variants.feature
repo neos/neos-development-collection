@@ -21,8 +21,8 @@ Feature: Migrating nodes with content dimensions
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["en"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["ch"]} |
-    And I run the migration
-    Then I expect the following events
+    And I run the event migration
+    Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                                |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateIdentifier": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "coveredDimensionSpacePoints": [{"language": "en"},{"language": "de"},{"language": "ch"}], "nodeAggregateClassification": "root"}                                                                                                                      |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateIdentifier": "site-node-id", "nodeTypeName": "Some.Package:SomeNodeType", "nodeName": "test-site", "originDimensionSpacePoint": {"language": "de"}, "coveredDimensionSpacePoints": [{"language": "de"},{"language": "ch"}], "parentNodeAggregateIdentifier": "sites-node-id", "nodeAggregateClassification": "regular"} |
@@ -36,8 +36,8 @@ Feature: Migrating nodes with content dimensions
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["ch"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["en"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["de"]} |
-    And I run the migration
-    Then I expect the following events
+    And I run the event migration
+    Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                             |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateIdentifier": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "coveredDimensionSpacePoints": [{"language": "en"},{"language": "de"},{"language": "ch"}], "nodeAggregateClassification": "root"}                                                                                                   |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateIdentifier": "site-node-id", "nodeTypeName": "Some.Package:SomeNodeType", "nodeName": "test-site", "originDimensionSpacePoint": {"language": "ch"}, "coveredDimensionSpacePoints": [{"language": "ch"}], "parentNodeAggregateIdentifier": "sites-node-id", "nodeAggregateClassification": "regular"} |
@@ -53,8 +53,8 @@ Feature: Migrating nodes with content dimensions
       | sites      | /sites      |                       |
       | site       | /sites/site | {"language": ["mul"]} |
       | site       | /sites/site | {"language": ["de"]}  |
-    And I run the migration
-    Then I expect the following events
+    And I run the event migration
+    Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                 |
       | RootNodeAggregateWithNodeWasCreated | {}                                                                                                                                                                                      |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateIdentifier": "site", "parentNodeAggregateIdentifier": "sites"}                                                                                                           |
@@ -69,8 +69,8 @@ Feature: Migrating nodes with content dimensions
       | a1         | /sites/site/a/a1 | {"language": ["de"]} |
       | b          | /sites/site/b    | {"language": ["de"]} |
       | a1         | /sites/site/b/a1 | {"language": ["ch"]} |
-    And I run the migration
-    Then I expect the following events
+    And I run the event migration
+    Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                         |
       | RootNodeAggregateWithNodeWasCreated | {}                                                                                                                                                                                                                                                                              |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateIdentifier": "site", "parentNodeAggregateIdentifier": "sites"}                                                                                                                                                                                                   |
@@ -92,8 +92,8 @@ Feature: Migrating nodes with content dimensions
       | b          | /sites/site/b      | {"language": ["de"]} |
       | a          | /sites/site/b/a    | {"language": ["ch"]} |
       | a1         | /sites/site/b/a/a1 | {"language": ["ch"]} |
-    And I run the migration
-    Then I expect the following events
+    And I run the event migration
+    Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                      |
       | RootNodeAggregateWithNodeWasCreated | {}                                                                                                                                                                                                                                                                           |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateIdentifier": "site", "parentNodeAggregateIdentifier": "sites"}                                                                                                                                                                                                |

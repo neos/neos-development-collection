@@ -16,29 +16,34 @@ namespace Neos\ContentRepository\LegacyNodeMigration\Command;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception as DbalException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Export\Asset\Adapters\DbalAssetLoader;
+use Neos\ContentRepository\Export\Asset\Adapters\FileSystemResourceLoader;
+use Neos\ContentRepository\Export\Asset\AssetExporter;
+use Neos\ContentRepository\Export\ProcessorInterface;
+use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
+use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
+use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\LegacyNodeMigration\Middleware\NeosLegacyEventMiddleware;
-use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsMigration;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\LegacyNodeMigration\Helpers\NodeDataLoader;
+use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
+use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ESCR\Export\Handler;
-use Neos\ESCR\Export\Middleware\Context;
-use Neos\ESCR\Export\Middleware\Event\NeosEventMiddleware;
-use Neos\ESCR\Export\Middleware\MiddlewareInterface;
-use Neos\ESCR\Export\ValueObject\Parameters;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Utility\Environment;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Utility\Files;
 
 class ContentRepositoryMigrateCommandController extends CommandController
 {
@@ -51,15 +56,17 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
     public function __construct(
         private readonly Connection $connection,
+        private readonly Environment $environment,
+        private readonly PersistenceManagerInterface $persistenceManager,
+        private readonly AssetRepository $assetRepository,
+        private readonly ResourceRepository $resourceRepository,
+        private readonly ResourceManager $resourceManager,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyMapper $propertyMapper,
         private readonly EventNormalizer $eventNormalizer,
         private readonly PropertyConverter $propertyConverter,
-        private readonly Environment $environment,
         private readonly EventStoreFactory $eventStoreFactory,
-        private readonly WorkspaceFinder $workspaceFinder,
     ) {
         parent::__construct();
     }
@@ -67,55 +74,74 @@ class ContentRepositoryMigrateCommandController extends CommandController
     /**
      * Run a CR export
      *
-     * @param bool $quiet If set, only errors will be rendered
-     * @param bool $assumeYes If set, prompts will be skipped
+     * @param bool $verbose If set, all notices will be rendered
+     * @param string|null $config JSON encoded configuration, for example '{"dbal": {"dbname": "some-other-db"}, "resourcesPath": "/some/absolute/path"}'
+     * @throws \Exception
      */
-    public function runCommand(bool $quiet = false, bool $assumeYes = false): void
+    public function runCommand(bool $verbose = false, string $config = null): void
     {
-        $connection = $assumeYes ? $this->connection : $this->determineConnection();
-
-        $filesystem = new Filesystem(new LocalFilesystemAdapter($this->environment->getPathToTemporaryDirectory()));
-        $context = new Context($filesystem, Parameters::fromArray([]));
-
-        // TODO: export/import Assets
-
-        $nodeDataToEventsMigration = new NodeDataToEventsMigration($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph);
-        $exporter = Handler::fromContextAndMiddlewares($context, new NeosLegacyEventMiddleware($connection, $this->eventNormalizer, $nodeDataToEventsMigration));
-        if (!$quiet) {
-            $this->outputLine('Exporting node data table rows');
-            $this->registerProgressCallbacks($exporter);
+        if ($config !== null) {
+            try {
+                $parsedConfig = json_decode($config, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                throw new \InvalidArgumentException(sprintf('Failed to parse --config parameter: %s', $e->getMessage()), 1659526855, $e);
+            }
+            try {
+                $connection = isset($parsedConfig['dbal']) ? DriverManager::getConnection(array_merge($this->connection->getParams(), $parsedConfig['dbal']), new Configuration()) : $this->connection;
+            } catch (DbalException $e) {
+                throw new \InvalidArgumentException(sprintf('Failed to get database connection, check the --config parameter: %s', $e->getMessage()), 1659527201, $e);
+            }
+            $resourcesPath = $parsedConfig['resourcesPath'] ?? self::defaultResourcesPath();
+        } else {
+            $connection = $this->determineConnection();
+            $resourcesPath = $this->determineResourcesPath();
         }
-        $exporter->processExport();
+        $temporaryFilePath = $this->environment->getPathToTemporaryDirectory() . uniqid('Export', true);
+        Files::createDirectoryRecursively($temporaryFilePath);
+        $filesystem = new Filesystem(new LocalFilesystemAdapter($temporaryFilePath));
 
-        $importer = Handler::fromContextAndMiddlewares($context, new NeosEventMiddleware(true, true, $this->eventStoreFactory, $this->workspaceFinder, $this->eventNormalizer));
-        if (!$quiet) {
-            $this->outputLine('Importing events');
-            $this->registerProgressCallbacks($importer);
+        $assetExporter = new AssetExporter($filesystem, new DbalAssetLoader($connection), new FileSystemResourceLoader($resourcesPath));
+        $eventStore = $this->eventStoreFactory->create('ContentRepository');
+
+        /** @var ProcessorInterface[] $processors */
+        $processors = [
+            'Exporting assets' => new NodeDataToAssetsProcessor($this->nodeTypeManager, $assetExporter, new NodeDataLoader($connection)),
+            'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, $filesystem, new NodeDataLoader($connection)),
+            'Importing assets' => new AssetRepositoryImportProcessor($filesystem, $this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
+            'Importing events' => new EventStoreImportProcessor(true, true, $filesystem, $eventStore, $this->eventNormalizer),
+        ];
+
+
+        foreach ($processors as $label => $processor) {
+            $this->outputLine($label . '...');
+            $verbose && $processor->onMessage(fn (Severity $severity, string $message) => $this->outputLine('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
+            $result = $processor->run();
+            if ($result->severity === Severity::ERROR) {
+                throw new \RuntimeException($result->message);
+            }
+            $this->outputLine('  ' . $result->message);
+            $this->outputLine();
         }
 
-        // TODO: Fails if events table is not empty
-        // TODO: create site
-
-        $importer->processImport();
+        $this->outputLine();
 
         $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'assetUsage', 'contentStream'];
-        if (!$quiet) {
-            $this->outputLine('Replaying projections');
-            $this->output->progressStart(count($projections));
-        }
+        $this->outputLine('Replaying projections');
+        $verbose && $this->output->progressStart(count($projections));
         foreach ($projections as $projection) {
             Scripts::executeCommand('neos.contentrepositoryregistry:cr:replay', $this->flowSettings, false, ['projectionName' => $projection]);
-            if (!$quiet) {
-                $this->output->progressAdvance();
-            }
+            /** @noinspection DisconnectedForeachInstructionInspection */
+            $verbose && $this->output->progressAdvance();
         }
-        if (!$quiet) {
-            $this->output->progressFinish();
-        }
+        $verbose && $this->output->progressFinish();
 
         $this->outputLine('<success>Done</success>');
     }
 
+    /**
+     * @return Connection
+     * @throws DbalException
+     */
     private function determineConnection(): Connection
     {
         $connectionParams = $this->connection->getParams();
@@ -131,25 +157,22 @@ class ContentRepositoryMigrateCommandController extends CommandController
         return DriverManager::getConnection($connectionParams, new Configuration());
     }
 
-    private function registerProgressCallbacks(Handler $handler): void
+    private function determineResourcesPath(): string
     {
-        $output = $this->output->getOutput();
-        $mainSection = $output instanceof ConsoleOutput ? $output->section() : $output;
-        $progressBar = new ProgressBar($mainSection);
-        $progressBar->setBarCharacter('<success>●</success>');
-        $progressBar->setEmptyBarCharacter('<error>◌</error>');
-        $progressBar->setProgressCharacter('<success>●</success>');
-        $progressBar->setFormat('%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s% - %message%');
-        $progressBar->setMessage('...');
-
-        $handler->onStart(fn(int $numberOfSteps) => $progressBar->start($numberOfSteps));
-        $handler->onStep(function(MiddlewareInterface $middleware) use ($progressBar) {
-            $progressBar->advance();
-            $progressBar->setMessage($middleware->getLabel());
-        });
-        if ($output instanceof ConsoleOutput) {
-            $logSection = $output->section();
-            $handler->onMessage(fn(string $message) => $logSection->writeln($message));
+        $defaultResourcesPath = self::defaultResourcesPath();
+        $useDefault = $this->output->askConfirmation(sprintf('Do you want to migrate resources from the current installation "%s" (y/n)? ', $defaultResourcesPath));
+        if ($useDefault) {
+            return $defaultResourcesPath;
         }
+        $path = $this->output->ask('Absolute path to persistent resources (usually "<project>/Data/Persistent/Resources") ? ');
+        if (!is_dir($path) || !is_readable($path)) {
+            throw new \InvalidArgumentException(sprintf('Path "%s" is not a readable directory', $path), 1658736039);
+        }
+        return $path;
+    }
+
+    private static function defaultResourcesPath(): string
+    {
+        return FLOW_PATH_DATA . 'Persistent/Resources';
     }
 }
