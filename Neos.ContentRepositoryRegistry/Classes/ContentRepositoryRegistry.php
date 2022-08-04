@@ -9,7 +9,6 @@ use Neos\ContentRepository\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Factory\ProjectionsFactory;
-use Neos\ContentRepository\Projection\CatchUpHookFactories;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;

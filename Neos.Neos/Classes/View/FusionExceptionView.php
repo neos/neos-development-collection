@@ -129,14 +129,10 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
-        /** @phpstan-ignore-next-line */
         if ($currentSiteNode) {
             $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
-            if ($dimensionSpacePoint) {
-                /** @phpstan-ignore-next-line */
-                $this->setFallbackRuleFromDimension($dimensionSpacePoint);
-            }
+            $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
             $fusionRuntime->pushContextArray(array_merge(
                 $this->variables,

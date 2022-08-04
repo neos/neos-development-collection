@@ -13,14 +13,17 @@ final class Projections implements \IteratorAggregate
 {
     /**
      * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface>
+     * @phpstan-ignore-next-line
      */
     private array $projections;
 
     /**
      * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface> $projections
+     * @phpstan-ignore-next-line
      */
     private function __construct(ProjectionInterface ...$projections)
     {
+        // @phpstan-ignore-next-line
         $this->projections = $projections;
     }
 
@@ -30,7 +33,8 @@ final class Projections implements \IteratorAggregate
     }
 
     /**
-     * @param ProjectionInterface $projection
+     * @template T of ProjectionStateInterface
+     * @param ProjectionInterface<T> $projection
      * @return self
      */
     public function with(ProjectionInterface $projection): self
@@ -50,7 +54,7 @@ final class Projections implements \IteratorAggregate
     }
 
     /**
-     * @template T of Projection
+     * @template T of ProjectionInterface
      * @param class-string<T> $projectionClassName
      * @return T
      */
@@ -65,6 +69,7 @@ final class Projections implements \IteratorAggregate
                 1650120813
             );
         }
+        // @phpstan-ignore-next-line
         return $this->projections[$projectionClassName];
     }
 
@@ -73,6 +78,10 @@ final class Projections implements \IteratorAggregate
         return array_key_exists($projectionClassName, $this->projections);
     }
 
+    /**
+     * @return \Traversable<ProjectionInterface>
+     * @phpstan-ignore-next-line
+     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->projections);

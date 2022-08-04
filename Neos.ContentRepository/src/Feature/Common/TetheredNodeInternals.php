@@ -110,7 +110,8 @@ trait TetheredNodeInternals
                 $childNodeSource->getOriginDimensionSpacePoint(),
                 $parentNode->getOriginDimensionSpacePoint(),
                 $parentNodeAggregate,
-                $initiatingUserIdentifier
+                $initiatingUserIdentifier,
+                $contentRepository
             );
         } else {
             throw new \RuntimeException(

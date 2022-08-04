@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Projection\Workspace;
 
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -53,10 +54,20 @@ final class WorkspaceRuntimeCache
         return null;
     }
 
-    public function setWorkspaceByName(Workspace $workspace): void
+    public function setWorkspace(Workspace $workspace): void
     {
         if ($this->cacheEnabled === true) {
             $this->cachedWorkspacesByName[$workspace->workspaceName] = $workspace;
+            $this->cachedWorkspacesByContentStreamIdentifier[$workspace->currentContentStreamIdentifier] = $workspace;
         }
+    }
+
+    public function getByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
+    {
+        if ($this->cacheEnabled === true
+            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+            return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
+        }
+        return null;
     }
 }

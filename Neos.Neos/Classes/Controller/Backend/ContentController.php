@@ -410,8 +410,7 @@ class ContentController extends ActionController
         $views = [];
         if ($node instanceof NodeInterface) {
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->getNodeType(),
-                $contentRepositoryIdentifier
+                $node->getNodeType()
             );
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();

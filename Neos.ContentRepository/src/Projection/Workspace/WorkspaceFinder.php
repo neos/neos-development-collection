@@ -58,20 +58,16 @@ final class WorkspaceFinder implements ProjectionStateInterface
         }
 
         $workspace = Workspace::fromDatabaseRow($workspaceRow);
-
-        $this->workspaceRuntimeCache->setWorkspaceByName($workspace);
-
+        $this->workspaceRuntimeCache->setWorkspace($workspace);
         return $workspace;
     }
 
     public function findOneByCurrentContentStreamIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier
     ): ?Workspace {
-        if (
-            $this->cacheEnabled
-            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])
-        ) {
-            return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
+        $workspace = $this->workspaceRuntimeCache->getByCurrentContentStreamIdentifier($contentStreamIdentifier);
+        if ($workspace !== null) {
+            return $workspace;
         }
 
         $connection = $this->client->getConnection();
@@ -90,11 +86,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         }
 
         $workspace = Workspace::fromDatabaseRow($workspaceRow);
-
-        if ($this->cacheEnabled === true) {
-            $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $workspace;
-        }
-
+        $this->workspaceRuntimeCache->setWorkspace($workspace);
         return $workspace;
     }
 

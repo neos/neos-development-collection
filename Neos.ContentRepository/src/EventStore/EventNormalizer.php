@@ -45,7 +45,13 @@ use Neos\EventStore\Model\Event\EventType;
  */
 final class EventNormalizer
 {
+    /**
+     * @var array<class-string<EventInterface>,EventType>
+     */
     private array $fullClassNameToShortEventType = [];
+    /**
+     * @var array<string,class-string<EventInterface>>
+     */
     private array $shortEventTypeToFullClassName = [];
 
     public function __construct()

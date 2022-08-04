@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\EventStore;
 final class Events implements \IteratorAggregate
 {
     /**
-     * @var EventInterface|DecoratedEvent[]
+     * @var array<EventInterface|DecoratedEvent>
      */
     private readonly array $events;
 
@@ -26,6 +26,10 @@ final class Events implements \IteratorAggregate
         return new self($event);
     }
 
+    /**
+     * @param array<EventInterface|DecoratedEvent> $events
+     * @return static
+     */
     public static function fromArray(array $events): self
     {
         return new self(...$events);
@@ -36,6 +40,10 @@ final class Events implements \IteratorAggregate
         return new \ArrayIterator($this->events);
     }
 
+    /**
+     * @param \Closure $callback
+     * @return array<mixed>
+     */
     public function map(\Closure $callback): array
     {
         return array_map($callback, $this->events);

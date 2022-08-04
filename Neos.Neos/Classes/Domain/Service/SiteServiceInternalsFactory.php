@@ -17,6 +17,9 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
+/**
+ * @implements ContentRepositoryServiceFactoryInterface<SiteServiceInternals>
+ */
 class SiteServiceInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): SiteServiceInternals

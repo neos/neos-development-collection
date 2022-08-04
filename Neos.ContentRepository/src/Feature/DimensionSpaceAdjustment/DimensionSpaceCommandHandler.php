@@ -60,6 +60,8 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         } elseif ($command instanceof AddDimensionShineThrough) {
             return $this->handleAddDimensionShineThrough($command, $contentRepository);
         }
+
+        throw new \RuntimeException('Command ' . get_class($command) . ' not supported by this command handler.');
     }
 
     private function handleMoveDimensionSpacePoint(

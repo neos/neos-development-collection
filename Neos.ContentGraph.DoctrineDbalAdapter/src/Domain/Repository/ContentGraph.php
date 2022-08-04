@@ -45,7 +45,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 final class ContentGraph implements ContentGraphInterface
 {
     /**
-     * @var array<string,ContentSubgraphInterface>
+     * @var array<string,ContentSubgraph>
      */
     private array $subgraphs = [];
 
@@ -477,7 +477,7 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @return ContentSubgraph[]
-     * @internal only used for {@see InMemoryCacheAccessor} and impl. of {@see DoctrineDbalContentGraphProjection}
+     * @internal only used for {@see DoctrineDbalContentGraphProjection}
      */
     public function getSubgraphs(): array
     {

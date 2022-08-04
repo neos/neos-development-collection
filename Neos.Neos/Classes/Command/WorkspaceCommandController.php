@@ -68,7 +68,7 @@ class WorkspaceCommandController extends CommandController
      */
     public function publishCommand(
         $workspace,
-        $contentRepositoryIdentifier = 'default',
+        string $contentRepositoryIdentifier = 'default',
         $verbose = false,
         $dryRun = false
     ) {
@@ -100,7 +100,7 @@ class WorkspaceCommandController extends CommandController
      */
     public function discardCommand(
         $workspace,
-        $contentRepositoryIdentifier = 'default',
+        string $contentRepositoryIdentifier = 'default',
         $verbose = false,
         $dryRun = false
     ) {
@@ -121,7 +121,7 @@ class WorkspaceCommandController extends CommandController
         }
     }
 
-    public function createRootCommand(string $name, $contentRepositoryIdentifier = 'default'): void
+    public function createRootCommand(string $name, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
@@ -153,7 +153,7 @@ class WorkspaceCommandController extends CommandController
         $title = null,
         $description = null,
         $owner = '',
-        $contentRepositoryIdentifier = 'default'
+        string $contentRepositoryIdentifier = 'default'
     ) {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
@@ -210,7 +210,7 @@ class WorkspaceCommandController extends CommandController
      * @return void
      * @see neos.neos:workspace:discard
      */
-    public function deleteCommand($workspace, $force = false, $contentRepositoryIdentifier = 'default')
+    public function deleteCommand($workspace, $force = false, string $contentRepositoryIdentifier = 'default')
     {
         throw new \BadMethodCallException(
             'Workspace removal is not supported yet',
@@ -301,7 +301,7 @@ class WorkspaceCommandController extends CommandController
      * @param string $baseWorkspace Name of the new base workspace
      * @return void
      */
-    public function rebaseCommand($workspace, $baseWorkspace, $contentRepositoryIdentifier = 'default')
+    public function rebaseCommand($workspace, $baseWorkspace, string $contentRepositoryIdentifier = 'default')
     {
         throw new \BadMethodCallException(
             'Workspace rebasing is now a different concept ("real", git-like rebase <3),'
@@ -340,7 +340,7 @@ class WorkspaceCommandController extends CommandController
      *
      * @return void
      */
-    public function listCommand($contentRepositoryIdentifier = 'default')
+    public function listCommand(string $contentRepositoryIdentifier = 'default')
     {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);

@@ -8,9 +8,11 @@ use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 
+/**
+ * @implements ProjectionFactoryInterface<DocumentUriPathProjection>
+ */
 final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
@@ -23,7 +25,7 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): ProjectionInterface {
+    ): DocumentUriPathProjection {
         $projectionShortName = strtolower(str_replace(
             'Projection',
             '',

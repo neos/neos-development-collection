@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Management;
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
@@ -27,6 +28,9 @@ class WorkspacesControllerInternals implements ContentRepositoryServiceInterface
     ) {
     }
 
+    /**
+     * @return array<string,ContentDimension>
+     */
     public function getContentDimensionsOrderedByPriority(): array
     {
         return $this->contentDimensionSource->getContentDimensionsOrderedByPriority();

@@ -148,8 +148,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
         $this->dbal->beginTransaction();
 
-        // @codingStandardsIgnoreStart
-        match (get_class($eventInstance)) {
+        // @codingStandardsIgnoreStart @phpstan-ignore-next-line
+        match ($eventInstance::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($eventInstance),

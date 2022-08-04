@@ -43,6 +43,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
  * @internal
+ * @implements ProjectionInterface<WorkspaceFinder>
  */
 class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 {

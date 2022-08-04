@@ -23,6 +23,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\Common\NodeConstraintException;
+use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -186,6 +187,9 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         }
     }
 
+    /**
+     * @param array<NodeAggregateWithNodeWasCreated> $events
+     */
     private function createEventsForNodeToInsert(
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -193,7 +197,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
         ?NodeName $targetNodeName,
-        \Neos\ContentRepository\Feature\NodeDuplication\Command\NodeSubtreeSnapshot $nodeToInsert,
+        NodeSubtreeSnapshot $nodeToInsert,
         NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
         UserIdentifier $initiatingUserIdentifier,
         array &$events

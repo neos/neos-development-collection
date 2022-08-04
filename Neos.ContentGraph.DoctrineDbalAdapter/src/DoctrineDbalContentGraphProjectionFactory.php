@@ -15,6 +15,9 @@ use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 
+/**
+ * @implements ProjectionFactoryInterface<ContentGraphProjection>
+ */
 final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
@@ -33,12 +36,13 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): ProjectionInterface {
+    ): ContentGraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryIdentifier
         );
 
         return new ContentGraphProjection(
+            // @phpstan-ignore-next-line
             new DoctrineDbalContentGraphProjection(
                 $projectionFactoryDependencies->eventNormalizer,
                 $this->dbalClient,

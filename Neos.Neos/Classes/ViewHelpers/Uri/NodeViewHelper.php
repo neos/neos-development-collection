@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Uri;
 
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
@@ -277,7 +279,10 @@ class NodeViewHelper extends AbstractViewHelper
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress($documentNodeAddress);
+        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $documentNodeAddress
+        );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
@@ -318,12 +323,18 @@ class NodeViewHelper extends AbstractViewHelper
      * @param NodeAddress $nodeAddress
      * @return NodeAccessorInterface
      */
-    private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
+    private function getNodeAccessorForNodeAddress(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        NodeAddress $nodeAddress
+    ): NodeAccessorInterface
     {
         return $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            new ContentSubgraphIdentity(
+                $contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
         );
     }
 }

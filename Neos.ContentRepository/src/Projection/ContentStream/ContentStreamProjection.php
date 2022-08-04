@@ -141,40 +141,31 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function apply(EventEnvelope $eventEnvelope): void
     {
-
         if (!$this->canHandle($eventEnvelope->event)) {
             return;
         }
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
-        if ($eventInstance instanceof ContentStreamWasCreated) {
-            $this->whenContentStreamWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof RootWorkspaceWasCreated) {
-            $this->whenRootWorkspaceWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceWasCreated) {
-            $this->whenWorkspaceWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof ContentStreamWasForked) {
-            $this->whenContentStreamWasForked($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceWasDiscarded) {
-            $this->whenWorkspaceWasDiscarded($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceWasPartiallyDiscarded) {
-            $this->whenWorkspaceWasPartiallyDiscarded($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceWasPartiallyPublished) {
-            $this->whenWorkspaceWasPartiallyPublished($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceWasPublished) {
-            $this->whenWorkspaceWasPublished($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceWasRebased) {
-            $this->whenWorkspaceWasRebased($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof WorkspaceRebaseFailed) {
-            $this->whenWorkspaceRebaseFailed($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof ContentStreamWasRemoved) {
-            $this->whenContentStreamWasRemoved($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof EmbedsContentStreamAndNodeAggregateIdentifier) {
+        if ($eventInstance instanceof EmbedsContentStreamAndNodeAggregateIdentifier) {
             $this->updateContentStreamVersion($eventInstance, $eventEnvelope);
-        } else {
-            throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
+            return;
         }
+
+        // @phpstan-ignore-next-line
+        match($eventInstance::class) {
+            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($eventInstance, $eventEnvelope),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($eventInstance),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($eventInstance, $eventEnvelope),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($eventInstance),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($eventInstance),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($eventInstance),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($eventInstance),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($eventInstance),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($eventInstance),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($eventInstance, $eventEnvelope),
+        };
     }
 
     public function getSequenceNumber(): SequenceNumber
@@ -342,7 +333,7 @@ class ContentStreamProjection implements ProjectionInterface
     private function updateContentStreamVersion(
         EmbedsContentStreamAndNodeAggregateIdentifier $eventInstance,
         EventEnvelope $eventEnvelope
-    ) {
+    ): void {
         $this->getDatabaseConnection()->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [

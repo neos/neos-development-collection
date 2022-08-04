@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class SiteNodeName implements CacheAwareInterface
+final class SiteNodeName
 {
     private function __construct(
         public readonly string $value
@@ -47,11 +47,6 @@ final class SiteNodeName implements CacheAwareInterface
     }
 
     public function __toString(): string
-    {
-        return $this->value;
-    }
-
-    public function getCacheEntryIdentifier(): string
     {
         return $this->value;
     }

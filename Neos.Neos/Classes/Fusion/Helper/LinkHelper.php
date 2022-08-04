@@ -176,16 +176,6 @@ class LinkHelper implements ProtectedContextAwareInterface
                             1409734235
                         );
                     }
-                    $contentRepository = $this->contentRepositoryRegistry->get(
-                        $contextNode->getSubgraphIdentity()->contentRepositoryIdentifier
-                    );
-                    $contextNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($contextNode);
-                    if ($contextNodeAddress->workspaceName === null) {
-                        throw new \RuntimeException(sprintf(
-                            'Failed to create node address for context node "%s"',
-                            $contextNode->getNodeAggregateIdentifier()
-                        ));
-                    }
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                         $contextNode->getSubgraphIdentity()
                     );

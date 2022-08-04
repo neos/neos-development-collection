@@ -17,6 +17,9 @@ namespace Neos\Neos\View;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
+/**
+ * @implements ContentRepositoryServiceFactoryInterface<FusionExceptionViewInternals>
+ */
 class FusionExceptionViewInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(

@@ -16,6 +16,9 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  */
 final class ContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
+    /**
+     * @param WithMarkStaleInterface&ProjectionInterface<ContentGraphInterface> $projectionImplementation
+     */
     public function __construct(
         private readonly ProjectionInterface&WithMarkStaleInterface $projectionImplementation
     ) {

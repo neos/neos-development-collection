@@ -73,7 +73,7 @@ final class ContentRepository
     }
 
     /**
-     * @template T of ProjectionState
+     * @template T of ProjectionStateInterface
      * @param class-string<ProjectionInterface<T>> $projectionClassName
      * @return T
      */
@@ -83,8 +83,7 @@ final class ContentRepository
     }
 
     /**
-     * @template T of ProjectionState
-     * @param class-string<ProjectionInterface<T>> $projectionClassName
+     * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
      */
     public function catchUpProjection(string $projectionClassName): void
     {
@@ -118,8 +117,7 @@ final class ContentRepository
     }
 
     /**
-     * @template T of ProjectionState
-     * @param class-string<ProjectionInterface<T>> $projectionClassName
+     * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
      */
     public function resetProjectionState(string $projectionClassName): void
     {

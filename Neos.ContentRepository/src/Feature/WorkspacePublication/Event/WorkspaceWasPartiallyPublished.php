@@ -56,7 +56,7 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
         );
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             'sourceWorkspaceName' => $this->sourceWorkspaceName,

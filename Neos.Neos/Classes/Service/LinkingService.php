@@ -321,9 +321,7 @@ class LinkingService
                 )->contentRepositoryIdentifier;
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
-                $workspace = $nodeAddress->workspaceName
-                    ? $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName)
-                    : null;
+                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                     new ContentSubgraphIdentity(
                         $contentRepositoryIdentifier,

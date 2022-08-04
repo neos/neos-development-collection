@@ -100,9 +100,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $order,
                 $contentDimensionIdentifierToLimitTo
             ) {
-                return (int)$order[$menuItemA['node']?->getDimensionSpacePoint()?->getCoordinate(
+                return (int)$order[$menuItemA['node']?->getSubgraphIdentity()->dimensionSpacePoint->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
-                )] <=> (int)$order[$menuItemB['node']?->getDimensionSpacePoint()?->getCoordinate(
+                )] <=> (int)$order[$menuItemB['node']?->getSubgraphIdentity()->dimensionSpacePoint->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
                 )];
             });

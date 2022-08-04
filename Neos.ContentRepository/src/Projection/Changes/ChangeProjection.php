@@ -45,6 +45,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 /**
  * TODO: this class needs testing and probably a major refactoring!
  * @internal
+ * @implements ProjectionInterface<ChangeFinder>
  */
 class ChangeProjection implements ProjectionInterface
 {

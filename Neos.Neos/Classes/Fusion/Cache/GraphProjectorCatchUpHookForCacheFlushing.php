@@ -90,7 +90,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         }
     }
     /**
-     * @var array<int,array<string,mixed>>
+     * @var array<string,array<string,mixed>>
      */
     protected array $cacheFlushes = [];
 

@@ -45,7 +45,8 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly NodeTypeManager $nodeTypeManager
-    ) {
+    )
+    {
     }
 
     public function removeSiteNode(SiteNodeName $siteNodeName): void
@@ -85,7 +86,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
     }
 
-    public function createSiteNode(Site $site, string $nodeTypeName, UserIdentifier $currentUserIdentifier)
+    public function createSiteNode(Site $site, string $nodeTypeName, UserIdentifier $currentUserIdentifier): void
     {
         $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
         if (!$liveWorkspace instanceof Workspace) {

@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\CommandHandler;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\EventStore\Model\EventStore\CommitResult;
 use Neos\EventStore\Model\Event\SequenceNumber;
 
@@ -35,6 +36,9 @@ final class CommandResult
         }
     }
 
+    /**
+     * @param ProjectionInterface<ProjectionStateInterface> $projection
+     */
     private function blockProjection(ProjectionInterface $projection, SequenceNumber $expectedSequenceNumber): void
     {
         $attempts = 0;

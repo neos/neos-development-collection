@@ -18,7 +18,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
- * @implements ContentRepositoryServiceFactoryInterface<DimensionControllerInternals>
+ * @implements ContentRepositoryServiceFactoryInterface<WorkspacesControllerInternals>
  */
 class WorkspacesControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {

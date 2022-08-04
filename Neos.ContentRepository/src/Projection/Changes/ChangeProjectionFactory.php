@@ -19,13 +19,15 @@ use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 // TODO: MOVE TO NEOS
+/**
+ * @implements ProjectionFactoryInterface<ChangeProjection>
+ */
 class ChangeProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
@@ -38,7 +40,7 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): ProjectionInterface {
+    ): ChangeProjection {
         $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
         assert($workspaceFinder instanceof WorkspaceFinder);
         $projectionShortName = strtolower(str_replace(

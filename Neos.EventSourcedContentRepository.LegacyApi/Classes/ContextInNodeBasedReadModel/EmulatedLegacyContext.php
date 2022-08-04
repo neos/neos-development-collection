@@ -75,14 +75,17 @@ class EmulatedLegacyContext
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return $this->getNodeAddressOfContextNode()->workspaceName?->name;
+        return $this->getNodeAddressOfContextNode()->workspaceName->name;
     }
 
     public function getWorkspace(): EmulatedLegacyWorkspace
     {
         $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
+        return new EmulatedLegacyWorkspace(
+            $this->node->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $this->getNodeAddressOfContextNode()
+        );
     }
 
     public function getCurrentSite(): EmulatedLegacySite

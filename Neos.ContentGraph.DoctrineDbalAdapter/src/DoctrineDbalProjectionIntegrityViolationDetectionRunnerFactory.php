@@ -8,7 +8,11 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
+use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
+/**
+ * @implements ContentRepositoryServiceFactoryInterface<ProjectionIntegrityViolationDetectionRunner>
+ */
 class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function __construct(
@@ -18,7 +22,7 @@ class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements 
 
     public function build(
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
-    ): ContentRepositoryServiceInterface {
+    ): ProjectionIntegrityViolationDetectionRunner {
         return new ProjectionIntegrityViolationDetectionRunner(
             new ProjectionIntegrityViolationDetector(
                 $this->dbalClient,

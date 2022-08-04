@@ -5,12 +5,23 @@ namespace Neos\ContentRepository\Factory;
 use Neos\ContentRepository\Projection\CatchUpHookFactories;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 
 final class ProjectionsFactory
 {
+    /**
+     * @phpstan-ignore-next-line
+     * @var array<class-string<ProjectionFactoryInterface>, array{'factory': ProjectionFactoryInterface, 'options': array<mixed>, 'catchUpHooks': array<array{'catchUpHookFactory': CatchUpHookFactoryInterface}>}>
+     */
     private array $factories = [];
 
+    /**
+     * @param ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>> $factory
+     * @param array<string,mixed> $options
+     * @return void
+     */
     public function registerFactory(ProjectionFactoryInterface $factory, array $options): void
     {
         $this->factories[get_class($factory)] = [
@@ -20,6 +31,11 @@ final class ProjectionsFactory
         ];
     }
 
+    /**
+     * @param ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>> $factory
+     * @param CatchUpHookFactoryInterface $catchUpHookFactory
+     * @return void
+     */
     public function registerCatchUpHookFactory(
         ProjectionFactoryInterface $factory,
         CatchUpHookFactoryInterface $catchUpHookFactory

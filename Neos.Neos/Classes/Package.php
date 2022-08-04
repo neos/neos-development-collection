@@ -25,7 +25,6 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
@@ -128,19 +127,6 @@ class Package extends BasePackage
         $dispatcher->connect(
             SiteService::class,
             'sitePruned',
-            RouterCachingService::class,
-            'flushCaches'
-        );
-
-        $dispatcher->connect(
-            SiteImportService::class,
-            'siteImported',
-            ContentCache::class,
-            'flush'
-        );
-        $dispatcher->connect(
-            SiteImportService::class,
-            'siteImported',
             RouterCachingService::class,
             'flushCaches'
         );

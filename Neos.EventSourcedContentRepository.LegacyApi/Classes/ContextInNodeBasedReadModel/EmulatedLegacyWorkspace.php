@@ -39,11 +39,9 @@ class EmulatedLegacyWorkspace
         $this->legacyLogger->info('context.workspace.baseWorkspace called', LogEnvironment::fromMethodName(__METHOD__));
 
         if ($this->workspace === null) {
-            if ($this->nodeAddressOfContextNode->workspaceName) {
-                $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
-                $this->workspace = $contentRepository->getWorkspaceFinder()
-                    ->findOneByName($this->nodeAddressOfContextNode->workspaceName);
-            }
+            $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
+            $this->workspace = $contentRepository->getWorkspaceFinder()
+                ->findOneByName($this->nodeAddressOfContextNode->workspaceName);
         }
 
         return !is_null($this->workspace)

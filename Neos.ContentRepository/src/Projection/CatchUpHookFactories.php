@@ -9,7 +9,7 @@ use Neos\ContentRepository\ContentRepository;
 final class CatchUpHookFactories implements CatchUpHookFactoryInterface
 {
     /**
-     * @var array<class-string<CatchUpHookFactoryInterface>>
+     * @var array<mixed,CatchUpHookFactoryInterface>
      */
     private array $catchUpHookFactories;
 

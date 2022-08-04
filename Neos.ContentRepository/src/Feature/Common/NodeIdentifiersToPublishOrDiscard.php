@@ -17,24 +17,26 @@ namespace Neos\ContentRepository\Feature\Common;
 /**
  * A collection of NodeIdentifier objects, to be used when publishing or discarding a set of nodes
  *
- * @implements \IteratorAggregate<int,NodeIdentifier>
+ * @implements \IteratorAggregate<int,NodeIdentifierToPublishOrDiscard>
  */
 final class NodeIdentifiersToPublishOrDiscard implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<int,NodeIdentifierToPublishOrDiscard>
+     * @var array<NodeIdentifierToPublishOrDiscard>
      */
     public readonly array $nodeIdentifiers;
 
-    private function __construct(NodeIdentifierToPublishOrDiscard ...$nodeIdentifiers)
+    /**
+     * @param array<NodeIdentifierToPublishOrDiscard> $nodeIdentifiers
+     */
+    private function __construct(array $nodeIdentifiers)
     {
-        /** @var array<int,NodeIdentifierToPublishOrDiscard> $nodeIdentifiers */
         $this->nodeIdentifiers = $nodeIdentifiers;
     }
 
-    public static function fromNodeIdentifiers(array $nodeIdentifiers): self
+    public static function create(NodeIdentifierToPublishOrDiscard ...$nodeIdentifiers): self
     {
-        return new self(...$nodeIdentifiers);
+        return new self($nodeIdentifiers);
     }
 
     /**
@@ -42,7 +44,7 @@ final class NodeIdentifiersToPublishOrDiscard implements \IteratorAggregate, \Co
      */
     public static function fromArray(array $nodeIdentifierData): self
     {
-        return new self(...array_map(
+        return new self(array_map(
             fn (array $nodeIdentifierDatum): NodeIdentifierToPublishOrDiscard =>
                 NodeIdentifierToPublishOrDiscard::fromArray($nodeIdentifierDatum),
             $nodeIdentifierData
@@ -51,7 +53,7 @@ final class NodeIdentifiersToPublishOrDiscard implements \IteratorAggregate, \Co
 
     public function merge(self $other): self
     {
-        return new self(...array_merge($this->nodeIdentifiers, $other->nodeIdentifiers));
+        return new self(array_merge($this->nodeIdentifiers, $other->nodeIdentifiers));
     }
 
     /**

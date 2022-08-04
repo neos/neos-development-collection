@@ -42,7 +42,6 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\Neos\Domain\Service\UserService;
@@ -81,12 +80,6 @@ class SitesController extends AbstractModuleController
      * @var PackageManager
      */
     protected $packageManager;
-
-    /**
-     * __Flow\Inject
-     * @var SiteImportService
-     */
-    protected $siteImportService;
 
     /**
      * @Flow\Inject

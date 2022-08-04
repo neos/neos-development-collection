@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Module\Management;
 
 use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
@@ -135,7 +137,8 @@ class WorkspacesController extends AbstractModuleController
             if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace())) {
                 $workspaceName = (string)$workspace->getWorkspaceName();
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
-                $workspacesAndCounts[$workspaceName]['changesCounts'] = $this->computeChangesCount($workspace);
+                $workspacesAndCounts[$workspaceName]['changesCounts'] =
+                    $this->computeChangesCount($workspace, $contentRepository);
                 $workspacesAndCounts[$workspaceName]['canPublish']
                     = $this->domainUserService->currentUserCanPublishToWorkspace($workspace);
                 $workspacesAndCounts[$workspaceName]['canManage']
@@ -476,7 +479,13 @@ class WorkspacesController extends AbstractModuleController
 
         $command = PublishIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
-            [$node],
+            NodeIdentifiersToPublishOrDiscard::create(
+                new NodeIdentifierToPublishOrDiscard(
+                    $node->contentStreamIdentifier,
+                    $node->nodeAggregateIdentifier,
+                    $node->dimensionSpacePoint
+                )
+            ),
             UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
         );
         $contentRepository->handle($command)
@@ -507,7 +516,13 @@ class WorkspacesController extends AbstractModuleController
 
         $command = DiscardIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
-            [$node],
+            NodeIdentifiersToPublishOrDiscard::create(
+                new NodeIdentifierToPublishOrDiscard(
+                    $node->contentStreamIdentifier,
+                    $node->nodeAggregateIdentifier,
+                    $node->dimensionSpacePoint
+                )
+            ),
             UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
         );
         $contentRepository->handle($command)
@@ -539,16 +554,22 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryIdentifier;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
-        $nodeAddresses = [];
+        $nodesToPublishOrDiscard = [];
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         foreach ($nodes as $node) {
-            $nodeAddresses[] = $nodeAddressFactory->createFromUriString($node);
+            $nodeAddress = $nodeAddressFactory->createFromUriString($node);
+            $nodesToPublishOrDiscard[] = new NodeIdentifierToPublishOrDiscard(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->nodeAggregateIdentifier,
+                $nodeAddress->dimensionSpacePoint
+            );
         }
+
         switch ($action) {
             case 'publish':
                 $command = PublishIndividualNodesFromWorkspace::create(
                     $selectedWorkspace,
-                    $nodeAddresses,
+                    NodeIdentifiersToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                     UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
                 );
                 $contentRepository->handle($command)
@@ -565,7 +586,7 @@ class WorkspacesController extends AbstractModuleController
             case 'discard':
                 $command = DiscardIndividualNodesFromWorkspace::create(
                     $selectedWorkspace,
-                    $nodeAddresses,
+                    NodeIdentifiersToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                     UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
                 );
                 $contentRepository->handle($command)

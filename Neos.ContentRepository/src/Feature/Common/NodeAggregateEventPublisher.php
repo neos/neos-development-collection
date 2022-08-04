@@ -54,6 +54,12 @@ final class NodeAggregateEventPublisher
             }
 
             if ($i === 0) {
+                if (!$command instanceof \JsonSerializable) {
+                    throw new \RuntimeException(sprintf(
+                        'Command %s must be JSON Serializable to be used with NodeAggregateEventPublisher.',
+                        get_class($command)
+                    ));
+                }
                 $commandPayload = $command->jsonSerialize();
 
                 if (!isset($commandPayload['contentStreamIdentifier'])) {

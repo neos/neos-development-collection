@@ -82,7 +82,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->addIndex(['contentstreamidentifier', 'dimensionspacepointhash'], 'SUBGRAPH_IDENTIFIER');
     }
 
-    private function createReferenceRelationTable(Schema $schema)
+    private function createReferenceRelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_referencerelation');
         $table->addColumn('name', Types::STRING)
@@ -103,7 +103,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
     }
 
-    private function createRestrictionRelationTable(Schema $schema)
+    private function createRestrictionRelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
         $table->addColumn('contentstreamidentifier', Types::STRING)

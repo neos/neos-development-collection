@@ -193,7 +193,7 @@ class CachingHelper implements ProtectedContextAwareInterface
 
     /**
      * @param NodeInterface $node
-     * @return array|Workspace
+     * @return array<string,Workspace>
      */
     public function getWorkspaceChain(?NodeInterface $node): array
     {

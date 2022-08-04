@@ -62,6 +62,9 @@ final class NodeMoveMapping implements \JsonSerializable
         return $this->newSucceedingSiblingAssignments;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

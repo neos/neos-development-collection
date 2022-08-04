@@ -35,7 +35,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
      */
     protected $nodeAccessorManager;
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('node', NodeInterface::class, 'Node', true);

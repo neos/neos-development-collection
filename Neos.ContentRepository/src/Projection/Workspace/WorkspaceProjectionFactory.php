@@ -18,9 +18,11 @@ use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 
+/**
+ * @implements ProjectionFactoryInterface<WorkspaceProjection>
+ */
 class WorkspaceProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
@@ -33,7 +35,7 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): ProjectionInterface {
+    ): WorkspaceProjection {
         $projectionShortName = strtolower(str_replace(
             'Projection',
             '',

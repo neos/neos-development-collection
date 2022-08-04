@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Link;
 
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
@@ -277,7 +279,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             ), 1601372376);
         }
 
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress($nodeAddress);
+        /* @var NodeInterface $documentNode */
+        $documentNode = $this->getContextVariable('documentNode');
+        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $nodeAddress
+        );
         $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
             throw new ViewHelperException(sprintf(
@@ -288,8 +295,14 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
         if ($resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
             try {
-                $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
-            } catch (NodeNotFoundException | InvalidShortcutException $e) {
+                $contentRepository = $this->contentRepositoryRegistry->get(
+                    $resolvedNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                );
+                $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
+                    $nodeAddress,
+                    $contentRepository
+                );
+            } catch (NodeNotFoundException|InvalidShortcutException $e) {
                 throw new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
                     $resolvedNode->getNodeAggregateIdentifier(),
@@ -313,10 +326,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (
-            NodeAddressCannotBeSerializedException
-            | HttpException
-            | NoMatchingRouteException
-            | MissingActionNameException $e
+        NodeAddressCannotBeSerializedException
+        |HttpException
+        |NoMatchingRouteException
+        |MissingActionNameException $e
         ) {
             throw new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
@@ -361,7 +374,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress($documentNodeAddress);
+        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $documentNodeAddress
+        );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
@@ -402,12 +418,18 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @param NodeAddress $nodeAddress
      * @return NodeAccessorInterface
      */
-    private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
+    private function getNodeAccessorForNodeAddress(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        NodeAddress $nodeAddress
+    ): NodeAccessorInterface
     {
         return $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            new ContentSubgraphIdentity(
+                $contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
         );
     }
 }

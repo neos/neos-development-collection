@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 /**
@@ -24,7 +25,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
  */
 interface RebasableToOtherContentStreamsInterface
 {
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self;
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): CommandInterface;
 
     /**
      * called during deserialization from metadata

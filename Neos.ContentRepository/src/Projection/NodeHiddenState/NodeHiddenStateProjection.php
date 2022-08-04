@@ -38,10 +38,12 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 /**
  * TODO: this class needs proper testing
  * @internal
+ * @implements ProjectionInterface<NodeHiddenStateFinder>
  */
 class NodeHiddenStateProjection implements ProjectionInterface
 {
     private ?NodeHiddenStateFinder $nodeHiddenStateFinder;
+    private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
@@ -127,7 +129,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
-        match (get_class($eventInstance)) {
+        // @phpstan-ignore-next-line
+        match ($eventInstance::class) {
             NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($eventInstance),
             NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($eventInstance),
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($eventInstance),

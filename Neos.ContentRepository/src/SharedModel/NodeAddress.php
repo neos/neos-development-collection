@@ -77,7 +77,7 @@ final class NodeAddress
 
     public function isInLiveWorkspace(): bool
     {
-        return $this->workspaceName?->isLive() ?: false;
+        return $this->workspaceName->isLive();
     }
 
     public function __toString(): string

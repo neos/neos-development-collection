@@ -54,9 +54,10 @@ class ContentCacheFlusher
     /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      *
+     * @param ContentRepository $contentRepository
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return void
+     * @return callable
      */
     public function flushNodeAggregate(
         ContentRepository $contentRepository,
