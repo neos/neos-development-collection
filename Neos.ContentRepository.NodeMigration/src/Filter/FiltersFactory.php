@@ -6,17 +6,16 @@ namespace Neos\ContentRepository\NodeMigration\Filter;
 
 use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\MigrationException;
-use Psr\Container\ContainerInterface;
 
 /**
  * Implementation detail of {@see NodeMigrationService}
  */
 class FiltersFactory
 {
-    public function __construct(
-        private readonly ContainerInterface $container
-    ) {
-    }
+    /**
+     * @var array<string,FilterFactoryInterface>
+     */
+    private array $filterFactories = [];
 
     /**
      * @param array<int,array<string,mixed>> $filterConfigurations
@@ -32,16 +31,20 @@ class FiltersFactory
         return new Filters($filterObjects);
     }
 
+    public function registerFilter(string $filterIdentifier, FilterFactoryInterface $filterFactory): self
+    {
+        $this->filterFactories[$filterIdentifier] = $filterFactory;
+        return $this;
+    }
+
     /**
      * @param array<string,mixed> $filterConfiguration
      */
     protected function constructFilterObject(
         array $filterConfiguration
-    ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface {
-        $filterFactoryClassName = $this->resolveFilterFactoryClass($filterConfiguration['type']);
-
-        $filterFactory = $this->container->get($filterFactoryClassName);
-        assert($filterFactory instanceof FilterFactoryInterface);
+    ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
+    {
+        $filterFactory = $this->resolveFilterFactory($filterConfiguration['type']);
         return $filterFactory->build($filterConfiguration['settings'] ?? []);
     }
 
@@ -52,17 +55,17 @@ class FiltersFactory
      *
      * @throws MigrationException
      */
-    protected function resolveFilterFactoryClass(string $name): string
+    protected function resolveFilterFactory(string $name): FilterFactoryInterface
     {
-        if (class_exists($name)) {
-            return $name;
+        if (isset($this->filterFactories[$name])) {
+            return $this->filterFactories[$name];
         }
 
         if ($name === 'DimensionValues') {
             throw new MigrationException(
                 'The "DimensionValues" filter from the legacy content repository has been replaced'
-                    . ' by the "DimensionSpacePoint" filter in the event-sourced content repository.'
-                    . ' Please adjust your node migrations.',
+                . ' by the "DimensionSpacePoint" filter in the event-sourced content repository.'
+                . ' Please adjust your node migrations.',
                 1637177939
             );
         }
@@ -70,7 +73,7 @@ class FiltersFactory
         if ($name === 'IsRemoved') {
             throw new MigrationException(
                 'The "IsRemoved" filter from the legacy content repository has been removed without replacement,'
-                    . ' as removed nodes are not resolved during a migration anymore.',
+                . ' as removed nodes are not resolved during a migration anymore.',
                 1637177986
             );
         }
@@ -78,11 +81,15 @@ class FiltersFactory
         if ($name === 'Workspace') {
             throw new MigrationException(
                 'The "Workspace" filter from the legacy content repository has been removed without replacement,'
-                    . ' as migrations are always targeting a single workspace (live by default).',
+                . ' as migrations are always targeting a single workspace (live by default).',
                 1637178056
             );
         }
 
-        return 'Neos\ContentRepository\NodeMigration\Filter\\' . $name . 'FilterFactory';
+        throw new MigrationException(
+            'The "' . $name . '" filter is not registered.',
+            1659603426
+        );
+
     }
 }

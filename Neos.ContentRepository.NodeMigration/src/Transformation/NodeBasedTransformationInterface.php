@@ -30,5 +30,5 @@ interface NodeBasedTransformationInterface
         NodeInterface $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         ContentStreamIdentifier $contentStreamForWriting
-    ): CommandResult;
+    ): ?CommandResult;
 }

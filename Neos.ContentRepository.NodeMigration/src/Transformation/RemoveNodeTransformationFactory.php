@@ -14,30 +14,27 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
  * Remove Node
  */
-class RemoveNodeTransformationFactory implements TransformationFactoryInterface//NodeBasedTransformationInterface
+class RemoveNodeTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
-    {
-    }
-
     /**
      * @param array<string,mixed> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $strategy = null;
         if (isset($settings['strategy'])) {
@@ -52,12 +49,12 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface/
         return new class (
             $strategy,
             $overriddenDimensionSpacePoint,
-            $this->nodeAggregateCommandHandler
+            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 private ?NodeVariantSelectionStrategy $strategy,
                 private readonly ?DimensionSpacePoint $overriddenDimensionSpacePoint,
-                private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
+                private readonly ContentRepository $contentRepository
             ) {
             }
 
@@ -68,7 +65,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface/
                 NodeInterface $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult {
+            ): ?CommandResult {
                 if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
                     $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ONLY_GIVEN_VARIANT;
                 } elseif ($this->strategy === null) {
@@ -88,10 +85,10 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface/
                 if (!$coveredDimensionSpacePoints->contains($coveredDimensionSpacePoint)) {
                     // we are currently in a Node which has other covered dimension space points than the target ones,
                     // so we do not need to do anything.
-                    return CommandResult::createEmpty();
+                    return null;
                 }
 
-                return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
+                return $this->contentRepository->handle(new RemoveNodeAggregate(
                     $contentStreamForWriting,
                     $node->getNodeAggregateIdentifier(),
                     $coveredDimensionSpacePoint,

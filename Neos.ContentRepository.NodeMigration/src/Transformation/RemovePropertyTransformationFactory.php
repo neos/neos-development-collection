@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
@@ -28,36 +28,33 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  */
 class RemovePropertyTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
-    {
-    }
-
     /**
      * @param array<string,string> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $propertyName = $settings['property'];
         return new class (
             $propertyName,
-            $this->nodeAggregateCommandHandler
+            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
                  * the name of the property to be removed.
                  */
                 private readonly string $propertyName,
-                private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
+                private readonly ContentRepository $contentRepository
             ) {
             }
             public function execute(
                 NodeInterface $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult {
+            ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
-                    return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                    return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
                             $node->getNodeAggregateIdentifier(),
@@ -70,7 +67,7 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
                     );
                 }
 
-                return CommandResult::createEmpty();
+                return null;
             }
         };
     }

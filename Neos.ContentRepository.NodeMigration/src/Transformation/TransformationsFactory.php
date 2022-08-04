@@ -4,18 +4,30 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\NodeMigrationService;
-use Psr\Container\ContainerInterface;
 
 /**
  * Implementation detail of {@see NodeMigrationService}
  */
 class TransformationsFactory
 {
+    /**
+     * @var array<string,TransformationFactoryInterface>
+     */
+    private array $transformationFactories = [];
+
     public function __construct(
-        private readonly ContainerInterface $container
-    ) {
+        private readonly ContentRepository $contentRepository
+    )
+    {
+    }
+
+    public function registerTransformation(string $transformationIdentifier, TransformationFactoryInterface $transformationFactory): self
+    {
+        $this->transformationFactories[$transformationIdentifier] = $transformationFactory;
+        return $this;
     }
 
     /**
@@ -44,11 +56,10 @@ class TransformationsFactory
      */
     protected function buildTransformationObject(
         array $transformationConfiguration
-    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        $transformationFactoryClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
-        $transformationFactory = $this->container->get($transformationFactoryClassName);
-        assert($transformationFactory instanceof TransformationFactoryInterface);
-        return $transformationFactory->build($transformationConfiguration['settings'] ?? []);
+    ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
+    {
+        $transformationFactory = $this->resolveTransformationFactory($transformationConfiguration['type']);
+        return $transformationFactory->build($transformationConfiguration['settings'] ?? [], $this->contentRepository);
     }
 
     /**
@@ -61,10 +72,10 @@ class TransformationsFactory
      * @return string
      * @throws MigrationException
      */
-    protected function resolveTransformationClassName(string $transformationName): string
+    protected function resolveTransformationFactory(string $transformationName): TransformationFactoryInterface
     {
-        if (class_exists($transformationName)) {
-            return $transformationName;
+        if (isset($this->transformationFactories[$transformationName])) {
+            return $this->transformationFactories[$transformationName];
         }
 
         if ($transformationName === 'AddDimensions') {
@@ -103,7 +114,9 @@ class TransformationsFactory
             );
         }
 
-        return 'Neos\ContentRepository\NodeMigration\Transformation\\'
-            . $transformationName . 'TransformationFactory';
+        throw new MigrationException(
+            'The "' . $transformationName . '" transformation is not registered.',
+            1659602562
+        );
     }
 }

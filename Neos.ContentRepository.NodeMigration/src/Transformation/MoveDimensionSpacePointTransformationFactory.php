@@ -14,38 +14,35 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
-use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 
 /**
  * move a dimension space point globally
  */
 class MoveDimensionSpacePointTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly DimensionSpaceCommandHandler $dimensionSpaceCommandHandler)
-    {
-    }
-
     /**
      * @param array<string,array<string,string>> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $from = DimensionSpacePoint::fromArray($settings['from']);
         $to = DimensionSpacePoint::fromArray($settings['to']);
         return new class (
             $from,
             $to,
-            $this->dimensionSpaceCommandHandler
+            $contentRepository
         ) implements GlobalTransformationInterface {
             public function __construct(
                 private readonly DimensionSpacePoint $from,
                 private readonly DimensionSpacePoint $to,
-                private readonly DimensionSpaceCommandHandler $dimensionSpaceCommandHandler,
+                private readonly ContentRepository $contentRepository,
             ) {
             }
 
@@ -53,7 +50,7 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
                 ContentStreamIdentifier $contentStreamForReading,
                 ContentStreamIdentifier $contentStreamForWriting
             ): CommandResult {
-                return $this->dimensionSpaceCommandHandler->handleMoveDimensionSpacePoint(
+                return $this->contentRepository->handle(
                     new MoveDimensionSpacePoint(
                         $contentStreamForWriting,
                         $this->from,

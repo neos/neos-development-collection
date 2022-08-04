@@ -38,7 +38,7 @@ trait MigrationsTrait
 
     protected function setupMigrationsTrait(): void
     {
-        $this->nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new NodeMigrationServiceFactory($this->getObjectManager()));
+        $this->nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new NodeMigrationServiceFactory());
     }
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:

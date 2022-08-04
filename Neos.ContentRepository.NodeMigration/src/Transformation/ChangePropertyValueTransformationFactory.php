@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
@@ -37,15 +37,12 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  */
 class ChangePropertyValueTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
-    {
-    }
-
     /**
      * @param array<string,string> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $newSerializedValue = '{current}';
         if (isset($settings['newSerializedValue'])) {
@@ -73,7 +70,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
             $search,
             $replace,
             $currentValuePlaceholder,
-            $this->nodeAggregateCommandHandler
+            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
@@ -100,7 +97,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                  * current property value into the new value.
                  */
                 private readonly string $currentValuePlaceholder,
-                private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
+                private readonly ContentRepository $contentRepository
             ) {
             }
 
@@ -108,7 +105,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                 NodeInterface $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult {
+            ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->getProperties();
@@ -133,7 +130,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                         $newValueWithReplacedCurrentValue
                     );
 
-                    return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                    return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
                             $node->getNodeAggregateIdentifier(),
@@ -149,7 +146,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     );
                 }
 
-                return CommandResult::createEmpty();
+                return null;
             }
         };
     }

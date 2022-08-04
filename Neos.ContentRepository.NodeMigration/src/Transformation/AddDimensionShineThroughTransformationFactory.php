@@ -29,20 +29,17 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
  */
 class AddDimensionShineThroughTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly ContentRepository $contentRepository)
-    {
-    }
-
     /**
      * @param array<string,array<string,string>> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class (
             DimensionSpacePoint::fromArray($settings['from']),
             DimensionSpacePoint::fromArray($settings['to']),
-            $this->contentRepository
+            $contentRepository
         ) implements GlobalTransformationInterface {
             public function __construct(
                 private readonly DimensionSpacePoint $from,

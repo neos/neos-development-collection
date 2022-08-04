@@ -113,7 +113,7 @@ final class Transformations
         ContentStreamIdentifier $contentStreamForWriting
     ): void {
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
-            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $contentStreamForWriting)->block();
+            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $contentStreamForWriting)?->block();
         }
     }
 }

@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
@@ -26,21 +26,18 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 class AddNewPropertyTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly ContentRepository $contentRepository)
-    {
-    }
-
     /**
      * @param array<string,mixed> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         return new class (
             $settings['newPropertyName'],
             $settings['type'],
             $settings['serializedValue'],
-            $this->contentRepository
+            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
@@ -60,9 +57,9 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                 NodeInterface $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
-            ): CommandResult {
+            ): ?CommandResult {
                 if (!$node->hasProperty($this->newPropertyName)) {
-                    return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                    return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
                             $node->getNodeAggregateIdentifier(),
@@ -78,7 +75,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                     );
                 }
 
-                return CommandResult::createEmpty();
+                return null;
             }
         };
     }

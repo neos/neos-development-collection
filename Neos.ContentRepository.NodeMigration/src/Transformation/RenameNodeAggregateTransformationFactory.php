@@ -14,38 +14,35 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 class RenameNodeAggregateTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
-    {
-    }
-
     /**
      * @param array<string,string> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $newNodeName = $settings['newNodeName'];
 
         return new class (
             $newNodeName,
-            $this->nodeAggregateCommandHandler
+            $contentRepository
         ) implements NodeAggregateBasedTransformationInterface {
             public function __construct(
                 /**
                  * The new Node Name to use as a string
                  */
                 private readonly string $newNodeName,
-                private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
+                private readonly ContentRepository $contentRepository
             ) {
             }
 
@@ -53,7 +50,7 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
                 ReadableNodeAggregateInterface $nodeAggregate,
                 ContentStreamIdentifier $contentStreamForWriting
             ): CommandResult {
-                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName(new ChangeNodeAggregateName(
+                return $this->contentRepository->handle(new ChangeNodeAggregateName(
                     $contentStreamForWriting,
                     $nodeAggregate->getIdentifier(),
                     NodeName::fromString($this->newNodeName),

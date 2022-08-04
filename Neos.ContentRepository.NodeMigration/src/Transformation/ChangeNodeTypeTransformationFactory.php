@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /** @codingStandardsIgnoreStart */
@@ -31,15 +31,12 @@ use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChang
  */
 class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterface
 {
-    public function __construct(private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler)
-    {
-    }
-
     /**
      * @param array<string,mixed> $settings
      */
     public function build(
-        array $settings
+        array $settings,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         // by default, we won't delete anything.
         $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
@@ -52,7 +49,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
         return new class (
             $settings['newType'],
             $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
-            $this->nodeAggregateCommandHandler
+            $contentRepository
         ) implements NodeAggregateBasedTransformationInterface {
             public function __construct(
                 /**
@@ -60,7 +57,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                  */
                 private readonly string $newType,
                 private readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
-                private readonly NodeAggregateCommandHandler $nodeAggregateCommandHandler
+                private readonly ContentRepository $contentRepository
             ) {
             }
 
@@ -68,7 +65,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 ReadableNodeAggregateInterface $nodeAggregate,
                 ContentStreamIdentifier $contentStreamForWriting
             ): CommandResult {
-                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType(new ChangeNodeAggregateType(
+                return $this->contentRepository->handle(new ChangeNodeAggregateType(
                     $contentStreamForWriting,
                     $nodeAggregate->getIdentifier(),
                     NodeTypeName::fromString($this->newType),
