@@ -19,6 +19,7 @@
         "neos/utility-objecthandling": "*",
         "symfony/serializer": "*",
         "neos/flow": "*",
+        "symfony/property-access": "*",
         "webmozart/assert": "^1.10",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
@@ -151,11 +152,11 @@
             "Neos\\ContentRepository\\StructureAdjustment\\": [
                 "Neos.ContentRepository.StructureAdjustment/src"
             ],
-            "Neos\\ContentRepositoryRegistry\\": [
-                "Neos.ContentRepositoryRegistry/Classes"
-            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/src"
+            ],
+            "Neos\\ContentRepositoryRegistry\\": [
+                "Neos.ContentRepositoryRegistry/Classes"
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"

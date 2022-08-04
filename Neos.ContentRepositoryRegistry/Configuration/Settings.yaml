@@ -16,18 +16,23 @@ Neos:
 
     presets:
       'default':
+
         eventStore:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
           # options:
           #   eventTableName: (overridden event table name)
+
         nodeTypeManager:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
           options:
             fallbackNodeTypeName: Neos.Neos:FallbackNode
+
         contentDimensionSource:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
+
         projectionCatchUpTrigger:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
+
         propertyConverters:
           DateTimeNormalizer:
             className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
@@ -51,9 +56,8 @@ Neos:
             className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
           CollectionTypeDenormalizer:
             className: Neos\ContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
-          # TODO!!!
-          #ProxyAwareObjectNormalizer:
-          #  className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+          ProxyAwareObjectNormalizer:
+            className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\ProxyAwareObjectNormalizer
 
         projections:
           'Neos.ContentRepository:ContentStream':
