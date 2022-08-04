@@ -39,14 +39,24 @@ final class EventPersister
      */
     public function publishEvents(EventsToPublish $eventsToPublish): CommandResult
     {
-        // the following logic could also be done in an AppEventStore::commit method (being called directly from the individual
-        // Command Handlers).
-        $normalizedEvents = Events::fromArray($eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event)));
-        $commitResult = $this->eventStore->commit($eventsToPublish->streamName, $normalizedEvents, $eventsToPublish->expectedVersion);
+        // the following logic could also be done in an AppEventStore::commit method (being called
+        // directly from the individual Command Handlers).
+        $normalizedEvents = Events::fromArray(
+            $eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
+        );
+        $commitResult = $this->eventStore->commit(
+            $eventsToPublish->streamName,
+            $normalizedEvents,
+            $eventsToPublish->expectedVersion
+        );
         // for performance reasons, we do not want to update ALL projections all the time; but instead only
         // the projections which are interested in the events from above.
         // Further details can be found in the docs of PendingProjections.
-        $pendingProjections = PendingProjections::fromProjectionsAndEventsAndSequenceNumber($this->projections, $normalizedEvents, $commitResult->highestCommittedSequenceNumber);
+        $pendingProjections = PendingProjections::fromProjectionsAndEventsAndSequenceNumber(
+            $this->projections,
+            $normalizedEvents,
+            $commitResult->highestCommittedSequenceNumber
+        );
 
         foreach ($pendingProjections->projections as $projection) {
             if ($projection instanceof WithMarkStaleInterface) {

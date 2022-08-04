@@ -146,8 +146,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         $unnamedTetheredNodeRecords = $this->client->getConnection()->executeQuery(
-            'SELECT n.nodeaggregateidentifier, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . '_node n
-                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT n.nodeaggregateidentifier, h.contentstreamidentifier
+                    FROM ' . $this->tableNamePrefix . '_node n
+                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    ON h.childnodeanchor = n.relationanchorpoint
                 WHERE n.classification = :tethered
               AND h.name IS NULL
               GROUP BY n.nodeaggregateidentifier, h.contentstreamidentifier',
@@ -216,13 +218,15 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             SELECT r.* FROM ' . $this->tableNamePrefix . '_restrictionrelation r
                 LEFT JOIN (
                     ' . $this->tableNamePrefix . '_node p
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON p.relationanchorpoint = ph.childnodeanchor
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+                        ON p.relationanchorpoint = ph.childnodeanchor
                 ) ON p.nodeaggregateidentifier = r.originnodeaggregateidentifier
                 AND ph.contentstreamidentifier = r.contentstreamidentifier
                 AND ph.dimensionspacepointhash = r.dimensionspacepointhash
                 LEFT JOIN (
                     ' . $this->tableNamePrefix . '_node c
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON c.relationanchorpoint = ch.childnodeanchor
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
+                        ON c.relationanchorpoint = ch.childnodeanchor
                 ) ON c.nodeaggregateidentifier = r.affectednodeaggregateidentifier
                 AND ch.contentstreamidentifier = r.contentstreamidentifier
                 AND ch.dimensionspacepointhash = r.dimensionspacepointhash
@@ -271,10 +275,12 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     r.destinationnodeaggregateidentifier AS destinationNodeAggregateIdentifier
                 FROM ' . $this->tableNamePrefix . '_referencerelation r
                 INNER JOIN ' . $this->tableNamePrefix . '_node s ON r.nodeanchorpoint = s.relationanchorpoint
-                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation sh ON r.nodeanchorpoint = sh.childnodeanchor
+                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation sh
+                    ON r.nodeanchorpoint = sh.childnodeanchor
                 LEFT JOIN (
                     ' . $this->tableNamePrefix . '_node d
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh ON d.relationanchorpoint = dh.childnodeanchor
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh
+                        ON d.relationanchorpoint = dh.childnodeanchor
                 ) ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
                     AND sh.contentstreamidentifier = dh.contentstreamidentifier
                     AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
@@ -392,7 +398,8 @@ WHERE
                 $ambiguousNodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT n.nodeaggregateidentifier, COUNT(n.relationanchorpoint)
                     FROM ' . $this->tableNamePrefix . '_node n
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
                     WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
                     GROUP BY n.nodeaggregateidentifier
@@ -428,7 +435,8 @@ WHERE
                 $nodeRecordsWithMultipleParents = $this->client->getConnection()->executeQuery(
                     'SELECT c.nodeaggregateidentifier
                     FROM ' . $this->tableNamePrefix . '_node c
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = c.relationanchorpoint
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                        ON h.childnodeanchor = c.relationanchorpoint
                     WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
                     GROUP BY c.relationanchorpoint
@@ -467,7 +475,8 @@ WHERE
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.nodetypename FROM ' . $this->tableNamePrefix . '_node n
-                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                            ON h.childnodeanchor = n.relationanchorpoint
                         WHERE h.contentstreamidentifier = :contentStreamIdentifier
                         AND n.nodeaggregateidentifier = :nodeAggregateIdentifier',
                     [
@@ -509,7 +518,8 @@ WHERE
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.classification FROM ' . $this->tableNamePrefix . '_node n
-                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                            ON h.childnodeanchor = n.relationanchorpoint
                         WHERE h.contentstreamidentifier = :contentStreamIdentifier
                         AND n.nodeaggregateidentifier = :nodeAggregateIdentifier',
                     [
@@ -545,9 +555,12 @@ WHERE
         $result = new Result();
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
             $excessivelyCoveringNodeRecords = $this->client->getConnection()->executeQuery(
-                'SELECT n.nodeaggregateidentifier, c.dimensionspacepoint FROM ' . $this->tableNamePrefix . '_hierarchyrelation c
-                    INNER JOIN ' . $this->tableNamePrefix . '_node n ON c.childnodeanchor = n.relationanchorpoint
-                    LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p ON c.parentnodeanchor = p.childnodeanchor
+                'SELECT n.nodeaggregateidentifier, c.dimensionspacepoint
+                    FROM ' . $this->tableNamePrefix . '_hierarchyrelation c
+                    INNER JOIN ' . $this->tableNamePrefix . '_node n
+                        ON c.childnodeanchor = n.relationanchorpoint
+                    LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p
+                        ON c.parentnodeanchor = p.childnodeanchor
                     WHERE c.contentstreamidentifier = :contentStreamIdentifier
                     AND p.contentstreamidentifier = :contentStreamIdentifier
                     AND c.dimensionspacepointhash = p.dimensionspacepointhash
@@ -581,7 +594,8 @@ WHERE
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateidentifier, origindimensionspacepoint
                     FROM ' . $this->tableNamePrefix . '_node n
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
                     AND nodeaggregateidentifier NOT IN (

@@ -36,7 +36,13 @@ final class Projections implements \IteratorAggregate
     public function with(ProjectionInterface $projection): self
     {
         if ($this->has($projection::class)) {
-            throw new \InvalidArgumentException(sprintf('a projection of type "%s" already exists in this set', $projection::class), 1650121280);
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'a projection of type "%s" already exists in this set',
+                    $projection::class
+                ),
+                1650121280
+            );
         }
         $projections = $this->projections;
         $projections[$projection::class] = $projection;
@@ -51,7 +57,13 @@ final class Projections implements \IteratorAggregate
     public function get(string $projectionClassName): ProjectionInterface
     {
         if (!$this->has($projectionClassName)) {
-            throw new \InvalidArgumentException(sprintf('a projection of type "%s" is not part of this set', $projectionClassName), 1650120813);
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'a projection of type "%s" is not part of this set',
+                    $projectionClassName
+                ),
+                1650120813
+            );
         }
         return $this->projections[$projectionClassName];
     }

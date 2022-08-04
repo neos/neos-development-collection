@@ -61,8 +61,10 @@ trait NodeCreation
 
     abstract protected function getPropertyConverter(): PropertyConverter;
 
-    private function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleCreateNodeAggregateWithNode(
+        CreateNodeAggregateWithNode $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireNodeType($command->nodeTypeName);
         $this->validateProperties(
             $this->deserializeDefaultProperties($command->nodeTypeName),
@@ -247,7 +249,8 @@ trait NodeCreation
         )));
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand($command, Events::fromArray($events)),
             ExpectedVersion::ANY()
         );

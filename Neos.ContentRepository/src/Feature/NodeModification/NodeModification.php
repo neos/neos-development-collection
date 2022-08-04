@@ -40,8 +40,10 @@ trait NodeModification
         ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface;
 
-    private function handleSetNodeProperties(SetNodeProperties $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleSetNodeProperties(
+        SetNodeProperties $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
@@ -68,8 +70,10 @@ trait NodeModification
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
     }
 
-    private function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleSetSerializedNodeProperties(
+        SetSerializedNodeProperties $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

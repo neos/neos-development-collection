@@ -70,7 +70,11 @@ class DocumentUriPathSchemaBuilder
 
         $table
             ->addUniqueIndex(['nodeaggregateidentifier', 'dimensionspacepointhash'], 'variant')
-            ->addIndex(['parentnodeaggregateidentifier', 'precedingnodeaggregateidentifier', 'succeedingnodeaggregateidentifier'], 'preceding_succeeding')
+            ->addIndex([
+                'parentnodeaggregateidentifier',
+                'precedingnodeaggregateidentifier',
+                'succeedingnodeaggregateidentifier'
+            ], 'preceding_succeeding')
             ->addIndex(['sitenodename', 'uripath(100)'], 'sitenode_uripath');
     }
 

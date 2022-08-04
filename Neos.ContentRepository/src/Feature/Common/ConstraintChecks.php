@@ -60,8 +60,10 @@ trait ConstraintChecks
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): void
-    {
+    protected function requireContentStreamToExist(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): void {
         if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamIdentifier . '" does not exist yet.',
@@ -434,11 +436,12 @@ trait ConstraintChecks
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint,
         ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface {
-        $parentNodeAggregate = $contentRepository->getContentGraph()->findParentNodeAggregateByChildOriginDimensionSpacePoint(
-            $contentStreamIdentifier,
-            $childNodeAggregateIdentifier,
-            $childOriginDimensionSpacePoint
-        );
+        $parentNodeAggregate = $contentRepository->getContentGraph()
+            ->findParentNodeAggregateByChildOriginDimensionSpacePoint(
+                $contentStreamIdentifier,
+                $childNodeAggregateIdentifier,
+                $childOriginDimensionSpacePoint
+            );
 
         if (!$parentNodeAggregate) {
             throw new NodeAggregateCurrentlyDoesNotExist(

@@ -870,7 +870,8 @@ WHERE
             -- ContentSubgraph::findNodePath
             with recursive nodePath as (
             SELECT h.name, h.parentnodeanchor FROM ' . $this->tableNamePrefix . '_node n
-                 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    ON h.childnodeanchor = n.relationanchorpoint
                  AND h.contentstreamidentifier = :contentStreamIdentifier
                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
                  AND n.nodeaggregateidentifier = :nodeAggregateIdentifier

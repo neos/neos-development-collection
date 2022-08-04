@@ -30,8 +30,8 @@ use Psr\Log\LoggerInterface;
 /**
  * This service flushes Fusion content caches triggered by node changes.
  *
- * It is called when the projection changes: In this case, it is triggered by {@see GraphProjectorCatchUpHookForCacheFlushing} which
- * calls this method..
+ * It is called when the projection changes: In this case, it is triggered by
+ * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method..
  *   This is the relevant case if publishing a workspace
  *   - where we f.e. need to flush the cache for Live.
  *

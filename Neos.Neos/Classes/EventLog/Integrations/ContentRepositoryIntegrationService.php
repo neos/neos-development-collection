@@ -427,7 +427,9 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         if ($documentNode === null) {
             return;
         }
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);

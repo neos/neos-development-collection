@@ -26,7 +26,10 @@ final class CatchUpHookFactories implements CatchUpHookFactoryInterface
     public function with(CatchUpHookFactoryInterface $catchUpHookFactory): self
     {
         if ($this->has($catchUpHookFactory::class)) {
-            throw new \InvalidArgumentException(sprintf('a CatchUpHookFactory of type "%s" already exists in this set', $catchUpHookFactory::class), 1650121280);
+            throw new \InvalidArgumentException(
+                sprintf('a CatchUpHookFactory of type "%s" already exists in this set', $catchUpHookFactory::class),
+                1650121280
+            );
         }
         $catchUpHookFactories = $this->catchUpHookFactories;
         $catchUpHookFactories[$catchUpHookFactory::class] = $catchUpHookFactory;
@@ -40,7 +43,8 @@ final class CatchUpHookFactories implements CatchUpHookFactoryInterface
 
     public function build(ContentRepository $contentRepository): CatchUpHookInterface
     {
-        $catchUpHooks = array_map(fn(CatchUpHookFactoryInterface $catchUpHookFactory) => $catchUpHookFactory->build($contentRepository), $this->catchUpHookFactories);
+        $catchUpHooks = array_map(fn(CatchUpHookFactoryInterface $catchUpHookFactory) =>
+            $catchUpHookFactory->build($contentRepository), $this->catchUpHookFactories);
         return new DelegatingCatchUpHook(...$catchUpHooks);
     }
 }

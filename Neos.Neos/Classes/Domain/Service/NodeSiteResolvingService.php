@@ -31,8 +31,10 @@ class NodeSiteResolvingService
      */
     protected $nodeAccessorManager;
 
-    public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress, ContentRepositoryIdentifier $contentRepositoryIdentifier): ?NodeInterface
-    {
+    public function findSiteNodeForNodeAddress(
+        NodeAddress $nodeAddress,
+        ContentRepositoryIdentifier $contentRepositoryIdentifier
+    ): ?NodeInterface {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             new ContentSubgraphIdentity(
                 $contentRepositoryIdentifier,

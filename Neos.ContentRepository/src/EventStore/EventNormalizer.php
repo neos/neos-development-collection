@@ -40,7 +40,8 @@ use Neos\EventStore\Model\Event\EventType;
  *
  * For normalizing (from classes to event store), this is called from {@see ContentRepository::normalizeEvent()}.
  *
- * For denormalizing (from event store to classes), this is called in the individual projections; f.e. {@see ContentGraphProjection::apply()}.
+ * For denormalizing (from event store to classes), this is called in the individual projections; f.e.
+ * {@see ContentGraphProjection::apply()}.
  */
 final class EventNormalizer
 {
@@ -91,7 +92,14 @@ final class EventNormalizer
         try {
             $eventDataAsJson = json_encode($event, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
-            throw new \InvalidArgumentException(sprintf('Failed to normalize event of type "%s": %s', get_debug_type($event), $exception->getMessage()), 1651838981);
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Failed to normalize event of type "%s": %s',
+                    get_debug_type($event),
+                    $exception->getMessage()
+                ),
+                1651838981
+            );
         }
         return EventData::fromString($eventDataAsJson);
     }
@@ -100,7 +108,9 @@ final class EventNormalizer
     {
         $className = get_class($event);
 
-        return $this->fullClassNameToShortEventType[$className] ?? throw new \RuntimeException('Event type ' . get_class($event) . ' not registered');
+        return $this->fullClassNameToShortEventType[$className] ?? throw new \RuntimeException(
+            'Event type ' . get_class($event) . ' not registered'
+        );
     }
 
     /**
@@ -109,7 +119,10 @@ final class EventNormalizer
      */
     public function getEventClassName(Event $event): string
     {
-        return $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(sprintf('Failed to denormalize event "%s" of type "%s"', $event->id->value, $event->type->value), 1651839705);
+        return $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(
+            sprintf('Failed to denormalize event "%s" of type "%s"', $event->id->value, $event->type->value),
+            1651839705
+        );
     }
 
 
@@ -119,7 +132,10 @@ final class EventNormalizer
         try {
             $eventDataAsArray = json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
-            throw new \InvalidArgumentException(sprintf('Failed to decode data of event "%s": %s', $event->id->value, $exception->getMessage()), 1651839461);
+            throw new \InvalidArgumentException(
+                sprintf('Failed to decode data of event "%s": %s', $event->id->value, $exception->getMessage()),
+                1651839461
+            );
         }
         assert(is_array($eventDataAsArray));
         return $eventClassName::fromArray($eventDataAsArray);

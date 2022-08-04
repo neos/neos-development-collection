@@ -113,8 +113,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceAlreadyExists
      */
-    private function handleCreateWorkspace(CreateWorkspace $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleCreateWorkspace(
+        CreateWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
@@ -166,8 +168,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceAlreadyExists
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateRootWorkspace(CreateRootWorkspace $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    public function handleCreateRootWorkspace(
+        CreateRootWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
@@ -210,8 +214,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handlePublishWorkspace(PublishWorkspace $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    public function handlePublishWorkspace(
+        PublishWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
@@ -281,7 +287,11 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
             if ($event instanceof ContentStreamWasForked) {
                 if ($contentStreamWasForkedEvent !== null) {
-                    throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier . '" has two forked events.', 1658740373);
+                    throw new \RuntimeException(
+                        'Invariant violation: The content stream "' . $contentStreamIdentifier
+                        . '" has two forked events.',
+                        1658740373
+                    );
                 }
                 $contentStreamWasForkedEvent = $event;
             } elseif ($event instanceof PublishableToOtherContentStreamsInterface) {
@@ -297,7 +307,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if ($contentStreamWasForkedEvent === null) {
-            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier . '" has NO forked event.', 1658740407);
+            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier
+                . '" has NO forked event.', 1658740407);
         }
 
         if (count($events) === 0) {
@@ -328,8 +339,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleRebaseWorkspace(RebaseWorkspace $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    public function handleRebaseWorkspace(
+        RebaseWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
@@ -657,8 +670,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-    private function commandMatchesAtLeastOneNode(MatchableWithNodeIdentifierToPublishOrDiscardInterface $command, NodeIdentifiersToPublishOrDiscard $nodeIdentifiers): bool
-    {
+    private function commandMatchesAtLeastOneNode(
+        MatchableWithNodeIdentifierToPublishOrDiscardInterface $command,
+        NodeIdentifiersToPublishOrDiscard $nodeIdentifiers
+    ): bool {
         foreach ($nodeIdentifiers as $nodeIdentifier) {
             if ($command->matchesNodeIdentifier($nodeIdentifier)) {
                 return true;
@@ -673,8 +688,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handleDiscardWorkspace(DiscardWorkspace $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    public function handleDiscardWorkspace(
+        DiscardWorkspace $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 

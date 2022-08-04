@@ -118,7 +118,11 @@ class PluginUriAspect
             : $request->getControllerPackageKey();
 
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
-        $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
+        $possibleObjectName = str_replace(
+            '@package',
+            str_replace('.', '\\', $packageKey),
+            $possibleObjectName
+        );
         $possibleObjectName = str_replace('@subpackage', $subPackageKey ?? '', $possibleObjectName);
         $possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
         $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
@@ -140,7 +144,9 @@ class PluginUriAspect
     {
         // store original node path to restore it after generating the uri
         $originalNodePath = $request->getMainRequest()->getArgument('node');
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
 

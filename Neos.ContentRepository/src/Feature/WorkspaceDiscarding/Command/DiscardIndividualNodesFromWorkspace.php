@@ -30,7 +30,8 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
         public readonly NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
         public readonly UserIdentifier $initiatingUserIdentifier,
         /**
-         * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
+         * Content Stream Identifier of the newly created fork, which contains the remaining changes which were
+         * not removed
          */
         public readonly ContentStreamIdentifier $newContentStreamIdentifier
     ) {

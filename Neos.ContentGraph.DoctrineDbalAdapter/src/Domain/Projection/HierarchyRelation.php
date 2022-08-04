@@ -18,12 +18,10 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
  */
-#[Flow\Proxy(false)]
 final class HierarchyRelation
 {
     public function __construct(
@@ -65,8 +63,11 @@ final class HierarchyRelation
      * @param NodeRelationAnchorPoint $childAnchorPoint
      * @param Connection $databaseConnection
      */
-    public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection, string $tableNamePrefix): void
-    {
+    public function assignNewChildNode(
+        NodeRelationAnchorPoint $childAnchorPoint,
+        Connection $databaseConnection,
+        string $tableNamePrefix
+    ): void {
         $databaseConnection->update(
             $tableNamePrefix . '_hierarchyrelation',
             [

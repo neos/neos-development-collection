@@ -85,7 +85,10 @@ class PluginService
             VisibilityConstraints::withoutRestrictions()
         );
 
-        $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Plugin', false);
+        $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(
+            'Neos.Neos:Plugin',
+            false
+        );
 
         return $this->getNodes(
             $siteNode,
@@ -151,7 +154,11 @@ class PluginService
         string $controllerObjectName,
         string $actionName
     ): ?NodeInterface {
-        $viewDefinition = $this->getPluginViewDefinitionByAction($currentNode->getSubgraphIdentity()->contentRepositoryIdentifier, $controllerObjectName, $actionName);
+        $viewDefinition = $this->getPluginViewDefinitionByAction(
+            $currentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $controllerObjectName,
+            $actionName
+        );
 
         if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView') && $viewDefinition) {
             $masterPluginNode = $this->getPluginViewNodeByMasterPlugin($currentNode, $viewDefinition->getName());
@@ -176,10 +183,16 @@ class PluginService
      * @param string $actionName
      * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
      */
-    public function getPluginViewDefinitionByAction(ContentRepositoryIdentifier $contentRepositoryIdentifier, $controllerObjectName, $actionName): ?PluginViewDefinition
-    {
+    public function getPluginViewDefinitionByAction(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        $controllerObjectName,
+        $actionName
+    ): ?PluginViewDefinition {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-        $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Plugin', false);
+        $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(
+            'Neos.Neos:Plugin',
+            false
+        );
 
         $matchingPluginViewDefinitions = [];
         foreach ($pluginNodeTypes as $pluginNodeType) {

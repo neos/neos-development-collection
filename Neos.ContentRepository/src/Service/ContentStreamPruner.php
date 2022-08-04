@@ -66,8 +66,8 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function pruneRemovedFromEventStream(): iterable
     {
-
-        $removedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedAndRemovedContentStreams();
+        $removedContentStreams = $this->contentRepository->getContentStreamFinder()
+            ->findUnusedAndRemovedContentStreams();
 
         foreach ($removedContentStreams as $removedContentStream) {
             $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)

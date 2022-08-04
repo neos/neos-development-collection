@@ -288,7 +288,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         SiteDetectionResult $currentRequestSiteDetectionResult
     ): ResolveResult {
         // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
-        $contentRepository = $this->contentRepositoryRegistry->get($currentRequestSiteDetectionResult->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $currentRequestSiteDetectionResult->contentRepositoryIdentifier
+        );
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
         $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateIdentifier,

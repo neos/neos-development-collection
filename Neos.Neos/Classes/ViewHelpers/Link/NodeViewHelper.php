@@ -262,7 +262,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
         if ($node instanceof NodeInterface) {
-            $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
@@ -349,7 +351,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     {
         /* @var NodeInterface $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
-        $contentRepository = $this->contentRepositoryRegistry->get($documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
         if (strncmp($path, 'node://', 7) === 0) {
@@ -361,7 +365,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
-            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress, $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
+                $documentNodeAddress,
+                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',

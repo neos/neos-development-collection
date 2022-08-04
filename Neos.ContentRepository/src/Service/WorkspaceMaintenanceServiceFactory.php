@@ -12,8 +12,9 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
  */
 class WorkspaceMaintenanceServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): WorkspaceMaintenanceService
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): WorkspaceMaintenanceService {
         return new WorkspaceMaintenanceService(
             $serviceFactoryDependencies->contentRepository,
         );

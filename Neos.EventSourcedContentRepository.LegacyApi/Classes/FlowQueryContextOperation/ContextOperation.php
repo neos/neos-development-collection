@@ -110,7 +110,9 @@ class ContextOperation extends AbstractOperation
 
             if (array_key_exists('workspaceName', $targetContext)) {
                 $workspaceName = WorkspaceName::fromString($targetContext['workspaceName']);
-                $contentRepository = $this->contentRepositoryRegistry->get($contextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+                $contentRepository = $this->contentRepositoryRegistry->get(
+                    $contextNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                );
 
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
                 if (!is_null($workspace)) {

@@ -114,7 +114,9 @@ class LinkHelper implements ProtectedContextAwareInterface
             );
             return null;
         }
-        $contentRepository = $this->contentRepositoryRegistry->get($targetNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $targetNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {
             $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
@@ -174,7 +176,9 @@ class LinkHelper implements ProtectedContextAwareInterface
                             1409734235
                         );
                     }
-                    $contentRepository = $this->contentRepositoryRegistry->get($contextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+                    $contentRepository = $this->contentRepositoryRegistry->get(
+                        $contextNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                    );
                     $contextNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($contextNode);
                     if ($contextNodeAddress->workspaceName === null) {
                         throw new \RuntimeException(sprintf(

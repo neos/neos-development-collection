@@ -265,7 +265,8 @@ class SitesController extends AbstractModuleController
     public function newSiteAction(Site $site = null)
     {
         // This is not 100% correct, but it is as good as we can get it to work right now
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryIdentifier;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
 

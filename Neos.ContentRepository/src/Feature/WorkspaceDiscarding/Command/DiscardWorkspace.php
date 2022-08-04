@@ -28,7 +28,8 @@ final class DiscardWorkspace implements CommandInterface
         public readonly WorkspaceName $workspaceName,
         public readonly UserIdentifier $initiatingUserIdentifier,
         /**
-         * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
+         * Content Stream Identifier of the newly created fork, which contains the remaining changes
+         * which were not removed
          */
         public readonly ContentStreamIdentifier $newContentStreamIdentifier
     ) {

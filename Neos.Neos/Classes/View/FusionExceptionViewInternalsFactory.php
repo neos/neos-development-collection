@@ -19,8 +19,9 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
 class FusionExceptionViewInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): FusionExceptionViewInternals
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): FusionExceptionViewInternals {
         return new FusionExceptionViewInternals(
             $serviceFactoryDependencies->interDimensionalVariationGraph
         );

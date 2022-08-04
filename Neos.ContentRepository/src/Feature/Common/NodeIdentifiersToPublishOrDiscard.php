@@ -43,7 +43,8 @@ final class NodeIdentifiersToPublishOrDiscard implements \IteratorAggregate, \Co
     public static function fromArray(array $nodeIdentifierData): self
     {
         return new self(...array_map(
-            fn (array $nodeIdentifierDatum): NodeIdentifierToPublishOrDiscard => NodeIdentifierToPublishOrDiscard::fromArray($nodeIdentifierDatum),
+            fn (array $nodeIdentifierDatum): NodeIdentifierToPublishOrDiscard =>
+                NodeIdentifierToPublishOrDiscard::fromArray($nodeIdentifierDatum),
             $nodeIdentifierData
         ));
     }

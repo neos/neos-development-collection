@@ -119,6 +119,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             || $command instanceof ChangeNodeAggregateName;
     }
 
+    /** @codingStandardsIgnoreStart */
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
         return match (get_class($command)) {
@@ -138,6 +139,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
         };
     }
+    /** @codingStandardsIgnoreStop */
 
     protected function getNodeTypeManager(): NodeTypeManager
     {

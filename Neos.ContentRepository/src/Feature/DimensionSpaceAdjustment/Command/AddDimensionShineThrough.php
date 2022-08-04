@@ -30,7 +30,10 @@ use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterfac
  *
  * NOTE: the target dimension space point must not contain any content.
  */
-final class AddDimensionShineThrough implements CommandInterface, \JsonSerializable, RebasableToOtherContentStreamsInterface
+final class AddDimensionShineThrough implements
+    CommandInterface,
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,

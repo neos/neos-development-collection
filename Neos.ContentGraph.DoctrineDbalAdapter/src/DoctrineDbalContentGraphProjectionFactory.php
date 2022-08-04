@@ -22,14 +22,21 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
     ) {
     }
 
-    public static function graphProjectionTableNamePrefix(ContentRepositoryIdentifier $contentRepositoryIdentifier): string
-    {
+    public static function graphProjectionTableNamePrefix(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier
+    ): string {
         return sprintf('neos_cr_%s_projection_graph', $contentRepositoryIdentifier);
     }
 
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHookFactoryInterface $catchUpHookFactory, Projections $projectionsSoFar): ProjectionInterface
-    {
-        $tableNamePrefix = self::graphProjectionTableNamePrefix($projectionFactoryDependencies->contentRepositoryIdentifier);
+    public function build(
+        ProjectionFactoryDependencies $projectionFactoryDependencies,
+        array $options,
+        CatchUpHookFactoryInterface $catchUpHookFactory,
+        Projections $projectionsSoFar
+    ): ProjectionInterface {
+        $tableNamePrefix = self::graphProjectionTableNamePrefix(
+            $projectionFactoryDependencies->contentRepositoryIdentifier
+        );
 
         return new ContentGraphProjection(
             new DoctrineDbalContentGraphProjection(

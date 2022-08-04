@@ -127,7 +127,8 @@ class ContentController extends ActionController
      */
     public function initializeUploadAssetAction(): void
     {
-        $propertyMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments->getArgument('asset')
+            ->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
         $propertyMappingConfiguration->setTypeConverterOption(
             PersistentObjectConverter::class,
@@ -316,7 +317,8 @@ class ContentController extends ActionController
      */
     protected function initializeAssetsWithMetadataAction()
     {
-        $propertyMappingConfiguration = $this->arguments->getArgument('assets')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments->getArgument('assets')
+            ->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
         $propertyMappingConfiguration->setTypeConverterOption(
             AssetInterfaceConverter::class,
@@ -383,7 +385,8 @@ class ContentController extends ActionController
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryIdentifier;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         $this->response->setContentType('application/json');
@@ -426,7 +429,9 @@ class ContentController extends ActionController
                 if ($documentNode === null) {
                     continue;
                 }
-                $contentRepository = $this->contentRepositoryRegistry->get($documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+                $contentRepository = $this->contentRepositoryRegistry->get(
+                    $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                );
                 $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
                 $uri = $this->uriBuilder
                     ->reset()
@@ -455,7 +460,8 @@ class ContentController extends ActionController
      */
     public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryIdentifier;
 
         $this->response->setContentType('application/json');
 

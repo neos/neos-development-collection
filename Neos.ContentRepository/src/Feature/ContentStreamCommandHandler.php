@@ -60,8 +60,10 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     /**
      * @throws ContentStreamAlreadyExists
      */
-    private function handleCreateContentStream(CreateContentStream $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleCreateContentStream(
+        CreateContentStream $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier, $contentRepository);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
@@ -82,12 +84,15 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
-    private function handleForkContentStream(ForkContentStream $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleForkContentStream(
+        ForkContentStream $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamIdentifier, $contentRepository);
         $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier, $contentRepository);
 
-        $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()->findVersionForContentStream($command->sourceContentStreamIdentifier);
+        $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()
+            ->findVersionForContentStream($command->sourceContentStreamIdentifier);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
@@ -106,8 +111,10 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         );
     }
 
-    private function handleRemoveContentStream(RemoveContentStream $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleRemoveContentStream(
+        RemoveContentStream $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
@@ -130,8 +137,10 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamAlreadyExists
      */
-    protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): void
-    {
+    protected function requireContentStreamToNotExistYet(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): void {
         if ($contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
             throw new ContentStreamAlreadyExists(
                 'Content stream "' . $contentStreamIdentifier . '" already exists.',
@@ -144,8 +153,10 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): void
-    {
+    protected function requireContentStreamToExist(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): void {
         if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamIdentifier . '" does not exist yet.',

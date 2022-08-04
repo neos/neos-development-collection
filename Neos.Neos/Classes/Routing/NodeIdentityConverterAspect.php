@@ -47,7 +47,9 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            $contentRepository = $this->contentRepositoryRegistry->get($objectArgument->getSubgraphIdentity()->contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $objectArgument->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($objectArgument);
             return ['__contextNodePath' => $nodeAddress->serializeForUri()];

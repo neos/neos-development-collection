@@ -62,8 +62,10 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         }
     }
 
-    private function handleMoveDimensionSpacePoint(MoveDimensionSpacePoint $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleMoveDimensionSpacePoint(
+        MoveDimensionSpacePoint $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 
@@ -87,8 +89,10 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-    private function handleAddDimensionShineThrough(AddDimensionShineThrough $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleAddDimensionShineThrough(
+        AddDimensionShineThrough $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
             ->getEventStreamName();
 

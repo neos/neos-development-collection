@@ -106,8 +106,10 @@ trait NodeTypeChange
      * @throws NodeTypeNotFoundException
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    private function handleChangeNodeAggregateType(ChangeNodeAggregateType $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleChangeNodeAggregateType(
+        ChangeNodeAggregateType $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         /**************
          * Constraint checks
          **************/
@@ -140,11 +142,13 @@ trait NodeTypeChange
             );
         }
 
+        /** @codingStandardsIgnoreStart */
         match ($command->getStrategy()) {
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH
                 => $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType, $contentRepository),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE, null => null
         };
+        /** @codingStandardsIgnoreStop */
 
         /**************
          * Preparation - make the command fully deterministic in case of rebase

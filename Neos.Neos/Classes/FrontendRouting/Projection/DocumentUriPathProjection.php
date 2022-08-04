@@ -148,6 +148,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
         $this->dbal->beginTransaction();
 
+        // @codingStandardsIgnoreStart
         match (get_class($eventInstance)) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance),
@@ -164,6 +165,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($eventInstance),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($eventInstance),
         };
+        // @codingStandardsIgnoreEnd
 
         try {
             $this->dbal->commit();

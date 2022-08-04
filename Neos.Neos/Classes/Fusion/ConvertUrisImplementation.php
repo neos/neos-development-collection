@@ -114,7 +114,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
             ), 1382624087);
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
 

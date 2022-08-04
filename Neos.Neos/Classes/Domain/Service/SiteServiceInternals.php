@@ -54,14 +54,18 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints) ?: null;
         if (!$arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
             throw new \InvalidArgumentException(
-                'Cannot prune site "' . $siteNodeName->toNodeName() . '" due to the dimension space being empty',
+                'Cannot prune site "' . $siteNodeName->toNodeName()
+                . '" due to the dimension space being empty',
                 1651921482
             );
         }
         $contentGraph = $this->contentRepository->getContentGraph();
 
         foreach ($this->contentRepository->getContentStreamFinder()->findAllIdentifiers() as $contentStreamIdentifier) {
-            $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($contentStreamIdentifier, NodeTypeName::fromString('Neos.Neos:Sites'));
+            $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
+                $contentStreamIdentifier,
+                NodeTypeName::fromString('Neos.Neos:Sites')
+            );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
                 $contentStreamIdentifier,
                 $sitesNodeAggregate->getIdentifier(),

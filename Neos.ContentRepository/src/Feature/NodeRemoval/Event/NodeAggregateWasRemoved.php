@@ -70,7 +70,9 @@ final class NodeAggregateWasRemoved implements
             OriginDimensionSpacePointSet::fromArray($values['affectedOccupiedDimensionSpacePoints']),
             DimensionSpacePointSet::fromArray($values['affectedCoveredDimensionSpacePoints']),
             UserIdentifier::fromString($values['initiatingUserIdentifier']),
-            isset($values['removalAttachmentPoint']) ? NodeAggregateIdentifier::fromString($values['removalAttachmentPoint']) : null,
+            isset($values['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($values['removalAttachmentPoint'])
+                : null,
         );
     }
 

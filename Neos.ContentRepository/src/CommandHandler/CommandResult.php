@@ -41,7 +41,15 @@ final class CommandResult
         while ($projection->getSequenceNumber()->value < $expectedSequenceNumber->value) {
             usleep(50000); // 50000μs = 50ms
             if (++$attempts > 100) { // 5 seconds
-                throw new \RuntimeException(sprintf('TIMEOUT while waiting for projection "%s" to catch up to sequence number %d - check the error logs for details.', $projection::class, $expectedSequenceNumber->value), 1550232279);
+                throw new \RuntimeException(
+                    sprintf(
+                        'TIMEOUT while waiting for projection "%s" to catch up to sequence number %d ' .
+                        '- check the error logs for details.',
+                        $projection::class,
+                        $expectedSequenceNumber->value
+                    ),
+                    1550232279
+                );
             }
         }
     }

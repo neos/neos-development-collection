@@ -29,8 +29,12 @@ class DimensionController extends AbstractModuleController
 
     public function indexAction(string $type = 'intraDimension', string $dimensionSpacePointHash = null): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
-        $dimensionControllerInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new DimensionControllerInternalsFactory());
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryIdentifier;
+        $dimensionControllerInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new DimensionControllerInternalsFactory()
+        );
         $graph = $dimensionControllerInternals->loadGraph($type, $dimensionSpacePointHash);
 
         $this->view->assignMultiple([

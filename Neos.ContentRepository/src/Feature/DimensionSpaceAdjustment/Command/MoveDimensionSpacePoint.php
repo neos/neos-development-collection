@@ -26,7 +26,10 @@ use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterfac
  *
  * NOTE: the target dimension space point must not contain any content.
  */
-final class MoveDimensionSpacePoint implements \JsonSerializable, CommandInterface, RebasableToOtherContentStreamsInterface
+final class MoveDimensionSpacePoint implements
+    \JsonSerializable,
+    CommandInterface,
+    RebasableToOtherContentStreamsInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,

@@ -76,8 +76,10 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     /**
      * @throws NodeConstraintException
      */
-    private function handleCopyNodesRecursively(CopyNodesRecursively $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleCopyNodesRecursively(
+        CopyNodesRecursively $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
         $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
         $this->requireDimensionSpacePointToExist(
@@ -176,7 +178,11 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): void {
         foreach ($nodeAggregateIdentifierMapping->getAllNewNodeAggregateIdentifiers() as $nodeAggregateIdentifier) {
-            $this->requireProjectedNodeAggregateToNotExist($contentStreamIdentifier, $nodeAggregateIdentifier, $contentRepository);
+            $this->requireProjectedNodeAggregateToNotExist(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $contentRepository
+            );
         }
     }
 

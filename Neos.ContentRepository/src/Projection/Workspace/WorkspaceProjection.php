@@ -47,7 +47,8 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     /**
-     * @var WorkspaceFinder|null Cache for the workspace finder returned by {@see getState()}, so that always the same instance is returned
+     * @var WorkspaceFinder|null Cache for the workspace finder returned by {@see getState()},
+     * so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
     private DoctrineCheckpointStorage $checkpointStorage;

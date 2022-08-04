@@ -91,8 +91,10 @@ class NodeShortcutResolver
      * or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException
      */
-    public function resolveNode(DocumentNodeInfo $documentNodeInfo, ContentRepository $contentRepository): DocumentNodeInfo|UriInterface
-    {
+    public function resolveNode(
+        DocumentNodeInfo $documentNodeInfo,
+        ContentRepository $contentRepository
+    ): DocumentNodeInfo|UriInterface {
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
         $shortcutRecursionLevel = 0;
         while ($documentNodeInfo->isShortcut()) {

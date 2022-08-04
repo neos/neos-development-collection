@@ -23,6 +23,7 @@ use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 // TODO: MOVE TO NEOS
 class ChangeProjectionFactory implements ProjectionFactoryInterface
@@ -32,16 +33,28 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
     ) {
     }
 
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHookFactoryInterface $catchUpHookFactory, Projections $projectionsSoFar): ProjectionInterface
-    {
+    public function build(
+        ProjectionFactoryDependencies $projectionFactoryDependencies,
+        array $options,
+        CatchUpHookFactoryInterface $catchUpHookFactory,
+        Projections $projectionsSoFar
+    ): ProjectionInterface {
         $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
         assert($workspaceFinder instanceof WorkspaceFinder);
-
+        $projectionShortName = strtolower(str_replace(
+            'Projection',
+            '',
+            (new \ReflectionClass(DocumentUriPathProjection::class))->getShortName()
+        ));
         return new ChangeProjection(
             $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             $workspaceFinder,
-            sprintf('neos_cr_%s_projection_%s', $projectionFactoryDependencies->contentRepositoryIdentifier, strtolower(str_replace('Projection', '', (new \ReflectionClass(ChangeProjection::class))->getShortName()))),
+            sprintf(
+                'neos_cr_%s_projection_%s',
+                $projectionFactoryDependencies->contentRepositoryIdentifier,
+                $projectionShortName
+            ),
         );
     }
 }

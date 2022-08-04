@@ -109,7 +109,9 @@ final class EditorContentStreamZookeeper
                 $workspaceName = AdjustmentsWorkspaceName::fromAccountIdentifier(
                     $token->getAccount()->getAccountIdentifier()
                 );
-                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
+                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+                    $workspaceName->toContentRepositoryWorkspaceName()
+                );
 
                 $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {

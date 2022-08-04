@@ -106,14 +106,20 @@ class NodesController extends ActionController
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null
     ): void {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryIdentifier;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
 
-        $nodeAddress = $contextNode ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode) : null;
+        $nodeAddress = $contextNode
+            ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode)
+            : null;
+
         unset($contextNode);
         if (is_null($nodeAddress)) {
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+                WorkspaceName::fromString($workspaceName)
+            );
             if (is_null($workspace)) {
                 throw new \InvalidArgumentException(
                     'Could not resolve a node address for the given parameters.',
@@ -143,7 +149,9 @@ class NodesController extends ActionController
             $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
             $nodes = !is_null($entryNode) ? $nodeAccessor->findDescendants(
                 [$entryNode],
-                NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(implode(',', $nodeTypes)),
+                NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
+                    implode(',', $nodeTypes)
+                ),
                 SearchTerm::fulltext($searchTerm)
             ) : [];
         } else {

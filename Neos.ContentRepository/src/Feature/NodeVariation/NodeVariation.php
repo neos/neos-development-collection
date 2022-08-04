@@ -44,8 +44,10 @@ trait NodeVariation
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
-    private function handleCreateNodeVariant(CreateNodeVariant $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleCreateNodeVariant(
+        CreateNodeVariant $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

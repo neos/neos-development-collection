@@ -201,7 +201,9 @@ class CachingHelper implements ProtectedContextAwareInterface
             return [];
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
 
 
         /** @var Workspace $currentWorkspace */

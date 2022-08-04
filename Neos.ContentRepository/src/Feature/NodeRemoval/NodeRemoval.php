@@ -43,8 +43,10 @@ trait NodeRemoval
      * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      */
-    private function handleRemoveNodeAggregate(RemoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleRemoveNodeAggregate(
+        RemoveNodeAggregate $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,

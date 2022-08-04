@@ -22,8 +22,9 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
  */
 class DimensionControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): DimensionControllerInternals
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): DimensionControllerInternals {
         return new DimensionControllerInternals(
             $serviceFactoryDependencies->contentDimensionSource,
             $serviceFactoryDependencies->interDimensionalVariationGraph

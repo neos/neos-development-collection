@@ -22,8 +22,9 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
  */
 class WorkspacesControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): WorkspacesControllerInternals
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): WorkspacesControllerInternals {
         return new WorkspacesControllerInternals(
             $serviceFactoryDependencies->contentDimensionSource,
         );

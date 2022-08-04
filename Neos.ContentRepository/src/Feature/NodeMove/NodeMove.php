@@ -64,8 +64,10 @@ trait NodeMove
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
      */
-    private function handleMoveNodeAggregate(MoveNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleMoveNodeAggregate(
+        MoveNodeAggregate $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
         $this->requireDimensionSpacePointToExist($command->getDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(

@@ -52,7 +52,8 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 class ContentStreamProjection implements ProjectionInterface
 {
     /**
-     * @var ContentStreamFinder|null Cache for the content stream finder returned by {@see getState()}, so that always the same instance is returned
+     * @var ContentStreamFinder|null Cache for the content stream finder returned by {@see getState()},
+     * so that always the same instance is returned
      */
     private ?ContentStreamFinder $contentStreamFinder = null;
     private DoctrineCheckpointStorage $checkpointStorage;
@@ -338,8 +339,10 @@ class ContentStreamProjection implements ProjectionInterface
         return $this->dbalClient->getConnection();
     }
 
-    private function updateContentStreamVersion(EmbedsContentStreamAndNodeAggregateIdentifier $eventInstance, EventEnvelope $eventEnvelope)
-    {
+    private function updateContentStreamVersion(
+        EmbedsContentStreamAndNodeAggregateIdentifier $eventInstance,
+        EventEnvelope $eventEnvelope
+    ) {
         $this->getDatabaseConnection()->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
@@ -350,8 +353,17 @@ class ContentStreamProjection implements ProjectionInterface
 
     private static function extractVersion(EventEnvelope $eventEnvelope): int
     {
-        if (!str_starts_with($eventEnvelope->streamName->value, ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX)) {
-            throw new \RuntimeException('Cannot extract version number, as it was projected on wrong stream "' . $eventEnvelope->streamName->value . '", but needs to start with ' . ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX);
+        if (
+            !str_starts_with(
+                $eventEnvelope->streamName->value,
+                ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX
+            )
+        ) {
+            throw new \RuntimeException(
+                'Cannot extract version number, as it was projected on wrong stream "'
+                . $eventEnvelope->streamName->value . '", but needs to start with '
+                . ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX
+            );
         }
         return $eventEnvelope->version->value;
     }

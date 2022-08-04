@@ -152,7 +152,9 @@ class FusionService
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
 
         $mergedFusionCode = '';
-        $mergedFusionCode .= $this->generateNodeTypeDefinitions($startNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $mergedFusionCode .= $this->generateNodeTypeDefinitions(
+            $startNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
         $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
         $mergedFusionCode .= $siteRootFusionCode;

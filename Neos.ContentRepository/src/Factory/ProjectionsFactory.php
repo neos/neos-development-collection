@@ -20,8 +20,10 @@ final class ProjectionsFactory
         ];
     }
 
-    public function registerCatchUpHookFactory(ProjectionFactoryInterface $factory, CatchUpHookFactoryInterface $catchUpHookFactory): void
-    {
+    public function registerCatchUpHookFactory(
+        ProjectionFactoryInterface $factory,
+        CatchUpHookFactoryInterface $catchUpHookFactory
+    ): void {
         $this->factories[get_class($factory)]['catchUpHooks'][] = [
             'catchUpHookFactory' => $catchUpHookFactory,
         ];
@@ -42,7 +44,12 @@ final class ProjectionsFactory
                 $catchUpHookFactories = $catchUpHookFactories->with($catchUpHookFactory);
             }
 
-            $projections = $projections->with($factory->build($projectionFactoryDependencies, $options, $catchUpHookFactories, $projections));
+            $projections = $projections->with($factory->build(
+                $projectionFactoryDependencies,
+                $options,
+                $catchUpHookFactories,
+                $projections
+            ));
         }
 
         return $projections;

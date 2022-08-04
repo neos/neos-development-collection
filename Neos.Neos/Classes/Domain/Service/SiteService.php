@@ -83,7 +83,10 @@ class SiteService
                 . ' Neos.Neos.sites.*.contentRepository'
             )
         );
-        $siteServiceInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new SiteServiceInternalsFactory());
+        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new SiteServiceInternalsFactory()
+        );
         $siteServiceInternals->removeSiteNode($site->getNodeName());
 
         $site->setPrimaryDomain(null);
@@ -186,7 +189,10 @@ class SiteService
                 . ' Neos.Neos.sites.*.contentRepository'
             )
         );
-        $siteServiceInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new SiteServiceInternalsFactory());
+        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new SiteServiceInternalsFactory()
+        );
         $siteServiceInternals->createSiteNode($site, $nodeTypeName, $currentUserIdentifier);
 
         return $site;

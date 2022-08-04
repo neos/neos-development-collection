@@ -66,8 +66,12 @@ class WorkspaceCommandController extends CommandController
      * @return void
      * @throws ExceptionInterface
      */
-    public function publishCommand($workspace, $contentRepositoryIdentifier = 'default', $verbose = false, $dryRun = false)
-    {
+    public function publishCommand(
+        $workspace,
+        $contentRepositoryIdentifier = 'default',
+        $verbose = false,
+        $dryRun = false
+    ) {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
@@ -94,8 +98,12 @@ class WorkspaceCommandController extends CommandController
      * @param boolean $dryRun If set, only displays which nodes would be discarded, no real changes are committed
      * @return void
      */
-    public function discardCommand($workspace, $contentRepositoryIdentifier = 'default', $verbose = false, $dryRun = false)
-    {
+    public function discardCommand(
+        $workspace,
+        $contentRepositoryIdentifier = 'default',
+        $verbose = false,
+        $dryRun = false
+    ) {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
@@ -139,8 +147,14 @@ class WorkspaceCommandController extends CommandController
      * @param string $owner The identifier of a User to own the workspace
      * @return void
      */
-    public function createCommand($workspace, $baseWorkspace = 'live', $title = null, $description = null, $owner = '', $contentRepositoryIdentifier = 'default')
-    {
+    public function createCommand(
+        $workspace,
+        $baseWorkspace = 'live',
+        $title = null,
+        $description = null,
+        $owner = '',
+        $contentRepositoryIdentifier = 'default'
+    ) {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 

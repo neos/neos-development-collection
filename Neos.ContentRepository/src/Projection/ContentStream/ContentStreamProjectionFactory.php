@@ -28,12 +28,25 @@ class ContentStreamProjectionFactory implements ProjectionFactoryInterface
     ) {
     }
 
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies, array $options, CatchUpHookFactoryInterface $catchUpHookFactory, Projections $projectionsSoFar): ProjectionInterface
-    {
+    public function build(
+        ProjectionFactoryDependencies $projectionFactoryDependencies,
+        array $options,
+        CatchUpHookFactoryInterface $catchUpHookFactory,
+        Projections $projectionsSoFar
+    ): ProjectionInterface {
+        $projectionShortName = strtolower(str_replace(
+            'Projection',
+            '',
+            (new \ReflectionClass(ContentStreamProjection::class))->getShortName()
+        ));
         return new ContentStreamProjection(
             $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
-            sprintf('neos_cr_%s_projection_%s', $projectionFactoryDependencies->contentRepositoryIdentifier, strtolower(str_replace('Projection', '', (new \ReflectionClass(ContentStreamProjection::class))->getShortName()))),
+            sprintf(
+                'neos_cr_%s_projection_%s',
+                $projectionFactoryDependencies->contentRepositoryIdentifier,
+                $projectionShortName
+            ),
         );
     }
 }

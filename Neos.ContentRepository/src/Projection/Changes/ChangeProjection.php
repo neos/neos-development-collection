@@ -49,7 +49,8 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 class ChangeProjection implements ProjectionInterface
 {
     /**
-     * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()}, so that always the same instance is returned
+     * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
+     * so that always the same instance is returned
      */
     private ?ChangeFinder $changeFinder = null;
     private DoctrineCheckpointStorage $checkpointStorage;
@@ -106,7 +107,11 @@ class ChangeProjection implements ProjectionInterface
             ->setLength(255)
             ->setNotnull(false);
 
-        $changeTable->setPrimaryKey(['contentStreamIdentifier', 'nodeAggregateIdentifier', 'originDimensionSpacePointHash']);
+        $changeTable->setPrimaryKey([
+            'contentStreamIdentifier',
+            'nodeAggregateIdentifier',
+            'originDimensionSpacePointHash'
+        ]);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {

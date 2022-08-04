@@ -16,16 +16,17 @@ use Neos\EventStore\Model\EventStore\CommitResult;
 /**
  * Implementation detail of {@see ContentRepository::handle()}; needed for implementing {@see CommandResult::block()}.
  *
- * It contains the {@see PendingProjections} (i.e. all affected projections by the command and their target sequence number)
- * for the blocking mechanism.
+ * It contains the {@see PendingProjections} (i.e. all affected projections by the command and their target sequence
+ * number) for the blocking mechanism.
  *
- * It also contains the {@see CommitResult} that contains the highest sequence number and version of the published events.
+ * It also contains the {@see CommitResult} that contains the highest sequence number and version of the published
+ * events.
  *
  * ## Background: How does blocking work?
  *
- * We need to wait until the projection has consumed the events from our current command. This becomes a bit more complicated
- * in the implementation: For performance reasons, we do NOT send every event to every projection; but only events which
- * can be handled by a given projection (see the {@see ProjectionInterface::canHandle()} method).
+ * We need to wait until the projection has consumed the events from our current command. This becomes a bit more
+ * complicated in the implementation: For performance reasons, we do NOT send every event to every projection; but only
+ * events which can be handled by a given projection (see the {@see ProjectionInterface::canHandle()} method).
  *
  * Let's add an example (time flows from left to right):
  *
@@ -47,8 +48,8 @@ use Neos\EventStore\Model\EventStore\CommitResult;
  *
  * (implemented in {@see PendingProjections::fromProjectionsAndEventsAndSequenceNumber()})
  *
- * As *input*, we get the highestCommittedSequenceNumber from {@see CommitResult::$highestCommittedSequenceNumber}; so in the
- * example above, this would be `7`. Additionally, we get the just-committed events (for which we want to
+ * As *input*, we get the highestCommittedSequenceNumber from {@see CommitResult::$highestCommittedSequenceNumber}; so
+ * in the example above, this would be `7`. Additionally, we get the just-committed events (for which we want to
  * calculate the above), and all the projections.
  *
  * Additionally, we rely on the fact that the sequence number is monotonically increasing, **without gaps**. We then can
@@ -56,17 +57,17 @@ use Neos\EventStore\Model\EventStore\CommitResult;
  * above `7-6+1 = 2`.
  *
  * We then iterate over all sequence numbers (2-7 in the example) and ask each {@see ProjectionInterface::canHandle()}
- * whether it was interested in the event. We then remember the highest sequence number which each projection was interested
- * in.
+ * whether it was interested in the event. We then remember the highest sequence number which each projection was
+ * interested in.
  *
  * NOTE: We could also iterate backwards instead of forward - this would be a bit more efficient because we could break
  *       if we saw a projection for the first time; but maybe even more difficult code-wise.
  *
  * ## Blocking: Putting the parts together
  *
- * - The algorithm below is triggered by {@see ContentRepository::handle()}; and the resulting {@see PendingProjections} object
- *   is passed to {@see CommandResult}.
- * - {@see CommandResult::block()} does busy-waiting; repeatedly calling {@see ProjectionInterface::getSequenceNumber()}.
+ * - The algorithm below is triggered by {@see ContentRepository::handle()}; and the resulting {@see PendingProjections}
+ *   object is passed to {@see CommandResult}.
+ * - {@see CommandResult::block()} does busy-waiting; repeatedly calling {@see ProjectionInterface::getSequenceNumber()}
  * - {@see ProjectionInterface::getSequenceNumber()} is typically implemented internally via
  *   {@see CheckpointStorageInterface::getHighestAppliedSequenceNumber()}.
  */
@@ -82,8 +83,11 @@ final class PendingProjections
     ) {
     }
 
-    public static function fromProjectionsAndEventsAndSequenceNumber(Projections $allProjections, Events $events, SequenceNumber $highestCommittedSequenceNumber): self
-    {
+    public static function fromProjectionsAndEventsAndSequenceNumber(
+        Projections $allProjections,
+        Events $events,
+        SequenceNumber $highestCommittedSequenceNumber
+    ): self {
         $sequenceNumberInteger = $highestCommittedSequenceNumber->value - $events->count() + 1;
         $pendingProjections = Projections::create();
         $sequenceNumberPerProjection = [];
@@ -108,7 +112,10 @@ final class PendingProjections
     public function getExpectedSequenceNumber(ProjectionInterface $projection): SequenceNumber
     {
         if (!array_key_exists($projection::class, $this->sequenceNumberPerProjection)) {
-            throw new \InvalidArgumentException(sprintf('Projection of class "%s" is not pending', $projection::class), 1652252976);
+            throw new \InvalidArgumentException(
+                sprintf('Projection of class "%s" is not pending', $projection::class),
+                1652252976
+            );
         }
         return SequenceNumber::fromInteger($this->sequenceNumberPerProjection[$projection::class]);
     }

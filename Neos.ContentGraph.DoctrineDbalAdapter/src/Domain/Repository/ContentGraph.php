@@ -91,7 +91,8 @@ final class ContentGraph implements ContentGraphInterface
         // as this is where we actually find out whether the node exists in the content stream
         $nodeRow = $connection->executeQuery(
             'SELECT n.*, h.contentstreamidentifier, h.name FROM ' . $this->tableNamePrefix . '_node n
-                  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                      ON h.childnodeanchor = n.relationanchorpoint
                   WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
                   AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
                   AND h.contentstreamidentifier = :contentStreamIdentifier',
@@ -120,7 +121,8 @@ final class ContentGraph implements ContentGraphInterface
 
         $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
                     FROM ' . $this->tableNamePrefix . '_node n
-                        JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                            ON h.childnodeanchor = n.relationanchorpoint
                     WHERE h.contentstreamidentifier = :contentStreamIdentifier
                         AND h.parentnodeanchor = :rootEdgeParentAnchorIdentifier
                         AND n.nodetypename = :nodeTypeName';
@@ -154,7 +156,8 @@ final class ContentGraph implements ContentGraphInterface
 
         $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
                 FROM ' . $this->tableNamePrefix . '_node n
-                    JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
                 WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND n.nodetypename = :nodeTypeName';
 
@@ -221,8 +224,10 @@ final class ContentGraph implements ContentGraphInterface
                       ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
-                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
-                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+                        ON ph.childnodeanchor = p.relationanchorpoint
+                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
+                        ON ch.parentnodeanchor = p.relationanchorpoint
                       JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
                           ON r.originnodeaggregateidentifier = p.nodeaggregateidentifier
@@ -260,7 +265,8 @@ final class ContentGraph implements ContentGraphInterface
                       h.name, h.contentstreamidentifier, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node n
-                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                          ON h.childnodeanchor = n.relationanchorpoint
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
                           ON r.originnodeaggregateidentifier = n.nodeaggregateidentifier
                           AND r.contentstreamidentifier = h.contentstreamidentifier
@@ -270,7 +276,8 @@ final class ContentGraph implements ContentGraphInterface
                           SELECT p.nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node p
                           INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
                               ON ch.parentnodeanchor = p.relationanchorpoint
-                          INNER JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
+                          INNER JOIN ' . $this->tableNamePrefix . '_node c
+                              ON ch.childnodeanchor = c.relationanchorpoint
                           WHERE ch.contentstreamidentifier = :contentStreamIdentifier
                           AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
                           AND c.nodeaggregateidentifier = :childNodeAggregateIdentifier
@@ -378,9 +385,12 @@ final class ContentGraph implements ContentGraphInterface
                       ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
-                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
-                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
-                      JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
+                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+                          ON ph.childnodeanchor = p.relationanchorpoint
+                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
+                          ON ch.parentnodeanchor = p.relationanchorpoint
+                      JOIN ' . $this->tableNamePrefix . '_node c
+                          ON ch.childnodeanchor = c.relationanchorpoint
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
                           ON r.originnodeaggregateidentifier = p.nodeaggregateidentifier
                           AND r.contentstreamidentifier = ph.contentstreamidentifier
@@ -409,9 +419,12 @@ final class ContentGraph implements ContentGraphInterface
     ): DimensionSpacePointSet {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
-                      INNER JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
-                      INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON ph.childnodeanchor = n.relationanchorpoint
+        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash
+                      FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+                      INNER JOIN ' . $this->tableNamePrefix . '_node n
+                          ON h.parentnodeanchor = n.relationanchorpoint
+                      INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+                          ON ph.childnodeanchor = n.relationanchorpoint
                       WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
                       AND n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
@@ -464,7 +477,7 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @return ContentSubgraph[]
-     * @internal only used for {@see InMemoryCacheAccessor} and as implementation detail of {@see DoctrineDbalContentGraphProjection}
+     * @internal only used for {@see InMemoryCacheAccessor} and impl. of {@see DoctrineDbalContentGraphProjection}
      */
     public function getSubgraphs(): array
     {

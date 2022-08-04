@@ -10,5 +10,7 @@ interface ContentRepositoryServiceFactoryInterface
     /**
      * @return T
      */
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface;
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): ContentRepositoryServiceInterface;
 }

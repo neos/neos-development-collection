@@ -94,7 +94,9 @@ class EmulatedLegacyContext
 
     private function getNodeAddressOfContextNode(): NodeAddress
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($this->node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $this->node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         return NodeAddressFactory::create($contentRepository)->createFromNode($this->node);
     }
 

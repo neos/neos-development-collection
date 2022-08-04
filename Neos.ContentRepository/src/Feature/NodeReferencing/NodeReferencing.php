@@ -43,8 +43,10 @@ trait NodeReferencing
     ): ReadableNodeAggregateInterface;
 
 
-    private function handleSetNodeReferences(SetNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleSetNodeReferences(
+        SetNodeReferences $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
@@ -94,8 +96,10 @@ trait NodeReferencing
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    private function handleSetSerializedNodeReferences(SetSerializedNodeReferences $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleSetSerializedNodeReferences(
+        SetSerializedNodeReferences $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()

@@ -22,7 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 /**
  * A node identifier (Content Stream, NodeAggregateIdentifier, DimensionSpacePoint); used when
- * publishing or discarding individual nodes ({@see PublishIndividualNodesFromWorkspace} and {@see DiscardIndividualNodesFromWorkspace}
+ * publishing or discarding individual nodes ({@see PublishIndividualNodesFromWorkspace} and
+ * {@see DiscardIndividualNodesFromWorkspace}
  * and the corresponding events).
  */
 final class NodeIdentifierToPublishOrDiscard implements \JsonSerializable

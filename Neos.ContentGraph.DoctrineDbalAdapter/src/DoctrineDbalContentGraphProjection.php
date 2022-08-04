@@ -77,7 +77,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private bool $doingFullReplayOfProjection = false;
 
     /**
-     * @var ContentGraph|null Cache for the content graph returned by {@see getState()}, so that always the same instance is returned
+     * @var ContentGraph|null Cache for the content graph returned by {@see getState()},
+     * so that always the same instance is returned
      */
     private ?ContentGraph $contentGraph = null;
 
@@ -1077,8 +1078,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
             // 1) originDimensionSpacePoint on Node
             $rel = $this->getDatabaseConnection()->executeQuery(
-                'SELECT n.relationanchorpoint, n.origindimensionspacepointhash FROM ' . $this->tableNamePrefix . '_node n
-                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                'SELECT n.relationanchorpoint, n.origindimensionspacepointhash
+                     FROM ' . $this->tableNamePrefix . '_node n
+                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
 
                      AND h.contentstreamidentifier = :contentStreamIdentifier
                      AND h.dimensionspacepointhash = :dimensionSpacePointHash

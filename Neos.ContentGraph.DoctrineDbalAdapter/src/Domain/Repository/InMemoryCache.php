@@ -18,8 +18,9 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\AllChi
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodeByNodeAggregateIdentifierCache;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodePathCache;
+// @codingStandardsIgnoreStart
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
-
+// @codingStandardsIgnoreEnd
 /**
  * Accessors to in Memory Cache
  *

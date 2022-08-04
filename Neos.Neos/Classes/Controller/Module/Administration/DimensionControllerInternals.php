@@ -31,8 +31,10 @@ class DimensionControllerInternals implements ContentRepositoryServiceInterface
     ) {
     }
 
-    public function loadGraph(string $type, string $dimensionSpacePointHash = null): VisualIntraDimensionalVariationGraph|VisualInterDimensionalVariationGraph|null
-    {
+    public function loadGraph(
+        string $type,
+        string $dimensionSpacePointHash = null
+    ): VisualIntraDimensionalVariationGraph|VisualInterDimensionalVariationGraph|null {
         $dimensionSpacePoint = $dimensionSpacePointHash
             ? $this->interDimensionalVariationGraph->getDimensionSpacePoints()[$dimensionSpacePointHash]
             : null;

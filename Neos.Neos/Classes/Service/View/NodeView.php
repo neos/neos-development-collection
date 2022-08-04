@@ -108,7 +108,9 @@ class NodeView extends JsonView
             if (!$node->getClassification()->isRoot()) {
                 $closestDocumentNode = $this->findClosestDocumentNode($node);
                 if ($closestDocumentNode !== null) {
-                    $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+                    $contentRepository = $this->contentRepositoryRegistry->get(
+                        $node->getSubgraphIdentity()->contentRepositoryIdentifier
+                    );
                     $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
                     $data[] = [
                         'nodeContextPath' => $nodeAddressFactory->createFromNode($node)->serializeForUri(),
@@ -264,14 +266,21 @@ class NodeView extends JsonView
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $node->getSubgraphIdentity()
         );
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $nodeTypeConstraintParser = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager());
 
         $nodeTypeConstraints = $nodeTypeFilter
             ? $nodeTypeConstraintParser->parseFilterString($nodeTypeFilter)
             : null;
         foreach ($nodeAccessor->findChildNodes($node, $nodeTypeConstraints) as $childNode) {
-            if (!$this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($childNode))) {
+            if (
+                !$this->privilegeManager->isGranted(
+                    NodeTreePrivilege::class,
+                    new NodePrivilegeSubject($childNode)
+                )
+            ) {
                 continue;
             }
             $expand = ($depth === 0 || $recursionPointer < $depth);
@@ -293,7 +302,9 @@ class NodeView extends JsonView
 
             switch ($this->outputStyle) {
                 case self::STYLE_LIST:
-                    $contentRepository = $this->contentRepositoryRegistry->get($childNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+                    $contentRepository = $this->contentRepositoryRegistry->get(
+                        $childNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                    );
                     $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
                     $childNodeAddress = $nodeAddressFactory->createFromNode($childNode);
                     $properties = $childNode->getProperties();
@@ -330,7 +341,12 @@ class NodeView extends JsonView
                             ($recursionPointer + 1)
                         );
                     }
-                    array_push($nodes, $this->collectTreeNodeData($childNode, $expand, $children, $hasChildNodes));
+                    array_push($nodes, $this->collectTreeNodeData(
+                        $childNode,
+                        $expand,
+                        $children,
+                        $hasChildNodes
+                    ));
             }
         }
     }
@@ -366,7 +382,12 @@ class NodeView extends JsonView
             );
             $parent = $nodeAccessor->findParentNode($node);
             if ($parent !== null) {
-                if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($parent))) {
+                if (
+                    $this->privilegeManager->isGranted(
+                        NodeTreePrivilege::class,
+                        new NodePrivilegeSubject($parent)
+                    )
+                ) {
                     $addNode($parent, false);
                     $findParent($parent);
                 }
@@ -374,7 +395,12 @@ class NodeView extends JsonView
         };
 
         foreach ($nodes as $node) {
-            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            if (
+                $this->privilegeManager->isGranted(
+                    NodeTreePrivilege::class,
+                    new NodePrivilegeSubject($node)
+                )
+            ) {
                 $addNode($node, true);
                 $findParent($node);
             }
@@ -417,7 +443,9 @@ class NodeView extends JsonView
         bool $hasChildNodes = false,
         bool $matched = false
     ): array {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
         $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
@@ -442,12 +470,16 @@ class NodeView extends JsonView
         $nodeType = $node->getNodeType();
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor(
-                'show',
-                ['node' => $nodeAddress->serializeForUri()],
-                'Frontend\Node',
-                'Neos.Neos'
-            );
+            $uriForNode = $uriBuilder
+                ->reset()
+                ->setFormat('html')
+                ->setCreateAbsoluteUri(true)
+                ->uriFor(
+                    'show',
+                    ['node' => $nodeAddress->serializeForUri()],
+                    'Frontend\Node',
+                    'Neos.Neos'
+                );
         } else {
             $uriForNode = '#';
         }

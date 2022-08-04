@@ -55,7 +55,9 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
     protected function getNodeAddressOfContextNode(?NodeInterface $node): NodeAddress
     {
         if ($node !== null) {
-            $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
             return NodeAddressFactory::create($contentRepository)->createFromNode($node);
         }
 
@@ -77,7 +79,9 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
             );
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($baseNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $baseNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         return NodeAddressFactory::create($contentRepository)->createFromNode($baseNode);
     }
 

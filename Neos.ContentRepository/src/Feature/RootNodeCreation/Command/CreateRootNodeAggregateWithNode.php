@@ -27,7 +27,10 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no tethered child nodes.
  */
-final class CreateRootNodeAggregateWithNode implements CommandInterface, \JsonSerializable, RebasableToOtherContentStreamsInterface
+final class CreateRootNodeAggregateWithNode implements
+    CommandInterface,
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,

@@ -119,9 +119,16 @@ class ContentElementWrappingService
         string $fusionPath,
         array $additionalAttributes = []
     ): ?string {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
 
-        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)) {
+        if (
+            $this->isContentStreamOfLiveWorkspace(
+                $node->getSubgraphIdentity()->contentStreamIdentifier,
+                $contentRepository
+            )
+        ) {
             return $content;
         }
 
@@ -165,7 +172,9 @@ class ContentElementWrappingService
         array $additionalAttributes = [],
         ?NodeInterface $siteNode = null
     ): string {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         if ($this->needsMetadata($node, $contentRepository, true) === false) {
             return $content;
         }
@@ -189,7 +198,9 @@ class ContentElementWrappingService
      */
     protected function addGenericEditingMetadata(array $attributes, NodeInterface $node): array
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
         $attributes['typeof'] = 'typo3:' . $node->getNodeType()->getName();
         $attributes['about'] = $nodeAddress->serializeForUri();
@@ -283,8 +294,12 @@ class ContentElementWrappingService
      * @param array<string,mixed> $attributes
      * @return array<string,mixed>
      */
-    protected function addDocumentMetadata(ContentRepository $contentRepository, array $attributes, NodeInterface $node, ?NodeInterface $siteNode): array
-    {
+    protected function addDocumentMetadata(
+        ContentRepository $contentRepository,
+        array $attributes,
+        NodeInterface $node,
+        ?NodeInterface $siteNode
+    ): array {
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
         if (!$siteNode instanceof NodeInterface) {
@@ -350,8 +365,15 @@ class ContentElementWrappingService
      */
     protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode): void
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($documentNode->getSubgraphIdentity()->contentRepositoryIdentifier);
-        if ($this->isContentStreamOfLiveWorkspace($documentNode->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)) {
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+        if (
+            $this->isContentStreamOfLiveWorkspace(
+                $documentNode->getSubgraphIdentity()->contentStreamIdentifier,
+                $contentRepository
+            )
+        ) {
             return;
         }
 
@@ -429,16 +451,25 @@ class ContentElementWrappingService
         return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value) ?: '', '-'));
     }
 
-    protected function needsMetadata(NodeInterface $node, ContentRepository $contentRepository, bool $renderCurrentDocumentMetadata): bool
-    {
-        return $this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)
+    protected function needsMetadata(
+        NodeInterface $node,
+        ContentRepository $contentRepository,
+        bool $renderCurrentDocumentMetadata
+    ): bool {
+        return $this->isContentStreamOfLiveWorkspace(
+            $node->getSubgraphIdentity()->contentStreamIdentifier,
+            $contentRepository
+        )
              && ($renderCurrentDocumentMetadata === true
                 || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true);
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): bool
-    {
-        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+    private function isContentStreamOfLiveWorkspace(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): bool {
+        return $contentRepository->getWorkspaceFinder()
+            ->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
             ?->getWorkspaceName()->isLive() ?: false;
     }
 }

@@ -41,7 +41,8 @@ class EmulatedLegacyWorkspace
         if ($this->workspace === null) {
             if ($this->nodeAddressOfContextNode->workspaceName) {
                 $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
-                $this->workspace = $contentRepository->getWorkspaceFinder()->findOneByName($this->nodeAddressOfContextNode->workspaceName);
+                $this->workspace = $contentRepository->getWorkspaceFinder()
+                    ->findOneByName($this->nodeAddressOfContextNode->workspaceName);
             }
         }
 

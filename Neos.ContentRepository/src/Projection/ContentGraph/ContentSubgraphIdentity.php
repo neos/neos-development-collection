@@ -23,8 +23,8 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
  *This is the DimensionSpacePoint this node has been accessed in
  * - NOT the DimensionSpacePoint where the node is "at home".
  * The DimensionSpacePoint where the node is (at home) is called the ORIGIN DimensionSpacePoint,
- * and this can be accessed using {@see NodeInterface::getOriginDimensionSpacePoint}. If in doubt, you'll usually need this method
- * instead of the Origin DimensionSpacePoint.
+ * and this can be accessed using {@see NodeInterface::getOriginDimensionSpacePoint}. If in doubt, you'll
+ * usually need this method instead of the Origin DimensionSpacePoint.
  *
  *
  * // TODO: DESCRIBE PROPERLY

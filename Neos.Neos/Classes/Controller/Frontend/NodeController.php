@@ -145,7 +145,10 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress, $siteDetectionResult->contentRepositoryIdentifier);
+        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
+            $nodeAddress,
+            $siteDetectionResult->contentRepositoryIdentifier
+        );
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
@@ -226,7 +229,10 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress, $siteDetectionResult->contentRepositoryIdentifier);
+        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
+            $nodeAddress,
+            $siteDetectionResult->contentRepositoryIdentifier
+        );
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
@@ -326,8 +332,11 @@ class NodeController extends ActionController
         $this->redirectToUri($resolvedUri);
     }
 
-    private function fillCacheWithContentNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentSubgraphInterface $subgraph, ContentRepository $contentRepository): void
-    {
+    private function fillCacheWithContentNodes(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentSubgraphInterface $subgraph,
+        ContentRepository $contentRepository
+    ): void {
         if (!$subgraph instanceof ContentSubgraph) {
             // wrong subgraph implementation
             return;
@@ -337,7 +346,8 @@ class NodeController extends ActionController
         $subtree = $subgraph->findSubtrees(
             NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]),
             10,
-            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString('!Neos.Neos:Document')
+            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
+                ->parseFilterString('!Neos.Neos:Document')
         );
         $subtree = $subtree->getChildren()[0];
 

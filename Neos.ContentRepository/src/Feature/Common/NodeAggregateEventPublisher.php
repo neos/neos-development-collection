@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Feature\Common;
  */
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\EventStore\DecoratedEvent;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\EventStore\Model\Event\EventMetadata;
 
@@ -35,7 +36,7 @@ final class NodeAggregateEventPublisher
         $causationIdentifier = null;
         $i = 0;
         foreach ($events as $event) {
-            if ($event instanceof \Neos\ContentRepository\EventStore\DecoratedEvent) {
+            if ($event instanceof DecoratedEvent) {
                 $undecoratedEvent = $event->innerEvent;
                 if (!$undecoratedEvent instanceof PublishableToOtherContentStreamsInterface) {
                     throw new \RuntimeException(sprintf(
@@ -65,13 +66,13 @@ final class NodeAggregateEventPublisher
                     'commandClass' => get_class($command),
                     'commandPayload' => $commandPayload
                 ]);
-                $event = \Neos\ContentRepository\EventStore\DecoratedEvent::withMetadata($event, $metadata);
+                $event = DecoratedEvent::withMetadata($event, $metadata);
                 // we remember the 1st event's identifier as causation identifier for all the others
                 $causationIdentifier = $event->eventId;
             } else {
                 // event 2,3,4,...n get a causation identifier set, as they all originate from the 1st event.
                 if ($causationIdentifier !== null) {
-                    $event = \Neos\ContentRepository\EventStore\DecoratedEvent::withCausationIdentifier($event, $causationIdentifier);
+                    $event = DecoratedEvent::withCausationIdentifier($event, $causationIdentifier);
                 }
             }
             $processedEvents[] = $event;

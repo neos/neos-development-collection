@@ -154,7 +154,8 @@ trait NodeVariation
             }
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
-                $ingoingSourceHierarchyRelation = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNode(
+                $projectionContentGraph = $this->getProjectionContentGraph();
+                $ingoingSourceHierarchyRelation = $projectionContentGraph->findIngoingHierarchyRelationsForNode(
                     $sourceNode->relationAnchorPoint,
                     $event->contentStreamIdentifier,
                     new DimensionSpacePointSet([$event->sourceOrigin->toDimensionSpacePoint()])

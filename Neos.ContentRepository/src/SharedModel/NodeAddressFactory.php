@@ -91,9 +91,14 @@ class NodeAddressFactory
     public function createFromContextPath(string $contextPath): NodeAddress
     {
         $pathValues = NodePaths::explodeContextPath($contextPath);
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($pathValues['workspaceName']));
+        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(
+            WorkspaceName::fromString($pathValues['workspaceName'])
+        );
         if (is_null($workspace)) {
-            throw new \InvalidArgumentException('No workspace exists for context path ' . $contextPath, 1645363699);
+            throw new \InvalidArgumentException(
+                'No workspace exists for context path ' . $contextPath,
+                1645363699
+            );
         }
         $contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
@@ -114,7 +119,10 @@ class NodeAddressFactory
             )->getIdentifier()
         );
         if (is_null($node)) {
-            throw new \InvalidArgumentException('No node exists on context path ' . $contextPath, 1645363666);
+            throw new \InvalidArgumentException(
+                'No node exists on context path ' . $contextPath,
+                1645363666
+            );
         }
 
         return new NodeAddress(

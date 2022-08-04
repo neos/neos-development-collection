@@ -122,7 +122,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $descendantNodeAggregateIdentifiers = $this->getProjectionContentGraph()->findDescendantNodeAggregateIdentifiers(
+        $projectionContentGraph = $this->getProjectionContentGraph();
+        $descendantNodeAggregateIdentifiers = $projectionContentGraph->findDescendantNodeAggregateIdentifiers(
             $contentStreamIdentifier,
             $entryNodeAggregateIdentifier,
             $affectedDimensionSpacePoints

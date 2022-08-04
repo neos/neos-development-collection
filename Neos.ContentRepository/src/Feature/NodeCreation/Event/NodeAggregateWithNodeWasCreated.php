@@ -97,7 +97,9 @@ final class NodeAggregateWithNodeWasCreated implements
             SerializedPropertyValues::fromArray($values['initialPropertyValues']),
             NodeAggregateClassification::from($values['nodeAggregateClassification']),
             UserIdentifier::fromString($values['initiatingUserIdentifier']),
-            isset($values['succeedingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($values['succeedingNodeAggregateIdentifier']) : null,
+            isset($values['succeedingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($values['succeedingNodeAggregateIdentifier'])
+                : null,
         );
     }
 

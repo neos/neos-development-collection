@@ -51,8 +51,10 @@ trait RootNodeCreation
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
      */
-    private function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleCreateRootNodeAggregateWithNode(
+        CreateRootNodeAggregateWithNode $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireProjectedNodeAggregateToNotExist(
             $command->contentStreamIdentifier,
@@ -70,8 +72,11 @@ trait RootNodeCreation
             )
         );
 
+        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $command->contentStreamIdentifier
+        );
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
+            $contentStreamEventStream->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

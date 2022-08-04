@@ -29,6 +29,8 @@ trait NodeMove
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
+            $projectionContentGraph = $this->getProjectionContentGraph();
+
             if ($event->nodeMoveMappings) {
                 foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                     // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
@@ -44,7 +46,8 @@ trait NodeMove
 
                     // we build up the $coveredDimensionSpacePoints (i.e. the incoming edges)
                     // for the node which we want to move
-                    $ingoingHierarchyRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNode(
+
+                    $ingoingHierarchyRelations = $projectionContentGraph->findIngoingHierarchyRelationsForNode(
                         $nodeToBeMoved->relationAnchorPoint,
                         $event->getContentStreamIdentifier()
                     );

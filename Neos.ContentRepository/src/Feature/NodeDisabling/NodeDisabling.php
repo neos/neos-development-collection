@@ -42,8 +42,10 @@ trait NodeDisabling
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    private function handleDisableNodeAggregate(DisableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    private function handleDisableNodeAggregate(
+        DisableNodeAggregate $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
@@ -77,7 +79,8 @@ trait NodeDisabling
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
@@ -93,8 +96,10 @@ trait NodeDisabling
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function handleEnableNodeAggregate(EnableNodeAggregate $command, ContentRepository $contentRepository): EventsToPublish
-    {
+    public function handleEnableNodeAggregate(
+        EnableNodeAggregate $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(

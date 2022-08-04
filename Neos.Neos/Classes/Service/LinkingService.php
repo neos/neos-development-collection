@@ -316,7 +316,9 @@ class LinkingService
             }
             try {
                 // if we get a node string, we need to assume it links to the current site
-                $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($controllerContext->getRequest()->getHttpRequest())->contentRepositoryIdentifier;
+                $contentRepositoryIdentifier = SiteDetectionResult::fromRequest(
+                    $controllerContext->getRequest()->getHttpRequest()
+                )->contentRepositoryIdentifier;
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $nodeAddress->workspaceName
@@ -364,11 +366,14 @@ class LinkingService
         }
         $this->lastLinkedNode = $node;
 
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
             $node->getSubgraphIdentity()->contentStreamIdentifier
         );
-        $hiddenState = $contentRepository->projectionState(NodeHiddenStateProjection::class)->findHiddenState(
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
+        $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $node->getSubgraphIdentity()->contentStreamIdentifier,
             $node->getSubgraphIdentity()->dimensionSpacePoint,
             $node->getNodeAggregateIdentifier()

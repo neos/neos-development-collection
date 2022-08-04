@@ -48,7 +48,10 @@ final class ContentRepositoryFactory
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
-        $interDimensionalVariationGraph = new InterDimensionalVariationGraph($contentDimensionSource, $contentDimensionZookeeper);
+        $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
+            $contentDimensionSource,
+            $contentDimensionZookeeper
+        );
 
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryIdentifier,
@@ -99,8 +102,9 @@ final class ContentRepositoryFactory
      * @param ContentRepositoryServiceFactoryInterface<T> $serviceFactory
      * @return T
      */
-    public function buildService(ContentRepositoryServiceFactoryInterface $serviceFactory): ContentRepositoryServiceInterface
-    {
+    public function buildService(
+        ContentRepositoryServiceFactoryInterface $serviceFactory
+    ): ContentRepositoryServiceInterface {
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->build(),

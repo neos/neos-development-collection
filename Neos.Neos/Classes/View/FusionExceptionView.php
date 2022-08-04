@@ -94,7 +94,10 @@ class FusionExceptionView extends AbstractView
 
         $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
-        $fusionExceptionViewInternals = $this->contentRepositoryRegistry->getService($siteDetectionResult->contentRepositoryIdentifier, new FusionExceptionViewInternalsFactory());
+        $fusionExceptionViewInternals = $this->contentRepositoryRegistry->getService(
+            $siteDetectionResult->contentRepositoryIdentifier,
+            new FusionExceptionViewInternalsFactory()
+        );
         $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
 
         $contentStreamIdentifier = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive())

@@ -62,9 +62,16 @@ class ContentElementEditableService
      */
     public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
 
-        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraphIdentity()->contentStreamIdentifier, $contentRepository)) {
+        if (
+            $this->isContentStreamOfLiveWorkspace(
+                $node->getSubgraphIdentity()->contentStreamIdentifier,
+                $contentRepository
+            )
+        ) {
             return $content;
         }
 
@@ -75,15 +82,20 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)->createFromNode($node)->serializeForUri()
+            'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)
+                ->createFromNode($node)
+                ->serializeForUri()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier, ContentRepository $contentRepository): bool
-    {
-        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+    private function isContentStreamOfLiveWorkspace(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): bool {
+        return $contentRepository->getWorkspaceFinder()
+            ->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
             ?->getWorkspaceName()->isLive() ?: false;
     }
 }

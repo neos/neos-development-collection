@@ -20,7 +20,10 @@ final class ContentRepositoryIdentifier
         public readonly string $value
     ) {
         if (!preg_match('/^[a-z][a-z\d_]*[a-z]$/', $this->value)) {
-            throw new \InvalidArgumentException('Content Repository identifiers must be only lowercase and with _ and 0-9. This is to ensure this works inside a database table name properly');
+            throw new \InvalidArgumentException(
+                'Content Repository identifiers must be only lowercase and with _ and 0-9. ' .
+                'This is to ensure this works inside a database table name properly'
+            );
         }
     }
 

@@ -120,6 +120,11 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setNotnull(true);
 
         $table
-            ->setPrimaryKey(['contentstreamidentifier', 'dimensionspacepointhash', 'originnodeaggregateidentifier', 'affectednodeaggregateidentifier']);
+            ->setPrimaryKey([
+                'contentstreamidentifier',
+                'dimensionspacepointhash',
+                'originnodeaggregateidentifier',
+                'affectednodeaggregateidentifier'
+            ]);
     }
 }

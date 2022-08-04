@@ -65,7 +65,8 @@ final class ContentRepository
      */
     public function handle(CommandInterface $command): CommandResult
     {
-        // the commands only calculate which events they want to have published, but do not do the publishing themselves.
+        // the commands only calculate which events they want to have published, but do not do the
+        // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this);
 
         return $this->eventPersister->publishEvents($eventsToPublish);

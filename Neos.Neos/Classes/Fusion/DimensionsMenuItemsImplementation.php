@@ -47,12 +47,16 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $menuItems = [];
         $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
-        $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new DimensionsMenuItemsImplementationInternalsFactory());
+        $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new DimensionsMenuItemsImplementationInternalsFactory()
+        );
         assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
 
+        $contentDimensionZookeeper = $dimensionMenuItemsImplementationInternals->contentDimensionZookeeper;
         $currentDimensionSpacePoint = $this->currentNode->getSubgraphIdentity()->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
-        foreach ($dimensionMenuItemsImplementationInternals->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
+        foreach ($contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
@@ -137,7 +141,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals
     ): ?NodeInterface {
-        $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
+        $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph
+            ->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
             if (
@@ -160,21 +165,27 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * @return array<string,mixed>
      */
-    protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint, DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals): array
-    {
+    protected function determineMetadata(
+        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals
+    ): array {
         $metadata = $dimensionSpacePoint->coordinates;
-        array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier, $dimensionMenuItemsImplementationInternals) {
-            $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
-            $dimensionValue = [
+        array_walk(
+            $metadata,
+            function (&$dimensionValue, $rawDimensionIdentifier) use ($dimensionMenuItemsImplementationInternals) {
+                $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
+                $dimensionValue = [
                 'value' => $dimensionValue,
-                'label' => $dimensionMenuItemsImplementationInternals->contentDimensionSource->getDimension($dimensionIdentifier)
+                'label' => $dimensionMenuItemsImplementationInternals
+                    ->contentDimensionSource->getDimension($dimensionIdentifier)
                     ?->getValue($dimensionValue)?->getConfigurationValue('label') ?: $dimensionIdentifier,
                 'isPinnedDimension' => (
                     !$this->getContentDimensionIdentifierToLimitTo()
                     || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo())
                 )
-            ];
-        });
+                ];
+            }
+        );
 
         return $metadata;
     }
@@ -225,7 +236,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function getContentDimensionIdentifierToLimitTo(): ?ContentDimensionIdentifier
     {
-        return $this->fusionValue('dimension') ? new ContentDimensionIdentifier($this->fusionValue('dimension')) : null;
+        return $this->fusionValue('dimension')
+            ? new ContentDimensionIdentifier($this->fusionValue('dimension'))
+            : null;
     }
 
     /**
