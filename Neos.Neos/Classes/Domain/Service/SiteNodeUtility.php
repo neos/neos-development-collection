@@ -35,8 +35,7 @@ final class SiteNodeUtility
         private readonly NodeAccessorManager $nodeAccessorManager,
         private readonly DomainRepository $domainRepository,
         private readonly SiteRepository $siteRepository
-    )
-    {
+    ) {
     }
 
     public function findSiteNode(NodeInterface $node): NodeInterface
@@ -65,8 +64,7 @@ final class SiteNodeUtility
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
-    ): NodeInterface
-    {
+    ): NodeInterface {
         $domain = $this->domainRepository->findOneByActiveRequest();
         $site = $domain
             ? $domain->getSite()

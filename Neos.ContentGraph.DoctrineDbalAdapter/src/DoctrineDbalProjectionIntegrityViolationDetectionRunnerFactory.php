@@ -13,8 +13,7 @@ class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements 
 {
     public function __construct(
         private readonly DbalClientInterface $dbalClient
-    )
-    {
+    ) {
     }
 
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
@@ -23,7 +22,6 @@ class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements 
             new ProjectionIntegrityViolationDetector(
                 $this->dbalClient,
                 DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix($serviceFactoryDependencies->contentRepositoryIdentifier)
-
             )
         );
     }

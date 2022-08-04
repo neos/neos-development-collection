@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\CommandHandler;
 
 use Neos\ContentRepository\ContentRepository;
@@ -17,7 +19,8 @@ final class CommandResult
     public function __construct(
         private readonly PendingProjections $pendingProjections,
         public readonly CommitResult $commitResult,
-    ) {}
+    ) {
+    }
 
     /**
      * Wait until all projections are up to date; i.e. have processed the events.

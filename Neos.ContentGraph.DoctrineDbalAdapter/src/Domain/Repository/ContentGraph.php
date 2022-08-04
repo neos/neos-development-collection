@@ -466,7 +466,8 @@ final class ContentGraph implements ContentGraphInterface
      * @return ContentSubgraph[]
      * @internal only used for {@see InMemoryCacheAccessor} and as implementation detail of {@see DoctrineDbalContentGraphProjection}
      */
-    public function getSubgraphs(): array {
+    public function getSubgraphs(): array
+    {
         return $this->subgraphs;
     }
 }

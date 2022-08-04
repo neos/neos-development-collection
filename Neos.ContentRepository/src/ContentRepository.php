@@ -50,8 +50,7 @@ final class ContentRepository
         private readonly Projections $projections,
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
-    )
-    {
+    ) {
     }
 
     /**

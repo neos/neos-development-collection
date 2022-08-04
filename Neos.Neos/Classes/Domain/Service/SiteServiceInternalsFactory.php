@@ -19,8 +19,6 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
 class SiteServiceInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
-
-
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): SiteServiceInternals
     {
         return new SiteServiceInternals(

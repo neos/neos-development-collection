@@ -9,8 +9,7 @@ class DocumentUriPathSchemaBuilder
 {
     public function __construct(
         private readonly string $tableNamePrefix,
-    )
-    {
+    ) {
     }
 
     public function buildSchema(): Schema

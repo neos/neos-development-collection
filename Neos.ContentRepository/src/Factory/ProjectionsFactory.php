@@ -9,7 +9,6 @@ use Neos\ContentRepository\Projection\Projections;
 
 final class ProjectionsFactory
 {
-
     private array $factories = [];
 
     public function registerFactory(ProjectionFactoryInterface $factory, array $options): void

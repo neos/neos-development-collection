@@ -31,8 +31,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         private readonly DbalClientInterface $client,
         private readonly WorkspaceRuntimeCache $workspaceRuntimeCache,
         private readonly string $tableName
-    )
-    {
+    ) {
     }
 
 

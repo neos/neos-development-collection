@@ -28,8 +28,7 @@ final class NodeHiddenStateFinder implements ProjectionStateInterface
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly string $tableName
-    )
-    {
+    ) {
     }
 
     public function findHiddenState(

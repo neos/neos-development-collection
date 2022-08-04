@@ -22,7 +22,6 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 final class WorkspaceWasPartiallyDiscarded implements EventInterface
 {
-
     public function __construct(
         public readonly WorkspaceName $workspaceName,
         /**

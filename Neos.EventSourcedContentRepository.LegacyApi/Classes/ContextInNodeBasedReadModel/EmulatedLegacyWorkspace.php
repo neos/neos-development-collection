@@ -31,8 +31,7 @@ class EmulatedLegacyWorkspace
     public function __construct(
         private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
         private readonly NodeAddress $nodeAddressOfContextNode
-    )
-    {
+    ) {
     }
 
     public function getBaseWorkspace(): ?EmulatedLegacyBaseWorkspace

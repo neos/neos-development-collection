@@ -140,15 +140,15 @@ trait NodeMove
         foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $occupiedDimensionSpacePoint) {
             $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash]
                 = $this->resolveNewSucceedingSiblingsAssignments(
-                $command->getContentStreamIdentifier(),
-                $nodeAggregate,
-                $command->getNewParentNodeAggregateIdentifier(),
-                $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
-                $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
-                $occupiedDimensionSpacePoint,
-                $affectedDimensionSpacePoints,
-                $contentRepository
-            );
+                    $command->getContentStreamIdentifier(),
+                    $nodeAggregate,
+                    $command->getNewParentNodeAggregateIdentifier(),
+                    $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
+                    $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
+                    $occupiedDimensionSpacePoint,
+                    $affectedDimensionSpacePoints,
+                    $contentRepository
+                );
             $parentAssignments[$occupiedDimensionSpacePoint->hash] = $this->resolveNewParentAssignments(
                 $command->getContentStreamIdentifier(),
                 $nodeAggregate,
@@ -215,8 +215,7 @@ trait NodeMove
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints,
         ContentRepository $contentRepository
-    ): NodeVariantAssignments
-    {
+    ): NodeVariantAssignments {
         $parents = NodeVariantAssignments::create();
         if ($parentIdentifier) {
             // if a parent node aggregate identifier is explicitly given,
@@ -289,8 +288,7 @@ trait NodeMove
         ReadableNodeAggregateInterface $nodeAggregate,
         RelationDistributionStrategy $relationDistributionStrategy,
         DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
-    ): DimensionSpacePointSet
-    {
+    ): DimensionSpacePointSet {
         return match ($relationDistributionStrategy) {
             RelationDistributionStrategy::STRATEGY_SCATTER =>
             new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
@@ -326,8 +324,7 @@ trait NodeMove
         /** The dimension space points affected by the move operation */
         DimensionSpacePointSet $affectedDimensionSpacePoints,
         ContentRepository $contentRepository
-    ): NodeVariantAssignments
-    {
+    ): NodeVariantAssignments {
         $succeedingSiblings = NodeVariantAssignments::create();
         if (!$precedingSiblingIdentifier && !$succeedingSiblingIdentifier) {
             return $succeedingSiblings;
@@ -395,8 +392,7 @@ trait NodeMove
         ContentSubgraphInterface $contentSubgraph,
         ?NodeAggregateIdentifier $parentIdentifier,
         NodeAggregateIdentifier $siblingIdentifier
-    ): ?NodeInterface
-    {
+    ): ?NodeInterface {
         $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateIdentifier($siblingIdentifier);
         if ($parentIdentifier && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
@@ -424,8 +420,7 @@ trait NodeMove
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
         ContentSubgraphInterface $currentContentSubgraph,
         ContentSubgraphInterface $originContentSubgraph
-    ): ?NodeInterface
-    {
+    ): ?NodeInterface {
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)
@@ -488,8 +483,7 @@ trait NodeMove
         array $parentAssignments,
         array $succeedingSiblingAssignments,
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): NodeMoveMappings
-    {
+    ): NodeMoveMappings {
         $nodeMoveMappings = [];
         $coveredAffectedDimensionSpacePoints = is_null($affectedDimensionSpacePoints)
             ? $nodeAggregate->getCoveredDimensionSpacePoints()

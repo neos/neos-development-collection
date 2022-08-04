@@ -34,7 +34,6 @@ use Neos\Neos\Domain\Model\Site;
  */
 class SiteCommandController extends CommandController
 {
-
     /**
      * @Flow\Inject
      * @var SiteRepository

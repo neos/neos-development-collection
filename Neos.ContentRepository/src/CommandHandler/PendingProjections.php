@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\CommandHandler;
 
 use Neos\ContentRepository\ContentRepository;
@@ -77,7 +79,8 @@ final class PendingProjections
     public function __construct(
         public readonly Projections $projections,
         private readonly array $sequenceNumberPerProjection,
-    ) { }
+    ) {
+    }
 
     public static function fromProjectionsAndEventsAndSequenceNumber(Projections $allProjections, Events $events, SequenceNumber $highestCommittedSequenceNumber): self
     {
@@ -93,7 +96,7 @@ final class PendingProjections
                     }
                 }
             }
-            $sequenceNumberInteger ++;
+            $sequenceNumberInteger++;
         }
         return new self($pendingProjections, $sequenceNumberPerProjection);
     }

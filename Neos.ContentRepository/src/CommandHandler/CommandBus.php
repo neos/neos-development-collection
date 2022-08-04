@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\CommandHandler;
 
 use Neos\ContentRepository\ContentRepository;
@@ -31,5 +33,4 @@ final class CommandBus
         }
         throw new \RuntimeException(sprintf('No handler found for Command "%s"', get_debug_type($command)), 1649582778);
     }
-
 }

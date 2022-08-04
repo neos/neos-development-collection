@@ -190,8 +190,9 @@ class SitesController extends AbstractModuleController
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
             $site->getConfiguration()['contentRepository']
             ?? throw new \RuntimeException(
-            'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-            . ' Neos.Neos.sites.*.contentRepository')
+                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+                . ' Neos.Neos.sites.*.contentRepository'
+            )
         );
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 

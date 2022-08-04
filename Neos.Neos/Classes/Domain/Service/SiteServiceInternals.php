@@ -40,14 +40,12 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 
 class SiteServiceInternals implements ContentRepositoryServiceInterface
 {
-
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly NodeTypeManager $nodeTypeManager
-    )
-    {
+    ) {
     }
 
     public function removeSiteNode(SiteNodeName $siteNodeName): void
@@ -141,6 +139,5 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                 $currentUserIdentifier
             ))->block();
         }
-
     }
 }

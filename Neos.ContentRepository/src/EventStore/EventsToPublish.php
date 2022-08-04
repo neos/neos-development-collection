@@ -1,7 +1,8 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\EventStore;
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\EventStore;
 
 use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\ContentRepository;
@@ -19,5 +20,6 @@ final class EventsToPublish
         public readonly StreamName $streamName,
         public readonly Events $events,
         public readonly ExpectedVersion $expectedVersion,
-    ) {}
+    ) {
+    }
 }

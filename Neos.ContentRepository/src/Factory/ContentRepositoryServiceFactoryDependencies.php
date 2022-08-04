@@ -39,13 +39,11 @@ final class ContentRepositoryServiceFactoryDependencies
         public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public readonly PropertyConverter $propertyConverter,
-
         public readonly ContentRepository $contentRepository,
         // we don't need Projections, because this is included in ContentRepository->getState()
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         public readonly EventPersister $eventPersister,
-    )
-    {
+    ) {
     }
 
     public static function create(

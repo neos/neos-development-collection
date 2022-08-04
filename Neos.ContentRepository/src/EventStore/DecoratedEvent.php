@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\EventStore;
-
 
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -16,8 +16,7 @@ final class DecoratedEvent
         public readonly EventInterface $innerEvent,
         public readonly EventId $eventId,
         public readonly EventMetadata $eventMetadata,
-    )
-    {
+    ) {
     }
 
     public static function withMetadata(DecoratedEvent|EventInterface $event, EventMetadata $metadata): self

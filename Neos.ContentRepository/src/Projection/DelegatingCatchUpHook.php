@@ -6,16 +6,14 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 class DelegatingCatchUpHook implements CatchUpHookInterface
 {
-
     /**
      * @var CatchUpHookInterface[]
      */
     private array $catchUpHooks;
 
     public function __construct(
-        CatchUpHookInterface... $catchUpHooks
-    )
-    {
+        CatchUpHookInterface ...$catchUpHooks
+    ) {
         $this->catchUpHooks = $catchUpHooks;
     }
 

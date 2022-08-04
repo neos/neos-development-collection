@@ -24,8 +24,7 @@ class WorkspacesControllerInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
         protected ContentDimensionSourceInterface $contentDimensionSource,
-    )
-    {
+    ) {
     }
 
     public function getContentDimensionsOrderedByPriority(): array

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\ContentStreamForking\Event;
@@ -28,8 +29,7 @@ final class ContentStreamWasForked implements EventInterface
         public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
         public readonly Version $versionOfSourceContentStream,
         public readonly UserIdentifier $initiatingUserIdentifier
-    )
-    {
+    ) {
     }
 
     public static function fromArray(array $values): self

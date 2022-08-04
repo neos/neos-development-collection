@@ -9,7 +9,6 @@ use Neos\ContentRepository\EventStore\EventInterface;
  */
 interface CatchUpHookInterface
 {
-
     public function onBeforeCatchUp(): void;
 
     public function onBeforeEvent(EventInterface $eventInstance): void;

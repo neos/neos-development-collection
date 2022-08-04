@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
@@ -84,15 +85,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
-
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
-
         private readonly string $tableNamePrefix,
-    )
-    {
+    ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableNamePrefix . '_checkpoint',
@@ -362,8 +360,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
-    ): void
-    {
+    ): void {
         // TODO: still unsure why we need an "INSERT IGNORE" here;
         // normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
@@ -408,8 +405,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         NodeName $nodeName = null
-    ): void
-    {
+    ): void {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
@@ -475,8 +471,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
         NodeName $relationName = null
-    ): void
-    {
+    ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -515,8 +510,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition(
             $parentAnchorPoint,
             $childAnchorPoint,
@@ -553,8 +547,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException(
                 'You must either specify a parent or child node anchor'
@@ -778,8 +771,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): void
-    {
+    ): void {
         $this->getDatabaseConnection()->executeUpdate(
             '
             -- GraphProjector::cascadeRestrictionRelations
@@ -884,8 +876,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation
-    {
+    ): HierarchyRelation {
         $copy = new HierarchyRelation(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
@@ -912,8 +903,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     protected function copyNodeToDimensionSpacePoint(
         NodeRecord $sourceNode,
         OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): NodeRecord
-    {
+    ): NodeRecord {
         $copyRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $copy = new NodeRecord(
             $copyRelationAnchorPoint,
@@ -996,8 +986,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ContentStreamIdentifier $contentStreamIdentifierWhereWriteOccurs,
         NodeRelationAnchorPoint $anchorPoint,
         callable $operations
-    ): mixed
-    {
+    ): mixed {
         $contentStreamIdentifiers = $this->projectionContentGraph
             ->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPoint);
         if (count($contentStreamIdentifiers) > 1) {
@@ -1058,8 +1047,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
         NodeRelationAnchorPoint $destinationRelationAnchorPoint
-    ): void
-    {
+    ): void {
         $this->getDatabaseConnection()->executeStatement('
                 INSERT INTO ' . $this->tableNamePrefix . '_referencerelation (
                   nodeanchorpoint,

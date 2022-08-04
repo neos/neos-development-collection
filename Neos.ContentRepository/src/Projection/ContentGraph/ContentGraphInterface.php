@@ -138,5 +138,4 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @return iterable<NodeTypeName>
      */
     public function findUsedNodeTypeNames(): iterable;
-
 }

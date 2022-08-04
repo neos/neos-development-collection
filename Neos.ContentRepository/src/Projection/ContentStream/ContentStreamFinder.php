@@ -38,8 +38,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly string $tableName,
-    )
-    {
+    ) {
     }
 
     /**

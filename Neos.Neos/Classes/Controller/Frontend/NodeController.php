@@ -366,8 +366,7 @@ class NodeController extends ActionController
         NodeInterface $parentNode,
         NodePath $parentNodePath,
         InMemoryCache $inMemoryCache
-    ): void
-    {
+    ): void {
         $node = $subtree->getNode();
         if (is_null($node)) {
             return;

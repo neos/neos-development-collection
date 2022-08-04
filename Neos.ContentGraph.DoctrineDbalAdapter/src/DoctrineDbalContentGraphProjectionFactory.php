@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
@@ -18,8 +19,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
 {
     public function __construct(
         private readonly DbalClientInterface $dbalClient
-    )
-    {
+    ) {
     }
 
     public static function graphProjectionTableNamePrefix(ContentRepositoryIdentifier $contentRepositoryIdentifier): string
@@ -45,7 +45,6 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $tableNamePrefix
                 ),
                 $catchUpHookFactory,
-
                 $tableNamePrefix
             )
         );

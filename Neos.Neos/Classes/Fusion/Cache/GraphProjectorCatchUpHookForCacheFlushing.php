@@ -21,15 +21,12 @@ use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 
-
 class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 {
-
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly ContentCacheFlusher $contentCacheFlusher
-    )
-    {
+    ) {
     }
 
 
@@ -64,7 +61,6 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 }
             }
         }
-
     }
 
     public function onAfterEvent(EventInterface $eventInstance): void

@@ -26,7 +26,6 @@ final class PublishWorkspace implements CommandInterface
     public function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly UserIdentifier $initiatingUserIdentifier
-    )
-    {
+    ) {
     }
 }

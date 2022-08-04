@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
 use Neos\ContentRepository\ContentRepository;
@@ -16,7 +18,8 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
 {
     public function __construct(
         private readonly ProjectionInterface&WithMarkStaleInterface $projectionImplementation
-    ) {}
+    ) {
+    }
 
     public function setUp(): void
     {

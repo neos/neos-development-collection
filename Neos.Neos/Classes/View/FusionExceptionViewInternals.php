@@ -23,11 +23,9 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
  */
 class FusionExceptionViewInternals implements ContentRepositoryServiceInterface
 {
-
     public function __construct(
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-    )
-    {
+    ) {
     }
 
     public function getArbitraryDimensionSpacePoint(): DimensionSpacePoint

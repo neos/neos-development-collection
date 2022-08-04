@@ -34,7 +34,6 @@ final class ProjectionFactoryDependencies
         public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public readonly PropertyConverter $propertyConverter,
-    )
-    {
+    ) {
     }
 }

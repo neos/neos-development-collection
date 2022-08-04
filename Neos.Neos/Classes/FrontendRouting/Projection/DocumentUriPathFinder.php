@@ -23,8 +23,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix
-    )
-    {
+    ) {
     }
 
     /**
@@ -193,7 +192,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             try {
                 $contentStreamIdentifier = $this->dbal->fetchColumn(
                     'SELECT contentStreamIdentifier FROM '
-                        . $this->tableNamePrefix. '_livecontentstreams LIMIT 1'
+                        . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
                 );
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf(

@@ -30,11 +30,10 @@ class NodeTypeConstraintParser
 {
     private function __construct(
         private readonly NodeTypeManager $nodeTypeManager
-    )
-    {
+    ) {
     }
 
-    static public function create(NodeTypeManager $nodeTypeManager): self
+    public static function create(NodeTypeManager $nodeTypeManager): self
     {
         return new self($nodeTypeManager);
     }

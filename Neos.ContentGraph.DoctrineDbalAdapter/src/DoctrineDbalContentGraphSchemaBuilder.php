@@ -9,8 +9,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 {
     public function __construct(
         private readonly string $tableNamePrefix,
-    )
-    {
+    ) {
     }
 
     public function buildSchema(): Schema

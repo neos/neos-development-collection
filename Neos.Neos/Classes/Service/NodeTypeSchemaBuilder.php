@@ -24,11 +24,9 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
  */
 class NodeTypeSchemaBuilder
 {
-
     private function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
-    )
-    {
+    ) {
     }
 
     public static function create(NodeTypeManager $nodeTypeManager): self

@@ -28,8 +28,7 @@ class DimensionControllerInternals implements ContentRepositoryServiceInterface
     public function __construct(
         protected ContentDimensionSourceInterface $contentDimensionSource,
         protected InterDimensionalVariationGraph $interDimensionalVariationGraph
-    )
-    {
+    ) {
     }
 
     public function loadGraph(string $type, string $dimensionSpacePointHash = null): VisualIntraDimensionalVariationGraph|VisualInterDimensionalVariationGraph|null

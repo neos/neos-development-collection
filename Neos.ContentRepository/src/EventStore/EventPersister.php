@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\EventStore;
 
 use Neos\ContentRepository\CommandHandler\CommandResult;
@@ -27,8 +29,7 @@ final class EventPersister
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly EventNormalizer $eventNormalizer,
         private readonly Projections $projections,
-    )
-    {
+    ) {
     }
 
     /**
@@ -75,5 +76,4 @@ final class EventPersister
             $eventMetadata,
         );
     }
-
 }

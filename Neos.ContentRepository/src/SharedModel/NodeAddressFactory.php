@@ -27,11 +27,10 @@ class NodeAddressFactory
 {
     private function __construct(
         private readonly ContentRepository $contentRepository
-    )
-    {
+    ) {
     }
 
-    static public function create(ContentRepository $contentRepository): self
+    public static function create(ContentRepository $contentRepository): self
     {
         return new self($contentRepository);
     }

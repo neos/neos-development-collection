@@ -61,8 +61,7 @@ class ContentStreamProjection implements ProjectionInterface
         private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName
-    )
-    {
+    ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableName . '_checkpoint',

@@ -52,8 +52,7 @@ final class NodeFactory
         private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyConverter $propertyConverter
-    )
-    {
+    ) {
     }
 
     /**

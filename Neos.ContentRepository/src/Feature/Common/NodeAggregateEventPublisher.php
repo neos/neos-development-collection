@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\Common;
 
 /*
@@ -21,7 +23,6 @@ use Neos\EventStore\Model\Event\EventMetadata;
  */
 final class NodeAggregateEventPublisher
 {
-
     /**
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception

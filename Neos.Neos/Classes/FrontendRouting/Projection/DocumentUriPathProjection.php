@@ -148,7 +148,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
         $this->dbal->beginTransaction();
 
-        match(get_class($eventInstance)) {
+        match (get_class($eventInstance)) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($eventInstance),
@@ -192,7 +192,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         try {
-            $this->dbal->insert($this->tableNamePrefix. '_livecontentstreams', [
+            $this->dbal->insert($this->tableNamePrefix . '_livecontentstreams', [
                 'contentStreamIdentifier' => $event->newContentStreamIdentifier,
                 'workspaceName' => $event->workspaceName,
             ]);

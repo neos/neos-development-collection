@@ -33,14 +33,14 @@ final class ContentSubgraphIdentity
 {
     public function __construct(
         public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
-
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         /**
          * DimensionSpacePoint a node has been accessed in.
          */
         public readonly DimensionSpacePoint $dimensionSpacePoint,
         public readonly VisibilityConstraints $visibilityConstraints,
-    ) {}
+    ) {
+    }
 
     public function equals(ContentSubgraphIdentity $getSubgraphIdentity): bool
     {

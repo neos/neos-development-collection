@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment;
@@ -40,12 +41,10 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 {
-
     public function __construct(
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-    )
-    {
+    ) {
     }
 
     public function canHandle(CommandInterface $command): bool
@@ -126,7 +125,7 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         }
     }
 
-    static private function requireDimensionSpacePointToBeEmptyInContentStream(
+    private static function requireDimensionSpacePointToBeEmptyInContentStream(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         ContentGraphInterface $contentGraph

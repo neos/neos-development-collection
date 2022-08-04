@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 

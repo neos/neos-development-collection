@@ -35,7 +35,6 @@ use Symfony\Component\Serializer\Serializer;
 
 final class ContentRepositoryFactory
 {
-
     private ProjectionFactoryDependencies $projectionFactoryDependencies;
     private Projections $projections;
 
@@ -47,8 +46,7 @@ final class ContentRepositoryFactory
         Serializer $propertySerializer,
         ProjectionsFactory $projectionsFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger
-    )
-    {
+    ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph($contentDimensionSource, $contentDimensionZookeeper);
 

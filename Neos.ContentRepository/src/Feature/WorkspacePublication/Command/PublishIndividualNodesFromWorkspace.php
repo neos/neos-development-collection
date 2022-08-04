@@ -29,7 +29,6 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
         public readonly WorkspaceName $workspaceName,
         public readonly NodeIdentifiersToPublishOrDiscard $nodesToPublish,
         public readonly UserIdentifier $initiatingUserIdentifier,
-
         /**
          * during the publish process, we sort the events so that the events we want to publish
          * come first. In this process, two new content streams are generated:
@@ -41,7 +40,6 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
          * can run fully deterministic - we need this for the test cases.
          */
         public readonly ContentStreamIdentifier $contentStreamIdentifierForMatchingPart,
-
         /**
          * See the description of {@see $contentStreamIdentifierForMatchingPart}.
          *

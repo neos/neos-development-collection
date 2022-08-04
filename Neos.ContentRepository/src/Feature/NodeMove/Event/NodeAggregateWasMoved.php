@@ -29,7 +29,6 @@ final class NodeAggregateWasMoved implements
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
-
         /**
          * The MoveNodeMappings contains for every OriginDimensionSpacePoint of the aggregate which should be moved,
          * a list of new parent NodeAggregateIdentifiers, and a list of new succeeding-sibling NodeAggregateIdentifiers.
@@ -48,7 +47,6 @@ final class NodeAggregateWasMoved implements
          * @var NodeMoveMappings|null
          */
         public readonly ?NodeMoveMappings $nodeMoveMappings,
-
         /**
          * This specifies all "edges" which should move to the END of their siblings.
          * All dimension space points included here must NOT be part of any MoveNodeMapping.

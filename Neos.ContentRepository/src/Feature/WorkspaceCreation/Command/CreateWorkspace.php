@@ -37,7 +37,6 @@ final class CreateWorkspace implements CommandInterface
          */
         public readonly ContentStreamIdentifier $newContentStreamIdentifier,
         public readonly ?UserIdentifier $workspaceOwner = null
-    )
-    {
+    ) {
     }
 }

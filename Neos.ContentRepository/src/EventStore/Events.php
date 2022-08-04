@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\EventStore;
 
 /**
@@ -9,7 +11,6 @@ namespace Neos\ContentRepository\EventStore;
  */
 final class Events implements \IteratorAggregate
 {
-
     /**
      * @var EventInterface|DecoratedEvent[]
      */

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Projection;
 
 use Neos\ContentRepository\EventStore\EventPersister;
@@ -12,7 +14,6 @@ use Neos\ContentRepository\EventStore\EventPersister;
  */
 interface WithMarkStaleInterface
 {
-
     /**
      * Triggered directly before {@see ProjectionCatchUpTriggerInterface::triggerCatchUp()} is called;
      * by the {@see EventPersister::publishEvents()} method.

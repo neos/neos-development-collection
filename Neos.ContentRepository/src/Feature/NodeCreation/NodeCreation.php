@@ -11,6 +11,7 @@
  */
 
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Feature\NodeCreation;
 
 use Neos\ContentRepository\ContentRepository;
@@ -28,6 +29,7 @@ use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+
 /** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 /** @codingStandardsIgnoreEnd */

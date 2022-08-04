@@ -83,8 +83,7 @@ trait RootNodeCreation
     private function createRootWithNode(
         CreateRootNodeAggregateWithNode $command,
         DimensionSpacePointSet $coveredDimensionSpacePoints
-    ): RootNodeAggregateWithNodeWasCreated
-    {
+    ): RootNodeAggregateWithNodeWasCreated {
         return new RootNodeAggregateWithNodeWasCreated(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier,

@@ -26,12 +26,10 @@ final class WorkspaceRebaseFailed implements EventInterface
      */
     public function __construct(
         public readonly WorkspaceName $workspaceName,
-
         /**
          * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
          */
         public readonly ContentStreamIdentifier $candidateContentStreamIdentifier,
-
         /**
          * The content stream which we tried to rebase
          */

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\EventStore;
 
 use Neos\ContentRepository\ContentRepository;
@@ -42,11 +44,11 @@ use Neos\EventStore\Model\Event\EventType;
  */
 final class EventNormalizer
 {
-
     private array $fullClassNameToShortEventType = [];
     private array $shortEventTypeToFullClassName = [];
 
-    public function __construct() {
+    public function __construct()
+    {
         $supportedEventClassNames = [
             ContentStreamWasCreated::class,
             ContentStreamWasForked::class,

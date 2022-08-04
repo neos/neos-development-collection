@@ -21,15 +21,12 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 final class WorkspaceWasDiscarded implements EventInterface
 {
-
     public function __construct(
         public readonly WorkspaceName $workspaceName,
-
         /**
          * The new, empty, content stream
          */
         public readonly ContentStreamIdentifier $newContentStreamIdentifier,
-
         /**
          * The old content stream (which contains the discarded data)
          */
