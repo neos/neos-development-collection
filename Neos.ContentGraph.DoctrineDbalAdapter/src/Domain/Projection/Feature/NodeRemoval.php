@@ -143,83 +143,79 @@ trait NodeRemoval
             );
         }
 
-        if ($event->recursive) {
-
-        } else {
-            $this->getDatabaseConnection()->executeStatement(
-                /** @lang MariaDB */ '
-                INSERT INTO ' . HierarchyRelation::TABLE_NAME . ' (
-                    name,
-                    position,
-                    contentstreamidentifier,
-                    dimensionspacepoint,
-                    dimensionspacepointhash,
-                    parentnodeanchor,
-                    childnodeanchor
-                )
-                SELECT name, position, :contentStreamIdentifier AS contentstreamidentifier,
-                    dimensionspacepoint, dimensionspacepointhash, parentnodeanchor, childnodeanchor FROM (
+        $this->getDatabaseConnection()->executeStatement(
+            /** @lang MariaDB */ '
+            INSERT INTO ' . HierarchyRelation::TABLE_NAME . ' (
+                name,
+                position,
+                contentstreamidentifier,
+                dimensionspacepoint,
+                dimensionspacepointhash,
+                parentnodeanchor,
+                childnodeanchor
+            )
+            SELECT name, position, :contentStreamIdentifier AS contentstreamidentifier,
+                dimensionspacepoint, dimensionspacepointhash, parentnodeanchor, childnodeanchor FROM (
+                    /**
+                     * This provides a list of all hierarchy relations to be copied:
+                     * parentnodeanchor and childnodeanchor, name and position only, the rest will be changed
+                     */
+                    WITH RECURSIVE descendantNodes(relationanchorpoint, parentnodeanchor, name, position, childnodeanchor) AS (
                         /**
-                         * This provides a list of all hierarchy relations to be copied:
-                         * parentnodeanchor and childnodeanchor, name and position only, the rest will be changed
+                         * Initial query: find all outgoing tethered child node relations
+                         * from the starting node in its origin
                          */
-                        WITH RECURSIVE descendantNodes(relationanchorpoint, parentnodeanchor, name, position, childnodeanchor) AS (
+                        SELECT
+                            n.relationanchorpoint,
+                            h.parentnodeanchor,
+                            h.name,
+                            h.position,
+                            h.childnodeanchor
+                        FROM neos_contentgraph_node n
+                             JOIN neos_contentgraph_hierarchyrelation h ON n.relationanchorpoint = h.childnodeanchor
+                        WHERE h.parentnodeanchor = :relationAnchorPoint
+                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.dimensionspacepointhash = :originDimensionSpacePointHash
+                          ' . ($event->recursive ? '' : ' AND n.classification = :classification ') . '
+
+                        UNION ALL
                             /**
-                             * Initial query: find all outgoing tethered child node relations
-                             * from the starting node in its origin
+                             * Iteration query: find all outgoing tethered child node relations
+                             * from the parent node in its origin
                              */
                             SELECT
-                                n.relationanchorpoint,
+                                c.relationanchorpoint,
                                 h.parentnodeanchor,
                                 h.name,
                                 h.position,
                                 h.childnodeanchor
-                            FROM neos_contentgraph_node n
-                                 JOIN neos_contentgraph_hierarchyrelation h ON n.relationanchorpoint = h.childnodeanchor
-                            WHERE n.classification = :classification
-                              AND h.parentnodeanchor = :relationAnchorPoint
-                              AND h.contentstreamidentifier = :contentStreamIdentifier
+                            FROM
+                                descendantNodes p
+                                    JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
+                                    JOIN neos_contentgraph_node c ON c.relationanchorpoint = h.childnodeanchor
+                            WHERE h.contentstreamidentifier = :contentStreamIdentifier
                               AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-
-                            UNION ALL
-                                /**
-                                 * Iteration query: find all outgoing tethered child node relations
-                                 * from the parent node in its origin
-                                 */
-                                SELECT
-                                    c.relationanchorpoint,
-                                    h.parentnodeanchor,
-                                    h.name,
-                                    h.position,
-                                    h.childnodeanchor
-                                FROM
-                                    descendantNodes p
-                                        JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
-                                        JOIN neos_contentgraph_node c ON c.relationanchorpoint = h.childnodeanchor
-                                WHERE c.classification = :classification
-                                  AND h.contentstreamidentifier = :contentStreamIdentifier
-                                  AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                        ) SELECT name, position, parentnodeanchor, childnodeanchor, dimensionspacepoint, dimensionspacepointhash FROM descendantNodes
-                            JOIN (
-                                SELECT "' . implode(
-                                    ' UNION SELECT "',
-                                    array_map(
-                                        fn (DimensionSpacePoint $dimensionSpacePoint): string
-                                            => \str_replace('"', '\"', json_encode($dimensionSpacePoint)) . '" AS dimensionspacepoint, "' . $dimensionSpacePoint->hash . '" AS dimensionspacepointhash',
-                                        $event->affectedCoveredDimensionSpacePoints->points
-                                    )
-                                ) . '
-                            ) AS dimensionSpacePoints
-                        ) targetHierarchyRelation
-                ',
-                [
-                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
-                    'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
-                    'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
-                    'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash
-                ]
-            );
-        }
+                              ' . ($event->recursive ? '' : ' AND c.classification = :classification ') . '
+                    ) SELECT name, position, parentnodeanchor, childnodeanchor, dimensionspacepoint, dimensionspacepointhash FROM descendantNodes
+                        JOIN (
+                            SELECT "' . implode(
+                                ' UNION SELECT "',
+                                array_map(
+                                    fn (DimensionSpacePoint $dimensionSpacePoint): string
+                                        => \str_replace('"', '\"', json_encode($dimensionSpacePoint)) . '" AS dimensionspacepoint, "' . $dimensionSpacePoint->hash . '" AS dimensionspacepointhash',
+                                    $event->affectedCoveredDimensionSpacePoints->points
+                                )
+                            ) . '
+                        ) AS dimensionSpacePoints
+                    ) targetHierarchyRelation
+            ',
+            [
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
+                'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
+                'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash
+            ]
+        );
     }
 
     abstract protected function getDatabaseConnection(): Connection;

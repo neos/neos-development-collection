@@ -215,84 +215,79 @@ trait NodeRemoval
                     )
                 ))->addToDatabase($this->getDatabaseConnection());
             }
-
-            }
-
-        if ($event->recursive) {
-
-        } else {
-            $this->getDatabaseConnection()->executeStatement(
-            /** @lang PostgreSQL */ '
-                /**
-                 * This provides a list of all hierarchy relations to be copied:
-                 * parentnodeanchor and childnodeanchors only, the rest will be changed
-                 */
-                WITH RECURSIVE descendantNodes(relationanchorpoint) AS (
-                    /**
-                     * Initial query: find all outgoing tethered child node relations
-                     * from the starting node in its origin
-                     */
-                    SELECT
-                        n.relationanchorpoint,
-                        h.parentnodeanchor
-                    FROM  ' . NodeRecord::TABLE_NAME . ' n
-                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON n.relationanchorpoint = ANY(h.childnodeanchors)
-                    WHERE n.classification = :classification
-                      AND h.parentnodeanchor = :relationAnchorPoint
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-
-                    UNION ALL
-                    /**
-                     * Iteration query: find all outgoing tethered child node relations
-                     * from the parent node in its origin
-                     */
-                    SELECT
-                        c.relationanchorpoint,
-                        h.parentnodeanchor
-                    FROM
-                        descendantNodes p
-                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
-                        JOIN ' . NodeRecord::TABLE_NAME . ' c ON c.relationanchorpoint = ANY(h.childnodeanchors)
-                    WHERE c.classification = :classification
-                        AND h.contentstreamidentifier = :contentStreamIdentifier
-                        AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                )
-                INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
-                    SELECT
-                        :contentStreamIdentifier AS contentstreamidentifier,
-                        parentnodeanchor,
-                        CAST(dimensionspacepoint AS json),
-                        dimensionspacepointhash,
-                        array_agg(relationanchorpoint) AS childnodeanchors
-                    FROM descendantNodes
-                        /**
-                         * Finally, we join the relations to be copied
-                         * with all dimension space points they are to be copied to
-                         */
-                        JOIN (
-                            SELECT unnest(ARRAY[:dimensionSpacePoints]) AS dimensionspacepoint,
-                            unnest(ARRAY[:dimensionSpacePointHashes]) AS dimensionspacepointhash
-                        ) dimensionSpacePoints ON true
-                    GROUP BY parentnodeanchor, dimensionspacepoint, dimensionspacepointhash
-                ',
-                [
-                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
-                    'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
-                    'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
-                    'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                    'dimensionSpacePoints' => array_map(
-                        fn(DimensionSpacePoint $dimensionSpacePoint): string => json_encode($dimensionSpacePoint),
-                        $event->affectedCoveredDimensionSpacePoints->points
-                    ),
-                    'dimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
-                ],
-                [
-                    'dimensionSpacePoints' => Connection::PARAM_STR_ARRAY,
-                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-                ]
-            );
         }
+
+        $this->getDatabaseConnection()->executeStatement(
+        /** @lang PostgreSQL */ '
+            /**
+             * This provides a list of all hierarchy relations to be copied:
+             * parentnodeanchor and childnodeanchors only, the rest will be changed
+             */
+            WITH RECURSIVE descendantNodes(relationanchorpoint) AS (
+                /**
+                 * Initial query: find all outgoing tethered child node relations
+                 * from the starting node in its origin
+                 */
+                SELECT
+                    n.relationanchorpoint,
+                    h.parentnodeanchor
+                FROM  ' . NodeRecord::TABLE_NAME . ' n
+                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                WHERE h.parentnodeanchor = :relationAnchorPoint
+                  AND h.contentstreamidentifier = :contentStreamIdentifier
+                  AND h.dimensionspacepointhash = :originDimensionSpacePointHash
+                  ' . ($event->recursive ? '' : ' AND n.classification = :classification') .'
+
+                UNION ALL
+                /**
+                 * Iteration query: find all outgoing tethered child node relations
+                 * from the parent node in its origin
+                 */
+                SELECT
+                    c.relationanchorpoint,
+                    h.parentnodeanchor
+                FROM
+                    descendantNodes p
+                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
+                    JOIN ' . NodeRecord::TABLE_NAME . ' c ON c.relationanchorpoint = ANY(h.childnodeanchors)
+                WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                    AND h.dimensionspacepointhash = :originDimensionSpacePointHash
+                    ' . ($event->recursive ? '' : ' AND c.classification = :classification') .'
+            )
+            INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                SELECT
+                    :contentStreamIdentifier AS contentstreamidentifier,
+                    parentnodeanchor,
+                    CAST(dimensionspacepoint AS json),
+                    dimensionspacepointhash,
+                    array_agg(relationanchorpoint) AS childnodeanchors
+                FROM descendantNodes
+                    /**
+                     * Finally, we join the relations to be copied
+                     * with all dimension space points they are to be copied to
+                     */
+                    JOIN (
+                        SELECT unnest(ARRAY[:dimensionSpacePoints]) AS dimensionspacepoint,
+                        unnest(ARRAY[:dimensionSpacePointHashes]) AS dimensionspacepointhash
+                    ) dimensionSpacePoints ON true
+                GROUP BY parentnodeanchor, dimensionspacepoint, dimensionspacepointhash
+            ',
+            [
+                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
+                'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
+                'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
+                'dimensionSpacePoints' => array_map(
+                    fn(DimensionSpacePoint $dimensionSpacePoint): string => json_encode($dimensionSpacePoint),
+                    $event->affectedCoveredDimensionSpacePoints->points
+                ),
+                'dimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'dimensionSpacePoints' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]
+        );
     }
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
