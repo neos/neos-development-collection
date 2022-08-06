@@ -101,7 +101,8 @@ class ProjectionContentGraph
                  * First, find the origin\'s parent node aggregate identifier
                  */
                 SELECT orgp.nodeaggregateidentifier FROM ' . NodeRecord::TABLE_NAME . ' orgp
-                    JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' orgh ON orgh.parentnodeanchor = orgp.relationanchorpoint
+                    JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' orgh
+                        ON orgh.parentnodeanchor = orgp.relationanchorpoint
                     JOIN ' . NodeRecord::TABLE_NAME . ' orgn ON orgn.relationanchorpoint = orgh.childnodeanchor
                 WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
                     AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash

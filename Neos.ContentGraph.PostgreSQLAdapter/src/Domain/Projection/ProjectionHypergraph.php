@@ -150,7 +150,8 @@ final class ProjectionHypergraph
                  * First, find the origin\'s parent node aggregate identifier
                  */
                 SELECT orgp.nodeaggregateidentifier FROM ' . NodeRecord::TABLE_NAME . ' orgp
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' orgh ON orgh.parentnodeanchor = orgp.relationanchorpoint
+                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' orgh
+                        ON orgh.parentnodeanchor = orgp.relationanchorpoint
                     JOIN ' . NodeRecord::TABLE_NAME . ' orgn ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
                 WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
                     AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
@@ -397,8 +398,7 @@ final class ProjectionHypergraph
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateIdentifier $childNodeAggregateIdentifier
-    ): ?HierarchyHyperrelationRecord
-    {
+    ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             '
             /**
@@ -413,7 +413,8 @@ final class ProjectionHypergraph
                  * First, find the node\'s origin parent node aggregate identifier
                  */
                 SELECT orgp.nodeaggregateidentifier FROM neos_contentgraph_node orgp
-                    JOIN neos_contentgraph_hierarchyhyperrelation orgh ON orgp.relationanchorpoint = orgh.parentnodeanchor
+                    JOIN neos_contentgraph_hierarchyhyperrelation orgh
+                        ON orgp.relationanchorpoint = orgh.parentnodeanchor
                     JOIN neos_contentgraph_node orgn ON orgn.relationanchorpoint = ANY (orgh.childnodeanchors)
                 WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
                     AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
@@ -444,7 +445,8 @@ final class ProjectionHypergraph
              * Second, resolve the relation anchor point for each succeeding sibling in the selected DSP
              */
             SELECT sn.relationanchorpoint FROM ' . NodeRecord::TABLE_NAME . ' sn
-                JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' sh ON sn.relationanchorpoint = ANY(sh.childnodeanchors)
+                JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' sh
+                    ON sn.relationanchorpoint = ANY(sh.childnodeanchors)
             WHERE sh.contentstreamidentifier = :contentStreamIdentifier
                 AND sh.dimensionspacepointhash = :coveredDimensionSpacePointHash
                 AND sn.nodeaggregateidentifier IN (
@@ -493,7 +495,8 @@ final class ProjectionHypergraph
     ): NodeRecords {
         $query = /** @lang PostgreSQL */
             'SELECT n.* FROM ' . NodeRecord::TABLE_NAME . ' n
-                JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                    ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE n.classification = :classification
                 AND h.contentstreamidentifier = :contentStreamIdentifier
                 AND h.dimensionspacepointhash = :originDimensionSpacePointHash

@@ -73,8 +73,8 @@ trait NodeRemoval
         $this->getDatabaseConnection()->executeStatement(
             '
             DELETE n, r FROM neos_contentgraph_node n
-                LEFT JOIN ' . ReferenceRelation::TABLE_NAME .' r ON r.nodeanchorpoint = n.relationanchorpoint
-                LEFT JOIN ' . HierarchyRelationRecord::TABLE_NAME .' h ON h.childnodeanchor = n.relationanchorpoint
+                LEFT JOIN ' . ReferenceRelation::TABLE_NAME . ' r ON r.nodeanchorpoint = n.relationanchorpoint
+                LEFT JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     AND h.contentstreamidentifier IS NULL
@@ -110,7 +110,7 @@ trait NodeRemoval
             );
             $this->getDatabaseConnection()->executeStatement(
                 '
-            INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME .' (
+            INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME . ' (
                   parentnodeanchor,
                   childnodeanchor,
                   `name`,
@@ -143,8 +143,20 @@ trait NodeRemoval
         }
 
         // cascade to all descendants
+
+        $dimensionSpacePointsToJoin = '"' . implode(
+            ' UNION SELECT "',
+            array_map(
+                fn (DimensionSpacePoint $dimensionSpacePoint): string
+                => \str_replace('"', '\"', json_encode($dimensionSpacePoint))
+                    . '" AS dimensionspacepoint, "' . $dimensionSpacePoint->hash . '" AS dimensionspacepointhash',
+                $event->affectedCoveredDimensionSpacePoints->points
+            )
+        );
+
         $this->getDatabaseConnection()->executeStatement(
-            /** @lang MariaDB */ '
+            /** @lang MariaDB */
+            '
             INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME . ' (
                 name,
                 position,
@@ -160,7 +172,9 @@ trait NodeRemoval
                      * This provides a list of all hierarchy relations to be copied:
                      * parentnodeanchor and childnodeanchor, name and position only, the rest will be changed
                      */
-                    WITH RECURSIVE descendantNodes(relationanchorpoint, parentnodeanchor, name, position, childnodeanchor) AS (
+                    WITH RECURSIVE descendantNodes(
+                        relationanchorpoint, parentnodeanchor, name, position, childnodeanchor
+                    ) AS (
                         /**
                          * Initial query: find all outgoing tethered child node relations
                          * from the starting node in its origin
@@ -191,21 +205,17 @@ trait NodeRemoval
                                 h.childnodeanchor
                             FROM
                                 descendantNodes p
-                                    JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
+                                    JOIN neos_contentgraph_hierarchyrelation h
+                                        ON h.parentnodeanchor = p.relationanchorpoint
                                     JOIN neos_contentgraph_node c ON c.relationanchorpoint = h.childnodeanchor
                             WHERE h.contentstreamidentifier = :contentStreamIdentifier
                               AND h.dimensionspacepointhash = :originDimensionSpacePointHash
                               ' . ($event->recursive ? '' : ' AND c.classification = :classification ') . '
-                    ) SELECT name, position, parentnodeanchor, childnodeanchor, dimensionspacepoint, dimensionspacepointhash FROM descendantNodes
+                    ) SELECT name, position, parentnodeanchor, childnodeanchor,
+                        dimensionspacepoint, dimensionspacepointhash
+                        FROM descendantNodes
                         JOIN (
-                            SELECT "' . implode(
-                                ' UNION SELECT "',
-                                array_map(
-                                    fn (DimensionSpacePoint $dimensionSpacePoint): string
-                                        => \str_replace('"', '\"', json_encode($dimensionSpacePoint)) . '" AS dimensionspacepoint, "' . $dimensionSpacePoint->hash . '" AS dimensionspacepointhash',
-                                    $event->affectedCoveredDimensionSpacePoints->points
-                                )
-                            ) . '
+                            SELECT ' . $dimensionSpacePointsToJoin . '
                         ) AS dimensionSpacePoints
                     ) targetHierarchyRelation
             ',

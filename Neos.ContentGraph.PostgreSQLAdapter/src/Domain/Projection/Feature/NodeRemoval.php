@@ -177,11 +177,11 @@ trait NodeRemoval
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $hierarchyRelation
                 = $this->projectionHypergraph->findParentHierarchyHyperrelationRecordByOriginInDimensionSpacePoint(
-                $event->contentStreamIdentifier,
-                $event->originDimensionSpacePoint,
-                $coveredDimensionSpacePoint,
-                $event->nodeAggregateIdentifier
-            );
+                    $event->contentStreamIdentifier,
+                    $event->originDimensionSpacePoint,
+                    $coveredDimensionSpacePoint,
+                    $event->nodeAggregateIdentifier
+                );
 
             if ($hierarchyRelation instanceof HierarchyHyperrelationRecord) {
                 $succeedingSiblingCandidates = $this->projectionHypergraph
@@ -220,7 +220,8 @@ trait NodeRemoval
 
         // cascade to all descendants
         $this->getDatabaseConnection()->executeStatement(
-        /** @lang PostgreSQL */ '
+            /** @lang PostgreSQL */
+            '
             /**
              * This provides a list of all hierarchy relations to be copied:
              * parentnodeanchor and childnodeanchors only, the rest will be changed
@@ -234,11 +235,12 @@ trait NodeRemoval
                     n.relationanchorpoint,
                     h.parentnodeanchor
                 FROM  ' . NodeRecord::TABLE_NAME . ' n
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        ON n.relationanchorpoint = ANY(h.childnodeanchors)
                 WHERE h.parentnodeanchor = :relationAnchorPoint
                   AND h.contentstreamidentifier = :contentStreamIdentifier
                   AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                  ' . ($event->recursive ? '' : ' AND n.classification = :classification') .'
+                  ' . ($event->recursive ? '' : ' AND n.classification = :classification') . '
 
                 UNION ALL
                 /**
@@ -250,11 +252,12 @@ trait NodeRemoval
                     h.parentnodeanchor
                 FROM
                     descendantNodes p
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
+                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        ON h.parentnodeanchor = p.relationanchorpoint
                     JOIN ' . NodeRecord::TABLE_NAME . ' c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                 WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                    ' . ($event->recursive ? '' : ' AND c.classification = :classification') .'
+                    ' . ($event->recursive ? '' : ' AND c.classification = :classification') . '
             )
             INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
                 SELECT
