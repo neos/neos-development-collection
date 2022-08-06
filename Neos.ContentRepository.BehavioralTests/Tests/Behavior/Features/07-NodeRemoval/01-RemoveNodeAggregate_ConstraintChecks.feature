@@ -59,7 +59,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "nodewyn-tetherton" |
       | nodeVariantSelectionStrategy | "allVariants"       |
       | coveredDimensionSpacePoint   | {"language":"de"}   |
-    Then the last command should have thrown an exception of type "TetheredNodeAggregateCannotBeRemoved"
+    Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to remove a node aggregate in a non-existing dimension space point
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
