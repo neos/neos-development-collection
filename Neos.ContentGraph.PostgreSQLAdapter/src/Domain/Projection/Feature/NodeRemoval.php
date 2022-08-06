@@ -281,17 +281,15 @@ trait NodeRemoval
                     'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
                     'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
                     'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                    'dimensionSpacePoints' => implode(
-                        ',',
-                        array_map(
-                            fn(DimensionSpacePoint $dimensionSpacePoint): string => json_encode($dimensionSpacePoint),
-                            $event->affectedCoveredDimensionSpacePoints->points
-                        )
+                    'dimensionSpacePoints' => array_map(
+                        fn(DimensionSpacePoint $dimensionSpacePoint): string => json_encode($dimensionSpacePoint),
+                        $event->affectedCoveredDimensionSpacePoints->points
                     ),
-                    'dimensionSpacePointHashes' => implode(
-                        ',',
-                        $event->affectedCoveredDimensionSpacePoints->getPointHashes()
-                    )
+                    'dimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
+                ],
+                [
+                    'dimensionSpacePoints' => Connection::PARAM_STR_ARRAY,
+                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
         }

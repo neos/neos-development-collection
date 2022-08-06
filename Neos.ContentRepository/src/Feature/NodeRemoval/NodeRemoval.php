@@ -148,7 +148,7 @@ trait NodeRemoval
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
-            function () use ($command, $nodeAggregate, &$events) {
+            function () use ($command, $parentNodeAggregate, &$events) {
                 $events = DomainEvents::withSingleEvent(
                     DecoratedEvent::addIdentifier(
                         new NodeAggregateCoverageWasRestored(
@@ -159,7 +159,7 @@ trait NodeRemoval
                                 ? NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                                     ->resolveAffectedDimensionSpacePoints(
                                         $command->dimensionSpacePointToCover,
-                                        $nodeAggregate,
+                                        $parentNodeAggregate,
                                         $this->interDimensionalVariationGraph
                                     )
                                 : new DimensionSpacePointSet([$command->dimensionSpacePointToCover]),
