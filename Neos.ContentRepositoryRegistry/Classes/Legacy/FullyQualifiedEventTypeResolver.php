@@ -31,6 +31,7 @@ use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChan
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeVariantWasReset;
 use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
@@ -89,6 +90,7 @@ final class FullyQualifiedEventTypeResolver implements EventTypeResolverInterfac
             NodeGeneralizationVariantWasCreated::class,
             NodePeerVariantWasCreated::class,
             NodeSpecializationVariantWasCreated::class,
+            NodeVariantWasReset::class,
             // RootNodeCreation
             RootNodeAggregateWithNodeWasCreated::class,
             // WorkspaceCreation

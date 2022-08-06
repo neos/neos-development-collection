@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Feature\NodeVariation\Command\ResetNodeVariant;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -72,6 +73,48 @@ trait NodeVariation
     {
         try {
             $this->theCommandCreateNodeVariantIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Given /^the command ResetNodeVariant is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandResetNodeVariantIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
+            : $this->getCurrentContentStreamIdentifier();
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->getCurrentUserIdentifier();
+        $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
+            ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
+            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
+
+        $command = new ResetNodeVariant(
+            $contentStreamIdentifier,
+            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            $originDimensionSpacePoint,
+            $initiatingUserIdentifier
+        );
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleResetNodeVariant($command);
+    }
+
+    /**
+     * @Given /^the command ResetNodeVariant is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandResetNodeVariantIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandResetNodeVariantIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }

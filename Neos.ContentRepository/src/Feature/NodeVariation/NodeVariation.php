@@ -16,9 +16,11 @@ namespace Neos\ContentRepository\Feature\NodeVariation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateOccupiesNoGeneralization;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Feature\NodeVariation\Command\ResetNodeVariant;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeVariantWasReset;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -30,7 +32,10 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeVariation
 {
@@ -98,7 +103,63 @@ trait NodeVariation
 
     public function handleResetNodeVariant(ResetNodeVariant $command): CommandResult
     {
-        $events = DomainEvents::createEmpty();
+        $this->getReadSideMemoryCacheManager()->disableCache();
+
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
+        );
+        $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
+
+        $targetGeneralization = null;
+        foreach (
+            $this->interDimensionalVariationGraph->getIndexedGeneralizations(
+                $command->originDimensionSpacePoint->toDimensionSpacePoint()
+            ) as $generalization
+        ) {
+            $generalizationOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($generalization);
+            if (
+                $nodeAggregate->occupiesDimensionSpacePoint($generalizationOrigin)
+            ) {
+                $targetGeneralization = $generalizationOrigin;
+                break;
+            }
+        }
+        if (!$targetGeneralization instanceof OriginDimensionSpacePoint) {
+            throw NodeAggregateOccupiesNoGeneralization::butWasSupposedTo(
+                $nodeAggregate->getIdentifier(),
+                $command->originDimensionSpacePoint
+            );
+        }
+
+        $events = null;
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, $targetGeneralization, &$events) {
+                $events = DomainEvents::withSingleEvent(
+                    DecoratedEvent::addIdentifier(
+                        new NodeVariantWasReset(
+                            $command->contentStreamIdentifier,
+                            $command->nodeAggregateIdentifier,
+                            $command->originDimensionSpacePoint,
+                            $targetGeneralization,
+                            $command->initiatingUserIdentifier
+                        ),
+                        Uuid::uuid4()->toString()
+                    )
+                );
+
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                        ->getEventStreamName(),
+                    $events
+                );
+            }
+        );
+        /** @var DomainEvents $events */
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
