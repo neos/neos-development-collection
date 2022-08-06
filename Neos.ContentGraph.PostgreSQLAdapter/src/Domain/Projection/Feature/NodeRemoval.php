@@ -40,7 +40,8 @@ trait NodeRemoval
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
-            $nodeRecordsToBeRemoved = [];
+            $affectedRelationAnchorPoints = [];
+            // first step: remove hierarchy relations
             foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                     $event->getContentStreamIdentifier(),
@@ -68,27 +69,41 @@ trait NodeRemoval
                     $event->getNodeAggregateIdentifier()
                 );
 
-                if (
-                    $event->affectedCoveredDimensionSpacePoints->contains(
-                        $nodeRecord->originDimensionSpacePoint->toDimensionSpacePoint()
-                    )
-                ) {
-                    $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->hash] = $nodeRecord;
-                }
+                $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
 
                 $this->cascadeHierarchy(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePoint,
-                    $nodeRecord->relationAnchorPoint
-                );
-            }
-            foreach ($nodeRecordsToBeRemoved as $nodeRecord) {
-                $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
-                ReferenceRelationRecord::removeFromDatabaseForSource(
                     $nodeRecord->relationAnchorPoint,
-                    $this->getDatabaseConnection()
+                    $affectedRelationAnchorPoints
                 );
             }
+
+            // second step: remove orphaned nodes
+            $this->getDatabaseConnection()->executeStatement(
+                /** @lang PostgreSQL */
+                '
+                WITH deletedNodes AS (
+                    DELETE FROM ' . NodeRecord::TABLE_NAME . ' n
+                    WHERE n.relationanchorpoint IN (
+                        SELECT relationanchorpoint FROM ' . NodeRecord::TABLE_NAME . '
+                            LEFT JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                                ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                        WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
+                            AND h.contentstreamidentifier IS NULL
+                    )
+                    RETURNING relationanchorpoint
+                )
+                DELETE FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
+                    WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
+                ',
+                [
+                    'affectedRelationAnchorPoints' => $affectedRelationAnchorPoints
+                ],
+                [
+                    'affectedRelationAnchorPoints' => Connection::PARAM_STR_ARRAY
+                ]
+            );
         });
     }
 
@@ -99,7 +114,8 @@ trait NodeRemoval
     private function cascadeHierarchy(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeRelationAnchorPoint $nodeRelationAnchorPoint
+        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
+        array &$affectedRelationAnchorPoints
     ): void {
         $childHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
             $contentStreamIdentifier,
@@ -116,11 +132,11 @@ trait NodeRemoval
                 $ingoingHierarchyRelations = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
                 if (empty($ingoingHierarchyRelations)) {
-                    $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
                     ReferenceRelationRecord::removeFromDatabaseForSource(
                         $nodeRecord->relationAnchorPoint,
                         $this->getDatabaseConnection()
                     );
+                    $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
                 }
                 $this->removeFromRestrictions(
                     $contentStreamIdentifier,
@@ -130,7 +146,8 @@ trait NodeRemoval
                 $this->cascadeHierarchy(
                     $contentStreamIdentifier,
                     $dimensionSpacePoint,
-                    $nodeRecord->relationAnchorPoint
+                    $nodeRecord->relationAnchorPoint,
+                    $affectedRelationAnchorPoints
                 );
             }
         }
