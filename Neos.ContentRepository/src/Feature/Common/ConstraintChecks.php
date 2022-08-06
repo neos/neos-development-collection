@@ -97,7 +97,10 @@ trait ConstraintChecks
         DimensionSpacePoint $specialization
     ): void {
         $primaryGeneralization = $this->interDimensionalVariationGraph->getPrimaryGeneralization($specialization);
-        if (!$primaryGeneralization->equals($dimensionSpacePoint)) {
+        if (
+            !$primaryGeneralization instanceof DimensionSpacePoint
+            || !$primaryGeneralization->equals($dimensionSpacePoint)
+        ) {
             throw DimensionSpacePointIsNotPrimaryGeneralization::butWasSupposedToBe(
                 $dimensionSpacePoint,
                 $specialization

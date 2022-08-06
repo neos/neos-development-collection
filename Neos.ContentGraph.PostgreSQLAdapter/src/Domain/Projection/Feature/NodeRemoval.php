@@ -283,7 +283,8 @@ trait NodeRemoval
                 'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
                 'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                 'dimensionSpacePoints' => array_map(
-                    fn(DimensionSpacePoint $dimensionSpacePoint): string => json_encode($dimensionSpacePoint),
+                    fn(DimensionSpacePoint $dimensionSpacePoint): string
+                        => json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR),
                     $event->affectedCoveredDimensionSpacePoints->points
                 ),
                 'dimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()

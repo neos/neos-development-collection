@@ -19,7 +19,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The collection of node records
  *
- * @implements \ArrayIterator<int,NodeRecord>
+ * @implements \IteratorAggregate<int,NodeRecord>
  */
 #[Flow\Proxy(false)]
 final class NodeRecords implements \IteratorAggregate
@@ -31,6 +31,7 @@ final class NodeRecords implements \IteratorAggregate
 
     public function __construct(NodeRecord ...$nodeRecords)
     {
+        /** @var array<int,NodeRecord> $nodeRecords */
         $this->nodeRecords = $nodeRecords;
     }
 

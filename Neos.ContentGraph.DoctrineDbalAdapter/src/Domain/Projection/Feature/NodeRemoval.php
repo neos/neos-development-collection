@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ReferenceRelation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -92,6 +94,9 @@ trait NodeRemoval
             $event->nodeAggregateIdentifier,
             $event->originDimensionSpacePoint
         );
+        if (!$nodeRecord instanceof NodeRecord) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+        }
 
         // create a hierarchy relation to the restoration's parent
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
@@ -101,6 +106,9 @@ trait NodeRemoval
                 $coveredDimensionSpacePoint,
                 $event->nodeAggregateIdentifier
             );
+            if (!$parentNodeRecord instanceof NodeRecord) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+            }
             $position = $this->projectionContentGraph->determineHierarchyRelationPosition(
                 $parentNodeRecord->relationAnchorPoint,
                 null,
@@ -148,7 +156,7 @@ trait NodeRemoval
             ' UNION SELECT "',
             array_map(
                 fn (DimensionSpacePoint $dimensionSpacePoint): string
-                => \str_replace('"', '\"', json_encode($dimensionSpacePoint))
+                => \str_replace('"', '\"', json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR))
                     . '" AS dimensionspacepoint, "' . $dimensionSpacePoint->hash . '" AS dimensionspacepointhash',
                 $event->affectedCoveredDimensionSpacePoints->points
             )

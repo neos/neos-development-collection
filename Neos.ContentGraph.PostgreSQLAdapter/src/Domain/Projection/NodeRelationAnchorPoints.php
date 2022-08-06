@@ -31,6 +31,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 
     public function __construct(NodeRelationAnchorPoint ...$nodeRelationAnchorPoints)
     {
+        /** @var array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints */
         $this->nodeRelationAnchorPoints = $nodeRelationAnchorPoints;
     }
 

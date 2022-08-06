@@ -98,7 +98,7 @@ final class HierarchyHyperrelationRecord
         NodeRelationAnchorPoint $childNodeAnchor,
         NodeRelationAnchorPoints $succeedingSiblingCandidates,
         Connection $databaseConnection
-    ) {
+    ): void {
         $succeedingSiblingAnchor = null;
         if (!$succeedingSiblingCandidates->isEmpty()) {
             foreach ($this->childNodeAnchors as $childNodeAnchor) {
