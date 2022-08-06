@@ -91,7 +91,8 @@ trait NodeRemoval
                     )
                     RETURNING relationanchorpoint
                 )
-                DELETE FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
+                DELETE FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
+                    WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
                 ',
                 [
                     'affectedRelationAnchorPoints' => $affectedRelationAnchorPoints
