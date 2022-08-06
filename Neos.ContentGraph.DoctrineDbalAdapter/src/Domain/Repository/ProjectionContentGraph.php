@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
@@ -74,6 +74,52 @@ class ProjectionContentGraph
         )->fetchAssociative();
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+    }
+
+    /**
+     * @throws DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
+    public function findParentNodeRecordByOriginInDimensionSpacePoint(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        DimensionSpacePoint $coveredDimensionSpacePoint,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier
+    ): ?NodeRecord {
+        $query = /** @lang MariaDB */
+            '
+            /**
+             * Second, find the node record with the same node aggregate identifier in the selected DSP
+             */
+            SELECT p.*
+            FROM ' . NodeRecord::TABLE_NAME . ' p
+            JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' ph ON p.relationanchorpoint = ph.childnodeanchor
+            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
+            AND ph.dimensionspacepointhash = :coveredDimensionSpacePointHash
+            AND p.nodeaggregateidentifier = (
+                /**
+                 * First, find the origin\'s parent node aggregate identifier
+                 */
+                SELECT orgp.nodeaggregateidentifier FROM ' . NodeRecord::TABLE_NAME . ' orgp
+                    JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' orgh ON orgh.parentnodeanchor = orgp.relationanchorpoint
+                    JOIN ' . NodeRecord::TABLE_NAME . ' orgn ON orgn.relationanchorpoint = orgh.childnodeanchor
+                WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
+                    AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
+                    AND orgn.nodeaggregateidentifier = :childNodeAggregateIdentifier
+            )';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
+            'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
+        ];
+
+        $result = $this->getDatabaseConnection()
+            ->executeQuery($query, $parameters)
+            ->fetchAssociative();
+
+        return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
     /**
@@ -324,7 +370,7 @@ class ProjectionContentGraph
      * @param NodeRelationAnchorPoint $parentAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return HierarchyRelation[]
+     * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
@@ -356,7 +402,7 @@ class ProjectionContentGraph
      * @param NodeRelationAnchorPoint $childAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return HierarchyRelation[]
+     * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function getIngoingHierarchyRelationsForNodeAndSubgraph(
@@ -388,7 +434,7 @@ class ProjectionContentGraph
      * @param NodeRelationAnchorPoint $childAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet|null $restrictToSet
-     * @return HierarchyRelation[]
+     * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findIngoingHierarchyRelationsForNode(
@@ -426,7 +472,7 @@ class ProjectionContentGraph
      * @param NodeRelationAnchorPoint $parentAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet|null $restrictToSet
-     * @return HierarchyRelation[]
+     * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findOutgoingHierarchyRelationsForNode(
@@ -464,7 +510,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @return array|HierarchyRelation[]
+     * @return array|HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findOutgoingHierarchyRelationsForNodeAggregate(
@@ -500,7 +546,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePointSet|null $dimensionSpacePointSet
-     * @return array|HierarchyRelation[]
+     * @return array|HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findIngoingHierarchyRelationsForNodeAggregate(
@@ -637,9 +683,9 @@ class ProjectionContentGraph
     /**
      * @param array<string,string> $rawData
      */
-    protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
+    protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelationRecord
     {
-        return new HierarchyRelation(
+        return new HierarchyRelationRecord(
             NodeRelationAnchorPoint::fromString($rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromString($rawData['childnodeanchor']),
             $rawData['name'] ? NodeName::fromString($rawData['name']) : null,

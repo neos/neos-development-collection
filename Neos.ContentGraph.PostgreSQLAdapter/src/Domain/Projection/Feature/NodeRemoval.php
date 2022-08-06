@@ -173,6 +173,7 @@ trait NodeRemoval
             throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
         }
 
+        // create or adjust the target parent's child hierarchy hyperrelations
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $hierarchyRelation
                 = $this->projectionHypergraph->findParentHierarchyHyperrelationRecordByOriginInDimensionSpacePoint(
@@ -217,6 +218,7 @@ trait NodeRemoval
             }
         }
 
+        // cascade to all descendants
         $this->getDatabaseConnection()->executeStatement(
         /** @lang PostgreSQL */ '
             /**

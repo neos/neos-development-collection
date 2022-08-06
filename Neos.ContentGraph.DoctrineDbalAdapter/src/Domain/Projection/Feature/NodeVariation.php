@@ -6,7 +6,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -84,7 +84,7 @@ trait NodeVariation
                         );
                     }
 
-                    $hierarchyRelation = new HierarchyRelation(
+                    $hierarchyRelation = new HierarchyRelationRecord(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
                         $sourceNode->nodeName,
@@ -329,12 +329,12 @@ trait NodeVariation
     ): NodeRecord;
 
     abstract protected function copyHierarchyRelationToDimensionSpacePoint(
-        HierarchyRelation $sourceHierarchyRelation,
+        HierarchyRelationRecord $sourceHierarchyRelation,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation;
+    ): HierarchyRelationRecord;
 
     abstract protected function connectHierarchy(
         ContentStreamIdentifier $contentStreamIdentifier,

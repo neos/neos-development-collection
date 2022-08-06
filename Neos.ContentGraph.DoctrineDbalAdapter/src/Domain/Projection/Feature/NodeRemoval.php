@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ReferenceRelation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -51,11 +50,11 @@ trait NodeRemoval
     }
 
     /**
-     * @param HierarchyRelation $ingoingRelation
+     * @param HierarchyRelationRecord $ingoingRelation
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
-        HierarchyRelation $ingoingRelation
+        HierarchyRelationRecord $ingoingRelation
     ): void {
         $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
 
@@ -75,7 +74,7 @@ trait NodeRemoval
             '
             DELETE n, r FROM neos_contentgraph_node n
                 LEFT JOIN ' . ReferenceRelation::TABLE_NAME .' r ON r.nodeanchorpoint = n.relationanchorpoint
-                LEFT JOIN ' . HierarchyRelation::TABLE_NAME .' h ON h.childnodeanchor = n.relationanchorpoint
+                LEFT JOIN ' . HierarchyRelationRecord::TABLE_NAME .' h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     AND h.contentstreamidentifier IS NULL
@@ -94,10 +93,24 @@ trait NodeRemoval
             $event->originDimensionSpacePoint
         );
 
-        foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
+        // create a hierarchy relation to the restoration's parent
+        foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
+            $parentNodeRecord = $this->projectionContentGraph->findParentNodeRecordByOriginInDimensionSpacePoint(
+                $event->contentStreamIdentifier,
+                $event->originDimensionSpacePoint,
+                $coveredDimensionSpacePoint,
+                $event->nodeAggregateIdentifier
+            );
+            $position = $this->projectionContentGraph->determineHierarchyRelationPosition(
+                $parentNodeRecord->relationAnchorPoint,
+                null,
+                null,
+                $event->contentStreamIdentifier,
+                $coveredDimensionSpacePoint
+            );
             $this->getDatabaseConnection()->executeStatement(
                 '
-            INSERT INTO ' . HierarchyRelation::TABLE_NAME .' (
+            INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME .' (
                   parentnodeanchor,
                   childnodeanchor,
                   `name`,
@@ -106,46 +119,33 @@ trait NodeRemoval
                   dimensionspacepointhash,
                   contentstreamidentifier
                 )
-                SELECT
-                  h.childnodeanchor,
-                  :childRelationAnchorPoint,
-                  :name,
-                  128, # @todo fetch best matching position
-                  :dimensionSpacePoint AS dimensionspacepoint,
-                  :dimensionSpacePointHash AS dimensionspacepointhash,
-                  h.contentstreamidentifier
-                FROM
-                    ' . HierarchyRelation::TABLE_NAME . ' h
-                    JOIN ' . NodeRecord::TABLE_NAME . ' n ON h.childnodeanchor = n.relationanchorpoint
-                WHERE h.contentstreamidentifier = :contentStreamIdentifier
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                    AND n.nodeaggregateidentifier = (
-                        /**
-                         * First, c
-                         */
-                        SELECT orgp.nodeaggregateidentifier FROM '  . NodeRecord::TABLE_NAME . ' orgp
-                            JOIN ' . HierarchyRelation::TABLE_NAME . ' orgh ON orgh.parentnodeanchor = orgp.relationanchorpoint
-                            JOIN '  . NodeRecord::TABLE_NAME . ' orgn ON orgh.childnodeanchor = orgn.relationanchorpoint
-                        WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
-                            AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
-                            AND orgn.nodeaggregateidentifier = :nodeAggregateIdentifier
-                    )
-                ',
+                VALUES(
+                    :parentRelationAnchor,
+                    :childRelationAnchorPoint,
+                    :name,
+                    :position,
+                    :dimensionSpacePoint,
+                    :dimensionSpacePointHash,
+                    :contentStreamIdentifier
+                )',
                 [
-                    'dimensionSpacePoint' => json_encode($dimensionSpacePoint),
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                    'dimensionSpacePoint' => json_encode($coveredDimensionSpacePoint),
+                    'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
                     'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
                     'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                     'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
                     'childRelationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
-                    'name' => $nodeRecord->nodeName?->value
+                    'name' => $nodeRecord->nodeName?->value,
+                    'parentRelationAnchor' => (string)$parentNodeRecord->relationAnchorPoint,
+                    'position' => $position
                 ]
             );
         }
 
+        // cascade to all descendants
         $this->getDatabaseConnection()->executeStatement(
             /** @lang MariaDB */ '
-            INSERT INTO ' . HierarchyRelation::TABLE_NAME . ' (
+            INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME . ' (
                 name,
                 position,
                 contentstreamidentifier,

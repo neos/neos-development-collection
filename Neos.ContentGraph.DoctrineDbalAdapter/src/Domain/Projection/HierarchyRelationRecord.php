@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
  * The active record for reading and writing hierarchy relations from and to the database
  */
 #[Flow\Proxy(false)]
-final class HierarchyRelation
+final class HierarchyRelationRecord
 {
     public const TABLE_NAME = 'neos_contentgraph_hierarchyrelation';
 

@@ -350,7 +350,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                 $dimensionSpacePoint
             );
 
-            $hierarchyRelation = new HierarchyRelation(
+            $hierarchyRelation = new HierarchyRelationRecord(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
                 $relationName,
@@ -731,22 +731,22 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     }
 
     /**
-     * @param HierarchyRelation $sourceHierarchyRelation
+     * @param HierarchyRelationRecord $sourceHierarchyRelation
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeRelationAnchorPoint|null $newParent
      * @param NodeRelationAnchorPoint|null $newChild
-     * @return HierarchyRelation
+     * @return HierarchyRelationRecord
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function copyHierarchyRelationToDimensionSpacePoint(
-        HierarchyRelation $sourceHierarchyRelation,
+        HierarchyRelationRecord $sourceHierarchyRelation,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation {
-        $copy = new HierarchyRelation(
+    ): HierarchyRelationRecord {
+        $copy = new HierarchyRelationRecord(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
             $sourceHierarchyRelation->name,
