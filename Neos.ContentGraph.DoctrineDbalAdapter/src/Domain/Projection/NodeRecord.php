@@ -19,7 +19,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,6 +28,8 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class NodeRecord
 {
+    public const TABLE_NAME = 'neos_contentgraph_node';
+
     public function __construct(
         public NodeRelationAnchorPoint $relationAnchorPoint,
         public NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -49,7 +50,7 @@ final class NodeRecord
      */
     public function addToDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->insert('neos_contentgraph_node', [
+        $databaseConnection->insert(self::TABLE_NAME, [
             'relationanchorpoint' => (string)$this->relationAnchorPoint,
             'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
@@ -67,7 +68,7 @@ final class NodeRecord
     public function updateToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->update(
-            'neos_contentgraph_node',
+            self::TABLE_NAME,
             [
                 'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
@@ -89,7 +90,7 @@ final class NodeRecord
      */
     public function removeFromDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->delete('neos_contentgraph_node', [
+        $databaseConnection->delete(self::TABLE_NAME, [
             'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }

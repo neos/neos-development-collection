@@ -454,7 +454,7 @@ class ProjectionContentGraph
             $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
                  ->fetchAllAssociative() as $relationData
         ) {
-            $relations[$relationData['dimensionspacepointhash']] = $this->mapRawDataToHierarchyRelation($relationData);
+            $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
         return $relations;

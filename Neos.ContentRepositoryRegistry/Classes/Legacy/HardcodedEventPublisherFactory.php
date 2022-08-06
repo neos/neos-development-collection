@@ -25,6 +25,7 @@ use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
@@ -116,6 +117,7 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             // RestrictionRelations Trait: no event listeners
             // NodeRemoval Trait
             EventToListenerMapping::create(NodeAggregateWasRemoved::class, GraphProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateCoverageWasRestored::class, GraphProjector::class, []),
             // NodeMove Trait
             EventToListenerMapping::create(NodeAggregateWasMoved::class, GraphProjector::class, []),
             // MAIN GraphProjector
@@ -146,6 +148,7 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             EventToListenerMapping::create(NodeReferencesWereSet::class, HypergraphProjector::class, []),
             // NodeRemoval Trait
             EventToListenerMapping::create(NodeAggregateWasRemoved::class, HypergraphProjector::class, []),
+            EventToListenerMapping::create(NodeAggregateCoverageWasRestored::class, HypergraphProjector::class, []),
             // NodeRenaming Trait
             EventToListenerMapping::create(NodeAggregateNameWasChanged::class, HypergraphProjector::class, []),
             // NodeTypeChange Trait

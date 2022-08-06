@@ -19,23 +19,19 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The node relation anchor points value object collection
  *
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int,NodeRelationAnchorPoint>
  */
+#[Flow\Proxy(false)]
 final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 {
     /**
-     * @var \ArrayIterator<int,NodeRelationAnchorPoint>
+     * @var array<int,NodeRelationAnchorPoint>
      */
-    private \ArrayIterator $iterator;
+    public readonly array $nodeRelationAnchorPoints;
 
-    /**
-     * @param array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints
-     */
-    private function __construct(
-        private array $nodeRelationAnchorPoints
-    ) {
-        $this->iterator = new \ArrayIterator($nodeRelationAnchorPoints);
+    public function __construct(NodeRelationAnchorPoint ...$nodeRelationAnchorPoints)
+    {
+        $this->nodeRelationAnchorPoints = $nodeRelationAnchorPoints;
     }
 
     /**
@@ -58,7 +54,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             }
         }
 
-        return new self($values);
+        return new self(...$values);
     }
     public static function fromDatabaseString(string $databaseString): self
     {
@@ -68,6 +64,17 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
     public function toDatabaseString(): string
     {
         return '{' . implode(',', $this->nodeRelationAnchorPoints) .  '}';
+    }
+
+    public function contains(NodeRelationAnchorPoint $point): bool
+    {
+        foreach ($this->nodeRelationAnchorPoints as $nodeRelationAnchorPoint) {
+            if ($nodeRelationAnchorPoint->equals($point)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function add(
@@ -86,7 +93,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             $childNodeAnchors[] = $nodeRelationAnchorPoint;
         }
 
-        return self::fromArray($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     public function replace(
@@ -108,7 +115,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             unset($childNodeAnchors[$pivot]);
         }
 
-        return new self($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     /**
@@ -116,11 +123,16 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
      */
     public function getIterator(): \ArrayIterator
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->nodeRelationAnchorPoints);
     }
 
     public function count(): int
     {
         return count($this->nodeRelationAnchorPoints);
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->nodeRelationAnchorPoints) === 0;
     }
 }

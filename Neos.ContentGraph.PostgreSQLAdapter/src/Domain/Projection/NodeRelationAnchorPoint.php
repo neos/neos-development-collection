@@ -43,6 +43,11 @@ final class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
         return new self($value);
     }
 
+    public function equals(self $other): bool
+    {
+        return $this->value === $other->value;
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value;

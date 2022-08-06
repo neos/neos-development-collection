@@ -200,6 +200,7 @@ final class NodeFactory
         $occupationByCovered = [];
         /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
+
         foreach ($nodeRows as $nodeRow) {
             $contentStreamIdentifier = $contentStreamIdentifier
                 ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);

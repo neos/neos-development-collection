@@ -101,9 +101,7 @@ trait NodeCreation
                             $dimensionSpacePoint,
                             $event->succeedingNodeAggregateIdentifier
                         );
-                        if ($succeedingSiblingNode) {
-                            $succeedingSiblingNodeAnchor = $succeedingSiblingNode->relationAnchorPoint;
-                        }
+                        $succeedingSiblingNodeAnchor = $succeedingSiblingNode?->relationAnchorPoint;
                     }
                     $hierarchyRelation->addChildNodeAnchor(
                         $node->relationAnchorPoint,

@@ -26,6 +26,8 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class HierarchyRelation
 {
+    public const TABLE_NAME = 'neos_contentgraph_hierarchyrelation';
+
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
@@ -42,7 +44,7 @@ final class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->insert('neos_contentgraph_hierarchyrelation', [
+        $databaseConnection->insert(self::TABLE_NAME, [
             'parentnodeanchor' => $this->parentNodeAnchor,
             'childnodeanchor' => $this->childNodeAnchor,
             'name' => $this->name,
@@ -58,7 +60,7 @@ final class HierarchyRelation
      */
     public function removeFromDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->delete('neos_contentgraph_hierarchyrelation', $this->getDatabaseIdentifier());
+        $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
     }
 
     /**
@@ -68,7 +70,7 @@ final class HierarchyRelation
     public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection): void
     {
         $databaseConnection->update(
-            'neos_contentgraph_hierarchyrelation',
+            self::TABLE_NAME,
             [
                 'childnodeanchor' => $childAnchorPoint
             ],
@@ -91,7 +93,7 @@ final class HierarchyRelation
             $data['position'] = $position;
         }
         $databaseConnection->update(
-            'neos_contentgraph_hierarchyrelation',
+            self::TABLE_NAME,
             $data,
             $this->getDatabaseIdentifier()
         );
@@ -100,7 +102,7 @@ final class HierarchyRelation
     public function assignNewPosition(int $position, Connection $databaseConnection): void
     {
         $databaseConnection->update(
-            'neos_contentgraph_hierarchyrelation',
+            self::TABLE_NAME,
             [
                 'position' => $position
             ],

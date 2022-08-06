@@ -24,6 +24,7 @@ use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
@@ -79,6 +80,7 @@ final class FullyQualifiedEventTypeResolver implements EventTypeResolverInterfac
             NodeReferencesWereSet::class,
             // NodeRemoval
             NodeAggregateWasRemoved::class,
+            NodeAggregateCoverageWasRestored::class,
             // NodeRenaming
             NodeAggregateNameWasChanged::class,
             // NodeTypeChange

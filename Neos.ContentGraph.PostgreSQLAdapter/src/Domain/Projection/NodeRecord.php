@@ -30,40 +30,16 @@ final class NodeRecord
 {
     public const TABLE_NAME = 'neos_contentgraph_node';
 
-    public NodeRelationAnchorPoint $relationAnchorPoint;
-
-    public NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    public OriginDimensionSpacePoint $originDimensionSpacePoint;
-
-    public string $originDimensionSpacePointHash;
-
-    public SerializedPropertyValues $properties;
-
-    public NodeTypeName $nodeTypeName;
-
-    public NodeAggregateClassification $classification;
-
-    public ?NodeName $nodeName;
-
     public function __construct(
-        NodeRelationAnchorPoint $relationAnchorPoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        string $originDimensionSpacePointHash,
-        SerializedPropertyValues $properties,
-        NodeTypeName $nodeTypeName,
-        NodeAggregateClassification $classification,
-        ?NodeName $nodeName = null
+        public NodeRelationAnchorPoint $relationAnchorPoint,
+        public NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public string $originDimensionSpacePointHash,
+        public SerializedPropertyValues $properties,
+        public NodeTypeName $nodeTypeName,
+        public NodeAggregateClassification $classification,
+        public ?NodeName $nodeName = null
     ) {
-        $this->relationAnchorPoint = $relationAnchorPoint;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
-        $this->properties = $properties;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->classification = $classification;
-        $this->nodeName = $nodeName;
     }
 
     /**

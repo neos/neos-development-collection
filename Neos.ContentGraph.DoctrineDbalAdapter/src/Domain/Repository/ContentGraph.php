@@ -16,6 +16,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
@@ -181,8 +183,8 @@ final class ContentGraph implements ContentGraphInterface
         $query = 'SELECT n.*,
                       h.name, h.contentstreamidentifier, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
-                      FROM neos_contentgraph_hierarchyrelation h
-                      JOIN neos_contentgraph_node n ON n.relationanchorpoint = h.childnodeanchor
+                      FROM ' . HierarchyRelation::TABLE_NAME . ' h
+                      JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = h.childnodeanchor
                       LEFT JOIN neos_contentgraph_restrictionrelation r
                           ON r.originnodeaggregateidentifier = n.nodeaggregateidentifier
                           AND r.contentstreamidentifier = h.contentstreamidentifier

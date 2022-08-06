@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Feature\Common;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotPrimaryGeneralization;
+use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateAlreadyCoversDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -85,6 +87,17 @@ trait ConstraintChecks
     {
         if (!$this->getAllowedDimensionSubspace()->contains($dimensionSpacePoint)) {
             throw DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($dimensionSpacePoint);
+        }
+    }
+
+    /**
+     * @throws DimensionSpacePointIsNotPrimaryGeneralization
+     */
+    protected function requireDimensionSpacePointToBePrimaryGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization): void
+    {
+        $primaryGeneralization = $this->interDimensionalVariationGraph->getPrimaryGeneralization($specialization);
+        if (!$primaryGeneralization->equals($dimensionSpacePoint)) {
+            throw DimensionSpacePointIsNotPrimaryGeneralization::butWasSupposedToBe($dimensionSpacePoint, $specialization);
         }
     }
 
@@ -483,6 +496,21 @@ trait ConstraintChecks
                 $nodeAggregate->getIdentifier(),
                 $dimensionSpacePointSet,
                 $nodeAggregate->getCoveredDimensionSpacePoints()
+            );
+        }
+    }
+
+    /**
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
+     */
+    protected function requireNodeAggregateToNotCoverDimensionSpacePoint(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): void {
+        if ($nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
+            throw NodeAggregateAlreadyCoversDimensionSpacePoint::butWasNotSupposedTo(
+                $nodeAggregate->getIdentifier(),
+                $dimensionSpacePoint
             );
         }
     }

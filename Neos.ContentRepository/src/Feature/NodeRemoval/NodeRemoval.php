@@ -14,17 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeRemoval;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Feature\Common\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -38,7 +40,7 @@ trait NodeRemoval
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
+    abstract protected function getInterDimensionalVariationGraph(): InterDimensionalVariationGraph;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
@@ -61,7 +63,7 @@ trait NodeRemoval
             $command->nodeAggregateIdentifier
         );
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
-        $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
@@ -111,13 +113,72 @@ trait NodeRemoval
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
-    protected function requireNodeAggregateNotToBeTethered(ReadableNodeAggregateInterface $nodeAggregate): void
+    public function handleRestoreNodeAggregateCoverage(RestoreNodeAggregateCoverage $command): CommandResult
     {
-        if ($nodeAggregate->isTethered()) {
-            throw new TetheredNodeAggregateCannotBeRemoved(
-                'The node aggregate "' . $nodeAggregate->getIdentifier() . '" is tethered, and thus cannot be removed.',
-                1597753832
-            );
-        }
+        $this->getReadSideMemoryCacheManager()->disableCache();
+
+        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
+        );
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
+        $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint(
+            $nodeAggregate,
+            $command->originDimensionSpacePoint
+        );
+        $this->requireDimensionSpacePointToExist($command->dimensionSpacePointToCover);
+        $this->requireDimensionSpacePointToBePrimaryGeneralization(
+            $command->originDimensionSpacePoint->toDimensionSpacePoint(),
+            $command->dimensionSpacePointToCover
+        );
+        $this->requireNodeAggregateToNotCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePointToCover);
+        $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $command->originDimensionSpacePoint
+        );
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $parentNodeAggregate,
+            $command->dimensionSpacePointToCover
+        );
+
+        $events = null;
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, $nodeAggregate, &$events) {
+                $events = DomainEvents::withSingleEvent(
+                    DecoratedEvent::addIdentifier(
+                        new NodeAggregateCoverageWasRestored(
+                            $command->contentStreamIdentifier,
+                            $command->nodeAggregateIdentifier,
+                            $command->originDimensionSpacePoint,
+                            $command->withSpecializations
+                                ? NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                                    ->resolveAffectedDimensionSpacePoints(
+                                        $command->dimensionSpacePointToCover,
+                                        $nodeAggregate,
+                                        $this->interDimensionalVariationGraph
+                                    )
+                                : new DimensionSpacePointSet([$command->dimensionSpacePointToCover]),
+                            $command->recursive,
+                            $command->initiatingUserIdentifier
+                        ),
+                        Uuid::uuid4()->toString()
+                    )
+                );
+
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                        ->getEventStreamName(),
+                    $events
+                );
+            }
+        );
+        /** @var DomainEvents $events */
+
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 }

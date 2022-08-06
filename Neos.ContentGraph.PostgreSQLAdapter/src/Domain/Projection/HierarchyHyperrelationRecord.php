@@ -29,27 +29,13 @@ final class HierarchyHyperrelationRecord
 {
     public const TABLE_NAME = 'neos_contentgraph_hierarchyhyperrelation';
 
-    public ContentStreamIdentifier $contentStreamIdentifier;
-
-    public DimensionSpacePoint $dimensionSpacePoint;
-
-    public NodeRelationAnchorPoint $parentNodeAnchor;
-
-    /**
-     * The child node relation anchor points, indexed by sorting position
-     */
-    public NodeRelationAnchorPoints $childNodeAnchors;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeRelationAnchorPoint $parentNodeAnchor,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeRelationAnchorPoints $childNodeAnchorPoints
+        public ContentStreamIdentifier $contentStreamIdentifier,
+        public NodeRelationAnchorPoint $parentNodeAnchor,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        /** The child node relation anchor points, indexed by sorting position */
+        public NodeRelationAnchorPoints $childNodeAnchors
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->parentNodeAnchor = $parentNodeAnchor;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->childNodeAnchors = $childNodeAnchorPoints;
     }
 
     /**
@@ -106,6 +92,28 @@ final class HierarchyHyperrelationRecord
             $succeedingSiblingAnchor
         );
         $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+    }
+
+    public function addChildNodeAnchorAfterFirstCandidate(
+        NodeRelationAnchorPoint $childNodeAnchor,
+        NodeRelationAnchorPoints $succeedingSiblingCandidates,
+        Connection $databaseConnection
+    ) {
+        $succeedingSiblingAnchor = null;
+        if (!$succeedingSiblingCandidates->isEmpty()) {
+            foreach ($this->childNodeAnchors as $childNodeAnchor) {
+                if ($succeedingSiblingCandidates->contains($childNodeAnchor)) {
+                    $succeedingSiblingAnchor = $childNodeAnchor;
+                    break;
+                }
+            }
+        }
+
+        $this->addChildNodeAnchor(
+            $childNodeAnchor,
+            $succeedingSiblingAnchor,
+            $databaseConnection
+        );
     }
 
     public function removeChildNodeAnchor(
