@@ -107,6 +107,7 @@ trait NodeRemoval
     /**
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
+     * @param array<int,NodeRelationAnchorPoint> &$affectedRelationAnchorPoints
      */
     private function cascadeHierarchy(
         ContentStreamIdentifier $contentStreamIdentifier,
