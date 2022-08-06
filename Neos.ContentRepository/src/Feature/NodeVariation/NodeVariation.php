@@ -18,6 +18,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Feature\NodeVariation\Command\ResetNodeVariant;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -29,6 +30,7 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
+use Neos\EventSourcing\Event\DomainEvents;
 
 trait NodeVariation
 {
@@ -90,6 +92,13 @@ trait NodeVariation
 
             $this->getNodeAggregateEventPublisher()->publishMany($streamName->getEventStreamName(), $events);
         });
+
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
+    }
+
+    public function handleResetNodeVariant(ResetNodeVariant $command): CommandResult
+    {
+        $events = DomainEvents::createEmpty();
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
