@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The node relation anchor points value object collection
  *
@@ -46,17 +44,13 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
                 $values[] = NodeRelationAnchorPoint::fromString($item);
             } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
-            } else {
-                throw new \InvalidArgumentException(
-                    'NodeRelationAnchorPoints can only consist of '
-                        . NodeRelationAnchorPoint::class . ' objects.',
-                    1616603754
-                );
             }
         }
+        /** @var array<int,NodeRelationAnchorPoint $values */
 
         return new self(...$values);
     }
+
     public static function fromDatabaseString(string $databaseString): self
     {
         return self::fromArray(\explode(',', \trim($databaseString, '{}')));
@@ -86,7 +80,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $childNodeAnchors);
             if (is_int($pivot)) {
-                array_splice($childNodeAnchors, $pivot, 0, $nodeRelationAnchorPoint);
+                array_splice($childNodeAnchors, $pivot, 0, [$nodeRelationAnchorPoint]);
             } else {
                 $childNodeAnchors[] = $nodeRelationAnchorPoint;
             }
@@ -103,9 +97,9 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
     ): self {
         $childNodeAnchors = $this->nodeRelationAnchorPoints;
         $position = (int)array_search($nodeRelationAnchorPoint, $childNodeAnchors);
-        array_splice($childNodeAnchors, $position, 1, $replacement);
+        array_splice($childNodeAnchors, $position, 1, [$replacement]);
 
-        return self::fromArray($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     public function remove(NodeRelationAnchorPoint $nodeRelationAnchorPoint): self
