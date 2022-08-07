@@ -14,28 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The node relation anchor points value object collection
  *
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int,NodeRelationAnchorPoint>
  */
 final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 {
     /**
-     * @var \ArrayIterator<int,NodeRelationAnchorPoint>
+     * @var array<int,NodeRelationAnchorPoint>
      */
-    private \ArrayIterator $iterator;
+    public readonly array $nodeRelationAnchorPoints;
 
-    /**
-     * @param array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints
-     */
-    private function __construct(
-        private array $nodeRelationAnchorPoints
-    ) {
-        $this->iterator = new \ArrayIterator($nodeRelationAnchorPoints);
+    public function __construct(NodeRelationAnchorPoint ...$nodeRelationAnchorPoints)
+    {
+        /** @var array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints */
+        $this->nodeRelationAnchorPoints = $nodeRelationAnchorPoints;
     }
 
     /**
@@ -51,9 +45,11 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
                 $values[] = $item;
             }
         }
+        /** @var array<int,NodeRelationAnchorPoint $values */
 
-        return new self($values);
+        return new self(...$values);
     }
+
     public static function fromDatabaseString(string $databaseString): self
     {
         return self::fromArray(\explode(',', \trim($databaseString, '{}')));
@@ -80,7 +76,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             $childNodeAnchors[] = $nodeRelationAnchorPoint;
         }
 
-        return self::fromArray($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     public function replace(
@@ -102,7 +98,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             unset($childNodeAnchors[$pivot]);
         }
 
-        return new self($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     /**
@@ -110,7 +106,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
      */
     public function getIterator(): \ArrayIterator
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->nodeRelationAnchorPoints);
     }
 
     public function count(): int
