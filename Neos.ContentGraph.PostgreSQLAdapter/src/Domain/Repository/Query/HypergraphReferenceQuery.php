@@ -32,11 +32,11 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $query = /** @lang PostgreSQL */'SELECT ' . $nodeFieldsToFetch
             . ', r.name as referencename, r.properties AS referenceproperties
      FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
-        JOIN neos_contentgraph_node orgn ON orgn.relationanchorpoint = r.originnodeanchor
-        JOIN neos_contentgraph_hierarchyhyperrelation orgh ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
+        JOIN neos_contentgraph_node srcn ON srcn.relationanchorpoint = r.sourcenodeanchor
+        JOIN neos_contentgraph_hierarchyhyperrelation srch ON srcn.relationanchorpoint = ANY(srch.childnodeanchors)
         JOIN neos_contentgraph_node tarn ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
         JOIN neos_contentgraph_hierarchyhyperrelation tarh ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
-     WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
+     WHERE srch.contentstreamidentifier = :contentStreamIdentifier
      AND tarh.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
@@ -52,7 +52,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     {
         $query = $this->query;
         $query .= '
-    AND orgh.dimensionspacepointhash = :dimensionSpacePointHash
+    AND srch.dimensionspacepointhash = :dimensionSpacePointHash
     AND tarh.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
@@ -61,14 +61,14 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $this->types);
     }
 
-    public function withOriginNodeAggregateIdentifier(NodeAggregateIdentifier $originNodeAggregateIdentifier): self
+    public function withSourceNodeAggregateIdentifier(NodeAggregateIdentifier $sourceNodeAggregateIdentifier): self
     {
         $query = $this->query;
         $query .= '
-    AND orgn.nodeaggregateidentifier = :originNodeAggregateIdentifier';
+    AND srcn.nodeaggregateidentifier = :sourceNodeAggregateIdentifier';
 
         $parameters = $this->parameters;
-        $parameters['originNodeAggregateIdentifier'] = (string)$originNodeAggregateIdentifier;
+        $parameters['sourceNodeAggregateIdentifier'] = (string)$sourceNodeAggregateIdentifier;
 
         return new self($query, $parameters, $this->types);
     }
@@ -98,9 +98,9 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $this->types);
     }
 
-    public function withOriginRestriction(VisibilityConstraints $visibilityConstraints): self
+    public function withSourceRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'org');
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'src');
 
         return new self($query, $this->parameters, $this->types);
     }

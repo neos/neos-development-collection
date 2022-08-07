@@ -65,21 +65,62 @@ trait NodeVariation
                 $event->specializationOrigin->toDimensionSpacePoint(),
                 $event->nodeAggregateIdentifier
             );
-            if (is_null($oldCoveringNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+            if ($oldCoveringNode instanceof NodeRecord) {
+                $this->assignNewChildNodeToAffectedHierarchyRelations(
+                    $event->contentStreamIdentifier,
+                    $oldCoveringNode->relationAnchorPoint,
+                    $specializedNode->relationAnchorPoint,
+                    $event->specializationCoverage
+                );
+                $this->assignNewParentNodeToAffectedHierarchyRelations(
+                    $event->contentStreamIdentifier,
+                    $oldCoveringNode->relationAnchorPoint,
+                    $specializedNode->relationAnchorPoint,
+                    $event->specializationCoverage
+                );
+            } else {
+                // the dimension space point is not yet covered by the node aggregate,
+                // but it is known that the source's parent node aggregate does
+                $sourceParent = $this->projectionHypergraph->findParentNodeRecordByOrigin(
+                    $event->contentStreamIdentifier,
+                    $event->sourceOrigin,
+                    $event->nodeAggregateIdentifier
+                );
+                if (is_null($sourceParent)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(
+                        (get_class($event))
+                    );
+                }
+                foreach ($event->specializationCoverage as $specializedDimensionSpacePoint) {
+                    $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
+                        $event->contentStreamIdentifier,
+                        $specializedDimensionSpacePoint,
+                        $sourceParent->nodeAggregateIdentifier
+                    );
+                    if (is_null($parentNode)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            (get_class($event))
+                        );
+                    }
+                    $parentRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
+                        $event->contentStreamIdentifier,
+                        $specializedDimensionSpacePoint,
+                        $parentNode->relationAnchorPoint
+                    );
+                    if (is_null($parentRelation)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
+                            (get_class($event))
+                        );
+                    }
+
+                    $parentRelation->addChildNodeAnchor(
+                        $specializedNode->relationAnchorPoint,
+                        null,
+                        $this->getDatabaseConnection()
+                    );
+                }
             }
-            $this->assignNewChildNodeToAffectedHierarchyRelations(
-                $event->contentStreamIdentifier,
-                $oldCoveringNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint,
-                $event->specializationCoverage
-            );
-            $this->assignNewParentNodeToAffectedHierarchyRelations(
-                $event->contentStreamIdentifier,
-                $oldCoveringNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint,
-                $event->specializationCoverage
-            );
+
             $this->copyReferenceRelations(
                 $sourceNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint
@@ -358,31 +399,31 @@ trait NodeVariation
 
     protected function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $targetRelationAnchorPoint
+        NodeRelationAnchorPoint $newSourceRelationAnchorPoint
     ): void {
         // we don't care whether the target node aggregate covers the variant's origin
         // since if it doesn't, it already didn't match the source's coverage before
 
         $this->getDatabaseConnection()->executeStatement('
                 INSERT INTO ' . ReferenceRelationRecord::TABLE_NAME . ' (
-                  originnodeanchor,
+                  sourcenodeanchor,
                   name,
                   position,
                   properties,
                   targetnodeaggregateidentifier
                 )
                 SELECT
-                  :targetRelationAnchorPoint AS originnodeanchor,
+                  :newSourceRelationAnchorPoint AS sourcenodeanchor,
                   ref.name,
                   ref.position,
                   ref.properties,
                   ref.targetnodeaggregateidentifier
                 FROM
                     ' . ReferenceRelationRecord::TABLE_NAME . ' ref
-                    WHERE ref.originnodeanchor = :sourceNodeAnchorPoint
+                    WHERE ref.sourcenodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
-            'targetRelationAnchorPoint' => $targetRelationAnchorPoint->value
+            'newSourceRelationAnchorPoint' => $newSourceRelationAnchorPoint->value
         ]);
     }
 }

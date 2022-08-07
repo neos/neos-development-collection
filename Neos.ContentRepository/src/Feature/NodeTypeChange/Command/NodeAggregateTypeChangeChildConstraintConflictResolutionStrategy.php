@@ -31,7 +31,8 @@ enum NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy: string im
     case STRATEGY_DELETE = 'delete';
 
     /**
-     * This strategy means "we only change the NodeAggregateType if all constraints of parents AND children and grandchildren are still respected."
+     * This strategy means "we only change the NodeAggregateType if all constraints of parents
+     * AND children and grandchildren are still respected."
      */
     case STRATEGY_HAPPY_PATH = 'happypath';
 

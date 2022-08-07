@@ -34,7 +34,7 @@ use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithN
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
@@ -424,7 +424,7 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
-                        NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS,
+                        NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS,
                         UserIdentifier::forSystemUser()
                     )
                 )->blockUntilProjectionsAreUpToDate();

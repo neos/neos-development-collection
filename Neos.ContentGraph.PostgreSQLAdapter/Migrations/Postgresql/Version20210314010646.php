@@ -81,14 +81,14 @@ class Version20210314010646 extends AbstractMigration
     private function createReferenceSchema(): void
     {
         $this->addSql(/** @lang PostgreSQL */'CREATE TABLE neos_contentgraph_referencerelation(
-    originnodeanchor uuid NOT NULL,
+    sourcenodeanchor uuid NOT NULL,
     name varchar(255) NOT NULL,
     position smallint NOT NULL,
     properties jsonb NULL,
     targetnodeaggregateidentifier varchar(255) NOT NULL,
-    PRIMARY KEY(originnodeanchor, name, position)
+    PRIMARY KEY(sourcenodeanchor, name, position)
 )');
-        $this->addSql('CREATE INDEX REFERENCE_ORIGIN ON neos_contentgraph_referencerelation (originnodeanchor);');
+        $this->addSql('CREATE INDEX REFERENCE_SOURCE ON neos_contentgraph_referencerelation (sourcenodeanchor);');
         $this->addSql(/** @lang PostgreSQL */'CREATE INDEX REFERENCE_TARGET ON neos_contentgraph_referencerelation (targetnodeaggregateidentifier);');
     }
 

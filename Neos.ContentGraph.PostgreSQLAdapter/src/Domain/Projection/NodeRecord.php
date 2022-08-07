@@ -22,12 +22,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing nodes from and to the database
- *
- * @Flow\Proxy(false)
  */
 final class NodeRecord
 {

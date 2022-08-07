@@ -85,6 +85,7 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+
         /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -270,15 +271,15 @@ final class ProjectionHypergraph
      * @throws DBALException
      */
     public function findOutgoingReferenceHyperrelationRecords(
-        NodeRelationAnchorPoint $originNodeAnchor
+        NodeRelationAnchorPoint $sourceNodeAnchor
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
             FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
-            WHERE r.originnodeanchor = :originNodeAnchor';
+            WHERE r.sourcenodeanchor = :sourceNodeAnchor';
 
         $parameters = [
-            'originNodeAnchor' => (string)$originNodeAnchor
+            'sourceNodeAnchor' => (string)$sourceNodeAnchor
         ];
 
         $referenceHyperrelations = [];
