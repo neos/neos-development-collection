@@ -142,12 +142,12 @@ Feature: Remove Nodes
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in DE
+    # the node was removed inside the new content stream, but only in de and gsw, since it is a specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
