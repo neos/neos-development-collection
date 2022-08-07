@@ -19,7 +19,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  *
  * @implements \IteratorAggregate<int,NodeRelationAnchorPoint>
  */
-#[Flow\Proxy(false)]
 final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 {
     /**
