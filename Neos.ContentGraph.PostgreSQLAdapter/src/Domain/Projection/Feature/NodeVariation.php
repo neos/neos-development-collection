@@ -277,17 +277,18 @@ trait NodeVariation
                     FROM replacements
                     WHERE cast(replacements.tobereplaced AS uuid) = ANY(childnodeanchors)
                         AND contentstreamidentifier = :contentStreamIdentifier
-                        AND dimensionspacepointhash = :sourceOriginDimensionSpacePointHash
+                        AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
                 ',
                 [
                     'toBeReplaced' => $replacements->toBeReplaced,
                     'replacements' => $replacements->replacements,
                     'contentStreamIdentifier' => $event->contentStreamIdentifier,
-                    'sourceOriginDimensionSpacePointHash' => $event->sourceOrigin->hash
+                    'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
                 ],
                 [
                     'toBeReplaced' => Connection::PARAM_STR_ARRAY,
-                    'replacements' => Connection::PARAM_STR_ARRAY
+                    'replacements' => Connection::PARAM_STR_ARRAY,
+                    'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
 
@@ -303,17 +304,18 @@ trait NodeVariation
                     SET parentnodeanchor = cast(replacements.replacement AS uuid) FROM replacements
                 WHERE parentnodeanchor = cast(replacements.tobereplaced AS uuid)
                     AND contentstreamidentifier = :contentStreamIdentifier
-                    AND dimensionspacepointhash = :sourceOriginDimensionSpacePointHash
+                    AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
                 ',
                 [
                     'toBeReplaced' => $replacements->toBeReplaced,
                     'replacements' => $replacements->replacements,
                     'contentStreamIdentifier' => $event->contentStreamIdentifier,
-                    'sourceOriginDimensionSpacePointHash' => $event->sourceOrigin->hash
+                    'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
                 ],
                 [
                     'toBeReplaced' => Connection::PARAM_STR_ARRAY,
-                    'replacements' => Connection::PARAM_STR_ARRAY
+                    'replacements' => Connection::PARAM_STR_ARRAY,
+                    'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
 

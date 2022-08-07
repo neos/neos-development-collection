@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeVariation;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateOccupiesNoGeneralization;
@@ -33,6 +34,7 @@ use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
@@ -138,7 +140,7 @@ trait NodeVariation
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
-            function () use ($command, $targetGeneralization, &$events) {
+            function () use ($command, $targetGeneralization, $nodeAggregate, &$events) {
                 $events = DomainEvents::withSingleEvent(
                     DecoratedEvent::addIdentifier(
                         new NodeVariantWasReset(
@@ -146,6 +148,17 @@ trait NodeVariation
                             $command->nodeAggregateIdentifier,
                             $command->originDimensionSpacePoint,
                             $targetGeneralization,
+                            $this->interDimensionalVariationGraph->getSpecializationSet(
+                                $command->originDimensionSpacePoint->toDimensionSpacePoint()
+                            )->getIntersection(
+                                $nodeAggregate->getCoveredDimensionSpacePoints()
+                            )->getDifference(
+                                $nodeAggregate->getOccupiedDimensionSpacePoints()
+                                    ->getDifference(
+                                        new OriginDimensionSpacePointSet([$command->originDimensionSpacePoint])
+                                    )
+                                    ->toDimensionSpacePointSet()
+                            ),
                             $command->initiatingUserIdentifier
                         ),
                         Uuid::uuid4()->toString()

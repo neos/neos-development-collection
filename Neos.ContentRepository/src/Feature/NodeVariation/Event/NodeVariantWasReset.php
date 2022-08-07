@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeVariation\Event;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
@@ -34,6 +35,7 @@ final class NodeVariantWasReset implements
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $generalizationOrigin,
+        public readonly DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -55,6 +57,7 @@ final class NodeVariantWasReset implements
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->generalizationOrigin,
+            $this->affectedCoveredDimensionSpacePoints,
             $this->initiatingUserIdentifier
         );
     }

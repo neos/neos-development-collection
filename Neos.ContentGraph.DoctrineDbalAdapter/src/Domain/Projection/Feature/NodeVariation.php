@@ -395,11 +395,15 @@ trait NodeVariation
                     JOIN (' . $replacementSelectionStatement . ') replacements ON h.childnodeanchor = replacements.tobereplaced
                     SET childnodeanchor = replacements.replacement
                         WHERE contentstreamidentifier = :contentStreamIdentifier
-                        AND dimensionspacepointhash = :sourceDimensionSpacePointHash
+                        AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
                 ',
                 [
                     'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
-                    'sourceDimensionSpacePointHash' => $event->sourceOrigin->hash
+                    'sourceDimensionSpacePointHash' => $event->sourceOrigin->hash,
+                    'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
+                ],
+                [
+                    'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
 
@@ -411,11 +415,14 @@ trait NodeVariation
                     JOIN (' . $replacementSelectionStatement . ') replacements ON h.parentnodeanchor = replacements.tobereplaced
                     SET parentnodeanchor = replacements.replacement
                         WHERE contentstreamidentifier = :contentStreamIdentifier
-                        AND dimensionspacepointhash = :sourceDimensionSpacePointHash
+                        AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
                 ',
                 [
                     'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
-                    'sourceDimensionSpacePointHash' => $event->sourceOrigin->hash
+                    'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
+                ],
+                [
+                    'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
 
