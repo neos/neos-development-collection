@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Psr\Log\LoggerInterface;
@@ -21,6 +20,8 @@ trait NodeRemoval
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
     abstract protected function getTableNamePrefix(): string;
+
+    protected LoggerInterface $systemLogger;
 
     /**
      * @throws \Throwable
@@ -41,6 +42,7 @@ trait NodeRemoval
                 $event->nodeAggregateIdentifier,
                 $event->affectedCoveredDimensionSpacePoints
             );
+
             foreach ($ingoingRelations as $ingoingRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation);
             }
@@ -67,13 +69,18 @@ trait NodeRemoval
         }
 
         // remove node itself if it does not have any incoming hierarchy relations anymore
-        $this->getDatabaseConnection()->executeUpdate(
+        // also remove outbound reference relations
+        $this->getDatabaseConnection()->executeStatement(
             '
-            DELETE n FROM ' . $this->getTableNamePrefix() . '_node n
+            DELETE n, r FROM neos_contentgraph_node n
+                LEFT JOIN ' . $this->getTableNamePrefix() . '_referencerelation r
+                    ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN
-                    ' . $this->getTableNamePrefix() . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
+                    -- the following line means "left join leads to NO MATCHING hierarchyrelation"
                     AND h.contentstreamidentifier IS NULL
                 ',
             [

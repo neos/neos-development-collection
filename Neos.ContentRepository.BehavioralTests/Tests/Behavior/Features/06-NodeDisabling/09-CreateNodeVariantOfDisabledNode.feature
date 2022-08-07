@@ -27,18 +27,24 @@ Feature: Variation of hidden nodes
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
-    And I am in dimension space point {"language":"de"}
-    And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
-      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
     And VisibilityConstraints are set to "frontend"
 
   Scenario: Specialize a node where the specialization target is enabled
-    Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"de"}  |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+    Given I am in dimension space point {"language":"de"}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
+    And the command EnableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"gsw"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -47,15 +53,18 @@ Feature: Variation of hidden nodes
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"gsw"} |
     And the graph projection is fully up to date
-
-    When I am in dimension space point {"language":"de"}
+    And I am in dimension space point {"language":"de"}
     And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
     When I am in dimension space point {"language":"gsw"}
     And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
 
   Scenario: Specialize a node where the specialization target is disabled
-    Given the command DisableNodeAggregate is executed with payload:
+    Given I am in dimension space point {"language":"de"}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | nodeAggregateIdentifier      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
@@ -76,21 +85,25 @@ Feature: Variation of hidden nodes
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"gsw"} |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"gsw"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
 
   Scenario: Generalize a node where the generalization target is enabled
-    Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"de"}  |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+    Given I am in dimension space point {"language":"de"}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -109,50 +122,55 @@ Feature: Variation of hidden nodes
   Scenario: Generalize a node where the generalization target is disabled
     Given I am in dimension space point {"language":"ltz"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName  |
-      | nodingers-cat           | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-pet |
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
+
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "nodingers-cat"    |
+      | nodeAggregateIdentifier | "the-great-nodini" |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "nodingers-cat"      |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "nodingers-cat"    |
+      | nodeAggregateIdentifier | "the-great-nodini"    |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"de"}  |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"ltz"}
-    Then I expect node aggregate identifier "nodingers-cat" and node path "court-pet" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "nodingers-cat" and node path "court-pet" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "nodingers-cat"    |
-      | coveredDimensionSpacePoint   | {"language":"de"}  |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"      |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "nodingers-cat" and node path "court-pet" to lead to node cs-identifier;nodingers-cat;{"language":"de"}
+    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
 
   Scenario: Peer vary a node where the peer target is enabled
-    Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"de"}  |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+    Given I am in dimension space point {"language":"de"}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -169,7 +187,11 @@ Feature: Variation of hidden nodes
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
 
   Scenario: Peer vary a node where the peer target is disabled
-    Given the command CreateNodeVariant is executed with payload:
+    Given I am in dimension space point {"language":"de"}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
+    And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateIdentifier | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
@@ -196,10 +218,10 @@ Feature: Variation of hidden nodes
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"en"}  |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+      | Key                          | Value                |
+      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"en"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"en"}

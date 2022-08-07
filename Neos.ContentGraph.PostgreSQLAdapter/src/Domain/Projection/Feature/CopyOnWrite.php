@@ -117,15 +117,15 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function copyOutgoingReferenceRelations(
-        NodeRelationAnchorPoint $originRelationAnchorPoint,
-        NodeRelationAnchorPoint $targetRelationAnchorPoint
+        NodeRelationAnchorPoint $sourceNodeAnchor,
+        NodeRelationAnchorPoint $newSourceNodeAnchor
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
-                $originRelationAnchorPoint
+                $sourceNodeAnchor
             ) as $outgoingReferenceRelation
         ) {
-            $copiedReferenceRelation = $outgoingReferenceRelation->withOriginNodeAnchor($targetRelationAnchorPoint);
+            $copiedReferenceRelation = $outgoingReferenceRelation->withSourceNodeAnchor($newSourceNodeAnchor);
             $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());
         }
     }

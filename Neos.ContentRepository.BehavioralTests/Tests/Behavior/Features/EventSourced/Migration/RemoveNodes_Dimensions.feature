@@ -111,7 +111,7 @@ Feature: Remove Nodes
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
-  Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "onlyGivenVariant"
+  Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "allSpecializations"
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -130,7 +130,7 @@ Feature: Remove Nodes
           -
             type: 'RemoveNode'
             settings:
-              strategy: 'onlyGivenVariant'
+              strategy: 'allSpecializations'
     """
 
     # the original content stream has not been touched
@@ -143,12 +143,12 @@ Feature: Remove Nodes
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
-    # the node was removed inside the new content stream, but only in DE
+    # the node was removed inside the new content stream, but only in de and gsw, since it is a specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}

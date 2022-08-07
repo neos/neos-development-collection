@@ -51,7 +51,7 @@ trait NodeReferencing
 
                     // remove old
                     $this->getDatabaseConnection()->delete(ReferenceRelationRecord::TABLE_NAME, [
-                        'originnodeanchor' => $anchorPoint,
+                        'sourcenodeanchor' => $anchorPoint,
                         'name' => $event->referenceName
                     ]);
 

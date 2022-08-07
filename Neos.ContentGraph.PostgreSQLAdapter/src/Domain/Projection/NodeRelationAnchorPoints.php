@@ -14,28 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The node relation anchor points value object collection
  *
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int,NodeRelationAnchorPoint>
  */
 final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 {
     /**
-     * @var \ArrayIterator<int,NodeRelationAnchorPoint>
+     * @var array<int,NodeRelationAnchorPoint>
      */
-    private \ArrayIterator $iterator;
+    public readonly array $nodeRelationAnchorPoints;
 
-    /**
-     * @param array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints
-     */
-    private function __construct(
-        private array $nodeRelationAnchorPoints
-    ) {
-        $this->iterator = new \ArrayIterator($nodeRelationAnchorPoints);
+    public function __construct(NodeRelationAnchorPoint ...$nodeRelationAnchorPoints)
+    {
+        /** @var array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints */
+        $this->nodeRelationAnchorPoints = $nodeRelationAnchorPoints;
     }
 
     /**
@@ -49,17 +43,13 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
                 $values[] = NodeRelationAnchorPoint::fromString($item);
             } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
-            } else {
-                throw new \InvalidArgumentException(
-                    'NodeRelationAnchorPoints can only consist of '
-                        . NodeRelationAnchorPoint::class . ' objects.',
-                    1616603754
-                );
             }
         }
+        /** @var array<int,NodeRelationAnchorPoint $values */
 
-        return new self($values);
+        return new self(...$values);
     }
+
     public static function fromDatabaseString(string $databaseString): self
     {
         return self::fromArray(\explode(',', \trim($databaseString, '{}')));
@@ -78,7 +68,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $childNodeAnchors);
             if (is_int($pivot)) {
-                array_splice($childNodeAnchors, $pivot, 0, $nodeRelationAnchorPoint);
+                array_splice($childNodeAnchors, $pivot, 0, [$nodeRelationAnchorPoint]);
             } else {
                 $childNodeAnchors[] = $nodeRelationAnchorPoint;
             }
@@ -86,7 +76,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             $childNodeAnchors[] = $nodeRelationAnchorPoint;
         }
 
-        return self::fromArray($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     public function replace(
@@ -95,9 +85,9 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
     ): self {
         $childNodeAnchors = $this->nodeRelationAnchorPoints;
         $position = (int)array_search($nodeRelationAnchorPoint, $childNodeAnchors);
-        array_splice($childNodeAnchors, $position, 1, $replacement);
+        array_splice($childNodeAnchors, $position, 1, [$replacement]);
 
-        return self::fromArray($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     public function remove(NodeRelationAnchorPoint $nodeRelationAnchorPoint): self
@@ -108,7 +98,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
             unset($childNodeAnchors[$pivot]);
         }
 
-        return new self($childNodeAnchors);
+        return new self(...$childNodeAnchors);
     }
 
     /**
@@ -116,7 +106,7 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
      */
     public function getIterator(): \ArrayIterator
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->nodeRelationAnchorPoints);
     }
 
     public function count(): int

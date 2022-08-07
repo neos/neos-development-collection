@@ -46,7 +46,7 @@ Feature: Enable a node aggregate
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+      | nodeVariantSelectionStrategy | "allVariants"       |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
@@ -123,12 +123,12 @@ Feature: Enable a node aggregate
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+      | nodeVariantSelectionStrategy | "allVariants"       |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+      | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
@@ -200,12 +200,12 @@ Feature: Enable a node aggregate
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant"       |
+      | nodeVariantSelectionStrategy | "allVariants"       |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | nodeVariantSelectionStrategy | "onlyGivenVariant" |
+      | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:

@@ -158,7 +158,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint'
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withOriginNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
+            ->withSourceNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
             ->withTargetRestriction($this->visibilityConstraints);
 
         $orderings = [];
@@ -184,11 +184,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
-            'orgn.*, orgh.contentstreamidentifier, orgh.dimensionspacepoint'
+            'srcn.*, srch.contentstreamidentifier, srch.dimensionspacepoint'
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withTargetNodeAggregateIdentifier($nodeAggregateIdentifier)
-            ->withOriginRestriction($this->visibilityConstraints);
+            ->withSourceRestriction($this->visibilityConstraints);
 
         $orderings = [];
         if ($name) {
@@ -197,7 +197,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $orderings[] = 'r.name';
         }
         $orderings[] = 'r.position';
-        $orderings[] = 'orgn.nodeaggregateidentifier';
+        $orderings[] = 'srcn.nodeaggregateidentifier';
         $query = $query->orderedBy($orderings);
 
         $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();

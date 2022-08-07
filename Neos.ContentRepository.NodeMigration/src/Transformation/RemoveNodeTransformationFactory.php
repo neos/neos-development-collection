@@ -18,9 +18,9 @@ use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
@@ -66,10 +66,8 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
             ): ?CommandResult {
-                if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
-                    $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ONLY_GIVEN_VARIANT;
-                } elseif ($this->strategy === null) {
-                    $this->strategy = NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS;
+                if ($this->strategy === null) {
+                    $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS;
                 }
 
                 if ($this->strategy === NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS) {

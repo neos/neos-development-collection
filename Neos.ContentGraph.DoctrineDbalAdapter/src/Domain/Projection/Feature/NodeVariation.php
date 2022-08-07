@@ -18,7 +18,6 @@ use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariant
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Psr\Log\LoggerInterface;
 
 /**
  * The NodeVariation projection feature trait
@@ -52,6 +51,7 @@ trait NodeVariation
                 $event->specializationOrigin
             );
 
+            $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamIdentifier,
@@ -64,7 +64,48 @@ trait NodeVariation
                     $this->getDatabaseConnection(),
                     $this->tableNamePrefix
                 );
+                unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
             }
+            if (!empty($uncoveredDimensionSpacePoints)) {
+                $sourceParent = $this->projectionContentGraph->findParentNode(
+                    $event->contentStreamIdentifier,
+                    $event->nodeAggregateIdentifier,
+                    $event->sourceOrigin,
+                );
+                if (is_null($sourceParent)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
+                }
+                foreach ($uncoveredDimensionSpacePoints as $uncoveredDimensionSpacePoint) {
+                    $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+                        $event->contentStreamIdentifier,
+                        $sourceParent->nodeAggregateIdentifier,
+                        $uncoveredDimensionSpacePoint
+                    );
+                    if (is_null($parentNode)) {
+                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                            get_class($event)
+                        );
+                    }
+
+                    $hierarchyRelation = new HierarchyRelation(
+                        $parentNode->relationAnchorPoint,
+                        $specializedNode->relationAnchorPoint,
+                        $sourceNode->nodeName,
+                        $event->contentStreamIdentifier,
+                        $uncoveredDimensionSpacePoint,
+                        $uncoveredDimensionSpacePoint->hash,
+                        $this->projectionContentGraph->determineHierarchyRelationPosition(
+                            $parentNode->relationAnchorPoint,
+                            $specializedNode->relationAnchorPoint,
+                            null,
+                            $event->contentStreamIdentifier,
+                            $uncoveredDimensionSpacePoint
+                        )
+                    );
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->getTableNamePrefix());
+                }
+            }
+
             foreach (
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamIdentifier,

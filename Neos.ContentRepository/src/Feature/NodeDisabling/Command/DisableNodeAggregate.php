@@ -17,18 +17,16 @@ namespace Neos\ContentRepository\Feature\NodeDisabling\Command;
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
  */
-#[Flow\Proxy(false)]
 final class DisableNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
