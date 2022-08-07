@@ -9,8 +9,11 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppli
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ReferenceRelation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeVariantWasReset;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -319,6 +322,124 @@ trait NodeVariation
             $this->copyReferenceRelations(
                 $sourceNode->relationAnchorPoint,
                 $peerNode->relationAnchorPoint
+            );
+        });
+    }
+
+    public function whenNodeVariantWasReset(NodeVariantWasReset $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $replacements = $this->getDatabaseConnection()->executeQuery(
+                /** @lang MariaDB */
+                '
+                /**
+                 * This provides a list of all relation anchor points to be replaced in hierarchy relations
+                 * and potentially be deleted as well as their replacements
+                 */
+                WITH RECURSIVE replacements(tobereplaced, replacement) AS (
+                    /**
+                     * Initial query: find all replacement pairs from origin anchor to generalization anchor
+                     */
+                    SELECT n.relationanchorpoint AS tobereplaced, gen.relationanchorpoint AS replacement
+                    FROM neos_contentgraph_node n
+                        JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                        JOIN neos_contentgraph_node gen ON gen.nodeaggregateidentifier = n.nodeaggregateidentifier
+                        JOIN neos_contentgraph_hierarchyrelation genh ON genh.childnodeanchor = gen.relationanchorpoint
+                    WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                        AND h.dimensionspacepointhash = :sourceOriginDimensionSpacePointHash
+                        AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                        AND genh.contentstreamidentifier = :contentStreamIdentifier
+                        AND genh.dimensionspacepointhash = :generalizationOriginDimensionSpacePointHash
+                    UNION ALL
+                        /**
+                         * Iteration query: find all replacement pairs for tethered descendants
+                         */
+                        SELECT c.relationanchorpoint AS tobereplaced, genc.relationanchorpoint AS replacement
+                        FROM replacements p
+                            JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.tobereplaced
+                            JOIN neos_contentgraph_node c ON c.relationanchorpoint = ch.childnodeanchor
+                            JOIN neos_contentgraph_node genc ON genc.nodeaggregateidentifier = c.nodeaggregateidentifier
+                            JOIN neos_contentgraph_hierarchyrelation genh
+                                ON genh.childnodeanchor = genc.relationanchorpoint
+                        WHERE ch.contentstreamidentifier = :contentStreamIdentifier
+                          AND ch.dimensionspacepointhash = :sourceOriginDimensionSpacePointHash
+                          AND genh.contentstreamidentifier = :contentStreamIdentifier
+                          AND genh.dimensionspacepointhash = :generalizationOriginDimensionSpacePointHash
+                          AND c.classification = :tetheredClassification
+                ) SELECT * FROM replacements
+                ',
+                [
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                    'sourceOriginDimensionSpacePointHash' => $event->sourceOrigin->hash,
+                    'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                    'generalizationOriginDimensionSpacePointHash' => $event->generalizationOrigin->hash,
+                    'tetheredClassification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
+                ]
+            )->fetchAllAssociative();
+
+            $replacementSelectionStatement = 'SELECT ' . implode(
+                ' UNION ALL SELECT ',
+                array_map(
+                    fn (array $replacement): string
+                    => '"' . $replacement['tobereplaced'] . '" AS tobereplaced, "'
+                        . $replacement['replacement'] . '" AS replacement',
+                    $replacements
+                )
+            );
+
+            // adjust the inbound hierarchy relations
+            $this->getDatabaseConnection()->executeStatement(
+                /** @lang MariaDB */
+                '
+                    UPDATE neos_contentgraph_hierarchyrelation h
+                    JOIN (' . $replacementSelectionStatement . ') replacements ON h.childnodeanchor = replacements.tobereplaced
+                    SET childnodeanchor = replacements.replacement
+                        WHERE contentstreamidentifier = :contentStreamIdentifier
+                        AND dimensionspacepointhash = :sourceDimensionSpacePointHash
+                ',
+                [
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                    'sourceDimensionSpacePointHash' => $event->sourceOrigin->hash
+                ]
+            );
+
+            // adjust the outbound hierarchy relations
+            $this->getDatabaseConnection()->executeStatement(
+                /** @lang MariaDB */
+                '
+                    UPDATE neos_contentgraph_hierarchyrelation h
+                    JOIN (' . $replacementSelectionStatement . ') replacements ON h.parentnodeanchor = replacements.tobereplaced
+                    SET parentnodeanchor = replacements.replacement
+                        WHERE contentstreamidentifier = :contentStreamIdentifier
+                        AND dimensionspacepointhash = :sourceDimensionSpacePointHash
+                ',
+                [
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                    'sourceDimensionSpacePointHash' => $event->sourceOrigin->hash
+                ]
+            );
+
+            // remove orphaned node records along with their outbound reference relations
+            $this->getDatabaseConnection()->executeStatement(
+                /** @lang MariaDB */
+                    '
+                    DELETE n, r FROM neos_contentgraph_node n
+                        LEFT JOIN ' . ReferenceRelation::TABLE_NAME . ' r ON r.nodeanchorpoint = n.relationanchorpoint
+                        LEFT JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' h ON h.childnodeanchor = n.relationanchorpoint
+                    WHERE
+                        n.relationanchorpoint IN (:replacedRelationAnchorPoints)
+                        -- the following line means "left join leads to NO MATCHING hierarchyrelation"
+                        AND h.contentstreamidentifier IS NULL
+                    ',
+                [
+                    'replacedRelationAnchorPoints' => array_map(
+                        fn (array $replacement): string => $replacement['tobereplaced'],
+                        $replacements
+                    ),
+                ],
+                [
+                    'replacedRelationAnchorPoints' => Connection::PARAM_STR_ARRAY
+                ]
             );
         });
     }

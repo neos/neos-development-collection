@@ -32,6 +32,7 @@ use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChan
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeVariantWasReset;
 use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
@@ -112,6 +113,7 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             EventToListenerMapping::create(NodeSpecializationVariantWasCreated::class, GraphProjector::class, []),
             EventToListenerMapping::create(NodeGeneralizationVariantWasCreated::class, GraphProjector::class, []),
             EventToListenerMapping::create(NodePeerVariantWasCreated::class, GraphProjector::class, []),
+            EventToListenerMapping::create(NodeVariantWasReset::class, GraphProjector::class, []),
             // NodeDisabling Trait
             EventToListenerMapping::create(NodeAggregateWasDisabled::class, GraphProjector::class, []),
             // RestrictionRelations Trait: no event listeners
@@ -157,6 +159,7 @@ final class HardcodedEventPublisherFactory implements EventPublisherFactoryInter
             EventToListenerMapping::create(NodeSpecializationVariantWasCreated::class, HypergraphProjector::class, []),
             EventToListenerMapping::create(NodeGeneralizationVariantWasCreated::class, HypergraphProjector::class, []),
             EventToListenerMapping::create(NodePeerVariantWasCreated::class, HypergraphProjector::class, []),
+            EventToListenerMapping::create(NodeVariantWasReset::class, HypergraphProjector::class, []),
 
             // DocumentUriPathProjector
             EventToListenerMapping::create(RootWorkspaceWasCreated::class, DocumentUriPathProjector::class, []),
