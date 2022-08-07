@@ -18,7 +18,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * A collection of relation anchor point replacements:
  * each entry in the $toBeReplaced array is to be replaced by the entry in the $replacements array with the same index
  */
-final class RelationAnchorPointReplacements
+final class RelationAnchorPointReplacementDirective
 {
     private function __construct(
         /** @var array<int,string> */

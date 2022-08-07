@@ -22,7 +22,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RelationAnchorPointReplacements;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RelationAnchorPointReplacementDirective;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeVariantWasReset;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
@@ -208,7 +208,7 @@ trait NodeVariation
     public function whenNodeVariantWasReset(NodeVariantWasReset $event): void
     {
         $this->transactional(function () use ($event) {
-            $replacements = RelationAnchorPointReplacements::fromDatabaseRows(
+            $replacements = RelationAnchorPointReplacementDirective::fromDatabaseRows(
                 $this->getDatabaseConnection()->executeQuery(
                 /** @lang PostgreSQL */
                     '

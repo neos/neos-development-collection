@@ -10,6 +10,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRec
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ReferenceRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\RelationAnchorPointReplacementDirective;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeVariantWasReset;
@@ -329,7 +330,8 @@ trait NodeVariation
     public function whenNodeVariantWasReset(NodeVariantWasReset $event): void
     {
         $this->transactional(function () use ($event) {
-            $replacements = $this->getDatabaseConnection()->executeQuery(
+            $replacements = RelationAnchorPointReplacementDirective::fromDatabaseRows(
+                $this->getDatabaseConnection()->executeQuery(
                 /** @lang MariaDB */
                 '
                 /**
@@ -375,24 +377,15 @@ trait NodeVariation
                     'generalizationOriginDimensionSpacePointHash' => $event->generalizationOrigin->hash,
                     'tetheredClassification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
                 ]
-            )->fetchAllAssociative();
-
-            $replacementSelectionStatement = 'SELECT ' . implode(
-                ' UNION ALL SELECT ',
-                array_map(
-                    fn (array $replacement): string
-                    => '"' . $replacement['tobereplaced'] . '" AS tobereplaced, "'
-                        . $replacement['replacement'] . '" AS replacement',
-                    $replacements
-                )
-            );
+            )->fetchAllAssociative());
 
             // adjust the inbound hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
                 /** @lang MariaDB */
                 '
                     UPDATE neos_contentgraph_hierarchyrelation h
-                    JOIN (' . $replacementSelectionStatement . ') replacements ON h.childnodeanchor = replacements.tobereplaced
+                    JOIN (' . $replacements->getSelectionStatement() . ') replacements
+                        ON h.childnodeanchor = replacements.tobereplaced
                     SET childnodeanchor = replacements.replacement
                         WHERE contentstreamidentifier = :contentStreamIdentifier
                         AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
@@ -412,7 +405,8 @@ trait NodeVariation
                 /** @lang MariaDB */
                 '
                     UPDATE neos_contentgraph_hierarchyrelation h
-                    JOIN (' . $replacementSelectionStatement . ') replacements ON h.parentnodeanchor = replacements.tobereplaced
+                    JOIN (' . $replacements->getSelectionStatement() . ') replacements
+                        ON h.parentnodeanchor = replacements.tobereplaced
                     SET parentnodeanchor = replacements.replacement
                         WHERE contentstreamidentifier = :contentStreamIdentifier
                         AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
@@ -439,10 +433,7 @@ trait NodeVariation
                         AND h.contentstreamidentifier IS NULL
                     ',
                 [
-                    'replacedRelationAnchorPoints' => array_map(
-                        fn (array $replacement): string => $replacement['tobereplaced'],
-                        $replacements
-                    ),
+                    'replacedRelationAnchorPoints' => $replacements->getToBeReplaced()
                 ],
                 [
                     'replacedRelationAnchorPoints' => Connection::PARAM_STR_ARRAY
