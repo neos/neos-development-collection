@@ -74,6 +74,7 @@ trait NodeRemoval
                     neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
+                    -- the following line means "left join leads to NO MATCHING hierarchyrelation"
                     AND h.contentstreamidentifier IS NULL
                 ',
             [
