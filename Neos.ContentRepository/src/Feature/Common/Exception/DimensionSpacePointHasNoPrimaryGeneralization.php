@@ -21,16 +21,13 @@ use Neos\Flow\Annotations as Flow;
  * The exception to be thrown if a dimension space point is not the primary generalization of another one.
  */
 #[Flow\Proxy(false)]
-final class DimensionSpacePointIsNotPrimaryGeneralization extends \DomainException
+final class DimensionSpacePointHasNoPrimaryGeneralization extends \DomainException
 {
-    public static function butWasSupposedToBe(
-        DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePoint $specialization
-    ): self {
+    public static function butWasSupposedToHave(DimensionSpacePoint $dimensionSpacePoint): self
+    {
         return new self(
             'Dimension space point ' . json_encode($dimensionSpacePoint)
-                . ' is not the primary generalization of ' . json_encode($specialization)
-                . ' but was supposed to be.',
+                . ' has no primary generalization but was supposed to have.',
             1659618199
         );
     }

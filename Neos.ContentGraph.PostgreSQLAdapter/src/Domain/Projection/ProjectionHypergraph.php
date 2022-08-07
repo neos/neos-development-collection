@@ -126,6 +126,7 @@ final class ProjectionHypergraph
     }
 
     /**
+     * Resolves a node's parent in another dimension space point
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */

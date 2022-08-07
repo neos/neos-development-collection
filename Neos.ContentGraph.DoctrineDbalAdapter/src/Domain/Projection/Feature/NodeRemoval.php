@@ -11,6 +11,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ReferenceRelation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
@@ -93,7 +94,7 @@ trait NodeRemoval
         $nodeRecord = $this->projectionContentGraph->findNodeByIdentifiers(
             $event->contentStreamIdentifier,
             $event->nodeAggregateIdentifier,
-            $event->originDimensionSpacePoint
+            $event->sourceDimensionSpacePoint
         );
         if (!$nodeRecord instanceof NodeRecord) {
             throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
@@ -103,7 +104,7 @@ trait NodeRemoval
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $parentNodeRecord = $this->projectionContentGraph->findParentNodeRecordByOriginInDimensionSpacePoint(
                 $event->contentStreamIdentifier,
-                $event->originDimensionSpacePoint,
+                $event->sourceDimensionSpacePoint,
                 $coveredDimensionSpacePoint,
                 $event->nodeAggregateIdentifier
             );
@@ -138,22 +139,21 @@ trait NodeRemoval
                     :contentStreamIdentifier
                 )',
                 [
-                    'dimensionSpacePoint' => json_encode($coveredDimensionSpacePoint),
-                    'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
-                    'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                    'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                    'parentRelationAnchor' => (string)$parentNodeRecord->relationAnchorPoint,
                     'childRelationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
                     'name' => $nodeRecord->nodeName?->value,
-                    'parentRelationAnchor' => (string)$parentNodeRecord->relationAnchorPoint,
-                    'position' => $position
+                    'position' => $position,
+                    'dimensionSpacePoint' => json_encode($coveredDimensionSpacePoint),
+                    'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
+                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
                 ]
             );
         }
 
         // cascade to all descendants
 
-        $dimensionSpacePointsToJoin = '"' . implode(
+        // prepare a static UNION SELECT statement to join the affected dimension space points in the INSERT query
+        $dimensionSpacePointsToJoin = 'SELECT "' . implode(
             ' UNION SELECT "',
             array_map(
                 fn (DimensionSpacePoint $dimensionSpacePoint): string
@@ -178,15 +178,17 @@ trait NodeRemoval
             SELECT name, position, :contentStreamIdentifier AS contentstreamidentifier,
                 dimensionspacepoint, dimensionspacepointhash, parentnodeanchor, childnodeanchor FROM (
                     /**
-                     * This provides a list of all hierarchy relations to be copied:
-                     * parentnodeanchor and childnodeanchor, name and position only, the rest will be changed
+                     * First, we collect all hierarchy relations to be copied in the restoration process.
+                     * These are the descendant relations in the origin to be used:
+                     * parentnodeanchor and childnodeanchor, name and position only, the rest will be filled with the
+                     * affected dimension space point data
                      */
                     WITH RECURSIVE descendantNodes(
                         relationanchorpoint, parentnodeanchor, name, position, childnodeanchor
                     ) AS (
                         /**
-                         * Initial query: find all outgoing tethered child node relations
-                         * from the starting node in its origin
+                         * Iteration query: find all outgoing tethered child node relations from the parent node in its origin;
+                         * which ones are resolved depends on the recursion mode.
                          */
                         SELECT
                             n.relationanchorpoint,
@@ -199,12 +201,14 @@ trait NodeRemoval
                         WHERE h.parentnodeanchor = :relationAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                          ' . ($event->recursive ? '' : ' AND n.classification = :classification ') . '
+                          ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
+                ? ' AND n.classification = :classification '
+                : '') . '
 
                         UNION ALL
                             /**
-                             * Iteration query: find all outgoing tethered child node relations
-                             * from the parent node in its origin
+                             * Iteration query: find all outgoing tethered child node relations from the parent node in its origin;
+                             * which ones are resolved depends on the recursion mode.
                              */
                             SELECT
                                 c.relationanchorpoint,
@@ -219,12 +223,15 @@ trait NodeRemoval
                                     JOIN neos_contentgraph_node c ON c.relationanchorpoint = h.childnodeanchor
                             WHERE h.contentstreamidentifier = :contentStreamIdentifier
                               AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                              ' . ($event->recursive ? '' : ' AND c.classification = :classification ') . '
+                              ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
+                ? ' AND c.classification = :classification '
+                : '') . '
                     ) SELECT name, position, parentnodeanchor, childnodeanchor,
                         dimensionspacepoint, dimensionspacepointhash
                         FROM descendantNodes
                         JOIN (
-                            SELECT ' . $dimensionSpacePointsToJoin . '
+                            /** Here we join the affected dimension space points to actually create the new edges */
+                            ' . $dimensionSpacePointsToJoin . '
                         ) AS dimensionSpacePoints
                     ) targetHierarchyRelation
             ',
@@ -232,7 +239,7 @@ trait NodeRemoval
                 'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
                 'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
                 'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
-                'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash
+                'originDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash
             ]
         );
     }

@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeRemoval\Event;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
@@ -33,9 +34,12 @@ final class NodeAggregateCoverageWasRestored implements
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        /** The source dimension space point to restore the coverage from */
+        public readonly DimensionSpacePoint $sourceDimensionSpacePoint,
+        /** The affected dimension space points to restore the coverage to */
         public readonly DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
-        public readonly bool $recursive,
+        /** The mode to determine which descendants to affect as well. {@see RecursionMode} */
+        public readonly RecursionMode $recursionMode,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -55,9 +59,9 @@ final class NodeAggregateCoverageWasRestored implements
         return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->originDimensionSpacePoint,
+            $this->sourceDimensionSpacePoint,
             $this->affectedCoveredDimensionSpacePoints,
-            $this->recursive,
+            $this->recursionMode,
             $this->initiatingUserIdentifier
         );
     }

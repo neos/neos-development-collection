@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -121,9 +122,6 @@ trait NodeRemoval
         $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
             ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
             : $this->getCurrentContentStreamIdentifier();
-        $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
-            ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
-            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
         $dimensionSpacePointToCover = DimensionSpacePoint::fromArray($commandArguments['dimensionSpacePointToCover']);
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
@@ -132,10 +130,9 @@ trait NodeRemoval
         $command = new RestoreNodeAggregateCoverage(
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
-            $originDimensionSpacePoint,
             $dimensionSpacePointToCover,
             $commandArguments['withSpecializations'],
-            $commandArguments['recursive'],
+            RecursionMode::from($commandArguments['recursionMode']),
             $initiatingUserIdentifier
         );
 

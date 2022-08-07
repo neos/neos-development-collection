@@ -17,8 +17,9 @@ namespace Neos\ContentRepository\Feature\Common;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotPrimaryGeneralization;
+use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointHasNoPrimaryGeneralization;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateAlreadyCoversDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\Exception\ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -86,25 +87,6 @@ trait ConstraintChecks
     {
         if (!$this->getAllowedDimensionSubspace()->contains($dimensionSpacePoint)) {
             throw DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($dimensionSpacePoint);
-        }
-    }
-
-    /**
-     * @throws DimensionSpacePointIsNotPrimaryGeneralization
-     */
-    protected function requireDimensionSpacePointToBePrimaryGeneralization(
-        DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePoint $specialization
-    ): void {
-        $primaryGeneralization = $this->interDimensionalVariationGraph->getPrimaryGeneralization($specialization);
-        if (
-            !$primaryGeneralization instanceof DimensionSpacePoint
-            || !$primaryGeneralization->equals($dimensionSpacePoint)
-        ) {
-            throw DimensionSpacePointIsNotPrimaryGeneralization::butWasSupposedToBe(
-                $dimensionSpacePoint,
-                $specialization
-            );
         }
     }
 
@@ -472,6 +454,31 @@ trait ConstraintChecks
         }
 
         return $parentNodeAggregate;
+    }
+
+    /**
+     * @throws NodeAggregateCurrentlyDoesNotExist
+     */
+    public function requireProjectedParentNodeAggregateInDimensionSpacePoint(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): ReadableNodeAggregateInterface {
+        foreach ($this->getContentGraph()->findParentNodeAggregates(
+            $contentStreamIdentifier,
+             $childNodeAggregateIdentifier
+        ) as $parentNodeAggregate) {
+            if ($parentNodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
+                return $parentNodeAggregate;
+            }
+        }
+
+        throw new ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
+            'No parent node aggregate for ' . $childNodeAggregateIdentifier
+                . ' does currently cover dimension space point ' . json_encode($dimensionSpacePoint)
+                . ' in content stream ' . $contentStreamIdentifier,
+            1659906376
+        );
     }
 
     /**

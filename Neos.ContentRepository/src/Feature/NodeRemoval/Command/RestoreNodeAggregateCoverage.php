@@ -15,16 +15,21 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeRemoval\Command;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Proxy(false)]
+/**
+ * The command to restore coverage of a node aggregate.
+ * If a specialization variant of a node is deleted, the node and its descendants are no longer available
+ * in the variant's dimension space point.
+ * With this command, the fallback mechanism can be restored for that node and its descendants,
+ * i.e. the node will be available in the specialization dimension space point with fallback content.
+ */
 final class RestoreNodeAggregateCoverage implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
@@ -33,14 +38,12 @@ final class RestoreNodeAggregateCoverage implements
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
-        /** The origin of the node that should be used for coverage */
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        /** The dimension space point the node aggregate should cover again. Must be a direct specialization. */
+        /** The dimension space point the node aggregate should cover again. */
         public readonly DimensionSpacePoint $dimensionSpacePointToCover,
         /** If set to true, also all specializations of the selected dimension space point will be restored */
         public readonly bool $withSpecializations,
-        /** If set to true, this will be applied to all descendant nodes as well */
-        public readonly bool $recursive,
+        /** The mode to determine which descendants to affect as well. {@see RecursionMode} */
+        public readonly RecursionMode $recursionMode,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
     }
@@ -53,10 +56,9 @@ final class RestoreNodeAggregateCoverage implements
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePointToCover']),
             $array['withSpecializations'],
-            $array['recursive'],
+            RecursionMode::from($array['recursionMode']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
         );
     }
@@ -71,7 +73,7 @@ final class RestoreNodeAggregateCoverage implements
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->dimensionSpacePointToCover,
             'withSpecializations' => $this->withSpecializations,
-            'recursive' => $this->recursive,
+            'recursionMode' => $this->recursionMode,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
@@ -81,10 +83,9 @@ final class RestoreNodeAggregateCoverage implements
         return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->originDimensionSpacePoint,
             $this->dimensionSpacePointToCover,
             $this->withSpecializations,
-            $this->recursive,
+            $this->recursionMode,
             $this->initiatingUserIdentifier
         );
     }

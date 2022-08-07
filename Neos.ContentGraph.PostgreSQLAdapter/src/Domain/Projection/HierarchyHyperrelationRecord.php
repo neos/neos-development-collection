@@ -94,6 +94,10 @@ final class HierarchyHyperrelationRecord
         $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
     }
 
+    /**
+     * There might be multiple candidates for the role of succeeding sibling.
+     * The first match from the actually available ones will be selected.
+     */
     public function addChildNodeAnchorAfterFirstCandidate(
         NodeRelationAnchorPoint $childNodeAnchor,
         NodeRelationAnchorPoints $succeedingSiblingCandidates,

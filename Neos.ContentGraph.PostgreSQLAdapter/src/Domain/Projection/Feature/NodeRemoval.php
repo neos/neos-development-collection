@@ -23,6 +23,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -184,7 +185,7 @@ trait NodeRemoval
     {
         $nodeRecord = $this->projectionHypergraph->findNodeRecordByOrigin(
             $event->contentStreamIdentifier,
-            $event->originDimensionSpacePoint,
+            $event->sourceDimensionSpacePoint,
             $event->nodeAggregateIdentifier
         );
         if (!$nodeRecord instanceof NodeRecord) {
@@ -196,7 +197,7 @@ trait NodeRemoval
             $hierarchyRelation
                 = $this->projectionHypergraph->findParentHierarchyHyperrelationRecordByOriginInDimensionSpacePoint(
                     $event->contentStreamIdentifier,
-                    $event->originDimensionSpacePoint,
+                    $event->sourceDimensionSpacePoint,
                     $coveredDimensionSpacePoint,
                     $event->nodeAggregateIdentifier
                 );
@@ -205,7 +206,7 @@ trait NodeRemoval
                 $succeedingSiblingCandidates = $this->projectionHypergraph
                     ->findSucceedingSiblingRelationAnchorPointsByOriginInDimensionSpacePoint(
                         $event->contentStreamIdentifier,
-                        $event->originDimensionSpacePoint,
+                        $event->sourceDimensionSpacePoint,
                         $coveredDimensionSpacePoint,
                         $event->nodeAggregateIdentifier
                     );
@@ -217,7 +218,7 @@ trait NodeRemoval
             } else {
                 $parentNodeRecord = $this->projectionHypergraph->findParentNodeRecordByOriginInDimensionSpacePoint(
                     $event->contentStreamIdentifier,
-                    $event->originDimensionSpacePoint,
+                    $event->sourceDimensionSpacePoint,
                     $coveredDimensionSpacePoint,
                     $event->nodeAggregateIdentifier
                 );
@@ -241,13 +242,14 @@ trait NodeRemoval
             /** @lang PostgreSQL */
             '
             /**
-             * This provides a list of all hierarchy relations to be copied:
+             * First, we collect all hierarchy relations to be copied in the restoration process.
+             * These are the descendant relations in the origin to be used:
              * parentnodeanchor and childnodeanchors only, the rest will be changed
              */
             WITH RECURSIVE descendantNodes(relationanchorpoint) AS (
                 /**
-                 * Initial query: find all outgoing tethered child node relations
-                 * from the starting node in its origin
+                 * Initial query: find all outgoing child node relations from the starting node in its origin;
+                 * which ones are resolved depends on the recursion mode.
                  */
                 SELECT
                     n.relationanchorpoint,
@@ -258,12 +260,14 @@ trait NodeRemoval
                 WHERE h.parentnodeanchor = :relationAnchorPoint
                   AND h.contentstreamidentifier = :contentStreamIdentifier
                   AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                  ' . ($event->recursive ? '' : ' AND n.classification = :classification') . '
+                  ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
+                ? ' AND n.classification = :classification'
+                : '') . '
 
                 UNION ALL
                 /**
-                 * Iteration query: find all outgoing tethered child node relations
-                 * from the parent node in its origin
+                 * Iteration query: find all outgoing tethered child node relations from the parent node in its origin;
+                 * which ones are resolved depends on the recursion mode.
                  */
                 SELECT
                     c.relationanchorpoint,
@@ -275,7 +279,9 @@ trait NodeRemoval
                     JOIN ' . NodeRecord::TABLE_NAME . ' c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                 WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-                    ' . ($event->recursive ? '' : ' AND c.classification = :classification') . '
+                    ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
+                ? ' AND c.classification = :classification'
+                : '') . '
             )
             INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
                 SELECT
@@ -285,10 +291,7 @@ trait NodeRemoval
                     dimensionspacepointhash,
                     array_agg(relationanchorpoint) AS childnodeanchors
                 FROM descendantNodes
-                    /**
-                     * Finally, we join the relations to be copied
-                     * with all dimension space points they are to be copied to
-                     */
+                    /** Here we join the affected dimension space points to actually create the new edges */
                     JOIN (
                         SELECT unnest(ARRAY[:dimensionSpacePoints]) AS dimensionspacepoint,
                         unnest(ARRAY[:dimensionSpacePointHashes]) AS dimensionspacepointhash
@@ -299,7 +302,7 @@ trait NodeRemoval
                 'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
                 'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
                 'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
-                'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
+                'originDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash,
                 'dimensionSpacePoints' => array_map(
                     fn(DimensionSpacePoint $dimensionSpacePoint): string
                         => json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR),
