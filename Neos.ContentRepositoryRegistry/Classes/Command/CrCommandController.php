@@ -34,7 +34,14 @@ class CrCommandController extends CommandController
     protected $objectManager;
 
 
-    public function replayCommand(string $projectionName, string $contentRepositoryName = 'ContentRepository', int $maximumSequenceNumber = null, $quiet = false)
+    /**
+     * @param string $projectionName
+     * @param string $contentRepositoryName
+     * @param int|null $maximumSequenceNumber
+     * @param bool $quiet
+     * @return void
+     */
+    public function replayCommand(string $projectionName, string $contentRepositoryName = 'ContentRepository', int $maximumSequenceNumber = null, bool $quiet = false): void
     {
         if ($projectionName === 'graph') {
             $projector = $this->objectManager->get(GraphProjector::class);
