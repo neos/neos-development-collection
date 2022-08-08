@@ -32,7 +32,7 @@ class CrCommandController extends CommandController
     protected $objectManager;
 
 
-    public function replayCommand(string $projectionName, string $contentRepositoryIdentifier = 'default', int $maximumSequenceNumber = null, $quiet = false)
+    public function replayCommand(string $projectionName, string $contentRepositoryIdentifier = 'default', int $maximumSequenceNumber = null, bool $quiet = false)
     {
         $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
 

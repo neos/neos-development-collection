@@ -1,8 +1,0 @@
-Neos\ContentRepository\LegacyNodeMigration\Service\ContentRepositoryExportService:
-  properties:
-    eventStore:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'

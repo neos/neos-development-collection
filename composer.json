@@ -63,7 +63,7 @@
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
-        "neos/escr-export": "self.version",
+        "neos/contentrepository-export": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version",
         "neos/fusion-afx": "self.version",
@@ -217,6 +217,9 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
+            ],
+            "Neos\\ContentRepository\\Export\\": [
+                "Neos/Neos.ContentRepository.Export/src/"
             ]
         }
     },
