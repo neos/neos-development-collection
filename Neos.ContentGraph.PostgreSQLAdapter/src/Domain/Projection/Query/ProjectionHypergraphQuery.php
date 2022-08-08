@@ -96,7 +96,8 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
     public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
     {
         $query = $this->query .= '
-            AND n.origindimensionspacepointhash = :originDimensionSpacePointHash';
+            AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+            AND h.dimensionspacepointhash = :originDimensionSpacePointHash';
 
         $parameters = $this->parameters;
         $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;

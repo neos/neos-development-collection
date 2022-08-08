@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeDisabling\Command;
+namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -26,28 +26,29 @@ use Neos\Flow\Annotations as Flow;
  * The node variant selection strategy for node aggregates as selected when creating commands.
  * Used for calculating the affected dimension space points
  * to e.g. build restriction relations to other node aggregates or to remove nodes.
+ *
+ * To further explain this, consider the following variation graph:
+ * ┌─────┐     ┌─────┐     ┌─────┐     ┌─────┐
+ * │ gsw │────▶│ de  │────▶│ en  │◀────│ fr  │
+ * └─────┘     └─────┘     └─────┘     └─────┘
+ * From "de"'s point of view, "gsw" is a specialization, "en" a generalization and "fr" a peer variant
+ * {@see VariantType}
+ * For our examples we consider a node aggregate covering the complete dimension space.
  */
 #[Flow\Proxy(false)]
 enum NodeVariantSelectionStrategy: string implements \JsonSerializable
 {
     /**
-     * The "only given" strategy, meaning only the given dimension space point is affected
-     */
-    case STRATEGY_ONLY_GIVEN_VARIANT = 'onlyGivenVariant';
-
-    /**
-     * The "virtual specializations" strategy,
-     * meaning only the specializations covered but unoccupied by this node aggregate are affected.
-     */
-    case STRATEGY_VIRTUAL_SPECIALIZATIONS = 'virtualSpecializations';
-
-    /**
      * The "all specializations" strategy, meaning all specializations covered by this node aggregate are affected
+     *
+     * In our example, the result of using "allSpecializations" on "de" will be ["de","gsw"]
      */
     case STRATEGY_ALL_SPECIALIZATIONS = 'allSpecializations';
 
     /**
      * The "all variants" strategy, meaning all dimension space points covered by this node aggregate are affected
+     *
+     * In our example, the result of using "allVariants" on "de" will be ["de","gsw","en","fr"]
      */
     case STRATEGY_ALL_VARIANTS = 'allVariants';
 
@@ -59,12 +60,7 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
         return match ($this) {
             self::STRATEGY_ALL_VARIANTS => $nodeAggregate->getCoveredDimensionSpacePoints(),
             self::STRATEGY_ALL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
-                ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints()),
-            self::STRATEGY_VIRTUAL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
-                ->getIntersection($nodeAggregate->getCoverageByOccupant(
-                    $nodeAggregate->getOccupationByCovered($referenceDimensionSpacePoint)
-                )),
-            self::STRATEGY_ONLY_GIVEN_VARIANT => new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
+                ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints())
         };
     }
 
@@ -77,11 +73,7 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
             self::STRATEGY_ALL_VARIANTS => $nodeAggregate->getOccupiedDimensionSpacePoints(),
             self::STRATEGY_ALL_SPECIALIZATIONS => OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
                 $variationGraph->getSpecializationSet($referenceDimensionSpacePoint->toDimensionSpacePoint())
-                )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()),
-            self::STRATEGY_VIRTUAL_SPECIALIZATIONS, self::STRATEGY_ONLY_GIVEN_VARIANT =>
-                $nodeAggregate->occupiesDimensionSpacePoint($referenceDimensionSpacePoint)
-                    ? new OriginDimensionSpacePointSet([$referenceDimensionSpacePoint])
-                    : new OriginDimensionSpacePointSet([])
+            )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints())
         };
     }
 
