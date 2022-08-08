@@ -12,6 +12,8 @@
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
         "neos/utility-arrays": "*",
+        "league/flysystem": "^3",
+        "webmozart/assert": "^1.11",
         "neos/neos-ui": "*",
         "neos/eventstore": "*",
         "neos/eventstore-doctrineadapter": "*",
@@ -20,7 +22,6 @@
         "symfony/serializer": "*",
         "neos/flow": "*",
         "symfony/property-access": "*",
-        "webmozart/assert": "^1.10",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -54,6 +55,7 @@
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/contentrepository-dimensionspace": "self.version",
+        "neos/contentrepository-export": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
         "neos/contentrepository-nodemigration": "self.version",
@@ -63,7 +65,6 @@
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
-        "neos/contentrepository-export": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version",
         "neos/fusion-afx": "self.version",
@@ -83,6 +84,9 @@
         "neos/site-kickstarter": "self.version"
     },
     "suggest": {
+        "league/flysystem-ziparchive": "to export zip archives",
+        "neos/media": "to import Assets",
+        "neos/escr-asset-usage": "to export used assets",
         "neos/utility-schema": "Validate NodeType schema.",
         "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
@@ -137,6 +141,9 @@
             "Neos\\ContentRepository\\DimensionSpace\\": [
                 "Neos.ContentRepository.DimensionSpace/src"
             ],
+            "Neos\\ContentRepository\\Export\\": [
+                "Neos.ContentRepository.Export/src/"
+            ],
             "Neos\\ContentRepository\\LegacyNodeMigration\\": [
                 "Neos.ContentRepository.LegacyNodeMigration/Classes"
             ],
@@ -163,9 +170,6 @@
             ],
             "Neos\\ESCR\\AssetUsage\\": [
                 "Neos.ESCR.AssetUsage/Classes/"
-            ],
-            "Neos\\ESCR\\Export\\": [
-                "Neos.ESCR.Export/Classes/"
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
@@ -217,9 +221,6 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
-            ],
-            "Neos\\ContentRepository\\Export\\": [
-                "Neos/Neos.ContentRepository.Export/src/"
             ]
         }
     },
@@ -290,6 +291,8 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^1.5",
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3",
         "squizlabs/php_codesniffer": "^3.6",
         "phpunit/phpunit": "^9.0"
     }
