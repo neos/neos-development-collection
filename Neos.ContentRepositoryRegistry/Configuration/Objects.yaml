@@ -6,6 +6,7 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
 Neos\ContentRepository\Infrastructure\DbalClientInterface:
   className: Neos\ContentRepositoryRegistry\Infrastructure\DbalClient
 
+# !!! UGLY WORKAROUNDS, because we cannot wire non-Flow class constructor arguments here.
 Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
@@ -34,4 +35,15 @@ Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory:
       value: Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory
     2:
       object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+
+
+Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  arguments:
+    1:
+      value: Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
+    2:
+      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+
 

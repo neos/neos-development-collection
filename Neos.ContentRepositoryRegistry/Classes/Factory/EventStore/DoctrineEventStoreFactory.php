@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Factory\EventStore;
 
 use Doctrine\DBAL\Connection;
@@ -19,7 +20,12 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
     {
         return new DoctrineEventStore(
             $this->connection,
-            $eventStorePreset['options']['eventTableName'] ?? sprintf('neos_cr_%s_events', $contentRepositoryIdentifier)
+            self::databaseTableName($contentRepositoryIdentifier)
         );
+    }
+
+    public static function databaseTableName(ContentRepositoryIdentifier $contentRepositoryIdentifier): string
+    {
+        return sprintf('cr_%s_events', $contentRepositoryIdentifier);
     }
 }

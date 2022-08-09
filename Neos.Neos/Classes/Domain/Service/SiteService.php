@@ -177,6 +177,7 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
+        return $site; // TODO: FIX ME (CODE BELOW)
         $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
         if (is_null($currentUserIdentifier)) {
             $currentUserIdentifier = UserIdentifier::forSystemUser();

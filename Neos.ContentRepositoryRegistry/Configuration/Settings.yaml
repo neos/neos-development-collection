@@ -11,16 +11,13 @@ Neos:
       default:
         preset: default
         contentDimensions:
-          dimensions: # TODO NAMING HERE?
-            # NOTE: Dimensions Config follows here
+          # NOTE: Dimensions Config follows here
 
     presets:
       'default':
 
         eventStore:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
-          # options:
-          #   eventTableName: (overridden event table name)
 
         nodeTypeManager:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
@@ -66,6 +63,8 @@ Neos:
             factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
           'Neos.ContentRepository:Workspace':
             factoryObjectName: Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory
+          'Neos.ContentRepository:NodeHiddenState':
+            factoryObjectName: Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
 
 
 

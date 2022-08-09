@@ -17,22 +17,11 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\Export\Asset\Adapters\DbalAssetLoader;
-use Neos\ContentRepository\Export\Asset\Adapters\FileSystemResourceLoader;
-use Neos\ContentRepository\Export\Asset\AssetExporter;
-use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
-use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
-use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\LegacyNodeMigration\Helpers\NodeDataLoader;
-use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
-use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
+use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
@@ -42,7 +31,6 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Utility\Files;
 
 class ContentRepositoryMigrateCommandController extends CommandController
 {
@@ -60,25 +48,22 @@ class ContentRepositoryMigrateCommandController extends CommandController
         private readonly AssetRepository $assetRepository,
         private readonly ResourceRepository $resourceRepository,
         private readonly ResourceManager $resourceManager,
-        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyMapper $propertyMapper,
-        private readonly EventNormalizer $eventNormalizer,
-        private readonly PropertyConverter $propertyConverter,
-        private readonly EventStoreFactory $eventStoreFactory,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
     ) {
         parent::__construct();
     }
 
     /**
-     * Run a CR export
+     * Migrate from the Legacy CR
      *
      * @param bool $verbose If set, all notices will be rendered
      * @param string|null $config JSON encoded configuration, for example '{"dbal": {"dbname": "some-other-db"}, "resourcesPath": "/some/absolute/path"}'
      * @throws \Exception
      */
-    public function runCommand(bool $verbose = false, string $config = null): void
+    public function runCommand(bool $verbose = false, string $config = null, string $contentRepositoryIdentifier = 'default'): void
     {
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         if ($config !== null) {
             try {
                 $parsedConfig = json_decode($config, true, 512, JSON_THROW_ON_ERROR);
@@ -95,36 +80,37 @@ class ContentRepositoryMigrateCommandController extends CommandController
             $connection = $this->determineConnection();
             $resourcesPath = $this->determineResourcesPath();
         }
-        $temporaryFilePath = $this->environment->getPathToTemporaryDirectory() . uniqid('Export', true);
-        Files::createDirectoryRecursively($temporaryFilePath);
-        $filesystem = new Filesystem(new LocalFilesystemAdapter($temporaryFilePath));
 
-        $assetExporter = new AssetExporter($filesystem, new DbalAssetLoader($connection), new FileSystemResourceLoader($resourcesPath));
-        $eventStore = $this->eventStoreFactory->create('ContentRepository');
-
-        /** @var ProcessorInterface[] $processors */
-        $processors = [
-            'Exporting assets' => new NodeDataToAssetsProcessor($this->nodeTypeManager, $assetExporter, new NodeDataLoader($connection)),
-            'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, $filesystem, new NodeDataLoader($connection)),
-            'Importing assets' => new AssetRepositoryImportProcessor($filesystem, $this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Importing events' => new EventStoreImportProcessor(true, true, $filesystem, $eventStore, $this->eventNormalizer),
-        ];
-
-
-        foreach ($processors as $label => $processor) {
-            $this->outputLine($label . '...');
-            $verbose && $processor->onMessage(fn (Severity $severity, string $message) => $this->outputLine('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
-            $result = $processor->run();
-            if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($result->message);
-            }
-            $this->outputLine('  ' . $result->message);
-            $this->outputLine();
+        $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryIdentifier);
+        $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE (y/n)? ', $eventTableName));
+        if (!$confirmed) {
+            $this->outputLine('Exiting');
+            return;
         }
+        $this->connection->executeStatement('TRUNCATE ' . $eventTableName);
+        $this->outputLine('Truncated events');
+
+        $legacyMigrationService = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new LegacyMigrationServiceFactory(
+                $connection,
+                $resourcesPath,
+                $this->environment,
+                $this->persistenceManager,
+                $this->assetRepository,
+                $this->resourceRepository,
+                $this->resourceManager,
+                $this->propertyMapper
+            )
+        );
+        assert($legacyMigrationService instanceof LegacyMigrationService);
+        $legacyMigrationService->runAllProcessors($this->outputLine(...), $verbose);
+
 
         $this->outputLine();
 
-        $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'assetUsage', 'contentStream'];
+        // TODO: 'assetUsage'
+        $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'contentStream'];
         $this->outputLine('Replaying projections');
         $verbose && $this->output->progressStart(count($projections));
         foreach ($projections as $projection) {

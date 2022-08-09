@@ -1,0 +1,10 @@
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        projections:
+          'Neos.Neos:DocumentUriPathProjection':
+            factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory
+
+          'Neos.Neos:PendingChangesProjection':
+            factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory

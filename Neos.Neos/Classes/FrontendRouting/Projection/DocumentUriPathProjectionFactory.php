@@ -36,7 +36,7 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
             $projectionFactoryDependencies->nodeTypeManager,
             $this->dbal,
             sprintf(
-                'neos_cr_%s_projection_%s',
+                'cr_%s_p_neos_%s',
                 $projectionFactoryDependencies->contentRepositoryIdentifier,
                 $projectionShortName
             ),

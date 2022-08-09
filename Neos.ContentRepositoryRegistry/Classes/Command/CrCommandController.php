@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
-use Neos\ContentRepository\Projection\Changes\ChangeProjection;
+use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
@@ -31,6 +31,16 @@ class CrCommandController extends CommandController
      */
     protected $objectManager;
 
+
+
+    public function setupCommand(string $contentRepositoryIdentifier = 'default')
+    {
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository->setUp();
+        $this->outputLine('Content Repository tables "' . $contentRepositoryIdentifier . '" set up.');
+    }
 
     public function replayCommand(string $projectionName, string $contentRepositoryIdentifier = 'default', int $maximumSequenceNumber = null, bool $quiet = false)
     {

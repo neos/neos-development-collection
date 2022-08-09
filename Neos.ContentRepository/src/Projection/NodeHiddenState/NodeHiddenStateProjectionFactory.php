@@ -12,23 +12,18 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Change;
+namespace Neos\ContentRepository\Projection\NodeHiddenState;
 
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Projection\Changes\ChangeProjection;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
-// TODO: MOVE TO NEOS
 /**
- * @implements ProjectionFactoryInterface<ChangeProjection>
+ * @implements ProjectionFactoryInterface<NodeHiddenStateProjection>
  */
-class ChangeProjectionFactory implements ProjectionFactoryInterface
+class NodeHiddenStateProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
         private readonly DbalClientInterface $dbalClient
@@ -40,20 +35,19 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): ChangeProjection {
-        $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
-        assert($workspaceFinder instanceof WorkspaceFinder);
+    ): NodeHiddenStateProjection
+    {
         $projectionShortName = strtolower(str_replace(
             'Projection',
             '',
-            (new \ReflectionClass(DocumentUriPathProjection::class))->getShortName()
+            (new \ReflectionClass(NodeHiddenStateProjection::class))->getShortName()
         ));
-        return new ChangeProjection(
+
+        return new NodeHiddenStateProjection(
             $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
-            $workspaceFinder,
             sprintf(
-                'neos_cr_%s_projection_%s',
+                'cr_%s_p_%s',
                 $projectionFactoryDependencies->contentRepositoryIdentifier,
                 $projectionShortName
             ),

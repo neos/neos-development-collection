@@ -232,7 +232,7 @@ trait EventSourcedTrait
 
         $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
         // copied from DoctrineEventStoreFactory
-        $eventTableName = sprintf('neos_cr_%s_events', $this->contentRepositoryIdentifier);
+        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryIdentifier);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
     }

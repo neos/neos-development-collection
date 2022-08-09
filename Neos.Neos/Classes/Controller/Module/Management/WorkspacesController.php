@@ -18,7 +18,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Projection\Changes\ChangeProjection;
+use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;

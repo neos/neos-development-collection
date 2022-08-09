@@ -45,7 +45,7 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
             $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             sprintf(
-                'neos_cr_%s_projection_%s',
+                'cr_%s_p_%s',
                 $projectionFactoryDependencies->contentRepositoryIdentifier,
                 $projectionShortName
             ),

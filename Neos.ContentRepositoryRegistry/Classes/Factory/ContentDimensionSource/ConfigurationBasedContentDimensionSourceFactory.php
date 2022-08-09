@@ -16,7 +16,7 @@ class ConfigurationBasedContentDimensionSourceFactory implements ContentDimensio
     public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentDimensionSourcePreset): ContentDimensionSourceInterface
     {
         return new ConfigurationBasedContentDimensionSource(
-            $contentRepositorySettings['dimensions'] ?? []
+            $contentRepositorySettings['contentDimensions'] ?? []
         );
     }
 }

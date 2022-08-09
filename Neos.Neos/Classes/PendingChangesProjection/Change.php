@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Changes;
+namespace Neos\Neos\PendingChangesProjection;
 
 use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;

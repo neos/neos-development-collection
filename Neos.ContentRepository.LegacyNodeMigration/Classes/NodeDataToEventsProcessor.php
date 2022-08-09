@@ -10,10 +10,11 @@ use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
-use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -47,8 +48,6 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Property\PropertyMapper;
 use Ramsey\Uuid\Uuid;
@@ -57,7 +56,6 @@ use Webmozart\Assert\Assert;
 final class NodeDataToEventsProcessor implements ProcessorInterface
 {
 
-    private array $callbacks = [];
     private NodeTypeName $sitesNodeTypeName;
     private ContentStreamIdentifier $contentStreamIdentifier;
     private VisitedNodeAggregates $visitedNodes;
@@ -144,12 +142,12 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
     }
 
-    private function exportEvent(DomainEventInterface $event): void
+    private function exportEvent(EventInterface $event): void
     {
         $exportedEvent = new ExportedEvent(
             Uuid::uuid4()->toString(),
-            $this->eventNormalizer->getEventType($event),
-            $this->eventNormalizer->normalize($event),
+            $this->eventNormalizer->getEventType($event)->value,
+            json_decode($this->eventNormalizer->getEventData($event)->value, true),
             []
         );
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
@@ -172,7 +170,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray($dimensionArray);
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
         if ($parentNodeAggregate === null) {
-            throw new MigrationException(sprintf('Failed to find parent node for node with id "%s" and dimensions: %s', $nodeAggregateIdentifier, $originDimensionSpacePoint), 1655980069);
+            throw new MigrationException(sprintf('Failed to find parent node for node with id "%s" and dimensions: %s. Did you properly configure your dimensions setup to be in sync with the old setup?', $nodeAggregateIdentifier, $originDimensionSpacePoint), 1655980069);
         }
         $pathParts = $nodePath->getParts();
         $nodeName = end($pathParts);
@@ -307,13 +305,5 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         // HACK: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
         $nodeTypeOfParent->getFullConfiguration();
         return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
-    }
-
-    private function dispatch(Severity $severity, string $message, mixed ...$args): void
-    {
-        $renderedMessage = sprintf($message, ...$args);
-        foreach ($this->callbacks as $callback) {
-            $callback($severity, $renderedMessage);
-        }
     }
 }

@@ -12,17 +12,22 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\ContentStream;
+namespace Neos\Neos\PendingChangesProjection;
 
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
+use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\Projections;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+
 /**
- * @implements ProjectionFactoryInterface<ContentStreamProjection>
+ * @implements ProjectionFactoryInterface<ChangeProjection>
  */
-class ContentStreamProjectionFactory implements ProjectionFactoryInterface
+class ChangeProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
         private readonly DbalClientInterface $dbalClient
@@ -34,17 +39,20 @@ class ContentStreamProjectionFactory implements ProjectionFactoryInterface
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): ContentStreamProjection {
+    ): ChangeProjection {
+        $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
+        assert($workspaceFinder instanceof WorkspaceFinder);
         $projectionShortName = strtolower(str_replace(
             'Projection',
             '',
-            (new \ReflectionClass(ContentStreamProjection::class))->getShortName()
+            (new \ReflectionClass(ChangeProjection::class))->getShortName()
         ));
-        return new ContentStreamProjection(
+        return new ChangeProjection(
             $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
+            $workspaceFinder,
             sprintf(
-                'cr_%s_p_%s',
+                'cr_%s_p_neos_%s',
                 $projectionFactoryDependencies->contentRepositoryIdentifier,
                 $projectionShortName
             ),

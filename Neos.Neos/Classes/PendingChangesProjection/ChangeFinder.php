@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\Changes;
+namespace Neos\Neos\PendingChangesProjection;
 
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * !!! Still a bit unstable - might change in the future.
  *
- * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  */
 final class ChangeFinder implements ProjectionStateInterface
 {
