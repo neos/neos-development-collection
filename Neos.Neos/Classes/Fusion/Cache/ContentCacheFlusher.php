@@ -57,13 +57,12 @@ class ContentCacheFlusher
      * @param ContentRepository $contentRepository
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return callable
      */
     public function flushNodeAggregate(
         ContentRepository $contentRepository,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): callable {
+    ): void {
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
@@ -75,8 +74,7 @@ class ContentCacheFlusher
         );
         if (!$nodeAggregate) {
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
-            return function () {
-            };
+            return;
         }
 
         $this->registerChangeOnNodeType(
@@ -126,9 +124,7 @@ class ContentCacheFlusher
                 $parentNodeAggregates[] = $parentNodeAggregate;
             }
         }
-        return function () use ($tagsToFlush) {
-            $this->flushTags($tagsToFlush);
-        };
+        $this->flushTags($tagsToFlush);
     }
 
 
