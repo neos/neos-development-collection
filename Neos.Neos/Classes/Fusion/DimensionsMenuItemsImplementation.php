@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
@@ -47,6 +48,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $menuItems = [];
         $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $contentRepositoryIdentifier,
+        );
+
         $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->getService(
             $contentRepositoryIdentifier,
             new DimensionsMenuItemsImplementationInternalsFactory()
@@ -62,10 +67,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
                     $variant = $this->currentNode;
                 } else {
-                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $this->currentNode->getSubgraphIdentity(),
-                    );
-                    $variant = $nodeAccessor->findByIdentifier($this->currentNode->getNodeAggregateIdentifier());
+                    $variant = $contentRepository->getContentGraph()
+                        ->getSubgraphByIdentifier(
+                            $this->currentNode->getSubgraphIdentity()->contentStreamIdentifier,
+                            $dimensionSpacePoint,
+                            $this->currentNode->getSubgraphIdentity()->visibilityConstraints,
+                        )
+                        ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
@@ -73,7 +81,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
                         $this->currentNode->getNodeAggregateIdentifier(),
-                        $dimensionMenuItemsImplementationInternals
+                        $dimensionMenuItemsImplementationInternals,
+                        $contentRepository
                     );
                 }
 
@@ -139,7 +148,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         DimensionSpacePoint $dimensionSpacePoint,
         ContentDimensionIdentifier $contentDimensionIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals
+        DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals,
+        ContentRepository $contentRepository
     ): ?NodeInterface {
         $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph
             ->getWeightedGeneralizations($dimensionSpacePoint);
@@ -149,10 +159,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $generalization->getCoordinate($contentDimensionIdentifier)
                 === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)
             ) {
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $this->currentNode->getSubgraphIdentity(),
-                );
-                $variant = $nodeAccessor->findByIdentifier($nodeAggregateIdentifier);
+                $variant = $contentRepository->getContentGraph()
+                    ->getSubgraphByIdentifier(
+                        $this->currentNode->getSubgraphIdentity()->contentStreamIdentifier,
+                        $generalization,
+                        $this->currentNode->getSubgraphIdentity()->visibilityConstraints,
+                    )
+                    ->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
                 if ($variant) {
                     return $variant;
                 }
