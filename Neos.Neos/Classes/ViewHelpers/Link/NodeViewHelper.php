@@ -270,6 +270,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
+            throw new \RuntimeException('TODO: Support this case (and pass ContentRepositoryIdentiifer as argument');
             $nodeAddress = $this->resolveNodeAddressFromString($node);
         } else {
             throw new ViewHelperException(sprintf(
@@ -279,25 +280,24 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             ), 1601372376);
         }
 
-        /* @var NodeInterface $documentNode */
-        $documentNode = $this->getContextVariable('documentNode');
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
-            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
-            $nodeAddress
-        );
-        $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+
+        $subgraph = $contentRepository->getContentGraph()
+            ->getSubgraphByIdentifier(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                $node->getSubgraphIdentity()->visibilityConstraints
+            );
+
+        $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
             throw new ViewHelperException(sprintf(
                 'Failed to resolve node "%s" on subgraph "%s"',
                 $nodeAddress->nodeAggregateIdentifier,
-                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444);
         }
         if ($resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
             try {
-                $contentRepository = $this->contentRepositoryRegistry->get(
-                    $resolvedNode->getSubgraphIdentity()->contentRepositoryIdentifier
-                );
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
                     $nodeAddress,
                     $contentRepository
@@ -306,11 +306,11 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
                     $resolvedNode->getNodeAggregateIdentifier(),
-                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601370239, $e);
             }
             if ($shortcutNodeAddress instanceof NodeAddress) {
-                $resolvedNode = $nodeAccessor->findByIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
+                $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
             }
         }
 
