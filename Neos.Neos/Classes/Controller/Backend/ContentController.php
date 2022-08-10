@@ -160,8 +160,23 @@ class ContentController extends ActionController
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws ThumbnailServiceException
      */
-    public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
+    public function uploadAssetAction(Asset $asset, string $metadata, string $node, string $propertyName)
     {
+        $nodeAddressString = $node;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
+
+        $node = $contentRepository->getContentGraph()
+            ->getSubgraphByIdentifier(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
+            ->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
+
+
         $this->response->setContentType('application/json');
         if ($metadata !== 'Asset' && $metadata !== 'Image') {
             $this->response->setStatusCode(400);
