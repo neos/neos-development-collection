@@ -63,7 +63,7 @@ final class Projections implements \IteratorAggregate
         if (!$this->has($projectionClassName)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'a projection of type "%s" is registered in this content repository instance.',
+                    'a projection of type "%s" is not registered in this content repository instance.',
                     $projectionClassName
                 ),
                 1650120813
