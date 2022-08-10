@@ -18,7 +18,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -168,7 +167,7 @@ class ContentController extends ActionController
             $this->response->setStatusCode(400);
             $result = ['error' => 'Invalid "metadata" type: ' . $metadata];
         } else {
-            if (($asset instanceof Image || $asset instanceof ImageVariant) && $metadata === 'Image') {
+            if ($asset instanceof ImageInterface && $metadata === 'Image') {
                 $result = $this->getImageInterfacePreviewData($asset);
             } else {
                 $result = $this->getAssetProperties($asset);
@@ -227,12 +226,12 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for a given image
      *
-     * @param Image $image
+     * @param ImageInterface $image
      *
      * @return string JSON encoded response
      * @throws ThumbnailServiceException
      */
-    public function imageWithMetadataAction(Image $image)
+    public function imageWithMetadataAction(ImageInterface $image)
     {
         $this->response->setContentType('application/json');
         $imageProperties = $this->getImageInterfacePreviewData($image);
@@ -255,7 +254,7 @@ class ContentController extends ActionController
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
-    protected function getImageInterfacePreviewData(Image|ImageVariant $image)
+    protected function getImageInterfacePreviewData(ImageInterface $image)
     {
         // TODO: Now that we try to support all ImageInterface implementations we should use a strategy here
         // to get the image properties for custom implementations
