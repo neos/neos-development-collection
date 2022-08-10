@@ -145,7 +145,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
 
     public function getState(): ProjectionStateInterface
     {
-        if (!$this->nodeHiddenStateFinder) {
+        if (!isset($this->nodeHiddenStateFinder)) {
             $this->nodeHiddenStateFinder = new NodeHiddenStateFinder(
                 $this->dbalClient,
                 $this->tableName
