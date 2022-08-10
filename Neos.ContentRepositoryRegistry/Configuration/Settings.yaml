@@ -59,7 +59,9 @@ Neos:
         projections:
           'Neos.ContentRepository:ContentStream':
             factoryObjectName: Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory
-          'Neos.ContentRepository:MysqlContentGraph':
+          # NOTE: the following name must be stable, because we use it f.e. in Neos UI to register
+          # catchUpHooks for content cache flushing
+          'Neos.ContentRepository:ContentGraph':
             factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
           'Neos.ContentRepository:Workspace':
             factoryObjectName: Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory

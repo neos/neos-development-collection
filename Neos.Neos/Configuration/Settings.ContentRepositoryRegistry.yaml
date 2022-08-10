@@ -8,3 +8,7 @@ Neos:
 
           'Neos.Neos:PendingChangesProjection':
             factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory
+          'Neos.ContentRepository:ContentGraph':
+            catchUpHooks:
+              'Neos.Neos:FlushContentCache':
+                factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
