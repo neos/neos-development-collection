@@ -79,56 +79,59 @@ Do the following for setting up everything:
 
 1. Start the databases:
 
-   ```bash
-   pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose up -d; popd
+   .. code-block:: bash
 
-   # to stop the databases:
-   pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose down; popd
-   # to stop the databases AND remove the stored data:
-   pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose down -v; popd
-   ```
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose up -d; popd
+
+       # to stop the databases:
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose down; popd
+       # to stop the databases AND remove the stored data:
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose down -v; popd
 
 2. Copy matching Configuration:
 
-   ```bash
-   cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionConfigurationTemplate/* Configuration/
-   ```
+   .. code-block:: bash
+
+       cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionConfigurationTemplate/* Configuration/
 
 3. Run Doctrine Migrations:
 
-   ```bash
-   ./flow doctrine:migrate
-   FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
-   ```
+   .. code-block:: bash
+   
+       ./flow doctrine:migrate
+       FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
 
 4. Setup the Content Repository
 
-   ```bash
-   ./flow cr:setup
-   ```
+   .. code-block:: bash
+
+       ./flow cr:setup
 
 5. Set up Behat
 
-   ```bash
-   cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* Build/Behat/
-   pushd Build/Behat/
-   rm composer.lock
-   composer install
-   popd
-   ```
+   .. code-block:: bash
+
+       cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* Build/Behat/
+       pushd Build/Behat/
+       rm composer.lock
+       composer install
+       popd
+
 
 Starting Neos
 =============
 
-```bash
-./flow server:run
-```
+   .. code-block:: bash
+
+       ./flow server:run
+
 
 Running the Tests
 =================
 
-```bash
-pushd Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior
-../../../../../bin/behat -c behat.yml.dist Features/
-popd
-```
+   .. code-block:: bash
+
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior
+       ../../../../../bin/behat -c behat.yml.dist Features/
+       popd
+
