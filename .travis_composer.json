@@ -16,6 +16,8 @@
 
       "neos/demo": "@dev",
       "neos/neos-ui": "9.0.x-dev",
+      "neos/eventstore": "@dev",
+      "neos/eventstore-doctrineadapter": "@dev",
       "neos/neos-ui-compiled": "@dev",
       "neos/fusion-afx": "@dev",
       "neos/fusion-form": "@dev",
