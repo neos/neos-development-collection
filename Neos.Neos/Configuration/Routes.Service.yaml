@@ -2,6 +2,34 @@
 # "Service" subroutes configuration for the Neos.Neos package           #
 #                                                                        #
 
+# RESTful routes for Nodes service
+-
+  name: 'Nodes - index'
+  uriPattern: 'nodes'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'index'
+  appendExceedingArguments: true
+  httpMethods: ['GET']
+
+-
+  name: 'Nodes - single node'
+  uriPattern: 'nodes/{identifier}'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'show'
+  appendExceedingArguments: true
+  httpMethods: ['HEAD', 'GET']
+
+-
+  name: 'Nodes - create/adopt node'
+  uriPattern: 'nodes'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'create'
+  appendExceedingArguments: true
+  httpMethods: ['POST']
+
 # UserPreferencesController routes
 -
   name: 'Services - UserPreferencesController->index'
@@ -134,3 +162,13 @@
   appendExceedingArguments: true
   httpMethods: ['GET']
 
+# ContentDimensionController routes
+-
+  name: 'Services - ContentDimensionController->index()'
+  uriPattern: 'content-dimensions'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\ContentDimensions'
+    '@action':     'index'
+  appendExceedingArguments: true
+  httpMethods: ['GET']
