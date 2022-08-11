@@ -18,6 +18,7 @@ use Neos\ContentRepository\CommandHandler\CommandBus;
 use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\EventStore\EventPersister;
+use Neos\ContentRepository\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
@@ -44,6 +45,9 @@ use Neos\EventStore\ProvidesSetupInterface;
  */
 final class ContentRepository
 {
+    /**
+     * @internal use the {@see ContentRepositoryFactory::build()} to instantiate
+     */
     public function __construct(
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,

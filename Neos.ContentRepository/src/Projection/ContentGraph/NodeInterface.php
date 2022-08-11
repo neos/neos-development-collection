@@ -25,6 +25,15 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 /**
  * Main read model of the {@see ContentSubgraphInterface}.
  *
+ * Immutable, Read Only. In case you want to modify it, you need
+ * to create Commands and send them to ContentRepository::handle.
+ *
+ * The node does not have structure information, i.e. no infos
+ * about its children. To f.e. fetch children, you need to fetch
+ * the subgraph via $node->getSubgraphIdentity() and then
+ * call findChildNodes() on the subgraph.
+ *
+ *
  * @api
  */
 interface NodeInterface

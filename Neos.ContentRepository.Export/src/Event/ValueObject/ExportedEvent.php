@@ -13,7 +13,7 @@ final class ExportedEvent implements \JsonSerializable
     public function __construct(
         public readonly string $identifier,
         public readonly string $type,
-        public readonly array $payload,
+        public readonly array $payload, // TODO: string
         public readonly array $metadata,
     ) {}
 
