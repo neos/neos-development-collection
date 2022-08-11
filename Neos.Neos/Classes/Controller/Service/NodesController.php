@@ -246,12 +246,14 @@ class NodesController extends ActionController
      * @param string $identifier Specifies the identifier of the node to be created; if source
      * @param string $workspaceName Name of the workspace where to create the node in
      * @param array $dimensions Optional list of dimensions and their values in which the node should be created
+     * @phpstan-param array<string,array<string>> $dimensions
      * @param array $sourceDimensions
+     * @phpstan-param array<string,array<string>> $sourceDimensions
      */
     public function createAction(
-        $mode,
-        $identifier,
-        $workspaceName = 'live',
+        string $mode,
+        string $identifier,
+        string $workspaceName = 'live',
         array $dimensions = [],
         array $sourceDimensions = []
     ): void {
@@ -311,8 +313,8 @@ class NodesController extends ActionController
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
         $nodeAggregate = $contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $identifier);
 
-        if ($nodeAggregate->getCoveredDimensionSpacePoints()->count() > 0) {
-            $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', true);
+        if ($nodeAggregate && $nodeAggregate->getCoveredDimensionSpacePoints()->count() > 0) {
+            $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', 'true');
 
             // If the node exists in another dimension, we want to know how many nodes in the rootline are also
             // missing for the target dimension. This is needed in the UI to tell the user if nodes will be
@@ -340,13 +342,17 @@ class NodesController extends ActionController
                 if ($missingNodesOnRootline > 0) {
                     $this->response->setHttpHeader(
                         'X-Neos-Nodes-Missing-On-Rootline',
-                        $missingNodesOnRootline
+                        (string)$missingNodesOnRootline
                     );
                 }
             }
         }
     }
 
+    /**
+     * @param iterable<NodeAggregate> $nodeAggregates
+     * @return NodeAggregate|null
+     */
     private static function firstNodeAggregate(iterable $nodeAggregates): ?NodeAggregate
     {
         foreach ($nodeAggregates as $nodeAggregate) {
@@ -358,8 +364,10 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
-     * @param NodeInterface $node
-     * @param ContentContext $contentContext
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentSubgraphInterface $sourceSubgraph
+     * @param ContentSubgraphInterface $targetSubgraph
+     * @param ContentRepository $contentRepository
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
      * @return void
      */
@@ -368,14 +376,17 @@ class NodesController extends ActionController
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         ContentRepository $contentRepository,
-        $copyContent
+        bool $copyContent
     ) {
         // TODO: IMPL COPYING OF CONTENT
         assert($copyContent === false); // TODO IMPL ME
         assert($sourceSubgraph->getContentStreamIdentifier()->equals($targetSubgraph->getContentStreamIdentifier()));
 
         $identifiersFromRootlineToTranslate = [];
-        while ($targetSubgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier) === null) {
+        while (
+            $nodeAggregateIdentifier
+            && $targetSubgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier) === null
+        ) {
             $identifiersFromRootlineToTranslate[] = $nodeAggregateIdentifier;
             $nodeAggregateIdentifier = $sourceSubgraph->findParentNode($nodeAggregateIdentifier)
                 ?->getNodeAggregateIdentifier();

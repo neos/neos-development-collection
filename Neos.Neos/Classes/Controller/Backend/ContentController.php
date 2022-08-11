@@ -153,7 +153,7 @@ class ContentController extends ActionController
      *
      * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
-     * @param NodeInterface $node The node the new asset should be assigned to
+     * @param string $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
      * @return string
      * @throws IllegalObjectTypeException
@@ -265,7 +265,7 @@ class ContentController extends ActionController
      *   "previewDimensions": Dimensions for the preview image (width, height)
      *   "object": object properties like the __identity and __type of the object
      *
-     * @param Image|ImageVariant $image The image to retrieve meta data for
+     * @param ImageInterface $image The image to retrieve meta data for
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
@@ -275,7 +275,7 @@ class ContentController extends ActionController
         // to get the image properties for custom implementations
         if ($image instanceof ImageVariant) {
             $imageProperties = $this->getImageVariantPreviewData($image);
-        } else {
+        } elseif ($image instanceof Image) {
             $imageProperties = $this->getImagePreviewData($image);
         }
 
@@ -288,7 +288,7 @@ class ContentController extends ActionController
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
-    protected function getImagePreviewData(Image $image)
+    protected function getImagePreviewData(Image $image): array
     {
         $imageProperties = [
             'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
@@ -458,7 +458,7 @@ class ContentController extends ActionController
                 ];
             }
         }
-        return json_encode((object) $views, JSON_THROW_ON_ERROR);
+        return json_encode((object)$views, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -503,7 +503,7 @@ class ContentController extends ActionController
             );
         }
 
-        return json_encode((object) $masterPlugins, JSON_THROW_ON_ERROR);
+        return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
     }
 
     final protected function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
@@ -529,12 +529,12 @@ class ContentController extends ActionController
      * Signals that a new asset has been uploaded through the Neos Backend
      *
      * @param Asset $asset The uploaded asset
-     * @param NodeInterface $node The node the asset belongs to
+     * @param NodeInterface|null $node The node the asset belongs to
      * @param string $propertyName The node property name the asset is assigned to
      * @return void
      * @Flow\Signal
      */
-    protected function emitAssetUploaded(Asset $asset, NodeInterface $node, string $propertyName)
+    protected function emitAssetUploaded(Asset $asset, ?NodeInterface $node, string $propertyName)
     {
     }
 }

@@ -14,29 +14,23 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
 /**
  * The node implementation for the PostgreSQL content graph adapter
  *
  * @internal
  */
-#[Flow\Proxy(false)]
 final class Node implements NodeInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     private OriginDimensionSpacePoint $originDimensionSpacePoint;
@@ -51,12 +45,8 @@ final class Node implements NodeInterface
 
     private NodeAggregateClassification $classification;
 
-    private DimensionSpacePoint $perspectiveDimensionSpacePoint;
-
-    private VisibilityConstraints $perspectiveVisibilityConstraints;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        private readonly ContentSubgraphIdentity $subgraphIdentity,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeTypeName $nodeTypeName,
@@ -64,10 +54,7 @@ final class Node implements NodeInterface
         ?NodeName $nodeName,
         PropertyCollectionInterface $properties,
         NodeAggregateClassification $classification,
-        DimensionSpacePoint $perspectiveDimensionSpacePoint,
-        VisibilityConstraints $perspectiveVisibilityConstraints
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->nodeTypeName = $nodeTypeName;
@@ -75,8 +62,11 @@ final class Node implements NodeInterface
         $this->nodeName = $nodeName;
         $this->properties = $properties;
         $this->classification = $classification;
-        $this->perspectiveDimensionSpacePoint = $perspectiveDimensionSpacePoint;
-        $this->perspectiveVisibilityConstraints = $perspectiveVisibilityConstraints;
+    }
+
+    public function getSubgraphIdentity(): ContentSubgraphIdentity
+    {
+        return $this->subgraphIdentity;
     }
 
     public function getClassification(): NodeAggregateClassification
@@ -144,21 +134,6 @@ final class Node implements NodeInterface
     public function hasProperty($propertyName): bool
     {
         return $this->properties->offsetExists($propertyName);
-    }
-
-    /**
-     * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
-     * related to this object.
-     *
-     * @return string
-     */
-    public function getCacheEntryIdentifier(): string
-    {
-        return sha1(json_encode([
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint
-        ], JSON_THROW_ON_ERROR));
     }
 
     public function getLabel(): string

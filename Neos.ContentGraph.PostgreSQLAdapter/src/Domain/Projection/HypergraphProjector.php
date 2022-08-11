@@ -47,12 +47,9 @@ final class HypergraphProjector //TODOextends AbstractProcessedEventsAwareProjec
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
-        private readonly PostgresDbalClientInterface $databaseClient,
-        DbalClientInterface $eventStorageDatabaseClient,
-        VariableFrontend $processedEventsCache
+        private readonly PostgresDbalClientInterface $databaseClient
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($databaseClient);
-        // TODO parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
     }
 
     /**

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Link;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -270,8 +271,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
-            throw new \RuntimeException('TODO: Support this case (and pass ContentRepositoryIdentiifer as argument');
-            $nodeAddress = $this->resolveNodeAddressFromString($node);
+            $documentNode = $this->getContextVariable('documentNode');
+            assert($documentNode instanceof NodeInterface);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
+            $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository);
+            $node = $documentNode;
         } else {
             throw new ViewHelperException(sprintf(
                 'The "node" argument can only be a string or an instance of %s. Given: %s',
@@ -361,13 +367,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @return NodeAddress
      * @throws ViewHelperException
      */
-    private function resolveNodeAddressFromString(string $path): NodeAddress
-    {
+    private function resolveNodeAddressFromString(
+        string $path,
+        NodeInterface $documentNode,
+        ContentRepository $contentRepository
+    ): NodeAddress {
         /* @var NodeInterface $documentNode */
-        $documentNode = $this->getContextVariable('documentNode');
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
-        );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
         if (strncmp($path, 'node://', 7) === 0) {

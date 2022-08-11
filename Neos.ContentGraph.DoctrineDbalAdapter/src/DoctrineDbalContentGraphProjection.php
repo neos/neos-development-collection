@@ -74,8 +74,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
-    private bool $doingFullReplayOfProjection = false;
-
     /**
      * @var ContentGraph|null Cache for the content graph returned by {@see getState()},
      * so that always the same instance is returned
@@ -135,14 +133,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function reset(): void
     {
         $this->truncateDatabaseTables();
-
-        /**
-         * Performance optimization: reset() is only called at the start of a {@see ProjectionManager::replay()}.
-         * In this case, we do not need to trigger cache flushes;
-         * so we need to remember here whether we run a full replay right now
-         */
-        // TODO?? $this->doingFullReplayOfProjection = true;
-        // TODO?? $this->assumeProjectorRunsSynchronously();
 
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
