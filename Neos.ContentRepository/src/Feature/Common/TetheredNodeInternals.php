@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Feature\Common;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -10,40 +14,33 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Feature\Common;
-
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
 
 trait TetheredNodeInternals
 {
     use NodeVariationInternals;
-
-    abstract protected function getContentGraph(): ContentGraphInterface;
 
     abstract protected function createEventsForVariations(
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents;
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
+    ): Events;
 
     /**
      * This is the remediation action for non-existing tethered nodes.
@@ -59,10 +56,11 @@ trait TetheredNodeInternals
         NodeName $tetheredNodeName,
         ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
-        UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents {
-        $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName(
-            $parentNode->getContentStreamIdentifier(),
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
+    ): Events {
+        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+            $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
             $parentNode->getNodeAggregateIdentifier(),
             $tetheredNodeName
         );
@@ -76,21 +74,18 @@ trait TetheredNodeInternals
 
         if (count($childNodeAggregates) === 0) {
             // there is no tethered child node aggregate already; let's create it!
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeAggregateWithNodeWasCreated(
-                        $parentNode->getContentStreamIdentifier(),
-                        $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
-                        NodeTypeName::fromString($expectedTetheredNodeType->getName()),
-                        $parentNode->getOriginDimensionSpacePoint(),
-                        $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
-                        $parentNode->getNodeAggregateIdentifier(),
-                        $tetheredNodeName,
-                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
-                        NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                        $initiatingUserIdentifier
-                    ),
-                    Uuid::uuid4()->toString()
+            return Events::with(
+                new NodeAggregateWithNodeWasCreated(
+                    $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
+                    $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
+                    NodeTypeName::fromString($expectedTetheredNodeType->getName()),
+                    $parentNode->getOriginDimensionSpacePoint(),
+                    $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
+                    $parentNode->getNodeAggregateIdentifier(),
+                    $tetheredNodeName,
+                    SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
+                    NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                    $initiatingUserIdentifier
                 )
             );
         } elseif (count($childNodeAggregates) === 1) {
@@ -110,12 +105,13 @@ trait TetheredNodeInternals
                 break;
             }
             /** @var NodeInterface $childNodeSource Node aggregates are never empty */
-            $events = $this->createEventsForVariations(
-                $parentNode->getContentStreamIdentifier(),
+            return $this->createEventsForVariations(
+                $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
                 $childNodeSource->getOriginDimensionSpacePoint(),
                 $parentNode->getOriginDimensionSpacePoint(),
                 $parentNodeAggregate,
-                $initiatingUserIdentifier
+                $initiatingUserIdentifier,
+                $contentRepository
             );
         } else {
             throw new \RuntimeException(
@@ -123,7 +119,5 @@ trait TetheredNodeInternals
                     '- this is ambiguous and we should analyze how this may happen. That is very likely a bug.'
             );
         }
-
-        return $events;
     }
 }

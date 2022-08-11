@@ -14,7 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -22,25 +25,21 @@ use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
 
 trait NodeVariationInternals
 {
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
-
-    abstract protected function getContentGraph(): ContentGraphInterface;
 
     protected function createEventsForVariations(
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents {
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
+    ): Events {
         return match (
             $this->getInterDimensionalVariationGraph()->getVariantType(
                 $targetOrigin->toDimensionSpacePoint(),
@@ -52,21 +51,24 @@ trait NodeVariationInternals
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate,
-                $initiatingUserIdentifier
+                $initiatingUserIdentifier,
+                $contentRepository
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
                 $contentStreamIdentifier,
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate,
-                $initiatingUserIdentifier
+                $initiatingUserIdentifier,
+                $contentRepository
             ),
             default => $this->handleCreateNodePeerVariant(
                 $contentStreamIdentifier,
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate,
-                $initiatingUserIdentifier
+                $initiatingUserIdentifier,
+                $contentRepository
             ),
         };
     }
@@ -76,8 +78,9 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents {
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
+    ): Events {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
             $contentStreamIdentifier,
@@ -86,15 +89,16 @@ trait NodeVariationInternals
             $nodeAggregate,
             $specializationVisibility,
             $initiatingUserIdentifier,
-            []
+            [],
+            $contentRepository
         );
 
-        return DomainEvents::fromArray($events);
+        return Events::fromArray($events);
     }
 
     /**
-     * @param array<int,DecoratedEvent> $events
-     * @return array<int,DecoratedEvent>
+     * @param array<int,EventInterface> $events
+     * @return array<int,EventInterface>
      */
     protected function collectNodeSpecializationVariantsThatWillHaveBeenCreated(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -103,22 +107,20 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
         UserIdentifier $initiatingUserIdentifier,
-        array $events
+        array $events,
+        ContentRepository $contentRepository
     ): array {
-        $events[] = DecoratedEvent::addIdentifier(
-            new NodeSpecializationVariantWasCreated(
-                $contentStreamIdentifier,
-                $nodeAggregate->getIdentifier(),
-                $sourceOrigin,
-                $targetOrigin,
-                $specializationVisibility,
-                $initiatingUserIdentifier
-            ),
-            Uuid::uuid4()->toString()
+        $events[] = new NodeSpecializationVariantWasCreated(
+            $contentStreamIdentifier,
+            $nodeAggregate->getIdentifier(),
+            $sourceOrigin,
+            $targetOrigin,
+            $specializationVisibility,
+            $initiatingUserIdentifier
         );
 
         foreach (
-            $this->getContentGraph()->findTetheredChildNodeAggregates(
+            $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $contentStreamIdentifier,
                 $nodeAggregate->getIdentifier()
             ) as $tetheredChildNodeAggregate
@@ -130,7 +132,8 @@ trait NodeVariationInternals
                 $tetheredChildNodeAggregate,
                 $specializationVisibility,
                 $initiatingUserIdentifier,
-                $events
+                $events,
+                $contentRepository
             );
         }
 
@@ -142,8 +145,9 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents {
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
+    ): Events {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
             $contentStreamIdentifier,
@@ -152,15 +156,16 @@ trait NodeVariationInternals
             $nodeAggregate,
             $generalizationVisibility,
             $initiatingUserIdentifier,
-            []
+            [],
+            $contentRepository
         );
 
-        return DomainEvents::fromArray($events);
+        return Events::fromArray($events);
     }
 
     /**
-     * @param array<int,DecoratedEvent> $events
-     * @return array<int,DecoratedEvent>
+     * @param array<int,EventInterface> $events
+     * @return array<int,EventInterface>
      */
     protected function collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -169,22 +174,20 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
         UserIdentifier $initiatingUserIdentifier,
-        array $events
+        array $events,
+        ContentRepository $contentRepository
     ): array {
-        $events[] = DecoratedEvent::addIdentifier(
-            new NodeGeneralizationVariantWasCreated(
-                $contentStreamIdentifier,
-                $nodeAggregate->getIdentifier(),
-                $sourceOrigin,
-                $targetOrigin,
-                $generalizationVisibility,
-                $initiatingUserIdentifier
-            ),
-            Uuid::uuid4()->toString()
+        $events[] = new NodeGeneralizationVariantWasCreated(
+            $contentStreamIdentifier,
+            $nodeAggregate->getIdentifier(),
+            $sourceOrigin,
+            $targetOrigin,
+            $generalizationVisibility,
+            $initiatingUserIdentifier
         );
 
         foreach (
-            $this->getContentGraph()->findTetheredChildNodeAggregates(
+            $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $contentStreamIdentifier,
                 $nodeAggregate->getIdentifier()
             ) as $tetheredChildNodeAggregate
@@ -196,7 +199,8 @@ trait NodeVariationInternals
                 $tetheredChildNodeAggregate,
                 $generalizationVisibility,
                 $initiatingUserIdentifier,
-                $events
+                $events,
+                $contentRepository
             );
         }
 
@@ -208,8 +212,9 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier
-    ): DomainEvents {
+        UserIdentifier $initiatingUserIdentifier,
+        ContentRepository $contentRepository
+    ): Events {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
             $contentStreamIdentifier,
@@ -218,15 +223,16 @@ trait NodeVariationInternals
             $nodeAggregate,
             $peerVisibility,
             $initiatingUserIdentifier,
-            []
+            [],
+            $contentRepository
         );
 
-        return DomainEvents::fromArray($events);
+        return Events::fromArray($events);
     }
 
     /**
-     * @param array<int,DecoratedEvent> $events
-     * @return array<int,DecoratedEvent>
+     * @param array<int,EventInterface> $events
+     * @return array<int,EventInterface>
      */
     protected function collectNodePeerVariantsThatWillHaveBeenCreated(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -235,22 +241,20 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
         UserIdentifier $initiatingUserIdentifier,
-        array $events
+        array $events,
+        ContentRepository $contentRepository
     ): array {
-        $events[] = DecoratedEvent::addIdentifier(
-            new NodePeerVariantWasCreated(
-                $contentStreamIdentifier,
-                $nodeAggregate->getIdentifier(),
-                $sourceOrigin,
-                $targetOrigin,
-                $peerVisibility,
-                $initiatingUserIdentifier
-            ),
-            Uuid::uuid4()->toString()
+        $events[] = new NodePeerVariantWasCreated(
+            $contentStreamIdentifier,
+            $nodeAggregate->getIdentifier(),
+            $sourceOrigin,
+            $targetOrigin,
+            $peerVisibility,
+            $initiatingUserIdentifier
         );
 
         foreach (
-            $this->getContentGraph()->findTetheredChildNodeAggregates(
+            $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $contentStreamIdentifier,
                 $nodeAggregate->getIdentifier()
             ) as $tetheredChildNodeAggregate
@@ -262,7 +266,8 @@ trait NodeVariationInternals
                 $tetheredChildNodeAggregate,
                 $peerVisibility,
                 $initiatingUserIdentifier,
-                $events
+                $events,
+                $contentRepository
             );
         }
 

@@ -8,7 +8,7 @@
     "require": {
         "neos/form": "*",
         "neos/media": "self.version",
-        "neos/content-repository": "self.version",
+        "neos/contentrepository": "self.version",
         "neos/neos": "self.version",
         "neos/fusion": "self.version",
         "neos/nodetypes-basemixins": "self.version",

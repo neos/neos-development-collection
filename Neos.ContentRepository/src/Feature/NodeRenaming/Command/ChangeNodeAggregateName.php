@@ -14,44 +14,33 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeRenaming\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
  * This is the case because Node Names are usually only used for tethered nodes (=autocreated in the old CR);
  * as then the Node Name is used for querying.
  */
-#[Flow\Proxy(false)]
 final class ChangeNodeAggregateName implements
+    CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeAddressInterface
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private NodeName $newNodeName;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeName $newNodeName,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeName $newNodeName,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->newNodeName = $newNodeName;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -67,26 +56,6 @@ final class ChangeNodeAggregateName implements
         );
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getNewNodeName(): NodeName
-    {
-        return $this->newNodeName;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
     /**
      * @return array<string,\JsonSerializable>
      */
@@ -100,21 +69,21 @@ final class ChangeNodeAggregateName implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new ChangeNodeAggregateName(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->newNodeName,
             $this->initiatingUserIdentifier
         );
     }
 
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
+            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
+                && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
         );
     }
 }

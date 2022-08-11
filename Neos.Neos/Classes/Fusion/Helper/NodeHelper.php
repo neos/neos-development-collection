@@ -17,7 +17,8 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
@@ -29,9 +30,9 @@ class NodeHelper implements ProtectedContextAwareInterface
 {
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -104,7 +105,11 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     public function nodeAddressToString(NodeInterface $node): string
     {
-        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        return $nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
     private function findNodeByNodePath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
@@ -123,9 +128,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         while (true) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             );
             $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
@@ -140,9 +143,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     private function findNodePath(NodeInterface $node): NodePath
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
 
         return $nodeAccessor->findNodePath($node);
@@ -152,9 +153,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         foreach ($nodePath->getParts() as $nodeName) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             );
             $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
             if ($childNode === null) {

@@ -1,18 +1,19 @@
 {
-    "name": "neos/content-repository-dimensionspace",
-    "type": "neos-package",
+    "name": "neos/contentrepository-dimensionspace",
     "description": "The dimension space for the Neos Content Repository",
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
         "php": "~8.1",
-        "neos/cache": "*",
         "neos/utility-arrays": "*"
+    },
+    "replace": {
+        "neos/content-repository-dimensionspace": "self.version"
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\DimensionSpace\\": "Classes"
+            "Neos\\ContentRepository\\DimensionSpace\\": "src"
         }
     },
     "autoload-dev": {

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
 /**
- * TODO: what is the difference between NodeTypeConstraintFactory and NodeTypeConstraintsFactory
+ * TODO: what is the difference between NodeTypeConstraintParser and NodeTypeConstraintsFactory
  */
 final class NodeTypeConstraintsFactory
 {

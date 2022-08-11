@@ -18,7 +18,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -31,8 +31,6 @@ trait NodeRenaming
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 

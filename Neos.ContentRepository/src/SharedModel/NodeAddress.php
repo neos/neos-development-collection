@@ -36,7 +36,7 @@ final class NodeAddress
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly DimensionSpacePoint $dimensionSpacePoint,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
-        public readonly ?WorkspaceName $workspaceName
+        public readonly WorkspaceName $workspaceName
     ) {
     }
 
@@ -49,7 +49,7 @@ final class NodeAddress
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            isset($array['workspaceName']) ? WorkspaceName::fromString($array['workspaceName']) : null
+            WorkspaceName::fromString($array['workspaceName'])
         );
     }
 
@@ -63,16 +63,6 @@ final class NodeAddress
         );
     }
 
-    public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
-    {
-        return new self(
-            $this->contentStreamIdentifier,
-            $dimensionSpacePoint,
-            $this->nodeAggregateIdentifier,
-            $this->workspaceName
-        );
-    }
-
     /**
      * @throws NodeAddressCannotBeSerializedException
      */
@@ -80,9 +70,6 @@ final class NodeAddress
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
-        if ($this->workspaceName === null) {
-            throw NodeAddressCannotBeSerializedException::becauseNoWorkspaceNameWasResolved($this);
-        }
         return $this->workspaceName->name
             . '__' . $this->dimensionSpacePoint->serializeForUri()
             . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
@@ -90,7 +77,7 @@ final class NodeAddress
 
     public function isInLiveWorkspace(): bool
     {
-        return $this->workspaceName?->isLive() ?: false;
+        return $this->workspaceName->isLive();
     }
 
     public function __toString(): string

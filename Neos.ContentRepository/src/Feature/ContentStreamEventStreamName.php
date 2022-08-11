@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\Model\Event\StreamName;
 
 /**
  * A content stream's event stream name
@@ -27,6 +27,8 @@ final class ContentStreamEventStreamName
      */
     protected $eventStreamName;
 
+    public const EVENT_STREAM_NAME_PREFIX = 'Neos.ContentRepository:ContentStream:';
+
     protected function __construct(string $eventStreamName)
     {
         $this->eventStreamName = $eventStreamName;
@@ -34,7 +36,7 @@ final class ContentStreamEventStreamName
 
     public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): self
     {
-        return new ContentStreamEventStreamName('Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier);
+        return new ContentStreamEventStreamName(self::EVENT_STREAM_NAME_PREFIX . $contentStreamIdentifier);
     }
 
     public function getEventStreamName(): StreamName

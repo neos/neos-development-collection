@@ -125,8 +125,11 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
-          # workaround for picking https://github.com/neos/Neos.EventSourcing/commit/a2865c36f676c9c8c77f165a842098cb62188e5b
-          composer require --no-update neos/event-sourcing:"dev-master#a2865c36f676c9c8c77f165a842098cb62188e5b"
+          # workaround for not-yet-released neos/eventstore packages
+          composer require --no-update neos/eventstore:"dev-main"
+          composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
+          composer require --no-update neos/neos-ui:"dev-90-contentrepository"
+          composer require --no-update neos/neos-ui-compiled:"dev-9.0 as dev-90-contentrepository"
 
       - name: Cache Composer packages
         id: composer-cache

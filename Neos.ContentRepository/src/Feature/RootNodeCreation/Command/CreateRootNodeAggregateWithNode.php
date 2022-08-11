@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\RootNodeCreation\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Create root node aggregate with node command
@@ -27,8 +27,10 @@ use Neos\Flow\Annotations as Flow;
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no tethered child nodes.
  */
-#[Flow\Proxy(false)]
-final class CreateRootNodeAggregateWithNode implements \JsonSerializable, RebasableToOtherContentStreamsInterface
+final class CreateRootNodeAggregateWithNode implements
+    CommandInterface,
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -64,10 +66,10 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable, Rebasa
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->initiatingUserIdentifier

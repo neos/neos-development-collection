@@ -18,12 +18,10 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
  */
-#[Flow\Proxy(false)]
 final class HierarchyRelation
 {
     public function __construct(
@@ -40,9 +38,9 @@ final class HierarchyRelation
     /**
      * @param Connection $databaseConnection
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert('neos_contentgraph_hierarchyrelation', [
+        $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
             'parentnodeanchor' => $this->parentNodeAnchor,
             'childnodeanchor' => $this->childNodeAnchor,
             'name' => $this->name,
@@ -56,19 +54,22 @@ final class HierarchyRelation
     /**
      * @param Connection $databaseConnection
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete('neos_contentgraph_hierarchyrelation', $this->getDatabaseIdentifier());
+        $databaseConnection->delete($tableNamePrefix . '_hierarchyrelation', $this->getDatabaseIdentifier());
     }
 
     /**
      * @param NodeRelationAnchorPoint $childAnchorPoint
      * @param Connection $databaseConnection
      */
-    public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection): void
-    {
+    public function assignNewChildNode(
+        NodeRelationAnchorPoint $childAnchorPoint,
+        Connection $databaseConnection,
+        string $tableNamePrefix
+    ): void {
         $databaseConnection->update(
-            'neos_contentgraph_hierarchyrelation',
+            $tableNamePrefix . '_hierarchyrelation',
             [
                 'childnodeanchor' => $childAnchorPoint
             ],
@@ -82,7 +83,8 @@ final class HierarchyRelation
     public function assignNewParentNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ?int $position,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint
@@ -91,16 +93,16 @@ final class HierarchyRelation
             $data['position'] = $position;
         }
         $databaseConnection->update(
-            'neos_contentgraph_hierarchyrelation',
+            $tableNamePrefix . '_hierarchyrelation',
             $data,
             $this->getDatabaseIdentifier()
         );
     }
 
-    public function assignNewPosition(int $position, Connection $databaseConnection): void
+    public function assignNewPosition(int $position, Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            'neos_contentgraph_hierarchyrelation',
+            $tableNamePrefix . '_hierarchyrelation',
             [
                 'position' => $position
             ],

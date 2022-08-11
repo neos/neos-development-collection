@@ -16,7 +16,8 @@ namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -76,9 +77,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * Convert URIs matching a supported scheme with generated URIs
@@ -113,7 +114,11 @@ class ConvertUrisImplementation extends AbstractFusionObject
             ), 1382624087);
         }
 
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
 
         if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
             return $text;

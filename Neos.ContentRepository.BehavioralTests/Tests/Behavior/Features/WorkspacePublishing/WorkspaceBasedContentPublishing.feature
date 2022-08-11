@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Workspace based content publishing
 
   This is an END TO END test; testing all layers of the related functionality step by step together

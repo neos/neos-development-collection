@@ -27,16 +27,15 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\Projection\Content\SearchTerm;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -451,11 +450,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric();
 
         return $result ? $result[0] : 0;
-    }
-
-    public function getInMemoryCache(): InMemoryCache
-    {
-        return new InMemoryCache();
     }
 
     private function getDatabaseConnection(): DatabaseConnection

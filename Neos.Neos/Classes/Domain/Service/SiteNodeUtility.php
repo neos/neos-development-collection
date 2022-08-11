@@ -17,10 +17,12 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -40,9 +42,7 @@ final class SiteNodeUtility
     {
         $previousNode = null;
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
@@ -60,6 +60,7 @@ final class SiteNodeUtility
     }
 
     public function findCurrentSiteNode(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -71,9 +72,12 @@ final class SiteNodeUtility
 
         if ($site instanceof Site) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contentStreamIdentifier,
-                $dimensionSpacePoint,
-                $visibilityConstraints
+                new ContentSubgraphIdentity(
+                    $contentRepositoryIdentifier,
+                    $contentStreamIdentifier,
+                    $dimensionSpacePoint,
+                    $visibilityConstraints,
+                )
             );
 
             $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));

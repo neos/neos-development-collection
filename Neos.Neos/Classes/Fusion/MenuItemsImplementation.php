@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,9 +30,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeConstraintFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * Hard limit for the maximum number of levels supported by this menu
@@ -161,9 +161,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if (!is_null($this->getItemCollection())) {
             $menuLevelCollection = $this->getItemCollection();
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->getContentStreamIdentifier(),
-                $this->currentNode->getDimensionSpacePoint(),
-                VisibilityConstraints::frontend()
+                $this->currentNode->getSubgraphIdentity()
             );
             $childSubtree = $nodeAccessor->findSubtrees(
                 $menuLevelCollection,
@@ -177,9 +175,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->getContentStreamIdentifier(),
-                $this->currentNode->getDimensionSpacePoint(),
-                VisibilityConstraints::frontend()
+                $this->currentNode->getSubgraphIdentity()
             );
             $childSubtree = $nodeAccessor->findSubtrees(
                 [$entryParentNode],
@@ -301,7 +297,10 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function getNodeTypeConstraints(): NodeTypeConstraints
     {
         if (!$this->nodeTypeConstraints) {
-            $this->nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($this->getFilter());
+            $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $this->nodeTypeConstraints = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
+                ->parseFilterString($this->getFilter());
         }
 
         return $this->nodeTypeConstraints;
@@ -317,9 +316,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         do {
             $shouldContinueTraversal = $callback($node);
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getContentStreamIdentifier(),
-                $node->getDimensionSpacePoint(),
-                $node->getVisibilityConstraints()
+                $node->getSubgraphIdentity()
             );
             $node = $nodeAccessor->findParentNode($node);
         } while ($shouldContinueTraversal !== false && $node !== null);

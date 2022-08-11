@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;

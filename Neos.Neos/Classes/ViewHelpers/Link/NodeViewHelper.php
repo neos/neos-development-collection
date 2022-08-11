@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Link;
 
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
@@ -22,7 +25,8 @@ use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
@@ -151,9 +155,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * Initialize arguments
@@ -261,9 +265,19 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
         if ($node instanceof NodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
+            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+            $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
-            $nodeAddress = $this->resolveNodeAddressFromString($node);
+            $documentNode = $this->getContextVariable('documentNode');
+            assert($documentNode instanceof NodeInterface);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
+            $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository);
+            $node = $documentNode;
         } else {
             throw new ViewHelperException(sprintf(
                 'The "node" argument can only be a string or an instance of %s. Given: %s',
@@ -272,27 +286,38 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             ), 1601372376);
         }
 
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress($nodeAddress);
-        $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+
+        $subgraph = $contentRepository->getContentGraph()
+            ->getSubgraphByIdentifier(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                $node->getSubgraphIdentity()->visibilityConstraints
+            );
+
+        $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
             throw new ViewHelperException(sprintf(
                 'Failed to resolve node "%s" on subgraph "%s"',
                 $nodeAddress->nodeAggregateIdentifier,
-                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444);
         }
         if ($resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
             try {
-                $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
+                $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
+                    $nodeAddress,
+                    $contentRepository
+                );
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
                 throw new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
                     $resolvedNode->getNodeAggregateIdentifier(),
-                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601370239, $e);
             }
             if ($shortcutNodeAddress instanceof NodeAddress) {
-                $resolvedNode = $nodeAccessor->findByIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
+                $resolvedNode = $subgraph
+                    ->findNodeByNodeAggregateIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
             }
         }
 
@@ -342,21 +367,30 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @return NodeAddress
      * @throws ViewHelperException
      */
-    private function resolveNodeAddressFromString(string $path): NodeAddress
-    {
+    private function resolveNodeAddressFromString(
+        string $path,
+        NodeInterface $documentNode,
+        ContentRepository $contentRepository
+    ): NodeAddress {
         /* @var NodeInterface $documentNode */
-        $documentNode = $this->getContextVariable('documentNode');
-        $documentNodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
         if (strncmp($path, 'node://', 7) === 0) {
             return $documentNodeAddress->withNodeAggregateIdentifier(
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress($documentNodeAddress);
+        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $documentNodeAddress
+        );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
-            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress);
+            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
+                $documentNodeAddress,
+                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
@@ -390,12 +424,17 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @param NodeAddress $nodeAddress
      * @return NodeAccessorInterface
      */
-    private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
-    {
+    private function getNodeAccessorForNodeAddress(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        NodeAddress $nodeAddress
+    ): NodeAccessorInterface {
         return $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            new ContentSubgraphIdentity(
+                $contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
         );
     }
 }

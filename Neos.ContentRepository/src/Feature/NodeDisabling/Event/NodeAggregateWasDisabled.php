@@ -20,7 +20,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -28,7 +28,7 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class NodeAggregateWasDisabled implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -59,5 +59,25 @@ final class NodeAggregateWasDisabled implements
             $this->affectedDimensionSpacePoints,
             $this->initiatingUserIdentifier
         );
+    }
+
+    public static function fromArray(array $values): EventInterface
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'affectedDimensionSpacePoints' => $this->affectedDimensionSpacePoints,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
     }
 }

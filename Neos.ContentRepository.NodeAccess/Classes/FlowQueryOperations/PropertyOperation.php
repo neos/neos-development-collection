@@ -16,7 +16,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\Utility\ObjectAccess;
 
@@ -91,9 +91,7 @@ class PropertyOperation extends AbstractOperation
             /* @var $element NodeInterface */
             $element = $context[0];
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $element->getContentStreamIdentifier(),
-                $element->getDimensionSpacePoint(),
-                $element->getVisibilityConstraints()
+                $element->getSubgraphIdentity()
             );
             if ($propertyPath === '_path') {
                 return (string)$nodeAccessor->findNodePath($element);

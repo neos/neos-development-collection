@@ -93,7 +93,7 @@ trait FlowQueryTrait
         $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedExpectedNodeAggregateIdentifier);
         $expectationMet = false;
         foreach ($this->currentFlowQuery->getContext() as $node) {
-            /** @var \Neos\ContentRepository\Projection\Content\NodeInterface $node */
+            /** @var \Neos\ContentRepository\Projection\ContentGraph\NodeInterface $node */
             if ($node->getNodeAggregateIdentifier()->equals($expectedNodeAggregateIdentifier)) {
                 $expectationMet = true;
                 break;

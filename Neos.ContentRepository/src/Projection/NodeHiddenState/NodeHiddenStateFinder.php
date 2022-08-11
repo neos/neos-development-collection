@@ -16,20 +16,19 @@ namespace Neos\ContentRepository\Projection\NodeHiddenState;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Finder for hidden states
- *
- * @Flow\Scope("singleton")
- * @api
  */
-final class NodeHiddenStateFinder
+final class NodeHiddenStateFinder implements ProjectionStateInterface
 {
-    public function __construct(private readonly DbalClientInterface $client)
-    {
+    public function __construct(
+        private readonly DbalClientInterface $client,
+        private readonly string $tableName
+    ) {
     }
 
     public function findHiddenState(
@@ -40,7 +39,7 @@ final class NodeHiddenStateFinder
         $connection = $this->client->getConnection();
         $result = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_nodehiddenstate
+                SELECT * FROM ' . $this->tableName . '
                 WHERE contentstreamidentifier = :contentStreamIdentifier
                 AND dimensionspacepointhash = :dimensionSpacePointHash
                 AND nodeaggregateidentifier = :nodeAggregateIdentifier

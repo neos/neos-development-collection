@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeReferencing;
 
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\Common\NodeReferenceToWrite;
 use Neos\ContentRepository\Feature\Common\SerializedNodeReference;
 use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
@@ -23,31 +26,33 @@ use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Feature\Common\PropertyScope;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeReferencing
 {
     use ConstraintChecks;
 
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
+    abstract protected function requireProjectedNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
+    ): ReadableNodeAggregateInterface;
 
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
-    public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
-    {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+    private function handleSetNodeReferences(
+        SetNodeReferences $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->sourceNodeAggregateIdentifier
+            $command->sourceNodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $nodeTypeName = $sourceNodeAggregate->getNodeTypeName();
@@ -83,26 +88,26 @@ trait NodeReferencing
             $command->initiatingUserIdentifier
         );
 
-        return $this->handleSetSerializedNodeReferences($lowLevelCommand);
+        return $this->handleSetSerializedNodeReferences($lowLevelCommand, $contentRepository);
     }
 
     /**
-     * @internal
      * @throws \Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleSetSerializedNodeReferences(SetSerializedNodeReferences $command): CommandResult
-    {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+    private function handleSetSerializedNodeReferences(
+        SetSerializedNodeReferences $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->sourceNodeAggregateIdentifier
+            $command->sourceNodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint(
@@ -114,7 +119,8 @@ trait NodeReferencing
         foreach ($command->references as $reference) {
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
-                $reference->targetNodeAggregateIdentifier
+                $reference->targetNodeAggregateIdentifier,
+                $contentRepository
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
             $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -128,42 +134,35 @@ trait NodeReferencing
             );
         }
 
-        $domainEvents = DomainEvents::createEmpty();
-        $this->getNodeAggregateEventPublisher()->withCommand(
-            $command,
-            function () use ($command, &$domainEvents, $sourceNodeAggregate) {
-                $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
-                $scopeDeclaration = $sourceNodeType->getProperties()[(string)$command->referenceName]['scope'] ?? '';
-                $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
+        $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
+        $scopeDeclaration = $sourceNodeType->getProperties()[(string)$command->referenceName]['scope'] ?? '';
+        $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
 
-                $affectedOrigins = $scope->resolveAffectedOrigins(
-                    $command->sourceOriginDimensionSpacePoint,
-                    $sourceNodeAggregate,
-                    $this->interDimensionalVariationGraph
-                );
-
-                $event = DecoratedEvent::addIdentifier(
-                    new NodeReferencesWereSet(
-                        $command->contentStreamIdentifier,
-                        $command->sourceNodeAggregateIdentifier,
-                        $affectedOrigins,
-                        $command->referenceName,
-                        $command->references,
-                        $command->initiatingUserIdentifier
-                    ),
-                    Uuid::uuid4()->toString()
-                );
-
-                $domainEvents = DomainEvents::withSingleEvent($event);
-
-                $this->getNodeAggregateEventPublisher()->publishMany(
-                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
-                        ->getEventStreamName(),
-                    $domainEvents
-                );
-            }
+        $affectedOrigins = $scope->resolveAffectedOrigins(
+            $command->sourceOriginDimensionSpacePoint,
+            $sourceNodeAggregate,
+            $this->interDimensionalVariationGraph
         );
 
-        return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
+        $events = Events::with(
+            new NodeReferencesWereSet(
+                $command->contentStreamIdentifier,
+                $command->sourceNodeAggregateIdentifier,
+                $affectedOrigins,
+                $command->referenceName,
+                $command->references,
+                $command->initiatingUserIdentifier
+            )
+        );
+
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
+            NodeAggregateEventPublisher::enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 }

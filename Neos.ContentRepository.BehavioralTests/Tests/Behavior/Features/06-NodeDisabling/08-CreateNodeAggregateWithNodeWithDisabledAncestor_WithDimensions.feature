@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Creation of nodes underneath disabled nodes
 
   If we create new nodes underneath of disabled nodes, they must be marked as disabled as well;
@@ -22,6 +22,7 @@ Feature: Creation of nodes underneath disabled nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |

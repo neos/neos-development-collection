@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Feature\Common\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -25,7 +25,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\ContentStreamRepository;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -49,15 +48,10 @@ use Neos\ContentRepository\Feature\Common\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsFactory;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 trait ConstraintChecks
 {
-    abstract protected function getContentGraph(): ContentGraphInterface;
-
-    abstract protected function getContentStreamRepository(): ContentStreamRepository;
-
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
@@ -66,12 +60,13 @@ trait ConstraintChecks
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier): void
-    {
-        $contentStream = $this->getContentStreamRepository()->findContentStream($contentStreamIdentifier);
-        if (!$contentStream) {
+    protected function requireContentStreamToExist(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): void {
+        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamIdentifier . " does not exist yet.",
+                'Content stream "' . $contentStreamIdentifier . '" does not exist yet.',
                 1521386692
             );
         }
@@ -261,12 +256,14 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        array $parentNodeAggregateIdentifiers
+        array $parentNodeAggregateIdentifiers,
+        ContentRepository $contentRepository
     ): void {
         foreach ($parentNodeAggregateIdentifiers as $parentNodeAggregateIdentifier) {
             $parentAggregate = $this->requireProjectedNodeAggregate(
                 $contentStreamIdentifier,
-                $parentNodeAggregateIdentifier
+                $parentNodeAggregateIdentifier,
+                $contentRepository
             );
             try {
                 $parentsNodeType = $this->requireNodeType($parentAggregate->getNodeTypeName());
@@ -277,7 +274,7 @@ trait ConstraintChecks
             }
 
             foreach (
-                $this->getContentGraph()->findParentNodeAggregates(
+                $contentRepository->getContentGraph()->findParentNodeAggregates(
                     $contentStreamIdentifier,
                     $parentNodeAggregateIdentifier
                 ) as $grandParentNodeAggregate
@@ -390,9 +387,10 @@ trait ConstraintChecks
      */
     protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface {
-        $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier(
+        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
         );
@@ -413,9 +411,10 @@ trait ConstraintChecks
      */
     protected function requireProjectedNodeAggregateToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
     ): void {
-        $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier(
+        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
         );
@@ -434,13 +433,15 @@ trait ConstraintChecks
     public function requireProjectedParentNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
-        OriginDimensionSpacePoint $childOriginDimensionSpacePoint
+        OriginDimensionSpacePoint $childOriginDimensionSpacePoint,
+        ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface {
-        $parentNodeAggregate = $this->getContentGraph()->findParentNodeAggregateByChildOriginDimensionSpacePoint(
-            $contentStreamIdentifier,
-            $childNodeAggregateIdentifier,
-            $childOriginDimensionSpacePoint
-        );
+        $parentNodeAggregate = $contentRepository->getContentGraph()
+            ->findParentNodeAggregateByChildOriginDimensionSpacePoint(
+                $contentStreamIdentifier,
+                $childNodeAggregateIdentifier,
+                $childOriginDimensionSpacePoint
+            );
 
         if (!$parentNodeAggregate) {
             throw new NodeAggregateCurrentlyDoesNotExist(
@@ -519,7 +520,8 @@ trait ConstraintChecks
     protected function requireNodeAggregateToNotBeDescendant(
         ContentStreamIdentifier $contentStreamIdentifier,
         ReadableNodeAggregateInterface $nodeAggregate,
-        ReadableNodeAggregateInterface $referenceNodeAggregate
+        ReadableNodeAggregateInterface $referenceNodeAggregate,
+        ContentRepository $contentRepository
     ): void {
         if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
             throw new NodeAggregateIsDescendant(
@@ -529,7 +531,7 @@ trait ConstraintChecks
             );
         }
         foreach (
-            $this->getContentGraph()->findChildNodeAggregates(
+            $contentRepository->getContentGraph()->findChildNodeAggregates(
                 $contentStreamIdentifier,
                 $referenceNodeAggregate->getIdentifier()
             ) as $childReferenceNodeAggregate
@@ -537,7 +539,8 @@ trait ConstraintChecks
             $this->requireNodeAggregateToNotBeDescendant(
                 $contentStreamIdentifier,
                 $nodeAggregate,
-                $childReferenceNodeAggregate
+                $childReferenceNodeAggregate,
+                $contentRepository
             );
         }
     }
@@ -550,12 +553,13 @@ trait ConstraintChecks
         ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePoints
+        DimensionSpacePointSet $dimensionSpacePoints,
+        ContentRepository $contentRepository
     ): void {
         if ($nodeName === null) {
             return;
         }
-        $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()
+        $dimensionSpacePointsOccupiedByChildNodeName = $contentRepository->getContentGraph()
             ->getDimensionSpacePointsOccupiedByChildNodeName(
                 $contentStreamIdentifier,
                 $nodeName,
@@ -579,12 +583,13 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointsToBeCovered
+        DimensionSpacePointSet $dimensionSpacePointsToBeCovered,
+        ContentRepository $contentRepository
     ): void {
         if ($nodeName === null) {
             return;
         }
-        $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName(
+        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
             $contentStreamIdentifier,
             $parentNodeAggregateIdentifier,
             $nodeName

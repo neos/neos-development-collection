@@ -4,37 +4,26 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Service;
 
-use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamFinder;
+use Neos\EventStore\EventStoreInterface;
 
 /**
  * @api
  */
-class ContentStreamPruner
+class ContentStreamPruner implements ContentRepositoryServiceInterface
 {
-    protected ContentStreamFinder $contentStreamFinder;
-
-    protected ContentStreamCommandHandler $contentStreamCommandHandler;
-
-    protected Connection $connection;
-
-    protected ?CommandResult $lastCommandResult;
+    private ?CommandResult $lastCommandResult;
 
     public function __construct(
-        ContentStreamFinder $contentStreamFinder,
-        ContentStreamCommandHandler $contentStreamCommandHandler,
-        DbalClientInterface $dbalClient
+        private readonly ContentRepository $contentRepository,
+        private readonly EventStoreInterface $eventStore
     ) {
-        $this->contentStreamFinder = $contentStreamFinder;
-        $this->contentStreamCommandHandler = $contentStreamCommandHandler;
-        $this->connection = $dbalClient->getConnection();
     }
 
     /**
@@ -50,10 +39,10 @@ class ContentStreamPruner
      */
     public function prune(): iterable
     {
-        $unusedContentStreams = $this->contentStreamFinder->findUnusedContentStreams();
+        $unusedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedContentStreams();
 
         foreach ($unusedContentStreams as $contentStream) {
-            $this->lastCommandResult = $this->contentStreamCommandHandler->handleRemoveContentStream(
+            $this->lastCommandResult = $this->contentRepository->handle(
                 new RemoveContentStream(
                     $contentStream,
                     UserIdentifier::forSystemUser()
@@ -77,16 +66,13 @@ class ContentStreamPruner
      */
     public function pruneRemovedFromEventStream(): iterable
     {
-        $removedContentStreams = $this->contentStreamFinder->findUnusedAndRemovedContentStreams();
+        $removedContentStreams = $this->contentRepository->getContentStreamFinder()
+            ->findUnusedAndRemovedContentStreams();
 
         foreach ($removedContentStreams as $removedContentStream) {
-            $this->connection->executeUpdate(
-                'DELETE FROM neos_contentrepository_events WHERE stream = :stream',
-                [
-                    'stream' => (string)ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)
-                        ->getEventStreamName()
-                ]
-            );
+            $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)
+                ->getEventStreamName();
+            $this->eventStore->deleteStream($streamName);
         }
 
         return $removedContentStreams;

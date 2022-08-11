@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Unknown node types
 
   As a user of the CR I want to be able to detect and remove unknown node types
@@ -11,13 +11,14 @@ Feature: Unknown node types
     'Neos.ContentRepository.Testing:Document': []
     'Neos.Neos:FallbackNode': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
       | contentStreamIdentifier     | "cs-identifier"               |

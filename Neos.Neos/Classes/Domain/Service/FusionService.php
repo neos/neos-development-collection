@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -104,9 +105,9 @@ class FusionService
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -151,7 +152,9 @@ class FusionService
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
 
         $mergedFusionCode = '';
-        $mergedFusionCode .= $this->generateNodeTypeDefinitions();
+        $mergedFusionCode .= $this->generateNodeTypeDefinitions(
+            $startNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
         $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
         $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
         $mergedFusionCode .= $siteRootFusionCode;
@@ -185,11 +188,12 @@ class FusionService
      * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateNodeTypeDefinitions()
+    protected function generateNodeTypeDefinitions(ContentRepositoryIdentifier $contentRepositoryIdentifier)
     {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $code = '';
         /** @var NodeType $nodeType */
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
+        foreach ($contentRepository->getNodeTypeManager()->getNodeTypes(false) as $nodeType) {
             $code .= $this->generateFusionForNodeType($nodeType);
         }
         return $code;

@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create a node aggregate with complex default values
 
   As a user of the CR I want default properties of complex types to be un/serialized
@@ -40,6 +40,7 @@ Feature: Create a node aggregate with complex default values
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     And I am in dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:

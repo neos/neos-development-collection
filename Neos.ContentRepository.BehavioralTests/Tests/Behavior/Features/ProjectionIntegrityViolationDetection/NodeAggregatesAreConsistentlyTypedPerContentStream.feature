@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Run projection integrity violation detection regarding node aggregate type consistency
 
   As a user of the CR I want to be able to detect whether there are node aggregates of ambiguous type in a content stream
@@ -13,13 +13,14 @@ Feature: Run projection integrity violation detection regarding node aggregate t
     'Neos.ContentRepository.Testing:DocumentA': []
     'Neos.ContentRepository.Testing:DocumentB': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamIdentifier | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
       | contentStreamIdentifier     | "cs-identifier"                           |

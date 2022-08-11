@@ -1,12 +1,12 @@
 {
-    "name": "neos/content-repository-nodeaccess",
+    "name": "neos/contentrepository-nodeaccess",
     "type": "neos-package",
     "description": "The node accessor concept for the Neos Content Repository",
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/content-repository": "~9.0"
+        "neos/contentrepository": "~9.0"
     },
     "autoload": {
         "psr-4": {

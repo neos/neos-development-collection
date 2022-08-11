@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
@@ -24,6 +25,10 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariati
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Symfony\Component\Yaml\Yaml;
@@ -43,20 +48,19 @@ trait NodeOperationsTrait
      */
     private $nodeTypesConfiguration = [];
 
-    /**
-     * @return mixed
-     */
-    abstract protected function getObjectManager();
+    abstract protected function getObjectManager(): ObjectManagerInterface;
+    abstract protected function getContentRepository(): ContentRepository;
+    abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
     /**
-     * @AfterScenario @fixtures
+     * @AfterScenario @contentrepository
      */
     public function resetCustomNodeTypes()
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager::class)->overrideNodeTypes([]);
+            $this->getContentRepository()->getNodeTypeManager()->overrideNodeTypes([]);
         }
     }
 
@@ -74,7 +78,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
-            $this->getObjectManager()->get(\Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager::class)->overrideNodeTypes($configuration);
+            $this->getContentRepository()->getNodeTypeManager()->overrideNodeTypes($configuration);
         }
     }
 
@@ -128,7 +132,7 @@ trait NodeOperationsTrait
                 );
             }
 
-            $contentDimensionSource = $this->getObjectManager()->get(ContentDimensionSourceInterface::class);
+            $contentDimensionSource = $this->getContentRepositoryInternals()->contentDimensionSource;
             if (!$contentDimensionSource instanceof ConfigurationBasedContentDimensionSource) {
                 throw new \RuntimeException(sprintf('$contentDimensionSource must be of type ConfigurationBasedContentDimensionSource, %s given', get_class($contentDimensionSource)), 1571293359);
             }
@@ -144,7 +148,7 @@ trait NodeOperationsTrait
      */
     public function iHaveNoContentDimensions()
     {
-        $contentDimensionSource = $this->getObjectManager()->get(ContentDimensionSourceInterface::class);
+        $contentDimensionSource = $this->getContentRepositoryInternals()->contentDimensionSource;
         if (!$contentDimensionSource instanceof ConfigurationBasedContentDimensionSource) {
             throw new \RuntimeException(sprintf('$contentDimensionSource must be of type ConfigurationBasedContentDimensionSource, %s given', get_class($contentDimensionSource)), 1571293359);
         }
@@ -154,14 +158,15 @@ trait NodeOperationsTrait
         $this->resetDimensionSpaceRepositories();
     }
 
+    /**
+     * @deprecated remove, and instead create new ContentRepository instance
+     */
     private function resetDimensionSpaceRepositories()
     {
-        /** @var ContentDimensionZookeeper $contentDimensionZookeeper */
-        $contentDimensionZookeeper = $this->getObjectManager()->get(ContentDimensionZookeeper::class);
+        $contentDimensionZookeeper = $this->getContentRepositoryInternals()->contentDimensionZookeeper;
         ObjectAccess::setProperty($contentDimensionZookeeper, 'allowedCombinations', null, true);
 
-        /** @var InterDimensionalVariationGraph $interDimensionalVariationGraph */
-        $interDimensionalVariationGraph = $this->getObjectManager()->get(InterDimensionalVariationGraph::class);
+        $interDimensionalVariationGraph = $this->getContentRepositoryInternals()->interDimensionalVariationGraph;
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedDimensionSpacePoints', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'indexedGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'indexedSpecializations', null, true);

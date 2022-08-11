@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -27,11 +28,11 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  */
 trait NodeTypeChange
 {
+    abstract protected function getContentRepository(): ContentRepository;
+
     abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -62,8 +63,7 @@ trait NodeTypeChange
             $tetheredDescendantNodeAggregateIdentifiers
         );
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleChangeNodeAggregateType($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**

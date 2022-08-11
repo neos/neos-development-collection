@@ -16,12 +16,13 @@ namespace Neos\Neos\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
@@ -67,9 +68,9 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @param string|Uri $uri
@@ -113,7 +114,10 @@ class LinkHelper implements ProtectedContextAwareInterface
             );
             return null;
         }
-        $targetNodeAddress = $this->nodeAddressFactory->createFromNode($targetNode);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $targetNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {
             $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
                 ->uriFor($targetNodeAddress);
@@ -172,20 +176,8 @@ class LinkHelper implements ProtectedContextAwareInterface
                             1409734235
                         );
                     }
-                    $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
-                    if ($contextNodeAddress->workspaceName === null) {
-                        throw new \RuntimeException(sprintf(
-                            'Failed to create node address for context node "%s"',
-                            $contextNode->getNodeAggregateIdentifier()
-                        ));
-                    }
-                    $visibilityConstraints = $contextNodeAddress->workspaceName->isLive()
-                        ? VisibilityConstraints::frontend()
-                        : VisibilityConstraints::withoutRestrictions();
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $contextNode->getContentStreamIdentifier(),
-                        $contextNode->getDimensionSpacePoint(),
-                        $visibilityConstraints
+                        $contextNode->getSubgraphIdentity()
                     );
 
                     return $nodeAccessor->findByIdentifier(

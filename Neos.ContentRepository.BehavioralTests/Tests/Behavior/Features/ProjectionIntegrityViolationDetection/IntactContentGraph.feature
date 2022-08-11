@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Create an intact content graph and run integrity violation detection
 
   As a user of the CR I want to be able to get an empty integrity violation detection result on an intact content graph
@@ -12,7 +12,7 @@ Feature: Create an intact content graph and run integrity violation detection
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
@@ -29,6 +29,7 @@ Feature: Create an intact content graph and run integrity violation detection
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
       | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
+    And the graph projection is fully up to date
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |

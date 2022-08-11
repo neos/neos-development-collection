@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Node References without Dimensions
 
   As a user of the CR I want to be able to create, overwrite, reorder and delete reference between nodes

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -47,9 +47,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
         assert($node instanceof NodeInterface);
         $documentNodes = [];
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
         $currentNode = $node;
         while ($currentNode instanceof NodeInterface) {

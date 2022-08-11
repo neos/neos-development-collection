@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -29,20 +30,20 @@ use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\Model\Event\StreamName;
 
 /**
  * The node creation trait for behavioral tests
  */
 trait NodeCreation
 {
+    abstract protected function getContentRepository(): ContentRepository;
+
     abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
     abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
-
-    abstract protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler;
 
     abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
 
@@ -74,8 +75,7 @@ trait NodeCreation
             $initiatingUserIdentifier
         );
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateRootNodeAggregateWithNode($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
         $this->rootNodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
@@ -152,8 +152,7 @@ trait NodeCreation
                 : null
         );
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeAggregateWithNode($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**
@@ -204,8 +203,7 @@ trait NodeCreation
                     ? NodeAggregateIdentifiersByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIdentifiers'])
                     : null
             );
-            $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-                ->handleCreateNodeAggregateWithNode($command);
+            $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
             $this->theGraphProjectionIsFullyUpToDate();
         }
     }
@@ -250,8 +248,7 @@ trait NodeCreation
                 : null
         );
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**

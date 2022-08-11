@@ -14,7 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeCreation;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -26,30 +29,24 @@ use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+
+/** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+/** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Feature\Common\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeCreation
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
@@ -64,10 +61,10 @@ trait NodeCreation
 
     abstract protected function getPropertyConverter(): PropertyConverter;
 
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
-    {
+    private function handleCreateNodeAggregateWithNode(
+        CreateNodeAggregateWithNode $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireNodeType($command->nodeTypeName);
         $this->validateProperties(
             $this->deserializeDefaultProperties($command->nodeTypeName),
@@ -91,7 +88,7 @@ trait NodeCreation
             $command->tetheredDescendantNodeAggregateIdentifiers
         );
 
-        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand);
+        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $contentRepository);
     }
 
     private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
@@ -154,12 +151,11 @@ trait NodeCreation
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleCreateNodeAggregateWithNodeAndSerializedProperties(
-        CreateNodeAggregateWithNodeAndSerializedProperties $command
-    ): CommandResult {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+    private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
+        CreateNodeAggregateWithNodeAndSerializedProperties $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
@@ -171,21 +167,25 @@ trait NodeCreation
                 $command->contentStreamIdentifier,
                 $nodeType,
                 $command->nodeName,
-                [$command->parentNodeAggregateIdentifier]
+                [$command->parentNodeAggregateIdentifier],
+                $contentRepository
             );
         }
         $this->requireProjectedNodeAggregateToNotExist(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->parentNodeAggregateIdentifier
+            $command->parentNodeAggregateIdentifier,
+            $contentRepository
         );
         if ($command->succeedingSiblingNodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregate(
                 $command->contentStreamIdentifier,
-                $command->succeedingSiblingNodeAggregateIdentifier
+                $command->succeedingSiblingNodeAggregateIdentifier,
+                $contentRepository
             );
         }
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -204,7 +204,8 @@ trait NodeCreation
                 $command->nodeName,
                 $command->parentNodeAggregateIdentifier,
                 $command->originDimensionSpacePoint,
-                $coveredDimensionSpacePoints
+                $coveredDimensionSpacePoints,
+                $contentRepository
             );
         }
         $descendantNodeAggregateIdentifiers = self::populateNodeAggregateIdentifiers(
@@ -220,41 +221,39 @@ trait NodeCreation
         ) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $command->contentStreamIdentifier,
-                $descendantNodeAggregateIdentifier
+                $descendantNodeAggregateIdentifier,
+                $contentRepository
             );
         }
 
-        $events = DomainEvents::createEmpty();
-        $this->getNodeAggregateEventPublisher()->withCommand(
-            $command,
-            function () use (
+
+        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
+        $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
+
+        $events = [
+            $this->createRegularWithNode(
                 $command,
-                $nodeType,
                 $coveredDimensionSpacePoints,
-                $descendantNodeAggregateIdentifiers,
-                &$events
-            ) {
-                $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
-                $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
+                $initialPropertyValues
+            )
+        ];
 
-                $events = $this->createRegularWithNode(
-                    $command,
-                    $coveredDimensionSpacePoints,
-                    $initialPropertyValues
-                );
+        array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
+            $command,
+            $nodeType,
+            $coveredDimensionSpacePoints,
+            $command->nodeAggregateIdentifier,
+            $descendantNodeAggregateIdentifiers,
+            null,
+            $contentRepository
+        )));
 
-                $events = $this->handleTetheredChildNodes(
-                    $command,
-                    $nodeType,
-                    $coveredDimensionSpacePoints,
-                    $command->nodeAggregateIdentifier,
-                    $descendantNodeAggregateIdentifiers,
-                    $events
-                );
-            }
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
+            NodeAggregateEventPublisher::enrichWithCommand($command, Events::fromArray($events)),
+            ExpectedVersion::ANY()
         );
-
-        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
     /**
@@ -265,35 +264,20 @@ trait NodeCreation
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         SerializedPropertyValues $initialPropertyValues
-    ): DomainEvents {
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new NodeAggregateWithNodeWasCreated(
-                    $command->contentStreamIdentifier,
-                    $command->nodeAggregateIdentifier,
-                    $command->nodeTypeName,
-                    $command->originDimensionSpacePoint,
-                    $coveredDimensionSpacePoints,
-                    $command->parentNodeAggregateIdentifier,
-                    $command->nodeName,
-                    $initialPropertyValues,
-                    NodeAggregateClassification::CLASSIFICATION_REGULAR,
-                    $command->initiatingUserIdentifier,
-                    $command->succeedingSiblingNodeAggregateIdentifier
-                ),
-                Uuid::uuid4()->toString()
-            )
+    ): NodeAggregateWithNodeWasCreated {
+        return new NodeAggregateWithNodeWasCreated(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $command->nodeTypeName,
+            $command->originDimensionSpacePoint,
+            $coveredDimensionSpacePoints,
+            $command->parentNodeAggregateIdentifier,
+            $command->nodeName,
+            $initialPropertyValues,
+            NodeAggregateClassification::CLASSIFICATION_REGULAR,
+            $command->initiatingUserIdentifier,
+            $command->succeedingSiblingNodeAggregateIdentifier
         );
-
-        $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $command->contentStreamIdentifier
-        );
-        $this->getNodeAggregateEventPublisher()->publishMany(
-            $contentStreamEventStreamName->getEventStreamName(),
-            $events
-        );
-
-        return $events;
     }
 
     /**
@@ -308,9 +292,10 @@ trait NodeCreation
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
-        DomainEvents $events,
-        NodePath $nodePath = null
-    ): DomainEvents {
+        ?NodePath $nodePath,
+        ContentRepository $contentRepository,
+    ): Events {
+        $events = [];
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath
@@ -320,8 +305,8 @@ trait NodeCreation
                 ?? NodeAggregateIdentifier::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
 
-            $this->requireContentStreamToExist($command->contentStreamIdentifier);
-            $events = $events->appendEvents($this->createTetheredWithNode(
+            $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+            $events[] = $this->createTetheredWithNode(
                 $command,
                 $childNodeAggregateIdentifier,
                 NodeTypeName::fromString($childNodeType->getName()),
@@ -329,20 +314,20 @@ trait NodeCreation
                 $parentNodeAggregateIdentifier,
                 $nodeName,
                 $initialPropertyValues
-            ));
+            );
 
-            $events = $this->handleTetheredChildNodes(
+            array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
                 $command,
                 $childNodeType,
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateIdentifier,
                 $nodeAggregateIdentifiers,
-                $events,
-                $childNodePath
-            );
+                $childNodePath,
+                $contentRepository
+            )));
         }
 
-        return $events;
+        return Events::fromArray($events);
     }
 
     /**
@@ -358,35 +343,20 @@ trait NodeCreation
         NodeName $nodeName,
         SerializedPropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
-    ): DomainEvents {
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new NodeAggregateWithNodeWasCreated(
-                    $command->contentStreamIdentifier,
-                    $nodeAggregateIdentifier,
-                    $nodeTypeName,
-                    $command->originDimensionSpacePoint,
-                    $coveredDimensionSpacePoints,
-                    $parentNodeAggregateIdentifier,
-                    $nodeName,
-                    $initialPropertyValues,
-                    NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                    $command->initiatingUserIdentifier,
-                    $precedingNodeAggregateIdentifier
-                ),
-                Uuid::uuid4()->toString()
-            )
+    ): NodeAggregateWithNodeWasCreated {
+        return new NodeAggregateWithNodeWasCreated(
+            $command->contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $nodeTypeName,
+            $command->originDimensionSpacePoint,
+            $coveredDimensionSpacePoints,
+            $parentNodeAggregateIdentifier,
+            $nodeName,
+            $initialPropertyValues,
+            NodeAggregateClassification::CLASSIFICATION_TETHERED,
+            $command->initiatingUserIdentifier,
+            $precedingNodeAggregateIdentifier
         );
-
-        $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $command->contentStreamIdentifier
-        );
-        $this->getNodeAggregateEventPublisher()->publishMany(
-            $contentStreamEventStreamName->getEventStreamName(),
-            $events
-        );
-
-        return $events;
     }
 
     protected static function populateNodeAggregateIdentifiers(

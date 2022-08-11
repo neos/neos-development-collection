@@ -14,9 +14,26 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature;
 
+use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Feature\NodeModification\Command\SetNodeProperties;
+use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Feature\RootNodeCreation\RootNodeCreation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
@@ -31,14 +48,10 @@ use Neos\ContentRepository\Feature\NodeRenaming\NodeRenaming;
 use Neos\ContentRepository\Feature\NodeTypeChange\NodeTypeChange;
 use Neos\ContentRepository\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
-final class NodeAggregateCommandHandler
+final class NodeAggregateCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
     use RootNodeCreation;
@@ -53,17 +66,10 @@ final class NodeAggregateCommandHandler
     use NodeVariation;
     use TetheredNodeInternals;
 
-    private ContentStreamRepository $contentStreamRepository;
-
     /**
      * Used for constraint checks against the current outside configuration state of node types
      */
     private NodeTypeManager $nodeTypeManager;
-
-    /**
-     * The graph projection used for soft constraint checks
-     */
-    private ContentGraphInterface $contentGraph;
 
     /**
      * Used for variation resolution from the current outside state of content dimensions
@@ -75,13 +81,6 @@ final class NodeAggregateCommandHandler
      */
     private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
 
-    /**
-     * Used for publishing events
-     */
-    private NodeAggregateEventPublisher $nodeEventPublisher;
-
-    private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-
     protected PropertyConverter $propertyConverter;
 
     /**
@@ -89,53 +88,63 @@ final class NodeAggregateCommandHandler
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
-    private RuntimeBlocker $runtimeBlocker;
-
     public function __construct(
-        ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
-        ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        NodeAggregateEventPublisher $nodeEventPublisher,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker,
         PropertyConverter $propertyConverter
     ) {
-        $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->nodeEventPublisher = $nodeEventPublisher;
-        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->runtimeBlocker = $runtimeBlocker;
         $this->propertyConverter = $propertyConverter;
     }
 
-    protected function getContentGraph(): ContentGraphInterface
+
+    public function canHandle(CommandInterface $command): bool
     {
-        return $this->contentGraph;
+        return $command instanceof SetNodeProperties
+            || $command instanceof SetSerializedNodeProperties
+            || $command instanceof SetNodeReferences
+            || $command instanceof SetSerializedNodeReferences
+            || $command instanceof ChangeNodeAggregateType
+            || $command instanceof RemoveNodeAggregate
+            || $command instanceof CreateNodeAggregateWithNode
+            || $command instanceof CreateNodeAggregateWithNodeAndSerializedProperties
+            || $command instanceof MoveNodeAggregate
+            || $command instanceof CreateNodeVariant
+            || $command instanceof CreateRootNodeAggregateWithNode
+            || $command instanceof DisableNodeAggregate
+            || $command instanceof EnableNodeAggregate
+            || $command instanceof ChangeNodeAggregateName;
     }
 
-    protected function getContentStreamRepository(): ContentStreamRepository
+    /** @codingStandardsIgnoreStart */
+    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        return $this->contentStreamRepository;
+        // @phpstan-ignore-next-line
+        return match ($command::class) {
+            SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
+            SetSerializedNodeProperties::class => $this->handleSetSerializedNodeProperties($command, $contentRepository),
+            SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
+            SetSerializedNodeReferences::class => $this->handleSetSerializedNodeReferences($command, $contentRepository),
+            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
+            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
+            CreateNodeAggregateWithNode::class => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            CreateNodeAggregateWithNodeAndSerializedProperties::class => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
+            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
+            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
+            CreateRootNodeAggregateWithNode::class => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
+            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
+        };
     }
+    /** @codingStandardsIgnoreStop */
 
     protected function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
-    }
-
-    protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager
-    {
-        return $this->readSideMemoryCacheManager;
-    }
-
-    protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher
-    {
-        return $this->nodeEventPublisher;
     }
 
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
@@ -151,11 +160,6 @@ final class NodeAggregateCommandHandler
     protected function areAncestorNodeTypeConstraintChecksEnabled(): bool
     {
         return $this->ancestorNodeTypeConstraintChecksEnabled;
-    }
-
-    public function getRuntimeBlocker(): RuntimeBlocker
-    {
-        return $this->runtimeBlocker;
     }
 
     public function getPropertyConverter(): PropertyConverter
@@ -185,15 +189,16 @@ final class NodeAggregateCommandHandler
     /**
      * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
      */
-    protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier()
+            $command->getNodeAggregateIdentifier(),
+            $contentRepository
         );
         $newNodeType = $this->requireNodeType($command->getNewNodeTypeName());
         foreach (
-            $this->contentGraph->findParentNodeAggregates(
+            $contentRepository->getContentGraph()->findParentNodeAggregates(
                 $command->getContentStreamIdentifier(),
                 $command->getNodeAggregateIdentifier()
             ) as $parentAggregate
@@ -217,7 +222,7 @@ final class NodeAggregateCommandHandler
                 );
             }
             foreach (
-                $this->contentGraph->findParentNodeAggregates(
+                $contentRepository->getContentGraph()->findParentNodeAggregates(
                     $command->getContentStreamIdentifier(),
                     $parentAggregate->getIdentifier()
                 ) as $grandParentAggregate
@@ -250,12 +255,12 @@ final class NodeAggregateCommandHandler
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      */
-    protected function checkConstraintsImposedOnAlreadyPresentDescendants(ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedOnAlreadyPresentDescendants(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
 
         foreach (
-            $this->contentGraph->findChildNodeAggregates(
+            $contentRepository->getContentGraph()->findChildNodeAggregates(
                 $command->getContentStreamIdentifier(),
                 $command->getNodeAggregateIdentifier()
             ) as $childAggregate
@@ -277,7 +282,7 @@ final class NodeAggregateCommandHandler
                 && $newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())
             ) {
                 foreach (
-                    $this->contentGraph->findChildNodeAggregates(
+                    $contentRepository->getContentGraph()->findChildNodeAggregates(
                         $command->getContentStreamIdentifier(),
                         $childAggregate->getIdentifier()
                     ) as $grandChildAggregate

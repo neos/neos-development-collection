@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Run projection integrity violation detection regarding naming of tethered nodes
 
   As a user of the CR I want to be able to detect whether there are unnamed tethered events
@@ -12,13 +12,14 @@ Feature: Run projection integrity violation detection regarding naming of tether
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamIdentifier | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
       | contentStreamIdentifier     | "cs-identifier"                        |

@@ -6,6 +6,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Psr\Log\LoggerInterface;
@@ -17,12 +18,16 @@ use Psr\Log\LoggerInterface;
  */
 trait NodeRemoval
 {
+    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
+
+    abstract protected function getTableNamePrefix(): string;
+
     protected LoggerInterface $systemLogger;
 
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
@@ -33,7 +38,7 @@ trait NodeRemoval
                 $event->affectedCoveredDimensionSpacePoints
             );
 
-            $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+            $ingoingRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                 $event->contentStreamIdentifier,
                 $event->nodeAggregateIdentifier,
                 $event->affectedCoveredDimensionSpacePoints
@@ -52,10 +57,10 @@ trait NodeRemoval
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
         HierarchyRelation $ingoingRelation
     ): void {
-        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
+        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         foreach (
-            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
+            $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
                 $ingoingRelation->contentStreamIdentifier,
                 new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
@@ -69,9 +74,11 @@ trait NodeRemoval
         $this->getDatabaseConnection()->executeStatement(
             '
             DELETE n, r FROM neos_contentgraph_node n
-                LEFT JOIN neos_contentgraph_referencerelation r ON r.nodeanchorpoint = n.relationanchorpoint
+                LEFT JOIN ' . $this->getTableNamePrefix() . '_referencerelation r
+                    ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN
-                    neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     -- the following line means "left join leads to NO MATCHING hierarchyrelation"

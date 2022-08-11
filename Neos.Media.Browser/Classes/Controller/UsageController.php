@@ -13,10 +13,9 @@ namespace Neos\Media\Browser\Controller;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -24,6 +23,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 
@@ -41,7 +41,8 @@ class UsageController extends ActionController
     protected $assetService;
 
     /**
-     * @Flow\Inject
+     * TODO: NEEDS TO BE FIXED / REWRITTEN
+     * __Flow\Inject
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
@@ -60,15 +61,9 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceRepository;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -84,7 +79,10 @@ class UsageController extends ActionController
      */
     public function relatedNodesAction(AssetInterface $asset)
     {
-        $userWorkspace = $this->userService->getPersonalWorkspace();
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $userWorkspaceName = $this->userService->getPersonalWorkspaceName();
+        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($userWorkspaceName));
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -104,11 +102,11 @@ class UsageController extends ActionController
             }
 
             try {
-                $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
+                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($usage->getNodeTypeName());
             } catch (NodeTypeNotFoundException $e) {
                 $nodeType = null;
             }
-            $workspace = $this->workspaceRepository->findOneByName($usage->getWorkspaceName());
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($usage->getWorkspaceName()));
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
@@ -137,6 +135,7 @@ class UsageController extends ActionController
                 continue;
             }
 
+            // TODO FIX ME
             $site = $node->getContext()->getCurrentSite();
             foreach ($existingSites as $existingSite) {
                 /** @var Site $existingSite * */

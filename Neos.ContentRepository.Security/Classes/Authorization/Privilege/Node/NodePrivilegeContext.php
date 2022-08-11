@@ -16,8 +16,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 
@@ -38,15 +38,15 @@ class NodePrivilegeContext
      */
     protected $nodeAccessorManager;
 
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
+
     protected NodeInterface $node;
 
     protected ?NodeAccessorInterface $nodeAccessor;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
 
     public function __construct(NodeInterface $node)
     {
@@ -141,8 +141,10 @@ class NodePrivilegeContext
      */
     public function isInWorkspace(array $workspaceNames): bool
     {
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-            $this->node->getContentStreamIdentifier()
+        $contentRepository = $this->contentRepositoryRegistry->get($this->node->getSubgraphIdentity()->contentRepositoryIdentifier);
+
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
+            $this->node->getSubgraphIdentity()->contentStreamIdentifier
         );
         return !is_null($workspace) && in_array((string)$workspace->getWorkspaceName(), $workspaceNames);
     }
@@ -166,7 +168,7 @@ class NodePrivilegeContext
         }
 
         return in_array(
-            $this->node->getDimensionSpacePoint()->getCoordinate(
+            $this->node->getSubgraphIdentity()->dimensionSpacePoint->getCoordinate(
                 new ContentDimensionIdentifier($dimensionName)
             ),
             $presets
@@ -202,9 +204,7 @@ class NodePrivilegeContext
     {
         if (is_null($this->nodeAccessor)) {
             $this->nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->node->getContentStreamIdentifier(),
-                $this->node->getDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                $this->node->getSubgraphIdentity()
             );
         }
 

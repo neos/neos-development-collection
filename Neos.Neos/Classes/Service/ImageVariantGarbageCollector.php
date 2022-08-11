@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
@@ -77,7 +77,7 @@ class ImageVariantGarbageCollector
                 // If the result contains exactly the node that got a new ImageVariant assigned
                 // then we are safe to remove the asset here.
                 if (
-                    $usageItem->contentStreamIdentifier === $node->getContentStreamIdentifier()
+                    $usageItem->contentStreamIdentifier === $node->getSubgraphIdentity()->contentStreamIdentifier
                     && $usageItem->originDimensionSpacePoint === $node->getOriginDimensionSpacePoint()->hash
                     && $usageItem->nodeAggregateIdentifier === $node->getNodeAggregateIdentifier()
                 ) {

@@ -32,7 +32,7 @@ use Neos\ContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwar
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  */
-final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
+final class HypergraphProjector //TODOextends AbstractProcessedEventsAwareProjector
 {
     use ContentStreamForking;
     use NodeCreation;
@@ -47,12 +47,9 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
-        private readonly PostgresDbalClientInterface $databaseClient,
-        DbalClientInterface $eventStorageDatabaseClient,
-        VariableFrontend $processedEventsCache
+        private readonly PostgresDbalClientInterface $databaseClient
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($databaseClient);
-        parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
     }
 
     /**
@@ -60,7 +57,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
      */
     public function reset(): void
     {
-        parent::reset();
+        // TODO parent::reset();
         $this->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . NodeRecord::TABLE_NAME);
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . HierarchyHyperrelationRecord::TABLE_NAME);

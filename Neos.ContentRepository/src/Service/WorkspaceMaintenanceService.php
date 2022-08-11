@@ -4,44 +4,20 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Service;
 
-use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
-class WorkspaceMaintenanceService
+class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
 {
-    protected WorkspaceFinder $workspaceFinder;
-
-    protected WorkspaceCommandHandler $workspaceCommandHandler;
-
-    protected Connection $connection;
-
-    protected ?CommandResult $lastCommandResult;
-
     public function __construct(
-        WorkspaceFinder $workspaceFinder,
-        WorkspaceCommandHandler $workspaceCommandHandler,
-        DbalClientInterface $dbalClient
+        private readonly ContentRepository $contentRepository,
     ) {
-        $this->workspaceFinder = $workspaceFinder;
-        $this->workspaceCommandHandler = $workspaceCommandHandler;
-        $this->connection = $dbalClient->getConnection();
     }
 
     /**
-     * Remove all content streams which are not needed anymore from the projections.
-     *
-     * NOTE: This still **keeps** the event stream as is; so it would be possible to re-construct the content stream
-     *       at a later point in time (though we currently do not provide any API for it).
-     *
-     *       To remove the deleted Content Streams,
-     *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
-     *
      * @return array<string,Workspace> the workspaces of the removed content streams
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
@@ -52,13 +28,13 @@ class WorkspaceMaintenanceService
      */
     public function rebaseOutdatedWorkspaces(): array
     {
-        $outdatedWorkspaces = $this->workspaceFinder->findOutdated();
+        $outdatedWorkspaces = $this->contentRepository->getWorkspaceFinder()->findOutdated();
 
         foreach ($outdatedWorkspaces as $workspace) {
-            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(RebaseWorkspace::create(
+            $this->contentRepository->handle(RebaseWorkspace::create(
                 $workspace->getWorkspaceName(),
                 UserIdentifier::forSystemUser()
-            ));
+            ))->block();
         }
 
         return $outdatedWorkspaces;

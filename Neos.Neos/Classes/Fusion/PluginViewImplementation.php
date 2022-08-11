@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -71,9 +71,7 @@ class PluginViewImplementation extends PluginImplementation
 
         // Set the node to render this to the master plugin node
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $this->pluginViewNode->getContentStreamIdentifier(),
-            $this->pluginViewNode->getDimensionSpacePoint(),
-            $this->pluginViewNode->getVisibilityConstraints()
+            $this->pluginViewNode->getSubgraphIdentity()
         );
         $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($pluginNodeIdentifier));
         $this->node = $node;

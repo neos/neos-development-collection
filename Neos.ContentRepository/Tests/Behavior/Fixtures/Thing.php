@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Fixtures;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -22,9 +23,9 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\PropertyCollection;
-use Neos\ContentRepository\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 
 /**
@@ -32,10 +33,6 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
  */
 final class Thing implements NodeInterface
 {
-    protected ContentStreamIdentifier $contentStreamIdentifier;
-
-    protected NodeAggregateIdentifier $nodeAggregateIdentifier;
-
     protected OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     protected NodeTypeName $nodeTypeName;
@@ -51,8 +48,8 @@ final class Thing implements NodeInterface
     protected PropertyCollection $properties;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        private readonly ContentSubgraphIdentity $contentSubgraphIdentity,
+        private readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
@@ -60,8 +57,6 @@ final class Thing implements NodeInterface
         PropertyCollection $propertyCollection,
         NodeAggregateClassification $classification
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
@@ -84,11 +79,6 @@ final class Thing implements NodeInterface
     public function isTethered(): bool
     {
         return $this->classification->isTethered();
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
     }
 
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
@@ -150,16 +140,6 @@ final class Thing implements NodeInterface
         throw new \RuntimeException('Not supported');
     }
 
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        // TODO!!!
-        return $this->dimensionSpacePoint;
-    }
-
-    public function getVisibilityConstraints(): VisibilityConstraints
-    {
-    }
-
     public function getClassification(): NodeAggregateClassification
     {
         // TODO: Implement getClassification() method.
@@ -168,5 +148,10 @@ final class Thing implements NodeInterface
     public function equals(NodeInterface $other): bool
     {
         return false;
+    }
+
+    public function getSubgraphIdentity(): ContentSubgraphIdentity
+    {
+        return $this->contentSubgraphIdentity;
     }
 }

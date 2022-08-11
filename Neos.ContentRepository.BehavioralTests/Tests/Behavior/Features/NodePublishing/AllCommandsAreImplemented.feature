@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Publishing hide/show scenario of nodes
 
   Node structure is as follows:
@@ -107,7 +107,7 @@ Feature: Publishing hide/show scenario of nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | nodesToPublish           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
       | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
@@ -165,7 +165,7 @@ Feature: Publishing hide/show scenario of nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                               |
       | workspaceName                           | "user-test"                                                                                                                         |
-      | nodeAddresses                           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | nodesToPublish                          | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
       | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                                        |
       | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
     And the graph projection is fully up to date
@@ -207,7 +207,7 @@ Feature: Publishing hide/show scenario of nodes
    # When the command PublishIndividualNodesFromWorkspace is executed with payload:
    #   | Key           | Value                                                                                                                               |
    #   | workspaceName | "user-test"                                                                                                                         |
-    #  | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+    #  | nodesToPublish | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
     #And the graph projection is fully up to date
 
    # When I am in the active content stream of workspace "live" and dimension space point {}
@@ -253,7 +253,7 @@ Feature: Publishing hide/show scenario of nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | nodesToPublish           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
       | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
@@ -297,7 +297,7 @@ Feature: Publishing hide/show scenario of nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | nodesToPublish           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
       | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
@@ -343,7 +343,7 @@ Feature: Publishing hide/show scenario of nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                               |
       | workspaceName                           | "user-test"                                                                                                                         |
-      | nodeAddresses                           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | nodesToPublish                          | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
       | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                                        |
       | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
     And the graph projection is fully up to date
@@ -409,7 +409,7 @@ Feature: Publishing hide/show scenario of nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                 |
       | workspaceName                           | "user-test"                                                                                                           |
-      | nodeAddresses                           | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | nodesToPublish                          | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
       | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                          |
       | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                         |
     And the graph projection is fully up to date

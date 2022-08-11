@@ -11,13 +11,14 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -43,9 +44,9 @@ class ChildrenOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeConstraintFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -87,9 +88,7 @@ class ChildrenOperation extends AbstractOperation
         /** @var NodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
+                $contextNode->getSubgraphIdentity()
             )->findChildNodes($contextNode);
             foreach ($childNodes as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
@@ -150,9 +149,7 @@ class ChildrenOperation extends AbstractOperation
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             $resolvedNode = $this->nodeAccessorManager->accessorFor(
-                                $resolvedNode->getContentStreamIdentifier(),
-                                $resolvedNode->getDimensionSpacePoint(),
-                                $resolvedNode->getVisibilityConstraints()
+                                $resolvedNode->getSubgraphIdentity()
                             )->findChildNodeConnectedThroughEdgeName(
                                 $resolvedNode,
                                 NodeName::fromString($nodePathSegment)
@@ -173,14 +170,13 @@ class ChildrenOperation extends AbstractOperation
                     }, $instanceOfFilters);
                     /** @var NodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
+                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
                         /** @var NodeInterface $childNode */
                         $childNodes = $this->nodeAccessorManager->accessorFor(
-                            $contextNode->getContentStreamIdentifier(),
-                            $contextNode->getDimensionSpacePoint(),
-                            $contextNode->getVisibilityConstraints()
+                            $contextNode->getSubgraphIdentity()
                         )->findChildNodes(
                             $contextNode,
-                            $this->nodeTypeConstraintFactory->parseFilterString(
+                            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
                                 implode(',', $allowedNodeTypes)
                             )
                         );

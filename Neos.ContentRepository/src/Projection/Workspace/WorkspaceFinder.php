@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\Workspace;
 
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -24,49 +25,27 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-final class WorkspaceFinder
+final class WorkspaceFinder implements ProjectionStateInterface
 {
-    private bool $cacheEnabled = true;
-
-    /**
-     * @var array<string,Workspace>
-     */
-    private array $cachedWorkspacesByName = [];
-
-    /**
-     * @var array<string,Workspace>
-     */
-    private array $cachedWorkspacesByContentStreamIdentifier = [];
-
-    public function __construct(private readonly DbalClientInterface $client)
-    {
+    public function __construct(
+        private readonly DbalClientInterface $client,
+        private readonly WorkspaceRuntimeCache $workspaceRuntimeCache,
+        private readonly string $tableName
+    ) {
     }
 
-
-    public function disableCache(): void
-    {
-        $this->cacheEnabled = false;
-        $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamIdentifier = [];
-    }
-
-    public function enableCache(): void
-    {
-        $this->cacheEnabled = true;
-        $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamIdentifier = [];
-    }
 
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
-        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByName[(string)$name])) {
-            return $this->cachedWorkspacesByName[(string)$name];
+        $workspace = $this->workspaceRuntimeCache->getWorkspaceByName($name);
+        if ($workspace !== null) {
+            return $workspace;
         }
 
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
             '
-            SELECT * FROM neos_contentrepository_projection_workspace_v1
+            SELECT * FROM ' . $this->tableName . '
             WHERE workspaceName = :workspaceName
         ',
             [
@@ -79,28 +58,22 @@ final class WorkspaceFinder
         }
 
         $workspace = Workspace::fromDatabaseRow($workspaceRow);
-
-        if ($this->cacheEnabled === true) {
-            $this->cachedWorkspacesByName[(string)$name] = $workspace;
-        }
-
+        $this->workspaceRuntimeCache->setWorkspace($workspace);
         return $workspace;
     }
 
     public function findOneByCurrentContentStreamIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier
     ): ?Workspace {
-        if (
-            $this->cacheEnabled
-            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])
-        ) {
-            return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
+        $workspace = $this->workspaceRuntimeCache->getByCurrentContentStreamIdentifier($contentStreamIdentifier);
+        if ($workspace !== null) {
+            return $workspace;
         }
 
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
             '
-            SELECT * FROM neos_contentrepository_projection_workspace_v1
+            SELECT * FROM ' . $this->tableName . '
             WHERE currentContentStreamIdentifier = :currentContentStreamIdentifier
         ',
             [
@@ -113,11 +86,7 @@ final class WorkspaceFinder
         }
 
         $workspace = Workspace::fromDatabaseRow($workspaceRow);
-
-        if ($this->cacheEnabled === true) {
-            $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $workspace;
-        }
-
+        $this->workspaceRuntimeCache->setWorkspace($workspace);
         return $workspace;
     }
 
@@ -131,7 +100,7 @@ final class WorkspaceFinder
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
                 WHERE workspaceName LIKE :workspaceNameLike
             ',
             [
@@ -159,7 +128,7 @@ final class WorkspaceFinder
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
                 WHERE baseWorkspaceName = :workspaceName
             ',
             [
@@ -181,7 +150,7 @@ final class WorkspaceFinder
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
                 WHERE workspaceOwner = :workspaceOwner
             ',
             [
@@ -206,7 +175,7 @@ final class WorkspaceFinder
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                SELECT * FROM ' . $this->tableName . '
             '
         )->fetchAllAssociative();
 
@@ -231,7 +200,7 @@ final class WorkspaceFinder
         $connection = $this->client->getConnection();
         $workspaceRows = $connection->executeQuery(
             '
-                SELECT * FROM neos_contentrepository_projection_workspace_v1 WHERE status = :outdated
+                SELECT * FROM ' . $this->tableName . ' WHERE status = :outdated
             ',
             [
                 'outdated' => Workspace::STATUS_OUTDATED

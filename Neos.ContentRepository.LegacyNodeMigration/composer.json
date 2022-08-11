@@ -7,7 +7,7 @@
     ],
     "require": {
         "php": ">=8.1",
-        "neos/content-repository": "*",
+        "neos/contentrepository": "*",
         "neos/contentrepository-export": "*",
         "league/flysystem": "^3"
     },

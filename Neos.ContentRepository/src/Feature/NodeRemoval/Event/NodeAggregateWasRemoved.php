@@ -22,12 +22,10 @@ use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\EventStore\EventInterface;
 
-#[Flow\Proxy(false)]
 final class NodeAggregateWasRemoved implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -62,5 +60,31 @@ final class NodeAggregateWasRemoved implements
             $this->initiatingUserIdentifier,
             $this->removalAttachmentPoint
         );
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            OriginDimensionSpacePointSet::fromArray($values['affectedOccupiedDimensionSpacePoints']),
+            DimensionSpacePointSet::fromArray($values['affectedCoveredDimensionSpacePoints']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            isset($values['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($values['removalAttachmentPoint'])
+                : null,
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'affectedOccupiedDimensionSpacePoints' => $this->affectedOccupiedDimensionSpacePoints,
+            'affectedCoveredDimensionSpacePoints' => $this->affectedCoveredDimensionSpacePoints,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'removalAttachmentPoint' => $this->removalAttachmentPoint
+        ];
     }
 }

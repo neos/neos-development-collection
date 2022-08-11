@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Uri;
 
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
@@ -22,7 +24,8 @@ use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
@@ -108,9 +111,9 @@ class NodeViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -213,7 +216,11 @@ class NodeViewHelper extends AbstractViewHelper
         }
 
         if ($node instanceof NodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
+            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+            $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
             $nodeAddress = $this->resolveNodeAddressFromString($node);
         } else {
@@ -262,17 +269,27 @@ class NodeViewHelper extends AbstractViewHelper
     {
         /* @var NodeInterface $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
-        $documentNodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
         if (strncmp($path, 'node://', 7) === 0) {
             return $documentNodeAddress->withNodeAggregateIdentifier(
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress($documentNodeAddress);
+        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
+            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $documentNodeAddress
+        );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
-            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress);
+            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
+                $documentNodeAddress,
+                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            );
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
@@ -306,12 +323,17 @@ class NodeViewHelper extends AbstractViewHelper
      * @param NodeAddress $nodeAddress
      * @return NodeAccessorInterface
      */
-    private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
-    {
+    private function getNodeAccessorForNodeAddress(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        NodeAddress $nodeAddress
+    ): NodeAccessorInterface {
         return $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            new ContentSubgraphIdentity(
+                $contentRepositoryIdentifier,
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
         );
     }
 }

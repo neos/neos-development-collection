@@ -41,8 +41,9 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     protected $simpleTemplateRenderer;
 
     /**
-     * @Flow\Inject
-     * @var ContentDimensionZookeeper
+     * TODO: FIX ME ES CR
+     * __Flow\Inject
+     * __var ContentDimensionZookeeper
      */
     protected $contentDimensionZookeeper;
 

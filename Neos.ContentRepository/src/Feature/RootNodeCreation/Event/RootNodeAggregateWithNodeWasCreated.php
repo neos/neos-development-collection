@@ -22,15 +22,13 @@ use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIde
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * A root node aggregate and its initial node were created
  */
-#[Flow\Proxy(false)]
 final class RootNodeAggregateWithNodeWasCreated implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -65,5 +63,29 @@ final class RootNodeAggregateWithNodeWasCreated implements
             $this->nodeAggregateClassification,
             $this->initiatingUserIdentifier
         );
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($values['nodeTypeName']),
+            DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
+            NodeAggregateClassification::from($values['nodeAggregateClassification']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeTypeName' => $this->nodeTypeName,
+            'coveredDimensionSpacePoints' => $this->coveredDimensionSpacePoints,
+            'nodeAggregateClassification' => $this->nodeAggregateClassification,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }

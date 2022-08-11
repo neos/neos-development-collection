@@ -6,7 +6,8 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadMod
 
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -28,9 +29,9 @@ class EmulatedLegacyContext
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -74,14 +75,17 @@ class EmulatedLegacyContext
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return $this->getNodeAddressOfContextNode()->workspaceName?->name;
+        return $this->getNodeAddressOfContextNode()->workspaceName->name;
     }
 
     public function getWorkspace(): EmulatedLegacyWorkspace
     {
         $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
+        return new EmulatedLegacyWorkspace(
+            $this->node->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $this->getNodeAddressOfContextNode()
+        );
     }
 
     public function getCurrentSite(): EmulatedLegacySite
@@ -93,7 +97,10 @@ class EmulatedLegacyContext
 
     private function getNodeAddressOfContextNode(): NodeAddress
     {
-        return $this->nodeAddressFactory->createFromNode($this->node);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $this->node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+        return NodeAddressFactory::create($contentRepository)->createFromNode($this->node);
     }
 
     private function hasAccessToBackend(): bool

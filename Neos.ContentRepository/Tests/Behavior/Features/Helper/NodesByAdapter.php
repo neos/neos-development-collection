@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

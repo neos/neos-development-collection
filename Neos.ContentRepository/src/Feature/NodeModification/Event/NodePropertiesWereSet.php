@@ -21,8 +21,7 @@ use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterf
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * When a node property is changed, this event is triggered.
@@ -33,9 +32,8 @@ use Neos\Flow\Annotations as Flow;
  * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
  * because we treat NULL and "not set" the same from an API perspective.
  */
-#[Flow\Proxy(false)]
 final class NodePropertiesWereSet implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -83,5 +81,27 @@ final class NodePropertiesWereSet implements
             $this->propertyValues->merge($other->propertyValues),
             $this->initiatingUserIdentifier
         );
+    }
+
+    public static function fromArray(array $values): EventInterface
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
+            SerializedPropertyValues::fromArray($values['propertyValues']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
+            'propertyValues' => $this->propertyValues,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
     }
 }

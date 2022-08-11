@@ -10,8 +10,8 @@ use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\Event\StreamName;
 
 /**
  * Processor that exports all events of the live workspace to an "events.jsonl" file
@@ -23,7 +23,7 @@ final class EventExportProcessor implements ProcessorInterface
     public function __construct(
         private readonly Filesystem $files,
         private readonly WorkspaceFinder $workspaceFinder,
-        private readonly EventStore $eventStore,
+        private readonly EventStoreInterface $eventStore,
     ) {}
 
     public function onMessage(\Closure $callback): void
@@ -48,7 +48,7 @@ final class EventExportProcessor implements ProcessorInterface
 
         $numberOfExportedEvents = 0;
         foreach ($eventStream as $eventEnvelope) {
-            $event = ExportedEvent::fromRawEvent($eventEnvelope->getRawEvent());
+            $event = ExportedEvent::fromRawEvent($eventEnvelope->event);
             fwrite($eventFileResource, $event->toJson() . chr(10));
             $numberOfExportedEvents ++;
         }

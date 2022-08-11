@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Constraint checks on node aggregate disabling
 
   As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.

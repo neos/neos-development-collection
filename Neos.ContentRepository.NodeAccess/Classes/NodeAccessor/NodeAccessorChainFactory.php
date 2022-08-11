@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -39,9 +40,7 @@ class NodeAccessorChainFactory
     protected $objectManager;
 
     public function build(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints
+        ContentSubgraphIdentity $contentSubgraphIdentity
     ): NodeAccessorInterface {
         $nodeAccessorFactoriesConfiguration = (new PositionalArraySorter($this->nodeAccessorFactoriesConfiguration))
             ->toArray();
@@ -58,9 +57,7 @@ class NodeAccessorChainFactory
         foreach (array_reverse($nodeAccessorFactories) as $nodeAccessorFactory) {
             assert($nodeAccessorFactory instanceof NodeAccessorFactoryInterface);
             $nextAccessor = $nodeAccessorFactory->build(
-                $contentStreamIdentifier,
-                $dimensionSpacePoint,
-                $visibilityConstraints,
+                $contentSubgraphIdentity,
                 $nextAccessor
             );
         }

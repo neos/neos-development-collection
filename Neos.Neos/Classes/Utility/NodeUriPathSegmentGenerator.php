@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Utility;
 
 use Behat\Transliterator\Transliterator;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;

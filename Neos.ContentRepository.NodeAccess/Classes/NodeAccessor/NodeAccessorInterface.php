@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\NodeAccess\NodeAccessor;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -22,10 +22,10 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\Projection\Content\SearchTerm;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 /**
@@ -58,11 +58,6 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
  */
 interface NodeAccessorInterface
 {
-    // IDENTITY of this NodeAccessor.
-    public function getContentStreamIdentifier(): ContentStreamIdentifier;
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint;
-
     // Find by ID
     public function findByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
 

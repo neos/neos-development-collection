@@ -49,7 +49,7 @@ class NodeHiddenState
         $this->hidden = $hidden;
     }
 
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         if (is_null($this->contentStreamIdentifier)) {
             throw new \BadMethodCallException(
@@ -69,7 +69,7 @@ class NodeHiddenState
                 1645383962
             );
         }
-        $databaseConnection->insert('neos_contentrepository_projection_nodehiddenstate', [
+        $databaseConnection->insert($tableName, [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),

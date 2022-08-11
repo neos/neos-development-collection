@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create a root node aggregate
 
   As a user of the CR I want to create a new root node aggregate with an initial node.
@@ -23,6 +23,7 @@ Feature: Create a root node aggregate
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |

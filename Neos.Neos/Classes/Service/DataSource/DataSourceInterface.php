@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\DataSource;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
 /**
  * Data source interface for providing generic data

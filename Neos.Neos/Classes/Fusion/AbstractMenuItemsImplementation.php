@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Flow\Annotations as Flow;
@@ -177,9 +177,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected function getNodeLevelInSite(NodeInterface $node): int
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
+            $node->getSubgraphIdentity()
         );
 
         return $nodeAccessor->findNodePath($node)->getDepth() - 2; // sites always are depth 2;

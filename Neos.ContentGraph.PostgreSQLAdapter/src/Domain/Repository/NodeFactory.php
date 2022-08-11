@@ -17,8 +17,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Projection\Content\Reference;
-use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\Projection\ContentGraph\Reference;
+use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -31,11 +31,11 @@ use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Projection\ContentGraph\Exception\NodeImplementationClassNameIsInvalid;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
@@ -251,7 +251,7 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,mixed>> $nodeRows
-     * @return iterable<int,\Neos\ContentRepository\Projection\Content\NodeAggregate>
+     * @return iterable<int,\Neos\ContentRepository\Projection\ContentGraph\NodeAggregate>
      */
     public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable
     {

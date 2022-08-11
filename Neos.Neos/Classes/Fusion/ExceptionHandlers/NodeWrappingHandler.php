@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\ExceptionHandlers;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
@@ -50,9 +50,9 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
+    protected $contentRepositoryRegistry;
 
     /**
      * renders the exception to nice html content element to display, edit, remove, ...
@@ -72,8 +72,10 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
         if (isset($currentContext['node'])) {
             /** @var NodeInterface $node */
             $node = $currentContext['node'];
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-                $node->getContentStreamIdentifier()
+            $contentRepositoryIdentifier = $node->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
+                $node->getSubgraphIdentity()->contentStreamIdentifier
             );
             $applicationContext = $this->environment->getContext();
 

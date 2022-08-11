@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  */
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\Flow\Aop\JoinPointInterface;
 
 /**

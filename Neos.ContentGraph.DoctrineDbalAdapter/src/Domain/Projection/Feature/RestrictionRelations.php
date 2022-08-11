@@ -12,7 +12,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 
 trait RestrictionRelations
 {
-    protected ProjectionContentGraph $projectionContentGraph;
+    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
+
+    abstract protected function getTableNamePrefix(): string;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -30,7 +32,7 @@ trait RestrictionRelations
 -- GraphProjector::removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints
 
 DELETE r.*
-FROM neos_contentgraph_restrictionrelation r
+FROM ' . $this->getTableNamePrefix() . '_restrictionrelation r
 WHERE r.contentstreamidentifier = :contentStreamIdentifier
 AND r.originnodeaggregateidentifier = :originNodeAggregateIdentifier
 AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
@@ -57,7 +59,7 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                 -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
 
                 delete r.* from
-                    neos_contentgraph_restrictionrelation r
+                    ' . $this->getTableNamePrefix() . '_restrictionrelation r
                     join
                      (
                         -- we build a recursive tree
@@ -70,10 +72,10 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                                 n.nodeaggregateidentifier,
                                 h.dimensionspacepointhash
                              from
-                                neos_contentgraph_node n
+                                ' . $this->getTableNamePrefix() . '_node n
                              -- we need to join with the hierarchy relation,
                              -- because we need the dimensionspacepointhash.
-                             inner join neos_contentgraph_hierarchyrelation h
+                             inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
                                 on h.childnodeanchor = n.relationanchorpoint
                              where
                                 n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
@@ -88,9 +90,9 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                                 h.dimensionspacepointhash
                              from
                                 tree p
-                             inner join neos_contentgraph_hierarchyrelation h
+                             inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
                                 on h.parentnodeanchor = p.relationanchorpoint
-                             inner join neos_contentgraph_node c
+                             inner join ' . $this->getTableNamePrefix() . '_node c
                                 on h.childnodeanchor = c.relationanchorpoint
                              where
                                 h.contentstreamidentifier = :contentStreamIdentifier
@@ -120,7 +122,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $descendantNodeAggregateIdentifiers = $this->projectionContentGraph->findDescendantNodeAggregateIdentifiers(
+        $projectionContentGraph = $this->getProjectionContentGraph();
+        $descendantNodeAggregateIdentifiers = $projectionContentGraph->findDescendantNodeAggregateIdentifiers(
             $contentStreamIdentifier,
             $entryNodeAggregateIdentifier,
             $affectedDimensionSpacePoints
@@ -131,7 +134,7 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                 -- GraphProjector::removeAllRestrictionRelationsInSubtreeImposedByAncestors
 
                 DELETE r.*
-                    FROM neos_contentgraph_restrictionrelation r
+                    FROM ' . $this->getTableNamePrefix() . '_restrictionrelation r
                     WHERE r.contentstreamidentifier = :contentStreamIdentifier
                     AND r.originnodeaggregateidentifier NOT IN (:descendantNodeAggregateIdentifiers)
                     AND r.affectednodeaggregateidentifier IN (:descendantNodeAggregateIdentifiers)

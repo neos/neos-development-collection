@@ -12,7 +12,7 @@
         "neos/media-browser": "*",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
-        "neos/content-repository": "*",
+        "neos/contentrepository": "*",
         "neos/contentrepositoryregistry": "*",
         "neos/fusion": "*",
         "neos/fusion-afx": "*",

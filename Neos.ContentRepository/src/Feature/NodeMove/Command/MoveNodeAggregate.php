@@ -14,11 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeAddressInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
@@ -43,9 +45,10 @@ use Neos\Flow\Annotations as Flow;
  */
 #[Flow\Proxy(false)]
 final class MoveNodeAggregate implements
+    CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeAddressInterface
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     /**
      * The content stream in which the move operation is to be performed
@@ -193,10 +196,10 @@ final class MoveNodeAggregate implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,
@@ -207,10 +210,10 @@ final class MoveNodeAggregate implements
         );
     }
 
-    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
-        return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-            && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
-            && $this->dimensionSpacePoint === $nodeAddress->dimensionSpacePoint;
+        return $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
+            && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
+            && $this->dimensionSpacePoint === $nodeIdentifierToPublish->dimensionSpacePoint;
     }
 }

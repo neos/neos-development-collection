@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 
 /**
  * "parent" operation working on ContentRepository nodes. It iterates over all
@@ -69,9 +69,7 @@ class ParentOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /* @var $contextNode NodeInterface */
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
+                $contextNode->getSubgraphIdentity()
             );
 
             $parentNode = $nodeAccessor->findParentNode($contextNode);

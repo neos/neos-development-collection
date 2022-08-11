@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
@@ -52,22 +53,25 @@ class ContentElementEditableService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {
-        if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+        );
+
+        if (
+            $this->isContentStreamOfLiveWorkspace(
+                $node->getSubgraphIdentity()->contentStreamIdentifier,
+                $contentRepository
+            )
+        ) {
             return $content;
         }
 
@@ -78,16 +82,20 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)
+            'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)
+                ->createFromNode($node)
                 ->serializeForUri()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
-    {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+    private function isContentStreamOfLiveWorkspace(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): bool {
+        return $contentRepository->getWorkspaceFinder()
+            ->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
             ?->getWorkspaceName()->isLive() ?: false;
     }
 }

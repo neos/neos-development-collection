@@ -12,9 +12,14 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\ContentRepository\Projection\Content\ProjectionIntegrityViolationDetectionRunner;
+use Neos\ContentRepository\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -28,10 +33,13 @@ trait ProjectionIntegrityViolationDetectionTrait
     protected Result $lastIntegrityViolationDetectionResult;
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
+    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+    abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     protected function setupProjectionIntegrityViolationDetectionTrait(): void
     {
-        $this->projectionIntegrityViolationDetectionRunner = $this->getObjectManager()->get(ProjectionIntegrityViolationDetectionRunner::class);
+        $dbalClient = $this->objectManager->get(DbalClientInterface::class);
+        $this->projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($dbalClient));
     }
 
     /**

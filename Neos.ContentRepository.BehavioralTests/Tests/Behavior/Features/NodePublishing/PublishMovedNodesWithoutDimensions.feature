@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Publishing moved nodes without dimensions
 
   As a user of the CR I want to move a node
@@ -83,7 +83,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user"                                                                                                                              |
-      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+      | nodesToPublish           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
       | initiatingUserIdentifier | "user"                                                                                                                              |
     And the graph projection is fully up to date
 
@@ -125,7 +125,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                                   |
       | workspaceName            | "user"                                                                                                                                  |
-      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | nodesToPublish           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
       | initiatingUserIdentifier | "user"                                                                                                                                  |
     And the graph projection is fully up to date
 
@@ -177,7 +177,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user"                                                                                                                              |
-      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+      | nodesToPublish           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
       | initiatingUserIdentifier | "user"                                                                                                                              |
     And the graph projection is fully up to date
 
@@ -224,7 +224,7 @@ Feature: Publishing moved nodes without dimensions
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                         |
       | workspaceName            | "user"                                                                                                                        |
-      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}] |
+      | nodesToPublish           | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}] |
       | initiatingUserIdentifier | "user"                                                                                                                        |
 
     When the graph projection is fully up to date

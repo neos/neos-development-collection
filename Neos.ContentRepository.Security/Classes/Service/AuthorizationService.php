@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege;
@@ -20,11 +20,11 @@ use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSu
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * This service provides API methods to check for privileges
@@ -48,9 +48,9 @@ class AuthorizationService
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * Returns true if the currently authenticated user is allowed to edit the given $node, otherwise false
@@ -85,7 +85,8 @@ class AuthorizationService
     {
         $privilegeSubject = new CreateNodePrivilegeSubject($referenceNode);
 
-        $allNodeTypes = $this->nodeTypeManager->getNodeTypes();
+        $contentRepository = $this->contentRepositoryRegistry->get($referenceNode->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $allNodeTypes = $contentRepository->getNodeTypeManager()->getNodeTypes();
 
         $deniedCreationNodeTypes = [];
         $grantedCreationNodeTypes = [];

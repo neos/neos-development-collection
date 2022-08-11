@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node aggregate with node
 
   As a user of the CR I want to create a new externally referencable node aggregate of a specific type with an initial node
@@ -14,13 +14,15 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamIdentifier | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"

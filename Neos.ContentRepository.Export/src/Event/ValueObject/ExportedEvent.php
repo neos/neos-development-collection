@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Export\Event\ValueObject;
 
-use Neos\EventSourcing\EventStore\RawEvent;
+use Neos\EventStore\Model\Event;
 
 final class ExportedEvent implements \JsonSerializable
 {
@@ -13,17 +13,17 @@ final class ExportedEvent implements \JsonSerializable
     public function __construct(
         public readonly string $identifier,
         public readonly string $type,
-        public readonly array $payload,
+        public readonly array $payload, // TODO: string
         public readonly array $metadata,
     ) {}
 
-    public static function fromRawEvent(RawEvent $event): self
+    public static function fromRawEvent(Event $event): self
     {
         return new self(
-            $event->getIdentifier(),
-            $event->getType(),
-            $event->getPayload(),
-            $event->getMetadata(),
+            $event->id->value,
+            $event->type->value,
+            \json_decode($event->data->value, true),
+            $event->metadata->value,
         );
     }
 

@@ -17,57 +17,41 @@ namespace Neos\ContentRepository\Feature\WorkspaceRebase\Event;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\EventStore\EventInterface;
 
-/**
- * @Flow\Proxy(false)
- */
-class WorkspaceWasRebased implements DomainEventInterface
+final class WorkspaceWasRebased implements EventInterface
 {
-    private WorkspaceName $workspaceName;
-
-    /**
-     * The new content stream identifier (after the rebase was successful)
-     */
-    private ContentStreamIdentifier $newContentStreamIdentifier;
-
-    /**
-     * The old content stream identifier (which is not active anymore now)
-     */
-    private ContentStreamIdentifier $previousContentStreamIdentifier;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        WorkspaceName $workspaceName,
-        ContentStreamIdentifier $newContentStreamIdentifier,
-        ContentStreamIdentifier $previousContentStreamIdentifier,
-        UserIdentifier $initiatingUserIdentifier
+        public readonly WorkspaceName $workspaceName,
+        /**
+         * The new content stream identifier (after the rebase was successful)
+         */
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
+        /**
+         * The old content stream identifier (which is not active anymore now)
+         */
+        public readonly ContentStreamIdentifier $previousContentStreamIdentifier,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
-        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    public function getWorkspaceName(): WorkspaceName
+    public static function fromArray(array $values): self
     {
-        return $this->workspaceName;
+        return new self(
+            WorkspaceName::fromString($values['workspaceName']),
+            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($values['previousContentStreamIdentifier']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+        );
     }
 
-    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
+    public function jsonSerialize(): array
     {
-        return $this->newContentStreamIdentifier;
-    }
-
-    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->previousContentStreamIdentifier;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
+        return [
+            'workspaceName' => $this->workspaceName,
+            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
+            'previousContentStreamIdentifier' => $this->previousContentStreamIdentifier,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }

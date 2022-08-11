@@ -18,15 +18,15 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\Content\References;
+use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
+use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -57,14 +57,15 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
  */
 final class ContentSubgraph implements ContentSubgraphInterface
 {
-    protected InMemoryCache $inMemoryCache;
+    public readonly InMemoryCache $inMemoryCache;
 
     public function __construct(
         private readonly ContentStreamIdentifier $contentStreamIdentifier,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly DbalClientInterface $client,
-        private readonly NodeFactory $nodeFactory
+        private readonly NodeFactory $nodeFactory,
+        private readonly string $tableNamePrefix
     ) {
         $this->inMemoryCache = new InMemoryCache();
     }
@@ -131,7 +132,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     protected static function addSearchTermConstraintsToQuery(
         SqlQueryBuilder $query,
-        ?\Neos\ContentRepository\Projection\Content\SearchTerm $searchTerm,
+        ?\Neos\ContentRepository\Projection\ContentGraph\SearchTerm $searchTerm,
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
@@ -204,9 +205,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findChildNodes
-SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+SELECT c.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . '_node p
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
@@ -218,9 +219,8 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c'
         );
         $query->addToQuery('ORDER BY h.position ASC');
@@ -269,8 +269,8 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             $query = new SqlQueryBuilder();
             $query->addToQuery('
 -- ContentSubgraph::findNodeByNodeAggregateIdentifier
-SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+SELECT n.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
 
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -289,9 +289,8 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
                     $this->getDimensionSpacePoint()->hash
                 );
 
-            $query = self::addRestrictionRelationConstraintsToQuery(
-                $query,
-                $this->visibilityConstraints
+            $query = $this->addRestrictionRelationConstraintsToQuery(
+                $query
             );
 
             $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
@@ -311,21 +310,20 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         }
     }
 
-    private static function addRestrictionRelationConstraintsToQuery(
+    private function addRestrictionRelationConstraintsToQuery(
         SqlQueryBuilder $query,
-        VisibilityConstraints $visibilityConstraints,
         string $aliasOfNodeInQuery = 'n',
         string $aliasOfHierarchyEdgeInQuery = 'h',
         string $markerToReplaceInQuery = null
     ): SqlQueryBuilder {
         // TODO: make QueryBuilder immutable
-        if (!$visibilityConstraints->isDisabledContentShown()) {
+        if (!$this->visibilityConstraints->isDisabledContentShown()) {
             $query->addToQuery('
                 and not exists (
                     select
                         1
                     from
-                        neos_contentgraph_restrictionrelation r
+                        ' . $this->tableNamePrefix . '_restrictionrelation r
                     where
                         r.contentstreamidentifier = ' . $aliasOfHierarchyEdgeInQuery . '.contentstreamidentifier
                         and r.dimensionspacepointhash = ' . $aliasOfHierarchyEdgeInQuery . '.dimensionspacepointhash
@@ -343,9 +341,9 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
         $query = new SqlQueryBuilder();
-        $query->addToQuery('SELECT COUNT(*) FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+        $query->addToQuery('SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node p
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeaggregateidentifier = :parentNodeNodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
@@ -362,9 +360,8 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
                 $this->getDimensionSpacePoint()->hash
             );
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c'
         );
 
@@ -388,11 +385,11 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
             '
 -- ContentSubgraph::findReferencedNodes
 SELECT d.*, dh.contentstreamidentifier, dh.name, r.name AS referencename, r.properties AS referenceproperties
- FROM neos_contentgraph_hierarchyrelation sh
- INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint
- INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
- INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
- INNER JOIN neos_contentgraph_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint
+ FROM ' . $this->tableNamePrefix . '_hierarchyrelation sh
+ INNER JOIN ' . $this->tableNamePrefix . '_node s ON sh.childnodeanchor = s.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint
  WHERE s.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND dh.dimensionspacepointhash = :dimensionSpacePointHash
  AND sh.dimensionspacepointhash = :dimensionSpacePointHash
@@ -408,9 +405,8 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, r.name AS referencename, r.prop
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash)
             ->parameter('name', (string)$name);
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'd',
             'dh'
         );
@@ -449,11 +445,11 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, r.name AS referencename, r.prop
             '
 -- ContentSubgraph::findReferencingNodes
 SELECT s.*, sh.contentstreamidentifier, sh.name, r.name AS referencename, r.properties AS referenceproperties
- FROM neos_contentgraph_hierarchyrelation sh
- INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint
- INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
- INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
- INNER JOIN neos_contentgraph_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint
+ FROM ' . $this->tableNamePrefix . '_hierarchyrelation sh
+ INNER JOIN ' . $this->tableNamePrefix . '_node s ON sh.childnodeanchor = s.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint
  WHERE d.nodeaggregateidentifier = :destinationnodeaggregateidentifier
  AND dh.dimensionspacepointhash = :dimensionSpacePointHash
  AND sh.dimensionspacepointhash = :dimensionSpacePointHash
@@ -473,9 +469,8 @@ SELECT s.*, sh.contentstreamidentifier, sh.name, r.name AS referencename, r.prop
             $query->addToQuery('AND r.name = :name');
         }
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             's',
             'sh'
         );
@@ -527,10 +522,10 @@ SELECT s.*, sh.contentstreamidentifier, sh.name, r.name AS referencename, r.prop
         $query->addToQuery(
             '
 -- ContentSubgraph::findParentNode
-SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
+SELECT p.*, h.contentstreamidentifier, hp.name FROM ' . $this->tableNamePrefix . '_node p
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
  WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND hp.contentstreamidentifier = :contentStreamIdentifier
@@ -544,9 +539,8 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'p'
         );
 
@@ -629,10 +623,10 @@ SELECT
     h.name,
     h.contentstreamidentifier
 FROM
-    neos_contentgraph_node p
-INNER JOIN neos_contentgraph_hierarchyrelation h
+    ' . $this->tableNamePrefix . '_node p
+INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
     ON h.parentnodeanchor = p.relationanchorpoint
-INNER JOIN neos_contentgraph_node c
+INNER JOIN ' . $this->tableNamePrefix . '_node c
     ON h.childnodeanchor = c.relationanchorpoint
 WHERE
     p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
@@ -654,9 +648,8 @@ WHERE
                 )
                 ->parameter('edgeName', (string)$edgeName);
 
-            self::addRestrictionRelationConstraintsToQuery(
+            $this->addRestrictionRelationConstraintsToQuery(
                 $query,
-                $this->visibilityConstraints,
                 'c'
             );
 
@@ -752,12 +745,12 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
-        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
+        $this->addRestrictionRelationConstraintsToQuery($query);
 
         $query->addToQuery('
     AND h.position < (
-        SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
-            INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+        SELECT sibh.position FROM ' . $this->tableNamePrefix . '_hierarchyrelation sibh
+            INNER JOIN ' . $this->tableNamePrefix . '_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
         WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
             AND sibh.contentstreamidentifier = :contentStreamIdentifier
             AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
@@ -807,12 +800,12 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
-        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
+        $this->addRestrictionRelationConstraintsToQuery($query);
 
         $query->addToQuery('
     AND h.position > (
-        SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
-            INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+        SELECT sibh.position FROM ' . $this->tableNamePrefix . '_hierarchyrelation sibh
+            INNER JOIN ' . $this->tableNamePrefix . '_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
         WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
             AND sibh.contentstreamidentifier = :contentStreamIdentifier
             AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
@@ -844,12 +837,12 @@ WHERE
     protected function getSiblingBaseQuery(): string
     {
         return '
-  SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
-  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+  SELECT n.*, h.contentstreamidentifier, h.name FROM ' . $this->tableNamePrefix . '_node n
+  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
   WHERE h.contentstreamidentifier = :contentStreamIdentifier AND h.dimensionspacepointhash = :dimensionSpacePointHash
   AND h.parentnodeanchor = (
-      SELECT sibh.parentnodeanchor FROM neos_contentgraph_hierarchyrelation sibh
-        INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      SELECT sibh.parentnodeanchor FROM ' . $this->tableNamePrefix . '_hierarchyrelation sibh
+        INNER JOIN ' . $this->tableNamePrefix . '_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
       WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
         AND sibh.contentstreamidentifier = :contentStreamIdentifier
         AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
@@ -876,15 +869,16 @@ WHERE
             '
             -- ContentSubgraph::findNodePath
             with recursive nodePath as (
-            SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
-                 INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            SELECT h.name, h.parentnodeanchor FROM ' . $this->tableNamePrefix . '_node n
+                 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    ON h.childnodeanchor = n.relationanchorpoint
                  AND h.contentstreamidentifier = :contentStreamIdentifier
                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
                  AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
 
             UNION
 
-                SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
+                SELECT h.name, h.parentnodeanchor FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                     INNER JOIN nodePath as np ON h.childnodeanchor = np.parentnodeanchor
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
@@ -954,9 +948,9 @@ with recursive tree as (
      	0 as level,
      	0 as position
      from
-        neos_contentgraph_node n
+        ' . $this->tableNamePrefix . '_node n
      -- we need to join with the hierarchy relation, because we need the node name.
-     inner join neos_contentgraph_hierarchyrelation h
+     inner join ' . $this->tableNamePrefix . '_hierarchyrelation h
         on h.childnodeanchor = n.relationanchorpoint
      where
         n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
@@ -977,9 +971,9 @@ union
      	h.position
      from
         tree p
-	 inner join neos_contentgraph_hierarchyrelation h
+	 inner join ' . $this->tableNamePrefix . '_hierarchyrelation h
         on h.parentnodeanchor = p.relationanchorpoint
-	 inner join neos_contentgraph_node c
+	 inner join ' . $this->tableNamePrefix . '_node c
 	    on h.childnodeanchor = c.relationanchorpoint
 	 where
 	 	h.contentstreamidentifier = :contentStreamIdentifier
@@ -988,7 +982,7 @@ union
         ###NODE_TYPE_CONSTRAINTS###
         ###VISIBILITY_CONSTRAINTS_RECURSION###
 
-   -- select relationanchorpoint from neos_contentgraph_node
+   -- select relationanchorpoint from ' . $this->tableNamePrefix . '_node
 )
 select * from tree
 order by level asc, position asc;')
@@ -1007,16 +1001,14 @@ order by level asc, position asc;')
             '###NODE_TYPE_CONSTRAINTS###'
         );
 
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'n',
             'h',
             '###VISIBILITY_CONSTRAINTS_INITIAL###'
         );
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c',
             'h',
             '###VISIBILITY_CONSTRAINTS_RECURSION###'
@@ -1033,7 +1025,7 @@ order by level asc, position asc;')
                 $this->getDimensionSpacePoint(),
                 $this->visibilityConstraints
             );
-            $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add(
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
                 $node->getNodeAggregateIdentifier(),
                 $node
             );
@@ -1050,7 +1042,7 @@ order by level asc, position asc;')
             /* @var $parentSubtree Subtree */
             $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
             if ($parentSubtree->getNode() !== null) {
-                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add(
+                $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache()->add(
                     $node->getNodeAggregateIdentifier(),
                     $parentSubtree->getNode()->getNodeAggregateIdentifier()
                 );
@@ -1068,7 +1060,7 @@ order by level asc, position asc;')
     public function findDescendants(
         array $entryNodeAggregateIdentifiers,
         NodeTypeConstraints $nodeTypeConstraints,
-        ?\Neos\ContentRepository\Projection\Content\SearchTerm $searchTerm
+        ?\Neos\ContentRepository\Projection\ContentGraph\SearchTerm $searchTerm
     ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
@@ -1090,13 +1082,13 @@ with recursive tree as (
      	0 as level,
      	0 as position
      from
-        neos_contentgraph_node n
+        ' . $this->tableNamePrefix . '_node n
      -- we need to join with the hierarchy relation, because we need the node name.
-     INNER JOIN neos_contentgraph_hierarchyrelation h
+     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
         ON h.childnodeanchor = n.relationanchorpoint
-     INNER JOIN neos_contentgraph_node p
+     INNER JOIN ' . $this->tableNamePrefix . '_node p
         ON p.relationanchorpoint = h.parentnodeanchor
-     INNER JOIN neos_contentgraph_hierarchyrelation ph
+     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
         on ph.childnodeanchor = p.relationanchorpoint
      WHERE
         p.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
@@ -1119,16 +1111,16 @@ union
      	h.position
      from
         tree p
-	 inner join neos_contentgraph_hierarchyrelation h
+	 inner join ' . $this->tableNamePrefix . '_hierarchyrelation h
         on h.parentnodeanchor = p.relationanchorpoint
-	 inner join neos_contentgraph_node c
+	 inner join ' . $this->tableNamePrefix . '_node c
 	    on h.childnodeanchor = c.relationanchorpoint
 	 where
 	 	h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
         ###VISIBILITY_CONSTRAINTS_RECURSION###
 
-   -- select relationanchorpoint from neos_contentgraph_node
+   -- select relationanchorpoint from ' . $this->tableNamePrefix . '_node
 )
 select * from tree
 where
@@ -1157,16 +1149,14 @@ order by level asc, position asc;')
             '###SEARCH_TERM_CONSTRAINTS###',
             ''
         );
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'n',
             'h',
             '###VISIBILITY_CONSTRAINTS_INITIAL###'
         );
-        self::addRestrictionRelationConstraintsToQuery(
+        $this->addRestrictionRelationConstraintsToQuery(
             $query,
-            $this->visibilityConstraints,
             'c',
             'h',
             '###VISIBILITY_CONSTRAINTS_RECURSION###'
@@ -1193,8 +1183,8 @@ order by level asc, position asc;')
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
-SELECT COUNT(*) FROM neos_contentgraph_node n
- JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node n
+ JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
@@ -1203,10 +1193,5 @@ SELECT COUNT(*) FROM neos_contentgraph_node n
         $row = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $row ? (int)$row['COUNT(*)'] : 0;
-    }
-
-    public function getInMemoryCache(): InMemoryCache
-    {
-        return $this->inMemoryCache;
     }
 }

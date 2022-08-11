@@ -14,66 +14,24 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceCreation\Command;
 
+use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Command to create a root workspace
- *
- * @Flow\Proxy(false)
  */
-final class CreateRootWorkspace
+final class CreateRootWorkspace implements CommandInterface
 {
-    private WorkspaceName $workspaceName;
-
-    private WorkspaceTitle $workspaceTitle;
-
-    private WorkspaceDescription $workspaceDescription;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    private ContentStreamIdentifier $newContentStreamIdentifier;
-
     public function __construct(
-        WorkspaceName $workspaceName,
-        WorkspaceTitle $workspaceTitle,
-        WorkspaceDescription $workspaceDescription,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $newContentStreamIdentifier
+        public readonly WorkspaceName $workspaceName,
+        public readonly WorkspaceTitle $workspaceTitle,
+        public readonly WorkspaceDescription $workspaceDescription,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->workspaceTitle = $workspaceTitle;
-        $this->workspaceDescription = $workspaceDescription;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
-    }
-
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    public function getWorkspaceTitle(): WorkspaceTitle
-    {
-        return $this->workspaceTitle;
-    }
-
-    public function getWorkspaceDescription(): WorkspaceDescription
-    {
-        return $this->workspaceDescription;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->newContentStreamIdentifier;
     }
 }

@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\NodeAccess\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -401,6 +401,7 @@ class NodeType
                 /** @var ExpressionBasedNodeLabelGenerator $nodeLabelGenerator */
                 $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
             } else {
+                // TODO
                 /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
                 $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
             }

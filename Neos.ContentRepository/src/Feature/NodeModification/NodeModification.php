@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeModification;
 
+use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -25,35 +28,28 @@ use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\PropertyScope;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
-use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
-use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Ramsey\Uuid\Uuid;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait NodeModification
 {
-    abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
-
-    abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentRepository $contentRepository
     ): ReadableNodeAggregateInterface;
 
-    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
-
-    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
-    {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier);
+    private function handleSetNodeProperties(
+        SetNodeProperties $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier
+            $command->nodeAggregateIdentifier,
+            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $nodeTypeName = $nodeAggregate->getNodeTypeName();
@@ -71,58 +67,51 @@ trait NodeModification
             $command->initiatingUserIdentifier
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
     }
 
-    public function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): CommandResult
-    {
-        $this->getReadSideMemoryCacheManager()->disableCache();
-
-        $domainEvents = DomainEvents::createEmpty();
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$domainEvents) {
-            // Check if node exists
-            $nodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier
+    private function handleSetSerializedNodeProperties(
+        SetSerializedNodeProperties $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        // Check if node exists
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $contentRepository
+        );
+        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
+        $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
+        $events = [];
+        foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
+            $scope = PropertyScope::from($scopeValue);
+            $affectedOrigins = $scope->resolveAffectedOrigins(
+                $command->originDimensionSpacePoint,
+                $nodeAggregate,
+                $this->interDimensionalVariationGraph
             );
-            $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
-            $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
-            $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
-            $events = [];
-            foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
-                $scope = PropertyScope::from($scopeValue);
-                $affectedOrigins = $scope->resolveAffectedOrigins(
-                    $command->originDimensionSpacePoint,
-                    $nodeAggregate,
-                    $this->interDimensionalVariationGraph
+            foreach ($affectedOrigins as $affectedOrigin) {
+                $events[] = new NodePropertiesWereSet(
+                    $command->contentStreamIdentifier,
+                    $command->nodeAggregateIdentifier,
+                    $affectedOrigin,
+                    $propertyValues,
+                    $command->initiatingUserIdentifier
                 );
-                foreach ($affectedOrigins as $affectedOrigin) {
-                    $events[] = new NodePropertiesWereSet(
-                        $command->contentStreamIdentifier,
-                        $command->nodeAggregateIdentifier,
-                        $affectedOrigin,
-                        $propertyValues,
-                        $command->initiatingUserIdentifier
-                    );
-                }
             }
-            $events = $this->mergeSplitEvents($events);
-            $domainEvents = DomainEvents::fromArray(array_map(
-                fn(NodePropertiesWereSet $event): DecoratedEvent => DecoratedEvent::addIdentifier(
-                    $event,
-                    Uuid::uuid4()->toString()
-                ),
-                $events
-            ));
+        }
+        $events = $this->mergeSplitEvents($events);
 
-            $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
-                    ->getEventStreamName(),
-                $domainEvents
-            );
-        });
-
-        return CommandResult::fromPublishedEvents($domainEvents, $this->getRuntimeBlocker());
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                ->getEventStreamName(),
+            NodeAggregateEventPublisher::enrichWithCommand(
+                $command,
+                Events::fromArray($events)
+            ),
+            ExpectedVersion::ANY()
+        );
     }
 
     /**

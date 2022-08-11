@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Single Node operations on multiple workspaces/content streams; e.g. copy on write!
 
   Background:

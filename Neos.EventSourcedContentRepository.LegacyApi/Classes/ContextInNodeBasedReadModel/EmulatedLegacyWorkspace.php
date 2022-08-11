@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 
@@ -21,29 +22,27 @@ class EmulatedLegacyWorkspace
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
-
-    protected NodeAddress $nodeAddressOfContextNode;
+    protected $contentRepositoryRegistry;
 
     protected ?Workspace $workspace;
 
-    public function __construct(NodeAddress $nodeAddressOfContextNode)
-    {
-        $this->nodeAddressOfContextNode = $nodeAddressOfContextNode;
-    }
-
-    public function initializeObject(): void
-    {
-        $this->workspace = $this->nodeAddressOfContextNode->workspaceName
-            ? $this->workspaceFinder->findOneByName($this->nodeAddressOfContextNode->workspaceName)
-            : null;
+    public function __construct(
+        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        private readonly NodeAddress $nodeAddressOfContextNode
+    ) {
     }
 
     public function getBaseWorkspace(): ?EmulatedLegacyBaseWorkspace
     {
         $this->legacyLogger->info('context.workspace.baseWorkspace called', LogEnvironment::fromMethodName(__METHOD__));
+
+        if ($this->workspace === null) {
+            $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
+            $this->workspace = $contentRepository->getWorkspaceFinder()
+                ->findOneByName($this->nodeAddressOfContextNode->workspaceName);
+        }
 
         return !is_null($this->workspace)
             ? new EmulatedLegacyBaseWorkspace($this->workspace)

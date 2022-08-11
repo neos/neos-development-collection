@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Change Property Value across dimensions; and test DimensionSpacePoints filter
 
   NOTE: ChangePropertyValue is tested exhaustively in ChangePropertyValues_NoDimensions.feature; here,
@@ -31,13 +31,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
           type: string
     """
 
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                      |
       | contentStreamIdentifier     | "cs-identifier"                                                            |

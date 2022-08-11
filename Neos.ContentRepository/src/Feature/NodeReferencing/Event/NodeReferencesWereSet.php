@@ -13,15 +13,13 @@ use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIde
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * Named references with optional properties were created from source node to destination node(s)
  */
-#[Flow\Proxy(false)]
 final class NodeReferencesWereSet implements
-    DomainEventInterface,
+    EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
@@ -66,5 +64,29 @@ final class NodeReferencesWereSet implements
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->sourceNodeAggregateIdentifier;
+    }
+
+    public static function fromArray(array $values): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($values['sourceNodeAggregateIdentifier']),
+            OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),
+            PropertyName::fromString($values['referenceName']),
+            SerializedNodeReferences::fromArray($values['references']),
+            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+        );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
+            'affectedSourceOriginDimensionSpacePoints' => $this->affectedSourceOriginDimensionSpacePoints,
+            'referenceName' => $this->referenceName,
+            'references' => $this->references,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
     }
 }

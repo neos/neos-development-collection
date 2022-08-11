@@ -1,5 +1,5 @@
 {namespace neos=Neos\Neos\ViewHelpers}
-<f:if condition="{change.node.removed}">
+<f:if condition="{change.isRemoved}">
     <f:then>class="neos-content-change legend-deleted" data-nodepath="{change.node.path}" title="{neos:backend.translate(id: 'workspaces.legend.deleted', source: 'Modules', package: 'Neos.Neos')}"</f:then>
     <f:else>
         <f:if condition="{change.isNew}">
