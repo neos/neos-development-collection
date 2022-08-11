@@ -36,7 +36,6 @@
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "behat/transliterator": "~1.0",
-        "flowpack/jobqueue-common": "*",
         "neos/form": "*",
         "neos/kickstarter": "*"
     },
