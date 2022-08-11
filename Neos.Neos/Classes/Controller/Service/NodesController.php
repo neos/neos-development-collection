@@ -185,7 +185,8 @@ class NodesController extends ActionController
      *
      * @param string $identifier Specifies the node to look up (NodeAggregateIdentifier)
      * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
+     * @param array $dimensions Optional list of dimensions and their values which should be
+     * used for querying the specified node
      * @phpstan-param array<string,array<string>> $dimensions
      */
     public function showAction(string $identifier, string $workspaceName = 'live', array $dimensions = []): void
@@ -247,8 +248,13 @@ class NodesController extends ActionController
      * @param array $dimensions Optional list of dimensions and their values in which the node should be created
      * @param array $sourceDimensions
      */
-    public function createAction($mode, $identifier, $workspaceName = 'live', array $dimensions = [], array $sourceDimensions = []): void
-    {
+    public function createAction(
+        $mode,
+        $identifier,
+        $workspaceName = 'live',
+        array $dimensions = [],
+        array $sourceDimensions = []
+    ): void {
         $identifier = NodeAggregateIdentifier::fromString($identifier);
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryIdentifier;
@@ -273,7 +279,13 @@ class NodesController extends ActionController
             );
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
-            $this->adoptNodeAndParents($identifier, $sourceSubgraph, $targetSubgraph, $contentRepository, $mode === 'adoptFromAnotherDimensionAndCopyContent');
+            $this->adoptNodeAndParents(
+                $identifier,
+                $sourceSubgraph,
+                $targetSubgraph,
+                $contentRepository,
+                $mode === 'adoptFromAnotherDimensionAndCopyContent'
+            );
 
             $this->redirect('show', null, null, [
                 'identifier' => $identifier,
@@ -286,10 +298,15 @@ class NodesController extends ActionController
     }
 
     /**
-     * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existent
+     * If the node is not found, we *first* want to figure out whether the node exists in other dimensions
+     * or is really non-existent
      */
-    protected function addExistingNodeVariantInformationToResponse(NodeAggregateIdentifier $identifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, ContentRepository $contentRepository): void
-    {
+    protected function addExistingNodeVariantInformationToResponse(
+        NodeAggregateIdentifier $identifier,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository $contentRepository
+    ): void {
         $contentGraph = $contentRepository->getContentGraph();
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
         $nodeAggregate = $contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $identifier);
@@ -297,10 +314,11 @@ class NodesController extends ActionController
         if ($nodeAggregate->getCoveredDimensionSpacePoints()->count() > 0) {
             $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', true);
 
-            // If the node exists in another dimension, we want to know how many nodes in the rootline are also missing for the target
-            // dimension. This is needed in the UI to tell the user if nodes will be materialized recursively upwards in the rootline.
-            // To find the node path for the given identifier, we just use the first result. This is a safe assumption at least for
-            // "Document" nodes (aggregate=true), because they are always moved in-sync.
+            // If the node exists in another dimension, we want to know how many nodes in the rootline are also
+            // missing for the target dimension. This is needed in the UI to tell the user if nodes will be
+            // materialized recursively upwards in the rootline. To find the node path for the given identifier,
+            // we just use the first result. This is a safe assumption at least for "Document" nodes (aggregate=true),
+            // because they are always moved in-sync.
             if ($nodeTypeManager->getNodeType($nodeAggregate->getNodeTypeName()->getValue())->isAggregate()) {
                 // TODO: we would need the SourceDimensions parameter (as in Create()) to ensure the correct
                 // rootline is traversed. Here, we, as a workaround, simply use the 1st aggregate for now.
@@ -320,13 +338,17 @@ class NodesController extends ActionController
 
                 // TODO: possibly off-by-one-or-two errors :D
                 if ($missingNodesOnRootline > 0) {
-                    $this->response->setHttpHeader('X-Neos-Nodes-Missing-On-Rootline', $missingNodesOnRootline);
+                    $this->response->setHttpHeader(
+                        'X-Neos-Nodes-Missing-On-Rootline',
+                        $missingNodesOnRootline
+                    );
                 }
             }
         }
     }
 
-    private static function firstNodeAggregate(iterable $nodeAggregates): ?NodeAggregate {
+    private static function firstNodeAggregate(iterable $nodeAggregates): ?NodeAggregate
+    {
         foreach ($nodeAggregates as $nodeAggregate) {
             return $nodeAggregate;
         }
@@ -341,8 +363,13 @@ class NodesController extends ActionController
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
      * @return void
      */
-    protected function adoptNodeAndParents(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentSubgraphInterface $sourceSubgraph, ContentSubgraphInterface $targetSubgraph, ContentRepository $contentRepository, $copyContent)
-    {
+    protected function adoptNodeAndParents(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentSubgraphInterface $sourceSubgraph,
+        ContentSubgraphInterface $targetSubgraph,
+        ContentRepository $contentRepository,
+        $copyContent
+    ) {
         // TODO: IMPL COPYING OF CONTENT
         assert($copyContent === false); // TODO IMPL ME
         assert($sourceSubgraph->getContentStreamIdentifier()->equals($targetSubgraph->getContentStreamIdentifier()));

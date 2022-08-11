@@ -153,7 +153,7 @@ class ContentStreamProjection implements ProjectionInterface
         }
 
         // @phpstan-ignore-next-line
-        match($eventInstance::class) {
+        match ($eventInstance::class) {
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($eventInstance, $eventEnvelope),
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($eventInstance),

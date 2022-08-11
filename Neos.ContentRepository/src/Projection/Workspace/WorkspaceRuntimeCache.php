@@ -64,8 +64,10 @@ final class WorkspaceRuntimeCache
 
     public function getByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
     {
-        if ($this->cacheEnabled === true
-            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+        if (
+            $this->cacheEnabled === true
+            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])
+        ) {
             return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
         }
         return null;

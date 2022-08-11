@@ -302,7 +302,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                     $nodeAddress,
                     $contentRepository
                 );
-            } catch (NodeNotFoundException|InvalidShortcutException $e) {
+            } catch (NodeNotFoundException | InvalidShortcutException $e) {
                 throw new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
                     $resolvedNode->getNodeAggregateIdentifier(),
@@ -310,7 +310,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 ), 1601370239, $e);
             }
             if ($shortcutNodeAddress instanceof NodeAddress) {
-                $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
+                $resolvedNode = $subgraph
+                    ->findNodeByNodeAggregateIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
             }
         }
 
@@ -326,10 +327,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (
-        NodeAddressCannotBeSerializedException
-        |HttpException
-        |NoMatchingRouteException
-        |MissingActionNameException $e
+            NodeAddressCannotBeSerializedException
+            | HttpException
+            | NoMatchingRouteException
+            | MissingActionNameException $e
         ) {
             throw new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
@@ -421,8 +422,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     private function getNodeAccessorForNodeAddress(
         ContentRepositoryIdentifier $contentRepositoryIdentifier,
         NodeAddress $nodeAddress
-    ): NodeAccessorInterface
-    {
+    ): NodeAccessorInterface {
         return $this->nodeAccessorManager->accessorFor(
             new ContentSubgraphIdentity(
                 $contentRepositoryIdentifier,

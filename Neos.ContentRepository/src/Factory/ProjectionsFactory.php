@@ -13,7 +13,7 @@ final class ProjectionsFactory
 {
     /**
      * @phpstan-ignore-next-line
-     * @var array<class-string<ProjectionFactoryInterface>, array{'factory': ProjectionFactoryInterface, 'options': array<mixed>, 'catchUpHooks': array<array{'catchUpHookFactory': CatchUpHookFactoryInterface}>}>
+     * @var array
      */
     private array $factories = [];
 

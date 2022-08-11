@@ -326,8 +326,7 @@ class NodeViewHelper extends AbstractViewHelper
     private function getNodeAccessorForNodeAddress(
         ContentRepositoryIdentifier $contentRepositoryIdentifier,
         NodeAddress $nodeAddress
-    ): NodeAccessorInterface
-    {
+    ): NodeAccessorInterface {
         return $this->nodeAccessorManager->accessorFor(
             new ContentSubgraphIdentity(
                 $contentRepositoryIdentifier,

@@ -65,7 +65,10 @@ final class SiteDetectionResult
         }
         assert(is_string($siteNodeName));
         assert(is_string($contentRepositoryIdentifier));
-        return new self(SiteNodeName::fromString($siteNodeName), ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier));
+        return new self(
+            SiteNodeName::fromString($siteNodeName),
+            ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier)
+        );
     }
 
     public function storeInRequest(ServerRequestInterface $request): ServerRequestInterface
@@ -79,7 +82,13 @@ final class SiteDetectionResult
     public function storeInRouteParameters(RouteParameters $routeParameters): RouteParameters
     {
         return $routeParameters
-            ->withParameter(self::ROUTINGPARAMETER_SITENODENAME, $this->siteNodeName->value)
-            ->withParameter(self::ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER, $this->contentRepositoryIdentifier->value);
+            ->withParameter(
+                self::ROUTINGPARAMETER_SITENODENAME,
+                $this->siteNodeName->value
+            )
+            ->withParameter(
+                self::ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER,
+                $this->contentRepositoryIdentifier->value
+            );
     }
 }

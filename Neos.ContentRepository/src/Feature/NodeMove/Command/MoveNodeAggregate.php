@@ -196,10 +196,10 @@ final class MoveNodeAggregate implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,

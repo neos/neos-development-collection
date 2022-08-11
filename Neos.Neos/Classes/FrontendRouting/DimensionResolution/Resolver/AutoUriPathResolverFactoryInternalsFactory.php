@@ -16,15 +16,16 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
 /**
  * @deprecated TODO CLEAN UP
+ * @implements ContentRepositoryServiceFactoryInterface<AutoUriPathResolverFactoryInternals>
  */
 final class AutoUriPathResolverFactoryInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): AutoUriPathResolverFactoryInternals {
         return new AutoUriPathResolverFactoryInternals(
             $serviceFactoryDependencies->contentDimensionSource
         );

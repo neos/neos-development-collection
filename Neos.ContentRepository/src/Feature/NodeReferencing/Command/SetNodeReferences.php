@@ -66,10 +66,10 @@ final class SetNodeReferences implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
             $this->referenceName,

@@ -120,10 +120,10 @@ final class ChangeNodeAggregateType implements
             && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier);
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->newNodeTypeName,
             $this->strategy,

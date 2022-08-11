@@ -69,10 +69,10 @@ final class ChangeNodeAggregateName implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new ChangeNodeAggregateName(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->newNodeName,
             $this->initiatingUserIdentifier

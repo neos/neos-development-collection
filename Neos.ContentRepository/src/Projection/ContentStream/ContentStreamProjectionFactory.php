@@ -19,6 +19,7 @@ use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Projection\Projections;
+
 /**
  * @implements ProjectionFactoryInterface<ContentStreamProjection>
  */

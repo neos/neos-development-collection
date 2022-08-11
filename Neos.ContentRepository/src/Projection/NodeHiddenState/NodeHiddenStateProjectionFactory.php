@@ -35,8 +35,7 @@ class NodeHiddenStateProjectionFactory implements ProjectionFactoryInterface
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): NodeHiddenStateProjection
-    {
+    ): NodeHiddenStateProjection {
         $projectionShortName = strtolower(str_replace(
             'Projection',
             '',

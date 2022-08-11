@@ -72,10 +72,10 @@ final class DisableNodeAggregate implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
             $this->nodeVariantSelectionStrategy,

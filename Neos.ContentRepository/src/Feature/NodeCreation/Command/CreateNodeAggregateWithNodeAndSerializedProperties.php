@@ -164,10 +164,10 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,

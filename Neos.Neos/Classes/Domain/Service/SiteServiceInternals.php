@@ -45,8 +45,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly NodeTypeManager $nodeTypeManager
-    )
-    {
+    ) {
     }
 
     public function removeSiteNode(SiteNodeName $siteNodeName): void

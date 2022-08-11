@@ -25,7 +25,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
  */
 interface RebasableToOtherContentStreamsInterface
 {
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): CommandInterface;
+    public function createCopyForContentStream(ContentStreamIdentifier $target): CommandInterface;
 
     /**
      * called during deserialization from metadata

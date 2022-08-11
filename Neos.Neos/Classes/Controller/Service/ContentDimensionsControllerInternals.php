@@ -24,5 +24,6 @@ class ContentDimensionsControllerInternals implements ContentRepositoryServiceIn
 {
     public function __construct(
         public readonly ContentDimensionZookeeper $contentDimensionZookeeper
-    ) {}
+    ) {
+    }
 }

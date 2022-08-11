@@ -19,15 +19,16 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+
+/** @codingStandardsIgnoreStart */
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\AutoUriPathResolverConfigurationException;
+/** @codingStandardsIgnoreEnd */
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMapping;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
-/** @codingStandardsIgnoreStart */
-/** @codingStandardsIgnoreEnd */
 
 /**
  * @api
@@ -46,8 +47,14 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
         ContentRepositoryIdentifier $contentRepositoryIdentifier,
         array $dimensionResolverOptions
     ): DimensionResolverInterface {
-        $autoUriPathResolverFactoryInternals = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new AutoUriPathResolverFactoryInternalsFactory());
-        $contentDimensions = $autoUriPathResolverFactoryInternals->contentDimensionSource->getContentDimensionsOrderedByPriority();
+        $autoUriPathResolverFactoryInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new AutoUriPathResolverFactoryInternalsFactory()
+        );
+        $contentDimensions = $autoUriPathResolverFactoryInternals
+            ->contentDimensionSource
+            ->getContentDimensionsOrderedByPriority();
+
         if (count($contentDimensions) >= 2) {
             throw new AutoUriPathResolverConfigurationException(
                 'The AutoUriPathResolverFactory is only meant for single-dimension use cases.'

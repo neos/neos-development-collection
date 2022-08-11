@@ -76,10 +76,10 @@ final class SetSerializedNodeProperties implements
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $target): self
     {
         return new self(
-            $targetContentStreamIdentifier,
+            $target,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
             $this->propertyValues,

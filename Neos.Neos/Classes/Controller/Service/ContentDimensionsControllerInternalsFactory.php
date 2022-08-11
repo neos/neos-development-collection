@@ -19,12 +19,13 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
  * @deprecated
+ * @implements ContentRepositoryServiceFactoryInterface<ContentDimensionsControllerInternals>
  */
 class ContentDimensionsControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
-
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentDimensionsControllerInternals
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): ContentDimensionsControllerInternals {
         return new ContentDimensionsControllerInternals(
             $serviceFactoryDependencies->contentDimensionZookeeper
         );
