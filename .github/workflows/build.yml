@@ -129,6 +129,7 @@ jobs:
           composer require --no-update neos/eventstore:"dev-main"
           composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
           composer require --no-update neos/neos-ui:"dev-90-contentrepository"
+          composer require --no-update neos/neos-ui-compiled:"dev-9.0 as dev-90-contentrepository"
 
       - name: Cache Composer packages
         id: composer-cache
