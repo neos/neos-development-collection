@@ -1,6 +1,6 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
+.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=9.0
    :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
@@ -32,6 +32,8 @@
 ---------------------------
 Neos development collection
 ---------------------------
+
+**FOR DOCS ON THE EVENT SOURCED CONTENT REPOSITORY, READ ON BELOW**
 
 This repository is a collection of packages for the Neos content application platform (learn more on https://www.neos.io/).
 The repository is used for development and all pull requests should go into it.
@@ -68,6 +70,12 @@ For more detailed information, see https://discuss.neos.io/t/development-setup/5
 New (Event Sourced) Content Repository (ES CR)
 ----------------------------------------------
 
+Prerequisites
+=============
+
+- You need PHP 8.1 installed.
+- Please be sure to run off the Neos-Development-Distribution in Branch 9.0, to avoid dependency issues (as described above).
+
 Setup
 =====
 
@@ -97,7 +105,7 @@ Do the following for setting up everything:
 3. Run Doctrine Migrations:
 
    .. code-block:: bash
-   
+
        ./flow doctrine:migrate
        FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
 
