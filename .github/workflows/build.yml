@@ -128,7 +128,6 @@ jobs:
           # workaround for not-yet-released neos/eventstore packages
           composer require --no-update neos/eventstore:"dev-main"
           composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
-          composer require --no-update neos/neos-ui:"dev-9.0"
 
       - name: Cache Composer packages
         id: composer-cache
