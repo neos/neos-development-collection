@@ -28,7 +28,7 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
             $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
@@ -48,7 +48,7 @@ trait NodeDisabling
                     $descendantNodeAggregateIdentifiers
                 );
 
-                $restrictionRelation->addToDatabase($this->getDatabaseConnection());
+                $restrictionRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         });
     }
@@ -56,7 +56,7 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->transactional(function () use ($event) {
             $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
@@ -65,7 +65,7 @@ trait NodeDisabling
                 $event->nodeAggregateIdentifier,
             );
             foreach ($restrictionRelations as $restrictionRelation) {
-                $restrictionRelation->removeFromDatabase($this->getDatabaseConnection());
+                $restrictionRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         });
     }

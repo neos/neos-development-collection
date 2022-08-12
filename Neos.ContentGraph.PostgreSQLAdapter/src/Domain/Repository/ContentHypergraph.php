@@ -52,7 +52,11 @@ final class ContentHypergraph implements ContentGraphInterface
      */
     private array $subhypergraphs;
 
-    public function __construct(PostgresDbalClientInterface $databaseClient, NodeFactory $nodeFactory)
+    public function __construct(
+        PostgresDbalClientInterface $databaseClient,
+        NodeFactory $nodeFactory,
+        private readonly string $tableNamePrefix
+    )
     {
         $this->databaseClient = $databaseClient;
         $this->nodeFactory = $nodeFactory;
@@ -70,7 +74,8 @@ final class ContentHypergraph implements ContentGraphInterface
                 $dimensionSpacePoint,
                 $visibilityConstraints,
                 $this->databaseClient,
-                $this->nodeFactory
+                $this->nodeFactory,
+                $this->tableNamePrefix
             );
         }
 
@@ -82,7 +87,7 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeInterface {
-        $query = HypergraphQuery::create($contentStreamIdentifier);
+        $query = HypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
@@ -116,7 +121,7 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
-        $query = HypergraphQuery::create($contentStreamIdentifier, true);
+        $query = HypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix, true);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -135,15 +140,15 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = /** @lang PostgreSQL */ '
             SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename,
                    n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
-                JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
+                JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
             WHERE ph.contentstreamidentifier = :contentStreamIdentifier
                 AND n.nodeaggregateidentifier = (
                     SELECT pn.nodeaggregateidentifier
-                        FROM ' . NodeRecord::TABLE_NAME . ' pn
-                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch
+                        FROM ' . $this->tableNamePrefix . '_node pn
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation ch
                             ON pn.relationanchorpoint = ch.parentnodeanchor
-                        JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+                        JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
                     WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier
                         AND cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
                         AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
@@ -173,7 +178,7 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier
     ): iterable {
-        $query = HypergraphParentQuery::create($contentStreamIdentifier);
+        $query = HypergraphParentQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -272,7 +277,7 @@ final class ContentHypergraph implements ContentGraphInterface
      */
     public function countNodes(): int
     {
-        $query = 'SELECT COUNT(*) FROM ' . NodeRecord::TABLE_NAME;
+        $query = 'SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node';
 
         return $this->getDatabaseConnection()->executeQuery($query)->fetchOne();
     }

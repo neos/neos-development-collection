@@ -17,6 +17,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
@@ -49,6 +51,7 @@ final class NodeFactory
     private PropertyConverter $propertyConverter;
 
     public function __construct(
+        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
         NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
@@ -81,7 +84,12 @@ final class NodeFactory
         }
         /** @var NodeInterface $result */
         $result = new $nodeClassName(
-            $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+            new ContentSubgraphIdentity(
+                $this->contentRepositoryIdentifier,
+                $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
+                $visibilityConstraints
+            ),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
@@ -91,9 +99,7 @@ final class NodeFactory
                 SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                 $this->propertyConverter
             ),
-            NodeAggregateClassification::from($nodeRow['classification']),
-            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-            $visibilityConstraints
+            NodeAggregateClassification::from($nodeRow['classification'])
         );
 
         return $result;

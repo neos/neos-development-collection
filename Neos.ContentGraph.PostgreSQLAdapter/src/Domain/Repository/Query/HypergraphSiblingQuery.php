@@ -29,7 +29,8 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        HypergraphSiblingQueryMode $queryMode
+        HypergraphSiblingQueryMode $queryMode,
+        string $tableNamePrefix
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT sn.*, sh.contentstreamidentifier, sh.dimensionspacepoint, ordinality, childnodeanchor
@@ -49,14 +50,14 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $tableNamePrefix);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 's');
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, 's');
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withOrdinalityOrdering(bool $reverse): self
@@ -64,6 +65,6 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
         $query = $this->query . '
     ORDER BY ordinality ' . ($reverse ? 'DESC' : 'ASC');
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 }

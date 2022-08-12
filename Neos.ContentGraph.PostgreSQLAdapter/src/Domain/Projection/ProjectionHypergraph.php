@@ -30,7 +30,8 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 final class ProjectionHypergraph
 {
     public function __construct(
-        private readonly PostgresDbalClientInterface $databaseClient
+        private readonly PostgresDbalClientInterface $databaseClient,
+        private readonly string $tableNamePrefix
     ) {
     }
 
@@ -45,7 +46,7 @@ final class ProjectionHypergraph
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
-            FROM ' . NodeRecord::TABLE_NAME . ' n
+            FROM ' . $this->tableNamePrefix . '_node n
             WHERE n.relationanchorpoint = :relationAnchorPoint';
 
         $parameters = [
@@ -65,7 +66,7 @@ final class ProjectionHypergraph
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeRecord {
-        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
+        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier);
         /** @phpstan-ignore-next-line @todo check actual return type */
@@ -82,7 +83,7 @@ final class ProjectionHypergraph
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeRecord {
-        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
+        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
@@ -103,9 +104,9 @@ final class ProjectionHypergraph
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT p.*
-            FROM ' . NodeRecord::TABLE_NAME . ' p
-            JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $this->tableNamePrefix . '_node p
+            JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h ON h.parentnodeanchor = p.relationanchorpoint
+            JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
             AND h.dimensionspacepointhash = :originDimensionSpacePointHash
@@ -157,9 +158,9 @@ final class ProjectionHypergraph
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT p.*
-            FROM ' . NodeRecord::TABLE_NAME . ' p
-            JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $this->tableNamePrefix . '_node p
+            JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h ON h.parentnodeanchor = p.relationanchorpoint
+            JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND h.dimensionspacepointhash = :coveredDimensionSpacePointHash
             AND n.nodeaggregateidentifier = :childNodeAggregateIdentifier';
@@ -185,7 +186,7 @@ final class ProjectionHypergraph
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): array {
-        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
+        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
         /** @phpstan-ignore-next-line @todo check actual return type */
@@ -207,7 +208,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND :childNodeAnchor = ANY(h.childnodeanchors)';
         $parameters = [
@@ -242,7 +243,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND h.parentnodeanchor = :parentNodeAnchor';
         $parameters = [
@@ -275,7 +276,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
-            FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
+            FROM ' . $this->tableNamePrefix . '_referencerelation r
             WHERE r.sourcenodeanchor = :sourceNodeAnchor';
 
         $parameters = [
@@ -301,7 +302,7 @@ final class ProjectionHypergraph
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 AND h.parentnodeanchor = :parentNodeAnchor';
@@ -328,7 +329,7 @@ final class ProjectionHypergraph
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 AND :childNodeAnchor = ANY(h.childnodeanchors)';
@@ -354,7 +355,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             WHERE :childNodeAnchor = ANY(h.childnodeanchors)';
 
         $parameters = [
@@ -381,8 +382,8 @@ final class ProjectionHypergraph
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON h.parentnodeanchor = n.relationanchorpoint
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
@@ -411,8 +412,8 @@ final class ProjectionHypergraph
     ): DimensionSpacePointSet {
         $query = /** @lang PostgreSQL */
             'SELECT h.dimensionspacepoint
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON h.parentnodeanchor = n.relationanchorpoint
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND n.relationanchorpoint = :relationAnchorPoint';
         $parameters = [
@@ -441,8 +442,8 @@ final class ProjectionHypergraph
     ): DimensionSpacePointSet {
         $query = /** @lang PostgreSQL */
             'SELECT h.dimensionspacepoint
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON h.parentnodeanchor = n.relationanchorpoint
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';
         $parameters = [
@@ -473,7 +474,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
-            FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r
+            FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation r
             WHERE r.contentstreamidentifier = :contentStreamIdentifier
             AND r.dimensionspacepointhash IN (:dimensionSpacePointHashes)
             AND r.originnodeaggregateidentifier = :originNodeAggregateIdentifier';
@@ -510,7 +511,7 @@ final class ProjectionHypergraph
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
-            FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r
+            FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation r
             WHERE r.contentstreamidentifier = :contentStreamIdentifier
             AND r.dimensionspacepointhash = :dimensionSpacePointHash
             AND :nodeAggregateIdentifier = ANY(r.affectednodeaggregateidentifiers)';
@@ -553,8 +554,8 @@ final class ProjectionHypergraph
                        n.nodeaggregateidentifier,
                        n.relationanchorpoint,
                        h.dimensionspacepointhash
-                    FROM ' . NodeRecord::TABLE_NAME . ' n
-                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                    FROM ' . $this->tableNamePrefix . '_node n
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                         ON n.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
                         AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -570,7 +571,7 @@ final class ProjectionHypergraph
                         h.dimensionspacepointhash
                     FROM
                         descendantNodes p
-                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                         ON h.parentnodeanchor = p.relationanchorpoint
                     INNER JOIN neos_contentgraph_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE
@@ -607,7 +608,7 @@ final class ProjectionHypergraph
     {
         $query = /** @lang PostgreSQL */
             'SELECT DISTINCT contentstreamidentifier
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation
             WHERE :anchorPoint = ANY(childnodeanchors)';
 
         $parameters = [

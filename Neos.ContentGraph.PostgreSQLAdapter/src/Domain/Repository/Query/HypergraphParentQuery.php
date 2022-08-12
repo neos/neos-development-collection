@@ -31,7 +31,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
     /**
      * @param array<int,string>|null $fieldsToFetch
      */
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier, ?array $fieldsToFetch = null): self
+    public static function create(ContentStreamIdentifier $contentStreamIdentifier, string $tableNamePrefix, ?array $fieldsToFetch = null): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
@@ -39,10 +39,10 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
                 : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename,
                     pn.classification, pn.properties, pn.nodename,
                     ph.contentstreamidentifier, ph.dimensionspacepoint') . '
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
-            JOIN ' . NodeRecord::TABLE_NAME . ' pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
-            JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch ON ch.parentnodeanchor = pn.relationanchorpoint
-            JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+            FROM ' . $tableNamePrefix . '_hierarchyhyperrelation ph
+            JOIN ' . $tableNamePrefix . '_node pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
+            JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation ch ON ch.parentnodeanchor = pn.relationanchorpoint
+            JOIN ' . $tableNamePrefix . '_node cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
             WHERE ph.contentstreamidentifier = :contentStreamIdentifier
                 AND ch.contentstreamidentifier = :contentStreamIdentifier';
 
@@ -50,7 +50,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $tableNamePrefix);
     }
 
     public function withChildNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
@@ -61,7 +61,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -73,6 +73,6 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 }

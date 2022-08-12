@@ -5,6 +5,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 
+/**
+ * @internal
+ */
 class DoctrineDbalContentGraphSchemaBuilder
 {
     public function __construct(
