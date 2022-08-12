@@ -5,6 +5,15 @@ Feature: Change node name
 
   Background:
     Given I have no content dimensions
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "system"             |
+    And the graph projection is fully up to date
+
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
       | contentStreamIdentifier     | "cs-identifier"               |
@@ -39,8 +48,8 @@ Feature: Change node name
       | newNodeName              | "cat"                        |
       | initiatingUserIdentifier | "initiating-user-identifier" |
 
-    Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 2 is of type "NodeAggregateNameWasChanged" with payload:
+    Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
+    And event at index 3 is of type "NodeAggregateNameWasChanged" with payload:
       | Key                     | Expected           |
       | contentStreamIdentifier | "cs-identifier"    |
       | nodeAggregateIdentifier | "nody-mc-nodeface" |
