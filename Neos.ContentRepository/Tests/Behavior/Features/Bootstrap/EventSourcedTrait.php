@@ -31,28 +31,27 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentGraph\DoctrineDbalAdapter\HypergraphProjectionFactory;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\Factory\ContentRepositoryFactory;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
-use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Service\ContentStreamPruner;
+use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCreation;
@@ -72,7 +71,6 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepo
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -174,7 +172,16 @@ trait EventSourcedTrait
         $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
 
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
-        $this->contentRepositoryRegistry = $this->getObjectManager()->get(ContentRepositoryRegistry::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepositoryRegistry');
+        $settings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph'] = [
+            'factoryObjectName' => HypergraphProjectionFactory::class
+        ];
+
+        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
+            $settings,
+            $this->getObjectManager()
+        );
+
         $this->initCleanContentRepository();
     }
 
@@ -187,7 +194,8 @@ trait EventSourcedTrait
 
         $availableContentGraphs = [];
         $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-        $availableContentGraphs['Postgres'] = null; // TODO: currently disabled
+        // NOTE: to disable a content graph (do not run the tests for it), use "null" as value.
+        $availableContentGraphs['Postgres'] = $this->contentRepository->projectionState(HypergraphProjection::class);
 
         if (count($availableContentGraphs) === 0) {
             throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
