@@ -187,8 +187,8 @@ jobs:
                   dbname: 'flow_functional_testing'
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
-          ./flow configuration:show
-          ./flow routing:list
+          # Enable for debugging: ./flow configuration:show
+          # Enable for debugging: ./flow routing:list
 
       - name: Run Linter
         if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
