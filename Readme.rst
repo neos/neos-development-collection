@@ -139,17 +139,17 @@ Creating a new Site
 Migrating an existing (Neos < 9.0) Site
 ---------------------------------------
 
-!!! THIS HAS NOT FULLY BEEN VALIDATED RIGHT NOW !!!
-
 .. code-block:: bash
 
     # WORKAROUND: for now, you still need to create a site (which must match the root node name)
     # !! in the future, you would want to import *INTO* a given site (and replace its root node)
     ./flow site:create neosdemo Neos.Demo Neos.Demo:Document.Homepage
 
-    # TODO: this JSON config is hard to write :)
+    # the following config points to a Neos 8.0 database (adjust to your needs), created by
+    # the legacy "./flow site:import Neos.Demo" command.
     ./flow contentrepositorymigrate:run --config '{"dbal": {"dbname": "neos80"}, "resourcesPath": "/path/to/neos-8.0/Data/Persistent/Resources"}'
 
+    # TODO: this JSON config is hard to write - we should change this soonish.
 
 
 
