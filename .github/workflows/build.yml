@@ -220,12 +220,10 @@ jobs:
           mkdir -p ${{ github.workspace }}/Data/DebugDatabaseDumps
           touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
-          FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           ./flow package:list --loading-order
-          ./flow configuration:show --type Settings
           cd Packages/Neos
 
-          composer test
+          composer test:behavioral
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.

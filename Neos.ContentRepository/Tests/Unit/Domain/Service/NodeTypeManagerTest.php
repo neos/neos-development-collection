@@ -47,10 +47,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     protected function prepareNodeTypeManager(array $nodeTypesFixtureData, string $fallbackNodeTypeName = '')
     {
-        $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-
-        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('NodeTypes')->will(self::returnValue($nodeTypesFixtureData));
-        $this->nodeTypeManager = new NodeTypeManager($this->mockConfigurationManager, $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock(), $fallbackNodeTypeName);
+        $this->nodeTypeManager = new NodeTypeManager(fn() => $nodeTypesFixtureData, $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock(), $fallbackNodeTypeName);
     }
 
     /**
