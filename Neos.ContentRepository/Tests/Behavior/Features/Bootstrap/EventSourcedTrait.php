@@ -178,11 +178,17 @@ trait EventSourcedTrait
         $this->initCleanContentRepository();
     }
 
+    private static bool $wasContentRepositorySetupCalled = false;
+
     private function initCleanContentRepository(): void
     {
         $this->contentRepositoryRegistry->forgetInstances();
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
-        $this->contentRepository->setUp(); // TODO: is this too slow for every test??
+        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
+        if (!self::$wasContentRepositorySetupCalled) {
+            $this->contentRepository->setUp();
+            self::$wasContentRepositorySetupCalled = true;
+        }
         $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryIdentifier, new ContentRepositoryInternalsFactory());
 
         $availableContentGraphs = [];
