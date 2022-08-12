@@ -43,7 +43,7 @@ Contributing
 
 If you want to contribute to Neos and want to set up a development environment, then follow these steps:
 
-``composer create-project neos/neos-development-distribution neos-development dev-9.0 --keep-vcs --prefer-install=auto``
+``composer create-project neos/neos-development-distribution neos-development 9.0.x-dev --keep-vcs --prefer-install=auto``
 
 Note the **-distribution** package you create a project from, instead of just checking out this repository.
 
