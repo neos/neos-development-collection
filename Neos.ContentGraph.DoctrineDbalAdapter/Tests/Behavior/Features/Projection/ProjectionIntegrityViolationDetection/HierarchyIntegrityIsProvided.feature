@@ -1,4 +1,4 @@
-@fixtures
+@contentrepository
 Feature: Run integrity violation detection regarding hierarchy relations and nodes
 
   As a user of the CR I want to know whether there are nodes or hierarchy relations with invalid hashes or parents / children

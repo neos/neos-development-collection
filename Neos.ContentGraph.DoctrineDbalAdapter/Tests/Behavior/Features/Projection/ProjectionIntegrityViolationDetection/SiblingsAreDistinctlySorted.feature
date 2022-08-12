@@ -1,4 +1,4 @@
-@fixtures
+@contentrepository
 Feature: Run integrity violation detection regarding sibling sorting
 
   As a user of the CR I want to know whether there are siblings with ambiguous sorting

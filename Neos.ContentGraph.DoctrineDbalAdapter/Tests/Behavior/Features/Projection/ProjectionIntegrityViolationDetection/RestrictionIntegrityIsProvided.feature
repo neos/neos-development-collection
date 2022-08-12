@@ -1,4 +1,4 @@
-@fixtures
+@contentrepository
 Feature: Run integrity violation detection regarding restriction relations
 
   As a user of the CR I want to know whether there are nodes with restriction relations missing from their ancestors
