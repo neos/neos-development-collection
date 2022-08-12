@@ -117,7 +117,7 @@ Do the following for setting up everything:
 
    .. code-block:: bash
 
-       cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* Build/Behat/
+       cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/ Build/Behat
        pushd Build/Behat/
        rm composer.lock
        composer install
