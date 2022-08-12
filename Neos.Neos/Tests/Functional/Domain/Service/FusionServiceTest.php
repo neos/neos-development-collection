@@ -62,8 +62,9 @@ class FusionServiceTest extends FunctionalTestCase
         $this->fusionService = $this->objectManager->get(FusionService::class);
         $this->expectedPrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
         $this->yamlParser = $this->objectManager->get(YamlParser::class);
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
         $this->originalNodeTypeManager = new NodeTypeManager(
-            $this->objectManager->get(ConfigurationManager::class),
+            fn() => $configurationManager->getConfiguration('NodeTypes'),
             $this->objectManager,
             null
         );
