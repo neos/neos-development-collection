@@ -157,12 +157,9 @@ class NodeTypeEnrichmentService
             $splitPrefix = $this->splitIdentifier($nodeTypeName);
             $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
             $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
-            // WORKAROUND: in Compile time mode, $this->resourceManager is null (because it is injected),
-            // so we use this as a safety check here :)
-            if (isset($this->resourceManager)) {
+            if (file_exists($resourcePath)) {
                 $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
             }
-
         }
 
         return $thumbnailUrl;

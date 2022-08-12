@@ -76,13 +76,6 @@ class NodeTypesLoader implements LoaderInterface
             $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($this->configurationBasePath . $contextName . '/' . 'NodeTypes', true));
         }
 
-        // NOTE: Node Types loading is wired very early in the bootstrap; and the NodeTypeEnrichmentService needs a more booted system.
-        // To break the cycle, we defer loading the NodeType
-        if ($this->bootstrap && $this->bootstrap->getObjectManager()->isRegistered(NodeTypeEnrichmentService::class)) {
-            $nodeTypeEnrichmentService = $this->bootstrap->getObjectManager()->get(NodeTypeEnrichmentService::class);
-            assert($nodeTypeEnrichmentService instanceof NodeTypeEnrichmentService);
-            $configuration = $nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
-        }
         return $configuration;
     }
 }
