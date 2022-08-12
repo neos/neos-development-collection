@@ -131,7 +131,10 @@ You can chose from one of the following options:
 Creating a new Site
 -------------------
 
-tbd
+   .. code-block:: bash
+
+       ./flow site:create neosdemo Neos.Demo Neos.Demo:Document.Homepage
+
 
 Migrating an existing (Neos < 9.0) Site
 ---------------------------------------
