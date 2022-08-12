@@ -15,6 +15,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
+// NOTE: not sure why this is needed
+require_once(__DIR__ . '/Fixtures/ExampleDimensionSource.php');
+
 /**
  * Unit test cases for the ContentDimensionZookeeper
  */
