@@ -223,7 +223,7 @@ jobs:
           ./flow package:list --loading-order
           cd Packages/Neos
 
-          composer test:behavioral
+          composer test:behavioral:stop-on-failure
 
           # ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
