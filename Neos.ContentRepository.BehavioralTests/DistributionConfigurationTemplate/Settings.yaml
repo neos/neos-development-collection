@@ -28,12 +28,3 @@ Neos:
         user: 'root'
         password: db
         dbname: 'neos'
-
-
-  # You might need to uncomment the following lines and specify
-  # the location of the PHP binary manually.
-#    core:
-#      phpBinaryPathAndFilename: 'C:/path/to/php.exe'
-  Neos:
-    Ui:
-      frontendDevelopmentMode: true

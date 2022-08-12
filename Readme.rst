@@ -123,9 +123,28 @@ Do the following for setting up everything:
        composer install
        popd
 
+Site Setup
+==========
 
-Starting Neos
-=============
+You can chose from one of the following options:
+
+Creating a new Site
+-------------------
+
+tbd
+
+Migrating an existing (Neos < 9.0) Site
+---------------------------------------
+
+tbd
+
+Importing an existing (Neos >= 9.0) Site from an Export
+-------------------------------------------------------
+
+tbd
+
+Running Neos
+============
 
    .. code-block:: bash
 

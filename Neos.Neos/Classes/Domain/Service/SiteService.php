@@ -177,25 +177,25 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        return $site; // TODO: FIX ME (CODE BELOW)
-//        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
-//        if (is_null($currentUserIdentifier)) {
-//            $currentUserIdentifier = UserIdentifier::forSystemUser();
-//        }
-//
-//        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
-//            $site->getConfiguration()['contentRepository']
-//            ?? throw new \RuntimeException(
-//                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-//                . ' Neos.Neos.sites.*.contentRepository'
-//            )
-//        );
-//        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
-//            $contentRepositoryIdentifier,
-//            new SiteServiceInternalsFactory()
-//        );
-//        $siteServiceInternals->createSiteNode($site, $nodeTypeName, $currentUserIdentifier);
-//
-//        return $site;
+        //return $site; // TODO: FIX ME (CODE BELOW)
+        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+        if (is_null($currentUserIdentifier)) {
+            $currentUserIdentifier = UserIdentifier::forSystemUser();
+        }
+
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+            $site->getConfiguration()['contentRepository']
+            ?? throw new \RuntimeException(
+                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+                . ' Neos.Neos.sites.*.contentRepository'
+            )
+        );
+        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new SiteServiceInternalsFactory()
+        );
+        $siteServiceInternals->createSiteNode($site, $nodeTypeName, $currentUserIdentifier);
+
+        return $site;
     }
 }

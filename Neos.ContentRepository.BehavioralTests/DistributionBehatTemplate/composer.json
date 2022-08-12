@@ -1,6 +1,7 @@
 {
 	"require": {
-		"behat/behat": "^3.11.0"
+		"behat/behat": "^3.11.0",
+		"psr/container": "^1.0"
 	},
 	"config": {
 		"bin-dir": "../../bin/"
