@@ -209,9 +209,8 @@ jobs:
       - name: Run ES CR Tests
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
-        # we want to reach the Upload Postgres DB dump step.
-        # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
-        #continue-on-error: true
+        # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
+        continue-on-error: true
         run: |
           echo ${{ github.workspace }}
           ls ${{ github.workspace }}
@@ -223,31 +222,32 @@ jobs:
           ./flow package:list --loading-order
           cd Packages/Neos
 
-          composer test:behavioral:stop-on-failure
-
-          # ALTERNATIVELY, comment in the following lines to dump the DB.
-          # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
-          # set +e
           # composer test:behavioral:stop-on-failure
-          # retVal=$?
-          # set -e
-          # if [ $retVal -ne 0 ]; then
-          #   cd ../../
-          #   echo "DUMPING DATABASE (because of error)"
-          #   sudo apt-get install -y postgresql-client
-          #   echo "writing PW file"
-          #   touch ~/.pgpass
-          #   echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
-          #   chmod 600 ~/.pgpass
-          #
-          #   echo "starting pg_dump"
-          #   pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
-          #   echo "pg_dump finished - ALL DONE NOW"
-          # fi
-          # exit $retVal
+
+          # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
+          # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
+          set +e
+          composer test:behavioral:stop-on-failure
+          retVal=$?
+          set -e
+          if [ $retVal -ne 0 ]; then
+            cd ../../
+            echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
+            sudo apt-get install -y postgresql-client mysql-client
+            echo "writing PW file"
+            touch ~/.pgpass
+            echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
+            chmod 600 ~/.pgpass
+
+            echo "starting pg_dump"
+            pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+            echo "pg_dump finished, starting mysqldump"
+            mysqldump --host=127.0.0.1 -u neos -p neos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+          fi
+          exit $retVal
           # END OF DEBUG SCRIPT
 
-      - name: Upload Postgres DB dump
+      - name: Upload Postgres/Mysql DB dump
         uses: actions/upload-artifact@v2
         if: matrix.parallel-parts == 'escr-behavioral'
         with:
@@ -256,7 +256,7 @@ jobs:
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
         if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
-        # we want to reach the Upload Postgres DB dump step.
+        # we want to reach the Upload Postgres/Mysql DB dump step.
         # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
         run: |
           echo '${{ toJSON(steps) }}'
