@@ -244,8 +244,8 @@ jobs:
 
             echo "starting pg_dump"
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
-            echo "pg_dump finished, starting mariadb-dump"
-            mariadb-dump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+            echo "pg_dump finished, starting mysqldump"
+            mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
           fi
           exit $retVal
           # END OF DEBUG SCRIPT
