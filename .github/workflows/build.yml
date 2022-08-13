@@ -233,7 +233,9 @@ jobs:
           if [ $retVal -ne 0 ]; then
             cd ../../
             echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
-            sudo apt-get remove -y mysql-client
+            sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
+            sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove
+            sudo DEBIAN_FRONTEND=noninteractive apt -y autoclean
             sudo apt-get install -y postgresql-client mariadb-client
             echo "writing PW file"
             touch ~/.pgpass
