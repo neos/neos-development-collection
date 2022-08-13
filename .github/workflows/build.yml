@@ -222,7 +222,7 @@ jobs:
           ./flow package:list --loading-order
           cd Packages/Neos
 
-          # composer test:behavioral:stop-on-failure
+          # composer test:behavioral
 
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
@@ -242,7 +242,7 @@ jobs:
             echo "starting pg_dump"
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
             echo "pg_dump finished, starting mysqldump"
-            mysqldump --host=127.0.0.1 -u neos -p neos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+            mysqldump --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
           fi
           exit $retVal
           # END OF DEBUG SCRIPT
