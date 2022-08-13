@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       mariadb:
-        image: mariadb:10.4
+        image: mariadb:10.8
         env:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
@@ -62,7 +62,7 @@ jobs:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:13.2
+        image: postgres:14.2
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
