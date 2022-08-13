@@ -49,7 +49,7 @@ jobs:
           #  experimental: false
           #  dependencies: 'lowest'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     services:
       mariadb:
         image: mariadb:10.4
@@ -233,7 +233,7 @@ jobs:
           if [ $retVal -ne 0 ]; then
             cd ../../
             echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
-            sudo apt-get install -y postgresql-client mysql-client
+            sudo apt-get install -y postgresql-client mariadb-client
             echo "writing PW file"
             touch ~/.pgpass
             echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
@@ -241,8 +241,8 @@ jobs:
 
             echo "starting pg_dump"
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
-            echo "pg_dump finished, starting mysqldump"
-            mysqldump --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+            echo "pg_dump finished, starting mariadb-dump"
+            mariadb-dump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
           fi
           exit $retVal
           # END OF DEBUG SCRIPT
@@ -303,7 +303,7 @@ jobs:
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: CI build (matrix)
     needs: build
     steps:
