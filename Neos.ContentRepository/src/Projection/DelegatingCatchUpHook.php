@@ -3,6 +3,7 @@
 namespace Neos\ContentRepository\Projection;
 
 use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\EventStore\Model\EventEnvelope;
 
 class DelegatingCatchUpHook implements CatchUpHookInterface
 {
@@ -24,17 +25,17 @@ class DelegatingCatchUpHook implements CatchUpHookInterface
         }
     }
 
-    public function onBeforeEvent(EventInterface $eventInstance): void
+    public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         foreach ($this->catchUpHooks as $catchUpHook) {
-            $catchUpHook->onBeforeEvent($eventInstance);
+            $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
         }
     }
 
-    public function onAfterEvent(EventInterface $eventInstance): void
+    public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         foreach ($this->catchUpHooks as $catchUpHook) {
-            $catchUpHook->onAfterEvent($eventInstance);
+            $catchUpHook->onAfterEvent($eventInstance, $eventEnvelope);
         }
     }
 

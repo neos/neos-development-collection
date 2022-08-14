@@ -197,7 +197,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
-        $catchUpHook->onBeforeEvent($eventInstance);
+        $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
 
         if ($eventInstance instanceof RootNodeAggregateWithNodeWasCreated) {
             $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance);
@@ -237,7 +237,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
 
-        $catchUpHook->onAfterEvent($eventInstance);
+        $catchUpHook->onAfterEvent($eventInstance, $eventEnvelope);
     }
 
     public function getSequenceNumber(): SequenceNumber

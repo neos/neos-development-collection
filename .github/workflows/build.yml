@@ -171,6 +171,22 @@ jobs:
                     user: 'neos'
                     password: 'neos'
                     charset: 'UTF8'
+
+              # We enable the race condition tracker
+              presets:
+                'default':
+                  projections:
+                    'Neos.ContentRepository:ContentGraph':
+                      catchUpHooks:
+                        'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                          factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+            ContentRepository:
+              BehavioralTests:
+                raceConditionTracker:
+                  redis:
+                    host: redis
+                    port: 6379
+
           EOF
           mkdir Configuration/Testing/Postgres
           cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
@@ -229,9 +245,13 @@ jobs:
           set +e
           composer test:behavioral:stop-on-failure
           retVal=$?
+
+          # automatically search for race conditions
+          cd ../../
+          ./flow raceConditionTracker:analyzeTrace
+
           set -e
           if [ $retVal -ne 0 ]; then
-            cd ../../
             echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
             sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
             sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove

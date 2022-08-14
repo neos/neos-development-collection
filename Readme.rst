@@ -169,9 +169,29 @@ Running Neos
 Running the Tests
 =================
 
+The normal mode is running PHP locally, but running Mariadb / Postgres in containers (so we know
+we use the right versions etc).
+
    .. code-block:: bash
 
        pushd Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior
        ../../../../../bin/behat -c behat.yml.dist Features/
        popd
 
+
+Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
+develop on Mac OS, you might want to run the Behat tests in a Docker container (= a linux environment)
+as well. We have seen cases where they behave differently, i.e. where they run without race
+conditions on OSX, but with race conditions in Linux/Docker. Additionally, the Linux/Docker setup
+described below also makes it easy to run the race-condition-detector:
+
+   .. code-block:: bash
+
+       docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml build
+       docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml up -d
+       docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml run neos /bin/bash
+
+       # the following commands now run INSIDE the Neos docker container:
+       FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:reset
+       ../../../../../bin/behat -c behat.yml.dist
+       FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace

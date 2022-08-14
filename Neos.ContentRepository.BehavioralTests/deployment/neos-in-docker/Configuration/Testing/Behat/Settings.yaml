@@ -1,0 +1,30 @@
+# This file is mounted into the Docker container in "docker-compose-full.yml"
+Neos:
+  Flow:
+    persistence:
+      backendOptions:
+        driver: 'pdo_mysql'
+        charset: 'utf8mb4'
+        host: 'mysql'
+        port: 3306
+        user: 'root'
+        password: db
+
+        dbname: 'neos_behat'
+
+
+  # We enable the race condition tracker. For details on how this works, see RaceTrackerCatchUpHook.php
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        projections:
+          'Neos.ContentRepository:ContentGraph':
+            catchUpHooks:
+              'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+  ContentRepository:
+    BehavioralTests:
+      raceConditionTracker:
+        redis:
+          host: redis
+          port: 6379

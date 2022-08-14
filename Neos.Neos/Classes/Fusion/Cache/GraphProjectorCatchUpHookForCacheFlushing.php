@@ -20,6 +20,7 @@ use Neos\ContentRepository\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\EventStore\Model\EventEnvelope;
 
 class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 {
@@ -34,7 +35,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     {
     }
 
-    public function onBeforeEvent(EventInterface $eventInstance): void
+    public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         //if ($doingFullReplayOfProjection) {
         // performance optimization: on full replay, we assume all caches to be flushed anyways
@@ -63,7 +64,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         }
     }
 
-    public function onAfterEvent(EventInterface $eventInstance): void
+    public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         // TODO if ($doingFullReplayOfProjection) {
             // performance optimization: on full replay, we assume all caches to be flushed anyways
