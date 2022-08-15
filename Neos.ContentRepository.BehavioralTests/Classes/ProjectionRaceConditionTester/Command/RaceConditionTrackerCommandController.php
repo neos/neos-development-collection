@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Command;
 
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
@@ -41,8 +42,6 @@ final class RaceConditionTrackerCommandController extends CommandController
 
     public function analyzeTraceCommand()
     {
-        // TODO: DETECT DOUBLE PROCESSING OF EVENTS!!! (should also not happen :D)
-
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
         $traces = RedisInterleavingLogger::getTraces();
 
@@ -53,17 +52,50 @@ final class RaceConditionTrackerCommandController extends CommandController
         $this->outputLine('The trace contains %d lines.', [count($traces)]);
 
         // Find Violations
-        $violationIndices = $traces->findViolations();
-        if (count($violationIndices)) {
-            $this->outputLine('The trace contains <error>%d violations</error> at line(s) %s.', [count($violationIndices), implode(',', $violationIndices)]);
+        $projectionConcurrencyViolationIndices = $traces->findProjectionConcurrencyViolations();
+        if (count($projectionConcurrencyViolationIndices)) {
+            $this->outputLine('The trace contains <error>%d violations of projection no-concurrency invariant</error> at line(s) %s.', [count($projectionConcurrencyViolationIndices), implode(',', $projectionConcurrencyViolationIndices)]);
         } else {
-            $this->outputLine('The trace contains <info>no violations</info>');
+            $this->outputLine('The trace contains <info>no violations of projection no-concurrency invariant</info>.');
         }
 
+        $doubleProcessedEventIndices = $traces->findDoubleProcessingOfEvents();
+        if (count($doubleProcessedEventIndices)) {
+            $this->outputLine('The trace contains <error>%d double-processed event pairs (DBL)</error>.', [count($doubleProcessedEventIndices)]);
+        } else {
+            $this->outputLine('The trace contains <info>no double-processed event pairs</info>.');
+        }
 
-        // PRINTER for every violationIndex (skip duplicates)
+        $this->printViolations($traces, $projectionConcurrencyViolationIndices, $doubleProcessedEventIndices);
+
+        $this->outputLine('');
+        $this->outputLine('Legend: ');
+        $this->outputLine('*    The process is in the critical section (i.e. needed to acquire the lock before).');
+        $this->outputLine('_    The lock will be released directly after.');
+        $this->outputLine('DBL  The event was processed multiple times.');
+        $this->outputLine('');
+        $this->outputLine('If more than one process is in the critical section at the same time, we have detected an invalid state (i.e. a bug somewhere in the synchronization logic).');
+
+        $this->outputLine('');
+
+        if (!empty($projectionConcurrencyViolationIndices)) {
+            $this->sendAndExit(1);
+        }
+        if (!empty($doubleProcessedEventIndices)) {
+            $this->sendAndExit(1);
+        }
+    }
+
+    private function printViolations(TraceEntries $traces, array $projectionConcurrencyViolationIndices, array $doubleProcessedEventIndices)
+    {
         $alreadyPrintedIndices = [];
-        foreach ($violationIndices as $violationIndex) {
+
+        // we want to display both kinds of violation
+        $projectionConcurrencyViolationIndices = [
+            ...$projectionConcurrencyViolationIndices,
+            ...array_keys($doubleProcessedEventIndices)
+        ];
+        foreach ($projectionConcurrencyViolationIndices as $violationIndex) {
             if (isset($alreadyPrintedIndices[$violationIndex])) {
                 // we have this error already displayed, so we do not need to render it again.
                 continue;
@@ -75,34 +107,25 @@ final class RaceConditionTrackerCommandController extends CommandController
 
             $pids = $traces->getPidSetInIndexRange($startIndex, $endIndex);
             $tableRows = [];
-            $traces->iterateRange($startIndex, $endIndex, function (TraceEntry $traceEntry, int $i) use ($pids, &$tableRows, &$alreadyPrintedIndices) {
+            $traces->iterateRange($startIndex, $endIndex, function (TraceEntry $traceEntry, int $i) use ($pids, &$tableRows, &$alreadyPrintedIndices, $doubleProcessedEventIndices) {
                 $alreadyPrintedIndices[$i] = true;
 
-                $tableRows[] = [$i, ...$traceEntry->printTableRow($pids)];
+                $firstRow = $i;
+                if (isset($doubleProcessedEventIndices[$i])) {
+                    $firstRow .= ' <error>DBL</error>';
+                }
+                $tableRows[] = [$firstRow, ...$traceEntry->printTableRow($pids)];
             });
 
             $this->outputLine('');
             $this->outputLine('');
-            $this->outputLine('<info>DETAILS for violation at line ' . $violationIndex . '</info>');
+            $this->outputLine('<info>DETAILS for projection invariant violation around line ' . $violationIndex . '</info>');
 
             $table = new Table($this->output->getOutput());
             $table
                 ->setHeaders(['Line', 'ID', ...array_map(fn(string $pid) => 'PID ' . $pid, $pids)])
                 ->setRows($tableRows);
             $table->render();
-        }
-
-        $this->outputLine('');
-        $this->outputLine('Legend: ');
-        $this->outputLine('* the process is in the critical section (i.e. needed to acquire the lock before)');
-        $this->outputLine('_ The lock will be released directly after.');
-        $this->outputLine('');
-        $this->outputLine('If more than one process is in the critical section at the same time, we have detected an invalid state (i.e. a bug somewhere in the synchronization logic).');
-
-        $this->outputLine('');
-
-        if (!empty($violationIndices)) {
-            $this->sendAndExit(1);
         }
     }
 }

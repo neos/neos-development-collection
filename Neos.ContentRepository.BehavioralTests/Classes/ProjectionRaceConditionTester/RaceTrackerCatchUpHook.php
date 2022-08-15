@@ -88,7 +88,14 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
  *
  * When a transaction is open for more than one PID, we know that we found a race.
  *
- * This algorithm is implemented in {@see TraceEntries::findViolations()}.
+ * This algorithm is implemented in {@see TraceEntries::findProjectionConcurrencyViolations()}.
+ *
+ *
+ * ## Duplicate Processing Algorithm
+ *
+ * At the same time, an Event should never be processed multiple times by the same Projector. We additionally
+ * detect this by remembering the sequence numbers of seen events; and if we have already seen the sequence
+ * number already, we know this is an error. This is implemented in {@see TraceEntries::findDoubleProcessingOfEvents()}.
  *
  * @internal
  */

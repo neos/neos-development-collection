@@ -62,6 +62,12 @@ final class TraceEntries implements \ArrayAccess, \Countable
         return array_values($pids);
     }
 
+    /**
+     * @param int $startIndex (inclusive)
+     * @param int $endIndex (inclusive)
+     * @param \Closure $callback
+     * @return void
+     */
     public function iterateRange(int $startIndex, int $endIndex, \Closure $callback)
     {
         if ($startIndex < 0) {
@@ -75,7 +81,7 @@ final class TraceEntries implements \ArrayAccess, \Countable
     /**
      * @return array Violation Indices
      */
-    public function findViolations(): array
+    public function findProjectionConcurrencyViolations(): array
     {
         // this array contains which PIDs (Process IDs) are right now in the critical section.
         // the key is the PID; the value is simply "true"
@@ -106,5 +112,65 @@ final class TraceEntries implements \ArrayAccess, \Countable
     public function count(): int
     {
         return count($this->traces);
+    }
+
+    /**
+     * It shall never happen that the same event (i.e. with the same sequence number) is processed multiple times by
+     * the same projector.
+     */
+    public function findDoubleProcessingOfEvents(): array
+    {
+        $doubleProcessedEventIndices = [];
+        foreach ($this->findEpochs() as $epoch) {
+            // the KEY is the sequence number which we have already seen,
+            // and the VALUE is the trace index where we have seen it.
+            $alreadySeenSequenceNumbers = [];
+            $this->iterateRange($epoch['min'], $epoch['max'],
+                function (TraceEntry $entry, int $i) use (&$alreadySeenSequenceNumbers, &$doubleProcessedEventIndices) {
+                    if (isset($entry->payload['seq'])) {
+                        if (isset($alreadySeenSequenceNumbers[$entry->payload['seq']])) {
+                            // ERROR CASE: we've already seen the same sequence number; so we create an error listing.
+                            $doubleProcessedEventIndices[$alreadySeenSequenceNumbers[$entry->payload['seq']]] = true;
+                            $doubleProcessedEventIndices[$i] = true;
+                        } else {
+                            // we record the seen sequence number
+                            $alreadySeenSequenceNumbers[$entry->payload['seq']] = $i;
+                        }
+                    }
+                }
+            );
+        }
+
+        return $doubleProcessedEventIndices;
+    }
+
+    /**
+     * An epoch is a section of the trace between which the sequence numbers
+     * increase monotonically. F.e. a single testcase.
+     *
+     * @return array
+     */
+    private function findEpochs(): array
+    {
+        $currentEpochStartIndex = 0;
+        $lastSeenSequenceNumber = -1;
+
+        $epochs = [];
+        foreach ($this->traces as $i => $entry) {
+            assert($entry instanceof TraceEntry);
+            if (isset($entry->payload['seq'])) {
+                if ($entry->payload['seq'] < $lastSeenSequenceNumber) {
+                    // the currently-seen sequence number is LOWER than the last seen one -> a new epoch begins now.
+                    $epochs[] = [
+                        'min' => $currentEpochStartIndex,
+                        'max' => $i - 1
+                    ];
+                    $currentEpochStartIndex = $i;
+                }
+                $lastSeenSequenceNumber = $entry->payload['seq'];
+            }
+        }
+
+        return $epochs;
     }
 }
