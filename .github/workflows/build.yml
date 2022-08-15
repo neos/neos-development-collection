@@ -248,7 +248,7 @@ jobs:
 
           # automatically search for race conditions
           cd ../../
-          ./flow raceConditionTracker:analyzeTrace
+          ./flow raceConditionTracker:analyzeTrace --store-trace ${{ github.workspace }}/Data/DebugDatabaseDumps/race-trace.ndjson
 
           set -e
           if [ $retVal -ne 0 ]; then

@@ -67,7 +67,7 @@ final class TraceEntry
             }
 
             if ($pid === $this->pid && !empty($this->payload)) {
-                $tableCell .= json_encode($this->payload);
+                $tableCell .= json_encode($this->payload, JSON_PRETTY_PRINT);
             }
             $tableRow[] = new TableCell($tableCell, $cellOptions);
         }

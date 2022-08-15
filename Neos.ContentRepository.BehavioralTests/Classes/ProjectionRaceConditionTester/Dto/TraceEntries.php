@@ -121,56 +121,38 @@ final class TraceEntries implements \ArrayAccess, \Countable
     public function findDoubleProcessingOfEvents(): array
     {
         $doubleProcessedEventIndices = [];
-        foreach ($this->findEpochs() as $epoch) {
-            // the KEY is the sequence number which we have already seen,
-            // and the VALUE is the trace index where we have seen it.
-            $alreadySeenSequenceNumbers = [];
-            $this->iterateRange($epoch['min'], $epoch['max'],
-                function (TraceEntry $entry, int $i) use (&$alreadySeenSequenceNumbers, &$doubleProcessedEventIndices) {
-                    if (isset($entry->payload['seq'])) {
-                        if (isset($alreadySeenSequenceNumbers[$entry->payload['seq']])) {
-                            // ERROR CASE: we've already seen the same sequence number; so we create an error listing.
-                            $doubleProcessedEventIndices[$alreadySeenSequenceNumbers[$entry->payload['seq']]] = true;
-                            $doubleProcessedEventIndices[$i] = true;
-                        } else {
-                            // we record the seen sequence number
-                            $alreadySeenSequenceNumbers[$entry->payload['seq']] = $i;
-                        }
-                    }
+        $alreadySeenIds = [];
+        foreach ($this->traces as $i => $entry) {
+            assert($entry instanceof TraceEntry);
+            if (isset($entry->payload['id'])) {
+                if (isset($alreadySeenIds[$entry->payload['id']])) {
+                    // ERROR CASE: we've already seen the same sequence number; so we create an error listing.
+                    $doubleProcessedEventIndices[$alreadySeenIds[$entry->payload['id']]] = true;
+                    $doubleProcessedEventIndices[$i] = true;
+                } else {
+                    // we record the seen ID
+                    $alreadySeenIds[$entry->payload['id']] = $i;
                 }
-            );
+            }
         }
 
         return $doubleProcessedEventIndices;
     }
 
-    /**
-     * An epoch is a section of the trace between which the sequence numbers
-     * increase monotonically. F.e. a single testcase.
-     *
-     * @return array
-     */
-    private function findEpochs(): array
+    public function asNdJson(): string
     {
-        $currentEpochStartIndex = 0;
-        $lastSeenSequenceNumber = -1;
-
-        $epochs = [];
+        $lines = [];
         foreach ($this->traces as $i => $entry) {
             assert($entry instanceof TraceEntry);
-            if (isset($entry->payload['seq'])) {
-                if ($entry->payload['seq'] < $lastSeenSequenceNumber) {
-                    // the currently-seen sequence number is LOWER than the last seen one -> a new epoch begins now.
-                    $epochs[] = [
-                        'min' => $currentEpochStartIndex,
-                        'max' => $i - 1
-                    ];
-                    $currentEpochStartIndex = $i;
-                }
-                $lastSeenSequenceNumber = $entry->payload['seq'];
-            }
+            $lines[] = json_encode([
+                'idx' => $i,
+                'id' => $entry->id,
+                'pid' => $entry->pid,
+                'type' => $entry->type->value,
+                'payload' => $entry->payload
+            ]);
         }
 
-        return $epochs;
+        return implode("\n", $lines);
     }
 }

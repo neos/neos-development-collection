@@ -19,6 +19,7 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\Flow\Cli\CommandController;
+use Neos\Utility\Files;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -40,7 +41,7 @@ final class RaceConditionTrackerCommandController extends CommandController
         RedisInterleavingLogger::reset();
     }
 
-    public function analyzeTraceCommand()
+    public function analyzeTraceCommand(string $storeTrace = null)
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
         $traces = RedisInterleavingLogger::getTraces();
@@ -77,6 +78,14 @@ final class RaceConditionTrackerCommandController extends CommandController
         $this->outputLine('If more than one process is in the critical section at the same time, we have detected an invalid state (i.e. a bug somewhere in the synchronization logic).');
 
         $this->outputLine('');
+
+        if (!empty($storeTrace)) {
+            Files::createDirectoryRecursively(dirname($storeTrace));
+            file_put_contents($storeTrace, $traces->asNdJson());
+            $this->outputLine('The full trace file was written to <info>%s</info>.', [$storeTrace]);
+            $this->outputLine('');
+        }
+
 
         if (!empty($projectionConcurrencyViolationIndices)) {
             $this->sendAndExit(1);

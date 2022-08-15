@@ -119,7 +119,8 @@ final class RaceTrackerCatchUpHook implements CatchUpHookInterface
         $this->inCriticalSection = true;
         RedisInterleavingLogger::trace(TraceEntryType::InCriticalSection, [
             'evt' => $eventEnvelope->event->type->value,
-            'seq' => $eventEnvelope->sequenceNumber->value
+            'seq' => $eventEnvelope->sequenceNumber->value,
+            'id' => $eventEnvelope->event->id->value
         ]);
     }
 
