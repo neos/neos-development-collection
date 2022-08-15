@@ -35,6 +35,7 @@ services:
       # if you want to edit certain folders directly, mount them here:
       - ./Packages/Neos/Neos.ContentRepository.BehavioralTests/:/app/Packages/Neos/Neos.ContentRepository.BehavioralTests/:cached
       - ./Packages/Neos/Neos.ContentRepository/Tests/Behavior/:/app/Packages/Neos/Neos.ContentRepository/Tests/Behavior/:cached
+      - ./Packages/Neos/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/:/app/Packages/Neos/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/:cached
 
     ports:
       - 8081:8081
