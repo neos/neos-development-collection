@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
+
+/** @noinspection PhpComposerExtensionStubsInspection */
 
 /*
  * This file is part of the Neos.ContentRepository.BehavioralTests package.
@@ -13,7 +15,6 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto;
-
 
 /**
  * For full docs and context, see {@see RaceTrackerCatchUpHook}

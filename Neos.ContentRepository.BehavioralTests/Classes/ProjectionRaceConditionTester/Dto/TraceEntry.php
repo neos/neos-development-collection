@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
+
+/** @noinspection PhpComposerExtensionStubsInspection */
 
 /*
  * This file is part of the Neos.ContentRepository.BehavioralTests package.
@@ -13,7 +15,6 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto;
-
 
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHook;
 use Symfony\Component\Console\Helper\TableCell;
@@ -33,15 +34,21 @@ final class TraceEntry
      */
     public array $pidsInCriticalSection;
 
+    /**
+     * @param array<mixed> $payload
+     */
     public function __construct(
         public readonly string $id,
         public readonly string $pid,
         public readonly TraceEntryType $type,
         public readonly array $payload,
-    )
-    {
+    ) {
     }
 
+    /**
+     * @param array<string> $pids
+     * @return TableCell[]
+     */
     public function printTableRow(array $pids): array
     {
         $cellOptions = [];
@@ -73,12 +80,5 @@ final class TraceEntry
         }
 
         return $tableRow;
-    }
-
-    private function idLabel(): string
-    {
-
-        return $this->id;
-
     }
 }

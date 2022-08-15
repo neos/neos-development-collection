@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
+
+/** @noinspection PhpComposerExtensionStubsInspection */
 
 /*
  * This file is part of the Neos.ContentRepository.BehavioralTests package.
@@ -14,20 +16,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto;
 
-
 /**
  * Value object for a list of {@see TraceEntry} objects, as stored in-order in the Redis stream
  *
  * For full docs and context, see {@see RaceTrackerCatchUpHook}
  *
  * @internal
+ * @implements \ArrayAccess<int,TraceEntry>
  */
 final class TraceEntries implements \ArrayAccess, \Countable
 {
+    /**
+     * @param TraceEntry[] $traces
+     */
     public function __construct(
         private readonly array $traces,
-    )
-    {
+    ) {
     }
 
     public function offsetExists(mixed $offset): bool
@@ -50,6 +54,9 @@ final class TraceEntries implements \ArrayAccess, \Countable
         throw new \RuntimeException("Not supported");
     }
 
+    /**
+     * @return array<string>
+     */
     public function getPidSetInIndexRange(int $startIndex, int $endIndex): array
     {
         $pids = [];
@@ -65,10 +72,8 @@ final class TraceEntries implements \ArrayAccess, \Countable
     /**
      * @param int $startIndex (inclusive)
      * @param int $endIndex (inclusive)
-     * @param \Closure $callback
-     * @return void
      */
-    public function iterateRange(int $startIndex, int $endIndex, \Closure $callback)
+    public function iterateRange(int $startIndex, int $endIndex, \Closure $callback): void
     {
         if ($startIndex < 0) {
             $startIndex = 0;
@@ -79,7 +84,7 @@ final class TraceEntries implements \ArrayAccess, \Countable
     }
 
     /**
-     * @return array Violation Indices
+     * @return array<int> Violation Indices
      */
     public function findProjectionConcurrencyViolations(): array
     {
@@ -117,6 +122,8 @@ final class TraceEntries implements \ArrayAccess, \Countable
     /**
      * It shall never happen that the same event (i.e. with the same sequence number) is processed multiple times by
      * the same projector.
+     *
+     * @return array<int,bool>
      */
     public function findDoubleProcessingOfEvents(): array
     {

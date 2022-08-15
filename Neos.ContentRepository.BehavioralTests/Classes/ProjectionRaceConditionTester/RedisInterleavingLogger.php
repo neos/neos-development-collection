@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
+
+/** @noinspection PhpComposerExtensionStubsInspection */
 
 /*
  * This file is part of the Neos.ContentRepository.BehavioralTests package.
@@ -14,7 +16,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester;
 
-
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntry;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
@@ -28,21 +29,24 @@ final class RedisInterleavingLogger
 {
     private static \Redis $redis;
 
-    public static function connect(string $host, int $port)
+    public static function connect(string $host, int $port): void
     {
         self::$redis = new \Redis();
         self::$redis->connect($host, $port);
     }
 
-    public static function reset()
+    public static function reset(): void
     {
         self::$redis->del('tracePids', 'trace');
     }
 
-    public static function trace(TraceEntryType $type, array $payload = [])
+    /**
+     * @param array<mixed> $payload
+     */
+    public static function trace(TraceEntryType $type, array $payload = []): void
     {
         $pid = getmypid();
-        self::$redis->sAdd('tracePids', $pid);
+        self::$redis->sAdd('tracePids', (string)$pid);
         self::$redis->xAdd('trace', '*', [
             ...$payload,
             'pid' => $pid,
@@ -52,7 +56,6 @@ final class RedisInterleavingLogger
 
     /**
      * @return TraceEntries
-     * @throws
      */
     public static function getTraces(): TraceEntries
     {

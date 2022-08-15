@@ -42,7 +42,8 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
  * Process B             acquireLock(  |                                [  ) processEvent() releaseLock(  ]  )
  * ```
  *
- * (i.e. Process B will wait inside acquireLock() until the lock is released (i.e. Process A finished), and then continue.
+ * (i.e. Process B will wait inside acquireLock() until the lock is released (i.e. Process A finished), and then
+ * continue.
  *
  *
  * A WRONG and UNDEFINED behavior looks as follows:
@@ -101,10 +102,9 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
  */
 final class RaceTrackerCatchUpHook implements CatchUpHookInterface
 {
-
     /**
      * @Flow\InjectConfiguration("raceConditionTracker")
-     * @var array
+     * @var array<mixed>
      */
     protected $configuration;
     private bool $inCriticalSection = false;
