@@ -104,6 +104,8 @@ final class RaceConditionTrackerCommandController extends CommandController
             ...$projectionConcurrencyViolationIndices,
             ...array_keys($doubleProcessedEventIndices)
         ];
+        asort($projectionConcurrencyViolationIndices);
+
         foreach ($projectionConcurrencyViolationIndices as $violationIndex) {
             if (isset($alreadyPrintedIndices[$violationIndex])) {
                 // we have this error already displayed, so we do not need to render it again.
