@@ -137,6 +137,9 @@ Feature: Publishing hide/show scenario of nodes
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
       | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
+    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
+    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
+    And the graph projection is fully up to date
     Given the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
