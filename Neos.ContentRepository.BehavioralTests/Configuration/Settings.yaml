@@ -1,6 +1,6 @@
 
 Neos:
-  # To detect race conditions, enable the code block below,
+  # To detect race conditions, enable the code block below, and set raceConditionTracker.enabled to TRUE
   # and then use ./flow raceConditionTracker:analyzeTrace
   #ContentRepositoryRegistry:
   #  presets:
@@ -14,6 +14,7 @@ Neos:
   ContentRepository:
     BehavioralTests:
       raceConditionTracker:
+        enabled: false
         redis:
           host: 127.0.0.1
           port: 6379

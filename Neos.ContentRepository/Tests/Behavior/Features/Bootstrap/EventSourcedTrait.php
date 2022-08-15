@@ -31,28 +31,27 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\Factory\ContentRepositoryFactory;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
-use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Service\ContentStreamPruner;
+use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCreation;
@@ -72,8 +71,9 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepo
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Exception\CheckpointException;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -168,20 +168,56 @@ trait EventSourcedTrait
         return $this->activeContentGraphs;
     }
 
+    private bool $raceConditionTrackerEnabled = false;
+
     protected function setupEventSourcedTrait()
     {
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
 
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
         $this->contentRepositoryRegistry = $this->getObjectManager()->get(ContentRepositoryRegistry::class);
+
+        // prepare race tracking for debugging into the race log
+        if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)
+            $raceConditionTrackerConfig = $this->getObjectManager()->get(ConfigurationManager::class)
+                ->getConfiguration(
+                    ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+                    'Neos.ContentRepository.BehavioralTests.raceConditionTracker');
+
+            // if it's enabled, correctly configure the Redis connection.
+            // Then, people can use {@see logToRaceConditionTracker()} for debugging.
+            $this->raceConditionTrackerEnabled = boolval($raceConditionTrackerConfig['enabled']);
+            if ($this->raceConditionTrackerEnabled) {
+                RedisInterleavingLogger::connect(
+                    $raceConditionTrackerConfig['redis']['host'],
+                    $raceConditionTrackerConfig['redis']['port']
+                );
+            }
+        }
+
         $this->initCleanContentRepository();
     }
+
+    /**
+     * This function logs a message into the race condition tracker's event log,
+     * which can be inspected by calling ./flow raceConditionTracker:analyzeTrace.
+     *
+     * It is helpful to do this during debugging; in order to figure out whether an issue is an actual bug
+     * or a situation which can only happen during test runs.
+     */
+    public function logToRaceConditionTracker(array $payload)
+    {
+        if ($this->raceConditionTrackerEnabled) {
+            RedisInterleavingLogger::trace(TraceEntryType::DebugLog, $payload);
+        }
+    }
+
 
     private static bool $wasContentRepositorySetupCalled = false;
 
     private function initCleanContentRepository(): void
     {
+        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
         $this->contentRepositoryRegistry->forgetInstances();
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
@@ -234,13 +270,89 @@ trait EventSourcedTrait
         $this->currentNodeAggregates = null;
         $this->currentUserIdentifier = null;
         $this->currentNodes = null;
-        $this->contentRepository->resetProjectionStates();
 
         $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
         // copied from DoctrineEventStoreFactory
+
+        /**
+         * Reset projections and events
+         * ============================
+         *
+         * PITFALL: for a long time, the code below was a two-liner (it is not anymore, for reasons explained here):
+         * - reset projections (truncate table contents)
+         * - truncate events table.
+         *
+         * This code has SERIOUS Race Condition and Bug Potential.
+         * tl;dr: It is CRUCIAL that *FIRST* the event store is emptied, and *then* the projection state is reset;
+         * so the OPPOSITE order as described above.
+         *
+         * If doing it in the way described initially, the following can happen (time flows from top to bottom):
+         *
+         * ```
+         * Main Behat Process                        Dangling Projection catch up worker
+         * ==================                        ===================================
+         *
+         *                                           (hasn't started working yet, simply sleeping)
+         *
+         * 1) Projection State reset
+         *                                           "oh, I have some work to do to catch up EVERYTHING"
+         *                                           "query the events table"
+         *
+         * 2) Event Table Reset
+         *                                           (events table is already loaded into memory) -> replay WIP
+         *
+         * (new commands/events start happening,
+         * in the new testcase)
+         *                                           ==> ERRORS because the projection now contains the result of both
+         *                                               old AND new events (of the two different testcases) <==
+         * ```
+         *
+         * This was an actual bug which bit us and made our tests unstable :D :D
+         *
+         * How did we find this? By the virtue of our Race Tracker (Docs: see {@see RaceTrackerCatchUpHook}), which
+         * checks for events being applied multiple times to a projection.
+         * ... and additionally by using {@see logToRaceConditionTracker()} to find the interleavings between the
+         * Catch Up process and the testcase reset.
+         */
+
         $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryIdentifier);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
+        // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
+        //       try again.
+        //
+        // TODO: inside the projections, the code to reset looks like this:
+        //        $this->truncateDatabaseTables();
+        //        $this->checkpointStorage->acquireLock();
+        //        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        //  -> it'd say we need to change this; to:
+        //        $this->checkpointStorage->acquireLock();
+        //        $this->truncateDatabaseTables();
+        //        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        // TODO: Rename to "tryToAcquireLock"?
+        $projectionsWereReset = false;
+        $retryCount = 0;
+        do {
+            try {
+                $retryCount++;
+                $this->contentRepository->resetProjectionStates();
+
+                // if we end up here without exception, we know the projection states were properly reset.
+                $projectionsWereReset = true;
+            } catch(CheckpointException $checkpointException) {
+                // TODO: HACK: UGLY CODE!!!
+                if ($checkpointException->getCode() === 1652279016 && $retryCount < 20) { // we wait for 10 seconds max.
+                    // another process is in the critical section; a.k.a.
+                    // the lock is acquired already by another process.
+                    //
+                    // -> we sleep for 0.5s and retry
+                    usleep(500000);
+                } else {
+                    // some error error - we re-throw
+                    throw $checkpointException;
+                }
+            }
+        } while ($projectionsWereReset !== true);
     }
 
     /**

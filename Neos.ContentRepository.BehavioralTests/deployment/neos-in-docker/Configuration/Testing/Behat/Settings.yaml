@@ -25,6 +25,7 @@ Neos:
   ContentRepository:
     BehavioralTests:
       raceConditionTracker:
+        enabled: true
         redis:
           host: redis
           port: 6379

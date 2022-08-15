@@ -24,4 +24,5 @@ enum TraceEntryType: string
 {
     case InCriticalSection = 'InCriticalSection';
     case LockWillBeReleasedIfItWasAcquiredBefore = 'LockWillBeReleased';
+    case DebugLog = 'DebugLog';
 }
