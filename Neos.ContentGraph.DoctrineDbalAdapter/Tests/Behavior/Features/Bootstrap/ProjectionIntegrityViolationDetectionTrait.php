@@ -16,7 +16,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphSchemaBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\TestingNodeAggregateIdentifier;
@@ -29,6 +32,13 @@ use Neos\Flow\Utility\Algorithms;
 trait ProjectionIntegrityViolationDetectionTrait
 {
     private DbalClient $dbalClient;
+
+    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+
+    protected function getTableNamePrefix(): string
+    {
+        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix($this->getContentRepositoryIdentifier());
+    }
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
@@ -45,8 +55,9 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
+
         $this->dbalClient->getConnection()->delete(
-            'neos_contentgraph_restrictionrelation',
+            $this->getTableNamePrefix() . '_restrictionrelation',
             $record
         );
     }
@@ -61,7 +72,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_restrictionrelation',
+            $this->getTableNamePrefix() . '_restrictionrelation',
             [
                 'originnodeaggregateidentifier' => (string)TestingNodeAggregateIdentifier::nonExistent()
             ],
@@ -79,7 +90,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_restrictionrelation',
+            $this->getTableNamePrefix() . '_restrictionrelation',
             [
                 'affectednodeaggregateidentifier' => (string)TestingNodeAggregateIdentifier::nonExistent()
             ],
@@ -97,7 +108,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $this->dbalClient->getConnection()->insert(
-            'neos_contentgraph_hierarchyrelation',
+            $this->getTableNamePrefix() . '_hierarchyrelation',
             $record
         );
     }
@@ -114,7 +125,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         unset($record['position']);
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
+            $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'dimensionspacepointhash' => $dataset['newDimensionSpacePointHash']
             ],
@@ -138,7 +149,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         ];
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
+            $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'position' => $dataset['newPosition']
             ],
@@ -156,7 +167,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_referencerelation',
+            $this->getTableNamePrefix() . '_referencerelation',
             [
                 'nodeanchorpoint' => 'detached'
             ],
@@ -174,7 +185,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_referencerelation',
+            $this->getTableNamePrefix() . '_referencerelation',
             [
                 'position' => $dataset['newPosition']
             ],
@@ -253,8 +264,8 @@ trait ProjectionIntegrityViolationDetectionTrait
     ): string {
         $nodeRecord = $this->dbalClient->getConnection()->executeQuery(
             'SELECT n.relationanchorpoint
-                            FROM neos_contentgraph_node n
-                            INNER JOIN neos_contentgraph_hierarchyrelation h
+                            FROM ' . $this->getTableNamePrefix() . '_node n
+                            INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h
                             ON n.relationanchorpoint = h.childnodeanchor
                             WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
                             AND h.contentstreamidentifier = :contentStreamIdentifier

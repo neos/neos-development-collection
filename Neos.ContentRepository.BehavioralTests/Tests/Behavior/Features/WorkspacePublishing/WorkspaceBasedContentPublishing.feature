@@ -52,6 +52,9 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Original"}         |
       | initiatingUserIdentifier  | "initiating-user-identifier" |
+    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
+    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
+    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                        |
       | workspaceName              | "user-test"                  |

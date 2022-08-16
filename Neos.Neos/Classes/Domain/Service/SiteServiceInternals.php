@@ -25,6 +25,8 @@ use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
+use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -32,7 +34,10 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\Neos\Domain\Exception\LiveWorkspaceIsMissing;
 use Neos\Neos\Domain\Exception\SitesNodeIsMissing;
 use Neos\Neos\Domain\Model\Site;
@@ -88,16 +93,35 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function createSiteNode(Site $site, string $nodeTypeName, UserIdentifier $currentUserIdentifier): void
     {
         $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-        if (!$liveWorkspace instanceof Workspace) {
-            throw LiveWorkspaceIsMissing::butWasRequested();
+        if ($liveWorkspace instanceof Workspace) {
+            $liveContentStreamIdentifier = $liveWorkspace->getCurrentContentStreamIdentifier();
+        } else {
+            $liveContentStreamIdentifier = ContentStreamIdentifier::create();
+            $this->contentRepository->handle(
+                new CreateRootWorkspace(
+                    WorkspaceName::forLive(),
+                    WorkspaceTitle::fromString('Live'),
+                    WorkspaceDescription::fromString('Public live workspace'),
+                    UserIdentifier::forSystemUser(),
+                    $liveContentStreamIdentifier
+                )
+            )->block();
         }
         try {
-            $sitesNode = $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
+            $sitesNodeIdentifier = $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
+                $liveContentStreamIdentifier,
                 NodeTypeNameFactory::forSites()
-            );
+            )->getIdentifier();
+
+            // TODO make this case more explicit
         } catch (\Exception $exception) {
-            throw SitesNodeIsMissing::butWasRequested();
+            $sitesNodeIdentifier = NodeAggregateIdentifier::create();
+            $this->contentRepository->handle(new CreateRootNodeAggregateWithNode(
+                $liveContentStreamIdentifier,
+                $sitesNodeIdentifier,
+                NodeTypeNameFactory::forSites(),
+                UserIdentifier::forSystemUser()
+            ))->block();
         }
 
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
@@ -120,12 +144,12 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
         $siteNodeAggregateIdentifier = NodeAggregateIdentifier::create();
         $this->contentRepository->handle(new CreateNodeAggregateWithNode(
-            $liveWorkspace->getCurrentContentStreamIdentifier(),
+            $liveContentStreamIdentifier,
             $siteNodeAggregateIdentifier,
             NodeTypeName::fromString($nodeTypeName),
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
             $currentUserIdentifier,
-            $sitesNode->getIdentifier(),
+            $sitesNodeIdentifier,
             null,
             $site->getNodeName()->toNodeName(),
             PropertyValuesToWrite::fromArray([
@@ -136,7 +160,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
             $this->contentRepository->handle(new CreateNodeVariant(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
+                $liveContentStreamIdentifier,
                 $siteNodeAggregateIdentifier,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),

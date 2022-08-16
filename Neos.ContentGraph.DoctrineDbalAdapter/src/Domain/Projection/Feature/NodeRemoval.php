@@ -73,7 +73,7 @@ trait NodeRemoval
         // also remove outbound reference relations
         $this->getDatabaseConnection()->executeStatement(
             '
-            DELETE n, r FROM neos_contentgraph_node n
+            DELETE n, r FROM ' . $this->getTableNamePrefix() . '_node n
                 LEFT JOIN ' . $this->getTableNamePrefix() . '_referencerelation r
                     ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN

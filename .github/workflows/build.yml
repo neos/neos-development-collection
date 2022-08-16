@@ -49,10 +49,10 @@ jobs:
           #  experimental: false
           #  dependencies: 'lowest'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     services:
       mariadb:
-        image: mariadb:10.4
+        image: mariadb:10.8
         env:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
@@ -62,7 +62,7 @@ jobs:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:13.2
+        image: postgres:14.2
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
@@ -128,8 +128,6 @@ jobs:
           # workaround for not-yet-released neos/eventstore packages
           composer require --no-update neos/eventstore:"dev-main"
           composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
-          # composer require --no-update neos/neos-ui:"dev-90-contentrepository"
-          # composer require --no-update neos/neos-ui-compiled:"9.0.x-dev as dev-90-contentrepository"
 
       - name: Cache Composer packages
         id: composer-cache
@@ -173,6 +171,23 @@ jobs:
                     user: 'neos'
                     password: 'neos'
                     charset: 'UTF8'
+
+              # We enable the race condition tracker
+              presets:
+                'default':
+                  projections:
+                    'Neos.ContentRepository:ContentGraph':
+                      catchUpHooks:
+                        'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                          factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+            ContentRepository:
+              BehavioralTests:
+                raceConditionTracker:
+                  enabled: true
+                  redis:
+                    host: 127.0.0.1
+                    port: 6379
+
           EOF
           mkdir Configuration/Testing/Postgres
           cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
@@ -189,8 +204,8 @@ jobs:
                   dbname: 'flow_functional_testing'
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
-          ./flow configuration:show
-          ./flow routing:list
+          # Enable for debugging: ./flow configuration:show
+          # Enable for debugging: ./flow routing:list
 
       - name: Run Linter
         if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
@@ -205,15 +220,14 @@ jobs:
       - name: Run functional tests
         if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
-          FLOW_CONTEXT=Testing ./flow doctrine:migrate
+          FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run ES CR Tests
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
-        # we want to reach the Upload Postgres DB dump step.
-        # TODO: If we want to fail everything, run https://stackoverflow.com/a/58003436/4921449 afterwards
-        #continue-on-error: true
+        # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
+        continue-on-error: true
         run: |
           echo ${{ github.workspace }}
           ls ${{ github.workspace }}
@@ -222,36 +236,42 @@ jobs:
           mkdir -p ${{ github.workspace }}/Data/DebugDatabaseDumps
           touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
 
-          FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
           ./flow package:list --loading-order
-          ./flow configuration:show --type Settings
           cd Packages/Neos
 
-          composer test
+          # composer test:behavioral
 
-          # ALTERNATIVELY, comment in the following lines to dump the DB.
+          # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
-          # set +e
-          # composer test:behavioral:stop-on-failure
-          # retVal=$?
-          # set -e
-          # if [ $retVal -ne 0 ]; then
-          #   cd ../../
-          #   echo "DUMPING DATABASE (because of error)"
-          #   sudo apt-get install -y postgresql-client
-          #   echo "writing PW file"
-          #   touch ~/.pgpass
-          #   echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
-          #   chmod 600 ~/.pgpass
-          #
-          #   echo "starting pg_dump"
-          #   pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
-          #   echo "pg_dump finished - ALL DONE NOW"
-          # fi
-          # exit $retVal
+          set +e
+          composer test:behavioral:stop-on-failure
+          retVal=$?
+
+          # automatically search for race conditions
+          cd ../../
+          ./flow raceConditionTracker:analyzeTrace --store-trace ${{ github.workspace }}/Data/DebugDatabaseDumps/race-trace.ndjson
+
+          set -e
+          if [ $retVal -ne 0 ]; then
+            echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
+            sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
+            sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove
+            sudo DEBIAN_FRONTEND=noninteractive apt -y autoclean
+            sudo apt-get install -y postgresql-client mariadb-client
+            echo "writing PW file"
+            touch ~/.pgpass
+            echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
+            chmod 600 ~/.pgpass
+
+            echo "starting pg_dump"
+            pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+            echo "pg_dump finished, starting mysqldump"
+            mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+          fi
+          exit $retVal
           # END OF DEBUG SCRIPT
 
-      - name: Upload Postgres DB dump
+      - name: Upload Postgres/Mysql DB dump
         uses: actions/upload-artifact@v2
         if: matrix.parallel-parts == 'escr-behavioral'
         with:
@@ -260,7 +280,7 @@ jobs:
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
         if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
-        # we want to reach the Upload Postgres DB dump step.
+        # we want to reach the Upload Postgres/Mysql DB dump step.
         # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
         run: |
           echo '${{ toJSON(steps) }}'
@@ -307,7 +327,7 @@ jobs:
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: CI build (matrix)
     needs: build
     steps:

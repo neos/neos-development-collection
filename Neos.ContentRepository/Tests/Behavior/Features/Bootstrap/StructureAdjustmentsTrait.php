@@ -27,17 +27,12 @@ use PHPUnit\Framework\Assert;
  */
 trait StructureAdjustmentsTrait
 {
-    /**
-     * @var StructureAdjustmentService
-     */
-    protected $structureAdjustmentService;
-
     abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
-    protected function setupStructureAdjustmentTrait(): void
+    protected function getStructureAdjustmentService(): StructureAdjustmentService
     {
-        $this->structureAdjustmentService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new StructureAdjustmentServiceFactory());
+        return $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new StructureAdjustmentServiceFactory());
     }
 
     /**
@@ -48,9 +43,9 @@ trait StructureAdjustmentsTrait
      */
     public function iAdjustTheNodeStructureForNodeType(string $nodeTypeName): void
     {
-        $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
+        $errors = $this->getStructureAdjustmentService()->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         foreach ($errors as $error) {
-            $this->structureAdjustmentService->fixError($error);
+            $this->getStructureAdjustmentService()->fixError($error);
         }
     }
 
@@ -61,7 +56,7 @@ trait StructureAdjustmentsTrait
      */
     public function iExpectNoStructureAdjustmentsForType(string $nodeTypeName): void
     {
-        $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
+        $errors = $this->getStructureAdjustmentService()->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $errors = iterator_to_array($errors);
         Assert::assertEmpty($errors, implode(', ', array_map(fn (StructureAdjustment $adjustment) => $adjustment->render(), $errors)));
     }
@@ -74,7 +69,7 @@ trait StructureAdjustmentsTrait
      */
     public function iExpectTheFollowingStructureAdjustmentsForType(string $nodeTypeName, TableNode $expectedAdjustments): void
     {
-        $actualAdjustments = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
+        $actualAdjustments = $this->getStructureAdjustmentService()->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $actualAdjustments = iterator_to_array($actualAdjustments);
 
         $this->assertEqualStructureAdjustments($expectedAdjustments, $actualAdjustments);

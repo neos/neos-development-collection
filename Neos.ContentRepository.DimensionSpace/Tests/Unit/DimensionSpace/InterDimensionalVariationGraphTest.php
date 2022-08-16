@@ -17,6 +17,10 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
+// NOTE: not sure why this is needed
+require_once(__DIR__ . '/Fixtures/VariationExampleDimensionSource.php');
+require_once(__DIR__ . '/Fixtures/NullExampleDimensionSource.php');
+
 /**
  * Unit test cases for the inter dimensional variation graph
  */

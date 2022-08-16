@@ -1,0 +1,3 @@
+'Neos.Neos:Sites':
+  superTypes:
+    'Neos.ContentRepository:Root': true

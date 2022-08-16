@@ -11,9 +11,6 @@
 Neos:
 
   Neos:
-    contentCacheFlusher:
-      queueName: 'neos-contentCacheFlusher'
-
     contentDimensions:
       resolution:
         uriPathSegmentDelimiter: '_'

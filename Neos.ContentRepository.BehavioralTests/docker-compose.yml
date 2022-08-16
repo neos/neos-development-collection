@@ -1,4 +1,9 @@
 # This Docker-Compose file eases running testcases, because it starts Mysql and Postgres in a way that you can copy/paste Settings.yaml reliably.
+#
+# QUICK HELP:
+# "docker compose up -d" starts everything.
+# "docker compose down" stops everything, but keeps the data.
+# "docker compose down -v" stops everything, and REMOVES the data.
 version: '3.5'
 services:
   mysql:
@@ -7,15 +12,21 @@ services:
       MYSQL_ROOT_PASSWORD: 'db'
     volumes:
       - mysql:/var/lib/mysql
+      - ./deployment/mariadb-initdb.d:/docker-entrypoint-initdb.d:cached
+
     ports:
       - 13306:3306
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
   postgres:
     image: postgres:14.2
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 'db'
-      POSTGRES_DB: 'neos-behat'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./deployment/postgres-initdb.d:/docker-entrypoint-initdb.d:cached
+
     ports:
       - 15432:5432
 
@@ -23,5 +34,6 @@ services:
 
 volumes:
   mysql:
+  postgres:
 
 

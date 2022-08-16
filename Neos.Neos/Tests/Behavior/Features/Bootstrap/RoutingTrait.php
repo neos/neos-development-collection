@@ -17,16 +17,14 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\EventSourcing\EventListener\EventListenerInvoker;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -45,10 +43,11 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
-use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
-use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\ObjectAccess;
@@ -73,6 +72,8 @@ trait RoutingTrait
      * @return ObjectManagerInterface
      */
     abstract protected function getObjectManager();
+
+    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
 
     /**
      * @Given A site exists for node name :nodeName
@@ -159,20 +160,14 @@ trait RoutingTrait
         $persistenceManager->clearState();
     }
 
+    abstract protected function getContentRepository(): ContentRepository;
+
     /**
      * @When The documenturipath projection is up to date
      */
     public function theDocumenturipathProjectionIsUpToDate(): void
     {
-        /* @var $eventStoreFactory EventStoreFactory */
-        $eventStoreFactory = $this->getObjectManager()->get(EventStoreFactory::class);
-        /** @var EventStore $eventStore */
-        $eventStore = $eventStoreFactory->create('ContentRepository');
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->getObjectManager()->get(EntityManagerInterface::class);
-        /** @var DocumentUriPathProjection $projector */
-        $projector = $this->getObjectManager()->get(DocumentUriPathProjection::class);
-        (new EventListenerInvoker($eventStore, $projector, $entityManager->getConnection()))->catchUp();
+        $this->getContentRepository()->catchUpProjection(DocumentUriPathProjection::class);
     }
 
     /**
@@ -239,7 +234,7 @@ trait RoutingTrait
             return null;
         }
 
-        $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
+        $nodeAddressFactory = NodeAddressFactory::create($this->getContentRepository());
         return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }
 
@@ -277,7 +272,10 @@ trait RoutingTrait
         /** @var Connection $dbal */
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
-        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri ORDER BY nodeaggregateidentifierpath');
+        $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
+            $this->getContentRepositoryIdentifier()
+        );
+        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidentifierpath');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);

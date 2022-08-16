@@ -1,5 +1,3 @@
-'Neos.Neos:Sites': []
-
 'Neos.Neos:Timable':
   properties:
 # TODO: enable again!

@@ -97,8 +97,23 @@ class ContentCacheFlusher
         // we do not need these variables anymore here
         unset($contentStreamIdentifier, $nodeAggregateIdentifier);
 
+
+        // NOTE: Normally, the content graph cannot contain cycles. However, during the
+        // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
+        // and in case of bugs, it could have actually cycles.
+        // We still want the content cache flushing to work, without hanging up in an endless loop.
+        // That's why we track the seen NodeAggregateIdentifiers to be sure we don't travers them multiple times.
+        $processedNodeAggregateIdentifiers = [];
+
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
+            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->getIdentifier()->getValue()])) {
+                // we've already processed this NodeAggregateIdentifier (i.e. flushed the caches for it);
+                // thus we can skip this one, and thus break the cycle.
+                continue;
+            }
+            $processedNodeAggregateIdentifiers[$nodeAggregate->getIdentifier()->getValue()] = true;
+
             $tagName = 'DescendantOf_%' . $nodeAggregate->getContentStreamIdentifier()
                 . '%_' . $nodeAggregate->getIdentifier();
             $tagsToFlush[$tagName] = sprintf(

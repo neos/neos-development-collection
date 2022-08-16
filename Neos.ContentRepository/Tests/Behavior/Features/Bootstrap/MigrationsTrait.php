@@ -36,10 +36,6 @@ trait MigrationsTrait
     abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
-    protected function setupMigrationsTrait(): void
-    {
-        $this->nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new NodeMigrationServiceFactory());
-    }
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:
      */
@@ -48,7 +44,8 @@ trait MigrationsTrait
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
         $contentStreamIdentifiers = array_map(fn (string $cs) => ContentStreamIdentifier::fromString($cs), explode(',', $contentStreams));
         $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIdentifiers);
-        $this->nodeMigrationService->executeMigration($command);
+        $nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new NodeMigrationServiceFactory());
+        $nodeMigrationService->executeMigration($command);
     }
 
     /**

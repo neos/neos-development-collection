@@ -31,6 +31,8 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentGraph\DoctrineDbalAdapter\HypergraphProjectionFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\ContentRepository;
@@ -72,6 +74,7 @@ use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Exception\CheckpointException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -166,12 +169,17 @@ trait EventSourcedTrait
         return $this->activeContentGraphs;
     }
 
-    protected function setupEventSourcedTrait()
+    private bool $alwaysRunContentRepositorySetup = false;
+    private bool $raceConditionTrackerEnabled = false;
+
+    protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false)
     {
+        $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
 
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
+
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepositoryRegistry');
         $settings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph'] = [
             'factoryObjectName' => HypergraphProjectionFactory::class
@@ -182,14 +190,52 @@ trait EventSourcedTrait
             $this->getObjectManager()
         );
 
-        $this->initCleanContentRepository();
+        // prepare race tracking for debugging into the race log
+        if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)
+            $raceConditionTrackerConfig = $this->getObjectManager()->get(ConfigurationManager::class)
+                ->getConfiguration(
+                    ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+                    'Neos.ContentRepository.BehavioralTests.raceConditionTracker');
+
+            // if it's enabled, correctly configure the Redis connection.
+            // Then, people can use {@see logToRaceConditionTracker()} for debugging.
+            $this->raceConditionTrackerEnabled = boolval($raceConditionTrackerConfig['enabled']);
+            if ($this->raceConditionTrackerEnabled) {
+                RedisInterleavingLogger::connect(
+                    $raceConditionTrackerConfig['redis']['host'],
+                    $raceConditionTrackerConfig['redis']['port']
+                );
+            }
+        }
     }
+
+    /**
+     * This function logs a message into the race condition tracker's event log,
+     * which can be inspected by calling ./flow raceConditionTracker:analyzeTrace.
+     *
+     * It is helpful to do this during debugging; in order to figure out whether an issue is an actual bug
+     * or a situation which can only happen during test runs.
+     */
+    public function logToRaceConditionTracker(array $payload)
+    {
+        if ($this->raceConditionTrackerEnabled) {
+            RedisInterleavingLogger::trace(TraceEntryType::DebugLog, $payload);
+        }
+    }
+
+
+    private static bool $wasContentRepositorySetupCalled = false;
 
     private function initCleanContentRepository(): void
     {
+        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
         $this->contentRepositoryRegistry->forgetInstances();
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
-        $this->contentRepository->setUp(); // TODO: is this too slow for every test??
+        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
+        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
+            $this->contentRepository->setUp();
+            self::$wasContentRepositorySetupCalled = true;
+        }
         $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryIdentifier, new ContentRepositoryInternalsFactory());
 
         $availableContentGraphs = [];
@@ -205,14 +251,15 @@ trait EventSourcedTrait
 
     }
 
-
     /**
-     * @BeforeScenario
+     * @BeforeScenario @contentrepository
      * @return void
      * @throws \Exception
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
+        $this->initCleanContentRepository();
+
         $adapterTagPrefix = 'adapters=';
         $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
         /** @var array<int,string> $adapterKeys */
@@ -236,13 +283,89 @@ trait EventSourcedTrait
         $this->currentNodeAggregates = null;
         $this->currentUserIdentifier = null;
         $this->currentNodes = null;
-        $this->contentRepository->resetProjectionStates();
 
         $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
         // copied from DoctrineEventStoreFactory
+
+        /**
+         * Reset projections and events
+         * ============================
+         *
+         * PITFALL: for a long time, the code below was a two-liner (it is not anymore, for reasons explained here):
+         * - reset projections (truncate table contents)
+         * - truncate events table.
+         *
+         * This code has SERIOUS Race Condition and Bug Potential.
+         * tl;dr: It is CRUCIAL that *FIRST* the event store is emptied, and *then* the projection state is reset;
+         * so the OPPOSITE order as described above.
+         *
+         * If doing it in the way described initially, the following can happen (time flows from top to bottom):
+         *
+         * ```
+         * Main Behat Process                        Dangling Projection catch up worker
+         * ==================                        ===================================
+         *
+         *                                           (hasn't started working yet, simply sleeping)
+         *
+         * 1) Projection State reset
+         *                                           "oh, I have some work to do to catch up EVERYTHING"
+         *                                           "query the events table"
+         *
+         * 2) Event Table Reset
+         *                                           (events table is already loaded into memory) -> replay WIP
+         *
+         * (new commands/events start happening,
+         * in the new testcase)
+         *                                           ==> ERRORS because the projection now contains the result of both
+         *                                               old AND new events (of the two different testcases) <==
+         * ```
+         *
+         * This was an actual bug which bit us and made our tests unstable :D :D
+         *
+         * How did we find this? By the virtue of our Race Tracker (Docs: see {@see RaceTrackerCatchUpHook}), which
+         * checks for events being applied multiple times to a projection.
+         * ... and additionally by using {@see logToRaceConditionTracker()} to find the interleavings between the
+         * Catch Up process and the testcase reset.
+         */
+
         $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryIdentifier);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
+        // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
+        //       try again.
+        //
+        // TODO: inside the projections, the code to reset looks like this:
+        //        $this->truncateDatabaseTables();
+        //        $this->checkpointStorage->acquireLock();
+        //        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        //  -> it'd say we need to change this; to:
+        //        $this->checkpointStorage->acquireLock();
+        //        $this->truncateDatabaseTables();
+        //        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        // TODO: Rename to "tryToAcquireLock"?
+        $projectionsWereReset = false;
+        $retryCount = 0;
+        do {
+            try {
+                $retryCount++;
+                $this->contentRepository->resetProjectionStates();
+
+                // if we end up here without exception, we know the projection states were properly reset.
+                $projectionsWereReset = true;
+            } catch(CheckpointException $checkpointException) {
+                // TODO: HACK: UGLY CODE!!!
+                if ($checkpointException->getCode() === 1652279016 && $retryCount < 20) { // we wait for 10 seconds max.
+                    // another process is in the critical section; a.k.a.
+                    // the lock is acquired already by another process.
+                    //
+                    // -> we sleep for 0.5s and retry
+                    usleep(500000);
+                } else {
+                    // some error error - we re-throw
+                    throw $checkpointException;
+                }
+            }
+        } while ($projectionsWereReset !== true);
     }
 
     /**

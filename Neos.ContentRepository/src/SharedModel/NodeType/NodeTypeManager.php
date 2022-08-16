@@ -47,8 +47,7 @@ class NodeTypeManager
     protected array $fullNodeTypeConfigurations;
 
     public function __construct(
-        // TODO: decouple NodeTypeManager from Flow ConfigurationManager and ObjectManagerInterface!!
-        private readonly ConfigurationManager $configurationManager,
+        private readonly \Closure $nodeTypeConfigLoader,
         private readonly ObjectManagerInterface $objectManager,
         private readonly ?string $fallbackNodeTypeName
     ) {
@@ -162,7 +161,7 @@ class NodeTypeManager
      */
     protected function loadNodeTypes(): void
     {
-        $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
+        $completeNodeTypeConfiguration = ($this->nodeTypeConfigLoader)();
 
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             if (!is_string($nodeTypeName)) {

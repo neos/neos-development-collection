@@ -1,7 +1,5 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
+|Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
-   :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |StyleCI| image:: https://styleci.io/repos/40964014/shield?style=flat
@@ -33,6 +31,8 @@
 Neos development collection
 ---------------------------
 
+**FOR DOCS ON THE EVENT SOURCED CONTENT REPOSITORY, READ ON BELOW**
+
 This repository is a collection of packages for the Neos content application platform (learn more on https://www.neos.io/).
 The repository is used for development and all pull requests should go into it.
 
@@ -43,7 +43,7 @@ Contributing
 
 If you want to contribute to Neos and want to set up a development environment, then follow these steps:
 
-``composer create-project neos/neos-development-distribution neos-development dev-master --keep-vcs --prefer-install=auto``
+``composer create-project neos/neos-development-distribution neos-development 9.0.x-dev --keep-vcs --prefer-install=auto``
 
 Note the **-distribution** package you create a project from, instead of just checking out this repository.
 
@@ -57,18 +57,141 @@ In the root directory of the development distribution, you can do the following 
 To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests.
 
 To switch the branch you intend to work on:
-``git checkout 8.0 && composer update``
+``git checkout 9.0 && composer update``
 
 .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
 
 For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
 
 
---------------------------------------
-New (Event Sourced) Content Repository
---------------------------------------
+----------------------------------------------
+New (Event Sourced) Content Repository (ES CR)
+----------------------------------------------
+
+Prerequisites
+=============
+
+- You need PHP 8.1 installed.
+- Please be sure to run off the Neos-Development-Distribution in Branch 9.0, to avoid dependency issues (as described above).
+
+Setup
+=====
+
+The ES CR has a Docker-compose file included in `Neos.ContentRepository.BehavioralTests` which starts both
+Mariadb and Postgres in compatible versions. Additionally, there exists a helper to change the configuration
+in your distribution (`/Configuration`) to the correct values matching this database.
+
+Do the following for setting up everything:
+
+1. Start the databases:
+
+   .. code-block:: bash
+
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose up -d; popd
+
+       # to stop the databases:
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose down; popd
+       # to stop the databases AND remove the stored data:
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests; docker compose down -v; popd
+
+2. Copy matching Configuration:
+
+   .. code-block:: bash
+
+       cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionConfigurationTemplate/* Configuration/
+
+3. Run Doctrine Migrations:
+
+   .. code-block:: bash
+
+       ./flow doctrine:migrate
+       FLOW_CONTEXT=Testing/Postgres ./flow doctrine:migrate
+
+4. Setup the Content Repository
+
+   .. code-block:: bash
+
+       ./flow cr:setup
+
+5. Set up Behat
+
+   .. code-block:: bash
+
+       cp -R Packages/Neos/Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/ Build/Behat
+       pushd Build/Behat/
+       rm composer.lock
+       composer install
+       popd
+
+Site Setup
+==========
+
+You can chose from one of the following options:
+
+Creating a new Site
+-------------------
+
+.. code-block:: bash
+
+    ./flow site:create neosdemo Neos.Demo Neos.Demo:Document.Homepage
+
+
+Migrating an existing (Neos < 9.0) Site
+---------------------------------------
+
+.. code-block:: bash
+
+    # WORKAROUND: for now, you still need to create a site (which must match the root node name)
+    # !! in the future, you would want to import *INTO* a given site (and replace its root node)
+    ./flow site:create neosdemo Neos.Demo Neos.Demo:Document.Homepage
+
+    # the following config points to a Neos 8.0 database (adjust to your needs), created by
+    # the legacy "./flow site:import Neos.Demo" command.
+    ./flow contentrepositorymigrate:run --config '{"dbal": {"dbname": "neos80"}, "resourcesPath": "/path/to/neos-8.0/Data/Persistent/Resources"}'
+
+    # TODO: this JSON config is hard to write - we should change this soonish.
+
+
+
+Importing an existing (Neos >= 9.0) Site from an Export
+-------------------------------------------------------
+
+tbd
+
+Running Neos
+============
+
+   .. code-block:: bash
+
+       ./flow server:run
+
 
 Running the Tests
 =================
 
-see ./Neos.ContentRepository.BehavioralTests/README.md for explanation.
+The normal mode is running PHP locally, but running Mariadb / Postgres in containers (so we know
+we use the right versions etc).
+
+   .. code-block:: bash
+
+       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior
+       ../../../../../bin/behat -c behat.yml.dist Features/
+       popd
+
+
+Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
+develop on Mac OS, you might want to run the Behat tests in a Docker container (= a linux environment)
+as well. We have seen cases where they behave differently, i.e. where they run without race
+conditions on OSX, but with race conditions in Linux/Docker. Additionally, the Linux/Docker setup
+described below also makes it easy to run the race-condition-detector:
+
+   .. code-block:: bash
+
+       docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml build
+       docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml up -d
+       docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml run neos /bin/bash
+
+       # the following commands now run INSIDE the Neos docker container:
+       FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:reset
+       ../../../../../bin/behat -c behat.yml.dist
+       FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace
