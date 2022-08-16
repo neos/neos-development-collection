@@ -105,6 +105,29 @@ trait NodeDisabling
         $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
     }
 
+
+    /**
+     * @Given /^the event NodeAggregateWasEnabled was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();
+        }
+        if (!isset($eventPayload['contentStreamIdentifier'])) {
+            $eventPayload['contentStreamIdentifier'] = (string)$this->getCurrentContentStreamIdentifier();
+        }
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier'])
+        );
+
+        $this->publishEvent('NodeAggregateWasEnabled', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+
     /**
      * @Given /^the command EnableNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable

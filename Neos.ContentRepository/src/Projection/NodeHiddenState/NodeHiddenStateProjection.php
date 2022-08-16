@@ -143,7 +143,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
         return $this->checkpointStorage->getHighestAppliedSequenceNumber();
     }
 
-    public function getState(): ProjectionStateInterface
+    public function getState(): NodeHiddenStateFinder
     {
         if (!isset($this->nodeHiddenStateFinder)) {
             $this->nodeHiddenStateFinder = new NodeHiddenStateFinder(
@@ -159,13 +159,19 @@ class NodeHiddenStateProjection implements ProjectionInterface
     {
         $this->transactional(function () use ($event) {
             foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-                $nodeHiddenState = new NodeHiddenState(
+                if (!$this->getState()->findHiddenState(
                     $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier,
                     $dimensionSpacePoint,
-                    true
-                );
-                $nodeHiddenState->addToDatabase($this->getDatabaseConnection(), $this->tableName);
+                    $event->nodeAggregateIdentifier
+                )->isHidden()) {
+                    $nodeHiddenState = new NodeHiddenState(
+                        $event->contentStreamIdentifier,
+                        $event->nodeAggregateIdentifier,
+                        $dimensionSpacePoint,
+                        true
+                    );
+                    $nodeHiddenState->addToDatabase($this->getDatabaseConnection(), $this->tableName);
+                }
             }
         });
     }

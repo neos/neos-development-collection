@@ -169,12 +169,11 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | initiatingUserIdentifier     | "user"                   |
-    And the command "DisableNodeAggregate" is executed with payload:
+    And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | affectedDimensionSpacePoints | [{}]                     |
       | initiatingUserIdentifier     | "user"                   |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
@@ -204,12 +203,11 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | initiatingUserIdentifier     | "user"                   |
-    And the command "DisableNodeAggregate" is executed with payload:
+    And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
       | nodeAggregateIdentifier      | "earl-o-documentbourgh" |
-      | coveredDimensionSpacePoint   | {}                      |
-      | nodeVariantSelectionStrategy | "allVariants"           |
+      | affectedDimensionSpacePoints | [{}]                    |
       | initiatingUserIdentifier     | "user"                  |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
@@ -224,12 +222,11 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | initiatingUserIdentifier     | "user"                   |
-    And the command "EnableNodeAggregate" is executed with payload:
+    And the event NodeAggregateWasEnabled was published with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | affectedDimensionSpacePoints | [{}]                     |
       | initiatingUserIdentifier     | "user"                   |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
