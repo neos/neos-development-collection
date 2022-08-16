@@ -1,4 +1,4 @@
-@fixtures
+@fixtures @contentrepository
 # Note: For the routing tests to work we rely on Configuration/Testing/Behat/NodeTypes.Test.Routing.yaml
 Feature: Routing behavior of shortcut nodes
 

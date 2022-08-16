@@ -73,7 +73,6 @@ use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
-use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -168,10 +167,12 @@ trait EventSourcedTrait
         return $this->activeContentGraphs;
     }
 
+    private bool $alwaysRunContentRepositorySetup = false;
     private bool $raceConditionTrackerEnabled = false;
 
-    protected function setupEventSourcedTrait()
+    protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false)
     {
+        $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
 
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
@@ -194,8 +195,6 @@ trait EventSourcedTrait
                 );
             }
         }
-
-        $this->initCleanContentRepository();
     }
 
     /**
@@ -221,7 +220,7 @@ trait EventSourcedTrait
         $this->contentRepositoryRegistry->forgetInstances();
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
-        if (!self::$wasContentRepositorySetupCalled) {
+        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
             $this->contentRepository->setUp();
             self::$wasContentRepositorySetupCalled = true;
         }
@@ -239,14 +238,15 @@ trait EventSourcedTrait
 
     }
 
-
     /**
-     * @BeforeScenario
+     * @BeforeScenario @contentrepository
      * @return void
      * @throws \Exception
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
+        $this->initCleanContentRepository();
+
         $adapterTagPrefix = 'adapters=';
         $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
         /** @var array<int,string> $adapterKeys */

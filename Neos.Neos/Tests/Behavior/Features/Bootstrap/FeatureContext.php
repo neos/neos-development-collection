@@ -11,6 +11,7 @@
  */
 
 use Behat\Behat\Definition\Call\Then;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\ElementInterface;
@@ -115,7 +116,7 @@ class FeatureContext extends MinkContext
 
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
-        $this->setupEventSourcedTrait();
+        $this->setupEventSourcedTrait(true);
         $this->setupMigrationsTrait();
     }
 
