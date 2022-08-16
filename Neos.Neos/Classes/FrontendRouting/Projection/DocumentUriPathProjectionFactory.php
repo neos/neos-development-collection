@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
@@ -20,26 +21,35 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
     ) {
     }
 
+    public static function projectionTableNamePrefix(
+        ContentRepositoryIdentifier $contentRepositoryIdentifier
+    ): string {
+        $projectionShortName = strtolower(str_replace(
+            'Projection',
+            '',
+            (new \ReflectionClass(DocumentUriPathProjection::class))->getShortName()
+        ));
+
+        return sprintf(
+            'cr_%s_p_neos_%s',
+            $contentRepositoryIdentifier,
+            $projectionShortName
+        );
+    }
+
+
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
     ): DocumentUriPathProjection {
-        $projectionShortName = strtolower(str_replace(
-            'Projection',
-            '',
-            (new \ReflectionClass(DocumentUriPathProjection::class))->getShortName()
-        ));
+
         return new DocumentUriPathProjection(
             $projectionFactoryDependencies->eventNormalizer,
             $projectionFactoryDependencies->nodeTypeManager,
             $this->dbal,
-            sprintf(
-                'cr_%s_p_neos_%s',
-                $projectionFactoryDependencies->contentRepositoryIdentifier,
-                $projectionShortName
-            ),
+            self::projectionTableNamePrefix($projectionFactoryDependencies->contentRepositoryIdentifier)
         );
     }
 }

@@ -25,9 +25,6 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\EventSourcing\EventListener\EventListenerInvoker;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -50,6 +47,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterf
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\ObjectAccess;
@@ -74,6 +72,8 @@ trait RoutingTrait
      * @return ObjectManagerInterface
      */
     abstract protected function getObjectManager();
+
+    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
 
     /**
      * @Given A site exists for node name :nodeName
@@ -272,7 +272,10 @@ trait RoutingTrait
         /** @var Connection $dbal */
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
-        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri ORDER BY nodeaggregateidentifierpath');
+        $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
+            $this->getContentRepositoryIdentifier()
+        );
+        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidentifierpath');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);

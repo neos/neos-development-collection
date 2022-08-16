@@ -159,11 +159,13 @@ class NodeHiddenStateProjection implements ProjectionInterface
     {
         $this->transactional(function () use ($event) {
             foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-                if (!$this->getState()->findHiddenState(
-                    $event->contentStreamIdentifier,
-                    $dimensionSpacePoint,
-                    $event->nodeAggregateIdentifier
-                )->isHidden()) {
+                if (
+                    !$this->getState()->findHiddenState(
+                        $event->contentStreamIdentifier,
+                        $dimensionSpacePoint,
+                        $event->nodeAggregateIdentifier
+                    )->isHidden()
+                ) {
                     $nodeHiddenState = new NodeHiddenState(
                         $event->contentStreamIdentifier,
                         $event->nodeAggregateIdentifier,
