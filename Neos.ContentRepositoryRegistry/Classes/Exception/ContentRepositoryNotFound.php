@@ -1,8 +1,10 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Exception;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
+#[Flow\Proxy(false)]
 final class ContentRepositoryNotFound extends \InvalidArgumentException
 {
 
