@@ -19,7 +19,7 @@ use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\Neos\PendingChangesProjection\ChangeProjection;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
@@ -406,7 +406,7 @@ class WorkspacesController extends AbstractModuleController
      * Rebase the current users personal workspace onto the given $targetWorkspace and then
      * redirects to the $targetNode in the content module.
      */
-    public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace): void
+    public function rebaseAndRedirectAction(Node $targetNode, Workspace $targetWorkspace): void
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryIdentifier;
@@ -439,8 +439,8 @@ class WorkspacesController extends AbstractModuleController
 
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
             $personalWorkspace->getCurrentContentStreamIdentifier(),
-            $targetNode->getSubgraphIdentity()->dimensionSpacePoint,
-            $targetNode->getNodeAggregateIdentifier(),
+            $targetNode->subgraphIdentity->dimensionSpacePoint,
+            $targetNode->nodeAggregateIdentifier,
             $personalWorkspace->getWorkspaceName()
         );
 
@@ -735,33 +735,33 @@ class WorkspacesController extends AbstractModuleController
 
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
             if ($node) {
-                $pathParts = explode('/', (string)$subgraph->findNodePath($node->getNodeAggregateIdentifier()));
+                $pathParts = explode('/', (string)$subgraph->findNodePath($node->nodeAggregateIdentifier));
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
                     $document = null;
                     $closestDocumentNode = $node;
                     while ($closestDocumentNode) {
-                        if ($closestDocumentNode->getNodeType()->isOfType('Neos.Neos:Document')) {
+                        if ($closestDocumentNode->nodeType->isOfType('Neos.Neos:Document')) {
                             $document = $closestDocumentNode;
                             break;
                         }
                         $closestDocumentNode = $subgraph->findParentNode(
-                            $closestDocumentNode->getNodeAggregateIdentifier()
+                            $closestDocumentNode->nodeAggregateIdentifier
                         );
                     }
 
                     // $document will be null if we have a broken root line for this node.
                     // This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
-                        assert($document instanceof NodeInterface);
+                        assert($document instanceof Node);
                         $documentPath = implode('/', array_slice(explode(
                             '/',
-                            (string)$subgraph->findNodePath($document->getNodeAggregateIdentifier())
+                            (string)$subgraph->findNodePath($document->nodeAggregateIdentifier)
                         ), 3));
                         $relativePath = str_replace(
                             sprintf('//%s/%s', $siteNodeName, $documentPath),
                             '',
-                            (string)$subgraph->findNodePath($node->getNodeAggregateIdentifier())
+                            (string)$subgraph->findNodePath($node->nodeAggregateIdentifier)
                         );
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                             $siteChanges[$siteNodeName]['siteNode']
@@ -779,8 +779,8 @@ class WorkspacesController extends AbstractModuleController
                                 $contentRepository
                             )
                         ];
-                        if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
-                            $change['configuration'] = $node->getNodeType()->getFullConfiguration();
+                        if ($node->nodeType->isOfType('Neos.Neos:Node')) {
+                            $change['configuration'] = $node->nodeType->getFullConfiguration();
                         }
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                     }
@@ -813,16 +813,16 @@ class WorkspacesController extends AbstractModuleController
      * (that is, which would be overwritten if the given node would be published)
      */
     protected function getOriginalNode(
-        NodeInterface $modifiedNode,
+        Node $modifiedNode,
         ContentStreamIdentifier $baseContentStreamIdentifier,
         ContentRepository $contentRepository
-    ): ?NodeInterface {
+    ): ?Node {
         $baseSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
             $baseContentStreamIdentifier,
-            $modifiedNode->getSubgraphIdentity()->dimensionSpacePoint,
+            $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $baseSubgraph->findNodeByNodeAggregateIdentifier($modifiedNode->getNodeAggregateIdentifier());
+        $node = $baseSubgraph->findNodeByNodeAggregateIdentifier($modifiedNode->nodeAggregateIdentifier);
 
         return $node;
     }
@@ -834,7 +834,7 @@ class WorkspacesController extends AbstractModuleController
      * @return array<string,mixed>
      */
     protected function renderContentChanges(
-        NodeInterface $changedNode,
+        Node $changedNode,
         ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode,
         ContentRepository $contentRepository
     ): array {
@@ -851,10 +851,10 @@ class WorkspacesController extends AbstractModuleController
 
         $contentChanges = [];
 
-        $changeNodePropertiesDefaults = $changedNode->getNodeType()->getDefaultValuesForProperties();
+        $changeNodePropertiesDefaults = $changedNode->nodeType->getDefaultValuesForProperties();
 
         $renderer = new HtmlArrayRenderer();
-        foreach ($changedNode->getProperties() as $propertyName => $changedPropertyValue) {
+        foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
             if (
                 $originalNode === null && empty($changedPropertyValue)
                 || (
@@ -963,12 +963,12 @@ class WorkspacesController extends AbstractModuleController
      * Tries to determine a label for the specified property
      *
      * @param string $propertyName
-     * @param NodeInterface $changedNode
+     * @param Node $changedNode
      * @return string
      */
-    protected function getPropertyLabel($propertyName, NodeInterface $changedNode)
+    protected function getPropertyLabel($propertyName, Node $changedNode)
     {
-        $properties = $changedNode->getNodeType()->getProperties();
+        $properties = $changedNode->nodeType->getProperties();
         if (
             !isset($properties[$propertyName])
             || !isset($properties[$propertyName]['ui']['label'])

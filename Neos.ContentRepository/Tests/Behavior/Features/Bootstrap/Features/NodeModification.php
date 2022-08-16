@@ -21,7 +21,7 @@ use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
@@ -114,7 +114,7 @@ trait NodeModification
      */
     public function iExpectThisNodeToNotHaveTheProperty(string $propertyName)
     {
-        $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($propertyName) {
+        $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($propertyName) {
             Assert::assertFalse($currentNode->hasProperty($propertyName), 'Node should not exist for adapter ' . $adapterName);
         });
     }

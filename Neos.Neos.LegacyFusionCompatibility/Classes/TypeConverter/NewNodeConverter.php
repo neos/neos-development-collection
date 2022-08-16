@@ -13,7 +13,7 @@ namespace Neos\Neos\LegacyFusionCompatibility\TypeConverter;
  */
 
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -36,7 +36,7 @@ class NewNodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = NodeInterface::class;
+    protected $targetType = Node::class;
 
     /**
      * @var integer
@@ -47,7 +47,7 @@ class NewNodeConverter extends AbstractTypeConverter
      * @param string $source
      * @param string $targetType
      * @param array<string,string> $subProperties
-     * @return ?NodeInterface
+     * @return ?Node
      */
     public function convertFrom(
         $source,

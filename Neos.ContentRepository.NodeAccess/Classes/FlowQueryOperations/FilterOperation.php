@@ -11,16 +11,14 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Utility\ObjectAccess;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository
  * nodes. It will not evaluate any elements that are not instances of the
- * `NodeInterface`.
+ * `Node`.
  *
  * The implementation changes the behavior of the `instanceof` operator to
  * work on node types instead of PHP object types, so that::
@@ -48,7 +46,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -64,7 +62,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
             return;
         }
 
-        if ($arguments[0] instanceof NodeInterface) {
+        if ($arguments[0] instanceof Node) {
             $filteredContext = [];
             $context = $flowQuery->getContext();
             foreach ($context as $element) {
@@ -88,9 +86,9 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
-        /* @var NodeInterface $element */
+        /* @var Node $element */
         try {
-            return ((string)$element->getNodeName() === $propertyNameFilter);
+            return ((string)$element->nodeName === $propertyNameFilter);
         } catch (\InvalidArgumentException $e) {
             // in case the Element has no valid node name, we do not match!
             return false;
@@ -100,19 +98,19 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     /**
      * {@inheritdoc}
      *
-     * @param NodeInterface $element
+     * @param Node $element
      * @param string $identifier
      * @return boolean
      */
     protected function matchesIdentifierFilter($element, $identifier)
     {
-        return (strtolower((string)$element->getNodeAggregateIdentifier()) === strtolower($identifier));
+        return (strtolower((string)$element->nodeAggregateIdentifier) === strtolower($identifier));
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param NodeInterface $element
+     * @param Node $element
      * @param string $propertyPath
      * @return mixed
      */
@@ -135,16 +133,16 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function evaluateOperator($value, $operator, $operand)
     {
-        if ($operator === 'instanceof' && $value instanceof NodeInterface) {
+        if ($operator === 'instanceof' && $value instanceof Node) {
             if ($this->operandIsSimpleType($operand)) {
                 return $this->handleSimpleTypeOperand($operand, $value);
-            } elseif ($operand === NodeInterface::class || $operand === Node::class || $operand === \Neos\ContentRepository\Domain\Model\NodeInterface::class || $operand === TraversableNodeInterface::class) {
+            } elseif ($operand === Node::class || $operand === Node::class || $operand === \Neos\ContentRepository\Domain\Model\Node::class || $operand === TraversableNode::class) {
                 return true;
             } else {
                 $isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
                 return $operand[0] === '!' ? $isOfType === false : $isOfType;
             }
-        } elseif ($operator === '!instanceof' && $value instanceof NodeInterface) {
+        } elseif ($operator === '!instanceof' && $value instanceof Node) {
             return !$this->evaluateOperator($value, 'instanceof', $operand);
         }
         return parent::evaluateOperator($value, $operator, $operand);

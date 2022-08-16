@@ -18,7 +18,7 @@ use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -62,7 +62,7 @@ class ChildrenOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return isset($context[0]) && ($context[0] instanceof NodeInterface);
+        return isset($context[0]) && ($context[0] instanceof Node);
     }
 
     /**
@@ -85,15 +85,15 @@ class ChildrenOperation extends AbstractOperation
             }
         }
 
-        /** @var NodeInterface $contextNode */
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getSubgraphIdentity()
+                $contextNode->subgraphIdentity
             )->findChildNodes($contextNode);
             foreach ($childNodes as $childNode) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier] = true;
                 }
             }
         }
@@ -143,13 +143,13 @@ class ChildrenOperation extends AbstractOperation
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = $filter['PropertyNameFilter'] ?? $filter['PathFilter'];
                     $nodePathSegments = explode('/', $nodePath);
-                    /** @var NodeInterface $contextNode */
+                    /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $currentPathSegments = $nodePathSegments;
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             $resolvedNode = $this->nodeAccessorManager->accessorFor(
-                                $resolvedNode->getSubgraphIdentity()
+                                $resolvedNode->subgraphIdentity
                             )->findChildNodeConnectedThroughEdgeName(
                                 $resolvedNode,
                                 NodeName::fromString($nodePathSegment)
@@ -157,10 +157,10 @@ class ChildrenOperation extends AbstractOperation
                         }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
-                            (string)$resolvedNode->getNodeAggregateIdentifier()
+                            (string)$resolvedNode->nodeAggregateIdentifier
                         ])) {
                             $filteredOutput[] = $resolvedNode;
-                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()] = true;
+                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->nodeAggregateIdentifier] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -168,12 +168,12 @@ class ChildrenOperation extends AbstractOperation
                     $allowedNodeTypes = array_map(function ($instanceOfFilter) {
                         return $instanceOfFilter['Operand'];
                     }, $instanceOfFilters);
-                    /** @var NodeInterface $contextNode */
+                    /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->getSubgraphIdentity()->contentRepositoryIdentifier);
-                        /** @var NodeInterface $childNode */
+                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryIdentifier);
+                        /** @var Node $childNode */
                         $childNodes = $this->nodeAccessorManager->accessorFor(
-                            $contextNode->getSubgraphIdentity()
+                            $contextNode->subgraphIdentity
                         )->findChildNodes(
                             $contextNode,
                             NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
@@ -183,10 +183,10 @@ class ChildrenOperation extends AbstractOperation
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[
-                                (string)$childNode->getNodeAggregateIdentifier()
+                                (string)$childNode->nodeAggregateIdentifier
                             ])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
+                                $filteredOutputNodeIdentifiers[(string)$childNode->nodeAggregateIdentifier] = true;
                             }
                         }
                     }
@@ -207,7 +207,7 @@ class ChildrenOperation extends AbstractOperation
 
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->getNodeAggregateIdentifier()])) {
+                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->nodeAggregateIdentifier])) {
                         $output[] = $filteredNode;
                     }
                 }

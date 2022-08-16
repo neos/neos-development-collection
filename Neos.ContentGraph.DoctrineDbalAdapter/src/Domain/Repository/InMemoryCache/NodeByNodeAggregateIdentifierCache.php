@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * NodeAggregateIdentifier -> Node cache
@@ -27,7 +27,7 @@ use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 final class NodeByNodeAggregateIdentifierCache
 {
     /**
-     * @var array<string,NodeInterface>
+     * @var array<string,Node>
      */
     protected array $nodes = [];
 
@@ -56,7 +56,7 @@ final class NodeByNodeAggregateIdentifierCache
         return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIdentifiers[$key]);
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeInterface $node): void
+    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, Node $node): void
     {
         if ($this->isEnabled === false) {
             return;
@@ -76,7 +76,7 @@ final class NodeByNodeAggregateIdentifierCache
         $this->nonExistingNodeAggregateIdentifiers[$key] = true;
     }
 
-    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
+    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node
     {
         if ($this->isEnabled === false) {
             return null;

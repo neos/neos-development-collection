@@ -17,7 +17,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Asset;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -233,13 +233,13 @@ class NodeConverterTest extends UnitTestCase
     /**
      * @param string $nodePath
      * @param array $nodeTypeProperties
-     * @return NodeInterface
+     * @return Node
      */
     protected function setUpNodeWithNodeType($nodePath, $nodeTypeProperties = [])
     {
         $mockLiveWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $mockNode = $this->createMock(NodeInterface::class);
+        $mockNode = $this->createMock(Node::class);
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects(self::any())->method('getProperties')->will(self::returnValue($nodeTypeProperties));
         $mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue($mockNodeType));

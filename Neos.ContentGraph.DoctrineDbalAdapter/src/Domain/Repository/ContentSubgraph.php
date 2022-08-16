@@ -25,7 +25,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
@@ -235,15 +235,15 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
             $result[] = $node;
             $namedChildNodeCache->add(
                 $parentNodeAggregateIdentifier,
-                $node->getNodeName(),
+                $node->nodeName,
                 $node
             );
             $parentNodeIdentifierCache->add(
-                $node->getNodeAggregateIdentifier(),
+                $node->nodeAggregateIdentifier,
                 $parentNodeAggregateIdentifier
             );
             $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
-                $node->getNodeAggregateIdentifier(),
+                $node->nodeAggregateIdentifier,
                 $node
             );
         }
@@ -259,7 +259,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
         return Nodes::fromArray($result);
     }
 
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node
     {
         $cache = $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache();
 
@@ -498,11 +498,11 @@ SELECT s.*, sh.contentstreamidentifier, sh.name, r.name AS referencename, r.prop
 
     /**
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @return NodeInterface|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
+    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?Node
     {
         $cache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
@@ -554,13 +554,13 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM ' . $this->tableNamePrefix .
         if ($node) {
             $cache->add(
                 $childNodeAggregateIdentifier,
-                $node->getNodeAggregateIdentifier()
+                $node->nodeAggregateIdentifier
             );
 
             // we also add the parent node to the NodeAggregateIdentifier => Node cache;
             // as this might improve cache hit rates as well.
             $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
-                $node->getNodeAggregateIdentifier(),
+                $node->nodeAggregateIdentifier,
                 $node
             );
         } else {
@@ -573,13 +573,13 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM ' . $this->tableNamePrefix .
     /**
      * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
-     * @return NodeInterface|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findNodeByPath(
         NodePath $path,
         NodeAggregateIdentifier $startingNodeAggregateIdentifier
-    ): ?NodeInterface {
+    ): ?Node {
         $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
             throw new \RuntimeException(
@@ -589,7 +589,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM ' . $this->tableNamePrefix .
         foreach ($path->getParts() as $edgeName) {
             // identifier exists here :)
             $currentNode = $this->findChildNodeConnectedThroughEdgeName(
-                $currentNode->getNodeAggregateIdentifier(),
+                $currentNode->nodeAggregateIdentifier,
                 $edgeName
             );
             if (!$currentNode) {
@@ -603,13 +603,13 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM ' . $this->tableNamePrefix .
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $edgeName
-     * @return NodeInterface|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
-    ): ?NodeInterface {
+    ): ?Node {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         if ($cache->contains($parentNodeAggregateIdentifier, $edgeName)) {
             return $cache->get($parentNodeAggregateIdentifier, $edgeName);
@@ -669,7 +669,7 @@ WHERE
                     $node
                 );
                 $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
-                    $node->getNodeAggregateIdentifier(),
+                    $node->nodeAggregateIdentifier,
                     $node
                 );
                 return $node;
@@ -1026,7 +1026,7 @@ order by level asc, position asc;')
                 $this->visibilityConstraints
             );
             $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add(
-                $node->getNodeAggregateIdentifier(),
+                $node->nodeAggregateIdentifier,
                 $node
             );
 
@@ -1043,8 +1043,8 @@ order by level asc, position asc;')
             $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
             if ($parentSubtree->getNode() !== null) {
                 $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache()->add(
-                    $node->getNodeAggregateIdentifier(),
-                    $parentSubtree->getNode()->getNodeAggregateIdentifier()
+                    $node->nodeAggregateIdentifier,
+                    $parentSubtree->getNode()->nodeAggregateIdentifier
                 );
             }
         }

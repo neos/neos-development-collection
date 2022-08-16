@@ -389,7 +389,7 @@ class NodesController extends ActionController
         ) {
             $identifiersFromRootlineToTranslate[] = $nodeAggregateIdentifier;
             $nodeAggregateIdentifier = $sourceSubgraph->findParentNode($nodeAggregateIdentifier)
-                ?->getNodeAggregateIdentifier();
+                ?->nodeAggregateIdentifier;
         }
         // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse
         // them to know what we need to create.

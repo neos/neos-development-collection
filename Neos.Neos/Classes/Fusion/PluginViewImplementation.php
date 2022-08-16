@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -36,7 +36,7 @@ class PluginViewImplementation extends PluginImplementation
     protected $pluginService;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $pluginViewNode;
 
@@ -54,7 +54,7 @@ class PluginViewImplementation extends PluginImplementation
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
         $pluginRequest = $parentRequest->createSubRequest();
 
-        if (!$this->pluginViewNode instanceof NodeInterface) {
+        if (!$this->pluginViewNode instanceof Node) {
             $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
             $this->passArgumentsToPluginRequest($pluginRequest);
             $pluginRequest->setControllerPackageKey($this->getPackage());
@@ -71,7 +71,7 @@ class PluginViewImplementation extends PluginImplementation
 
         // Set the node to render this to the master plugin node
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $this->pluginViewNode->getSubgraphIdentity()
+            $this->pluginViewNode->subgraphIdentity
         );
         $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($pluginNodeIdentifier));
         $this->node = $node;
@@ -91,7 +91,7 @@ class PluginViewImplementation extends PluginImplementation
         $pluginViewName = $this->pluginViewNode->getProperty('view');
         foreach (
             $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->getNodeType()
+                $node->nodeType
             ) as $pluginViewDefinition
         ) {
             /** @var PluginViewDefinition $pluginViewDefinition */

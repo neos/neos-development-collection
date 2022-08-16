@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content;
 
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -29,7 +29,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
  *
  * @internal
  */
-final class Node implements NodeInterface
+final class Node implements Node
 {
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
@@ -141,9 +141,9 @@ final class Node implements NodeInterface
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
-    public function equals(NodeInterface $other): bool
+    public function equals(Node $other): bool
     {
-        return $this->getSubgraphIdentity()->equals($other->getSubgraphIdentity())
+        return $this->subgraphIdentity->equals($other->subgraphIdentity)
             && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
     }
 }

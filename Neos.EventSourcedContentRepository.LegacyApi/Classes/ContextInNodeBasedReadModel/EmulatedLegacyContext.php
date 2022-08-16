@@ -6,7 +6,7 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadMod
 
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
@@ -17,7 +17,7 @@ use Neos\Flow\Security\Exception;
 class EmulatedLegacyContext
 {
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $node;
 
@@ -39,7 +39,7 @@ class EmulatedLegacyContext
      */
     protected $privilegeManager;
 
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -83,7 +83,7 @@ class EmulatedLegacyContext
         $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
 
         return new EmulatedLegacyWorkspace(
-            $this->node->getSubgraphIdentity()->contentRepositoryIdentifier,
+            $this->node->subgraphIdentity->contentRepositoryIdentifier,
             $this->getNodeAddressOfContextNode()
         );
     }
@@ -98,7 +98,7 @@ class EmulatedLegacyContext
     private function getNodeAddressOfContextNode(): NodeAddress
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $this->node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $this->node->subgraphIdentity->contentRepositoryIdentifier
         );
         return NodeAddressFactory::create($contentRepository)->createFromNode($this->node);
     }

@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
@@ -107,15 +107,15 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $node = $this->fusionValue('node');
 
-        if (!$node instanceof NodeInterface) {
+        if (!$node instanceof Node) {
             throw new NeosException(sprintf(
-                'The current node must be an instance of NodeInterface, given: "%s".',
+                'The current node must be an instance of Node, given: "%s".',
                 gettype($text)
             ), 1382624087);
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);

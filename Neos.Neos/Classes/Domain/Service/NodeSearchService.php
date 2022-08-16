@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -35,7 +35,7 @@ class NodeSearchService implements NodeSearchServiceInterface
     public function findByProperties(
         string $term,
         array $searchNodeTypes,
-        ?NodeInterface $startingPoint = null
+        ?Node $startingPoint = null
     ): never {
         throw new \InvalidArgumentException('Cannot find nodes with the current set of arguments', 1651923867);
     }

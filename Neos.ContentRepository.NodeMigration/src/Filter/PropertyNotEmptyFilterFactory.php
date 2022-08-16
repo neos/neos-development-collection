@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * Filter nodes having the given property and its value not empty.
@@ -37,7 +37,7 @@ class PropertyNotEmptyFilterFactory implements FilterFactoryInterface
             ) {
             }
 
-            public function matches(NodeInterface $node): bool
+            public function matches(Node $node): bool
             {
                 if ($node->hasProperty($this->propertyName)) {
                     $propertyValue = $node->getProperty($this->propertyName);

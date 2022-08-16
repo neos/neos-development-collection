@@ -14,30 +14,30 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * An immutable, type-safe collection of NodeInterface objects, indexed by content graph adapter
+ * An immutable, type-safe collection of Node objects, indexed by content graph adapter
  *
- * @implements \IteratorAggregate<string,NodeInterface>
- * @implements \ArrayAccess<string,NodeInterface>
+ * @implements \IteratorAggregate<string,Node>
+ * @implements \ArrayAccess<string,Node>
  */
 #[Flow\Proxy(false)]
 final class NodesByAdapter implements \IteratorAggregate, \ArrayAccess
 {
     /**
-     * @var array<string,NodeInterface>
+     * @var array<string,Node>
      */
     private array $nodes;
 
     /**
-     * @var \ArrayIterator<string,NodeInterface>
+     * @var \ArrayIterator<string,Node>
      */
     private \ArrayIterator $iterator;
 
     /**
-     * @param iterable<string,NodeInterface> $collection
+     * @param iterable<string,Node> $collection
      */
     public function __construct(iterable $collection)
     {
@@ -46,8 +46,8 @@ final class NodesByAdapter implements \IteratorAggregate, \ArrayAccess
             if (!is_string($adapterName) || empty($adapterName)) {
                 throw new \InvalidArgumentException('NodesByAdapter must be indexed by adapter name', 1643562288);
             }
-            if (!$item instanceof NodeInterface) {
-                throw new \InvalidArgumentException('NodesByAdapter can only consist of ' . NodeInterface::class . ' objects.', 1618137807);
+            if (!$item instanceof Node) {
+                throw new \InvalidArgumentException('NodesByAdapter can only consist of ' . Node::class . ' objects.', 1618137807);
             }
             $nodes[$adapterName] = $item;
         }
@@ -56,7 +56,7 @@ final class NodesByAdapter implements \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * @return \ArrayIterator<string,NodeInterface>
+     * @return \ArrayIterator<string,Node>
      */
     public function getIterator(): \ArrayIterator
     {
@@ -68,7 +68,7 @@ final class NodesByAdapter implements \IteratorAggregate, \ArrayAccess
         return isset($this->nodes[$offset]);
     }
 
-    public function offsetGet(mixed $offset): ?NodeInterface
+    public function offsetGet(mixed $offset): ?Node
     {
         return $this->nodes[$offset] ?? null;
     }

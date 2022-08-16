@@ -23,7 +23,7 @@ use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -270,13 +270,13 @@ trait NodeMove
                     1645367254
                 );
             }
-            if (!$parentNode->getNodeAggregateIdentifier()->equals($originParent->getNodeAggregateIdentifier())) {
+            if (!$parentNode->nodeAggregateIdentifier->equals($originParent->getNodeAggregateIdentifier())) {
                 /** @var DimensionSpace\DimensionSpacePoint $dimensionSpacePoint */
                 $dimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
                 $parents = $parents->add(
                     new NodeVariantAssignment(
-                        $parentNode->getNodeAggregateIdentifier(),
-                        $parentNode->getOriginDimensionSpacePoint()
+                        $parentNode->nodeAggregateIdentifier,
+                        $parentNode->originDimensionSpacePoint
                     ),
                     $dimensionSpacePoint
                 );
@@ -380,7 +380,7 @@ trait NodeMove
                 $succeedingSiblings = $succeedingSiblings->add(
                     new NodeVariantAssignment(
                         $succeedingSibling->getNodeAggregateIdentifier(),
-                        $succeedingSibling->getOriginDimensionSpacePoint()
+                        $succeedingSibling->originDimensionSpacePoint
                     ),
                     $dimensionSpacePoint
                 );
@@ -394,7 +394,7 @@ trait NodeMove
         ContentSubgraphInterface $contentSubgraph,
         ?NodeAggregateIdentifier $parentIdentifier,
         NodeAggregateIdentifier $siblingIdentifier
-    ): ?NodeInterface {
+    ): ?Node {
         $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateIdentifier($siblingIdentifier);
         if ($parentIdentifier && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
@@ -422,7 +422,7 @@ trait NodeMove
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
         ContentSubgraphInterface $currentContentSubgraph,
         ContentSubgraphInterface $originContentSubgraph
-    ): ?NodeInterface {
+    ): ?Node {
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)

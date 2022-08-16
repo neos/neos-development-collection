@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -41,9 +41,9 @@ class PluginImplementation extends AbstractArrayFusionObject
      */
     protected $dispatcher;
 
-    protected ?NodeInterface $node;
+    protected ?Node $node;
 
-    protected ?NodeInterface $documentNode;
+    protected ?Node $documentNode;
 
     /**
      * @return string
@@ -106,14 +106,14 @@ class PluginImplementation extends AbstractArrayFusionObject
 
     /**
      * @param ActionRequest $pluginRequest
-     * @param NodeInterface|null $node
+     * @param Node|null $node
      * @return ActionRequest
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
      */
     protected function resolveDispatchArgumentsForPluginRequest(
         ActionRequest $pluginRequest,
-        NodeInterface $node = null
+        Node $node = null
     ): ActionRequest {
         $packageKey = $this->getPackage();
         $subpackageKey = $this->getSubpackage();
@@ -192,13 +192,13 @@ class PluginImplementation extends AbstractArrayFusionObject
             return $this->getArgumentNamespace();
         }
 
-        if ($this->node instanceof NodeInterface) {
+        if ($this->node instanceof Node) {
             $nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
             if ($nodeArgumentNamespace !== null) {
                 return $nodeArgumentNamespace;
             }
 
-            $nodeArgumentNamespace = $this->node->getNodeType()->getName();
+            $nodeArgumentNamespace = $this->node->nodeType->getName();
             $nodeArgumentNamespace = str_replace(':', '-', $nodeArgumentNamespace);
             $nodeArgumentNamespace = str_replace('.', '_', $nodeArgumentNamespace);
             $nodeArgumentNamespace = strtolower($nodeArgumentNamespace);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi;
+namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeApi;
 
-interface LegacyNodeInterfaceApi
+interface LegacyNodeApi
 {
     /**
      * @return string

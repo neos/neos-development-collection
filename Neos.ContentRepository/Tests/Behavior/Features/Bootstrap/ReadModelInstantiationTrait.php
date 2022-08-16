@@ -19,7 +19,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -33,7 +33,7 @@ trait ReadModelInstantiationTrait
 
     protected ?DimensionSpacePoint $dimensionSpacePoint = null;
 
-    protected ?NodeInterface $currentReadModel = null;
+    protected ?Node $currentReadModel = null;
 
     protected ?\Exception $lastInstantiationException = null;
 
@@ -123,7 +123,7 @@ trait ReadModelInstantiationTrait
 
         $expectedProperties = $this->readPayloadTable($payloadTable);
 
-        $properties = $this->currentReadModel->getProperties();
+        $properties = $this->currentReadModel->properties;
         foreach ($expectedProperties as $propertyName => $expectedPropertyValue) {
             Assert::assertTrue(isset($properties[$propertyName]), 'Property "' . $propertyName . '" not found');
             if ($expectedPropertyValue === 'PostalAddress:dummy') {

@@ -17,7 +17,7 @@ namespace Neos\Neos\View;
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;
@@ -175,11 +175,11 @@ class FusionView extends AbstractView
         return $this->fusionPath;
     }
 
-    protected function getClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    protected function getClosestDocumentNode(Node $node): ?Node
     {
-        while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
+        while ($node !== null && !$node->nodeType->isOfType('Neos.Neos:Document')) {
             $node = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
+                $node->subgraphIdentity
             )->findParentNode($node);
         }
 
@@ -187,36 +187,36 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @return NodeInterface
+     * @return Node
      * @throws Exception
      */
-    protected function getCurrentSiteNode(): NodeInterface
+    protected function getCurrentSiteNode(): Node
     {
         $currentNode = $this->variables['site'] ?? null;
-        if (!$currentNode instanceof NodeInterface) {
+        if (!$currentNode instanceof Node) {
             throw new Exception('FusionView needs a variable \'site\' set with a Node object.', 1538996432);
         }
         return $currentNode;
     }
 
     /**
-     * @return NodeInterface
+     * @return Node
      * @throws Exception
      */
-    protected function getCurrentNode(): NodeInterface
+    protected function getCurrentNode(): Node
     {
         $currentNode = $this->variables['value'] ?? null;
-        if (!$currentNode instanceof NodeInterface) {
+        if (!$currentNode instanceof Node) {
             throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
         }
         return $currentNode;
     }
 
     /**
-     * @param NodeInterface $currentSiteNode
+     * @param Node $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(NodeInterface $currentSiteNode)
+    protected function getFusionRuntime(Node $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);

@@ -17,7 +17,7 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -46,10 +46,10 @@ class NodeHelper implements ProtectedContextAwareInterface
      *
      * @throws Exception
      */
-    public function nearestContentCollection(NodeInterface $node, string $nodePath): NodeInterface
+    public function nearestContentCollection(Node $node, string $nodePath): Node
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
-        if ($node->getNodeType()->isOfType($contentCollectionType)) {
+        if ($node->nodeType->isOfType($contentCollectionType)) {
             return $node;
         } else {
             if ($nodePath === '') {
@@ -65,7 +65,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 NodePath::fromString($nodePath)
             );
 
-            if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
+            if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
                 throw new Exception(sprintf(
@@ -75,7 +75,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $contentCollectionType,
                     $this->findNodePath($node),
                     $nodePath,
-                    $node->getNodeType()
+                    $node->nodeType
                 ), 1389352984);
             }
         }
@@ -84,7 +84,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     /**
      * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
      */
-    public function labelForNode(NodeInterface $node): NodeLabelToken
+    public function labelForNode(Node $node): NodeLabelToken
     {
         return new NodeLabelToken($node);
     }
@@ -93,26 +93,26 @@ class NodeHelper implements ProtectedContextAwareInterface
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *
-     * @param NodeInterface $node
+     * @param Node $node
      * @param string $nodeType
      * @return bool
      */
-    public function isOfType(NodeInterface $node, string $nodeType): bool
+    public function isOfType(Node $node, string $nodeType): bool
     {
-        return $node->getNodeType()->isOfType($nodeType);
+        return $node->nodeType->isOfType($nodeType);
     }
 
 
-    public function nodeAddressToString(NodeInterface $node): string
+    public function nodeAddressToString(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
-    private function findNodeByNodePath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    private function findNodeByNodePath(Node $node, NodePath $nodePath): ?Node
     {
         if ($nodePath->isAbsolute()) {
             $node = $this->findRootNode($node);
@@ -124,11 +124,11 @@ class NodeHelper implements ProtectedContextAwareInterface
 
 
 
-    private function findRootNode(NodeInterface $node): NodeInterface
+    private function findRootNode(Node $node): Node
     {
         while (true) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
+                $node->subgraphIdentity
             );
             $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
@@ -140,20 +140,20 @@ class NodeHelper implements ProtectedContextAwareInterface
         }
     }
 
-    private function findNodePath(NodeInterface $node): NodePath
+    private function findNodePath(Node $node): NodePath
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getSubgraphIdentity()
+            $node->subgraphIdentity
         );
 
         return $nodeAccessor->findNodePath($node);
     }
 
-    private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    private function findNodeByPath(Node $node, NodePath $nodePath): ?Node
     {
         foreach ($nodePath->getParts() as $nodeName) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
+                $node->subgraphIdentity
             );
             $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
             if ($childNode === null) {

@@ -17,7 +17,7 @@ use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * "prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
@@ -55,7 +55,7 @@ class PrevUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -93,8 +93,8 @@ class PrevUntilOperation extends AbstractOperation
 
             foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null &&
-                    !isset($outputNodeIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
-                    $outputNodeIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
+                    !isset($outputNodeIdentifiers[(string)$prevNode->nodeAggregateIdentifier])) {
+                    $outputNodeIdentifiers[(string)$prevNode->nodeAggregateIdentifier] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -108,11 +108,11 @@ class PrevUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the next nodes should be found
+     * @param Node $contextNode The node for which the next nodes should be found
      * @param NodeAccessorInterface $nodeAccessor
      * @return Nodes The following nodes of $contextNode
      */
-    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getPrevForNode(Node $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
     {
         $parentNode = $nodeAccessor->findParentNode($contextNode);
         if ($parentNode === null) {

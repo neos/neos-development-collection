@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Fixtures;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeTemplate;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 /**
  * A read model implementation based on the deprecated legacy API
  */
-final class DeprecatedReadModel implements NodeInterface
+final class DeprecatedReadModel implements Node
 {
     public function setName($newName)
     {
@@ -216,27 +216,27 @@ final class DeprecatedReadModel implements NodeInterface
     {
     }
 
-    public function moveBefore(NodeInterface $referenceNode)
+    public function moveBefore(Node $referenceNode)
     {
     }
 
-    public function moveAfter(NodeInterface $referenceNode)
+    public function moveAfter(Node $referenceNode)
     {
     }
 
-    public function moveInto(NodeInterface $referenceNode)
+    public function moveInto(Node $referenceNode)
     {
     }
 
-    public function copyBefore(NodeInterface $referenceNode, $nodeName)
+    public function copyBefore(Node $referenceNode, $nodeName)
     {
     }
 
-    public function copyAfter(NodeInterface $referenceNode, $nodeName)
+    public function copyAfter(Node $referenceNode, $nodeName)
     {
     }
 
-    public function copyInto(NodeInterface $referenceNode, $nodeName)
+    public function copyInto(Node $referenceNode, $nodeName)
     {
     }
 

@@ -16,7 +16,7 @@ namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -166,7 +166,7 @@ class BackendRedirectionService
         return $uriBuilder->uriFor('show', ['node' => $lastVisitedNode], 'Frontend\\Node', 'Neos.Neos');
     }
 
-    protected function getLastVisitedNode(string $workspaceName, ActionRequest $actionRequest): ?NodeInterface
+    protected function getLastVisitedNode(string $workspaceName, ActionRequest $actionRequest): ?Node
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($actionRequest->getHttpRequest())
             ->contentRepositoryIdentifier;
@@ -176,20 +176,20 @@ class BackendRedirectionService
             return null;
         }
         try {
-            /** @var NodeInterface $lastVisitedNode */
+            /** @var Node $lastVisitedNode */
             $lastVisitedNode = $this->propertyMapper->convert(
                 $this->session->getData('lastVisitedNode'),
-                NodeInterface::class
+                Node::class
             );
 
             return $this->nodeAccessorManager->accessorFor(
                 new ContentSubgraphIdentity(
                     $contentRepositoryIdentifier,
                     $workspace->getCurrentContentStreamIdentifier(),
-                    $lastVisitedNode->getSubgraphIdentity()->dimensionSpacePoint,
+                    $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 )
-            )->findByIdentifier($lastVisitedNode->getNodeAggregateIdentifier());
+            )->findByIdentifier($lastVisitedNode->nodeAggregateIdentifier);
         } catch (\Exception $exception) {
             return null;
         }

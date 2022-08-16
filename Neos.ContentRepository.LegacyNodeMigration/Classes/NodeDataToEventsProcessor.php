@@ -226,7 +226,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 continue;
             }
 
-            // In the old `NodeInterface`, we call the property mapper to convert the returned properties from NodeData;
+            // In the old `Node`, we call the property mapper to convert the returned properties from NodeData;
             // so we need to do the same here.
             try {
                 $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);

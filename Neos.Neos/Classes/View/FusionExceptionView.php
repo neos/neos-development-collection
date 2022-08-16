@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
@@ -174,14 +174,14 @@ class FusionExceptionView extends AbstractView
     }
 
     /**
-     * @param NodeInterface $currentSiteNode
+     * @param Node $currentSiteNode
      * @param ControllerContext $controllerContext
      * @return FusionRuntime
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
     protected function getFusionRuntime(
-        NodeInterface $currentSiteNode,
+        Node $currentSiteNode,
         ControllerContext $controllerContext
     ): FusionRuntime {
         if ($this->fusionRuntime === null) {

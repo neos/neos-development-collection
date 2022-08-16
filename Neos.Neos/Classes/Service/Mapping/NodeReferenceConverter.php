@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Mapping;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -32,7 +32,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
      * @var array<string>
      * @api
      */
-    protected $sourceTypes = [NodeInterface::class, 'array'];
+    protected $sourceTypes = [Node::class, 'array'];
 
     /**
      * The target type this converter can convert to.
@@ -53,7 +53,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
     /**
      * {@inheritdoc}
      *
-     * @param NodeInterface|array<NodeInterface> $source
+     * @param Node|array<Node> $source
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
@@ -68,7 +68,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
         if (is_array($source)) {
             $result = [];
             foreach ($source as $node) {
-                $result[] = (string)$node->getNodeAggregateIdentifier();
+                $result[] = (string)$node->nodeAggregateIdentifier;
             }
         } else {
             $result = (string)$source->getNodeAggregateIdentifier();

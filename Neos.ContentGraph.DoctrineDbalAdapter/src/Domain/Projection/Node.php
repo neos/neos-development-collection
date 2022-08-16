@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 
 /**
@@ -29,7 +29,7 @@ use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
  *
  * @internal
  */
-final class Node implements NodeInterface
+final class Node implements Node
 {
     public function __construct(
         private ContentSubgraphIdentity $subgraphIdentity,
@@ -119,9 +119,9 @@ final class Node implements NodeInterface
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
-    public function equals(NodeInterface $other): bool
+    public function equals(Node $other): bool
     {
-        return $this->getSubgraphIdentity()->equals($other->getSubgraphIdentity())
+        return $this->subgraphIdentity->equals($other->subgraphIdentity)
             && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
     }
 

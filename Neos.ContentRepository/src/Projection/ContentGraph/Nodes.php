@@ -15,30 +15,30 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
 /**
- * An immutable, type-safe collection of NodeInterface objects
+ * An immutable, type-safe collection of Node objects
  *
- * @implements \IteratorAggregate<int,NodeInterface>
- * @implements \ArrayAccess<int,NodeInterface>
+ * @implements \IteratorAggregate<int,Node>
+ * @implements \ArrayAccess<int,Node>
  *
  * @api
  */
 final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
-     * @var array<int,NodeInterface>
+     * @var array<int,Node>
      */
     private array $nodes;
 
     /**
-     * @param iterable<int,NodeInterface> $collection
+     * @param iterable<int,Node> $collection
      */
     private function __construct(iterable $collection)
     {
         $nodes = [];
         foreach ($collection as $item) {
-            if (!$item instanceof NodeInterface) {
+            if (!$item instanceof Node) {
                 throw new \InvalidArgumentException(
-                    'Nodes can only consist of ' . NodeInterface::class . ' objects.',
+                    'Nodes can only consist of ' . Node::class . ' objects.',
                     1618044512
                 );
             }
@@ -49,7 +49,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @param array<int,NodeInterface> $nodes
+     * @param array<int,Node> $nodes
      */
     public static function fromArray(array $nodes): self
     {
@@ -61,13 +61,13 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return new self([]);
     }
 
-    public function offsetGet(mixed $offset): ?NodeInterface
+    public function offsetGet(mixed $offset): ?Node
     {
         return $this->nodes[$offset] ?? null;
     }
 
     /**
-     * @return \ArrayIterator<int,NodeInterface>|NodeInterface[]
+     * @return \ArrayIterator<int,Node>|Node[]
      */
     public function getIterator(): \ArrayIterator
     {
@@ -94,7 +94,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return count($this->nodes);
     }
 
-    public function first(): ?NodeInterface
+    public function first(): ?Node
     {
         if (count($this->nodes) > 0) {
             $array = $this->nodes;
@@ -121,7 +121,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return $this->count() === 0;
     }
 
-    private function getNodeIndex(NodeInterface $subject): int
+    private function getNodeIndex(Node $subject): int
     {
         foreach ($this->nodes as $index => $node) {
             if ($node->equals($subject)) {
@@ -130,7 +130,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         }
         throw new \InvalidArgumentException(sprintf(
             'The node %s does not exist in this set',
-            $subject->getNodeAggregateIdentifier()
+            $subject->nodeAggregateIdentifier
         ), 1542901216);
     }
 
@@ -138,10 +138,10 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
      * Returns the node before the given $referenceNode in this set.
      * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
      *
-     * @param NodeInterface $referenceNode
-     * @return NodeInterface
+     * @param Node $referenceNode
+     * @return Node
      */
-    public function previous(NodeInterface $referenceNode): ?NodeInterface
+    public function previous(Node $referenceNode): ?Node
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         if ($referenceNodeIndex === 0) {
@@ -153,7 +153,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Returns all nodes before the given $referenceNode in this set
      */
-    public function previousAll(NodeInterface $referenceNode): self
+    public function previousAll(Node $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
@@ -164,7 +164,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
      * Returns the node after the given $referenceNode in this set.
      * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no following sibling
      */
-    public function next(NodeInterface $referenceNode): ?NodeInterface
+    public function next(Node $referenceNode): ?Node
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         if ($referenceNodeIndex === $this->count() - 1) {
@@ -177,7 +177,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Returns all nodes after the given $referenceNode in this set
      */
-    public function nextAll(NodeInterface $referenceNode): self
+    public function nextAll(Node $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
@@ -187,7 +187,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Returns all nodes after the given $referenceNode in this set
      */
-    public function until(NodeInterface $referenceNode): self
+    public function until(Node $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         return new self(array_slice($this->nodes, $referenceNodeIndex + 1));

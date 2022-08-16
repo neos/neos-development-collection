@@ -16,7 +16,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * "parents" operation working on ContentRepository nodes. It iterates over all
@@ -53,7 +53,7 @@ class ParentsOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -67,19 +67,19 @@ class ParentsOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $parents = [];
-        /* @var NodeInterface $contextNode */
+        /* @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $node = $contextNode;
             do {
                 $node = $this->nodeAccessorManager->accessorFor(
-                    $node->getSubgraphIdentity()
+                    $node->subgraphIdentity
                 )->findParentNode($node);
                 if ($node === null) {
                     // no parent found
                     break;
                 }
                 // stop at sites
-                if ($node->getNodeTypeName() === NodeTypeName::fromString('Neos.Neos:Sites')) {
+                if ($node->nodeTypeName === NodeTypeName::fromString('Neos.Neos:Sites')) {
                     break;
                 }
                 $parents[] = $node;

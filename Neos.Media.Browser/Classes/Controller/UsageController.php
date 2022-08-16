@@ -165,7 +165,7 @@ class UsageController extends ActionController
 
     /**
      * @param AssetUsageInNodeProperties $assetUsage
-     * @return NodeInterface
+     * @return Node
      */
     private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
     {

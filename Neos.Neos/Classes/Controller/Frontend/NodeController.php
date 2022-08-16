@@ -23,7 +23,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -275,8 +275,8 @@ class NodeController extends ActionController
     protected function overrideViewVariablesFromInternalArguments()
     {
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
-            $node = $this->propertyMapper->convert((string)$nodeContextPath, NodeInterface::class);
-            if (!$node instanceof NodeInterface) {
+            $node = $this->propertyMapper->convert((string)$nodeContextPath, Node::class);
+            if (!$node instanceof Node) {
                 throw new NodeNotFoundException(sprintf(
                     'The node with context path "%s" could not be resolved',
                     (string)$nodeContextPath
@@ -357,9 +357,9 @@ class NodeController extends ActionController
         if (is_null($currentDocumentNode)) {
             return;
         }
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
+        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->nodeAggregateIdentifier);
 
-        $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
+        $nodePathCache->add($currentDocumentNode->nodeAggregateIdentifier, $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
             self::fillCacheInternal(
@@ -373,7 +373,7 @@ class NodeController extends ActionController
 
     private static function fillCacheInternal(
         SubtreeInterface $subtree,
-        NodeInterface $parentNode,
+        Node $parentNode,
         NodePath $parentNodePath,
         InMemoryCache $inMemoryCache
     ): void {
@@ -387,12 +387,12 @@ class NodeController extends ActionController
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $nodePathCache = $inMemoryCache->getNodePathCache();
-        if ($node->getNodeName() !== null) {
-            $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
-            $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
+        if ($node->nodeName !== null) {
+            $nodePath = $parentNodePath->appendPathSegment($node->nodeName);
+            $nodePathCache->add($node->nodeAggregateIdentifier, $nodePath);
             $namedChildNodeByNodeIdentifierCache->add(
-                $parentNode->getNodeAggregateIdentifier(),
-                $node->getNodeName(),
+                $parentNode->nodeAggregateIdentifier,
+                $node->nodeName,
                 $node
             );
         } else {
@@ -400,8 +400,8 @@ class NodeController extends ActionController
         }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add(
-            $node->getNodeAggregateIdentifier(),
-            $parentNode->getNodeAggregateIdentifier()
+            $node->nodeAggregateIdentifier,
+            $parentNode->nodeAggregateIdentifier
         );
 
         $allChildNodes = [];
@@ -417,7 +417,7 @@ class NodeController extends ActionController
 
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
-            $node->getNodeAggregateIdentifier(),
+            $node->nodeAggregateIdentifier,
             null,
             $allChildNodes
         );

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * ViewHelper to find out if Neos is rendering a preview mode.
@@ -68,7 +68,7 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
         parent::initializeArguments();
         $this->registerArgument(
             'node',
-            NodeInterface::class,
+            Node::class,
             'Optional Node to use context from'
         );
         $this->registerArgument(
@@ -78,7 +78,7 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
         );
     }
 
-    public function render(NodeInterface $node = null, string $mode = null): bool
+    public function render(Node $node = null, string $mode = null): bool
     {
         // TODO: implement
         return false;

@@ -11,7 +11,7 @@ use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -58,7 +58,7 @@ class ContextOperation extends AbstractOperation
      */
     public function canEvaluate($context): bool
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -91,9 +91,9 @@ class ContextOperation extends AbstractOperation
 
         $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var NodeInterface $contextNode */
+            /** @var Node $contextNode */
 
-            $contentSubgraphIdentity = $contextNode->getSubgraphIdentity();
+            $contentSubgraphIdentity = $contextNode->subgraphIdentity;
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
@@ -111,7 +111,7 @@ class ContextOperation extends AbstractOperation
             if (array_key_exists('workspaceName', $targetContext)) {
                 $workspaceName = WorkspaceName::fromString($targetContext['workspaceName']);
                 $contentRepository = $this->contentRepositoryRegistry->get(
-                    $contextNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                    $contextNode->subgraphIdentity->contentRepositoryIdentifier
                 );
 
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
@@ -128,7 +128,7 @@ class ContextOperation extends AbstractOperation
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $contentSubgraphIdentity
             );
-            $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->getNodeAggregateIdentifier());
+            $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->nodeAggregateIdentifier);
             if ($nodeInModifiedSubgraph !== null) {
                 $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->__toString()] = $nodeInModifiedSubgraph;
             }

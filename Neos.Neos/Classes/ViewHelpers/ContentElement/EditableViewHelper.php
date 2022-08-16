@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\ContentElement;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
@@ -73,7 +73,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         );
         $this->registerArgument(
             'node',
-            NodeInterface::class,
+            Node::class,
             'The node of the content element. Optional, will be resolved from the Fusion context by default'
         );
     }
@@ -118,10 +118,10 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @return NodeInterface
+     * @return Node
      * @throws ViewHelperException
      */
-    protected function getNodeFromFusionContext(): NodeInterface
+    protected function getNodeFromFusionContext(): Node
     {
         $node = $this->getContextVariable('node');
         if ($node === null) {

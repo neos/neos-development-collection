@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
@@ -67,7 +67,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
         $content = $this->getValue();
 
         $node = $this->fusionValue('node');
-        if (!$node instanceof NodeInterface) {
+        if (!$node instanceof Node) {
             return $content;
         }
 

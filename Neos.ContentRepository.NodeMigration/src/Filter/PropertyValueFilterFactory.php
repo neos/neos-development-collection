@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 
 /**
@@ -40,13 +40,13 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
             ) {
             }
 
-            public function matches(NodeInterface $node): bool
+            public function matches(Node $node): bool
             {
                 if (is_null($this->propertyName) || !$node->hasProperty($this->propertyName)) {
                     return false;
                 }
                 /** @var PropertyCollectionInterface $properties */
-                $properties = $node->getProperties();
+                $properties = $node->properties;
                 $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
                 if (!$serializedPropertyValue) {
                     return false;

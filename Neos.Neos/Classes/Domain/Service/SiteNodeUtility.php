@@ -18,7 +18,7 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -38,14 +38,14 @@ final class SiteNodeUtility
     ) {
     }
 
-    public function findSiteNode(NodeInterface $node): NodeInterface
+    public function findSiteNode(Node $node): Node
     {
         $previousNode = null;
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getSubgraphIdentity()
+            $node->subgraphIdentity
         );
         do {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
+            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
                 if (is_null($previousNode)) {
                     break;
@@ -64,7 +64,7 @@ final class SiteNodeUtility
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
-    ): NodeInterface {
+    ): Node {
         $domain = $this->domainRepository->findOneByActiveRequest();
         $site = $domain
             ? $domain->getSite()
@@ -85,7 +85,7 @@ final class SiteNodeUtility
                 $sitesNode,
                 $site->getNodeName()->toNodeName()
             );
-            if ($siteNode instanceof NodeInterface) {
+            if ($siteNode instanceof Node) {
                 return $siteNode;
             }
         }

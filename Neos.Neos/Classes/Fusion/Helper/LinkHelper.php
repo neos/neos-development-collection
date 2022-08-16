@@ -22,7 +22,7 @@ use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
@@ -100,11 +100,11 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     public function resolveNodeUri(
         string|Uri $uri,
-        NodeInterface $contextNode,
+        Node $contextNode,
         ControllerContext $controllerContext
     ): ?string {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
-        if (!$targetNode instanceof NodeInterface) {
+        if (!$targetNode instanceof Node) {
             $this->systemLogger->info(
                 sprintf(
                     'Could not resolve "%s" to an existing node; The node was probably deleted.',
@@ -115,7 +115,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             return null;
         }
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $targetNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            $targetNode->subgraphIdentity->contentRepositoryIdentifier
         );
         $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {
@@ -129,7 +129,7 @@ class LinkHelper implements ProtectedContextAwareInterface
         ) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',
-                $targetNode->getNodeAggregateIdentifier(),
+                $targetNode->nodeAggregateIdentifier,
                 $e->getMessage()
             ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
@@ -158,8 +158,8 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     public function convertUriToObject(
         string|Uri $uri,
-        NodeInterface $contextNode = null
-    ): NodeInterface|AssetInterface|null {
+        Node $contextNode = null
+    ): Node|AssetInterface|null {
         if (empty($uri)) {
             return null;
         }
@@ -177,7 +177,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                         );
                     }
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $contextNode->getSubgraphIdentity()
+                        $contextNode->subgraphIdentity
                     );
 
                     return $nodeAccessor->findByIdentifier(

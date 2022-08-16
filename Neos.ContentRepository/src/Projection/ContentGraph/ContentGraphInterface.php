@@ -46,7 +46,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?NodeInterface;
+    ): ?Node;
 
     public function findRootNodeAggregateByType(
         ContentStreamIdentifier $contentStreamIdentifier,

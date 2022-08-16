@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -54,7 +54,7 @@ class PrevAllOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -77,9 +77,9 @@ class PrevAllOperation extends AbstractOperation
             // @todo: implement NodeAccessor::getPrecedingSiblings
             foreach ($this->getPrevForNode($contextNode, $nodeAccessor) as $prevNode) {
                 if ($prevNode !== null
-                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])
+                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateIdentifier])
                 ) {
-                    $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
+                    $outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateIdentifier] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -92,11 +92,11 @@ class PrevAllOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
+     * @param Node $contextNode The node for which the preceding node should be found
      * @param NodeAccessorInterface $nodeAccessor
      * @return Nodes The preceding nodes of $contextNode
      */
-    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getPrevForNode(Node $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
     {
         $parentNode = $nodeAccessor->findParentNode($contextNode);
         if ($parentNode === null) {

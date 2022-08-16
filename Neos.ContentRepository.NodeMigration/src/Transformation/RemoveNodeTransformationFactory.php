@@ -21,7 +21,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
@@ -62,7 +62,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
              * Remove the property from the given node.
              */
             public function execute(
-                NodeInterface $node,
+                Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
             ): ?CommandResult {
@@ -78,7 +78,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
                 }
 
                 $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint
-                    ?: $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint();
+                    ?: $node->originDimensionSpacePoint->toDimensionSpacePoint();
 
                 if (!$coveredDimensionSpacePoints->contains($coveredDimensionSpacePoint)) {
                     // we are currently in a Node which has other covered dimension space points than the target ones,
@@ -88,7 +88,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
 
                 return $this->contentRepository->handle(new RemoveNodeAggregate(
                     $contentStreamForWriting,
-                    $node->getNodeAggregateIdentifier(),
+                    $node->nodeAggregateIdentifier,
                     $coveredDimensionSpacePoint,
                     $this->strategy,
                     UserIdentifier::forSystemUser()

@@ -16,7 +16,7 @@ namespace Neos\Neos\ViewHelpers\Rendering;
 
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManager;
@@ -45,18 +45,18 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
     /**
      * Get a node from the current Fusion context if available.
      *
-     * @param NodeInterface|null $node
+     * @param Node|null $node
      * @return NodeAddress
      *
      * @throws ViewHelperException
      * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers
      * to get variables from the Fusion context.
      */
-    protected function getNodeAddressOfContextNode(?NodeInterface $node): NodeAddress
+    protected function getNodeAddressOfContextNode(?Node $node): NodeAddress
     {
         if ($node !== null) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+                $node->subgraphIdentity->contentRepositoryIdentifier
             );
             return NodeAddressFactory::create($contentRepository)->createFromNode($node);
         }
@@ -80,7 +80,7 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $baseNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            $baseNode->subgraphIdentity->contentRepositoryIdentifier
         );
         return NodeAddressFactory::create($contentRepository)->createFromNode($baseNode);
     }

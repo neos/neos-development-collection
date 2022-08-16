@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * Interface for rendering a node label string based on some strategy
@@ -27,5 +27,5 @@ interface NodeLabelGeneratorInterface
      * Render a node label
      * @api
      */
-    public function getLabel(NodeInterface $node): string;
+    public function getLabel(Node $node): string;
 }

@@ -15,7 +15,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
  * - {@see visibilityConstraints}
  *
  * In addition to the above subgraph identity, a Node's read model identity is further described
- * by {@see NodeInterface::getNodeAggregateIdentifier()}.
+ * by {@see Node::$nodeAggregateIdentifier}.
  *
  * With the above information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraphByIdentifier()}.
  *
@@ -24,7 +24,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
  * This is the DimensionSpacePoint this node has been accessed in, and NOT the DimensionSpacePoint where the
  * node is "at home".
  * The DimensionSpacePoint where the node is (at home) is called the ORIGIN DimensionSpacePoint,
- * and this can be accessed using {@see NodeInterface::getOriginDimensionSpacePoint}. If in doubt, you'll
+ * and this can be accessed using {@see Node::originDimensionSpacePoint}. If in doubt, you'll
  * usually need this method instead of the Origin DimensionSpacePoint inside the read model; and you'll
  * need the OriginDimensionSpacePoint when constructing commands on the write side.
  */

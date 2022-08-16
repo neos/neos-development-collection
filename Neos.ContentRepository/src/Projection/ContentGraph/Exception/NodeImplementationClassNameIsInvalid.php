@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Projection\ContentGraph\Exception;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -36,7 +36,7 @@ final class NodeImplementationClassNameIsInvalid extends \DomainException
     {
         return new self(
             'The given node implementation class "' . $attemptedClassName
-                . '" does not implement the required ' . NodeInterface::class . '.',
+                . '" does not implement the required ' . Node::class . '.',
             1615415501
         );
     }
@@ -45,7 +45,7 @@ final class NodeImplementationClassNameIsInvalid extends \DomainException
     {
         return new self(
             'The given node implementation class "' . $attemptedClassName
-                . '" implements the deprecated legacy NodeInterface.',
+                . '" implements the deprecated legacy Node.',
             1615415586
         );
     }

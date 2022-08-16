@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Aspects;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -65,7 +65,7 @@ class PluginUriAspect
         $arguments = $joinPoint->getMethodArguments();
 
         $currentNode = $request->getInternalArgument('__node');
-        if (!$request->getMainRequest()->hasArgument('node') || !$currentNode instanceof NodeInterface) {
+        if (!$request->getMainRequest()->hasArgument('node') || !$currentNode instanceof Node) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         }
 
@@ -83,11 +83,11 @@ class PluginUriAspect
         $documentNode = null;
         if ($targetNode) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $targetNode->getSubgraphIdentity()
+                $targetNode->subgraphIdentity
             );
             $documentNode = $targetNode;
-            while ($documentNode instanceof NodeInterface) {
-                if ($documentNode->getNodeTypeName()->equals(NodeTypeNameFactory::forDocument())) {
+            while ($documentNode instanceof Node) {
+                if ($documentNode->nodeTypeName->equals(NodeTypeNameFactory::forDocument())) {
                     break;
                 }
                 $documentNode = $nodeAccessor->findParentNode($documentNode);
@@ -137,15 +137,15 @@ class PluginUriAspect
      *
      * @param ActionRequest $request
      * @param JoinPointInterface $joinPoint The current join point
-     * @param NodeInterface $node
+     * @param Node $node
      * @return string $uri
      */
-    public function generateUriForNode(ActionRequest $request, JoinPointInterface $joinPoint, NodeInterface $node)
+    public function generateUriForNode(ActionRequest $request, JoinPointInterface $joinPoint, Node $node)
     {
         // store original node path to restore it after generating the uri
         $originalNodePath = $request->getMainRequest()->getArgument('node');
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);

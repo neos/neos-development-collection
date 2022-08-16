@@ -18,7 +18,7 @@ use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -34,7 +34,7 @@ class NodeSiteResolvingService
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,
         ContentRepositoryIdentifier $contentRepositoryIdentifier
-    ): ?NodeInterface {
+    ): ?Node {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             new ContentSubgraphIdentity(
                 $contentRepositoryIdentifier,
@@ -51,7 +51,7 @@ class NodeSiteResolvingService
         }
         $previousNode = null;
         do {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
+            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
                 return $previousNode;
             }

@@ -23,7 +23,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
@@ -31,7 +31,7 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 /**
  * A valid read model implementation
  */
-final class Thing implements NodeInterface
+final class Thing implements Node
 {
     protected OriginDimensionSpacePoint $originDimensionSpacePoint;
 
@@ -145,7 +145,7 @@ final class Thing implements NodeInterface
         // TODO: Implement getClassification() method.
     }
 
-    public function equals(NodeInterface $other): bool
+    public function equals(Node $other): bool
     {
         return false;
     }

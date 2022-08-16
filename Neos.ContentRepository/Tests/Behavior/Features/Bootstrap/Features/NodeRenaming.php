@@ -45,7 +45,7 @@ trait NodeRenaming
     {
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
             $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-            Assert::assertEquals($nodeName, (string)$node->getNodeName(), 'Node Names do not match in adapter ' . $adapterName);
+            Assert::assertEquals($nodeName, (string)$node->nodeName, 'Node Names do not match in adapter ' . $adapterName);
         }
     }
 }

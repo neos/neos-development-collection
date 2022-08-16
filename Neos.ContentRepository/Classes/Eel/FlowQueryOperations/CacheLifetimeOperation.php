@@ -11,12 +11,12 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Now;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 
 /**
  * "cacheLifetime" operation working on ContentRepository nodes. Will get the minimum of all allowed cache lifetimes for the
@@ -69,7 +69,7 @@ class CacheLifetimeOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNode));
     }
 
     /**
@@ -83,7 +83,7 @@ class CacheLifetimeOperation extends AbstractOperation
     {
         $minimumDateTime = null;
         foreach ($flowQuery->getContext() as $contextNode) {
-            if ($contextNode instanceof NodeInterface) {
+            if ($contextNode instanceof Node) {
                 $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
                 if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === null || $hiddenBeforeDateTime < $minimumDateTime)) {
                     $minimumDateTime = $hiddenBeforeDateTime;

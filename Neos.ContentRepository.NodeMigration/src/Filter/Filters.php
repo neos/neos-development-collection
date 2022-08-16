@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
@@ -64,7 +64,7 @@ final class Filters
         return true;
     }
 
-    public function matchesNode(NodeInterface $node): bool
+    public function matchesNode(Node $node): bool
     {
         foreach ($this->nodeBasedFilters as $filter) {
             if (!$filter->matches($node)) {

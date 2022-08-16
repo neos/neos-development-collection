@@ -16,7 +16,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * "prev" operation working on ContentRepository nodes. It iterates over all
@@ -54,7 +54,7 @@ class PrevOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -75,8 +75,8 @@ class PrevOperation extends AbstractOperation
             );
 
             $nextNode = $this->getPrevForNode($contextNode, $nodeAccessor);
-            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()])) {
-                $outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()] = true;
+            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateIdentifier])) {
+                $outputNodePaths[(string)$nextNode->nodeAggregateIdentifier] = true;
                 $output[] = $nextNode;
             }
         }
@@ -88,11 +88,11 @@ class PrevOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
+     * @param Node $contextNode The node for which the preceding node should be found
      * @param NodeAccessorInterface $nodeAccessor
-     * @return NodeInterface|null The preceeding node of $contextNode or NULL
+     * @return Node|null The preceeding node of $contextNode or NULL
      */
-    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): ?NodeInterface
+    protected function getPrevForNode(Node $contextNode, NodeAccessorInterface $nodeAccessor): ?Node
     {
         $parentNode = $nodeAccessor->findParentNode($contextNode);
         if ($parentNode === null) {

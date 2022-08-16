@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Utility;
 
 use Behat\Transliterator\Transliterator;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;
@@ -33,15 +33,15 @@ class NodeUriPathSegmentGenerator
     /**
      * Generates a URI path segment for a given node taking its language dimension value into account
      *
-     * @param ?NodeInterface $node Optional node to determine language dimension value from
+     * @param ?Node $node Optional node to determine language dimension value from
      * @param ?string $text Optional text
      */
-    public function generateUriPathSegment(?NodeInterface $node = null, ?string $text = null): string
+    public function generateUriPathSegment(?Node $node = null, ?string $text = null): string
     {
         $language = null;
         if ($node) {
-            $text = $text ?: $node->getLabel() ?: (string)$node->getNodeName();
-            $languageDimensionValue = $node->getOriginDimensionSpacePoint()->coordinates['language'] ?? null;
+            $text = $text ?: $node->getLabel() ?: (string)$node->nodeName;
+            $languageDimensionValue = $node->originDimensionSpacePoint->coordinates['language'] ?? null;
             if (!is_null($languageDimensionValue)) {
                 $locale = new Locale($languageDimensionValue);
                 $language = $locale->getLanguage();

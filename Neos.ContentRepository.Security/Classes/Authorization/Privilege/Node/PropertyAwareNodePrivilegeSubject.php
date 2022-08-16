@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Aop\JoinPointInterface;
 
 /**
@@ -22,7 +22,7 @@ class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject
     protected ?string $propertyName = null;
 
     public function __construct(
-        NodeInterface $node,
+        Node $node,
         ?JoinPointInterface $joinPoint = null,
         ?string $propertyName = null
     ) {

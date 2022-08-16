@@ -78,9 +78,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeInterface|null
+     * @return Node|null
      */
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -94,29 +94,29 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @return NodeInterface|null
+     * @return Node|null
      */
-    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface;
+    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?Node;
 
     /**
      * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
-     * @return NodeInterface|null
+     * @return Node|null
      */
     public function findNodeByPath(
         NodePath $path,
         NodeAggregateIdentifier $startingNodeAggregateIdentifier
-    ): ?NodeInterface;
+    ): ?Node;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $edgeName
-     * @return NodeInterface|null
+     * @return Node|null
      */
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
-    ): ?NodeInterface;
+    ): ?Node;
 
     /**
      * @param NodeAggregateIdentifier $sibling

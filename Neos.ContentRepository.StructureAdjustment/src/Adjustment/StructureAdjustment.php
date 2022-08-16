@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\Error\Messages\Message;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 final class StructureAdjustment extends Message
 {
@@ -43,7 +43,7 @@ final class StructureAdjustment extends Message
     }
 
     public static function createForNode(
-        NodeInterface $node,
+        Node $node,
         string $type,
         string $errorMessage,
         ?\Closure $remediation = null
@@ -53,9 +53,9 @@ final class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $node->getSubgraphIdentity()->contentStreamIdentifier->jsonSerialize(),
-                'dimensionSpacePoint' => json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
-                'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
+                'contentStream' => $node->subgraphIdentity->contentStreamIdentifier->jsonSerialize(),
+                'dimensionSpacePoint' => json_encode($node->originDimensionSpacePoint->jsonSerialize()),
+                'nodeAggregateIdentifier' => $node->nodeAggregateIdentifier->jsonSerialize(),
                 'isAutoFixable' => ($remediation !== null)
             ],
             $type,

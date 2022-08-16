@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 use GuzzleHttp\Psr7\Message;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
@@ -69,15 +69,15 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $handler->setRuntime($this->runtime);
         $output = $handler->handleRenderingException($fusionPath, $exception);
         $currentContext = $this->runtime->getCurrentContext();
-        /** @var ?NodeInterface $documentNode */
+        /** @var ?Node $documentNode */
         $documentNode = $currentContext['documentNode'] ?? null;
 
-        /** @var ?NodeInterface $node */
+        /** @var ?Node $node */
         $node = $currentContext['node'] ?? null;
 
         $fluidView = $this->prepareFluidView();
         $isBackend = false;
-        /** @var ?NodeInterface $siteNode */
+        /** @var ?Node $siteNode */
         $siteNode = $currentContext['site'] ?? null;
 
         if ($documentNode === null) {
@@ -86,10 +86,10 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            $contentRepositoryIdentifier = $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepositoryIdentifier = $documentNode->subgraphIdentity->contentRepositoryIdentifier;
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
             $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-                $documentNode->getSubgraphIdentity()->contentStreamIdentifier
+                $documentNode->subgraphIdentity->contentStreamIdentifier
             );
             if (
                 $workspace && !$workspace->getWorkspaceName()->isLive()

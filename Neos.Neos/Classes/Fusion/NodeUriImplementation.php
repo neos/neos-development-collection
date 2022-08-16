@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
@@ -36,7 +36,7 @@ class NodeUriImplementation extends AbstractFusionObject
     /**
      * A node object or a string node path or NULL to resolve the current document node
      */
-    public function getNode(): NodeInterface|string|null
+    public function getNode(): Node|string|null
     {
         return $this->fusionValue('node');
     }
@@ -120,9 +120,9 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        if ($node instanceof NodeInterface) {
+        if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+                $node->subgraphIdentity->contentRepositoryIdentifier
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -122,11 +122,11 @@ class SiteService
      * Note: This is usually triggered by the ContentController::assetUploaded signal
      *
      * @param Asset $asset
-     * @param NodeInterface $node
+     * @param Node $node
      * @param string $propertyName
      * @return void
      */
-    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
+    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, Node $node, string $propertyName)
     {
         try {
             $siteNode = $this->siteNodeUtility->findSiteNode($node);
@@ -134,7 +134,7 @@ class SiteService
             return;
         }
 
-        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
+        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->nodeName);
         if ($site === null) {
             return;
         }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Node;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Ui\ContentRepository\Service\NodeService;
@@ -33,10 +33,10 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+        $this->registerArgument('node', Node::class, 'Node', true);
     }
 
-    public function render(): ?NodeInterface
+    public function render(): ?Node
     {
         return $this->nodeService->getClosestDocument($this->arguments['node']);
     }

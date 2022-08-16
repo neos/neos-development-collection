@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
@@ -52,7 +52,7 @@ trait TetheredNodeInternals
      */
     protected function createEventsForMissingTetheredNode(
         ReadableNodeAggregateInterface $parentNodeAggregate,
-        NodeInterface $parentNode,
+        Node $parentNode,
         NodeName $tetheredNodeName,
         ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
@@ -60,8 +60,8 @@ trait TetheredNodeInternals
         ContentRepository $contentRepository
     ): Events {
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
-            $parentNode->getNodeAggregateIdentifier(),
+            $parentNode->subgraphIdentity->contentStreamIdentifier,
+            $parentNode->nodeAggregateIdentifier,
             $tetheredNodeName
         );
 
@@ -76,12 +76,12 @@ trait TetheredNodeInternals
             // there is no tethered child node aggregate already; let's create it!
             return Events::with(
                 new NodeAggregateWithNodeWasCreated(
-                    $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
+                    $parentNode->subgraphIdentity->contentStreamIdentifier,
                     $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
                     NodeTypeName::fromString($expectedTetheredNodeType->getName()),
-                    $parentNode->getOriginDimensionSpacePoint(),
-                    $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
-                    $parentNode->getNodeAggregateIdentifier(),
+                    $parentNode->originDimensionSpacePoint,
+                    $parentNodeAggregate->getCoverageByOccupant($parentNode->originDimensionSpacePoint),
+                    $parentNode->nodeAggregateIdentifier,
                     $tetheredNodeName,
                     SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
@@ -104,11 +104,11 @@ trait TetheredNodeInternals
                 $childNodeSource = $node;
                 break;
             }
-            /** @var NodeInterface $childNodeSource Node aggregates are never empty */
+            /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNode->getSubgraphIdentity()->contentStreamIdentifier,
-                $childNodeSource->getOriginDimensionSpacePoint(),
-                $parentNode->getOriginDimensionSpacePoint(),
+                $parentNode->subgraphIdentity->contentStreamIdentifier,
+                $childNodeSource->originDimensionSpacePoint,
+                $parentNode->originDimensionSpacePoint,
                 $parentNodeAggregate,
                 $initiatingUserIdentifier,
                 $contentRepository

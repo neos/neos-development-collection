@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Tests\Behavior\Features\Helper;
 
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
@@ -57,12 +57,12 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
         );
     }
 
-    public static function fromNode(NodeInterface $node): self
+    public static function fromNode(Node $node): self
     {
         return new NodeDiscriminator(
-            $node->getSubgraphIdentity()->contentStreamIdentifier,
-            $node->getNodeAggregateIdentifier(),
-            $node->getOriginDimensionSpacePoint()
+            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->nodeAggregateIdentifier,
+            $node->originDimensionSpacePoint
         );
     }
 

@@ -21,7 +21,7 @@ use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterfac
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -120,7 +120,7 @@ final class CopyNodesRecursively implements
      */
     public static function create(
         ContentSubgraphInterface $subgraph,
-        NodeInterface $startNode,
+        Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
         UserIdentifier $initiatingUserIdentifier,
         NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,

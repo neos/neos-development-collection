@@ -17,7 +17,7 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -60,15 +60,15 @@ class ContentElementEditableService
     /**
      * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
+    public function wrapContentProperty(Node $node, string $property, string $content): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
 
         if (
             $this->isContentStreamOfLiveWorkspace(
-                $node->getSubgraphIdentity()->contentStreamIdentifier,
+                $node->subgraphIdentity->contentStreamIdentifier,
                 $contentRepository
             )
         ) {

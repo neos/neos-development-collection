@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * "parent" operation working on ContentRepository nodes. It iterates over all
@@ -52,7 +52,7 @@ class ParentOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -67,9 +67,9 @@ class ParentOperation extends AbstractOperation
         $output = [];
         $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var $contextNode NodeInterface */
+            /* @var $contextNode Node */
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getSubgraphIdentity()
+                $contextNode->subgraphIdentity
             );
 
             $parentNode = $nodeAccessor->findParentNode($contextNode);
@@ -77,9 +77,9 @@ class ParentOperation extends AbstractOperation
                 continue;
             }
 
-            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
+            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateIdentifier])) {
                 $output[] = $parentNode;
-                $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
+                $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateIdentifier] = true;
             }
         }
 

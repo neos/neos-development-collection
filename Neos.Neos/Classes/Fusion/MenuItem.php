@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * A menu item
  */
 final class MenuItem
 {
-    protected NodeInterface $node;
+    protected Node $node;
 
     protected ?MenuItemState $state;
 
@@ -28,7 +28,7 @@ final class MenuItem
      * @param array<int,MenuItem> $children
      */
     public function __construct(
-        NodeInterface $node,
+        Node $node,
         ?MenuItemState $state = null,
         ?string $label = null,
         int $menuLevel = 1,
@@ -41,7 +41,7 @@ final class MenuItem
         $this->children = $children;
     }
 
-    public function getNode(): NodeInterface
+    public function getNode(): Node
     {
         return $this->node;
     }

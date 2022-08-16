@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Tests\Behavior\Features\Helper;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\Flow\Annotations as Flow;
 
@@ -61,7 +61,7 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
     public static function fromNodes(Nodes $nodes): self
     {
         return new self(...array_map(
-            fn (NodeInterface $node): NodeDiscriminator => NodeDiscriminator::fromNode($node),
+            fn (Node $node): NodeDiscriminator => NodeDiscriminator::fromNode($node),
             $nodes->getIterator()->getArrayCopy()
         ));
     }

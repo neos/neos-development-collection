@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class NodeHelperTest extends AbstractFusionObjectTest
 {
     /**
-     * @var NodeInterface|MockObject
+     * @var Node|MockObject
      */
     protected $textNode;
 
@@ -75,7 +75,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
         $view->assign('node', $this->textNode);
 
-        self::assertEquals($this->textNode->getNodeType()->getLabel(), (string)$view->render());
+        self::assertEquals($this->textNode->nodeType->getLabel(), (string)$view->render());
     }
 
     /**
@@ -119,7 +119,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
             ->willReturn('Content.Text');
 
         $textNode = $this
-            ->getMockBuilder(NodeInterface::class)
+            ->getMockBuilder(Node::class)
             ->disableOriginalConstructor()
             ->getMock();
         $textNode
