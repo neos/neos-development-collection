@@ -1,0 +1,10 @@
+
+# For Behavioral E2E Tests, we always test against Postgres and Mysql.
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        projections:
+          'Neos.ContentGraph.PostgreSQLAdapter:Hypergraph':
+            factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
+

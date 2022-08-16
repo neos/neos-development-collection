@@ -33,7 +33,6 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentGraph\DoctrineDbalAdapter\HypergraphProjectionFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
@@ -176,19 +175,8 @@ trait EventSourcedTrait
     {
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-
+        $this->contentRepositoryRegistry = $this->getObjectManager()->get(ContentRepositoryRegistry::class);
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
-
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepositoryRegistry');
-        $settings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph'] = [
-            'factoryObjectName' => HypergraphProjectionFactory::class
-        ];
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $settings,
-            $this->getObjectManager()
-        );
 
         // prepare race tracking for debugging into the race log
         if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)

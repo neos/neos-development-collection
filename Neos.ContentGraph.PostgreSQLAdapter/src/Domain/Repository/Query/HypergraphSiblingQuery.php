@@ -34,10 +34,10 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT sn.*, sh.contentstreamidentifier, sh.dimensionspacepoint, ordinality, childnodeanchor
-    FROM neos_contentgraph_node n
-        JOIN neos_contentgraph_hierarchyhyperrelation sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
+    FROM ' . $tableNamePrefix . '_node n
+        JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
             unnest(sh.childnodeanchors) WITH ORDINALITY childnodeanchor
-        JOIN neos_contentgraph_node sn ON childnodeanchor = sn.relationanchorpoint
+        JOIN ' . $tableNamePrefix . '_node sn ON childnodeanchor = sn.relationanchorpoint
     WHERE sh.contentstreamidentifier = :contentStreamIdentifier
         AND sh.dimensionspacepointhash = :dimensionSpacePointHash
         AND n.nodeaggregateidentifier = :nodeAggregateIdentifier

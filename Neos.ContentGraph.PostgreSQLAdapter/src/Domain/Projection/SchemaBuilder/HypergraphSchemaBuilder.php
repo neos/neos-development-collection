@@ -2,6 +2,7 @@
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -19,7 +20,6 @@ class HypergraphSchemaBuilder
 
     public function buildSchema(): Schema
     {
-        self::registerTypes();
         $schema = new Schema();
 
         $this->createNodeTable($schema);
@@ -30,20 +30,23 @@ class HypergraphSchemaBuilder
         return $schema;
     }
 
-    private static function registerTypes(): void
+    public static function registerTypes(AbstractPlatform $platform): void
     {
         // do NOT RELY ON THESE TYPES BEING PRESENT - we only load them to build the schema.
-        Type::addType('hypergraph_jsonb', JsonbType::class);
-        Type::addType('hypergraph_uuid', UuidType::class);
-        Type::addType('hypergraph_uuid_array', UuidArrayType::class);
-        Type::addType('hypergraph_varchararray', VarcharArrayType::class);
+        if (!Type::hasType('hypergraphjsonb')) {
+            Type::addType('hypergraphjsonb', JsonbType::class);
+            Type::addType('hypergraphuuid', UuidType::class);
+            $platform->registerDoctrineTypeMapping('_uuid', 'hypergraphuuid');
+            Type::addType('hypergraphuuids', UuidArrayType::class);
+            Type::addType('hypergraphvarchars', VarcharArrayType::class);
+        }
     }
 
     private function createNodeTable(Schema $schema): void
     {
 
         $table = $schema->createTable($this->tableNamePrefix . '_node');
-        $table->addColumn('relationanchorpoint', 'hypergraph_uuid')
+        $table->addColumn('relationanchorpoint', 'hypergraphuuid')
             ->setNotnull(true);
         $table->addColumn('nodeaggregateidentifier', Types::STRING)
             ->setLength(255)
@@ -56,7 +59,7 @@ class HypergraphSchemaBuilder
         $table->addColumn('nodetypename', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('properties', 'hypergraph_jsonb')
+        $table->addColumn('properties', 'hypergraphjsonb')
             ->setNotnull(true);
         $table->addColumn('classification', Types::STRING)
             ->setLength(255)
@@ -78,14 +81,14 @@ class HypergraphSchemaBuilder
         $table->addColumn('contentstreamidentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('parentnodeanchor', 'hypergraph_uuid')
+        $table->addColumn('parentnodeanchor', 'hypergraphuuid')
             ->setNotnull(true);
         $table->addColumn('dimensionspacepoint', Types::JSON)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('childnodeanchors', 'hypergraph_uuids')
+        $table->addColumn('childnodeanchors', 'hypergraphuuids')
             ->setNotnull(true);
         $table
             ->setPrimaryKey(['contentstreamidentifier', 'parentnodeanchor', 'dimensionspacepointhash'])
@@ -98,7 +101,7 @@ class HypergraphSchemaBuilder
     private function createReferenceRelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_referencerelation');
-        $table->addColumn('sourcenodeanchor', 'hypergraph_uuid')
+        $table->addColumn('sourcenodeanchor', 'hypergraphuuid')
             ->setNotnull(true);
         $table->addColumn('name', Types::STRING)
             ->setLength(255)
@@ -106,8 +109,8 @@ class HypergraphSchemaBuilder
         $table->addColumn('position', Types::INTEGER)
             // TODO: SMALLINT?
             ->setNotnull(true);
-        $table->addColumn('properties', 'hypergraph_jsonb')
-            ->setNotnull(true);
+        $table->addColumn('properties', 'hypergraphjsonb')
+            ->setNotnull(false);
         $table->addColumn('targetnodeaggregateidentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
@@ -130,7 +133,7 @@ class HypergraphSchemaBuilder
         $table->addColumn('originnodeaggregateidentifier', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateidentifiers', 'hypergraph_varchararray')
+        $table->addColumn('affectednodeaggregateidentifiers', 'hypergraphvarchars')
             ->setNotnull(true);
 
         $table

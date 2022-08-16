@@ -573,7 +573,7 @@ final class ProjectionHypergraph
                         descendantNodes p
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                         ON h.parentnodeanchor = p.relationanchorpoint
-                    INNER JOIN neos_contentgraph_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
+                    INNER JOIN ' . $this->tableNamePrefix . '_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
                         AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)

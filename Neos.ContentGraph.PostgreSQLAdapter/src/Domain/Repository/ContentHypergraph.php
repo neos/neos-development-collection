@@ -56,8 +56,7 @@ final class ContentHypergraph implements ContentGraphInterface
         PostgresDbalClientInterface $databaseClient,
         NodeFactory $nodeFactory,
         private readonly string $tableNamePrefix
-    )
-    {
+    ) {
         $this->databaseClient = $databaseClient;
         $this->nodeFactory = $nodeFactory;
     }
@@ -198,7 +197,8 @@ final class ContentHypergraph implements ContentGraphInterface
     ): iterable {
         $query = HypergraphChildQuery::create(
             $contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix
         );
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -219,7 +219,8 @@ final class ContentHypergraph implements ContentGraphInterface
     ): iterable {
         $query = HypergraphChildQuery::create(
             $contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix
         );
         $query = $query->withChildNodeName($name);
 
@@ -238,7 +239,11 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
     ): iterable {
-        $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $contentStreamIdentifier,
+            $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix
+        );
         $query = $query->withOnlyTethered();
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -256,6 +261,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphChildQuery::create(
             $contentStreamIdentifier,
             $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix,
             ['ch.dimensionspacepoint, ch.dimensionspacepointhash']
         );
         $query = $query->withChildNodeName($nodeName)
@@ -288,16 +294,6 @@ final class ContentHypergraph implements ContentGraphInterface
     public function findUsedNodeTypeNames(): iterable
     {
         return [];
-    }
-
-    public function enableCache(): void
-    {
-        // TODO: Implement enableCache() method.
-    }
-
-    public function disableCache(): void
-    {
-        // TODO: Implement disableCache() method.
     }
 
     private function getDatabaseConnection(): DatabaseConnection

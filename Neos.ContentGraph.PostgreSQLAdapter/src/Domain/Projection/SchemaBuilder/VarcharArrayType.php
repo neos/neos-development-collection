@@ -7,7 +7,6 @@ use Doctrine\DBAL\Types\Type;
 
 class VarcharArrayType extends Type
 {
-
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return 'varchar(255)[]';
@@ -15,6 +14,6 @@ class VarcharArrayType extends Type
 
     public function getName()
     {
-        return 'hypergraph_varchararray';
+        return 'hypergraphvarchars';
     }
 }

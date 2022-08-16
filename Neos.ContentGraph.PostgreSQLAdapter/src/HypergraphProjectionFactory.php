@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter;
+namespace Neos\ContentGraph\PostgreSQLAdapter;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
@@ -20,14 +20,12 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
         private readonly PostgresDbalClientInterface $dbalClient
-    )
-    {
+    ) {
     }
 
     public static function graphProjectionTableNamePrefix(
         ContentRepositoryIdentifier $contentRepositoryIdentifier
-    ): string
-    {
+    ): string {
         return sprintf('cr_%s_p_hypergraph', $contentRepositoryIdentifier);
     }
 
@@ -36,8 +34,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
         array $options,
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
-    ): HypergraphProjection
-    {
+    ): HypergraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryIdentifier
         );

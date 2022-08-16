@@ -42,8 +42,7 @@ trait CommonGraphQueryOperations
         array $parameters,
         private readonly string $tableNamePrefix,
         array $types = []
-    )
-    {
+    ) {
         $this->query = $query;
         $this->parameters = $parameters;
         $this->types = $types;

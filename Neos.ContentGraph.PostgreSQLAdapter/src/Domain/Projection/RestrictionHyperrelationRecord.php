@@ -70,7 +70,11 @@ final class RestrictionHyperrelationRecord
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->add($nodeAggregateIdentifier);
 
-        $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection, $tableNamePrefix);
+        $this->updateAffectedNodeAggregateIdentifiers(
+            $affectedNodeAggregateIdentifiers,
+            $databaseConnection,
+            $tableNamePrefix
+        );
     }
 
     /**
@@ -85,7 +89,11 @@ final class RestrictionHyperrelationRecord
         if ($affectedNodeAggregateIdentifiers->isEmpty()) {
             $this->removeFromDatabase($databaseConnection, $tableNamePrefix);
         } else {
-            $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection, $tableNamePrefix);
+            $this->updateAffectedNodeAggregateIdentifiers(
+                $affectedNodeAggregateIdentifiers,
+                $databaseConnection,
+                $tableNamePrefix
+            );
         }
     }
 

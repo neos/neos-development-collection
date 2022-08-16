@@ -31,8 +31,11 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
     /**
      * @param array<int,string>|null $fieldsToFetch
      */
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier, string $tableNamePrefix, ?array $fieldsToFetch = null): self
-    {
+    public static function create(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        string $tableNamePrefix,
+        ?array $fieldsToFetch = null
+    ): self {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)

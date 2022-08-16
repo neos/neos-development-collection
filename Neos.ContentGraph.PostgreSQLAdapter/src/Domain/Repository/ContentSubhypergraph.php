@@ -138,6 +138,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
             $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix,
             ['COUNT(*)']
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -256,7 +257,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): ?NodeInterface {
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix,
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)

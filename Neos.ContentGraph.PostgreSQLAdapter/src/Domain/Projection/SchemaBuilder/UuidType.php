@@ -7,7 +7,6 @@ use Doctrine\DBAL\Types\Type;
 
 class UuidType extends Type
 {
-
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return 'uuid';
@@ -15,6 +14,6 @@ class UuidType extends Type
 
     public function getName()
     {
-        return 'hypergraph_uuid';
+        return 'hypergraphuuid';
     }
 }

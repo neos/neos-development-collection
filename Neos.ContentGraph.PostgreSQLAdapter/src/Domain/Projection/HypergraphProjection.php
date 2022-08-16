@@ -59,7 +59,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
- * @implements ProjectionInterface<
+ * @implements ProjectionInterface<ContentHypergraph>
  */
 final class HypergraphProjection implements ProjectionInterface
 {
@@ -87,9 +87,8 @@ final class HypergraphProjection implements ProjectionInterface
         private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly NodeFactory $nodeFactory,
         private readonly string $tableNamePrefix,
-
     ) {
-        $this->projectionHypergraph = new ProjectionHypergraph($databaseClient);
+        $this->projectionHypergraph = new ProjectionHypergraph($this->databaseClient, $this->tableNamePrefix);
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $this->databaseClient->getConnection(),
             $this->tableNamePrefix . '_checkpoint',
@@ -107,13 +106,13 @@ final class HypergraphProjection implements ProjectionInterface
     private function setupTables(): SetupResult
     {
         $connection = $this->databaseClient->getConnection();
+        HypergraphSchemaBuilder::registerTypes($connection->getDatabasePlatform());
         $schemaManager = $connection->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
         $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
-
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);
@@ -208,8 +207,8 @@ final class HypergraphProjection implements ProjectionInterface
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
-        $catchUpHook->onBeforeEvent($eventInstance);
-
+        $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
+        // @codingStandardsIgnoreStart
         // @phpstan-ignore-next-line
         match ($eventInstance::class) {
             // ContentStreamForking
@@ -235,8 +234,9 @@ final class HypergraphProjection implements ProjectionInterface
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($eventInstance),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($eventInstance),
         };
+        // @codingStandardsIgnoreEnd
 
-        $catchUpHook->onAfterEvent($eventInstance);
+        $catchUpHook->onAfterEvent($eventInstance, $eventEnvelope);
     }
 
     public function getSequenceNumber(): SequenceNumber
@@ -247,7 +247,11 @@ final class HypergraphProjection implements ProjectionInterface
     public function getState(): ContentHypergraph
     {
         if (!$this->contentHypergraph) {
-            $this->contentHypergraph = new ContentHypergraph($this->databaseClient, $this->nodeFactory, $this->tableNamePrefix);
+            $this->contentHypergraph = new ContentHypergraph(
+                $this->databaseClient,
+                $this->nodeFactory,
+                $this->tableNamePrefix
+            );
         }
         return $this->contentHypergraph;
     }

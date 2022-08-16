@@ -33,10 +33,14 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $query = /** @lang PostgreSQL */'SELECT ' . $nodeFieldsToFetch
             . ', r.name as referencename, r.properties AS referenceproperties
      FROM ' . $tableNamePrefix . '_referencerelation r
-        JOIN neos_contentgraph_node srcn ON srcn.relationanchorpoint = r.sourcenodeanchor
-        JOIN neos_contentgraph_hierarchyhyperrelation srch ON srcn.relationanchorpoint = ANY(srch.childnodeanchors)
-        JOIN neos_contentgraph_node tarn ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
-        JOIN neos_contentgraph_hierarchyhyperrelation tarh ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
+        JOIN ' . $tableNamePrefix . '_node srcn
+            ON srcn.relationanchorpoint = r.sourcenodeanchor
+        JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation srch
+            ON srcn.relationanchorpoint = ANY(srch.childnodeanchors)
+        JOIN ' . $tableNamePrefix . '_node tarn
+            ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
+        JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation tarh
+            ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
      WHERE srch.contentstreamidentifier = :contentStreamIdentifier
      AND tarh.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -102,14 +106,22 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
 
     public function withSourceRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, 'src');
+        $query = $this->query . QueryUtility::getRestrictionClause(
+            $visibilityConstraints,
+            $this->tableNamePrefix,
+            'src'
+        );
 
         return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withTargetRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, 'tar');
+        $query = $this->query . QueryUtility::getRestrictionClause(
+            $visibilityConstraints,
+            $this->tableNamePrefix,
+            'tar'
+        );
 
         return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
