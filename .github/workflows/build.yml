@@ -220,7 +220,7 @@ jobs:
       - name: Run functional tests
         if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
-          FLOW_CONTEXT=Testing ./flow doctrine:migrate
+          FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
       - name: Run ES CR Tests
