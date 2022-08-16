@@ -117,7 +117,6 @@ class FeatureContext extends MinkContext
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
         $this->setupEventSourcedTrait(true);
-        $this->setupMigrationsTrait();
     }
 
     /**

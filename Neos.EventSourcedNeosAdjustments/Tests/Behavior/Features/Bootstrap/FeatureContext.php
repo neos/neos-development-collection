@@ -54,7 +54,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
 
         $this->setupFlowSubcommandTrait();
         $this->setupEventSourcedTrait();
-        $this->setupMigrationsTrait();
     }
 
     /**

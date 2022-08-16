@@ -87,7 +87,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupStructureAdjustmentTrait();
         $this->setupProjectionIntegrityViolationDetectionTrait();
         $this->setupReadModelInstantiationTrait();
-        $this->setupMigrationsTrait();
     }
 
     /**
