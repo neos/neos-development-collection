@@ -559,7 +559,6 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]
         );
-        $this->dbal->commit();
         $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $eventEnvelope);
     }
 
