@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
@@ -34,7 +33,6 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\Exception\NodeImplementationClassNameIsInvalid;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollection;
@@ -65,18 +63,8 @@ final class NodeFactory
         VisibilityConstraints $visibilityConstraints
     ): Node {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $nodeClassName = $nodeType->getConfiguration('class') ?: Node::class;
-        if (!class_exists($nodeClassName)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
-        }
-        if (!is_subclass_of($nodeClassName, Node::class)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface(
-                $nodeClassName
-            );
-        }
-        /** @var Node $node */
-        $node = new $nodeClassName(
-            new ContentSubgraphIdentity(
+        $node = new Node(
+            ContentSubgraphIdentity::create(
                 $this->contentRepositoryIdentifier,
                 ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
                 $dimensionSpacePoint,
@@ -84,11 +72,11 @@ final class NodeFactory
             ),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
-            NodeAggregateClassification::from($nodeRow['classification']),
+            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
         );
 
         return $node;

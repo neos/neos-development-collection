@@ -40,7 +40,6 @@ final class Node
 {
     public function __construct(
         public readonly ContentSubgraphIdentity $subgraphIdentity,
-
         /**
          * NodeAggregateIdentifier (identifier) of this node
          * This is part of the node's "Read Model" identity, whis is defined by:
@@ -51,17 +50,14 @@ final class Node
          * or {@see ContentRepositoryRegistry::subgraphForNode()}
          */
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
-        public readonly NodeAggregateClassification $classification,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly NodeType $nodeType,
-        public readonly ?NodeName $nodeName,
-
         /**
          * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
          * in order to update it.
          */
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-
+        public readonly NodeAggregateClassification $classification,
+        public readonly NodeTypeName $nodeTypeName,
+        public readonly NodeType $nodeType,
         /**
          * Returns all properties of this node. References are NOT part of this API;
          * there you need to check getReference() and getReferences().
@@ -70,9 +66,9 @@ final class Node
          *
          * @return PropertyCollectionInterface Property values, indexed by their name
          */
-        public readonly PropertyCollectionInterface $properties
-    )
-    {
+        public readonly PropertyCollectionInterface $properties,
+        public readonly ?NodeName $nodeName
+    ) {
     }
 
     /**

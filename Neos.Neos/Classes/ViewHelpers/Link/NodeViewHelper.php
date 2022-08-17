@@ -392,10 +392,16 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             if ($path === '~') {
                 $targetNode = $siteNode;
             } else {
-                $targetNode = $subgraph->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode->nodeAggregateIdentifier);
+                $targetNode = $subgraph->findNodeByPath(
+                    NodePath::fromString(substr($path, 1)),
+                    $siteNode->nodeAggregateIdentifier
+                );
             }
         } else {
-            $targetNode = $subgraph->findNodeByPath(NodePath::fromString($path), $documentNode->nodeAggregateIdentifier);
+            $targetNode = $subgraph->findNodeByPath(
+                NodePath::fromString($path),
+                $documentNode->nodeAggregateIdentifier
+            );
         }
         if ($targetNode === null) {
             throw new ViewHelperException(sprintf(

@@ -234,10 +234,10 @@ class NodeViewHelper extends AbstractViewHelper
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (
-        NodeAddressCannotBeSerializedException
-        |HttpException
-        |NoMatchingRouteException
-        |MissingActionNameException $e
+            NodeAddressCannotBeSerializedException
+            | HttpException
+            | NoMatchingRouteException
+            | MissingActionNameException $e
         ) {
             throw new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
@@ -292,10 +292,16 @@ class NodeViewHelper extends AbstractViewHelper
             if ($path === '~') {
                 $targetNode = $siteNode;
             } else {
-                $targetNode = $subgraph->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode->nodeAggregateIdentifier);
+                $targetNode = $subgraph->findNodeByPath(
+                    NodePath::fromString(substr($path, 1)),
+                    $siteNode->nodeAggregateIdentifier
+                );
             }
         } else {
-            $targetNode = $subgraph->findNodeByPath(NodePath::fromString($path), $documentNode->nodeAggregateIdentifier);
+            $targetNode = $subgraph->findNodeByPath(
+                NodePath::fromString($path),
+                $documentNode->nodeAggregateIdentifier
+            );
         }
         if ($targetNode === null) {
             throw new ViewHelperException(sprintf(

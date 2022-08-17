@@ -18,7 +18,8 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  * In addition to the above subgraph identity, a Node's read model identity is further described
  * by {@see Node::$nodeAggregateIdentifier}.
  *
- * With the above information, you can fetch a Subgraph directly by using {@see ContentRepositoryRegistry::subgraphForNode()}.
+ * With the above information, you can fetch a Subgraph directly by using
+ * {@see ContentRepositoryRegistry::subgraphForNode()}.
  *
  * (a bit lower-level): For Non-Neos/Flow installations, you can fetch a Subgraph using
  * {@see ContentGraphInterface::getSubgraph()}.

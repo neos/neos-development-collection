@@ -72,7 +72,9 @@ class PluginViewImplementation extends PluginImplementation
         // Set the node to render this to the master plugin node
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->pluginViewNode);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($pluginNodeIdentifier));
+        $node = $subgraph->findNodeByNodeAggregateIdentifier(
+            NodeAggregateIdentifier::fromString($pluginNodeIdentifier)
+        );
         $this->node = $node;
         if ($node === null) {
             return $pluginRequest;

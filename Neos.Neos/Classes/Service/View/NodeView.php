@@ -318,7 +318,10 @@ class NodeView extends JsonView
                     break;
                 case self::STYLE_TREE:
                     $children = [];
-                    $grandChildNodes = $subgraph->findChildNodes($childNode->nodeAggregateIdentifier, $nodeTypeConstraints);
+                    $grandChildNodes = $subgraph->findChildNodes(
+                        $childNode->nodeAggregateIdentifier,
+                        $nodeTypeConstraints
+                    );
                     $hasChildNodes = $grandChildNodes->count() > 0;
                     if ($expand && $hasChildNodes) {
                         $this->collectChildNodeData(

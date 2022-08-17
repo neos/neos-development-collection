@@ -14,9 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Projection\ContentGraph\References;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
@@ -31,7 +32,6 @@ use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\Exception\NodeImplementationClassNameIsInvalid;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
@@ -41,6 +41,8 @@ use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
+ *
+ * @internal
  */
 final class NodeFactory
 {
@@ -49,6 +51,7 @@ final class NodeFactory
     private PropertyConverter $propertyConverter;
 
     public function __construct(
+        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
         NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
@@ -66,34 +69,23 @@ final class NodeFactory
         ?ContentStreamIdentifier $contentStreamIdentifier = null
     ): Node {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $nodeClassName = $nodeType->getConfiguration('class')
-            ?: Node::class;
-        if (!class_exists($nodeClassName)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
-        }
-        if (!in_array(Node::class, class_implements($nodeClassName) ?: [])) {
-            if (in_array(Node::class, class_implements($nodeClassName) ?: [])) {
-                throw NodeImplementationClassNameIsInvalid
-                    ::becauseTheClassImplementsTheDeprecatedLegacyInterface($nodeClassName);
-            }
-            throw NodeImplementationClassNameIsInvalid
-                ::becauseTheClassDoesNotImplementTheRequiredInterface($nodeClassName);
-        }
-        /** @var Node $result */
-        $result = new $nodeClassName(
-            $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+        $result = new Node(
+            ContentSubgraphIdentity::create(
+                $this->contentRepositoryIdentifier,
+                $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
+                $visibilityConstraints
+            ),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
             new PropertyCollection(
                 SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                 $this->propertyConverter
             ),
-            NodeAggregateClassification::from($nodeRow['classification']),
-            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-            $visibilityConstraints
+            $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
         );
 
         return $result;

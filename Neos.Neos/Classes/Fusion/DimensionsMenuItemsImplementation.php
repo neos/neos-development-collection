@@ -29,7 +29,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-
     /**
      * @return array<mixed>
      */

@@ -77,10 +77,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
     ): References;
 
     /**
+     * TODO: RENAME: findById? or findByNodeAggregateId?
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return Node|null
      */
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node; // TODO: RENAME: findById? or findByNodeAggregateId?
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier

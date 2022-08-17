@@ -155,7 +155,9 @@ class NodesController extends ActionController
 
             $nodes = [];
             foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
-                $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+                $node = $subgraph->findNodeByNodeAggregateIdentifier(
+                    NodeAggregateIdentifier::fromString($nodeAggregateIdentifier)
+                );
                 if ($node !== null) {
                     $nodes[] = $node;
                 }
