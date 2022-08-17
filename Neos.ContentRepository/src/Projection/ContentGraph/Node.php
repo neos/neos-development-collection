@@ -18,9 +18,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
  * Main read model of the {@see ContentSubgraphInterface}.
@@ -47,8 +47,8 @@ final class Node
          * - {@see getSubgraphIdentitity}
          * - {@see getNodeAggregateIdentifier} (this method)
          *
-         * With the above information, you can fetch a Node Accessor using {@see NodeAccessorManager::accessorFor()}, or
-         * (for lower-level access) a Subgraph using {@see ContentGraphInterface::getSubgraphByIdentifier()}.
+         * With the above information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraph()}.
+         * or {@see ContentRepositoryRegistry::subgraphForNode()}
          */
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
         public readonly NodeAggregateClassification $classification,

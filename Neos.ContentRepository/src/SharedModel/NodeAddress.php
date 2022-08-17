@@ -32,6 +32,9 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
  */
 final class NodeAddress
 {
+    /**
+     * @internal use NodeAddressFactory, if you want to create a NodeAddress
+     */
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly DimensionSpacePoint $dimensionSpacePoint,

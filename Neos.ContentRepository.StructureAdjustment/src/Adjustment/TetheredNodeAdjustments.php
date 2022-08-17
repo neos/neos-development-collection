@@ -61,7 +61,7 @@ class TetheredNodeAdjustments
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
-                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
+                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
                         $node->subgraphIdentity->contentStreamIdentifier,
                         $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
@@ -130,7 +130,7 @@ class TetheredNodeAdjustments
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($nodeAggregate->getNodes() as $node) {
                     assert($node instanceof Node);
-                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
+                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
                         $node->subgraphIdentity->contentStreamIdentifier,
                         $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()

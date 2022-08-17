@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
@@ -81,11 +82,6 @@ class FindOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
@@ -200,14 +196,12 @@ class FindOperation extends AbstractOperation
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->subgraphIdentity
-            );
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
             $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamIdentifier
                 . '@' . $contextNode->subgraphIdentity->dimensionSpacePoint);
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
-                    'subgraph' => $nodeAccessor,
+                    'subgraph' => $subgraph,
                     'nodes' => []
                 ];
             }
@@ -228,9 +222,9 @@ class FindOperation extends AbstractOperation
         array $result
     ): array {
         foreach ($entryPoints as $entryPoint) {
-            /** @var NodeAccessorInterface $nodeAccessor */
-            $nodeAccessor = $entryPoint['subgraph'];
-            $nodeByIdentifier = $nodeAccessor->findByIdentifier($nodeAggregateIdentifier);
+            /** @var ContentSubgraphInterface $subgraph */
+            $subgraph = $entryPoint['subgraph'];
+            $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
             if ($nodeByIdentifier) {
                 $result[] = $nodeByIdentifier;
             }
@@ -247,20 +241,20 @@ class FindOperation extends AbstractOperation
     protected function addNodesByPath(NodePath $nodePath, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
-            /** @var NodeAccessorInterface $nodeAccessor */
-            $nodeAccessor = $entryPoint['subgraph'];
+            /** @var ContentSubgraphInterface $subgraph */
+            $subgraph = $entryPoint['subgraph'];
             foreach ($entryPoint['nodes'] as $node) {
                 /** @var Node $node */
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
                     while ($rootNode instanceof Node && !$rootNode->classification->isRoot()) {
-                        $rootNode = $nodeAccessor->findParentNode($rootNode);
+                        $rootNode = $subgraph->findParentNode($rootNode->nodeAggregateIdentifier);
                     }
                     if ($rootNode instanceof Node) {
-                        $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
+                        $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->nodeAggregateIdentifier);
                     }
                 } else {
-                    $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $node);
+                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->nodeAggregateIdentifier);
                 }
                 if (isset($nodeByPath)) {
                     $result[] = $nodeByPath;
@@ -280,10 +274,10 @@ class FindOperation extends AbstractOperation
     {
         $nodeTypeFilter = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString($nodeTypeName->jsonSerialize());
         foreach ($entryPoints as $entryPoint) {
-            /** @var NodeAccessorInterface $nodeAccessor */
-            $nodeAccessor = $entryPoint['subgraph'];
+            /** @var ContentSubgraphInterface $subgraph */
+            $subgraph = $entryPoint['subgraph'];
 
-            foreach ($nodeAccessor->findDescendants(
+            foreach ($subgraph->findDescendants(
                 $entryPoint['nodes'],
                 $nodeTypeFilter,
                 null

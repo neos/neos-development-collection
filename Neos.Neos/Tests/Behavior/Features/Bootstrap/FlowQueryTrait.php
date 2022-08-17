@@ -54,7 +54,7 @@ trait FlowQueryTrait
      */
     public function iHaveAFlowQueryWithNode(string $serializedNodeAggregateIdentifier)
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $subgraph = $this->contentGraph->getSubgraph(
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

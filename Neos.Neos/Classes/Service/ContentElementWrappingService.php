@@ -212,10 +212,8 @@ class ContentElementWrappingService
             $attributes['rel'] = 'typo3:content-collection';
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
-        $parentNode = $nodeAccessor->findParentNode($node);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $parentNode = $subgraph->findParentNode($node->nodeAggregateIdentifier);
         // these properties are needed together with the current NodeType to evaluate Node Type Constraints
         // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
         if ($parentNode) {
@@ -233,7 +231,7 @@ class ContentElementWrappingService
             // as the Node-Type-Switcher in the UI relies on that.
             $attributes['data-node-__parent-node-name'] = $parentNode->nodeName;
             $attributes['data-node-__grandparent-node-type']
-                = $nodeAccessor->findParentNode($parentNode)?->getNodeType()->getName();
+                = $subgraph->findParentNode($parentNode->nodeAggregateIdentifier)?->nodeType->getName();
         }
 
         return $attributes;
@@ -303,9 +301,7 @@ class ContentElementWrappingService
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
         if (!$siteNode instanceof Node) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            );
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
             $siteCandidate = $node;
             while ($siteCandidate instanceof Node) {
@@ -313,7 +309,7 @@ class ContentElementWrappingService
                     $siteNode = $siteCandidate;
                     break;
                 }
-                $siteCandidate = $nodeAccessor->findParentNode($siteCandidate);
+                $siteCandidate = $subgraph->findParentNode($siteCandidate->nodeAggregateIdentifier);
             }
         }
         $siteNodeAddress = null;
@@ -377,13 +373,12 @@ class ContentElementWrappingService
             return;
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $documentNode->subgraphIdentity
-        );
+
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($documentNode);
 
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
-        foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
+        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateIdentifier) as $node) {
             if ($node->nodeType->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
@@ -396,7 +391,7 @@ class ContentElementWrappingService
                 /** @codingStandardsIgnoreEnd */
             }
 
-            $nestedNodes = $nodeAccessor->findChildNodes($node);
+            $nestedNodes = $subgraph->findChildNodes($node);
             $hasChildNodes = false;
             foreach ($nestedNodes as $nestedNode) {
                 $hasChildNodes = true;

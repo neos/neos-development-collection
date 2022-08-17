@@ -11,13 +11,12 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "prevAll" operation working on ContentRepository nodes. It iterates over all
@@ -42,9 +41,9 @@ class PrevAllOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -69,13 +68,7 @@ class PrevAllOperation extends AbstractOperation
         $output = [];
         $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-            // @todo: implement NodeAccessor::getPrecedingSiblings
-            foreach ($this->getPrevForNode($contextNode, $nodeAccessor) as $prevNode) {
+            foreach ($this->getPrevForNode($contextNode) as $prevNode) {
                 if ($prevNode !== null
                     && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateIdentifier])
                 ) {
@@ -93,16 +86,16 @@ class PrevAllOperation extends AbstractOperation
 
     /**
      * @param Node $contextNode The node for which the preceding node should be found
-     * @param NodeAccessorInterface $nodeAccessor
      * @return Nodes The preceding nodes of $contextNode
      */
-    protected function getPrevForNode(Node $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getPrevForNode(Node $contextNode): Nodes
     {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
         if ($parentNode === null) {
             return Nodes::createEmpty();
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->previousAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->previousAll($contextNode);
     }
 }

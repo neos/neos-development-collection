@@ -11,11 +11,11 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "siblings" operation working on ContentRepository nodes. It iterates over all
@@ -40,9 +40,9 @@ class SiblingsOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -71,17 +71,15 @@ class SiblingsOperation extends AbstractOperation
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->subgraphIdentity
-            );
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
 
-            $parentNode = $nodeAccessor->findParentNode($contextNode);
+            $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
             if ($parentNode === null) {
                 // no parent found
                 continue;
             }
 
-            foreach ($nodeAccessor->findChildNodes($parentNode) as $childNode) {
+            foreach ($subgraph->findChildNodes($parentNode->nodeAggregateIdentifier) as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier])) {
                     $output[] = $childNode;
                     $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier] = true;

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -33,12 +32,6 @@ class NodeHelper implements ProtectedContextAwareInterface
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
@@ -68,12 +61,14 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
+                $nodePathOfNode = $this->contentRepositoryRegistry->subgraphForNode($node)
+                    ->findNodePath($node->nodeAggregateIdentifier);
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $this->findNodePath($node),
+                    $nodePathOfNode,
                     $nodePath,
                     $node->nodeType
                 ), 1389352984);
@@ -127,10 +122,8 @@ class NodeHelper implements ProtectedContextAwareInterface
     private function findRootNode(Node $node): Node
     {
         while (true) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            );
-            $parentNode = $nodeAccessor->findParentNode($node);
+            $parentNode = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findParentNode($node->nodeAggregateIdentifier);
             if ($parentNode === null) {
                 // there is no parent, so the root node was the node before
                 return $node;
@@ -140,22 +133,11 @@ class NodeHelper implements ProtectedContextAwareInterface
         }
     }
 
-    private function findNodePath(Node $node): NodePath
-    {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
-
-        return $nodeAccessor->findNodePath($node);
-    }
-
     private function findNodeByPath(Node $node, NodePath $nodePath): ?Node
     {
         foreach ($nodePath->getParts() as $nodeName) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            );
-            $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
+            $childNode = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findChildNodeConnectedThroughEdgeName($node->nodeAggregateIdentifier, $nodeName);
             if ($childNode === null) {
                 // we cannot find the child node, so there is no node on this path
                 return null;

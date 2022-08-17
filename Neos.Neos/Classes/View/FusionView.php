@@ -18,6 +18,7 @@ use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;
@@ -43,9 +44,9 @@ class FusionView extends AbstractView
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * Renders the view
@@ -177,10 +178,9 @@ class FusionView extends AbstractView
 
     protected function getClosestDocumentNode(Node $node): ?Node
     {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         while ($node !== null && !$node->nodeType->isOfType('Neos.Neos:Document')) {
-            $node = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            )->findParentNode($node);
+            $node = $subgraph->findParentNode($node->nodeAggregateIdentifier);
         }
 
         return $node;

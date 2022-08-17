@@ -93,18 +93,14 @@ class ContextOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var Node $contextNode */
 
-            $contentSubgraphIdentity = $contextNode->subgraphIdentity;
+            $subgraphIdentity = $contextNode->subgraphIdentity;
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
-                $visibilityConstraints = $invisibleContentShown
-                    ? VisibilityConstraints::withoutRestrictions()
-                    : VisibilityConstraints::frontend();
-                $contentSubgraphIdentity = new ContentSubgraphIdentity(
-                    $contentSubgraphIdentity->contentRepositoryIdentifier,
-                    $contentSubgraphIdentity->contentStreamIdentifier,
-                    $contentSubgraphIdentity->dimensionSpacePoint,
-                    $visibilityConstraints
+                $subgraphIdentity = $subgraphIdentity->withVisibilityConstraints(
+                    $invisibleContentShown
+                        ? VisibilityConstraints::withoutRestrictions()
+                        : VisibilityConstraints::frontend()
                 );
             }
 
@@ -116,19 +112,19 @@ class ContextOperation extends AbstractOperation
 
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
                 if (!is_null($workspace)) {
-                    $contentSubgraphIdentity = new ContentSubgraphIdentity(
-                        $contentSubgraphIdentity->contentRepositoryIdentifier,
-                        $workspace->getCurrentContentStreamIdentifier(),
-                        $contentSubgraphIdentity->dimensionSpacePoint,
-                        $contentSubgraphIdentity->visibilityConstraints
+                    $subgraphIdentity = $subgraphIdentity->withContentStreamIdentifier(
+                        $workspace->getCurrentContentStreamIdentifier()
                     );
                 }
             }
 
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contentSubgraphIdentity
-            );
-            $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->nodeAggregateIdentifier);
+            $nodeInModifiedSubgraph = $contentRepository->getContentGraph()
+                ->getSubgraph(
+                    $subgraphIdentity->contentStreamIdentifier,
+                    $subgraphIdentity->dimensionSpacePoint,
+                    $subgraphIdentity->visibilityConstraints
+                )
+                ->findNodeByNodeAggregateIdentifier($contextNode->nodeAggregateIdentifier);
             if ($nodeInModifiedSubgraph !== null) {
                 $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->__toString()] = $nodeInModifiedSubgraph;
             }

@@ -58,7 +58,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $this->nodeFactory = $nodeFactory;
     }
 
-    public function getSubgraphByIdentifier(
+    public function getSubgraph(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints

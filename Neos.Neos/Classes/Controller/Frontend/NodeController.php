@@ -16,11 +16,9 @@ namespace Neos\Neos\Controller\Frontend;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
@@ -56,12 +54,6 @@ class NodeController extends ActionController
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -139,7 +131,7 @@ class NodeController extends ActionController
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
@@ -155,15 +147,7 @@ class NodeController extends ActionController
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $contentRepository);
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $siteDetectionResult->contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                $visibilityConstraints
-            )
-        );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException(
@@ -223,7 +207,7 @@ class NodeController extends ActionController
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
@@ -239,15 +223,7 @@ class NodeController extends ActionController
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $contentRepository);
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $siteDetectionResult->contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                $visibilityConstraints
-            )
-        );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);

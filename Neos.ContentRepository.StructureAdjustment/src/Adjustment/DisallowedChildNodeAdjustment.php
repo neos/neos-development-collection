@@ -55,7 +55,7 @@ class DisallowedChildNodeAdjustment
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-                $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
+                $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()

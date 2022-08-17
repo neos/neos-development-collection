@@ -197,7 +197,7 @@ trait NodeTypeChange
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
-                $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+                $subgraph = $contentRepository->getContentGraph()->getSubgraph(
                     $node->subgraphIdentity->contentStreamIdentifier,
                     $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
@@ -433,7 +433,7 @@ trait NodeTypeChange
     ): DimensionSpacePointSet {
         $points = [];
         foreach ($childNodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-            $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $childNodeAggregate->getContentStreamIdentifier(),
                 $coveredDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()

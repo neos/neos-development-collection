@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Aspects;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -49,9 +48,6 @@ class PluginUriAspect
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
-
     /**
      * @Flow\Around("method(Neos\Flow\Mvc\Routing\UriBuilder->uriFor())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint The current join point
@@ -82,15 +78,13 @@ class PluginUriAspect
 
         $documentNode = null;
         if ($targetNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $targetNode->subgraphIdentity
-            );
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($targetNode);
             $documentNode = $targetNode;
             while ($documentNode instanceof Node) {
-                if ($documentNode->nodeTypeName->equals(NodeTypeNameFactory::forDocument())) {
+                if ($documentNode->nodeType->isOfType((string)NodeTypeNameFactory::forDocument())) {
                     break;
                 }
-                $documentNode = $nodeAccessor->findParentNode($documentNode);
+                $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateIdentifier);
             }
         }
 

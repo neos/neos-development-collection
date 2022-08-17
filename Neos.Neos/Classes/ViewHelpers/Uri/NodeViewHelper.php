@@ -14,20 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Uri;
 
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -36,6 +31,8 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -114,12 +111,6 @@ class NodeViewHelper extends AbstractViewHelper
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -243,10 +234,10 @@ class NodeViewHelper extends AbstractViewHelper
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (
-            NodeAddressCannotBeSerializedException
-            | HttpException
-            | NoMatchingRouteException
-            | MissingActionNameException $e
+        NodeAddressCannotBeSerializedException
+        |HttpException
+        |NoMatchingRouteException
+        |MissingActionNameException $e
         ) {
             throw new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
@@ -279,9 +270,10 @@ class NodeViewHelper extends AbstractViewHelper
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
-            $documentNode->subgraphIdentity->contentRepositoryIdentifier,
-            $documentNodeAddress
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $documentNodeAddress->contentStreamIdentifier,
+            $documentNodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
         );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
@@ -294,46 +286,25 @@ class NodeViewHelper extends AbstractViewHelper
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
                     $documentNodeAddress->nodeAggregateIdentifier,
-                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601366598);
             }
             if ($path === '~') {
                 $targetNode = $siteNode;
             } else {
-                $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode);
+                $targetNode = $subgraph->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode->nodeAggregateIdentifier);
             }
         } else {
-            $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString($path), $documentNode);
+            $targetNode = $subgraph->findNodeByPath(NodePath::fromString($path), $documentNode->nodeAggregateIdentifier);
         }
         if ($targetNode === null) {
             throw new ViewHelperException(sprintf(
                 'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
                 $path,
                 $documentNodeAddress->nodeAggregateIdentifier,
-                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789);
         }
         return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->nodeAggregateIdentifier);
-    }
-
-    /**
-     * Returns the ContentSubgraph that is specified via "subgraph" argument, if present.
-     * Otherwise the Subgraph of the given $nodeAddress
-     *
-     * @param NodeAddress $nodeAddress
-     * @return NodeAccessorInterface
-     */
-    private function getNodeAccessorForNodeAddress(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        NodeAddress $nodeAddress
-    ): NodeAccessorInterface {
-        return $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            )
-        );
     }
 }

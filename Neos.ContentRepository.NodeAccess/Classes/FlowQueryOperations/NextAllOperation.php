@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -42,9 +43,9 @@ class NextAllOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -69,13 +70,7 @@ class NextAllOperation extends AbstractOperation
         $output = [];
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-
-            foreach ($this->getNextForNode($contextNode, $nodeAccessor) as $nextNode) {
+            foreach ($this->getNextForNode($contextNode) as $nextNode) {
                 if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateIdentifier])) {
                     $outputNodePaths[(string)$nextNode->nodeAggregateIdentifier] = true;
                     $output[] = $nextNode;
@@ -91,16 +86,17 @@ class NextAllOperation extends AbstractOperation
 
     /**
      * @param Node $contextNode The node for which the next node should be found
-     * @param NodeAccessorInterface $nodeAccessor
      * @return Nodes The next nodes of $contextNode
      */
-    protected function getNextForNode(Node $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getNextForNode(Node $contextNode): Nodes
     {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
         if ($parentNode === null) {
             return Nodes::createEmpty();
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->nextAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->nextAll($contextNode);
     }
 }

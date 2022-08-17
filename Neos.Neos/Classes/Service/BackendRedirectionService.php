@@ -182,14 +182,11 @@ class BackendRedirectionService
                 Node::class
             );
 
-            return $this->nodeAccessorManager->accessorFor(
-                new ContentSubgraphIdentity(
-                    $contentRepositoryIdentifier,
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
-                    VisibilityConstraints::withoutRestrictions()
-                )
-            )->findByIdentifier($lastVisitedNode->nodeAggregateIdentifier);
+            $contentRepository->getContentGraph()->getSubgraph(
+                $workspace->getCurrentContentStreamIdentifier(),
+                $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )->findNodeByNodeAggregateIdentifier($lastVisitedNode->nodeAggregateIdentifier);
         } catch (\Exception $exception) {
             return null;
         }

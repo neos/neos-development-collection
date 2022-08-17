@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -43,9 +44,9 @@ class HasOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -99,10 +100,8 @@ class HasOperation extends AbstractOperation
             }
             foreach ($elements as $element) {
                 if ($element instanceof Node) {
-                    $accessor = $this->nodeAccessorManager->accessorFor(
-                        $element->subgraphIdentity
-                    );
-                    $parent = $accessor->findParentNode($element);
+                    $parent = $this->contentRepositoryRegistry->subgraphForNode($element)
+                        ->findParentNode($element->nodeAggregateIdentifier);
                     if (!is_null($parent)) {
                         foreach ($context as $contextElement) {
                             /** @var Node $contextElement */

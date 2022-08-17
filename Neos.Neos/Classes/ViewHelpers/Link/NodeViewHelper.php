@@ -288,7 +288,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
 
         $subgraph = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
                 $node->subgraphIdentity->visibilityConstraints
@@ -380,9 +380,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
-            $documentNode->subgraphIdentity->contentRepositoryIdentifier,
-            $documentNodeAddress
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $documentNodeAddress->contentStreamIdentifier,
+            $documentNodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
         );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
@@ -395,46 +396,25 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
                     $documentNodeAddress->nodeAggregateIdentifier,
-                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601366598);
             }
             if ($path === '~') {
                 $targetNode = $siteNode;
             } else {
-                $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode);
+                $targetNode = $subgraph->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode->nodeAggregateIdentifier);
             }
         } else {
-            $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString($path), $documentNode);
+            $targetNode = $subgraph->findNodeByPath(NodePath::fromString($path), $documentNode->nodeAggregateIdentifier);
         }
         if ($targetNode === null) {
             throw new ViewHelperException(sprintf(
                 'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
                 $path,
                 $documentNodeAddress->nodeAggregateIdentifier,
-                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789);
         }
         return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->nodeAggregateIdentifier);
-    }
-
-    /**
-     * Returns the ContentSubgraph that is specified via "subgraph" argument, if present.
-     * Otherwise the Subgraph of the given $nodeAddress
-     *
-     * @param NodeAddress $nodeAddress
-     * @return NodeAccessorInterface
-     */
-    private function getNodeAccessorForNodeAddress(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        NodeAddress $nodeAddress
-    ): NodeAccessorInterface {
-        return $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            )
-        );
     }
 }

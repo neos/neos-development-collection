@@ -727,7 +727,7 @@ class WorkspacesController extends AbstractModuleController
                 $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
                 $contentStreamIdentifier = $baseWorkspace->getCurrentContentStreamIdentifier();
             }
-            $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
                 $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
@@ -817,7 +817,7 @@ class WorkspacesController extends AbstractModuleController
         ContentStreamIdentifier $baseContentStreamIdentifier,
         ContentRepository $contentRepository
     ): ?Node {
-        $baseSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $baseSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $baseContentStreamIdentifier,
             $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

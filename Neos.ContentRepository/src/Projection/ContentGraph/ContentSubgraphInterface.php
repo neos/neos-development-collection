@@ -36,7 +36,7 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
  *
  * From the central Content Repository instance, you can fetch the singleton
  * {@see ContentGraphInterface}. There, you can call
- * {@see ContentGraphInterface::getSubgraphByIdentifier()} and pass in
+ * {@see ContentGraphInterface::getSubgraph()} and pass in
  * the {@see ContentStreamIdentifier}, {@see DimensionSpacePoint} and
  * {@see VisibilityConstraints} you want to have.
  *
@@ -80,7 +80,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return Node|null
      */
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node;
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node; // TODO: RENAME: findById? or findByNodeAggregateId?
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier

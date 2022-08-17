@@ -71,9 +71,6 @@ class NodeView extends JsonView
      */
     protected $contentRepositoryRegistry;
 
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
-
     /**
      * Assigns a node to the NodeView.
      *
@@ -133,16 +130,14 @@ class NodeView extends JsonView
 
     private function findClosestDocumentNode(Node $node): ?Node
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
         $documentNode = $node;
         while ($documentNode instanceof Node) {
             if ($documentNode->nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                 return $documentNode;
             }
-            $documentNode = $nodeAccessor->findParentNode($documentNode);
+            $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateIdentifier);
         }
 
         return null;
@@ -263,18 +258,17 @@ class NodeView extends JsonView
         Node $untilNode = null,
         $recursionPointer = 1
     ) {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->subgraphIdentity->contentRepositoryIdentifier
         );
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeTypeConstraintParser = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager());
 
         $nodeTypeConstraints = $nodeTypeFilter
             ? $nodeTypeConstraintParser->parseFilterString($nodeTypeFilter)
             : null;
-        foreach ($nodeAccessor->findChildNodes($node, $nodeTypeConstraints) as $childNode) {
+        foreach ($subgraph->findChildNodes($node->nodeAggregateIdentifier, $nodeTypeConstraints) as $childNode) {
             if (
                 !$this->privilegeManager->isGranted(
                     NodeTreePrivilege::class,
@@ -290,8 +284,8 @@ class NodeView extends JsonView
                 $expand === false
                 && $untilNode !== null
                 && strpos(
-                    (string)$nodeAccessor->findNodePath($untilNode),
-                    (string)$nodeAccessor->findNodePath($childNode),
+                    (string)$subgraph->findNodePath($untilNode->nodeAggregateIdentifier),
+                    (string)$subgraph->findNodePath($childNode->nodeAggregateIdentifier),
                 ) === 0
                 && $childNode !== $untilNode
             ) {
@@ -302,10 +296,6 @@ class NodeView extends JsonView
 
             switch ($this->outputStyle) {
                 case self::STYLE_LIST:
-                    $contentRepository = $this->contentRepositoryRegistry->get(
-                        $childNode->subgraphIdentity->contentRepositoryIdentifier
-                    );
-                    $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
                     $childNodeAddress = $nodeAddressFactory->createFromNode($childNode);
                     $properties = $childNode->properties;
                     $properties['__contextNodePath'] = $childNodeAddress->serializeForUri();
@@ -329,7 +319,7 @@ class NodeView extends JsonView
                     break;
                 case self::STYLE_TREE:
                     $children = [];
-                    $grandChildNodes = $nodeAccessor->findChildNodes($childNode, $nodeTypeConstraints);
+                    $grandChildNodes = $subgraph->findChildNodes($childNode->nodeAggregateIdentifier, $nodeTypeConstraints);
                     $hasChildNodes = $grandChildNodes->count() > 0;
                     if ($expand && $hasChildNodes) {
                         $this->collectChildNodeData(
@@ -356,17 +346,12 @@ class NodeView extends JsonView
      */
     public function collectParentNodeData(Node $rootNode, Nodes $nodes): array
     {
-        $rootNodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $rootNode->subgraphIdentity
-        );
-        $rootNodePath = (string)$rootNodeAccessor->findNodePath($rootNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($rootNode);
+        $rootNodePath = (string)$subgraph->findNodePath($rootNode->nodeAggregateIdentifier);
         $nodeCollection = [];
 
-        $addNode = function (Node $node, bool $matched) use ($rootNodePath, &$nodeCollection) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            );
-            $nodePath = (string)$nodeAccessor->findNodePath($node);
+        $addNode = function (Node $node, bool $matched) use ($subgraph, $rootNodePath, &$nodeCollection) {
+            $nodePath = (string)$subgraph->findNodePath($node->nodeAggregateIdentifier);
             $path = str_replace('/', '.children.', substr($nodePath, strlen($rootNodePath) + 1));
             if ($path !== '') {
                 $nodeCollection = Arrays::setValueByPath($nodeCollection, $path . '.node', $node);
@@ -376,11 +361,8 @@ class NodeView extends JsonView
             }
         };
 
-        $findParent = function (Node $node) use (&$findParent, &$addNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            );
-            $parent = $nodeAccessor->findParentNode($node);
+        $findParent = function (Node $node) use ($subgraph, &$findParent, &$addNode) {
+            $parent = $subgraph->findParentNode($node->nodeAggregateIdentifier);
             if ($parent !== null) {
                 if (
                     $this->privilegeManager->isGranted(

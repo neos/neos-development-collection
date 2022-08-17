@@ -169,7 +169,7 @@ class ContentController extends ActionController
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
 
         $node = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
@@ -409,16 +409,14 @@ class ContentController extends ActionController
         if (is_null($workspace)) {
             throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
         }
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $contentRepositoryIdentifier,
+        $subgraph = $contentRepository->getContentGraph()
+            ->getSubgraph(
                 $workspace->getCurrentContentStreamIdentifier(),
                 DimensionSpacePoint::fromArray($dimensions),
                 VisibilityConstraints::withoutRestrictions()
-            )
-        );
+            );
         $node = $identifier
-            ? $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($identifier))
+            ? $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($identifier))
             : null;
 
         $views = [];
@@ -512,17 +510,11 @@ class ContentController extends ActionController
             if ($node->nodeType->isOfType('Neos.Neos:Document')) {
                 return $node;
             }
-            $node = $this->findParentNode($node);
+            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findParentNode($node->nodeAggregateIdentifier);
         }
 
         return null;
-    }
-
-    protected function findParentNode(Node $node): ?Node
-    {
-        return $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        )->findParentNode($node);
     }
 
     /**

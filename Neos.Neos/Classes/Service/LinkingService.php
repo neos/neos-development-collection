@@ -237,13 +237,10 @@ class LinkingService
                             1409734235
                         );
                     }
-                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $contextNode->subgraphIdentity
-                    );
-
-                    return $nodeAccessor->findByIdentifier(
-                        NodeAggregateIdentifier::fromString($matches[2])
-                    );
+                    return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                        ->findNodeByNodeAggregateIdentifier(
+                            NodeAggregateIdentifier::fromString($matches[2])
+                        );
                 case 'asset':
                     /** @var ?AssetInterface $asset */
                     $asset = $this->assetRepository->findByIdentifier($matches[2]);
@@ -322,17 +319,14 @@ class LinkingService
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    new ContentSubgraphIdentity(
-                        $contentRepositoryIdentifier,
-                        $nodeAddress->contentStreamIdentifier,
-                        $nodeAddress->dimensionSpacePoint,
-                        $workspace && !$workspace->isPublicWorkspace()
-                            ? VisibilityConstraints::withoutRestrictions()
-                            : VisibilityConstraints::frontend()
-                    )
+                $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                    $nodeAddress->contentStreamIdentifier,
+                    $nodeAddress->dimensionSpacePoint,
+                    $workspace && !$workspace->isPublicWorkspace()
+                        ? VisibilityConstraints::withoutRestrictions()
+                        : VisibilityConstraints::frontend()
                 );
-                $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+                $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
             } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(
@@ -340,11 +334,8 @@ class LinkingService
                         1407879905
                     );
                 }
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $baseNode->subgraphIdentity
-                );
-
-                $node = $nodeAccessor->findNodeByPath(NodePath::fromString($nodeString), $baseNode);
+                $node = $this->contentRepositoryRegistry->subgraphForNode($baseNode)
+                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->nodeAggregateIdentifier);
             }
             if (!$node instanceof Node) {
                 throw new NeosException(sprintf(

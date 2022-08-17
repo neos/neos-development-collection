@@ -20,15 +20,14 @@ use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -37,11 +36,9 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
-use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConverterService;
 use Neos\Neos\View\Service\NodeJsonView;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Rudimentary REST service for nodes
@@ -63,12 +60,6 @@ class NodesController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject()
@@ -135,29 +126,23 @@ class NodesController extends ActionController
                     1645631728
                 );
             }
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                new ContentSubgraphIdentity(
-                    $contentRepositoryIdentifier,
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
-                    VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
-                )
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $workspace->getCurrentContentStreamIdentifier(),
+                DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
+                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
         } else {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                new ContentSubgraphIdentity(
-                    $contentRepositoryIdentifier,
-                    $nodeAddress->contentStreamIdentifier,
-                    $nodeAddress->dimensionSpacePoint,
-                    VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
-                )
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
         }
 
         if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
-            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
-            $nodes = !is_null($entryNode) ? $nodeAccessor->findDescendants(
-                [$entryNode],
+            $entryNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
+            $nodes = !is_null($entryNode) ? $subgraph->findDescendants(
+                [$entryNode->nodeAggregateIdentifier],
                 NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
                     implode(',', $nodeTypes)
                 ),
@@ -170,7 +155,7 @@ class NodesController extends ActionController
 
             $nodes = [];
             foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
-                $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+                $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
                 if ($node !== null) {
                     $nodes[] = $node;
                 }
@@ -202,7 +187,7 @@ class NodesController extends ActionController
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
         $subgraph = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $workspace->getCurrentContentStreamIdentifier(),
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
@@ -267,14 +252,14 @@ class NodesController extends ActionController
         assert($workspace instanceof Workspace);
 
         $sourceSubgraph = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $workspace->getCurrentContentStreamIdentifier(),
                 DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions),
                 VisibilityConstraints::withoutRestrictions()
             );
 
         $targetSubgraph = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $workspace->getCurrentContentStreamIdentifier(),
                 DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
                 VisibilityConstraints::withoutRestrictions()

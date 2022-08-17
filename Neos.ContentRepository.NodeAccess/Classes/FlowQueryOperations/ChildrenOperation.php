@@ -87,9 +87,8 @@ class ChildrenOperation extends AbstractOperation
 
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            $childNodes = $this->nodeAccessorManager->accessorFor(
-                $contextNode->subgraphIdentity
-            )->findChildNodes($contextNode);
+            $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findChildNodes($contextNode->nodeAggregateIdentifier);
             foreach ($childNodes as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier])) {
                     $output[] = $childNode;
@@ -148,10 +147,9 @@ class ChildrenOperation extends AbstractOperation
                         $currentPathSegments = $nodePathSegments;
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
-                            $resolvedNode = $this->nodeAccessorManager->accessorFor(
-                                $resolvedNode->subgraphIdentity
-                            )->findChildNodeConnectedThroughEdgeName(
-                                $resolvedNode,
+                            $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($resolvedNode)
+                                ->findChildNodeConnectedThroughEdgeName(
+                                $resolvedNode->nodeAggregateIdentifier,
                                 NodeName::fromString($nodePathSegment)
                             );
                         }
@@ -171,11 +169,9 @@ class ChildrenOperation extends AbstractOperation
                     /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $contentRepository = $this->contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryIdentifier);
-                        /** @var Node $childNode */
-                        $childNodes = $this->nodeAccessorManager->accessorFor(
-                            $contextNode->subgraphIdentity
-                        )->findChildNodes(
-                            $contextNode,
+                        $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                            ->findChildNodes(
+                            $contextNode->nodeAggregateIdentifier,
                             NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
                                 implode(',', $allowedNodeTypes)
                             )

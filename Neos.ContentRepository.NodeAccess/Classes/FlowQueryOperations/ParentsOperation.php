@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -41,9 +42,9 @@ class ParentsOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -71,9 +72,8 @@ class ParentsOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             $node = $contextNode;
             do {
-                $node = $this->nodeAccessorManager->accessorFor(
-                    $node->subgraphIdentity
-                )->findParentNode($node);
+                $node = $this->contentRepositoryRegistry->subgraphForNode($node)
+                    ->findParentNode($node);
                 if ($node === null) {
                     // no parent found
                     break;

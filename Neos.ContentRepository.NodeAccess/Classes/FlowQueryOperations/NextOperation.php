@@ -11,12 +11,11 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "next" operation working on ContentRepository nodes. It iterates over all
@@ -42,9 +41,9 @@ class NextOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -69,13 +68,7 @@ class NextOperation extends AbstractOperation
         $output = [];
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-
-            $nextNode = $this->getNextForNode($contextNode, $nodeAccessor);
+            $nextNode = $this->getNextForNode($contextNode);
             if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateIdentifier])) {
                 $outputNodePaths[(string)$nextNode->nodeAggregateIdentifier] = true;
                 $output[] = $nextNode;
@@ -90,16 +83,17 @@ class NextOperation extends AbstractOperation
 
     /**
      * @param Node $contextNode The node for which the preceding node should be found
-     * @param NodeAccessorInterface $nodeAccessor
      * @return Node|null The following node of $contextNode or NULL
      */
-    protected function getNextForNode(Node $contextNode, NodeAccessorInterface $nodeAccessor): ?Node
+    protected function getNextForNode(Node $contextNode): ?Node
     {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
         if ($parentNode === null) {
             return null;
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->next($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->next($contextNode);
     }
 }

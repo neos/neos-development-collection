@@ -56,7 +56,7 @@ final class ContentGraph implements ContentGraphInterface
     ) {
     }
 
-    final public function getSubgraphByIdentifier(
+    final public function getSubgraph(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints

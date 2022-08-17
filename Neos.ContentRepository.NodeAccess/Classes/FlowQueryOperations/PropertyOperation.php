@@ -11,13 +11,13 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -50,9 +50,9 @@ class PropertyOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -90,24 +90,22 @@ class PropertyOperation extends AbstractOperation
 
             /* @var $element Node */
             $element = $context[0];
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $element->subgraphIdentity
-            );
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             if ($propertyPath === '_path') {
-                return (string)$nodeAccessor->findNodePath($element);
+                return (string)$subgraph->findNodePath($element->nodeAggregateIdentifier);
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
                 if ($element->nodeType->getPropertyType($propertyPath) === 'reference') {
                     return (
-                        $nodeAccessor->findReferencedNodes(
-                            $element,
+                        $subgraph->findReferencedNodes(
+                            $element->nodeAggregateIdentifier,
                             PropertyName::fromString($propertyPath)
                         )[0] ?? null
                     )?->node;
                 } elseif ($element->nodeType->getPropertyType($propertyPath) === 'references') {
-                    return $nodeAccessor->findReferencedNodes(
-                        $element,
+                    return $subgraph->findReferencedNodes(
+                        $element->nodeAggregateIdentifier,
                         PropertyName::fromString($propertyPath)
                     )->getNodes();
                 } else {

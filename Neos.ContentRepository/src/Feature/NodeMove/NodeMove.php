@@ -238,7 +238,7 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        $originSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamIdentifier,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
@@ -255,7 +255,7 @@ trait NodeMove
         foreach ($succeedingSiblingAssignments as $coveredDimensionSpacePointHash => $succeedingSiblingAssignment) {
             /** @var DimensionSpace\DimensionSpacePoint $affectedDimensionSpacePoint */
             $affectedDimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
-            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
                 $affectedDimensionSpacePoint,
                 $visibilityConstraints
@@ -333,7 +333,7 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        $originContentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $originContentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamIdentifier,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
@@ -342,7 +342,7 @@ trait NodeMove
             $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
-            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
                 $visibilityConstraints

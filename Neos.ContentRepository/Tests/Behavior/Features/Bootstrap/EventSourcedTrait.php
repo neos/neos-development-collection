@@ -555,7 +555,7 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateIdentifier, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
         Assert::assertNotNull($node, 'Did not find a node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
@@ -576,7 +576,7 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
         if (!$this->getRootNodeAggregateIdentifier()) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }

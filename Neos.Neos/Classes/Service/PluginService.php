@@ -15,21 +15,20 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Neos;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 
 /**
@@ -50,9 +49,6 @@ class PluginService
      * @var Context
      */
     protected $securityContext;
-
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -104,15 +100,12 @@ class PluginService
      */
     protected function getNodes(Node $siteNode, NodeTypeNames $nodeTypeNames): Nodes
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $siteNode->subgraphIdentity
-        );
-
-        return $nodeAccessor->findDescendants(
-            [$siteNode],
-            new NodeTypeConstraints(false, $nodeTypeNames),
-            null
-        );
+        return $this->contentRepositoryRegistry->subgraphForNode($siteNode)
+            ->findDescendants(
+                [$siteNode->nodeAggregateIdentifier],
+                new NodeTypeConstraints(false, $nodeTypeNames),
+                null
+            );
     }
 
     /**

@@ -16,6 +16,7 @@ namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -31,9 +32,9 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     public function initializeArguments(): void
     {
@@ -46,15 +47,14 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
         $node = $this->arguments['node'];
         assert($node instanceof Node);
         $documentNodes = [];
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+
         $currentNode = $node;
         while ($currentNode instanceof Node) {
             if ($currentNode->nodeType->isOfType('Neos.Neos:Document')) {
                 $documentNodes[] = $currentNode;
             }
-            $currentNode = $nodeAccessor->findParentNode($currentNode);
+            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateIdentifier);
         }
         $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);

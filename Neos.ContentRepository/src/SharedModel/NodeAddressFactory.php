@@ -106,7 +106,7 @@ class NodeAddressFactory
             ? \mb_substr($pathValues['nodePath'], 6)
             : $pathValues['nodePath']);
 
-        $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

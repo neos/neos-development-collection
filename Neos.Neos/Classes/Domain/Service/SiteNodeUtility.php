@@ -16,13 +16,13 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -32,7 +32,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 final class SiteNodeUtility
 {
     public function __construct(
-        private readonly NodeAccessorManager $nodeAccessorManager,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly DomainRepository $domainRepository,
         private readonly SiteRepository $siteRepository
     ) {
@@ -41,9 +41,7 @@ final class SiteNodeUtility
     public function findSiteNode(Node $node): Node
     {
         $previousNode = null;
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
             if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
@@ -53,7 +51,7 @@ final class SiteNodeUtility
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $nodeAccessor->findParentNode($node));
+        } while ($node = $subgraph->findParentNode($node->nodeAggregateIdentifier));
 
         // no Site node found at rootline
         throw new \RuntimeException('No site node found!');
@@ -71,18 +69,21 @@ final class SiteNodeUtility
             : $this->siteRepository->findDefault();
 
         if ($site instanceof Site) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                new ContentSubgraphIdentity(
-                    $contentRepositoryIdentifier,
-                    $contentStreamIdentifier,
-                    $dimensionSpacePoint,
-                    $visibilityConstraints,
-                )
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                $visibilityConstraints,
             );
 
-            $sitesNode = $nodeAccessor->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
-            $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
-                $sitesNode,
+            $rootNodeAggregate = $contentRepository->getContentGraph()
+                ->findRootNodeAggregateByType(
+                    $contentStreamIdentifier,
+                    NodeTypeName::fromString('Neos.Neos:Sites')
+                );
+            $sitesNode = $subgraph->findNodeByNodeAggregateIdentifier($rootNodeAggregate->getIdentifier());
+            $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                $sitesNode->nodeAggregateIdentifier,
                 $site->getNodeName()->toNodeName()
             );
             if ($siteNode instanceof Node) {

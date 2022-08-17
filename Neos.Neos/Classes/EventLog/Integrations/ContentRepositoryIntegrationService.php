@@ -416,12 +416,10 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
             return;
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->subgraphIdentity
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $documentNode = $node;
         while ($documentNode !== null && !$documentNode->nodeType->isAggregate()) {
-            $documentNode = $nodeAccessor->findParentNode($documentNode);
+            $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateIdentifier);
         }
 
         if ($documentNode === null) {
