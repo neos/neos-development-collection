@@ -27,15 +27,20 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
 
     public static function create(
         ContentStreamIdentifier $contentStreamIdentifier,
-        string $nodeFieldsToFetch
+        string $nodeFieldsToFetch,
+        string $tableNamePrefix
     ): self {
         $query = /** @lang PostgreSQL */'SELECT ' . $nodeFieldsToFetch
             . ', r.name as referencename, r.properties AS referenceproperties
-     FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
-        JOIN neos_contentgraph_node srcn ON srcn.relationanchorpoint = r.sourcenodeanchor
-        JOIN neos_contentgraph_hierarchyhyperrelation srch ON srcn.relationanchorpoint = ANY(srch.childnodeanchors)
-        JOIN neos_contentgraph_node tarn ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
-        JOIN neos_contentgraph_hierarchyhyperrelation tarh ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
+     FROM ' . $tableNamePrefix . '_referencerelation r
+        JOIN ' . $tableNamePrefix . '_node srcn
+            ON srcn.relationanchorpoint = r.sourcenodeanchor
+        JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation srch
+            ON srcn.relationanchorpoint = ANY(srch.childnodeanchors)
+        JOIN ' . $tableNamePrefix . '_node tarn
+            ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
+        JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation tarh
+            ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
      WHERE srch.contentstreamidentifier = :contentStreamIdentifier
      AND tarh.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -44,7 +49,8 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
 
         return new self(
             $query,
-            $parameters
+            $parameters,
+            $tableNamePrefix
         );
     }
 
@@ -58,7 +64,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters, $this->types);
+        return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withSourceNodeAggregateIdentifier(NodeAggregateIdentifier $sourceNodeAggregateIdentifier): self
@@ -70,7 +76,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['sourceNodeAggregateIdentifier'] = (string)$sourceNodeAggregateIdentifier;
 
-        return new self($query, $parameters, $this->types);
+        return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withTargetNodeAggregateIdentifier(
@@ -83,7 +89,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['targetNodeAggregateIdentifier'] = (string)$targetNodeAggregateIdentifier;
 
-        return new self($query, $parameters, $this->types);
+        return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withReferenceName(PropertyName $referenceName): self
@@ -95,21 +101,29 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['referenceName'] = (string)$referenceName;
 
-        return new self($query, $parameters, $this->types);
+        return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withSourceRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'src');
+        $query = $this->query . QueryUtility::getRestrictionClause(
+            $visibilityConstraints,
+            $this->tableNamePrefix,
+            'src'
+        );
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withTargetRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'tar');
+        $query = $this->query . QueryUtility::getRestrictionClause(
+            $visibilityConstraints,
+            $this->tableNamePrefix,
+            'tar'
+        );
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     /**
@@ -121,6 +135,6 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         $query .= '
     ORDER BY ' . implode(', ', $orderings);
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 }

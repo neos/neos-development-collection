@@ -54,12 +54,12 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         $this->types = $types;
     }
 
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier): self
+    public static function create(ContentStreamIdentifier $contentStreamIdentifier, string $tableNamePrefix): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier';
 
         $parameters = [

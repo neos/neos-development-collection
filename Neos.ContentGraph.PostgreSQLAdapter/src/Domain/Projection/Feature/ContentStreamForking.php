@@ -27,7 +27,7 @@ trait ContentStreamForking
     /**
      * @throws \Throwable
      */
-    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
+    private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->transactional(function () use ($event) {
             $parameters = [
@@ -36,23 +36,23 @@ trait ContentStreamForking
             ];
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-                'INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
                     (contentstreamidentifier, parentnodeanchor,
                      dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
                 SELECT :targetContentStreamIdentifier, parentnodeanchor,
                     dimensionspacepoint, dimensionspacepointhash, childnodeanchors
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' source
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation source
                 WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
                 $parameters
             );
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-                'INSERT INTO ' . RestrictionHyperrelationRecord::TABLE_NAME . '
+                'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
                     (contentstreamidentifier, dimensionspacepointhash,
                      originnodeaggregateidentifier, affectednodeaggregateidentifiers)
                 SELECT :targetContentStreamIdentifier, dimensionspacepointhash,
                     originnodeaggregateidentifier, affectednodeaggregateidentifiers
-                FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' source
+                FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
                 WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
                 $parameters
             );

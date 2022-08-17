@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\Command;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;

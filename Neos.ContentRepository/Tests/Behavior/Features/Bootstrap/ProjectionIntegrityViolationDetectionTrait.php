@@ -36,18 +36,14 @@ trait ProjectionIntegrityViolationDetectionTrait
     abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
-    protected function setupProjectionIntegrityViolationDetectionTrait(): void
-    {
-        $dbalClient = $this->objectManager->get(DbalClientInterface::class);
-        $this->projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($dbalClient));
-    }
-
     /**
      * @When /^I run integrity violation detection$/
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $this->lastIntegrityViolationDetectionResult = $this->projectionIntegrityViolationDetectionRunner->run();
+        $dbalClient = $this->objectManager->get(DbalClientInterface::class);
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($dbalClient));
+        $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 
     /**

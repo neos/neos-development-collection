@@ -12,9 +12,20 @@ Neos:
 
         dbname: 'neos_behat'
 
-
-  # We enable the race condition tracker. For details on how this works, see RaceTrackerCatchUpHook.php
   ContentRepositoryRegistry:
+    postgres:
+      persistence:
+        backendOptions:
+          driver: pdo_pgsql
+          # see docker-compose-full.yml
+          host: 'postgres'
+          port: 5432
+          dbname: 'neos_behat'
+          user: 'root'
+          password: 'db'
+          charset: 'UTF8'
+
+    # We enable the race condition tracker. For details on how this works, see RaceTrackerCatchUpHook.php
     presets:
       'default':
         projections:

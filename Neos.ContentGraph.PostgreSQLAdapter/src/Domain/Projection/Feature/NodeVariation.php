@@ -44,7 +44,7 @@ trait NodeVariation
     /**
      * @throws \Throwable
      */
-    public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
@@ -116,7 +116,8 @@ trait NodeVariation
                     $parentRelation->addChildNodeAnchor(
                         $specializedNode->relationAnchorPoint,
                         null,
-                        $this->getDatabaseConnection()
+                        $this->getDatabaseConnection(),
+                        $this->tableNamePrefix
                     );
                 }
             }
@@ -128,7 +129,7 @@ trait NodeVariation
         });
     }
 
-    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
+    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
@@ -165,7 +166,7 @@ trait NodeVariation
         });
     }
 
-    public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
+    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
@@ -219,7 +220,7 @@ trait NodeVariation
             $sourceNode->classification,
             $sourceNode->nodeName
         );
-        $copy->addToDatabase($this->getDatabaseConnection());
+        $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         return $copy;
     }
@@ -235,8 +236,8 @@ trait NodeVariation
     ): void {
         $currentNodeAnchorPointStatement = '
             WITH currentNodeAnchorPoint AS (
-                SELECT relationanchorpoint FROM ' . NodeRecord::TABLE_NAME . ' n
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' p
+                SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
+                    JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation p
                     ON n.relationanchorpoint = ANY(p.childnodeanchors)
                 WHERE p.contentstreamidentifier = :contentStreamIdentifier
                 AND p.dimensionspacepointhash = :affectedDimensionSpacePointHash
@@ -250,7 +251,7 @@ trait NodeVariation
         foreach ($affectedDimensionSpacePointSet as $affectedDimensionSpacePoint) {
             $parentStatement = /** @lang PostgreSQL */
                 $currentNodeAnchorPointStatement . '
-                UPDATE ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                UPDATE ' . $this->tableNamePrefix . '_hierarchyhyperrelation
                     SET parentnodeanchor = :newNodeRelationAnchorPoint
                     WHERE contentstreamidentifier = :contentStreamIdentifier
                         AND dimensionspacepointhash = :affectedDimensionSpacePointHash
@@ -258,7 +259,7 @@ trait NodeVariation
                 ';
             $childStatement = /** @lang PostgreSQL */
                 $currentNodeAnchorPointStatement . '
-                UPDATE ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                UPDATE ' . $this->tableNamePrefix . '_hierarchyhyperrelation
                     SET childnodeanchors = array_replace(
                         childnodeanchors,
                         (SELECT relationanchorpoint FROM currentNodeAnchorPoint),
@@ -325,7 +326,8 @@ trait NodeVariation
                     $hierarchyRelation->addChildNodeAnchor(
                         $targetRelationAnchor,
                         $targetSucceedingSibling?->relationAnchorPoint,
-                        $this->getDatabaseConnection()
+                        $this->getDatabaseConnection(),
+                        $this->tableNamePrefix
                     );
                 } else {
                     $targetParentNode = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
@@ -344,7 +346,7 @@ trait NodeVariation
                         $uncoveredDimensionSpacePoint,
                         NodeRelationAnchorPoints::fromArray([$targetRelationAnchor])
                     );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                 }
             }
         }
@@ -369,7 +371,8 @@ trait NodeVariation
             $ingoingHierarchyHyperrelationRecord->replaceChildNodeAnchor(
                 $oldChildAnchor,
                 $newChildAnchor,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -392,7 +395,8 @@ trait NodeVariation
         ) {
             $outgoingHierarchyHyperrelationRecord->replaceParentNodeAnchor(
                 $newParentAnchor,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -405,7 +409,7 @@ trait NodeVariation
         // since if it doesn't, it already didn't match the source's coverage before
 
         $this->getDatabaseConnection()->executeStatement('
-                INSERT INTO ' . ReferenceRelationRecord::TABLE_NAME . ' (
+                INSERT INTO ' . $this->tableNamePrefix . '_referencerelation (
                   sourcenodeanchor,
                   name,
                   position,
@@ -419,7 +423,7 @@ trait NodeVariation
                   ref.properties,
                   ref.targetnodeaggregateidentifier
                 FROM
-                    ' . ReferenceRelationRecord::TABLE_NAME . ' ref
+                    ' . $this->tableNamePrefix . '_referencerelation ref
                     WHERE ref.sourcenodeanchor = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,

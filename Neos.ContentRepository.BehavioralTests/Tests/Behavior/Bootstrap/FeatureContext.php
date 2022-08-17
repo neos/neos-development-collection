@@ -84,8 +84,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
 
         $this->setupSecurity();
         $this->setupEventSourcedTrait();
-        $this->setupProjectionIntegrityViolationDetectionTrait();
-        $this->setupReadModelInstantiationTrait();
     }
 
     /**

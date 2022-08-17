@@ -69,7 +69,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly PostgresDbalClientInterface $databaseClient,
-        private readonly NodeFactory $nodeFactory
+        private readonly NodeFactory $nodeFactory,
+        private readonly string $tableNamePrefix
     ) {
     }
 
@@ -85,7 +86,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node
     {
-        $query = HypergraphQuery::create($this->contentStreamIdentifier);
+        $query = HypergraphQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints);
@@ -107,7 +108,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
@@ -136,6 +138,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
             $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix,
             ['COUNT(*)']
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -155,7 +158,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
-            'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint'
+            'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint',
+            $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withSourceNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
@@ -184,7 +188,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
-            'srcn.*, srch.contentstreamidentifier, srch.dimensionspacepoint'
+            'srcn.*, srch.contentstreamidentifier, srch.dimensionspacepoint',
+            $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withTargetNodeAggregateIdentifier($nodeAggregateIdentifier)
@@ -210,7 +215,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?Node
     {
-        $query = HypergraphParentQuery::create($this->contentStreamIdentifier);
+        $query = HypergraphParentQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
@@ -252,7 +257,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): ?Node {
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateIdentifier,
+            $this->tableNamePrefix,
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
@@ -323,7 +329,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             $sibling,
-            $mode
+            $mode,
+            $this->tableNamePrefix
         );
         $query = $query->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
@@ -359,10 +366,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
             0 as level,
             h.ordinality
-        FROM ' . NodeRecord::TABLE_NAME . ' n
+        FROM ' . $this->tableNamePrefix . '_node n
             INNER JOIN (
                 SELECT *
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ',
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation,
                      -- this creates a new generated column "ordinality" which contains the sorting
                      -- order of the childnodeanchor entries. We use this on the top level query to
                      -- ensure that we preserve sorting of child nodes.
@@ -371,7 +378,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         WHERE n.nodeaggregateidentifier IN (:entryNodeAggregateIdentifiers)
             AND h.contentstreamidentifier = :contentStreamIdentifier
 	    	AND h.dimensionspacepointhash = :dimensionSpacePointHash
-        ' . QueryUtility::getRestrictionClause($this->visibilityConstraints) . '
+        ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix) . '
     UNION ALL
          -- --------------------------------
          -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
@@ -384,18 +391,18 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FROM subtree p
             INNER JOIN (
                 SELECT *
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ',
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation,
                      -- this creates a new generated column "ordinality" which contains the sorting
                      -- order of the childnodeanchor entries. We use this on the top level query to
                      -- ensure that we preserve sorting of child nodes.
                      unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
             ) ch ON ch.parentnodeanchor = p.relationanchorpoint
-            INNER JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
+            INNER JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
 	    WHERE
 	 	    ch.contentstreamidentifier = :contentStreamIdentifier
 		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
 		    AND p.level + 1 <= :maximumLevels
-            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, 'c') . '
+            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix, 'c') . '
 		    -- @todo node type constraints
     )
     SELECT * FROM subtree
@@ -437,8 +444,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     {
         $query = /** @lang PostgreSQL */
         'SELECT COUNT(*)
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 

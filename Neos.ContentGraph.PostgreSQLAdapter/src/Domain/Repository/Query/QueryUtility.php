@@ -25,6 +25,7 @@ final class QueryUtility
 {
     public static function getRestrictionClause(
         VisibilityConstraints $visibilityConstraints,
+        string $tableNamePrefix,
         string $prefix = ''
     ): string {
         if ($visibilityConstraints->isDisabledContentShown()) {
@@ -34,7 +35,7 @@ final class QueryUtility
         return '
             AND NOT EXISTS (
                 SELECT 1
-                FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' rest
+                FROM ' . $tableNamePrefix . '_restrictionhyperrelation rest
                 WHERE rest.contentstreamidentifier = ' . $prefix . 'h.contentstreamidentifier
                     AND rest.dimensionspacepointhash = ' . $prefix . 'h.dimensionspacepointhash
                     AND ' . $prefix . 'n.nodeaggregateidentifier = ANY(rest.affectednodeaggregateidentifiers)

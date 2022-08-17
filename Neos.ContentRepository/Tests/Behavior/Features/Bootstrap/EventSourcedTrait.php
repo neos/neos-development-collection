@@ -33,6 +33,7 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
@@ -174,9 +175,7 @@ trait EventSourcedTrait
     {
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
-
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
-        $this->contentRepositoryRegistry = $this->getObjectManager()->get(ContentRepositoryRegistry::class);
 
         // prepare race tracking for debugging into the race log
         if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)
@@ -214,10 +213,35 @@ trait EventSourcedTrait
 
     private static bool $wasContentRepositorySetupCalled = false;
 
-    private function initCleanContentRepository(): void
+    /**
+     * @param array<string> $adapterKeys "DoctrineDBAL" if
+     * @return void
+     */
+    private function initCleanContentRepository(array $adapterKeys): void
     {
         $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
-        $this->contentRepositoryRegistry->forgetInstances();
+
+        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+        $registrySettings = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.ContentRepositoryRegistry'
+        );
+
+        if (!in_array('Postgres', $adapterKeys)) {
+            // in case we do not have tests annotated with @adapters=Postgres, we
+            // REMOVE the Postgres projection from the Registry settings. This way, we won't trigger
+            // Postgres projection catchup for tests which are not yet postgres-aware.
+            //
+            // This is to make the testcases more stable and deterministic. We can remove this workaround
+            // once the Postgres adapter is fully ready.
+            unset($registrySettings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
+        }
+
+        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
+            $registrySettings,
+            $this->getObjectManager()
+        );
+
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
         if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
@@ -228,7 +252,10 @@ trait EventSourcedTrait
 
         $availableContentGraphs = [];
         $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-        $availableContentGraphs['Postgres'] = null; // TODO: currently disabled
+        // NOTE: to disable a content graph (do not run the tests for it), you can use "null" as value.
+        if (in_array('Postgres', $adapterKeys)) {
+            $availableContentGraphs['Postgres'] = $this->contentRepository->projectionState(HypergraphProjection::class);
+        }
 
         if (count($availableContentGraphs) === 0) {
             throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
@@ -245,8 +272,6 @@ trait EventSourcedTrait
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
-        $this->initCleanContentRepository();
-
         $adapterTagPrefix = 'adapters=';
         $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
         /** @var array<int,string> $adapterKeys */
@@ -257,6 +282,8 @@ trait EventSourcedTrait
                 break;
             }
         }
+
+        $this->initCleanContentRepository($adapterKeys);
 
         $this->activeContentGraphs = count($adapterKeys) === 0
             ? $this->availableContentGraphs

@@ -28,8 +28,6 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
  */
 final class NodeRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_node';
-
     public NodeRelationAnchorPoint $relationAnchorPoint;
 
     public NodeAggregateIdentifier $nodeAggregateIdentifier;
@@ -87,9 +85,9 @@ final class NodeRecord
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
+        $databaseConnection->insert($tableNamePrefix . '_node', [
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
@@ -104,10 +102,10 @@ final class NodeRecord
     /**
      * @throws DBALException
      */
-    public function updateToDatabase(Connection $databaseConnection): void
+    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_node',
             [
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
@@ -126,9 +124,9 @@ final class NodeRecord
     /**
      * @throws DBALException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, [
+        $databaseConnection->delete($tableNamePrefix . '_node', [
             'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }

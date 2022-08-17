@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
@@ -63,7 +63,7 @@ class CrCommandController extends CommandController
         } elseif ($projectionName === 'contentStream') {
             $projectionName = ContentStreamProjection::class;
         } elseif ($projectionName === 'hypergraph') {
-            $projectionName = HypergraphProjector::class; // TODO
+            $projectionName = HypergraphProjection::class; // TODO
         } else {
             throw new \RuntimeException('Wrong $projectionName given. Supported are: graph, nodeHiddenState, documentUriPath, change, workspace, assetUsage, contentStream');
         }

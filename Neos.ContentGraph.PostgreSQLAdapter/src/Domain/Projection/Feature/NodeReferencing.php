@@ -31,7 +31,7 @@ trait NodeReferencing
     /**
      * @throws \Throwable
      */
-    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
+    private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
             foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
@@ -50,7 +50,7 @@ trait NodeReferencing
                     );
 
                     // remove old
-                    $this->getDatabaseConnection()->delete(ReferenceRelationRecord::TABLE_NAME, [
+                    $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
                         'sourcenodeanchor' => $anchorPoint,
                         'name' => $event->referenceName
                     ]);
@@ -65,7 +65,7 @@ trait NodeReferencing
                             $reference->properties,
                             $reference->targetNodeAggregateIdentifier
                         );
-                        $referenceRecord->addToDatabase($this->getDatabaseConnection());
+                        $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                         $position++;
                     }
                 } else {

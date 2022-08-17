@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
+ * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
