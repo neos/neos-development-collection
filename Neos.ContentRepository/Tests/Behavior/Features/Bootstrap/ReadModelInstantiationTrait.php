@@ -43,10 +43,6 @@ trait ReadModelInstantiationTrait
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
-    public function setupReadModelInstantiationTrait(): void
-    {
-    }
-
     /**
      * @When /^the read model with node aggregate identifier "([^"]*)" is instantiated and exceptions are caught$/
      * @param string $rawNodeAggregateIdentifier
