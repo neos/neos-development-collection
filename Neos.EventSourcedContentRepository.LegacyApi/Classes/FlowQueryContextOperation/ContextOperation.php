@@ -85,6 +85,8 @@ class ContextOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var Node $contextNode */
 
+            $contentRepository = $this->contentRepositoryRegistry
+                ->get($contextNode->subgraphIdentity->contentRepositoryIdentifier);
             $subgraphIdentity = $contextNode->subgraphIdentity;
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
@@ -118,7 +120,7 @@ class ContextOperation extends AbstractOperation
                 )
                 ->findNodeByNodeAggregateIdentifier($contextNode->nodeAggregateIdentifier);
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->__toString()] = $nodeInModifiedSubgraph;
+                $output[$nodeInModifiedSubgraph->nodeAggregateIdentifier->__toString()] = $nodeInModifiedSubgraph;
             }
         }
 

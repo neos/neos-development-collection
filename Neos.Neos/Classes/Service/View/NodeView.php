@@ -101,7 +101,7 @@ class NodeView extends JsonView
     {
         $data = [];
         foreach ($nodes as $node) {
-            if (!$node->getClassification()->isRoot()) {
+            if (!$node->classification->isRoot()) {
                 $closestDocumentNode = $this->findClosestDocumentNode($node);
                 if ($closestDocumentNode !== null) {
                     $contentRepository = $this->contentRepositoryRegistry->get(
@@ -480,7 +480,7 @@ class NodeView extends JsonView
             'isFolder' => $hasChildNodes,
             'isLazy' => ($hasChildNodes && !$expand),
             'nodeType' => $nodeType->getName(),
-            'isAutoCreated' => $node->getClassification() === NodeAggregateClassification::CLASSIFICATION_TETHERED,
+            'isAutoCreated' => $node->classification === NodeAggregateClassification::CLASSIFICATION_TETHERED,
             'expand' => $expand,
             'addClass' => implode(' ', $classes),
             'name' => $node->nodeName,

@@ -270,7 +270,7 @@ trait NodeMove
                     1645367254
                 );
             }
-            if (!$parentNode->nodeAggregateIdentifier->equals($originParent->getNodeAggregateIdentifier())) {
+            if (!$parentNode->nodeAggregateIdentifier->equals($originParent->nodeAggregateIdentifier)) {
                 /** @var DimensionSpace\DimensionSpacePoint $dimensionSpacePoint */
                 $dimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
                 $parents = $parents->add(
@@ -379,7 +379,7 @@ trait NodeMove
             if ($succeedingSibling) {
                 $succeedingSiblings = $succeedingSiblings->add(
                     new NodeVariantAssignment(
-                        $succeedingSibling->getNodeAggregateIdentifier(),
+                        $succeedingSibling->nodeAggregateIdentifier,
                         $succeedingSibling->originDimensionSpacePoint
                     ),
                     $dimensionSpacePoint
@@ -405,7 +405,7 @@ trait NodeMove
                     1645366837
                 );
             }
-            if ($parent->getNodeAggregateIdentifier()->equals($parentIdentifier)) {
+            if ($parent->nodeAggregateIdentifier->equals($parentIdentifier)) {
                 return $siblingCandidate;
             }
         } else {
@@ -434,13 +434,13 @@ trait NodeMove
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first
             if (isset($succeedingSiblingCandidates[$i])) {
-                if ($succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
+                if ($succeedingSiblingCandidates[$i]->nodeAggregateIdentifier->equals($nodeAggregateIdentifier)) {
                     \array_splice($succeedingSiblingCandidates, $i, 1);
                 }
                 $succeedingSibling = $this->findSibling(
                     $currentContentSubgraph,
                     $parentIdentifier,
-                    $succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier()
+                    $succeedingSiblingCandidates[$i]->nodeAggregateIdentifier
                 );
                 if ($succeedingSibling) {
                     break;
@@ -448,13 +448,13 @@ trait NodeMove
             }
             if (isset($precedingSiblingCandidates[$i])) {
                 /** @var NodeAggregateIdentifier $precedingSiblingIdentifier can only be the case if not null */
-                if ($precedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
+                if ($precedingSiblingCandidates[$i]->nodeAggregateIdentifier->equals($nodeAggregateIdentifier)) {
                     \array_splice($precedingSiblingCandidates, $i, 1);
                 }
                 $precedingSibling = $this->findSibling(
                     $currentContentSubgraph,
                     $parentIdentifier,
-                    $precedingSiblingCandidates[$i]->getNodeAggregateIdentifier()
+                    $precedingSiblingCandidates[$i]->nodeAggregateIdentifier
                 );
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblings(

@@ -156,7 +156,7 @@ class NodeController extends ActionController
             );
         }
 
-        if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
+        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -229,7 +229,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
-        if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
+        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut')) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 

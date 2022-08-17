@@ -256,7 +256,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
             if ($event->succeedingNodeAggregateIdentifier === null) {
                 $precedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
-                    $parentNode->nodeAggregateIdentifier,
+                    $parentNode->getNodeAggregateIdentifier(),
                     $dimensionSpacePoint->hash
                 ));
                 if ($precedingNode !== null) {
@@ -269,7 +269,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             } else {
                 $precedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
                     $event->succeedingNodeAggregateIdentifier,
-                    $parentNode->nodeAggregateIdentifier,
+                    $parentNode->getNodeAggregateIdentifier(),
                     $dimensionSpacePoint->hash
                 ));
                 if ($precedingNode !== null) {
@@ -304,7 +304,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'siteNodeName' => $siteNodeName,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'parentNodeAggregateIdentifier' => $parentNode->nodeAggregateIdentifier,
+                'parentNodeAggregateIdentifier' => $parentNode->getNodeAggregateIdentifier(),
                 'precedingNodeAggregateIdentifier' => $precedingNode?->getNodeAggregateIdentifier(),
                 'succeedingNodeAggregateIdentifier' => $event->succeedingNodeAggregateIdentifier,
                 'shortcutTarget' => $shortcutTarget,
@@ -457,7 +457,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                         OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix
                     )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => $node->nodeAggregateIdentifier,
+                'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
         }
@@ -486,7 +486,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                         OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix
                     )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => $node->nodeAggregateIdentifier,
+                'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
         }
@@ -555,7 +555,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
                 'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => $node->nodeAggregateIdentifier,
+                'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]
         );
@@ -630,7 +630,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             ',
             /** @codingStandardsIgnoreEnd */
             [
-                'nodeAggregateIdentifier' => $node->nodeAggregateIdentifier,
+                'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'newParentNodeAggregateIdentifierPath' => $newParentNode->getNodeAggregateIdentifierPath(),
                 'sourceNodeAggregateIdentifierPathOffset'
                     => (int)strrpos($node->getNodeAggregateIdentifierPath(), '/') + 1,
@@ -704,7 +704,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     private function updateNode(DocumentNodeInfo $node, array $data): void
     {
         $this->updateNodeByIdAndDimensionSpacePointHash(
-            $node->nodeAggregateIdentifier,
+            $node->getNodeAggregateIdentifier(),
             $node->getDimensionSpacePointHash(),
             $data
         );
@@ -829,7 +829,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $this->updateNodeByIdAndDimensionSpacePointHash(
                 $newSucceedingNodeAggregateIdentifier,
                 $node->getDimensionSpacePointHash(),
-                ['precedingNodeAggregateIdentifier' => $node->nodeAggregateIdentifier]
+                ['precedingNodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()]
             );
         } else {
             $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
@@ -840,7 +840,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if ($newPrecedingNode !== null) {
             $this->updateNode(
                 $newPrecedingNode,
-                ['succeedingNodeAggregateIdentifier' => $node->nodeAggregateIdentifier]
+                ['succeedingNodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()]
             );
         }
 

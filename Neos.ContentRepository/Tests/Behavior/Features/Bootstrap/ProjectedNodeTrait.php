@@ -235,8 +235,8 @@ trait ProjectedNodeTrait
         $expectedClassification = NodeAggregateClassification::from($serializedExpectedClassification);
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
-                $expectedClassification->equals($currentNode->getClassification()),
-                'Node was expected to be classified as "' . $expectedClassification->value . '" but is as "' . $currentNode->getClassification()->value . '" in adapter "' . $adapterName . '"'
+                $expectedClassification->equals($currentNode->classification),
+                'Node was expected to be classified as "' . $expectedClassification->value . '" but is as "' . $currentNode->classification->value . '" in adapter "' . $adapterName . '"'
             );
         });
     }

@@ -177,7 +177,7 @@ class BackendRedirectionService
                 Node::class
             );
 
-            $contentRepository->getContentGraph()->getSubgraph(
+            return $contentRepository->getContentGraph()->getSubgraph(
                 $workspace->getCurrentContentStreamIdentifier(),
                 $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()

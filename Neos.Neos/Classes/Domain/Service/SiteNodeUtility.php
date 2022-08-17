@@ -17,7 +17,6 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -82,12 +81,14 @@ final class SiteNodeUtility
                     NodeTypeName::fromString('Neos.Neos:Sites')
                 );
             $sitesNode = $subgraph->findNodeByNodeAggregateIdentifier($rootNodeAggregate->getIdentifier());
-            $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                $sitesNode->nodeAggregateIdentifier,
-                $site->getNodeName()->toNodeName()
-            );
-            if ($siteNode instanceof Node) {
-                return $siteNode;
+            if ($sitesNode) {
+                $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                    $sitesNode->nodeAggregateIdentifier,
+                    $site->getNodeName()->toNodeName()
+                );
+                if ($siteNode instanceof Node) {
+                    return $siteNode;
+                }
             }
         }
 

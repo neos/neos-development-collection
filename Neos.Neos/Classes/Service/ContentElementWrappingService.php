@@ -210,12 +210,12 @@ class ContentElementWrappingService
             $attributes['data-node-__parent-node-type'] = $parentNode->nodeType->getName();
         }
 
-        if ($node->getClassification()->isTethered()) {
+        if ($node->classification->isTethered()) {
             $attributes['data-node-_name'] = $node->nodeName;
             $attributes['data-node-_is-autocreated'] = 'true';
         }
 
-        if ($parentNode && $parentNode->getClassification()->isTethered()) {
+        if ($parentNode && $parentNode->classification->isTethered()) {
             $attributes['data-node-_parent-is-autocreated'] = 'true';
             // we shall only add these properties if the parent is actually auto-created;
             // as the Node-Type-Switcher in the UI relies on that.
@@ -381,7 +381,7 @@ class ContentElementWrappingService
                 /** @codingStandardsIgnoreEnd */
             }
 
-            $nestedNodes = $subgraph->findChildNodes($node);
+            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateIdentifier);
             $hasChildNodes = false;
             foreach ($nestedNodes as $nestedNode) {
                 $hasChildNodes = true;

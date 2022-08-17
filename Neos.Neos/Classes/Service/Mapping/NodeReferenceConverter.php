@@ -71,7 +71,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
                 $result[] = (string)$node->nodeAggregateIdentifier;
             }
         } else {
-            $result = (string)$source->getNodeAggregateIdentifier();
+            $result = (string)$source->nodeAggregateIdentifier;
         }
 
         return $result;
