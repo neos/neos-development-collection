@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -46,6 +47,12 @@ final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSeriali
         return new self(...[]);
     }
 
+
+
+    public static function create(NodeAggregateIdentifier ...$nodeAggregateIdentifiers): self
+    {
+        return new self(...$nodeAggregateIdentifiers);
+    }
     /**
      * @param array<string|int,string|NodeAggregateIdentifier> $array
      */
@@ -68,6 +75,16 @@ final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSeriali
     public static function fromJsonString(string $jsonString): self
     {
         return self::fromArray(\json_decode($jsonString, true));
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    public static function fromNodes(array $nodes): self
+    {
+        return new self(
+            ...array_map(fn(Node $node) => $node->nodeAggregateIdentifier, $nodes)
+        );
     }
 
     public function merge(self $other): self

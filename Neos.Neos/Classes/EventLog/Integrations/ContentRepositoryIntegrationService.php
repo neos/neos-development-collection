@@ -14,16 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\EventLog\Integrations;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 
 /**
  * Monitors Neos.ContentRepository changes
@@ -56,9 +53,6 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
 
     /**
      * @var array<mixed>

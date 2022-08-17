@@ -12,21 +12,16 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParserFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;

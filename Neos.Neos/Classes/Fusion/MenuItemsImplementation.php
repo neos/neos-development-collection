@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
@@ -28,12 +29,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
-
     /**
      * Hard limit for the maximum number of levels supported by this menu
      */
@@ -158,13 +153,10 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function buildItems(): array
     {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
         if (!is_null($this->getItemCollection())) {
-            $menuLevelCollection = $this->getItemCollection();
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->subgraphIdentity
-            );
-            $childSubtree = $nodeAccessor->findSubtrees(
-                $menuLevelCollection,
+            $childSubtree = $subgraph->findSubtrees(
+                NodeAggregateIdentifiers::fromNodes($this->getItemCollection()),
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
@@ -174,11 +166,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 return [];
             }
 
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->subgraphIdentity
-            );
-            $childSubtree = $nodeAccessor->findSubtrees(
-                [$entryParentNode],
+            $childSubtree = $subgraph->findSubtrees(
+                NodeAggregateIdentifiers::create($entryParentNode->nodeAggregateIdentifier),
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
@@ -313,12 +302,10 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function traverseUpUntilCondition(Node $node, \Closure $callback): void
     {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
             $shouldContinueTraversal = $callback($node);
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->subgraphIdentity
-            );
-            $node = $nodeAccessor->findParentNode($node);
+            $node = $subgraph->findParentNode($node->nodeAggregateIdentifier);
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 }

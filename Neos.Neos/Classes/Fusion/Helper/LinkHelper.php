@@ -15,15 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -33,6 +30,7 @@ use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -59,12 +57,6 @@ class LinkHelper implements ProtectedContextAwareInterface
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject

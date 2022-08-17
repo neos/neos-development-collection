@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\View;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;

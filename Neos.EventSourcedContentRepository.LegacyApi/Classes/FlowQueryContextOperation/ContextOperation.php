@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\FlowQueryContextOperation;
 
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -32,12 +30,6 @@ class ContextOperation extends AbstractOperation
      * @var integer
      */
     protected static $priority = 10;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject

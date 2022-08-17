@@ -15,17 +15,15 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\Exception;
 use Psr\Http\Message\ResponseInterface;
 

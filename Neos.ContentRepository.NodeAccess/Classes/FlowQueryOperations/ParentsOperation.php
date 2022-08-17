@@ -16,7 +16,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**

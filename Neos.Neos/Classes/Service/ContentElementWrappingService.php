@@ -15,21 +15,17 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
 /**
@@ -82,12 +78,6 @@ class ContentElementWrappingService
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * All editable nodes rendered in the document

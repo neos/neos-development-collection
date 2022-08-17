@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
@@ -95,9 +93,6 @@ class BackendRedirectionService
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
 
     /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.

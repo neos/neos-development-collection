@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Fusion\Exception as FusionException;
@@ -67,11 +66,8 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      */
     protected $currentNodeRootline;
 
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.

@@ -17,7 +17,6 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
@@ -47,12 +46,6 @@ class ChildrenOperation extends AbstractOperation
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * {@inheritdoc}

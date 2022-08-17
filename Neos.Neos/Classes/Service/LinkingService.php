@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -35,8 +33,8 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -121,9 +119,6 @@ class LinkingService
      * @var BaseUriProvider
      */
     protected $baseUriProvider;
-
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;

@@ -11,12 +11,11 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;

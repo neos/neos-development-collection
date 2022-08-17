@@ -15,23 +15,14 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Link;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
-use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -40,6 +31,11 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -140,12 +136,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject

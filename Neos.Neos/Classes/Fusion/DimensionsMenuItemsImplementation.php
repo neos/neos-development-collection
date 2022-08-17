@@ -29,8 +29,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @return array<mixed>
