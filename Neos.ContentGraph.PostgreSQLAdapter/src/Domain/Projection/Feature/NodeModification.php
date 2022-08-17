@@ -30,7 +30,7 @@ trait NodeModification
     /**
      * @throws \Throwable
      */
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(

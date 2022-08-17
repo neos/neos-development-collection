@@ -39,7 +39,7 @@ trait NodeCreation
     /**
      * @throws \Throwable
      */
-    public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
+    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
@@ -56,7 +56,7 @@ trait NodeCreation
         );
 
         $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection());
+            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             $this->connectToHierarchy(
                 $event->contentStreamIdentifier,
                 NodeRelationAnchorPoint::forRootHierarchyRelation(),
@@ -86,7 +86,7 @@ trait NodeCreation
         );
 
         $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection());
+            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
                 $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecord(
                     $event->contentStreamIdentifier,
@@ -108,7 +108,8 @@ trait NodeCreation
                     $hierarchyRelation->addChildNodeAnchor(
                         $node->relationAnchorPoint,
                         $succeedingSiblingNodeAnchor,
-                        $this->getDatabaseConnection()
+                        $this->getDatabaseConnection(),
+                        $this->tableNamePrefix
                     );
                 } else {
                     $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
@@ -127,7 +128,7 @@ trait NodeCreation
                         $dimensionSpacePoint,
                         NodeRelationAnchorPoints::fromArray([$node->relationAnchorPoint])
                     );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                 }
                 $this->connectToRestrictionRelations(
                     $event->contentStreamIdentifier,
@@ -160,7 +161,8 @@ trait NodeCreation
                 $hierarchyRelation->addChildNodeAnchor(
                     $childNodeAnchor,
                     $succeedingSiblingNodeAnchor,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
             } else {
                 $hierarchyRelation = new HierarchyHyperrelationRecord(
@@ -169,7 +171,7 @@ trait NodeCreation
                     $dimensionSpacePoint,
                     NodeRelationAnchorPoints::fromArray([$childNodeAnchor])
                 );
-                $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         }
     }
@@ -193,7 +195,8 @@ trait NodeCreation
         ) {
             $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
                 $affectedNodeAggregateIdentifier,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }

@@ -26,6 +26,15 @@ Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
     2:
       object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
 
+Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  arguments:
+    1:
+      value: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
+    2:
+      object: 'Neos\ContentRepositoryRegistry\Infrastructure\PostgresDbalClient'
+
 
 Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory:
   scope: singleton

@@ -29,7 +29,7 @@ trait NodeRenaming
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
+    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             foreach (

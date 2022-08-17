@@ -37,8 +37,12 @@ trait CommonGraphQueryOperations
      * @param array<string,mixed> $parameters
      * @param array<string,int|string> $types
      */
-    final protected function __construct(string $query, array $parameters, array $types = [])
-    {
+    final protected function __construct(
+        string $query,
+        array $parameters,
+        private readonly string $tableNamePrefix,
+        array $types = []
+    ) {
         $this->query = $query;
         $this->parameters = $parameters;
         $this->types = $types;
@@ -75,7 +79,7 @@ trait CommonGraphQueryOperations
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
         }
 
-        return new self($query, $parameters, $types);
+        return new self($query, $parameters, $this->tableNamePrefix, $types);
     }
 
     public function withLimit(int $limit): self
@@ -83,7 +87,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             LIMIT ' . $limit;
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withOffset(int $offset): self
@@ -91,7 +95,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             OFFSET ' . $offset;
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function getQuery(): string

@@ -34,7 +34,7 @@ trait NodeRemoval
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
             $affectedRelationAnchorPoints = [];
@@ -58,7 +58,8 @@ trait NodeRemoval
                     );
                 $ingoingHierarchyRelation->removeChildNodeAnchor(
                     $nodeRecord->relationAnchorPoint,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
                 $this->removeFromRestrictions(
                     $event->getContentStreamIdentifier(),
@@ -81,17 +82,17 @@ trait NodeRemoval
                 /** @lang PostgreSQL */
                 '
                 WITH deletedNodes AS (
-                    DELETE FROM ' . NodeRecord::TABLE_NAME . ' n
+                    DELETE FROM ' . $this->tableNamePrefix . '_node n
                     WHERE n.relationanchorpoint IN (
-                        SELECT relationanchorpoint FROM ' . NodeRecord::TABLE_NAME . '
-                            LEFT JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
+                            LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                                 ON n.relationanchorpoint = ANY(h.childnodeanchors)
                         WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
                             AND h.contentstreamidentifier IS NULL
                     )
                     RETURNING relationanchorpoint
                 )
-                DELETE FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
+                DELETE FROM ' . $this->tableNamePrefix . '_referencerelation r
                     WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
                 ',
                 [
@@ -121,7 +122,7 @@ trait NodeRemoval
             $nodeRelationAnchorPoint
         );
         if ($childHierarchyRelation) {
-            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
+            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
                 /** @var NodeRecord $nodeRecord */
@@ -132,7 +133,8 @@ trait NodeRemoval
                 if (empty($ingoingHierarchyRelations)) {
                     ReferenceRelationRecord::removeFromDatabaseForSource(
                         $nodeRecord->relationAnchorPoint,
-                        $this->getDatabaseConnection()
+                        $this->getDatabaseConnection(),
+                        $this->tableNamePrefix
                     );
                     $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
                 }
@@ -172,7 +174,8 @@ trait NodeRemoval
         ) {
             $restrictionRelation->removeAffectedNodeAggregateIdentifier(
                 $nodeAggregateIdentifier,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }

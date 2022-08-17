@@ -27,8 +27,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class RestrictionHyperrelationRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_restrictionhyperrelation';
-
     public ContentStreamIdentifier $contentStreamIdentifier;
 
     public string $dimensionSpacePointHash;
@@ -67,11 +65,16 @@ final class RestrictionHyperrelationRecord
      */
     public function addAffectedNodeAggregateIdentifier(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->add($nodeAggregateIdentifier);
 
-        $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
+        $this->updateAffectedNodeAggregateIdentifiers(
+            $affectedNodeAggregateIdentifiers,
+            $databaseConnection,
+            $tableNamePrefix
+        );
     }
 
     /**
@@ -79,23 +82,28 @@ final class RestrictionHyperrelationRecord
      */
     public function removeAffectedNodeAggregateIdentifier(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->remove($nodeAggregateIdentifier);
         if ($affectedNodeAggregateIdentifiers->isEmpty()) {
-            $this->removeFromDatabase($databaseConnection);
+            $this->removeFromDatabase($databaseConnection, $tableNamePrefix);
         } else {
-            $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
+            $this->updateAffectedNodeAggregateIdentifiers(
+                $affectedNodeAggregateIdentifiers,
+                $databaseConnection,
+                $tableNamePrefix
+            );
         }
     }
 
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->executeStatement(
-            'INSERT INTO ' . self::TABLE_NAME . ' (
+            'INSERT INTO ' . $tableNamePrefix . '_restrictionhyperrelation (
                 contentstreamidentifier,
                 dimensionspacepointhash,
                 originnodeaggregateidentifier,
@@ -116,10 +124,11 @@ final class RestrictionHyperrelationRecord
      */
     private function updateAffectedNodeAggregateIdentifiers(
         NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_restrictionhyperrelation',
             [
                 'affectednodeaggregateidentifiers' => $affectedNodeAggregateIdentifiers->toDatabaseString()
             ],
@@ -131,9 +140,9 @@ final class RestrictionHyperrelationRecord
     /**
      * @throws DBALException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
+        $databaseConnection->delete($tableNamePrefix . '_restrictionhyperrelation', $this->getDatabaseIdentifier());
     }
 
     /**

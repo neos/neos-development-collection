@@ -33,6 +33,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
 
     public static function create(
         ContentStreamIdentifier $contentStreamIdentifier,
+        string $tableNamePrefix,
         bool $joinRestrictionRelations = false
     ): self {
         $query = /** @lang PostgreSQL */
@@ -40,11 +41,11 @@ final class HypergraphQuery implements HypergraphQueryInterface
                 n.nodetypename, n.classification, n.properties, n.nodename,
                 h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
                 r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
+            FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinRestrictionRelations
                 ? '
-            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r
+            LEFT JOIN ' . $tableNamePrefix . '_restrictionhyperrelation r
                 ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
                 AND r.contentstreamidentifier = h.contentstreamidentifier
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
@@ -56,7 +57,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $tableNamePrefix);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -67,7 +68,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
     public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
@@ -78,7 +79,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
     public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
@@ -89,13 +90,13 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, '');
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, '');
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 }

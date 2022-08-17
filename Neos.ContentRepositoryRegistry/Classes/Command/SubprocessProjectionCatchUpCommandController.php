@@ -23,6 +23,7 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
 
     public function catchupCommand(string $contentRepositoryIdentifier, string $projectionClassName): void
     {
+
         $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier));
         $contentRepository->catchUpProjection($projectionClassName);
     }

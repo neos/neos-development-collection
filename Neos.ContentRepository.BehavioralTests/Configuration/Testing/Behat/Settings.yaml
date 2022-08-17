@@ -1,0 +1,16 @@
+
+# For Behavioral E2E Tests, we always test against Postgres and Mysql.
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        projections:
+          # NOTE: this projection needs to be registered here, as otherwise, the
+          # SubprocessProjectionCatchUpCommandController won't be able to replay this projection.
+          #
+          # However, we only trigger this projection when annotated with @adapters=Postgres;
+          # see EventSourcedTrait::beforeEventSourcedScenarioDispatcher and
+          # EventSourcedTrait::initCleanContentRepository.
+          'Neos.ContentGraph.PostgreSQLAdapter:Hypergraph':
+            factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
+

@@ -41,7 +41,7 @@ trait CopyOnWrite
             $copiedNode = clone $originNode;
             $copiedNode->relationAnchorPoint = $copiedNodeRelationAnchorPoint;
             $preprocessor($copiedNode);
-            $copiedNode->addToDatabase($this->getDatabaseConnection());
+            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             $this->reassignIngoingHierarchyRelations(
                 $originContentStreamIdentifier,
@@ -64,7 +64,7 @@ trait CopyOnWrite
         } else {
             // no reason to create a copy
             $preprocessor($originNode);
-            $originNode->updateToDatabase($this->getDatabaseConnection());
+            $originNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             return $originNode->relationAnchorPoint;
         }
@@ -87,7 +87,8 @@ trait CopyOnWrite
             $ingoingHierarchyRelation->replaceChildNodeAnchor(
                 $originRelationAnchorPoint,
                 $targetRelationAnchorPoint,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -108,7 +109,8 @@ trait CopyOnWrite
         ) {
             $outgoingHierarchyRelation->replaceParentNodeAnchor(
                 $targetRelationAnchorPoint,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -126,7 +128,7 @@ trait CopyOnWrite
             ) as $outgoingReferenceRelation
         ) {
             $copiedReferenceRelation = $outgoingReferenceRelation->withSourceNodeAnchor($newSourceNodeAnchor);
-            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());
+            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
         }
     }
 

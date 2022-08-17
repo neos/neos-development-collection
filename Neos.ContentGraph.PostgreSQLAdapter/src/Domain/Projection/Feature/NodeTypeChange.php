@@ -29,7 +29,7 @@ trait NodeTypeChange
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
+    private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             foreach (

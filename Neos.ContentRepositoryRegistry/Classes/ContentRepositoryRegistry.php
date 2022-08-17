@@ -82,16 +82,6 @@ final class ContentRepositoryRegistry
         return $this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)];
     }
 
-    /**
-     * Useful for tests
-     * @internal
-     */
-    public function forgetInstances(): void
-    {
-        $this->contentRepositoryInstances = [];
-        $this->contentRepositoryServiceInstances = [];
-        $this->factoryInstances = [];
-    }
 
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException

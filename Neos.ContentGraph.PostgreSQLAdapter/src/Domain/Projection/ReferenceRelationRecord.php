@@ -25,8 +25,6 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
  */
 final class ReferenceRelationRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_referencerelation';
-
     public function __construct(
         public readonly NodeRelationAnchorPoint $sourceNodeAnchor,
         public readonly PropertyName $name,
@@ -55,9 +53,9 @@ final class ReferenceRelationRecord
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
+        $databaseConnection->insert($tableNamePrefix . '_referencerelation', [
             'sourcenodeanchor' => (string)$this->sourceNodeAnchor,
             'name' => (string)$this->name,
             'position' => $this->position,
@@ -81,9 +79,10 @@ final class ReferenceRelationRecord
 
     public static function removeFromDatabaseForSource(
         NodeRelationAnchorPoint $sourceNodeAnchor,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
-        $databaseConnection->delete(self::TABLE_NAME, [
+        $databaseConnection->delete($tableNamePrefix . '_referencerelation', [
             'sourcenodeanchor' => $sourceNodeAnchor
         ]);
     }
