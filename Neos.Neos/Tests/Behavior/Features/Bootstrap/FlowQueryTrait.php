@@ -54,7 +54,7 @@ trait FlowQueryTrait
      */
     public function iHaveAFlowQueryWithNode(string $serializedNodeAggregateIdentifier)
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $subgraph = $this->contentGraph->getSubgraph(
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
@@ -93,8 +93,8 @@ trait FlowQueryTrait
         $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedExpectedNodeAggregateIdentifier);
         $expectationMet = false;
         foreach ($this->currentFlowQuery->getContext() as $node) {
-            /** @var \Neos\ContentRepository\Projection\ContentGraph\NodeInterface $node */
-            if ($node->getNodeAggregateIdentifier()->equals($expectedNodeAggregateIdentifier)) {
+            /** @var \Neos\ContentRepository\Projection\ContentGraph\Node $node */
+            if ($node->nodeAggregateIdentifier->equals($expectedNodeAggregateIdentifier)) {
                 $expectationMet = true;
                 break;
             }

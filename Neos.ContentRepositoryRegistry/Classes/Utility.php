@@ -12,7 +12,7 @@ namespace Neos\ContentRepositoryRegistry;
  */
 
 use Behat\Transliterator\Transliterator;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 
 /**

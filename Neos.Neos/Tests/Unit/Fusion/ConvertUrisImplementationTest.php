@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -46,7 +46,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
     protected $mockRuntime;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $mockNode;
 
@@ -76,7 +76,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockContext->expects(self::any())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
 
-        $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $this->mockNode = $this->getMockBuilder(Node::class)->getMock();
         $this->mockNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContext));
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();

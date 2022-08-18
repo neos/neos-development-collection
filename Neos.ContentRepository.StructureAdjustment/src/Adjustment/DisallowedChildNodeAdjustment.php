@@ -55,7 +55,7 @@ class DisallowedChildNodeAdjustment
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-                $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
+                $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
@@ -63,14 +63,14 @@ class DisallowedChildNodeAdjustment
 
                 $parentNode = $subgraph->findParentNode($nodeAggregate->getIdentifier());
                 $grandparentNode = $parentNode !== null
-                    ? $subgraph->findParentNode($parentNode->getNodeAggregateIdentifier())
+                    ? $subgraph->findParentNode($parentNode->nodeAggregateIdentifier)
                     : null;
 
 
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
-                    $parentNodeType = $this->loadNodeType($parentNode->getNodeTypeName());
+                    $parentNodeType = $this->loadNodeType($parentNode->nodeTypeName);
                     if ($parentNodeType !== null) {
                         $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType);
                     }
@@ -81,13 +81,13 @@ class DisallowedChildNodeAdjustment
                 if (
                     $parentNode !== null
                     && $grandparentNode != null
-                    && $parentNode->isTethered()
-                    && !is_null($parentNode->getNodeName())
+                    && $parentNode->classification->isTethered()
+                    && !is_null($parentNode->nodeName)
                 ) {
-                    $grandparentNodeType = $this->loadNodeType($grandparentNode->getNodeTypeName());
+                    $grandparentNodeType = $this->loadNodeType($grandparentNode->nodeTypeName);
                     if ($grandparentNodeType !== null) {
                         $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->getNodeName()->jsonSerialize(),
+                            $parentNode->nodeName->jsonSerialize(),
                             $nodeType
                         );
                     }
@@ -106,9 +106,9 @@ class DisallowedChildNodeAdjustment
                         Thus, the node is invalid at this location and should be removed.
                     ',
                         $parentNodeType !== null ? $parentNodeType->getName() : '',
-                        $node->getNodeTypeName()->jsonSerialize(),
+                        $node->nodeTypeName->jsonSerialize(),
                         $grandparentNodeType !== null ? $grandparentNodeType->getName() : '',
-                        $node->getNodeTypeName()->jsonSerialize(),
+                        $node->nodeTypeName->jsonSerialize(),
                     );
 
                     yield StructureAdjustment::createForNode(

@@ -16,7 +16,7 @@ namespace Neos\Neos\EventLog\Domain\Model;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
@@ -129,10 +129,10 @@ class NodeEvent extends Event
     /**
      * Set the "context node" this operation was working on.
      *
-     * @param NodeInterface $node
+     * @param Node $node
      * @return void
      */
-    /*public function setNode(NodeInterface $node)
+    /*public function setNode(Node $node)
     {
         $this->nodeIdentifier = $node->getIdentifier();
         $this->workspaceName = $node->getContext()->getWorkspaceName();
@@ -147,7 +147,7 @@ class NodeEvent extends Event
         $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, [
             'nodeContextPath' => $node->get(),
             'nodeLabel' => $node->getLabel(),
-            'nodeType' => $node->getNodeType()->getName(),
+            'nodeType' => $node->nodeType->getName(),
             'site' => $siteIdentifier
         ]);
 
@@ -158,7 +158,7 @@ class NodeEvent extends Event
             $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, [
                 'documentNodeContextPath' => $node->getContextPath(),
                 'documentNodeLabel' => $node->getLabel(),
-                'documentNodeType' => $node->getNodeType()->getName()
+                'documentNodeType' => $node->nodeType->getName()
             ]);
         }
     }*/
@@ -177,12 +177,12 @@ class NodeEvent extends Event
     /**
      * Returns the closest aggregate node of the given node
      *
-     * @param NodeInterface $node
-     * @return NodeInterface
+     * @param Node $node
+     * @return Node
      */
-    /*public static function getClosestAggregateNode(NodeInterface $node)
+    /*public static function getClosestAggregateNode(Node $node)
     {
-        while ($node !== null && !$node->getNodeType()->isAggregate()) {
+        while ($node !== null && !$node->nodeType->isAggregate()) {
             $node = $node->getParent();
         }
         return $node;
@@ -195,7 +195,7 @@ class NodeEvent extends Event
      * Doctrine's proxy class of the Site domain model will fail with an EntityNotFoundException. We catch this
      * case and return NULL.
      *
-     * @return NodeInterface
+     * @return Node
      */
     /*public function getDocumentNode()
     {
@@ -219,7 +219,7 @@ class NodeEvent extends Event
      * Doctrine's proxy class of the Site domain model will fail with an EntityNotFoundException. We catch this
      * case and return NULL.
      *
-     * @return NodeInterface
+     * @return Node
      */
     /*public function getNode()
     {

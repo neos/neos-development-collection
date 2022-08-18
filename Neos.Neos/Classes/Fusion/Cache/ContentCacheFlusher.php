@@ -297,7 +297,7 @@ class ContentCacheFlusher
                 $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
             });
 
-            if (!$node instanceof NodeInterface) {
+            if (!$node instanceof Node) {
                 $this->systemLogger->warning(sprintf(
                     'Found a node reference from node with identifier %s in workspace %s to asset %s,'
                         . ' but the node could not be fetched.',

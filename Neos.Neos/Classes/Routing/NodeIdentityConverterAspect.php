@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Routing;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -46,9 +46,9 @@ class NodeIdentityConverterAspect
     public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array|string
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
-        if ($objectArgument instanceof NodeInterface) {
+        if ($objectArgument instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $objectArgument->getSubgraphIdentity()->contentRepositoryIdentifier
+                $objectArgument->subgraphIdentity->contentRepositoryIdentifier
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($objectArgument);

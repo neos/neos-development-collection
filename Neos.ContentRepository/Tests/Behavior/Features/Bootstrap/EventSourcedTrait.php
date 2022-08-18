@@ -39,7 +39,8 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
@@ -422,8 +423,8 @@ trait EventSourcedTrait
     {
         $currentNodes = $this->currentNodes->getIterator()->getArrayCopy();
         $firstNode = reset($currentNodes);
-        assert($firstNode instanceof NodeInterface);
-        return $firstNode->getNodeAggregateIdentifier();
+        assert($firstNode instanceof Node);
+        return $firstNode->nodeAggregateIdentifier;
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
@@ -517,10 +518,11 @@ trait EventSourcedTrait
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
+            assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();
 
             $subtree = $contentGraph
-                ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+                ->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
                 ->findSubtrees(NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]), $maximumLevels, $nodeTypeConstraints);
 
             /** @var SubtreeInterface[] $flattenedSubtree */
@@ -534,7 +536,7 @@ trait EventSourcedTrait
                 $actualLevel = $flattenedSubtree[$i]->getLevel();
                 Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
                 $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($expectedRow['NodeAggregateIdentifier']);
-                $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier();
+                $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->getNode()->nodeAggregateIdentifier;
                 Assert::assertTrue($expectedNodeAggregateIdentifier->equals($actualNodeAggregateIdentifier), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateIdentifier . '", actual: "' . $actualNodeAggregateIdentifier . '" (adapter: ' . $adapterName . ')');
             }
         }
@@ -582,7 +584,7 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateIdentifier, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
         Assert::assertNotNull($node, 'Did not find a node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
@@ -603,7 +605,7 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
         if (!$this->getRootNodeAggregateIdentifier()) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
@@ -613,7 +615,7 @@ trait EventSourcedTrait
         $this->currentNodeAddresses[$alias] = new NodeAddress(
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
-            $node->getNodeAggregateIdentifier(),
+            $node->nodeAggregateIdentifier,
             $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
         );
     }

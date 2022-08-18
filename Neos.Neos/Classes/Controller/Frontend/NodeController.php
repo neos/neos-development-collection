@@ -16,14 +16,12 @@ namespace Neos\Neos\Controller\Frontend;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -56,12 +54,6 @@ class NodeController extends ActionController
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -139,7 +131,7 @@ class NodeController extends ActionController
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
@@ -155,15 +147,7 @@ class NodeController extends ActionController
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $contentRepository);
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $siteDetectionResult->contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                $visibilityConstraints
-            )
-        );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException(
@@ -172,7 +156,7 @@ class NodeController extends ActionController
             );
         }
 
-        if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
+        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -223,7 +207,7 @@ class NodeController extends ActionController
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
@@ -239,21 +223,13 @@ class NodeController extends ActionController
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateIdentifier, $subgraph, $contentRepository);
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $siteDetectionResult->contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                $visibilityConstraints
-            )
-        );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
-        if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
+        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut')) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -275,8 +251,8 @@ class NodeController extends ActionController
     protected function overrideViewVariablesFromInternalArguments()
     {
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
-            $node = $this->propertyMapper->convert((string)$nodeContextPath, NodeInterface::class);
-            if (!$node instanceof NodeInterface) {
+            $node = $this->propertyMapper->convert((string)$nodeContextPath, Node::class);
+            if (!$node instanceof Node) {
                 throw new NodeNotFoundException(sprintf(
                     'The node with context path "%s" could not be resolved',
                     (string)$nodeContextPath
@@ -357,9 +333,9 @@ class NodeController extends ActionController
         if (is_null($currentDocumentNode)) {
             return;
         }
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
+        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->nodeAggregateIdentifier);
 
-        $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
+        $nodePathCache->add($currentDocumentNode->nodeAggregateIdentifier, $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
             self::fillCacheInternal(
@@ -373,7 +349,7 @@ class NodeController extends ActionController
 
     private static function fillCacheInternal(
         SubtreeInterface $subtree,
-        NodeInterface $parentNode,
+        Node $parentNode,
         NodePath $parentNodePath,
         InMemoryCache $inMemoryCache
     ): void {
@@ -387,12 +363,12 @@ class NodeController extends ActionController
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $nodePathCache = $inMemoryCache->getNodePathCache();
-        if ($node->getNodeName() !== null) {
-            $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
-            $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
+        if ($node->nodeName !== null) {
+            $nodePath = $parentNodePath->appendPathSegment($node->nodeName);
+            $nodePathCache->add($node->nodeAggregateIdentifier, $nodePath);
             $namedChildNodeByNodeIdentifierCache->add(
-                $parentNode->getNodeAggregateIdentifier(),
-                $node->getNodeName(),
+                $parentNode->nodeAggregateIdentifier,
+                $node->nodeName,
                 $node
             );
         } else {
@@ -400,8 +376,8 @@ class NodeController extends ActionController
         }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add(
-            $node->getNodeAggregateIdentifier(),
-            $parentNode->getNodeAggregateIdentifier()
+            $node->nodeAggregateIdentifier,
+            $parentNode->nodeAggregateIdentifier
         );
 
         $allChildNodes = [];
@@ -417,7 +393,7 @@ class NodeController extends ActionController
 
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
-            $node->getNodeAggregateIdentifier(),
+            $node->nodeAggregateIdentifier,
             null,
             $allChildNodes
         );

@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
@@ -57,7 +57,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
     protected $mockContext;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $mockNode;
 
@@ -89,7 +89,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(\Neos\Fusion\Core\Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $this->mockNode = $this->getMockBuilder(Node::class)->getMock();
         $this->mockNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContentContext));
         $this->mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue(new NodeType('Acme.Test:Headline', [], [])));
 

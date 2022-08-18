@@ -15,9 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -35,21 +34,15 @@ class NodeHelper implements ProtectedContextAwareInterface
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
      *
      * @throws Exception
      */
-    public function nearestContentCollection(NodeInterface $node, string $nodePath): NodeInterface
+    public function nearestContentCollection(Node $node, string $nodePath): Node
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
-        if ($node->getNodeType()->isOfType($contentCollectionType)) {
+        if ($node->nodeType->isOfType($contentCollectionType)) {
             return $node;
         } else {
             if ($nodePath === '') {
@@ -65,17 +58,19 @@ class NodeHelper implements ProtectedContextAwareInterface
                 NodePath::fromString($nodePath)
             );
 
-            if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
+            if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
+                $nodePathOfNode = $this->contentRepositoryRegistry->subgraphForNode($node)
+                    ->findNodePath($node->nodeAggregateIdentifier);
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $this->findNodePath($node),
+                    $nodePathOfNode,
                     $nodePath,
-                    $node->getNodeType()
+                    $node->nodeType
                 ), 1389352984);
             }
         }
@@ -84,7 +79,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     /**
      * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
      */
-    public function labelForNode(NodeInterface $node): NodeLabelToken
+    public function labelForNode(Node $node): NodeLabelToken
     {
         return new NodeLabelToken($node);
     }
@@ -93,26 +88,26 @@ class NodeHelper implements ProtectedContextAwareInterface
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *
-     * @param NodeInterface $node
+     * @param Node $node
      * @param string $nodeType
      * @return bool
      */
-    public function isOfType(NodeInterface $node, string $nodeType): bool
+    public function isOfType(Node $node, string $nodeType): bool
     {
-        return $node->getNodeType()->isOfType($nodeType);
+        return $node->nodeType->isOfType($nodeType);
     }
 
 
-    public function nodeAddressToString(NodeInterface $node): string
+    public function nodeAddressToString(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
-    private function findNodeByNodePath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    private function findNodeByNodePath(Node $node, NodePath $nodePath): ?Node
     {
         if ($nodePath->isAbsolute()) {
             $node = $this->findRootNode($node);
@@ -124,13 +119,11 @@ class NodeHelper implements ProtectedContextAwareInterface
 
 
 
-    private function findRootNode(NodeInterface $node): NodeInterface
+    private function findRootNode(Node $node): Node
     {
         while (true) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
-            );
-            $parentNode = $nodeAccessor->findParentNode($node);
+            $parentNode = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findParentNode($node->nodeAggregateIdentifier);
             if ($parentNode === null) {
                 // there is no parent, so the root node was the node before
                 return $node;
@@ -140,22 +133,11 @@ class NodeHelper implements ProtectedContextAwareInterface
         }
     }
 
-    private function findNodePath(NodeInterface $node): NodePath
-    {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getSubgraphIdentity()
-        );
-
-        return $nodeAccessor->findNodePath($node);
-    }
-
-    private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    private function findNodeByPath(Node $node, NodePath $nodePath): ?Node
     {
         foreach ($nodePath->getParts() as $nodeName) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
-            );
-            $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
+            $childNode = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findChildNodeConnectedThroughEdgeName($node->nodeAggregateIdentifier, $nodeName);
             if ($childNode === null) {
                 // we cannot find the child node, so there is no node on this path
                 return null;

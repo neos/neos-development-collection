@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Scope('singleton')]
@@ -27,36 +27,36 @@ class NodeSiteResolvingService
 {
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,
         ContentRepositoryIdentifier $contentRepositoryIdentifier
-    ): ?NodeInterface {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                $nodeAddress->isInLiveWorkspace()
-                    ? VisibilityConstraints::frontend()
-                    : VisibilityConstraints::withoutRestrictions()
-            )
+    ): ?Node {
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $contentRepositoryIdentifier
         );
-        $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->dimensionSpacePoint,
+            $nodeAddress->isInLiveWorkspace()
+                ? VisibilityConstraints::frontend()
+                : VisibilityConstraints::withoutRestrictions()
+        );
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
         if (is_null($node)) {
             return null;
         }
         $previousNode = null;
         do {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
+            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $nodeAccessor->findParentNode($node));
+        } while ($node = $subgraph->findParentNode($node->nodeAggregateIdentifier));
 
         // no Site node found at rootline
         return null;

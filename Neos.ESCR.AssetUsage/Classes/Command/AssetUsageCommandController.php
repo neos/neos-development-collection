@@ -83,7 +83,7 @@ final class AssetUsageCommandController extends CommandController
         if ($dimensionSpacePoint === null) {
             return false;
         }
-        $subGraph = $this->contentGraph->getSubgraphByIdentifier(
+        $subGraph = $this->contentGraph->getSubgraph(
             $usage->contentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

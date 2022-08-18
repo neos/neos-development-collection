@@ -19,7 +19,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
@@ -54,7 +54,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
             }
 
             public function execute(
-                NodeInterface $node,
+                Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
             ): ?CommandResult {
@@ -62,8 +62,8 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                     return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
-                            $node->getNodeAggregateIdentifier(),
-                            $node->getOriginDimensionSpacePoint(),
+                            $node->nodeAggregateIdentifier,
+                            $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
                                 $this->newPropertyName => new SerializedPropertyValue(
                                     $this->serializedValue,

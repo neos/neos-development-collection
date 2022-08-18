@@ -11,12 +11,11 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "prev" operation working on ContentRepository nodes. It iterates over all
@@ -42,9 +41,9 @@ class PrevOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -54,7 +53,7 @@ class PrevOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -68,15 +67,9 @@ class PrevOperation extends AbstractOperation
         $output = [];
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-
-            $nextNode = $this->getPrevForNode($contextNode, $nodeAccessor);
-            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()])) {
-                $outputNodePaths[(string)$nextNode->getNodeAggregateIdentifier()] = true;
+            $nextNode = $this->getPrevForNode($contextNode);
+            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateIdentifier])) {
+                $outputNodePaths[(string)$nextNode->nodeAggregateIdentifier] = true;
                 $output[] = $nextNode;
             }
         }
@@ -88,17 +81,17 @@ class PrevOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @param NodeAccessorInterface $nodeAccessor
-     * @return NodeInterface|null The preceeding node of $contextNode or NULL
+     * @param Node $contextNode The node for which the preceding node should be found
+     * @return Node|null The preceeding node of $contextNode or NULL
      */
-    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): ?NodeInterface
+    protected function getPrevForNode(Node $contextNode): ?Node
     {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
         if ($parentNode === null) {
             return null;
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->previous($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->previous($contextNode);
     }
 }

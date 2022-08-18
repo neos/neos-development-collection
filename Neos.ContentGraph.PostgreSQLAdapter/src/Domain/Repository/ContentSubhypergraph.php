@@ -35,7 +35,7 @@ use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -84,7 +84,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->dimensionSpacePoint;
     }
 
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node
     {
         $query = HypergraphQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -213,7 +213,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
     }
 
-    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
+    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?Node
     {
         $query = HypergraphParentQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -231,7 +231,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     public function findNodeByPath(
         NodePath $path,
         NodeAggregateIdentifier $startingNodeAggregateIdentifier
-    ): ?NodeInterface {
+    ): ?Node {
         $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
             throw new \RuntimeException(
@@ -240,7 +240,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         foreach ($path->getParts() as $edgeName) {
             $currentNode = $this->findChildNodeConnectedThroughEdgeName(
-                $currentNode->getNodeAggregateIdentifier(),
+                $currentNode->nodeAggregateIdentifier,
                 $edgeName
             );
             if (!$currentNode) {
@@ -254,7 +254,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
-    ): ?NodeInterface {
+    ): ?Node {
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
             $parentNodeAggregateIdentifier,

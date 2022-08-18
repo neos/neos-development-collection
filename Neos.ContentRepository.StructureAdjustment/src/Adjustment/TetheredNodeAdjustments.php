@@ -20,7 +20,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
@@ -57,17 +57,17 @@ class TetheredNodeAdjustments
             // find missing tethered nodes
             $foundMissingOrDisallowedTetheredNodes = false;
             foreach ($nodeAggregate->getNodes() as $node) {
-                assert($node instanceof NodeInterface);
+                assert($node instanceof Node);
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
-                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
-                        $node->getSubgraphIdentity()->contentStreamIdentifier,
-                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
+                        $node->subgraphIdentity->contentStreamIdentifier,
+                        $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
                     $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                        $node->getNodeAggregateIdentifier(),
+                        $node->nodeAggregateIdentifier,
                         $tetheredNodeName
                     );
                     if ($tetheredNode === null) {
@@ -90,7 +90,7 @@ class TetheredNodeAdjustments
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-                                    $node->getSubgraphIdentity()->contentStreamIdentifier
+                                    $node->subgraphIdentity->contentStreamIdentifier
                                 );
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
@@ -129,19 +129,19 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($nodeAggregate->getNodes() as $node) {
-                    assert($node instanceof NodeInterface);
-                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
-                        $node->getSubgraphIdentity()->contentStreamIdentifier,
-                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                    assert($node instanceof Node);
+                    $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
+                        $node->subgraphIdentity->contentStreamIdentifier,
+                        $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $childNodes = $subgraph->findChildNodes($node->getNodeAggregateIdentifier());
+                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateIdentifier);
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
-                        if ($childNode->isTethered()) {
-                            $actualTetheredChildNodes[(string)$childNode->getNodeName()] = $childNode;
+                        if ($childNode->classification->isTethered()) {
+                            $actualTetheredChildNodes[(string)$childNode->nodeName] = $childNode;
                         }
                     }
 
@@ -156,7 +156,7 @@ class TetheredNodeAdjustments
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 return $this->reorderNodes(
-                                    $node->getSubgraphIdentity()->contentStreamIdentifier,
+                                    $node->subgraphIdentity->contentStreamIdentifier,
                                     $actualTetheredChildNodes,
                                     array_keys($expectedTetheredNodes)
                                 );
@@ -171,9 +171,9 @@ class TetheredNodeAdjustments
     /**
      * @return \Generator<int,StructureAdjustment>
      */
-    private function ensureNodeIsTethered(NodeInterface $node): \Generator
+    private function ensureNodeIsTethered(Node $node): \Generator
     {
-        if (!$node->isTethered()) {
+        if (!$node->classification->isTethered()) {
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE,
@@ -185,13 +185,13 @@ class TetheredNodeAdjustments
     /**
      * @return \Generator<int,StructureAdjustment>
      */
-    private function ensureNodeIsOfType(NodeInterface $node, NodeType $expectedNodeType): \Generator
+    private function ensureNodeIsOfType(Node $node, NodeType $expectedNodeType): \Generator
     {
-        if ($node->getNodeTypeName()->getValue() !== $expectedNodeType->getName()) {
+        if ($node->nodeTypeName->getValue() !== $expectedNodeType->getName()) {
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType . '", but was "' . $node->getNodeTypeName()->getValue() . '".'
+                'should be of type "' . $expectedNodeType . '", but was "' . $node->nodeTypeName->getValue() . '".'
             );
         }
     }
@@ -208,7 +208,7 @@ class TetheredNodeAdjustments
 
     /**
      * array key: name of tethered child node. Value: the Node itself.
-     * @param array<string,NodeInterface> $actualTetheredChildNodes
+     * @param array<string,Node> $actualTetheredChildNodes
      * an array depicting the expected tethered order, like ["node1", "node2"]
      * @param array<int,string> $expectedNodeOrdering
      */
@@ -223,22 +223,22 @@ class TetheredNodeAdjustments
         $succeedingSiblingNodeName = array_pop($expectedNodeOrdering);
         while ($nodeNameToMove = array_pop($expectedNodeOrdering)) {
             // let's move $nodeToMove before $succeedingNode.
-            /* @var $nodeToMove NodeInterface */
+            /* @var $nodeToMove Node */
             $nodeToMove = $actualTetheredChildNodes[$nodeNameToMove];
-            /* @var $succeedingNode NodeInterface */
+            /* @var $succeedingNode Node */
             $succeedingNode = $actualTetheredChildNodes[$succeedingSiblingNodeName];
 
             $events[] = new NodeAggregateWasMoved(
                 $contentStreamIdentifier,
-                $nodeToMove->getNodeAggregateIdentifier(),
+                $nodeToMove->nodeAggregateIdentifier,
                 NodeMoveMappings::fromArray([
                     new NodeMoveMapping(
-                        $nodeToMove->getOriginDimensionSpacePoint(),
+                        $nodeToMove->originDimensionSpacePoint,
                         NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
                         NodeVariantAssignments::createFromArray([
-                            $nodeToMove->getOriginDimensionSpacePoint()->hash => new NodeVariantAssignment(
-                                $succeedingNode->getNodeAggregateIdentifier(),
-                                $succeedingNode->getOriginDimensionSpacePoint()
+                            $nodeToMove->originDimensionSpacePoint->hash => new NodeVariantAssignment(
+                                $succeedingNode->nodeAggregateIdentifier,
+                                $succeedingNode->originDimensionSpacePoint
                             )
                         ])
                     )

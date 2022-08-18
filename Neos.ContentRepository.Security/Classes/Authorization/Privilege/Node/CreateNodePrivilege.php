@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 /** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 /** @codingStandardsIgnoreEnd */
@@ -67,7 +67,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
                 return false;
             }
 
-            /** @var NodeInterface $node */
+            /** @var Node $node */
             $node = $joinPoint->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);

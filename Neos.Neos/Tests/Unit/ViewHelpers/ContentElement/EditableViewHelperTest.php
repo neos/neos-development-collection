@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -66,7 +66,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     protected $mockContext;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $mockNode;
 
@@ -106,7 +106,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
         $this->mockContentContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $this->mockNode = $this->getMockBuilder(Node::class)->getMock();
         $this->mockNode->expects(self::any())->method('getContext')->willReturn($this->mockContentContext);
         $this->mockNode->expects(self::any())->method('getNodeType')->willReturn(new NodeType('Acme.Test:Headline', [], []));
 

@@ -30,15 +30,15 @@ class DimensionAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 foreach (
                     $nodeAggregate->getCoverageByOccupant(
-                        $node->getOriginDimensionSpacePoint()
+                        $node->originDimensionSpacePoint
                     ) as $coveredDimensionSpacePoint
                 ) {
                     $variantType = $this->interDimensionalVariationGraph->getVariantType(
                         $coveredDimensionSpacePoint,
-                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint()
+                        $node->originDimensionSpacePoint->toDimensionSpacePoint()
                     );
                     if (
-                        !$node->getOriginDimensionSpacePoint()->equals($coveredDimensionSpacePoint)
+                        !$node->originDimensionSpacePoint->equals($coveredDimensionSpacePoint)
                         && $variantType !== VariantType::TYPE_SPECIALIZATION
                     ) {
                         $message = sprintf(
@@ -51,7 +51,7 @@ class DimensionAdjustment
 
                                 You need to write a node migration to update the database to fix this case.
                             ',
-                            json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
+                            json_encode($node->originDimensionSpacePoint->jsonSerialize()),
                             json_encode($coveredDimensionSpacePoint->jsonSerialize()),
                             strtoupper($variantType->value)
                         );

@@ -18,7 +18,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * Implemented by all (readable) node aggregates that are to be used for hard or soft constraint checks.
@@ -60,13 +60,13 @@ interface ReadableNodeAggregateInterface
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint;
 
     /**
-     * @return iterable<int,NodeInterface>
+     * @return iterable<int,Node>
      */
     public function getNodes(): iterable;
 
     public function getNodeByOccupiedDimensionSpacePoint(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
-    ): NodeInterface;
+    ): Node;
 
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
 
@@ -84,11 +84,11 @@ interface ReadableNodeAggregateInterface
     ): DimensionSpacePointSet;
 
     /**
-     * @return array|NodeInterface[]
+     * @return array|Node[]
      */
     public function getNodesByCoveredDimensionSpacePoint(): array;
 
-    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface;
+    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): Node;
 
     public function getDisabledDimensionSpacePoints(): DimensionSpacePointSet;
 

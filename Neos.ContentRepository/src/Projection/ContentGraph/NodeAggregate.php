@@ -41,11 +41,11 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         private NodeTypeName $nodeTypeName,
         private ?NodeName $nodeName,
         private OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
-        /** @var array<string,NodeInterface> */
+        /** @var array<string,Node> */
         private array $nodesByOccupiedDimensionSpacePoint,
         private CoverageByOrigin $coverageByOccupant,
         private DimensionSpacePointSet $coveredDimensionSpacePoints,
-        /** @var array<string,NodeInterface> */
+        /** @var array<string,Node> */
         private array $nodesByCoveredDimensionSpacePoint,
         private OriginByCoverage $occupationByCovered,
         /**
@@ -89,7 +89,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     /**
      * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
      *
-     * @return iterable<int,NodeInterface>
+     * @return iterable<int,Node>
      */
     public function getNodes(): iterable
     {
@@ -98,7 +98,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
 
     public function getNodeByOccupiedDimensionSpacePoint(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
-    ): NodeInterface {
+    ): Node {
         if (!$this->occupiedDimensionSpacePoints->contains($occupiedDimensionSpacePoint)) {
             throw NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint::butWasSupposedTo(
                 $this->nodeAggregateIdentifier,
@@ -134,14 +134,14 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     }
 
     /**
-     * @return array<string,NodeInterface>
+     * @return array<string,Node>
      */
     public function getNodesByCoveredDimensionSpacePoint(): array
     {
         return $this->nodesByCoveredDimensionSpacePoint;
     }
 
-    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface
+    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): Node
     {
         if (!isset($this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash])) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(

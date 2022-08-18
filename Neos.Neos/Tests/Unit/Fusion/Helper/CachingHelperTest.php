@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -112,7 +112,7 @@ class CachingHelperTest extends UnitTestCase
         $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
-        $contextNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $contextNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $contextNode->expects(self::any())->method('getContext')->willReturn($contextMock);
 
         $hashedWorkspaceName = $cacheHelper->renderWorkspaceTagForContextNode($workspaceName);
@@ -190,12 +190,12 @@ class CachingHelperTest extends UnitTestCase
         $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $node = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $node->expects(self::any())->method('getContext')->willReturn($contextMock);
         $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
-        $anotherNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $anotherNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $anotherNode->expects(self::any())->method('getContext')->willReturn($contextMock);
         $anotherNode->expects(self::any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
 
@@ -240,7 +240,7 @@ class CachingHelperTest extends UnitTestCase
         $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $node = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $node->expects(self::any())->method('getContext')->willReturn($contextMock);
         $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
@@ -279,12 +279,12 @@ class CachingHelperTest extends UnitTestCase
         $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $node = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $node->expects(self::any())->method('getContext')->willReturn($contextMock);
         $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
-        $anotherNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $anotherNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $anotherNode->expects(self::any())->method('getContext')->willReturn($contextMock);
         $anotherNode->expects(self::any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
 

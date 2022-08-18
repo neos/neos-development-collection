@@ -13,9 +13,7 @@ namespace Neos\ContentRepository\Tests\Functional;
 
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -52,7 +50,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     protected $nodeContextPath = '/sites/example/home';
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $node;
 
@@ -101,9 +99,9 @@ abstract class AbstractNodeTest extends FunctionalTestCase
      * Retrieve a node through the property mapper
      *
      * @param string $contextPath
-     * @return NodeInterface
+     * @return Node
      */
-    protected function getNodeWithContextPath(string $contextPath): NodeInterface
+    protected function getNodeWithContextPath(string $contextPath): Node
     {
         /* @var $propertyMapper PropertyMapper */
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);

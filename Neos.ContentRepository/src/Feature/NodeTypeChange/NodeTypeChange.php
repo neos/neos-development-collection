@@ -24,7 +24,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\Common\NodeConstraintException;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -92,7 +92,7 @@ trait NodeTypeChange
 
     abstract protected function createEventsForMissingTetheredNode(
         ReadableNodeAggregateInterface $parentNodeAggregate,
-        NodeInterface $parentNode,
+        Node $parentNode,
         NodeName $tetheredNodeName,
         NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
@@ -193,17 +193,17 @@ trait NodeTypeChange
         // new tethered child nodes
         $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
         foreach ($nodeAggregate->getNodes() as $node) {
-            assert($node instanceof NodeInterface);
+            assert($node instanceof Node);
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
-                $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
-                    $node->getSubgraphIdentity()->contentStreamIdentifier,
-                    $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                    $node->subgraphIdentity->contentStreamIdentifier,
+                    $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );
                 $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                    $node->getNodeAggregateIdentifier(),
+                    $node->nodeAggregateIdentifier,
                     $tetheredNodeName
                 );
                 if ($tetheredNode === null) {
@@ -433,7 +433,7 @@ trait NodeTypeChange
     ): DimensionSpacePointSet {
         $points = [];
         foreach ($childNodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-            $subgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $childNodeAggregate->getContentStreamIdentifier(),
                 $coveredDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
@@ -441,7 +441,7 @@ trait NodeTypeChange
             $parentNode = $subgraph->findParentNode($childNodeAggregate->getIdentifier());
             if (
                 $parentNode
-                && $parentNode->getNodeAggregateIdentifier()->equals($parentNodeAggregate->getIdentifier())
+                && $parentNode->nodeAggregateIdentifier->equals($parentNodeAggregate->getIdentifier())
             ) {
                 $points[] = $coveredDimensionSpacePoint;
             }

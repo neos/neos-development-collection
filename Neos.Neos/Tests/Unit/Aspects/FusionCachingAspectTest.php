@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\Aspects;
  */
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Tests\UnitTestCase;
@@ -44,7 +44,7 @@ class FusionCachingAspectTest extends UnitTestCase
     private $mockAdviceChain;
 
     /**
-     * @var NodeInterface|MockObject
+     * @var Node|MockObject
      */
     private $mockStartNode;
 
@@ -71,7 +71,7 @@ class FusionCachingAspectTest extends UnitTestCase
         $this->fusionCachingAspect = new FusionCachingAspect();
 
         $this->mockJoinPoint = $this->getMockBuilder(JoinPointInterface::class)->getMock();
-        $this->mockStartNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $this->mockStartNode = $this->getMockBuilder(Node::class)->getMock();
         $this->mockJoinPoint->method('getMethodArgument')->with('startNode')->willReturn($this->mockStartNode);
 
         $this->mockAdviceChain = $this->getMockBuilder(AdviceChain::class)->disableOriginalConstructor()->getMock();
@@ -152,7 +152,7 @@ class FusionCachingAspectTest extends UnitTestCase
         $mockContextSite->method('getSiteResourcesPackageKey')->willReturn('ContextSite.ResourcePackage');
         $mockContext->method('getCurrentSite')->willReturn($mockContextSite);
 
-        $this->mockStartNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $this->mockStartNode = $this->getMockBuilder(Node::class)->getMock();
 
         $this->mockFusionCache->method('set')->willReturnCallback(static function (string $cacheIdentifier) {
             self::assertSame('Some_ResourcePackage', $cacheIdentifier);

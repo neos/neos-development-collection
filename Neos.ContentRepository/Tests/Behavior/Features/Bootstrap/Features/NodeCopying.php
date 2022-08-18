@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -53,7 +54,8 @@ trait NodeCopying
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentGraphs = $this->getAvailableContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
-        $subgraph = $contentGraph->getSubgraphByIdentifier(
+        assert($contentGraph instanceof ContentGraphInterface);
+        $subgraph = $contentGraph->getSubgraph(
             $this->getCurrentContentStreamIdentifier(),
             $this->getCurrentDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()

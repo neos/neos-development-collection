@@ -24,7 +24,7 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 final class Reference
 {
     public function __construct(
-        public readonly NodeInterface $node,
+        public readonly Node $node,
         public readonly PropertyName $name,
         public readonly ?PropertyCollectionInterface $properties
     ) {

@@ -19,7 +19,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValue;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
@@ -102,15 +102,15 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
             }
 
             public function execute(
-                NodeInterface $node,
+                Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamIdentifier $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     /** @var PropertyCollectionInterface $properties */
-                    $properties = $node->getProperties();
+                    $properties = $node->properties;
                     $currentProperty = $properties->serialized()->getProperty($this->propertyName);
-                    /** @var SerializedPropertyValue $currentProperty safe since NodeInterface::hasProperty */
+                    /** @var SerializedPropertyValue $currentProperty safe since Node::hasProperty */
                     $value = $currentProperty->getValue();
                     if (!is_string($value) && !is_array($value)) {
                         throw new \Exception(
@@ -133,8 +133,8 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
-                            $node->getNodeAggregateIdentifier(),
-                            $node->getOriginDimensionSpacePoint(),
+                            $node->nodeAggregateIdentifier,
+                            $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => new SerializedPropertyValue(
                                     $newValueWithReplacedSearch,

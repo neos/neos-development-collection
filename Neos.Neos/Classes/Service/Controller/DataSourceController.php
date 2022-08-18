@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Controller;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -39,10 +39,10 @@ class DataSourceController extends AbstractServiceController
 
     /**
      * @param string $dataSourceIdentifier
-     * @param NodeInterface $node
+     * @param Node $node
      * @throws NeosException
      */
-    public function indexAction($dataSourceIdentifier, NodeInterface $node = null): void
+    public function indexAction($dataSourceIdentifier, Node $node = null): void
     {
         $dataSources = static::getDataSources($this->objectManager);
 

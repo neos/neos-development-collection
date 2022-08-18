@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeDuplication\Command;
 
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -62,22 +62,22 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
     }
 
     // TODO: use accessor here??
-    public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, NodeInterface $sourceNode): self
+    public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, Node $sourceNode): self
     {
         $childNodes = [];
-        foreach ($subgraph->findChildNodes($sourceNode->getNodeAggregateIdentifier()) as $sourceChildNode) {
+        foreach ($subgraph->findChildNodes($sourceNode->nodeAggregateIdentifier) as $sourceChildNode) {
             $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
         }
         /** @var PropertyCollectionInterface $properties */
-        $properties = $sourceNode->getProperties();
+        $properties = $sourceNode->properties;
 
         return new self(
-            $sourceNode->getNodeAggregateIdentifier(),
-            $sourceNode->getNodeTypeName(),
-            $sourceNode->getNodeName(),
-            $sourceNode->getClassification(),
+            $sourceNode->nodeAggregateIdentifier,
+            $sourceNode->nodeTypeName,
+            $sourceNode->nodeName,
+            $sourceNode->classification,
             $properties->serialized(),
-            NodeReferences::fromReferences($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
+            NodeReferences::fromReferences($subgraph->findReferencedNodes($sourceNode->nodeAggregateIdentifier)),
             $childNodes
         );
     }

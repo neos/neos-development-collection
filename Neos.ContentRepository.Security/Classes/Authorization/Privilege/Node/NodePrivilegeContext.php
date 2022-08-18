@@ -12,11 +12,9 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
@@ -34,21 +32,15 @@ class NodePrivilegeContext
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
 
-    protected NodeInterface $node;
+    protected Node $node;
 
-    protected ?NodeAccessorInterface $nodeAccessor;
+    protected ?ContentSubgraphInterface $subgraph;
 
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -69,7 +61,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with($nodePathOrResult, (string)$this->getNodeAccessor()->findNodePath($this->node));
+        return str_starts_with($nodePathOrResult, (string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateIdentifier));
     }
 
     /**
@@ -88,7 +80,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with((string)$this->getNodeAccessor()->findNodePath($this->node), $nodePathOrResult);
+        return str_starts_with((string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateIdentifier), $nodePathOrResult);
     }
 
     /**
@@ -123,7 +115,7 @@ class NodePrivilegeContext
         }
 
         foreach ($nodeTypes as $nodeType) {
-            if ($this->node->getNodeType()->isOfType($nodeType)) {
+            if ($this->node->nodeType->isOfType($nodeType)) {
                 return true;
             }
         }
@@ -141,10 +133,10 @@ class NodePrivilegeContext
      */
     public function isInWorkspace(array $workspaceNames): bool
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($this->node->getSubgraphIdentity()->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($this->node->subgraphIdentity->contentRepositoryIdentifier);
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-            $this->node->getSubgraphIdentity()->contentStreamIdentifier
+            $this->node->subgraphIdentity->contentStreamIdentifier
         );
         return !is_null($workspace) && in_array((string)$workspace->getWorkspaceName(), $workspaceNames);
     }
@@ -168,7 +160,7 @@ class NodePrivilegeContext
         }
 
         return in_array(
-            $this->node->getSubgraphIdentity()->dimensionSpacePoint->getCoordinate(
+            $this->node->subgraphIdentity->dimensionSpacePoint->getCoordinate(
                 new ContentDimensionIdentifier($dimensionName)
             ),
             $presets
@@ -187,27 +179,25 @@ class NodePrivilegeContext
     {
         try {
             $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodePathOrIdentifier);
-            if ($nodeAggregateIdentifier->equals($this->node->getNodeAggregateIdentifier())) {
+            if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateIdentifier)) {
                 return true;
             }
-            $otherNode = $this->getNodeAccessor()->findByIdentifier($nodeAggregateIdentifier);
+            $otherNode = $this->getSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
             if (is_null($otherNode)) {
                 return false;
             }
-            return $this->getNodeAccessor()->findNodePath($otherNode) . '/';
+            return $this->getSubgraph()->findNodePath($otherNode->nodeAggregateIdentifier) . '/';
         } catch (\InvalidArgumentException $e) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }
     }
 
-    private function getNodeAccessor(): NodeAccessorInterface
+    private function getSubgraph(): ContentSubgraphInterface
     {
-        if (is_null($this->nodeAccessor)) {
-            $this->nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->node->getSubgraphIdentity()
-            );
+        if (is_null($this->subgraph)) {
+            $this->subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->node);
         }
 
-        return $this->nodeAccessor;
+        return $this->subgraph;
     }
 }

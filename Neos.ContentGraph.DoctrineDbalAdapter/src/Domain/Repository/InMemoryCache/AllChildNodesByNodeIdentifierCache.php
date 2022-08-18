@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 
@@ -26,7 +26,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 final class AllChildNodesByNodeIdentifierCache
 {
     /**
-     * @var array<string,array<string,array<int,NodeInterface>>>
+     * @var array<string,array<string,array<int,Node>>>
      */
     protected array $childNodes = [];
 
@@ -38,7 +38,7 @@ final class AllChildNodesByNodeIdentifierCache
     }
 
     /**
-     * @param array<int,NodeInterface> $allChildNodes
+     * @param array<int,Node> $allChildNodes
      */
     public function add(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -70,7 +70,7 @@ final class AllChildNodesByNodeIdentifierCache
     }
 
     /**
-     * @return array<int,NodeInterface>
+     * @return array<int,Node>
      */
     public function findChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -93,8 +93,8 @@ final class AllChildNodesByNodeIdentifierCache
         if (isset($this->childNodes[$key]['*'])) {
             $childNodes = $this->childNodes[$key]['*'];
             foreach ($childNodes as $childNode) {
-                /* @var  NodeInterface $childNode */
-                if ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($childNode->getNodeTypeName())) {
+                /* @var  Node $childNode */
+                if ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($childNode->nodeTypeName)) {
                     $result[] = $childNode;
                 }
             }

@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -32,11 +32,11 @@ class ParentsOperationTest extends UnitTestCase
     {
         $this->markTestSkipped('TODO - Update with Neos 9.0');
 
-        $rootNode = $this->createMock(TraversableNodeInterface::class);
-        $sitesNode = $this->createMock(TraversableNodeInterface::class);
-        $siteNode = $this->createMock(TraversableNodeInterface::class);
-        $firstLevelNode = $this->createMock(TraversableNodeInterface::class);
-        $secondLevelNode = $this->createMock(TraversableNodeInterface::class);
+        $rootNode = $this->createMock(TraversableNode::class);
+        $sitesNode = $this->createMock(TraversableNode::class);
+        $siteNode = $this->createMock(TraversableNode::class);
+        $firstLevelNode = $this->createMock(TraversableNode::class);
+        $secondLevelNode = $this->createMock(TraversableNode::class);
 
         $rootNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/')));
         $rootNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));

@@ -10,6 +10,8 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Factory\ProjectionsFactory;
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -66,6 +68,16 @@ final class ContentRepositoryRegistry
             $this->contentRepositoryInstances[$contentRepositoryIdentifier->value] = $this->getFactory($contentRepositoryIdentifier)->build();
         }
         return $this->contentRepositoryInstances[$contentRepositoryIdentifier->value];
+    }
+
+    public function subgraphForNode(Node $node): ContentSubgraphInterface
+    {
+        $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryIdentifier);
+        return $contentRepository->getContentGraph()->getSubgraph(
+            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->subgraphIdentity->dimensionSpacePoint,
+            $node->subgraphIdentity->visibilityConstraints
+        );
     }
 
     /**

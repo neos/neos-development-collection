@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
@@ -34,9 +33,8 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\Exception\NodeImplementationClassNameIsInvalid;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
@@ -63,20 +61,10 @@ final class NodeFactory
         array $nodeRow,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
-    ): NodeInterface {
+    ): Node {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $nodeClassName = $nodeType->getConfiguration('class') ?: Node::class;
-        if (!class_exists($nodeClassName)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
-        }
-        if (!is_subclass_of($nodeClassName, NodeInterface::class)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface(
-                $nodeClassName
-            );
-        }
-        /** @var NodeInterface $node */
-        $node = new $nodeClassName(
-            new ContentSubgraphIdentity(
+        $node = new Node(
+            ContentSubgraphIdentity::create(
                 $this->contentRepositoryIdentifier,
                 ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
                 $dimensionSpacePoint,
@@ -84,11 +72,11 @@ final class NodeFactory
             ),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
-            NodeAggregateClassification::from($nodeRow['classification']),
+            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
         );
 
         return $node;
@@ -188,11 +176,11 @@ final class NodeFactory
             }
         }
 
-        /** @var NodeInterface $primaryNode  a nodeAggregate only exists if it at least contains one node. */
+        /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
 
         return new \Neos\ContentRepository\Projection\ContentGraph\NodeAggregate(
-            $primaryNode->getSubgraphIdentity()->contentStreamIdentifier,
+            $primaryNode->subgraphIdentity->contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
             NodeAggregateClassification::from($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),
@@ -281,7 +269,7 @@ final class NodeFactory
             /** @var string $rawNodeAggregateIdentifier */
             yield new \Neos\ContentRepository\Projection\ContentGraph\NodeAggregate(
                 // this line is safe because a nodeAggregate only exists if it at least contains one node.
-                current($nodes)->getSubgraphIdentity()->contentStreamIdentifier,
+                current($nodes)->subgraphIdentity->contentStreamIdentifier,
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
                 $nodeTypeNames[$rawNodeAggregateIdentifier],

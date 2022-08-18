@@ -19,7 +19,7 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Service\NodePaths;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
@@ -35,22 +35,22 @@ class NodeAddressFactory
         return new self($contentRepository);
     }
 
-    public function createFromNode(NodeInterface $node): NodeAddress
+    public function createFromNode(Node $node): NodeAddress
     {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-            $node->getSubgraphIdentity()->contentStreamIdentifier
+            $node->subgraphIdentity->contentStreamIdentifier
         );
         if ($workspace === null) {
             throw new \RuntimeException(
-                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->getNodeAggregateIdentifier()
-                . ', because the content stream ' . $node->getSubgraphIdentity()->contentStreamIdentifier
+                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->nodeAggregateIdentifier
+                . ', because the content stream ' . $node->subgraphIdentity->contentStreamIdentifier
                 . ' is not assigned to a workspace.'
             );
         }
         return new NodeAddress(
-            $node->getSubgraphIdentity()->contentStreamIdentifier,
-            $node->getSubgraphIdentity()->dimensionSpacePoint,
-            $node->getNodeAggregateIdentifier(),
+            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->subgraphIdentity->dimensionSpacePoint,
+            $node->nodeAggregateIdentifier,
             $workspace->getWorkspaceName()
         );
     }
@@ -106,7 +106,7 @@ class NodeAddressFactory
             ? \mb_substr($pathValues['nodePath'], 6)
             : $pathValues['nodePath']);
 
-        $subgraph = $this->contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
@@ -128,7 +128,7 @@ class NodeAddressFactory
         return new NodeAddress(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
-            $node->getNodeAggregateIdentifier(),
+            $node->nodeAggregateIdentifier,
             $workspace->getWorkspaceName()
         );
     }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\ExceptionHandlers;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -70,12 +70,12 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
         $currentContext = $this->getRuntime()->getCurrentContext();
         if (isset($currentContext['node'])) {
-            /** @var NodeInterface $node */
+            /** @var Node $node */
             $node = $currentContext['node'];
-            $contentRepositoryIdentifier = $node->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepositoryIdentifier = $node->subgraphIdentity->contentRepositoryIdentifier;
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
             $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-                $node->getSubgraphIdentity()->contentStreamIdentifier
+                $node->subgraphIdentity->contentStreamIdentifier
             );
             $applicationContext = $this->environment->getContext();
 

@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
@@ -380,7 +380,7 @@ trait NodeAuthorizationTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName)));
         } else {
-            /** @var NodeInterface $currentNode */
+            /** @var Node $currentNode */
             $currentNode = $this->currentNodes[0];
             try {
                 switch ($propertyName) {
@@ -441,7 +441,7 @@ trait NodeAuthorizationTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName), 'string', escapeshellarg($value)));
         } else {
-            /** @var NodeInterface $currentNode */
+            /** @var Node $currentNode */
             $currentNode = $this->currentNodes[0];
             try {
                 switch ($propertyName) {

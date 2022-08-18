@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
@@ -44,7 +44,7 @@ class PropertyAdjustment
                 $propertyKeysInNode = [];
 
                 /** @var PropertyCollectionInterface $properties */
-                $properties = $node->getProperties();
+                $properties = $node->properties;
                 foreach ($properties->serialized() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
@@ -102,15 +102,15 @@ class PropertyAdjustment
         }
     }
 
-    private function removeProperty(NodeInterface $node, string $propertyKey): EventsToPublish
+    private function removeProperty(Node $node, string $propertyKey): EventsToPublish
     {
         $serializedPropertyValues = SerializedPropertyValues::fromArray([$propertyKey => null]);
         return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
     }
 
-    private function addProperty(NodeInterface $node, string $propertyKey, mixed $defaultValue): EventsToPublish
+    private function addProperty(Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
     {
-        $propertyType = $node->getNodeType()->getPropertyType($propertyKey);
+        $propertyType = $node->nodeType->getPropertyType($propertyKey);
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
             $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)
         ]);
@@ -119,20 +119,20 @@ class PropertyAdjustment
     }
 
     private function publishNodePropertiesWereSet(
-        NodeInterface $node,
+        Node $node,
         SerializedPropertyValues $serializedPropertyValues
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
-                $node->getSubgraphIdentity()->contentStreamIdentifier,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
+                $node->subgraphIdentity->contentStreamIdentifier,
+                $node->nodeAggregateIdentifier,
+                $node->originDimensionSpacePoint,
                 $serializedPropertyValues,
                 UserIdentifier::forSystemUser()
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getSubgraphIdentity()->contentStreamIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->subgraphIdentity->contentStreamIdentifier);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             $events,

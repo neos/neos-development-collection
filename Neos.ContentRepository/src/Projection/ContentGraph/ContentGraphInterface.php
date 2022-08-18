@@ -29,14 +29,14 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  * This is the MAIN ENTRY POINT for the Content Repository. This class exists only
  * **once per Content Repository**.
  *
- * The most important API method is {@see ContentGraphInterface::getSubgraphByIdentifier()},
+ * The most important API method is {@see ContentGraphInterface::getSubgraph()},
  * where you can access the most important read model, the {@see ContentSubgraphInterface}.
  *
  * @api
  */
 interface ContentGraphInterface extends ProjectionStateInterface
 {
-    public function getSubgraphByIdentifier(
+    public function getSubgraph(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -46,7 +46,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?NodeInterface;
+    ): ?Node;
 
     public function findRootNodeAggregateByType(
         ContentStreamIdentifier $contentStreamIdentifier,

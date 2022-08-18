@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 final class Transformations
 {
@@ -108,7 +108,7 @@ final class Transformations
     }
 
     public function executeNodeBasedAndBlock(
-        NodeInterface $node,
+        Node $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         ContentStreamIdentifier $contentStreamForWriting
     ): void {

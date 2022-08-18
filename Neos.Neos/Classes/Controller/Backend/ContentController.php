@@ -15,9 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Backend;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
@@ -115,9 +113,6 @@ class ContentController extends ActionController
     protected $propertyMapper;
 
     #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
-
-    #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
@@ -169,7 +164,7 @@ class ContentController extends ActionController
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
 
         $node = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
@@ -409,22 +404,20 @@ class ContentController extends ActionController
         if (is_null($workspace)) {
             throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
         }
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $contentRepositoryIdentifier,
+        $subgraph = $contentRepository->getContentGraph()
+            ->getSubgraph(
                 $workspace->getCurrentContentStreamIdentifier(),
                 DimensionSpacePoint::fromArray($dimensions),
                 VisibilityConstraints::withoutRestrictions()
-            )
-        );
+            );
         $node = $identifier
-            ? $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($identifier))
+            ? $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($identifier))
             : null;
 
         $views = [];
-        if ($node instanceof NodeInterface) {
+        if ($node instanceof Node) {
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->getNodeType()
+                $node->nodeType
             );
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();
@@ -443,7 +436,7 @@ class ContentController extends ActionController
                     continue;
                 }
                 $contentRepository = $this->contentRepositoryRegistry->get(
-                    $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                    $documentNode->subgraphIdentity->contentRepositoryIdentifier
                 );
                 $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
                 $uri = $this->uriBuilder
@@ -491,11 +484,11 @@ class ContentController extends ActionController
                 continue;
             }
             $translationHelper = new TranslationHelper();
-            $masterPlugins[(string)$pluginNode->getNodeAggregateIdentifier()] = $translationHelper->translate(
+            $masterPlugins[(string)$pluginNode->nodeAggregateIdentifier] = $translationHelper->translate(
                 'masterPlugins.nodeTypeOnPageLabel',
                 null,
                 [
-                    'nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()),
+                    'nodeTypeName' => $translationHelper->translate($pluginNode->nodeType->getLabel()),
                     'pageLabel' => $documentNode->getLabel()
                 ],
                 'Main',
@@ -506,35 +499,29 @@ class ContentController extends ActionController
         return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
     }
 
-    final protected function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    final protected function findClosestDocumentNode(Node $node): ?Node
     {
-        while ($node instanceof NodeInterface) {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+        while ($node instanceof Node) {
+            if ($node->nodeType->isOfType('Neos.Neos:Document')) {
                 return $node;
             }
-            $node = $this->findParentNode($node);
+            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findParentNode($node->nodeAggregateIdentifier);
         }
 
         return null;
-    }
-
-    protected function findParentNode(NodeInterface $node): ?NodeInterface
-    {
-        return $this->nodeAccessorManager->accessorFor(
-            $node->getSubgraphIdentity()
-        )->findParentNode($node);
     }
 
     /**
      * Signals that a new asset has been uploaded through the Neos Backend
      *
      * @param Asset $asset The uploaded asset
-     * @param NodeInterface|null $node The node the asset belongs to
+     * @param Node|null $node The node the asset belongs to
      * @param string $propertyName The node property name the asset is assigned to
      * @return void
      * @Flow\Signal
      */
-    protected function emitAssetUploaded(Asset $asset, ?NodeInterface $node, string $propertyName)
+    protected function emitAssetUploaded(Asset $asset, ?Node $node, string $propertyName)
     {
     }
 }

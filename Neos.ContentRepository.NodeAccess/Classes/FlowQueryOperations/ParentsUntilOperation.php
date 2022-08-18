@@ -11,12 +11,12 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "parentsUntil" operation working on ContentRepository nodes. It iterates over all
@@ -42,9 +42,9 @@ class ParentsUntilOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -54,7 +54,7 @@ class ParentsUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -83,8 +83,8 @@ class ParentsUntilOperation extends AbstractOperation
 
             foreach ($parentNodes as $parentNode) {
                 if ($parentNode !== null
-                    && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
-                    $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
+                    && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateIdentifier])) {
+                    $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateIdentifier] = true;
                     $output[] = $parentNode;
                 }
             }
@@ -97,14 +97,13 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    protected function getParents(NodeInterface $contextNode): Nodes
+    protected function getParents(Node $contextNode): Nodes
     {
         $ancestors = [];
         $node = $contextNode;
         do {
-            $node = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
-            )->findParentNode($node);
+            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findParentNode($node);
             if ($node === null) {
                 // no parent found
                 break;

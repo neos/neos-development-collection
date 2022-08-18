@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Eel\FlowQueryOperations;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -42,7 +42,7 @@ class SortOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (is_array($context) === true && (current($context) instanceof NodeInterface));
+        return count($context) === 0 || (is_array($context) === true && (current($context) instanceof Node));
     }
 
     /**
@@ -72,7 +72,7 @@ class SortOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        /** @var array|NodeInterface[] $nodes */
+        /** @var array|Node[] $nodes */
         $nodes = $flowQuery->getContext();
 
         // Check sort property
@@ -123,8 +123,8 @@ class SortOperation extends AbstractOperation
                 $propertyValue = $propertyValue->getTimestamp();
             }
 
-            $sortSequence[(string)$node->getNodeAggregateIdentifier()] = $propertyValue;
-            $nodesByIdentifier[(string)$node->getNodeAggregateIdentifier()] = $node;
+            $sortSequence[(string)$node->nodeAggregateIdentifier] = $propertyValue;
+            $nodesByIdentifier[(string)$node->nodeAggregateIdentifier] = $node;
         }
 
         // Create the sort sequence

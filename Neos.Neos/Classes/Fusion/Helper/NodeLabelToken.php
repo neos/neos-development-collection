@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -63,9 +63,9 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected $postfix = '';
 
-    protected NodeInterface $node;
+    protected Node $node;
 
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -140,13 +140,13 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected function resolveLabelFromNodeType(): void
     {
-        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel()) ?: '';
+        $this->label = $this->translationHelper->translate($this->node->nodeType->getLabel()) ?: '';
         if (empty($this->label)) {
-            $this->label = $this->node->getNodeType()->getName();
+            $this->label = $this->node->nodeType->getName();
         }
 
-        if (empty($this->postfix) && $this->node->isTethered()) {
-            $this->postfix =  ' (' . $this->node->getNodeName() . ')';
+        if (empty($this->postfix) && $this->node->classification->isTethered()) {
+            $this->postfix =  ' (' . $this->node->nodeName . ')';
         }
     }
 

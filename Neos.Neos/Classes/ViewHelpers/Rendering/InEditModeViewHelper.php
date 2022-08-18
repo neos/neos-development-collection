@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
@@ -68,7 +68,7 @@ class InEditModeViewHelper extends AbstractRenderingStateViewHelper
         parent::initializeArguments();
         $this->registerArgument(
             'node',
-            NodeInterface::class,
+            Node::class,
             'Optional Node to use context from'
         );
         $this->registerArgument(

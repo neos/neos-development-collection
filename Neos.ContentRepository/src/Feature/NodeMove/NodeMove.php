@@ -23,7 +23,7 @@ use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -238,7 +238,7 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        $originSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamIdentifier,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
@@ -255,7 +255,7 @@ trait NodeMove
         foreach ($succeedingSiblingAssignments as $coveredDimensionSpacePointHash => $succeedingSiblingAssignment) {
             /** @var DimensionSpace\DimensionSpacePoint $affectedDimensionSpacePoint */
             $affectedDimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
-            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
                 $affectedDimensionSpacePoint,
                 $visibilityConstraints
@@ -270,13 +270,13 @@ trait NodeMove
                     1645367254
                 );
             }
-            if (!$parentNode->getNodeAggregateIdentifier()->equals($originParent->getNodeAggregateIdentifier())) {
+            if (!$parentNode->nodeAggregateIdentifier->equals($originParent->nodeAggregateIdentifier)) {
                 /** @var DimensionSpace\DimensionSpacePoint $dimensionSpacePoint */
                 $dimensionSpacePoint = $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash];
                 $parents = $parents->add(
                     new NodeVariantAssignment(
-                        $parentNode->getNodeAggregateIdentifier(),
-                        $parentNode->getOriginDimensionSpacePoint()
+                        $parentNode->nodeAggregateIdentifier,
+                        $parentNode->originDimensionSpacePoint
                     ),
                     $dimensionSpacePoint
                 );
@@ -333,7 +333,7 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        $originContentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+        $originContentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamIdentifier,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
@@ -342,7 +342,7 @@ trait NodeMove
             $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
-            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraphByIdentifier(
+            $contentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
                 $visibilityConstraints
@@ -379,8 +379,8 @@ trait NodeMove
             if ($succeedingSibling) {
                 $succeedingSiblings = $succeedingSiblings->add(
                     new NodeVariantAssignment(
-                        $succeedingSibling->getNodeAggregateIdentifier(),
-                        $succeedingSibling->getOriginDimensionSpacePoint()
+                        $succeedingSibling->nodeAggregateIdentifier,
+                        $succeedingSibling->originDimensionSpacePoint
                     ),
                     $dimensionSpacePoint
                 );
@@ -394,7 +394,7 @@ trait NodeMove
         ContentSubgraphInterface $contentSubgraph,
         ?NodeAggregateIdentifier $parentIdentifier,
         NodeAggregateIdentifier $siblingIdentifier
-    ): ?NodeInterface {
+    ): ?Node {
         $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateIdentifier($siblingIdentifier);
         if ($parentIdentifier && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
@@ -405,7 +405,7 @@ trait NodeMove
                     1645366837
                 );
             }
-            if ($parent->getNodeAggregateIdentifier()->equals($parentIdentifier)) {
+            if ($parent->nodeAggregateIdentifier->equals($parentIdentifier)) {
                 return $siblingCandidate;
             }
         } else {
@@ -422,7 +422,7 @@ trait NodeMove
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
         ContentSubgraphInterface $currentContentSubgraph,
         ContentSubgraphInterface $originContentSubgraph
-    ): ?NodeInterface {
+    ): ?Node {
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)
@@ -434,13 +434,13 @@ trait NodeMove
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first
             if (isset($succeedingSiblingCandidates[$i])) {
-                if ($succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
+                if ($succeedingSiblingCandidates[$i]->nodeAggregateIdentifier->equals($nodeAggregateIdentifier)) {
                     \array_splice($succeedingSiblingCandidates, $i, 1);
                 }
                 $succeedingSibling = $this->findSibling(
                     $currentContentSubgraph,
                     $parentIdentifier,
-                    $succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier()
+                    $succeedingSiblingCandidates[$i]->nodeAggregateIdentifier
                 );
                 if ($succeedingSibling) {
                     break;
@@ -448,13 +448,13 @@ trait NodeMove
             }
             if (isset($precedingSiblingCandidates[$i])) {
                 /** @var NodeAggregateIdentifier $precedingSiblingIdentifier can only be the case if not null */
-                if ($precedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
+                if ($precedingSiblingCandidates[$i]->nodeAggregateIdentifier->equals($nodeAggregateIdentifier)) {
                     \array_splice($precedingSiblingCandidates, $i, 1);
                 }
                 $precedingSibling = $this->findSibling(
                     $currentContentSubgraph,
                     $parentIdentifier,
-                    $precedingSiblingCandidates[$i]->getNodeAggregateIdentifier()
+                    $precedingSiblingCandidates[$i]->nodeAggregateIdentifier
                 );
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblings(

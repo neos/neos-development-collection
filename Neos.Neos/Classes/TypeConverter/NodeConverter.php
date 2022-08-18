@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\TypeConverter;
 
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -41,7 +41,7 @@ class NodeConverter extends AbstractTypeConverter
     /**
      * @var array<int,string>
      */
-    protected $sourceTypes = [NodeInterface::class];
+    protected $sourceTypes = [Node::class];
 
     /**
      * @var string
@@ -54,7 +54,7 @@ class NodeConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @param NodeInterface $source
+     * @param Node $source
      * @param string $targetType
      * @param array<string,mixed> $subProperties
      * @return mixed|\Neos\Error\Messages\Error|string|null
@@ -67,7 +67,7 @@ class NodeConverter extends AbstractTypeConverter
         PropertyMappingConfigurationInterface $configuration = null
     ) {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $source->getSubgraphIdentity()->contentRepositoryIdentifier
+            $source->subgraphIdentity->contentRepositoryIdentifier
         );
         return NodeAddressFactory::create($contentRepository)->createFromNode($source)->serializeForUri();
     }

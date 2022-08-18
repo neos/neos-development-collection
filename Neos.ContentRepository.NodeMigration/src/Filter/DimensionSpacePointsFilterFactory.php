@@ -18,7 +18,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 
 /**
  * Filter nodes by origin dimension space point. Normally, check for exact matches; but if includeSpecializations=TRUE,
@@ -64,12 +64,12 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
             ) {
             }
 
-            public function matches(NodeInterface $node): bool
+            public function matches(Node $node): bool
             {
                 if ($this->includeSpecializations) {
                     foreach ($this->points as $point) {
                         $variantType = $this->interDimensionalVariationGraph->getVariantType(
-                            $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                            $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                             $point->toDimensionSpacePoint()
                         );
                         if (
@@ -83,7 +83,7 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
                     return false;
                 } else {
                     // exact matches on $this->points
-                    return $this->points->contains($node->getOriginDimensionSpacePoint());
+                    return $this->points->contains($node->originDimensionSpacePoint);
                 }
             }
         };

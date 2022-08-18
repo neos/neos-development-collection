@@ -47,7 +47,7 @@ final class References implements \IteratorAggregate, \ArrayAccess, \Countable
     public function getNodes(): Nodes
     {
         return Nodes::fromArray(array_map(
-            fn (Reference $reference): NodeInterface => $reference->node,
+            fn (Reference $reference): Node => $reference->node,
             $this->references
         ));
     }

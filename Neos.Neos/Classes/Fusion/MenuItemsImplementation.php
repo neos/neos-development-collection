@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
@@ -29,12 +30,6 @@ use Neos\Flow\Annotations as Flow;
 class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
-
-    /**
      * Hard limit for the maximum number of levels supported by this menu
      */
     public const MAXIMUM_LEVELS_LIMIT = 100;
@@ -42,7 +37,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Internal cache for the startingPoint tsValue.
      *
-     * @var NodeInterface
+     * @var Node
      */
     protected $startingPoint;
 
@@ -132,7 +127,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return $this->lastLevel;
     }
 
-    public function getStartingPoint(): ?NodeInterface
+    public function getStartingPoint(): ?Node
     {
         if ($this->startingPoint === null) {
             $this->startingPoint = $this->fusionValue('startingPoint');
@@ -142,7 +137,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @return array<int,NodeInterface>|null
+     * @return array<int,Node>|null
      */
     public function getItemCollection(): ?array
     {
@@ -158,13 +153,10 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function buildItems(): array
     {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
         if (!is_null($this->getItemCollection())) {
-            $menuLevelCollection = $this->getItemCollection();
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->getSubgraphIdentity()
-            );
-            $childSubtree = $nodeAccessor->findSubtrees(
-                $menuLevelCollection,
+            $childSubtree = $subgraph->findSubtrees(
+                NodeAggregateIdentifiers::fromNodes($this->getItemCollection()),
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
@@ -174,11 +166,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 return [];
             }
 
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->currentNode->getSubgraphIdentity()
-            );
-            $childSubtree = $nodeAccessor->findSubtrees(
-                [$entryParentNode],
+            $childSubtree = $subgraph->findSubtrees(
+                NodeAggregateIdentifiers::create($entryParentNode->nodeAggregateIdentifier),
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
@@ -234,15 +223,15 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      *
      * If entryLevel is configured this will be taken into account as well.
      *
-     * @return NodeInterface|null
+     * @return Node|null
      * @throws FusionException
      */
-    protected function findMenuStartingPoint(): ?NodeInterface
+    protected function findMenuStartingPoint(): ?Node
     {
         $fusionContext = $this->runtime->getCurrentContext();
         $traversalStartingPoint = $this->getStartingPoint() ?: $fusionContext['node'] ?? null;
 
-        if (!$traversalStartingPoint instanceof NodeInterface) {
+        if (!$traversalStartingPoint instanceof Node) {
             throw new FusionException(
                 'You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.',
                 1369596980
@@ -255,8 +244,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $entryParentNode = null;
             $this->traverseUpUntilCondition(
                 $traversalStartingPoint,
-                function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
-                    if (!$this->getNodeTypeConstraints()->matches($node->getNodeTypeName())) {
+                function (Node $node) use (&$remainingIterations, &$entryParentNode) {
+                    if (!$this->getNodeTypeConstraints()->matches($node->nodeTypeName)) {
                         return false;
                     }
 
@@ -278,8 +267,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             );
             $this->traverseUpUntilCondition(
                 $traversalStartingPoint,
-                function (NodeInterface $traversedNode) use (&$traversedHierarchy, $constraints) {
-                    if (!$constraints->matches($traversedNode->getNodeTypeName())) {
+                function (Node $traversedNode) use (&$traversedHierarchy, $constraints) {
+                    if (!$constraints->matches($traversedNode->nodeTypeName)) {
                         return false;
                     }
                     $traversedHierarchy[] = $traversedNode;
@@ -297,7 +286,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function getNodeTypeConstraints(): NodeTypeConstraints
     {
         if (!$this->nodeTypeConstraints) {
-            $contentRepositoryIdentifier = $this->currentNode->getSubgraphIdentity()->contentRepositoryIdentifier;
+            $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryIdentifier;
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
             $this->nodeTypeConstraints = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
                 ->parseFilterString($this->getFilter());
@@ -307,18 +296,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * the callback always gets the current NodeInterface passed as first parameter,
+     * the callback always gets the current Node passed as first parameter,
      * and then its parent, and its parent etc etc.
      * Until it has reached the root, or the return value of the closure is FALSE.
      */
-    protected function traverseUpUntilCondition(NodeInterface $node, \Closure $callback): void
+    protected function traverseUpUntilCondition(Node $node, \Closure $callback): void
     {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
             $shouldContinueTraversal = $callback($node);
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
-            );
-            $node = $nodeAccessor->findParentNode($node);
+            $node = $subgraph->findParentNode($node->nodeAggregateIdentifier);
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 }

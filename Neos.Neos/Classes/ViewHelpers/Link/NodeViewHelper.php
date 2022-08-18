@@ -15,23 +15,14 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Link;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
+use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
-use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -40,6 +31,11 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -140,12 +136,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -260,38 +250,38 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         $node = $this->arguments['node'];
-        if (!$node instanceof NodeInterface) {
+        if (!$node instanceof Node) {
             $node = $this->getContextVariable($this->arguments['baseNodeName']);
         }
 
-        if ($node instanceof NodeInterface) {
+        if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->getSubgraphIdentity()->contentRepositoryIdentifier
+                $node->subgraphIdentity->contentRepositoryIdentifier
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } elseif (is_string($node)) {
             $documentNode = $this->getContextVariable('documentNode');
-            assert($documentNode instanceof NodeInterface);
+            assert($documentNode instanceof Node);
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                $documentNode->subgraphIdentity->contentRepositoryIdentifier
             );
             $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository);
             $node = $documentNode;
         } else {
             throw new ViewHelperException(sprintf(
                 'The "node" argument can only be a string or an instance of %s. Given: %s',
-                NodeInterface::class,
+                Node::class,
                 is_object($node) ? get_class($node) : gettype($node)
             ), 1601372376);
         }
 
 
         $subgraph = $contentRepository->getContentGraph()
-            ->getSubgraphByIdentifier(
+            ->getSubgraph(
                 $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->dimensionSpacePoint,
-                $node->getSubgraphIdentity()->visibilityConstraints
+                $node->subgraphIdentity->visibilityConstraints
             );
 
         $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
@@ -302,7 +292,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444);
         }
-        if ($resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
+        if ($resolvedNode->nodeType->isOfType('Neos.Neos:Shortcut')) {
             try {
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
                     $nodeAddress,
@@ -311,7 +301,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
                 throw new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
-                    $resolvedNode->getNodeAggregateIdentifier(),
+                    $resolvedNode->nodeAggregateIdentifier,
                     json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601370239, $e);
             }
@@ -369,10 +359,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      */
     private function resolveNodeAddressFromString(
         string $path,
-        NodeInterface $documentNode,
+        Node $documentNode,
         ContentRepository $contentRepository
     ): NodeAddress {
-        /* @var NodeInterface $documentNode */
+        /* @var Node $documentNode */
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
         if (strncmp($path, 'node://', 7) === 0) {
@@ -380,61 +370,47 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 NodeAggregateIdentifier::fromString(\mb_substr($path, 7))
             );
         }
-        $nodeAccessor = $this->getNodeAccessorForNodeAddress(
-            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier,
-            $documentNodeAddress
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $documentNodeAddress->contentStreamIdentifier,
+            $documentNodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
         );
         if (strncmp($path, '~', 1) === 0) {
             // TODO: This can be simplified
             // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
             $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
                 $documentNodeAddress,
-                $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+                $documentNode->subgraphIdentity->contentRepositoryIdentifier
             );
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
                     $documentNodeAddress->nodeAggregateIdentifier,
-                    json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601366598);
             }
             if ($path === '~') {
                 $targetNode = $siteNode;
             } else {
-                $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString(substr($path, 1)), $siteNode);
+                $targetNode = $subgraph->findNodeByPath(
+                    NodePath::fromString(substr($path, 1)),
+                    $siteNode->nodeAggregateIdentifier
+                );
             }
         } else {
-            $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString($path), $documentNode);
+            $targetNode = $subgraph->findNodeByPath(
+                NodePath::fromString($path),
+                $documentNode->nodeAggregateIdentifier
+            );
         }
         if ($targetNode === null) {
             throw new ViewHelperException(sprintf(
                 'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
                 $path,
                 $documentNodeAddress->nodeAggregateIdentifier,
-                json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789);
         }
-        return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->getNodeAggregateIdentifier());
-    }
-
-    /**
-     * Returns the ContentSubgraph that is specified via "subgraph" argument, if present.
-     * Otherwise the Subgraph of the given $nodeAddress
-     *
-     * @param NodeAddress $nodeAddress
-     * @return NodeAccessorInterface
-     */
-    private function getNodeAccessorForNodeAddress(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        NodeAddress $nodeAddress
-    ): NodeAccessorInterface {
-        return $this->nodeAccessorManager->accessorFor(
-            new ContentSubgraphIdentity(
-                $contentRepositoryIdentifier,
-                $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            )
-        );
+        return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->nodeAggregateIdentifier);
     }
 }

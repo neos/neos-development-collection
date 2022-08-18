@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -25,7 +25,7 @@ final class Subtree implements SubtreeInterface
 {
     protected int $level;
 
-    protected NodeInterface $node;
+    protected Node $node;
 
     /**
      * @var array<int,SubtreeInterface>
@@ -35,7 +35,7 @@ final class Subtree implements SubtreeInterface
     /**
      * @param array<int,SubtreeInterface> $children
      */
-    public function __construct(int $level, NodeInterface $node, array $children = [])
+    public function __construct(int $level, Node $node, array $children = [])
     {
         $this->level = $level;
         $this->node = $node;
@@ -47,7 +47,7 @@ final class Subtree implements SubtreeInterface
         return $this->level;
     }
 
-    public function getNode(): NodeInterface
+    public function getNode(): Node
     {
         return $this->node;
     }

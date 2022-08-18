@@ -11,13 +11,12 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "nextUntil" operation working on ContentRepository nodes. It iterates over all context elements
@@ -43,9 +42,9 @@ class NextUntilOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -55,7 +54,7 @@ class NextUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -73,13 +72,7 @@ class NextUntilOperation extends AbstractOperation
         $until = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-
-            $nextNodes = $this->getNextForNode($contextNode, $nodeAccessor);
+            $nextNodes = $this->getNextForNode($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($nextNodes);
                 $untilQuery->pushOperation('filter', [$arguments[0]]);
@@ -94,8 +87,8 @@ class NextUntilOperation extends AbstractOperation
 
             foreach ($nextNodes as $nextNode) {
                 if ($nextNode !== null
-                    && !isset($outputNodeIdentifiers[(string)$nextNode->getNodeAggregateIdentifier()])) {
-                    $outputNodeIdentifiers[(string)$nextNode->getNodeAggregateIdentifier()] = true;
+                    && !isset($outputNodeIdentifiers[(string)$nextNode->nodeAggregateIdentifier])) {
+                    $outputNodeIdentifiers[(string)$nextNode->nodeAggregateIdentifier] = true;
                     $output[] = $nextNode;
                 }
             }
@@ -109,17 +102,18 @@ class NextUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the next nodes should be found
-     * @param NodeAccessorInterface $nodeAccessor
+     * @param Node $contextNode The node for which the next nodes should be found
      * @return Nodes The following nodes of $contextNode
      */
-    protected function getNextForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getNextForNode(Node $contextNode): Nodes
     {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
         if ($parentNode === null) {
             return Nodes::createEmpty();
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->nextAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->nextAll($contextNode);
     }
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Cache\Frontend\VariableFrontend;
@@ -38,9 +38,9 @@ class FusionCachingAspect
      */
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
-        /* @var NodeInterface $currentSiteNode */
+        /* @var Node $currentSiteNode */
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
-        $cacheIdentifier = $currentSiteNode->getNodeAggregateIdentifier()->jsonSerialize();
+        $cacheIdentifier = $currentSiteNode->nodeAggregateIdentifier->jsonSerialize();
 
         if ($this->fusionCache->has($cacheIdentifier)) {
             $fusionObjectTree = $this->fusionCache->get($cacheIdentifier);

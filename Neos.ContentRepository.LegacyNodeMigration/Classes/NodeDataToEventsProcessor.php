@@ -176,16 +176,15 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $nodeName = end($pathParts);
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
-        // HACK: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-        $nodeType->getFullConfiguration();
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
-        if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName)) {
-            // Create tethered node
+        if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
+            // Create tethered node if the node was not found before.
+            // If the node was already visited, we want to create a node variant (and keep the tethering status)
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet());
             $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, UserIdentifier::forSystemUser(), null));
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
-            // Create node variant
+            // Create node variant, BOTH for tethered and regular nodes
             $this->createNodeVariant($nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
         } else {
             // create node aggregate
@@ -226,7 +225,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 continue;
             }
 
-            // In the old `NodeInterface`, we call the property mapper to convert the returned properties from NodeData;
+            // In the old `Node`, we call the property mapper to convert the returned properties from NodeData;
             // so we need to do the same here.
             try {
                 $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);
@@ -302,8 +301,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             return false;
         }
         $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName->getValue());
-        // HACK: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-        $nodeTypeOfParent->getFullConfiguration();
         return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
     }
 }

@@ -15,21 +15,17 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
 /**
@@ -84,15 +80,9 @@ class ContentElementWrappingService
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    /**
      * All editable nodes rendered in the document
      *
-     * @var array<string,NodeInterface>
+     * @var array<string,Node>
      */
     protected array $renderedNodes = [];
 
@@ -114,18 +104,18 @@ class ContentElementWrappingService
      * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function wrapContentObject(
-        NodeInterface $node,
+        Node $node,
         string $content,
         string $fusionPath,
         array $additionalAttributes = []
     ): ?string {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
 
         if (
             $this->isContentStreamOfLiveWorkspace(
-                $node->getSubgraphIdentity()->contentStreamIdentifier,
+                $node->subgraphIdentity->contentStreamIdentifier,
                 $contentRepository
             )
         ) {
@@ -166,14 +156,14 @@ class ContentElementWrappingService
      * to be rendered in the element wrapping
      */
     public function wrapCurrentDocumentMetadata(
-        NodeInterface $node,
+        Node $node,
         string $content,
         string $fusionPath,
         array $additionalAttributes = [],
-        ?NodeInterface $siteNode = null
+        ?Node $siteNode = null
     ): string {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
         if ($this->needsMetadata($node, $contentRepository, true) === false) {
             return $content;
@@ -196,44 +186,42 @@ class ContentElementWrappingService
      * @param array<string,mixed> $attributes
      * @return array<string,mixed>
      */
-    protected function addGenericEditingMetadata(array $attributes, NodeInterface $node): array
+    protected function addGenericEditingMetadata(array $attributes, Node $node): array
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->getSubgraphIdentity()->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryIdentifier
         );
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
-        $attributes['typeof'] = 'typo3:' . $node->getNodeType()->getName();
+        $attributes['typeof'] = 'typo3:' . $node->nodeType->getName();
         $attributes['about'] = $nodeAddress->serializeForUri();
-        $attributes['data-node-_identifier'] = (string)$node->getNodeAggregateIdentifier();
+        $attributes['data-node-_identifier'] = (string)$node->nodeAggregateIdentifier;
         $attributes['data-node-__workspace-name'] = $nodeAddress->workspaceName;
         $attributes['data-node-__label'] = $node->getLabel();
 
-        if ($node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+        if ($node->nodeType->isOfType('Neos.Neos:ContentCollection')) {
             $attributes['rel'] = 'typo3:content-collection';
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getSubgraphIdentity()
-        );
-        $parentNode = $nodeAccessor->findParentNode($node);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $parentNode = $subgraph->findParentNode($node->nodeAggregateIdentifier);
         // these properties are needed together with the current NodeType to evaluate Node Type Constraints
         // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
         if ($parentNode) {
-            $attributes['data-node-__parent-node-type'] = $parentNode->getNodeType()->getName();
+            $attributes['data-node-__parent-node-type'] = $parentNode->nodeType->getName();
         }
 
-        if ($node->getClassification()->isTethered()) {
-            $attributes['data-node-_name'] = $node->getNodeName();
+        if ($node->classification->isTethered()) {
+            $attributes['data-node-_name'] = $node->nodeName;
             $attributes['data-node-_is-autocreated'] = 'true';
         }
 
-        if ($parentNode && $parentNode->getClassification()->isTethered()) {
+        if ($parentNode && $parentNode->classification->isTethered()) {
             $attributes['data-node-_parent-is-autocreated'] = 'true';
             // we shall only add these properties if the parent is actually auto-created;
             // as the Node-Type-Switcher in the UI relies on that.
-            $attributes['data-node-__parent-node-name'] = $parentNode->getNodeName();
+            $attributes['data-node-__parent-node-name'] = $parentNode->nodeName;
             $attributes['data-node-__grandparent-node-type']
-                = $nodeAccessor->findParentNode($parentNode)?->getNodeType()->getName();
+                = $subgraph->findParentNode($parentNode->nodeAggregateIdentifier)?->nodeType->getName();
         }
 
         return $attributes;
@@ -245,9 +233,9 @@ class ContentElementWrappingService
      * @param array<string,mixed> $attributes
      * @return array<string,mixed> the merged attributes
      */
-    protected function addNodePropertyAttributes(array $attributes, NodeInterface $node): array
+    protected function addNodePropertyAttributes(array $attributes, Node $node): array
     {
-        foreach (array_keys($node->getNodeType()->getProperties()) as $propertyName) {
+        foreach (array_keys($node->nodeType->getProperties()) as $propertyName) {
             if ($propertyName[0] === '_' && $propertyName[1] === '_') {
                 // skip fully-private properties
                 continue;
@@ -263,16 +251,16 @@ class ContentElementWrappingService
      *
      * @return array<string,mixed>
      */
-    protected function renderNodePropertyAttribute(NodeInterface $node, string $propertyName): array
+    protected function renderNodePropertyAttribute(Node $node, string $propertyName): array
     {
         $attributes = [];
 
         // skip the node name of the site node - TODO: Why do we need this?
-        if ($propertyName === '_name' && $node->getNodeType()->isOfType('Neos.Neos:Site')) {
+        if ($propertyName === '_name' && $node->nodeType->isOfType('Neos.Neos:Site')) {
             return $attributes;
         }
 
-        $dataType = $node->getNodeType()->getPropertyType($propertyName);
+        $dataType = $node->nodeType->getPropertyType($propertyName);
         $dasherizedPropertyName = $this->dasherize($propertyName);
 
         $propertyValue = $node->getProperty($propertyName);
@@ -297,30 +285,28 @@ class ContentElementWrappingService
     protected function addDocumentMetadata(
         ContentRepository $contentRepository,
         array $attributes,
-        NodeInterface $node,
-        ?NodeInterface $siteNode
+        Node $node,
+        ?Node $siteNode
     ): array {
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
-        if (!$siteNode instanceof NodeInterface) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $node->getSubgraphIdentity()
-            );
+        if (!$siteNode instanceof Node) {
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
             $siteCandidate = $node;
-            while ($siteCandidate instanceof NodeInterface) {
-                if ($siteCandidate->getNodeType()->isOfType('Neos.Neos:Site')) {
+            while ($siteCandidate instanceof Node) {
+                if ($siteCandidate->nodeType->isOfType('Neos.Neos:Site')) {
                     $siteNode = $siteCandidate;
                     break;
                 }
-                $siteCandidate = $nodeAccessor->findParentNode($siteCandidate);
+                $siteCandidate = $subgraph->findParentNode($siteCandidate->nodeAggregateIdentifier);
             }
         }
         $siteNodeAddress = null;
-        if ($siteNode instanceof NodeInterface) {
+        if ($siteNode instanceof Node) {
             $siteNodeAddress = $nodeAddressFactory->createFromNode($siteNode);
         }
-        $attributes['data-neos-site-name'] = $siteNode?->getNodeName();
+        $attributes['data-neos-site-name'] = $siteNode?->nodeName;
         $attributes['data-neos-site-node-context-path'] = $siteNodeAddress?->serializeForUri();
         // Add the workspace of the content repository context to the attributes
         $attributes['data-neos-context-workspace-name'] = $nodeAddress->workspaceName;
@@ -341,10 +327,10 @@ class ContentElementWrappingService
      * @param array<string,mixed> $initialClasses
      * @return array<string,mixed>
      */
-    protected function addCssClasses(array $attributes, NodeInterface $node, array $initialClasses = []): array
+    protected function addCssClasses(array $attributes, Node $node, array $initialClasses = []): array
     {
         $classNames = $initialClasses;
-        if (!$node->getSubgraphIdentity()->dimensionSpacePoint->equals($node->getOriginDimensionSpacePoint())) {
+        if (!$node->subgraphIdentity->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
             $classNames[] = 'neos-contentelement-shine-through';
         }
 
@@ -363,32 +349,31 @@ class ContentElementWrappingService
      * @throws \Neos\Eel\Exception
      * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
-    protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode): void
+    protected function appendNonRenderedContentNodeMetadata(Node $documentNode): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->getSubgraphIdentity()->contentRepositoryIdentifier
+            $documentNode->subgraphIdentity->contentRepositoryIdentifier
         );
         if (
             $this->isContentStreamOfLiveWorkspace(
-                $documentNode->getSubgraphIdentity()->contentStreamIdentifier,
+                $documentNode->subgraphIdentity->contentStreamIdentifier,
                 $contentRepository
             )
         ) {
             return;
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $documentNode->getSubgraphIdentity()
-        );
+
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($documentNode);
 
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
-        foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
+        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateIdentifier) as $node) {
+            if ($node->nodeType->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
 
-            if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
+            if (isset($this->renderedNodes[(string)$node->nodeAggregateIdentifier]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $nodeAddressFactory->createFromNode($node)->serializeForUri();
                 /** @codingStandardsIgnoreStart */
@@ -396,7 +381,7 @@ class ContentElementWrappingService
                 /** @codingStandardsIgnoreEnd */
             }
 
-            $nestedNodes = $nodeAccessor->findChildNodes($node);
+            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateIdentifier);
             $hasChildNodes = false;
             foreach ($nestedNodes as $nestedNode) {
                 $hasChildNodes = true;
@@ -429,7 +414,7 @@ class ContentElementWrappingService
      * @throws \Neos\Eel\Exception
      * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
-    public function getNonRenderedContentNodeMetadata(NodeInterface $documentNode): string
+    public function getNonRenderedContentNodeMetadata(Node $documentNode): string
     {
         $this->userLocaleService->switchToUILocale();
 
@@ -452,12 +437,12 @@ class ContentElementWrappingService
     }
 
     protected function needsMetadata(
-        NodeInterface $node,
+        Node $node,
         ContentRepository $contentRepository,
         bool $renderCurrentDocumentMetadata
     ): bool {
         return $this->isContentStreamOfLiveWorkspace(
-            $node->getSubgraphIdentity()->contentStreamIdentifier,
+            $node->subgraphIdentity->contentStreamIdentifier,
             $contentRepository
         )
              && ($renderCurrentDocumentMetadata === true

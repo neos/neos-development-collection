@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
@@ -51,13 +51,13 @@ class ImageVariantGarbageCollector
      * Note: This method it triggered by the "nodePropertyChanged" signal,
      * @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
      *
-     * @param NodeInterface $node the affected node
+     * @param Node $node the affected node
      * @param string $propertyName name of the property that has been changed/added
      * @param mixed $oldValue the property value before it was changed or NULL if the property is new
      * @param mixed $value the new property value
      * @return void
      */
-    public function removeUnusedImageVariant(NodeInterface $node, $propertyName, $oldValue, $value)
+    public function removeUnusedImageVariant(Node $node, $propertyName, $oldValue, $value)
     {
         if ($oldValue === $value || (!$oldValue instanceof ImageVariant)) {
             return;
@@ -77,9 +77,9 @@ class ImageVariantGarbageCollector
                 // If the result contains exactly the node that got a new ImageVariant assigned
                 // then we are safe to remove the asset here.
                 if (
-                    $usageItem->contentStreamIdentifier === $node->getSubgraphIdentity()->contentStreamIdentifier
-                    && $usageItem->originDimensionSpacePoint === $node->getOriginDimensionSpacePoint()->hash
-                    && $usageItem->nodeAggregateIdentifier === $node->getNodeAggregateIdentifier()
+                    $usageItem->contentStreamIdentifier === $node->subgraphIdentity->contentStreamIdentifier
+                    && $usageItem->originDimensionSpacePoint === $node->originDimensionSpacePoint->hash
+                    && $usageItem->nodeAggregateIdentifier === $node->nodeAggregateIdentifier
                 ) {
                     $this->assetRepository->remove($oldValue);
                 }

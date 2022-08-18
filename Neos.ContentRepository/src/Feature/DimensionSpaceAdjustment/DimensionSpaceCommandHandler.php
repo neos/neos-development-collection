@@ -136,7 +136,7 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         ContentGraphInterface $contentGraph
     ): void {
-        $subgraph = $contentGraph->getSubgraphByIdentifier(
+        $subgraph = $contentGraph->getSubgraph(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
