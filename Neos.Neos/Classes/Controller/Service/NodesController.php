@@ -387,12 +387,16 @@ class NodesController extends ActionController
 
         foreach (array_reverse($identifiersFromRootlineToTranslate) as $identifier) {
             assert($identifier instanceof NodeAggregateIdentifier);
+            // NOTE: for creating node variants, we need to find the ORIGIN DSP
+            // of the source node (in order to unambiguously identify it);
+            // so we need to load it from the source subgraph
+            $sourceNode = $sourceSubgraph->findNodeByNodeAggregateIdentifier($identifier);
             // TODO: do we REALLY need to block for every operation or do we find somethingmore clever?
             $contentRepository->handle(
                 new CreateNodeVariant(
                     $sourceSubgraph->getContentStreamIdentifier(),
                     $identifier,
-                    OriginDimensionSpacePoint::fromDimensionSpacePoint($sourceSubgraph->getDimensionSpacePoint()),
+                    $sourceNode->originDimensionSpacePoint,
                     OriginDimensionSpacePoint::fromDimensionSpacePoint($targetSubgraph->getDimensionSpacePoint()),
                     UserIdentifier::forSystemUser() // TODO: USE THE CORRECT USER HERE
                 )
