@@ -39,6 +39,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
@@ -517,10 +518,11 @@ trait EventSourcedTrait
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
+            assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();
 
             $subtree = $contentGraph
-                ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+                ->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
                 ->findSubtrees(NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]), $maximumLevels, $nodeTypeConstraints);
 
             /** @var SubtreeInterface[] $flattenedSubtree */

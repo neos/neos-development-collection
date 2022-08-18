@@ -15,8 +15,6 @@ use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
-use Neos\Neos\Domain\Service\SiteImportService;
-use Neos\ContentRepository\Domain\Model\Node;
 
 /**
  * Base test case for nodes

@@ -13,8 +13,6 @@ namespace Neos\ContentRepository\Tests\Functional;
 
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Domain\Service\SiteImportService;
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;

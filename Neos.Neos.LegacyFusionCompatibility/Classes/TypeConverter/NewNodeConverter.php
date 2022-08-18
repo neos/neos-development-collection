@@ -56,14 +56,6 @@ class NewNodeConverter extends AbstractTypeConverter
         PropertyMappingConfigurationInterface $configuration = null
     ) {
         throw new \RuntimeException('TODO FIX ME');
-        $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-
-        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
     }
 }

@@ -63,7 +63,8 @@ trait ReadModelInstantiationTrait
     public function theReadModelWithNodeAggregateIdentifierXIsInstantiated(string $rawNodeAggregateIdentifier): void
     {
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
-            $subgraph = $contentGraph->getSubgraphByIdentifier(
+            assert($contentGraph instanceof ContentGraphInterface);
+            $subgraph = $contentGraph->getSubgraph(
                 $this->contentStreamIdentifier,
                 $this->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()

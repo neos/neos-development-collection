@@ -136,10 +136,10 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
         if ($operator === 'instanceof' && $value instanceof Node) {
             if ($this->operandIsSimpleType($operand)) {
                 return $this->handleSimpleTypeOperand($operand, $value);
-            } elseif ($operand === Node::class || $operand === Node::class || $operand === \Neos\ContentRepository\Domain\Model\Node::class || $operand === TraversableNode::class) {
+            } elseif ($operand === Node::class) {
                 return true;
             } else {
-                $isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
+                $isOfType = $value->nodeType->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
                 return $operand[0] === '!' ? $isOfType === false : $isOfType;
             }
         } elseif ($operator === '!instanceof' && $value instanceof Node) {
