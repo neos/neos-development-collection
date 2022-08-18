@@ -214,8 +214,11 @@ class NodesController extends ActionController
             }
         });
 
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node)->serializeForUri();
+
         $this->view->assignMultiple([
             'node' => $node,
+            'nodeContextPath' => $nodeAddress,
             'convertedNodeProperties' => $convertedNodeProperties
         ]);
     }
