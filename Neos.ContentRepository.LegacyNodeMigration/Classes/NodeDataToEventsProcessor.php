@@ -180,12 +180,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $nodeType->getFullConfiguration();
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
-        if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName)) {
-            // Create tethered node
+        if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
+            // Create tethered node if the node was not found before.
+            // If the node was already visited, we want to create a node variant (and keep the tethering status)
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet());
             $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, UserIdentifier::forSystemUser(), null));
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
-            // Create node variant
+            // Create node variant, BOTH for tethered and regular nodes
             $this->createNodeVariant($nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
         } else {
             // create node aggregate
