@@ -391,6 +391,10 @@ class NodesController extends ActionController
             // of the source node (in order to unambiguously identify it);
             // so we need to load it from the source subgraph
             $sourceNode = $sourceSubgraph->findNodeByNodeAggregateIdentifier($identifier);
+            if (!$sourceNode) {
+                throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier
+                    . ' not found. This should never happen.', 1660905374);
+            }
             // TODO: do we REALLY need to block for every operation or do we find somethingmore clever?
             $contentRepository->handle(
                 new CreateNodeVariant(
