@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeVariation\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
@@ -25,7 +28,7 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  *
  * Copy a node to another dimension space point respecting further variation mechanisms
  */
-final class CreateNodeVariant implements CommandInterface, \JsonSerializable
+final class CreateNodeVariant implements CommandInterface, \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
@@ -62,5 +65,23 @@ final class CreateNodeVariant implements CommandInterface, \JsonSerializable
             'targetOrigin' => $this->targetOrigin,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
+    }
+
+    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    {
+        return $this->contentStreamIdentifier->equals($nodeIdentifierToPublish->contentStreamIdentifier)
+            && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
+            && $this->targetOrigin->equals($nodeIdentifierToPublish->dimensionSpacePoint);
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $target): CommandInterface
+    {
+        return new self(
+            $target,
+            $this->nodeAggregateIdentifier,
+            $this->sourceOrigin,
+            $this->targetOrigin,
+            $this->initiatingUserIdentifier
+        );
     }
 }
