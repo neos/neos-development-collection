@@ -25,6 +25,7 @@ use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -117,6 +118,12 @@ class NodeViewHelper extends AbstractViewHelper
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
+
+    /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
 
     /**
      * Initialize arguments
@@ -239,11 +246,11 @@ class NodeViewHelper extends AbstractViewHelper
             | NoMatchingRouteException
             | MissingActionNameException $e
         ) {
-            throw new ViewHelperException(sprintf(
+            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
                 $nodeAddress,
                 $e->getMessage()
-            ), 1601372594, $e);
+            ), 1601372594, $e));
         }
         return $uri;
     }
@@ -304,12 +311,12 @@ class NodeViewHelper extends AbstractViewHelper
             );
         }
         if ($targetNode === null) {
-            throw new ViewHelperException(sprintf(
+            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
                 $path,
                 $documentNodeAddress->nodeAggregateIdentifier,
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
-            ), 1601311789);
+            ), 1601311789));
         }
         return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->nodeAggregateIdentifier);
     }

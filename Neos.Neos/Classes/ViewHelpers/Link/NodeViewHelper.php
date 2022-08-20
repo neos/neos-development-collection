@@ -25,6 +25,7 @@ use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -148,6 +149,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
 
     /**
      * Initialize arguments
@@ -286,28 +293,29 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
-            throw new ViewHelperException(sprintf(
-                'Failed to resolve node "%s" on subgraph "%s"',
-                $nodeAddress->nodeAggregateIdentifier,
-                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
-            ), 1601372444);
+            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
+                    'Failed to resolve node "%s" on subgraph "%s"',
+                    $nodeAddress->nodeAggregateIdentifier,
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                ), 1601372444)
+            );
         }
-        if ($resolvedNode->nodeType->isOfType('Neos.Neos:Shortcut')) {
+        if ($resolvedNode && $resolvedNode->nodeType->isOfType('Neos.Neos:Shortcut')) {
             try {
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
                     $nodeAddress,
                     $contentRepository
                 );
+                if ($shortcutNodeAddress instanceof NodeAddress) {
+                    $resolvedNode = $subgraph
+                        ->findNodeByNodeAggregateIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
+                }
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
-                throw new ViewHelperException(sprintf(
+                $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
                     $resolvedNode->nodeAggregateIdentifier,
                     json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
-                ), 1601370239, $e);
-            }
-            if ($shortcutNodeAddress instanceof NodeAddress) {
-                $resolvedNode = $subgraph
-                    ->findNodeByNodeAggregateIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
+                ), 1601370239, $e));
             }
         }
 
@@ -320,6 +328,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             ->setAddQueryString($this->arguments['addQueryString'])
             ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
+        $uri = '';
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (
@@ -328,11 +337,11 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             | NoMatchingRouteException
             | MissingActionNameException $e
         ) {
-            throw new ViewHelperException(sprintf(
+            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
                 $nodeAddress,
                 $e->getMessage()
-            ), 1601372594, $e);
+            ), 1601372594, $e));
         }
         $this->tag->addAttribute('href', $uri);
 
