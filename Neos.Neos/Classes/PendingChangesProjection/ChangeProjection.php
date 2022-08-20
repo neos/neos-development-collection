@@ -21,6 +21,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -138,6 +141,9 @@ class ChangeProjection implements ProjectionInterface
             NodeAggregateWasEnabled::class,
             NodeAggregateWasRemoved::class,
             DimensionSpacePointWasMoved::class,
+            NodeGeneralizationVariantWasCreated::class,
+            NodeSpecializationVariantWasCreated::class,
+            NodePeerVariantWasCreated::class
         ]);
     }
 
@@ -169,6 +175,12 @@ class ChangeProjection implements ProjectionInterface
             $this->whenNodeAggregateWasRemoved($eventInstance);
         } elseif ($eventInstance instanceof DimensionSpacePointWasMoved) {
             $this->whenDimensionSpacePointWasMoved($eventInstance);
+        } elseif ($eventInstance instanceof NodeSpecializationVariantWasCreated) {
+            $this->whenNodeSpecializationVariantWasCreated($eventInstance);
+        } elseif ($eventInstance instanceof NodeGeneralizationVariantWasCreated) {
+            $this->whenNodeGeneralizationVariantWasCreated($eventInstance);
+        } elseif ($eventInstance instanceof NodePeerVariantWasCreated) {
+            $this->whenNodePeerVariantWasCreated($eventInstance);
         } else {
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
@@ -327,6 +339,34 @@ class ChangeProjection implements ProjectionInterface
                 ]
             );
         });
+    }
+
+
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event)
+    {
+        $this->markAsChanged(
+            $event->contentStreamIdentifier,
+            $event->nodeAggregateIdentifier,
+            $event->specializationOrigin
+        );
+    }
+
+    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event)
+    {
+        $this->markAsChanged(
+            $event->contentStreamIdentifier,
+            $event->nodeAggregateIdentifier,
+            $event->generalizationOrigin
+        );
+    }
+
+    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event)
+    {
+        $this->markAsChanged(
+            $event->contentStreamIdentifier,
+            $event->nodeAggregateIdentifier,
+            $event->peerOrigin
+        );
     }
 
     private function markAsChanged(
