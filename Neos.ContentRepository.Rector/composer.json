@@ -1,0 +1,13 @@
+{
+    "name": "neos/contentrepository-rector",
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepository\\Rector\\": "utils/rector/src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentRepository\\Rector\\Tests\\": "utils/rector/tests"
+        }
+    }
+}
