@@ -6,6 +6,7 @@ composer require rector/rector --dev
 // TODO: RENAME TO neos/rector-rules ??
 composer require neos/contentrepository-rector --dev
 
+cp Packages/Neos/Neos.ContentRepository.Rector/rector.template.php rector.php
 ```php
 ```
 

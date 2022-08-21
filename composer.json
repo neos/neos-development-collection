@@ -156,7 +156,7 @@
                 "Neos.ContentRepository.NodeMigration/src"
             ],
             "Neos\\ContentRepository\\Rector\\": [
-                "Neos.ContentRepository.Rector/utils/rector/src"
+                "Neos.ContentRepository.Rector/src"
             ],
             "Neos\\ContentRepository\\Security\\": [
                 "Neos.ContentRepository.Security/Classes"
@@ -262,7 +262,7 @@
                 "Neos.ContentRepository.NodeMigration/Tests"
             ],
             "Neos\\ContentRepository\\Rector\\Tests\\": [
-                "Neos.ContentRepository.Rector/utils/rector/tests"
+                "Neos.ContentRepository.Rector/tests"
             ],
             "Neos\\ContentRepository\\StructureAdjustment\\Tests\\": [
                 "Neos.ContentRepository.StructureAdjustment/Tests"
