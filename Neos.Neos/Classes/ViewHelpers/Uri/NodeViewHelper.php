@@ -238,6 +238,10 @@ class NodeViewHelper extends AbstractViewHelper
             ->setAddQueryString($this->arguments['addQueryString'])
             ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
+        $uri = '';
+        if (!$nodeAddress) {
+            return '';
+        }
         try {
             $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (
@@ -263,7 +267,7 @@ class NodeViewHelper extends AbstractViewHelper
      * @return NodeAddress
      * @throws ViewHelperException
      */
-    private function resolveNodeAddressFromString(string $path): NodeAddress
+    private function resolveNodeAddressFromString(string $path): ?NodeAddress
     {
         /* @var Node $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
@@ -317,6 +321,7 @@ class NodeViewHelper extends AbstractViewHelper
                 $documentNodeAddress->nodeAggregateIdentifier,
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789));
+            return null;
         }
         return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->nodeAggregateIdentifier);
     }

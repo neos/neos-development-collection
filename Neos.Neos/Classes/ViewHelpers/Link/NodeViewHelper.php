@@ -294,11 +294,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $resolvedNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
-                    'Failed to resolve node "%s" on subgraph "%s"',
-                    $nodeAddress->nodeAggregateIdentifier,
-                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
-                ), 1601372444)
-            );
+                'Failed to resolve node "%s" on subgraph "%s"',
+                $nodeAddress->nodeAggregateIdentifier,
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+            ), 1601372444));
         }
         if ($resolvedNode && $resolvedNode->nodeType->isOfType('Neos.Neos:Shortcut')) {
             try {

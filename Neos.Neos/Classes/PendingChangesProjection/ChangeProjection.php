@@ -342,7 +342,7 @@ class ChangeProjection implements ProjectionInterface
     }
 
 
-    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event)
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->markAsChanged(
             $event->contentStreamIdentifier,
@@ -351,7 +351,7 @@ class ChangeProjection implements ProjectionInterface
         );
     }
 
-    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event)
+    private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->markAsChanged(
             $event->contentStreamIdentifier,
@@ -360,7 +360,7 @@ class ChangeProjection implements ProjectionInterface
         );
     }
 
-    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event)
+    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
         $this->markAsChanged(
             $event->contentStreamIdentifier,
