@@ -13,6 +13,9 @@ class SubprocessProjectionCatchUpTriggerFactory implements ProjectionCatchUpTrig
 {
     public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): ProjectionCatchUpTriggerInterface
     {
-        return new SubprocessProjectionCatchUpTrigger($contentRepositoryIdentifier);
+        return new CatchUpTriggerWithSynchronousOption(
+            $contentRepositoryIdentifier,
+            new SubprocessProjectionCatchUpTrigger($contentRepositoryIdentifier)
+        );
     }
 }

@@ -23,6 +23,7 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Neos\Domain\Model\WorkspaceName as AdjustmentsWorkspaceName;
@@ -88,7 +89,6 @@ final class EditorContentStreamZookeeper
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
-
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         assert($requestHandler instanceof HttpRequestHandlerInterface);
         $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
@@ -138,12 +138,13 @@ final class EditorContentStreamZookeeper
                         )
                     )->block();
                 } else {
-                    $contentRepository->handle(
-                        RebaseWorkspace::create(
-                            $workspace->getWorkspaceName(),
-                            $userIdentifier
-                        )
-                    )->block();
+                    CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+                        $contentRepository->handle(
+                            RebaseWorkspace::create(
+                                $workspace->getWorkspaceName(),
+                                $userIdentifier
+                            )
+                        )->block());
                 }
             }
         }

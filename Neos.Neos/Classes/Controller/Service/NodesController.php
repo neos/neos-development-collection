@@ -26,11 +26,13 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
@@ -271,13 +273,14 @@ class NodesController extends ActionController
             );
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
-            $this->adoptNodeAndParents(
-                $identifier,
-                $sourceSubgraph,
-                $targetSubgraph,
-                $contentRepository,
-                $mode === 'adoptFromAnotherDimensionAndCopyContent'
-            );
+            CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+                $this->adoptNodeAndParents(
+                    $identifier,
+                    $sourceSubgraph,
+                    $targetSubgraph,
+                    $contentRepository,
+                    $mode === 'adoptFromAnotherDimensionAndCopyContent'
+                ));
 
             $this->redirect('show', null, null, [
                 'identifier' => $identifier,
@@ -368,8 +371,6 @@ class NodesController extends ActionController
         ContentRepository $contentRepository,
         bool $copyContent
     ) {
-        // TODO: IMPL COPYING OF CONTENT
-        assert($copyContent === false); // TODO IMPL ME
         assert($sourceSubgraph->getContentStreamIdentifier()->equals($targetSubgraph->getContentStreamIdentifier()));
 
         $identifiersFromRootlineToTranslate = [];
@@ -395,7 +396,6 @@ class NodesController extends ActionController
                 throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier
                     . ' not found. This should never happen.', 1660905374);
             }
-            // TODO: do we REALLY need to block for every operation or do we find somethingmore clever?
             $contentRepository->handle(
                 new CreateNodeVariant(
                     $sourceSubgraph->getContentStreamIdentifier(),
@@ -405,6 +405,50 @@ class NodesController extends ActionController
                     UserIdentifier::forSystemUser() // TODO: USE THE CORRECT USER HERE
                 )
             )->block();
+
+            if ($copyContent === true) {
+                $contentNodeConstraint = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
+                    ->parseFilterString('!Neos.Neos:Document');
+                $this->createNodeVariantsForChildNodes(
+                    $identifier,
+                    $contentNodeConstraint,
+                    $sourceSubgraph,
+                    $targetSubgraph,
+                    $contentRepository
+                );
+            }
+        }
+    }
+
+    private function createNodeVariantsForChildNodes(
+        NodeAggregateIdentifier $parentNodeId,
+        NodeTypeConstraints $constraints,
+        ContentSubgraphInterface $sourceSubgraph,
+        ContentSubgraphInterface $targetSubgraph,
+        ContentRepository $contentRepository
+    ): void {
+        foreach ($sourceSubgraph->findChildNodes($parentNodeId, $constraints) as $childNode) {
+            if ($childNode->classification->isRegular()) {
+                // Tethered nodes' variants are automatically created when the parent is translated.
+                // TODO: DOES THIS MAKE SENSE?
+                $contentRepository->handle(
+                    new CreateNodeVariant(
+                        $sourceSubgraph->getContentStreamIdentifier(),
+                        $childNode->nodeAggregateIdentifier,
+                        $childNode->originDimensionSpacePoint,
+                        OriginDimensionSpacePoint::fromDimensionSpacePoint($targetSubgraph->getDimensionSpacePoint()),
+                        UserIdentifier::forSystemUser() // TODO: USE THE CORRECT USER HERE
+                    )
+                )->block();
+            }
+
+            $this->createNodeVariantsForChildNodes(
+                $childNode->nodeAggregateIdentifier,
+                $constraints,
+                $sourceSubgraph,
+                $targetSubgraph,
+                $contentRepository
+            );
         }
     }
 }
