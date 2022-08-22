@@ -89,7 +89,6 @@ final class EditorContentStreamZookeeper
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
-
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         assert($requestHandler instanceof HttpRequestHandlerInterface);
         $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
@@ -145,9 +144,7 @@ final class EditorContentStreamZookeeper
                                 $workspace->getWorkspaceName(),
                                 $userIdentifier
                             )
-                        )->block()
-                    );
-
+                        )->block());
                 }
             }
         }

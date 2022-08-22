@@ -10,6 +10,19 @@ use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
 /**
+ * Pragmatic performance booster for some "batch" operations needed by the Neos UI.
+ *
+ * By calling {@see self::synchronously(\Closure)} in your code, all projection updates
+ * run inside the synchronously closure will be executed **by YOUR process** (instead
+ * of a separate process). This greatly speeds up performance for batch operations
+ * like rebase.
+ *
+ * This will only work if you did not open a database transaction beforehand.
+ *
+ * We will hopefully get rid of this class at some point; by introducing a NodeAggregate
+ * which will take care of constraint enforcement then.
+ *
+ * @internal
  */
 class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInterface
 {

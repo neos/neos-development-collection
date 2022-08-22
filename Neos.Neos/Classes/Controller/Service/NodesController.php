@@ -280,8 +280,7 @@ class NodesController extends ActionController
                     $targetSubgraph,
                     $contentRepository,
                     $mode === 'adoptFromAnotherDimensionAndCopyContent'
-                )
-            );
+                ));
 
             $this->redirect('show', null, null, [
                 'identifier' => $identifier,
@@ -427,11 +426,11 @@ class NodesController extends ActionController
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         ContentRepository $contentRepository
-    )
-    {
+    ): void {
         foreach ($sourceSubgraph->findChildNodes($parentNodeId, $constraints) as $childNode) {
             if ($childNode->classification->isRegular()) {
-                // Tethered nodes' variants are automatically created when the parent is translated. TODO: DOES THIS MAKE SENSE?
+                // Tethered nodes' variants are automatically created when the parent is translated.
+                // TODO: DOES THIS MAKE SENSE?
                 $contentRepository->handle(
                     new CreateNodeVariant(
                         $sourceSubgraph->getContentStreamIdentifier(),

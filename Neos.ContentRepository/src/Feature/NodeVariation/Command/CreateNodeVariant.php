@@ -28,7 +28,11 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  *
  * Copy a node to another dimension space point respecting further variation mechanisms
  */
-final class CreateNodeVariant implements CommandInterface, \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeIdentifierToPublishOrDiscardInterface
+final class CreateNodeVariant implements
+    CommandInterface,
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
