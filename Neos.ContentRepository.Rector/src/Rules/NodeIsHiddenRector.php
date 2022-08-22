@@ -14,7 +14,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeIsHiddenRector extends AbstractRector
 {
-    use CommonRuleTrait;
+    use AllTraits;
 
     public function __construct(
         private readonly NodesToAddCollector $nodesToAddCollector
@@ -51,10 +51,9 @@ final class NodeIsHiddenRector extends AbstractRector
         $getContentRepository = $this->this_contentRepositoryRegistry_get(
             $this->node_subgraphIdentity_contentRepositoryIdentifier($node->var)
         );
-
         $getNodeHiddenStateFinder = $this->contentRepository_getProjection(NodeHiddenStateProjection::class);
-
         $getHiddenState = $this->nodeHiddenStateFinder_findHiddenState($node->var);
+
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
                 self::assign('contentRepository', $getContentRepository),

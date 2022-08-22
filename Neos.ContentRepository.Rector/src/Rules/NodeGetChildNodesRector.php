@@ -12,7 +12,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeGetChildNodesRector extends AbstractRector
 {
-    use CommonRuleTrait;
+    use AllTraits;
 
     public function __construct(
         private readonly NodesToAddCollector $nodesToAddCollector
@@ -58,12 +58,8 @@ final class NodeGetChildNodesRector extends AbstractRector
             $node
         );
 
-        return $this->iteratorToArray($this->nodeFactory->createMethodCall(
-            'subgraph',
-            'findChildNodes',
-            [
-                $this->node_nodeAggregateIdentifier($node->var)
-            ]
-        ));
+        return $this->iteratorToArray(
+            $this->subgraph_findChildNodes($node->var)
+        );
     }
 }

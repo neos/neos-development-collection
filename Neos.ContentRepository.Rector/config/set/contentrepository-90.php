@@ -4,6 +4,8 @@ declare (strict_types=1);
 use Neos\ContentRepository\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\ContentRepository\Rector\Rules\NodeGetChildNodesRector;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Rector\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\ContentRepository\Rector\Rules\NodeIsHiddenRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -93,6 +95,10 @@ return static function (RectorConfig $rectorConfig): void {
     // copyInto()
     // getNodeData()
     // getContext()
+    // getContext()->getWorkspace()
+    $rectorConfig->rule(NodeGetContextGetWorkspaceRector::class);
+    // getContext()->getWorkspaceName()
+    // getContext()->getRootNode()
     // getDimensions()
     // createVariantForContext()
     // isAutoCreated()
