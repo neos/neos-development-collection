@@ -52,24 +52,6 @@ final class InjectContentRepositoryRegistryIfNeededRector extends AbstractRector
         return $node;
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Inject contentRepositoryRegistry if needed', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
-TODO
-CODE_SAMPLE
-                ,
-                <<<'CODE_SAMPLE'
-TODO
-CODE_SAMPLE
-            ),
-        ]);
-    }
-
     private function isContentRepositoryRegistryInUse(Class_ $class): bool
     {
         $inUse = false;
@@ -102,6 +84,47 @@ CODE_SAMPLE
                     new Node\Name('Flow\Inject')
                 )
             ])
+        ]);
+    }
+
+
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('Inject contentRepositoryRegistry if needed', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+
+class SomeClass
+{
+    public function run(Node $node)
+    {
+        $this->contentRepositoryRegistry->something();
+    }
+}
+CODE_SAMPLE
+                , <<<'CODE_SAMPLE'
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+
+class SomeClass
+{
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    public function run(Node $node)
+    {
+        $this->contentRepositoryRegistry->something();
+    }
+}
+CODE_SAMPLE
+            ),
         ]);
     }
 }

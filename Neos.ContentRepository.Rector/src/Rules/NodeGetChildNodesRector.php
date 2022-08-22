@@ -44,9 +44,6 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 class SomeClass
 {
 
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
     public function run(Node $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
@@ -125,10 +122,7 @@ CODE_SAMPLE
 
     private function iteratorToArray(Node\Expr\MethodCall $createMethodCall): Node
     {
-
-        $call = $this->nodeFactory->createFuncCall('iterator_to_array', [$createMethodCall]);
-        $call->setDocComment(new Doc("/** Foo */"));
-        return $call;
+        return $this->nodeFactory->createFuncCall('iterator_to_array', [$createMethodCall]);
     }
 
 }
