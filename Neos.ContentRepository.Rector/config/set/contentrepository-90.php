@@ -45,6 +45,7 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeType', 'nodeType');
     // setHidden
     // isHidden
+    $rectorConfig->rule(NodeIsHiddenRector::class);
     // setHiddenBeforeDateTime
     // getHiddenBeforeDateTime
     // setHiddenAfterDateTime

@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace Neos\ContentRepository\Rector\Rules;
 
+use Neos\ContentRepository\Rector\Utility\CodeSampleLoader;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -12,7 +13,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use Rector\Core\NodeManipulator\ClassInsertManipulator;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 // Modelled after https://raw.githubusercontent.com/sabbelasichon/typo3-rector/main/src/Rector/v10/v2/InjectEnvironmentServiceIfNeededInResponseRector.php
@@ -22,6 +22,11 @@ final class InjectContentRepositoryRegistryIfNeededRector extends AbstractRector
         private readonly ClassInsertManipulator $classInsertManipulator,
     )
     {
+    }
+
+    public function getRuleDefinition() : RuleDefinition
+    {
+        return CodeSampleLoader::fromFile('add injection for $contentRepositoryRegistry if in use.', __CLASS__);
     }
 
     /**
@@ -84,47 +89,6 @@ final class InjectContentRepositoryRegistryIfNeededRector extends AbstractRector
                     new Node\Name('Flow\Inject')
                 )
             ])
-        ]);
-    }
-
-
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Inject contentRepositoryRegistry if needed', [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-
-class SomeClass
-{
-    public function run(Node $node)
-    {
-        $this->contentRepositoryRegistry->something();
-    }
-}
-CODE_SAMPLE
-                , <<<'CODE_SAMPLE'
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-
-class SomeClass
-{
-
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    public function run(Node $node)
-    {
-        $this->contentRepositoryRegistry->something();
-    }
-}
-CODE_SAMPLE
-            ),
         ]);
     }
 }
