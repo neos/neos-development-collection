@@ -27,4 +27,15 @@ trait SubgraphTrait
         );
     }
 
+    private function subgraph_findNodePath(Variable $nodeVariable): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            'subgraph',
+            'findNodePath',
+            [
+                $this->node_nodeAggregateIdentifier($nodeVariable)
+            ]
+        );
+    }
+
 }

@@ -126,6 +126,8 @@ abstract class AbstractDimensionSpacePoint implements
 
     /**
      * @return array<string,array<int,string>>
+     *
+     * @deprecated only for Neos <= 9.0 compatibility
      */
     final public function toLegacyDimensionArray(): array
     {

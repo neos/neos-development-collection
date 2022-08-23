@@ -13,13 +13,12 @@ trait NodeTrait
      */
     protected $nodeFactory;
 
-    private function node_subgraphIdentity(Variable $nodeVariable): Expr
+    private function node_subgraphIdentity(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch($nodeVariable, 'subgraphIdentity');
     }
 
-
-    private function node_subgraphIdentity_contentRepositoryIdentifier(Variable $nodeVariable)
+    private function node_subgraphIdentity_contentRepositoryIdentifier(Expr $nodeVariable)
     {
         return $this->nodeFactory->createPropertyFetch(
             $this->node_subgraphIdentity($nodeVariable),
@@ -27,7 +26,7 @@ trait NodeTrait
         );
     }
 
-    private function node_subgraphIdentity_contentStreamIdentifier(Variable $nodeVariable): Expr
+    private function node_subgraphIdentity_contentStreamIdentifier(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch(
             $this->node_subgraphIdentity($nodeVariable),
@@ -35,7 +34,7 @@ trait NodeTrait
         );
     }
 
-    private function node_subgraphIdentity_dimensionSpacePoint(Variable $nodeVariable): Expr
+    private function node_subgraphIdentity_dimensionSpacePoint(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch(
             $this->node_subgraphIdentity($nodeVariable),
@@ -43,11 +42,25 @@ trait NodeTrait
         );
     }
 
-    private function node_nodeAggregateIdentifier(Variable $nodeVariable): Expr
+    private function node_nodeAggregateIdentifier(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch(
             $nodeVariable,
             'nodeAggregateIdentifier'
         );
     }
+
+    private function node_originDimensionSpacePoint(Expr $nodeVariable): Expr
+    {
+        return $this->nodeFactory->createPropertyFetch($nodeVariable, 'originDimensionSpacePoint');
+    }
+
+    private function node_originDimensionSpacePoint_toLegacyDimensionArray(Expr $nodeVariable): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            $this->node_originDimensionSpacePoint($nodeVariable),
+            'toLegacyDimensionArray'
+        );
+    }
+
 }

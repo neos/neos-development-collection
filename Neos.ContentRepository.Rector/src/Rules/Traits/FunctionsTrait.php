@@ -21,6 +21,11 @@ trait FunctionsTrait
         return $this->nodeFactory->createFuncCall('iterator_to_array', [$inner]);
     }
 
+    private function castToString(Expr $inner): Expr
+    {
+        return new Expr\Cast\String_($inner);
+    }
+
     private static function assign(string $variableName, Expr $value): Assign
     {
         return new Assign(
