@@ -9,5 +9,12 @@
         "psr-4": {
             "Neos\\ContentRepository\\Rector\\Tests\\": "tests"
         }
+    },
+    "scripts": {
+        "generate-docs": "rule-doc-generator generate src/Rules --output-file docs/rules_overview.md"
+    },
+    "require-dev": {
+        "symplify/rule-doc-generator": "^11.1",
+        "rector/rector": "^0.14.0"
     }
 }
