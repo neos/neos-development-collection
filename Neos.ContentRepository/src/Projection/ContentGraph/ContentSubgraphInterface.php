@@ -61,19 +61,19 @@ interface ContentSubgraphInterface extends \JsonSerializable
      */
     public function findChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        NodeTypeConstraints $nodeTypeConstraints = null, // non nullable; NodeTypeConstraints::all()
+        int $limit = null, // TODO REMOVE??
+        int $offset = null // TODO REMOVE??
     ): Nodes;
 
     public function findReferencedNodes(
         NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
-        PropertyName $name = null
+        PropertyName $name = null // non nullable; not PropertyName DTO; but ReferenceNameFilter::all()
     ): References;
 
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        PropertyName $name = null
+        PropertyName $name = null // non nullable; not PropertyName DTO; but ReferenceNameFilter::all()
     ): References;
 
     /**
@@ -87,6 +87,8 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @return int
+     *
+     * TODO: REMOVE
      */
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -103,6 +105,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return Node|null
+     *
+     * TODO: findDescendantNodeByPath
+     * TODO: DEPRECATE
      */
     public function findNodeByPath(
         NodePath $path,
@@ -122,9 +127,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * @param NodeAggregateIdentifier $sibling
      * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param int|null $limit // TODO REMOVE
+     * @param int|null $offset // TODO REMOVE
      * @return Nodes
+     *
+     * TODO: REMOVE
      */
     public function findSiblings(
         NodeAggregateIdentifier $sibling,
@@ -143,8 +150,8 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findSucceedingSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        int $limit = null, // TODO REMOVE
+        int $offset = null // TODO REMOVE
     ): Nodes;
 
     /**
@@ -157,8 +164,8 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findPrecedingSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        int $limit = null, // TODO REMOVE
+        int $offset = null // TODO REMOVE
     ): Nodes;
 
     /**
@@ -169,14 +176,24 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @return ContentStreamIdentifier
+     *
+     * TODO REMOVE
      */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     /**
      * @return DimensionSpacePoint
+     *
+     * TODO REMOVE
      */
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
+    /**
+     * TODO: ADJUST WITH findDescendants
+     *
+     * @internal
+     * @deprecated
+     */
     public function findSubtrees(
         NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
@@ -189,6 +206,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
+     * TODO: ADJUST WITH findSubtrees
+     *
+     * @internal
+     * @deprecated
+     *
      * @param array<int,NodeAggregateIdentifier> $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param SearchTerm|null $searchTerm
@@ -200,5 +222,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
         ?SearchTerm $searchTerm
     ): Nodes;
 
+    /**
+     * @return int
+     * @internal
+     * @deprecated do not rely on using this
+     * TODO: rename to containsNodes()
+     */
     public function countNodes(): int;
 }
