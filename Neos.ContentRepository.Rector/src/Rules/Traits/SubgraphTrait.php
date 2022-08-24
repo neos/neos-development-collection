@@ -38,4 +38,17 @@ trait SubgraphTrait
         );
     }
 
+
+
+    private function subgraph_findNodeByNodeAggregateIdentifier(Expr $nodeAggregateIdentifier)
+    {
+        return $this->nodeFactory->createMethodCall(
+            'subgraph',
+            'findNodeByNodeAggregateIdentifier',
+            [
+                $nodeAggregateIdentifier
+            ]
+        );
+    }
+
 }

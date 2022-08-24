@@ -1,6 +1,9 @@
 <?php
 declare (strict_types=1);
 
+use Neos\ContentRepository\Rector\Legacy\LegacyContextStub;
+use Neos\ContentRepository\Rector\Rules\ContextFactoryToLegacyContextStubRector;
+use Neos\ContentRepository\Rector\Rules\ContextGetRootNodeRector;
 use Neos\ContentRepository\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\ContentRepository\Rector\Rules\MethodCallToWarningCommentRector;
 use Neos\ContentRepository\Rector\Rules\NodeGetChildNodesRector;
@@ -125,12 +128,22 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeGetContextGetWorkspaceRector::class);
     // getContext()->getWorkspaceName()
     $rectorConfig->rule(NodeGetContextGetWorkspaceNameRector::class);
-    // getContext()->getRootNode()
     // getDimensions()
     $rectorConfig->rule(NodeGetDimensionsRector::class);
     // createVariantForContext()
     // isAutoCreated()
     // getOtherNodeVariants()
+
+    /**
+     * ContextInterface
+     */
+    // Context::getRootNode()
+    $rectorConfig->rule(ContextFactoryToLegacyContextStubRector::class);
+    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
+        'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
+    ]);
+    $rectorConfig->rule(ContextGetRootNodeRector::class);
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\NodeInterface

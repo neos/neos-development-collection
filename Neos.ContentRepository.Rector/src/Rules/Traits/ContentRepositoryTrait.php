@@ -40,6 +40,17 @@ trait ContentRepositoryTrait
         );
     }
 
+    private function contentRepository_getWorkspaceFinder_findOneByName(Expr $workspaceName)
+    {
+        return $this->nodeFactory->createMethodCall(
+            $this->contentRepository_getWorkspaceFinder(),
+            'findOneByName',
+            [
+                $workspaceName
+            ]
+        );
+    }
+
     private function contentRepository_getWorkspaceFinder(): Expr
     {
         return $this->nodeFactory->createMethodCall(
@@ -48,4 +59,39 @@ trait ContentRepositoryTrait
             []
         );
     }
+
+    private function contentRepository_getContentGraph_findRootNodeAggregateByType(Expr $contentStreamIdentifier, Expr $nodeTypeName)
+    {
+        return $this->nodeFactory->createMethodCall(
+            $this->contentRepository_getContentGraph(),
+            'findRootNodeAggregateByType',
+            [
+                $contentStreamIdentifier,
+                $nodeTypeName
+            ]
+        );
+    }
+
+    private function contentRepository_getContentGraph_getSubgraph(Expr $contentStreamIdentifier, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
+    {
+        return $this->nodeFactory->createMethodCall(
+            $this->contentRepository_getContentGraph(),
+            'getSubgraph',
+            [
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            ]
+        );
+    }
+
+    private function contentRepository_getContentGraph(): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            new Variable('contentRepository'),
+            'getContentGraph',
+            []
+        );
+    }
+
 }
