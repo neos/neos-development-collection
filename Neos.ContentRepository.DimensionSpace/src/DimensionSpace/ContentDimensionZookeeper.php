@@ -17,7 +17,12 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
- * The content dimension zookeeper
+ * Implementation detail of the content dimension mechanism.
+ *
+ * It reads the Content Dimension Source and figures out which dimension space combinations are valid; so
+ * it calculates the Allowed Dimension Subspace.
+ *
+ * @internal Use {@see InterDimensionalVariationGraph instead}
  */
 final class ContentDimensionZookeeper
 {
@@ -87,6 +92,7 @@ final class ContentDimensionZookeeper
     }
 
     /**
+     * TODO refactor to private/protected
      * @return array<int,array<string,Dimension\ContentDimensionValue>>
      */
     public function getAllowedCombinations(): array
@@ -100,6 +106,9 @@ final class ContentDimensionZookeeper
         return $allowedCombinations;
     }
 
+    /**
+     * @internal use {@see InterDimensionalVariationGraph::getDimensionSpacePoints()} instead.
+     */
     public function getAllowedDimensionSubspace(): DimensionSpacePointSet
     {
         $points = [];

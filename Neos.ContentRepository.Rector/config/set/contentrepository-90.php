@@ -15,9 +15,7 @@ use Neos\ContentRepository\Rector\Rules\NodeGetPathRector;
 use Neos\ContentRepository\Rector\Rules\NodeIsHiddenRector;
 use Neos\ContentRepository\Rector\ValueObject\MethodCallToWarningComment;
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 
@@ -26,6 +24,9 @@ return static function (RectorConfig $rectorConfig): void {
         'Neos\\ContentRepository\\Domain\\Model\\NodeInterface' => Node::class,
         'Neos\\ContentRepository\\Domain\\Projection\\Content\\NodeInterface' => Node::class,
         'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodeInterface' => Node::class,
+
+        'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
+        'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
     ]);
 
 
@@ -135,15 +136,17 @@ return static function (RectorConfig $rectorConfig): void {
     // getOtherNodeVariants()
 
     /**
-     * ContextInterface
+     * Context
      */
-    // Context::getRootNode()
     $rectorConfig->rule(ContextFactoryToLegacyContextStubRector::class);
-    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
-        'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
-    ]);
+    // Context::getWorkspaceName()
+    // Context::getRootNode()
     $rectorConfig->rule(ContextGetRootNodeRector::class);
+    // Context::getNode()
+    // Context::getNodeByIdentifier()
+    // Context::getNodeVariantsByIdentifier()
+    // Context::getNodesOnPath()
+    // Context::adoptNode()
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\NodeInterface
