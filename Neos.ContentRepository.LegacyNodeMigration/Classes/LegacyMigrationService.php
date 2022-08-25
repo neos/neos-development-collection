@@ -30,6 +30,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\NodeDataLoader;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -45,7 +46,6 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly Connection $connection,
         private readonly string $resourcesPath,
-
         private readonly Environment $environment,
         private readonly PersistenceManagerInterface $persistenceManager,
         private readonly AssetRepository $assetRepository,
@@ -57,6 +57,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly EventNormalizer $eventNormalizer,
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
+        private readonly ContentStreamIdentifier $contentStreamIdentifier,
     )
     {
     }
@@ -75,9 +76,8 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             'Exporting assets' => new NodeDataToAssetsProcessor($this->nodeTypeManager, $assetExporter, new NodeDataLoader($this->connection)),
             'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, $filesystem, new NodeDataLoader($this->connection)),
             'Importing assets' => new AssetRepositoryImportProcessor($filesystem, $this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Importing events' => new EventStoreImportProcessor(true, true, $filesystem, $this->eventStore, $this->eventNormalizer),
+            'Importing events' => new EventStoreImportProcessor(true, $filesystem, $this->eventStore, $this->eventNormalizer, $this->contentStreamIdentifier),
         ];
-
 
         foreach ($processors as $label => $processor) {
             $outputLineFn($label . '...');
@@ -89,5 +89,6 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             $outputLineFn('  ' . $result->message);
             $outputLineFn();
         }
+        Files::unlink($temporaryFilePath);
     }
 }

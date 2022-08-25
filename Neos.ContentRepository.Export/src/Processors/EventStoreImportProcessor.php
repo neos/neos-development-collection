@@ -37,11 +37,10 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
     public function __construct(
         private readonly bool $keepEventIds,
-        private readonly bool $keepStreamName,
         private readonly Filesystem $files,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
-
+        private ?ContentStreamIdentifier $contentStreamIdentifier,
     ) {}
 
     public function onMessage(\Closure $callback): void
@@ -55,19 +54,18 @@ final class EventStoreImportProcessor implements ProcessorInterface
         $domainEvents = [];
         $eventFileResource = $this->files->readStream('events.jsonl');
 
-        /** @var ContentStreamIdentifier|null $contentStreamIdentifier */
-        $contentStreamIdentifier = null;
-
         /** @var array<string, string> $eventIdMap */
         $eventIdMap = [];
 
+        $keepStreamName = false;
         while (($line = fgets($eventFileResource)) !== false) {
             $event = ExportedEvent::fromJson(trim($line));
-            if ($contentStreamIdentifier === null) {
-                $contentStreamIdentifier = $this->keepStreamName ? self::extractContentStreamIdentifier($event->payload) : ContentStreamIdentifier::create();
+            if ($this->contentStreamIdentifier === null) {
+                $this->contentStreamIdentifier = self::extractContentStreamIdentifier($event->payload);
+                $keepStreamName = true;
             }
-            if (!$this->keepStreamName) {
-                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamIdentifier']) ? [...$payload, 'contentStreamIdentifier' => (string)$contentStreamIdentifier] : $payload);
+            if (!$keepStreamName) {
+                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamIdentifier']) ? [...$payload, 'contentStreamIdentifier' => (string)$this->contentStreamIdentifier] : $payload);
             }
             if (!$this->keepEventIds) {
                 try {
@@ -108,13 +106,13 @@ final class EventStoreImportProcessor implements ProcessorInterface
             $domainEvents[] = $this->normalizeEvent($domainEvent);
         }
 
-        assert($contentStreamIdentifier !== null);
+        assert($this->contentStreamIdentifier !== null);
 
-        $contentStreamStreamName = StreamName::fromString('Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier);
+        $contentStreamStreamName = StreamName::fromString('Neos.ContentRepository:ContentStream:' . $this->contentStreamIdentifier);
         $events = Events::with(
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
-                    $contentStreamIdentifier,
+                    $this->contentStreamIdentifier,
                     UserIdentifier::forSystemUser(),
                 )
             )
@@ -122,7 +120,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         try {
             $contentStreamCreationCommitResult = $this->eventStore->commit($contentStreamStreamName, $events, ExpectedVersion::NO_STREAM());
         } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $workspaceStreamName->value));
+            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $this->contentStreamIdentifier->getValue()));
         }
 
         $workspaceName = WorkspaceName::forLive();
@@ -134,7 +132,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     WorkspaceTitle::fromString('live workspace'),
                     WorkspaceDescription::fromString('live workspace'),
                     UserIdentifier::forSystemUser(),
-                    $contentStreamIdentifier
+                    $this->contentStreamIdentifier
                 )
             )
         );

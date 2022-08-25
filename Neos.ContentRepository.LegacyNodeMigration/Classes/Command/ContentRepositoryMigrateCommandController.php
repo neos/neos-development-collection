@@ -17,11 +17,15 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
+use Neos\ContentRepository\Service\ContentRepositoryBootstrapper;
+use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
+use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
@@ -31,6 +35,9 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 class ContentRepositoryMigrateCommandController extends CommandController
 {
@@ -50,6 +57,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
         private readonly ResourceManager $resourceManager,
         private readonly PropertyMapper $propertyMapper,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly SiteRepository $siteRepository,
     ) {
         parent::__construct();
     }
@@ -61,33 +69,67 @@ class ContentRepositoryMigrateCommandController extends CommandController
      * @param string|null $config JSON encoded configuration, for example '{"dbal": {"dbname": "some-other-db"}, "resourcesPath": "/some/absolute/path"}'
      * @throws \Exception
      */
-    public function runCommand(bool $verbose = false, string $config = null, string $contentRepositoryIdentifier = 'default'): void
+    public function runCommand(bool $verbose = false, string $config = null): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
         if ($config !== null) {
             try {
                 $parsedConfig = json_decode($config, true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $e) {
                 throw new \InvalidArgumentException(sprintf('Failed to parse --config parameter: %s', $e->getMessage()), 1659526855, $e);
             }
+            $resourcesPath = $parsedConfig['resourcesPath'] ?? self::defaultResourcesPath();
             try {
                 $connection = isset($parsedConfig['dbal']) ? DriverManager::getConnection(array_merge($this->connection->getParams(), $parsedConfig['dbal']), new Configuration()) : $this->connection;
             } catch (DbalException $e) {
                 throw new \InvalidArgumentException(sprintf('Failed to get database connection, check the --config parameter: %s', $e->getMessage()), 1659527201, $e);
             }
-            $resourcesPath = $parsedConfig['resourcesPath'] ?? self::defaultResourcesPath();
         } else {
-            $connection = $this->determineConnection();
             $resourcesPath = $this->determineResourcesPath();
+            if (!$this->output->askConfirmation(sprintf('Do you want to migrate nodes from the current database "%s@%s" (y/n)? ', $this->connection->getParams()['dbname'] ?? '?', $this->connection->getParams()['host'] ?? '?'))) {
+                $connection = $this->adjustDataBaseConnection($this->connection);
+            } else {
+                $connection = $this->connection;
+            }
+        }
+        $this->verifyDatabaseConnection($connection);
+
+
+        $siteRows = $connection->fetchAllAssociativeIndexed('SELECT nodename, name, siteresourcespackagekey FROM neos_neos_domain_model_site');
+        $siteNodeName = $this->output->select('Which site to migrate?', array_map(static fn (array $siteRow) => $siteRow['name'] . ' (' . $siteRow['siteresourcespackagekey'] . ')', $siteRows));
+        $siteRow = $siteRows[$siteNodeName];
+
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        if ($site !== null) {
+            if (!$this->output->askConfirmation(sprintf('Site "%s" already exists, prune it? [n] ', $siteNodeName), false)) {
+                $this->outputLine('Cancelled...');
+                $this->quit();
+            }
+            $this->siteRepository->remove($site);
+            $this->persistenceManager->persistAll();
         }
 
+        $site = new Site($siteNodeName);
+        $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
+        $site->setState(Site::STATE_ONLINE);
+        $site->setName($siteRow['name']);
+        $this->siteRepository->add($site);
+        $this->persistenceManager->persistAll();
+
+        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+            $site->getConfiguration()['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository')
+        );
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
+        $liveContentStreamIdentifier = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
+        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
+
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryIdentifier);
-        $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE (y/n)? ', $eventTableName));
+        $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE [n]? ', $eventTableName), false);
         if (!$confirmed) {
-            $this->outputLine('Exiting');
-            return;
+            $this->outputLine('Cancelled...');
+            $this->quit();
         }
-        $this->connection->executeStatement('TRUNCATE ' . $eventTableName);
+        $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
         $this->outputLine('Truncated events');
 
         $legacyMigrationService = $this->contentRepositoryRegistry->getService(
@@ -100,7 +142,8 @@ class ContentRepositoryMigrateCommandController extends CommandController
                 $this->assetRepository,
                 $this->resourceRepository,
                 $this->resourceManager,
-                $this->propertyMapper
+                $this->propertyMapper,
+                $liveContentStreamIdentifier
             )
         );
         assert($legacyMigrationService instanceof LegacyMigrationService);
@@ -124,22 +167,34 @@ class ContentRepositoryMigrateCommandController extends CommandController
     }
 
     /**
-     * @return Connection
      * @throws DbalException
      */
-    private function determineConnection(): Connection
+    private function adjustDataBaseConnection(Connection $connection): Connection
     {
-        $connectionParams = $this->connection->getParams();
-        $useDefault = $this->output->askConfirmation(sprintf('Do you want to migrate nodes from the current database "%s@%s" (y/n)? ', $connectionParams['dbname'] ?? '?', $connectionParams['host'] ?? '?'));
-        if ($useDefault) {
-            return $this->connection;
-        }
+        $connectionParams = $connection->getParams();
         $connectionParams['driver'] = $this->output->select(sprintf('Driver? [%s] ', $connectionParams['driver'] ?? ''), ['pdo_mysql', 'pdo_sqlite', 'pdo_pgsql'], $connectionParams['driver'] ?? null);
         $connectionParams['host'] = $this->output->ask(sprintf('Host? [%s] ',$connectionParams['host'] ?? ''), $connectionParams['host'] ?? null);
+        $port = $this->output->ask(sprintf('Port? [%s] ',$connectionParams['port'] ?? ''), isset($connectionParams['port']) ? (string)$connectionParams['port'] : null);
+        $connectionParams['port'] = isset($port) ? (int)$port : null;
         $connectionParams['dbname'] = $this->output->ask(sprintf('DB name? [%s] ',$connectionParams['dbname'] ?? ''), $connectionParams['dbname'] ?? null);
         $connectionParams['user'] = $this->output->ask(sprintf('DB user? [%s] ',$connectionParams['user'] ?? ''), $connectionParams['user'] ?? null);
         $connectionParams['password'] = $this->output->askHiddenResponse(sprintf('DB password? [%s]', str_repeat('*', strlen($connectionParams['password'] ?? '')))) ?? $connectionParams['password'];
         return DriverManager::getConnection($connectionParams, new Configuration());
+    }
+
+    private function verifyDatabaseConnection(Connection $connection): void
+    {
+        do {
+            try {
+                $connection->connect();
+                $this->outputLine('<success>Successfully connected to database "%s"</success>', [$connection->getDatabase()]);
+                break;
+            } catch (ConnectionException $exception) {
+                $this->outputLine('<error>Failed to connect to database "%s": %s</error>', [$connection->getDatabase(), $exception->getMessage()]);
+                $this->outputLine('Please verify connection parameters...');
+                $this->adjustDataBaseConnection($connection);
+            }
+        } while (true);
     }
 
     private function determineResourcesPath(): string

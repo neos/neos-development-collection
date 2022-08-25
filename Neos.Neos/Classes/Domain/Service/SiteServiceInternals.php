@@ -29,6 +29,7 @@ use Neos\ContentRepository\Feature\RootNodeCreation\Command\CreateRootNodeAggreg
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Service\ContentRepositoryBootstrapper;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -92,38 +93,9 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
     public function createSiteNode(Site $site, string $nodeTypeName, UserIdentifier $currentUserIdentifier): void
     {
-        $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-        if ($liveWorkspace instanceof Workspace) {
-            $liveContentStreamIdentifier = $liveWorkspace->getCurrentContentStreamIdentifier();
-        } else {
-            $liveContentStreamIdentifier = ContentStreamIdentifier::create();
-            $this->contentRepository->handle(
-                new CreateRootWorkspace(
-                    WorkspaceName::forLive(),
-                    WorkspaceTitle::fromString('Live'),
-                    WorkspaceDescription::fromString('Public live workspace'),
-                    UserIdentifier::forSystemUser(),
-                    $liveContentStreamIdentifier
-                )
-            )->block();
-        }
-        try {
-            $sitesNodeIdentifier = $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $liveContentStreamIdentifier,
-                NodeTypeNameFactory::forSites()
-            )->getIdentifier();
-
-            // TODO make this case more explicit
-        } catch (\Exception $exception) {
-            $sitesNodeIdentifier = NodeAggregateIdentifier::create();
-            $this->contentRepository->handle(new CreateRootNodeAggregateWithNode(
-                $liveContentStreamIdentifier,
-                $sitesNodeIdentifier,
-                NodeTypeNameFactory::forSites(),
-                UserIdentifier::forSystemUser()
-            ))->block();
-        }
-
+        $bootstrapper = ContentRepositoryBootstrapper::create($this->contentRepository);
+        $liveContentStreamIdentifier = $bootstrapper->getOrCreateLiveContentStream();
+        $sitesNodeIdentifier = $bootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
