@@ -60,8 +60,10 @@ final class ContentRepositoryBootstrapper
      * Retrieve the root Node Aggregate Identifier for the specified $contentStreamIdentifier
      * If no root node of the specified $rootNodeTypeName exist, it will be created
      */
-    public function getOrCreateRootNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $rootNodeTypeName): NodeAggregateIdentifier
-    {
+    public function getOrCreateRootNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeTypeName $rootNodeTypeName
+    ): NodeAggregateIdentifier {
         try {
             return $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
                 $contentStreamIdentifier,

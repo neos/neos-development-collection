@@ -95,7 +95,10 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
     {
         $bootstrapper = ContentRepositoryBootstrapper::create($this->contentRepository);
         $liveContentStreamIdentifier = $bootstrapper->getOrCreateLiveContentStream();
-        $sitesNodeIdentifier = $bootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
+        $sitesNodeIdentifier = $bootstrapper->getOrCreateRootNodeAggregate(
+            $liveContentStreamIdentifier,
+            NodeTypeNameFactory::forSites()
+        );
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
