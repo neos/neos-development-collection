@@ -33,6 +33,8 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
  * From "de"'s point of view, "gsw" is a specialization, "en" a generalization and "fr" a peer variant
  * {@see VariantType}
  * For our examples we consider a node aggregate covering the complete dimension space.
+ *
+ * @api used as part of commands
  */
 enum NodeVariantSelectionStrategy: string implements \JsonSerializable
 {

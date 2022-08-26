@@ -25,6 +25,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
  *
  * @implements \IteratorAggregate<int,NodeReferenceToWrite>
+ * @api used as part of commands
  */
 final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializable
 {

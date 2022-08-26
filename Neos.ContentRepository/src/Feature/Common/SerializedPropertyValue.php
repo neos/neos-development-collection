@@ -18,6 +18,8 @@ namespace Neos\ContentRepository\Feature\Common;
  * "Raw" / Serialized property value as saved in the event log // in projections.
  *
  * This means: "value" must be a simple PHP data type (no objects allowed!)
+ *
+ * @api used as part of commands/events
  */
 final class SerializedPropertyValue implements \JsonSerializable
 {

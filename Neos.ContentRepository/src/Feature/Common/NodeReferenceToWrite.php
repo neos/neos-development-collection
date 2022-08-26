@@ -23,6 +23,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  *
  * We expect the property value types to match the NodeType's property types
  * (this is validated in the command handler).
+ * @api used as part of commands
  */
 final class NodeReferenceToWrite implements \JsonSerializable
 {

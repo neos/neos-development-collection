@@ -25,6 +25,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
  * publishing or discarding individual nodes ({@see PublishIndividualNodesFromWorkspace} and
  * {@see DiscardIndividualNodesFromWorkspace}
  * and the corresponding events).
+ *
+ * @api used as part of commands
  */
 final class NodeIdentifierToPublishOrDiscard implements \JsonSerializable
 {

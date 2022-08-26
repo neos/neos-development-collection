@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\ContentRepositoryRegistry\Utility;
@@ -22,8 +22,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
-use Neos\ContentRepository\Feature\Common\InvalidNodeTypePostprocessorException;
-use pq\Exception\InvalidArgumentException;
+use Neos\ContentRepository\Feature\Common\Exception\InvalidNodeTypePostprocessorException;
 
 /**
  * A Node Type
@@ -391,7 +390,7 @@ class NodeType
             if ($this->hasConfiguration('label.generatorClass')) {
                 $nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
                 if (!$nodeLabelGenerator instanceof NodeLabelGeneratorInterface) {
-                    throw new InvalidArgumentException(
+                    throw new \InvalidArgumentException(
                         $this->getConfiguration('label.generatorClass')
                             . 'does not implement the required ' . NodeLabelGeneratorInterface::class,
                         1651761078

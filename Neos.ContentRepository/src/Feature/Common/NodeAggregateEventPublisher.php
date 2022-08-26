@@ -20,7 +20,10 @@ use Neos\ContentRepository\EventStore\Events;
 use Neos\EventStore\Model\Event\EventMetadata;
 
 /**
- * Ensure all invariants are held for Node-based events:
+ * Stores the command in the event's metadata for events on a content stream. This is an important prerequisite
+ * for the rebase functionality-
+ *
+ * @internal
  */
 final class NodeAggregateEventPublisher
 {

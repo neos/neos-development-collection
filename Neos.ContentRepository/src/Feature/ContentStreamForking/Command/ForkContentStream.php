@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class ForkContentStream implements CommandInterface
 {

@@ -15,10 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\Common;
 
 /**
- * This interface must be implemented by all commands, such that they are filterable whether
- * they are applying their action to a NodeIdentifierToPublish.
+ * This interface must be implemented by all commands which are working with individual nodes, such that they are
+ * filterable whether they are applying their action to a NodeIdentifierToPublish.
  *
  * This is needed to publish and discard individual nodes.
+ *
+ * @internal because only relevant for commands
  */
 interface MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {

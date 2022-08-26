@@ -18,6 +18,7 @@ namespace Neos\ContentRepository\Feature\Common;
  * A collection of NodeIdentifier objects, to be used when publishing or discarding a set of nodes
  *
  * @implements \IteratorAggregate<int,NodeIdentifierToPublishOrDiscard>
+ * @api used as part of commands
  */
 final class NodeIdentifiersToPublishOrDiscard implements \IteratorAggregate, \Countable, \JsonSerializable
 {

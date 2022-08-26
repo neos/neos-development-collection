@@ -21,6 +21,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  * This interface is implemented by **events** which contain ContentStreamIdentifier and NodeAggregateIdentifier.
  *
  * This is relevant e.g. for content cache flushing as a result of an event.
+ *
+ * @api because external projections etc can listen to all events of this type
  */
 interface EmbedsContentStreamAndNodeAggregateIdentifier
 {

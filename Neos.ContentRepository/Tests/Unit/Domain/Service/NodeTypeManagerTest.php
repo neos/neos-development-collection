@@ -11,10 +11,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Exception;
-use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
-use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;

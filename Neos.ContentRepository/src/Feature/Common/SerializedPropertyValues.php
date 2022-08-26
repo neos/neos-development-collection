@@ -26,6 +26,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
  * because we treat NULL and "not set" the same from an API perspective.
  *
  * @implements \IteratorAggregate<string,?SerializedPropertyValue>
+ * @api used as part of commands/events
  */
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {

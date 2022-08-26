@@ -19,6 +19,8 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
  * An assignment of NodeAggregateIdentifiers to NodePaths
  *
  * Usable for predefining NodeAggregateIdentifiers if multiple nodes are to be created simultaneously
+ *
+ * @api used as part of commands
  */
 final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
 {

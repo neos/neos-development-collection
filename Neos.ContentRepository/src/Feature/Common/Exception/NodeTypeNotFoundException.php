@@ -12,10 +12,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * A "node type not found" exception
+ *
+ * @api
  */
 class NodeTypeNotFoundException extends \DomainException
 {

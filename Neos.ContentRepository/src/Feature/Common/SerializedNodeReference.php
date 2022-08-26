@@ -18,6 +18,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 
 /**
  * "Raw" / Serialized node reference as saved in the event log // in projections.
+ *
+ * @api used as part of commands/events
  */
 final class SerializedNodeReference implements \JsonSerializable
 {

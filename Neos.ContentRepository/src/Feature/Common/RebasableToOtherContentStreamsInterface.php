@@ -22,6 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
  * node-based commands.
  *
  * Reminder: a rebase can fail, because the target content stream might contain conflicting changes.
+ *
+ * @internal used internally for the rebasing mechanism of content streams
  */
 interface RebasableToOtherContentStreamsInterface
 {

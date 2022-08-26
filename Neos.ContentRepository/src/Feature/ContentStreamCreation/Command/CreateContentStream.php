@@ -21,6 +21,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 /**
  * CreateContentStream for creating the FIRST content stream.
  * All other content streams will be FORKED from this FIRST content stream.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateContentStream implements CommandInterface
 {

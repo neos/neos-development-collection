@@ -22,8 +22,9 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 /**
  * The property scope to be used in NodeType property declarations.
  * Will affect node operations on properties in that they decide which of the node's variants will be modified as well.
+ *
+ * @api used as part of commands
  */
-ContextGetRootNodeRector
 enum PropertyScope: string implements \JsonSerializable
 {
     /**

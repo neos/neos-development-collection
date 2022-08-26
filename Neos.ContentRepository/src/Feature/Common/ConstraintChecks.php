@@ -18,29 +18,17 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
-use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
-use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyDoesNotExist;
+use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateIsRoot;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateIsTethered;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyExists;
+use Neos\ContentRepository\Feature\Common\Exception\NodeConstraintException;
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyCovered;
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsAbstract;
@@ -48,11 +36,24 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Feature\Common\Exception\ReferenceCannotBeSet;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsFactory;
+use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
+use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
+use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
+use Neos\ContentRepository\Infrastructure\Property\PropertyType;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
+/**
+ * @internal implementation details of command handlers
+ */
 trait ConstraintChecks
 {
     abstract protected function getNodeTypeManager(): NodeTypeManager;

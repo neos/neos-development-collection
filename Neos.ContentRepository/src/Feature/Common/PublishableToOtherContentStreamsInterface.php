@@ -22,6 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
  * Reminder: Event Publishing to a target content stream can not fail if the source content stream is based
  *           on the target content stream, and no events have been committed to the target content stream in
  *           the meantime. This is because event's effects have to be fully deterministic.
+ *
+ * @internal used internally for the publishing mechanism of content streams
  */
 interface PublishableToOtherContentStreamsInterface
 {

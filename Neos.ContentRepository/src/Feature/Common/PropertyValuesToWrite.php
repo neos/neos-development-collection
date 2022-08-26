@@ -22,6 +22,8 @@ namespace Neos\ContentRepository\Feature\Common;
  * This object does not store the types of the values separately, while in {@see SerializedPropertyValues}, the types
  * are stored in the data structure.
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
+ *
+ * @api used as part of commands
  */
 final class PropertyValuesToWrite
 {

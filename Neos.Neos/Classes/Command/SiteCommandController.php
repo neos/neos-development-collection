@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Command;
 
 use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;

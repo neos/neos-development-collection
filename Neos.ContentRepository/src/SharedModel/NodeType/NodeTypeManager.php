@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\ContentRepository\Feature\Common\NodeConfigurationException;
-use Neos\ContentRepository\Feature\Common\NodeTypeIsFinalException;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**

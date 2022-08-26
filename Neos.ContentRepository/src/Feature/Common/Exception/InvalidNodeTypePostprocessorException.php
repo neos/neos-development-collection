@@ -12,11 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
- * This exception is thrown if sub-node constraints are violated
+ * An "Invalid node type postprocessor" exception
+ *
+ * @api
  */
-class NodeConstraintException extends \DomainException
+class InvalidNodeTypePostprocessorException extends \DomainException
 {
 }

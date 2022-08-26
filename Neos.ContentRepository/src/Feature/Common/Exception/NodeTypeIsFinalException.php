@@ -12,11 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
- * An Exception for node configuration errors.
+ * A "node type is final" exception
+ *
+ * @api
  */
-class NodeConfigurationException extends \DomainException
+class NodeTypeIsFinalException extends \DomainException
 {
 }

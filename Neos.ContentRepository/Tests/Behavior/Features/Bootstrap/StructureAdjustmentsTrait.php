@@ -15,7 +15,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;

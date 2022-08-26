@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use PHPUnit\Framework\Assert;

@@ -19,6 +19,9 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventStore\Model\Event\Version;
 
+/**
+ * @api events are the persistence-API of the content repository
+ */
 final class ContentStreamWasForked implements EventInterface
 {
     public function __construct(
