@@ -67,6 +67,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     private int $numberOfExportedEvents = 0;
 
+    private bool $metaDataExported = false;
+
     /**
      * @var resource|null
      */
@@ -112,6 +114,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 $this->exportEvent(new RootNodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, $this->interDimensionalVariationGraph->getDimensionSpacePoints(), NodeAggregateClassification::CLASSIFICATION_ROOT, UserIdentifier::forSystemUser()));
                 continue;
             }
+            if ($this->metaDataExported === false && $nodeDataRow['parentpath'] === '/sites') {
+                $this->exportMetaData($nodeDataRow);
+                $this->metaDataExported = true;
+            }
             try {
                 $this->processNodeData($nodeDataRow);
             } catch (MigrationException $exception) {
@@ -138,6 +144,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->visitedNodes = new VisitedNodeAggregates();
         $this->nodeReferencesWereSetEvents = [];
         $this->numberOfExportedEvents = 0;
+        $this->metaDataExported = false;
         $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
     }
@@ -152,6 +159,20 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         );
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
         $this->numberOfExportedEvents ++;
+    }
+
+    private function exportMetaData(array $nodeDataRow): void
+    {
+        if ($this->files->fileExists('meta.json')) {
+            $data = json_decode($this->files->read('meta.json'), true, 512, JSON_THROW_ON_ERROR);
+        } else {
+            $data = [];
+        }
+        $data['version'] = 1;
+        $data['sitePackageKey'] = strtok($nodeDataRow['nodetype'], ':');
+        $data['siteNodeName'] = substr($nodeDataRow['path'], 7);
+        $data['siteNodeType'] = $nodeDataRow['nodetype'];
+        $this->files->write('meta.json', json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
     }
 
     /**
