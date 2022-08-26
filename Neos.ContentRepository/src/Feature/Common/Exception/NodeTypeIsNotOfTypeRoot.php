@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a root node is tried to be created with a node type which is not of type root
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeTypeIsNotOfTypeRoot extends \DomainException
 {

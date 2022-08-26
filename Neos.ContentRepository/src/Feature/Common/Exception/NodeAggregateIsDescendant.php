@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 /**
  * The exception to be thrown if a node aggregate is a descendant of a reference node aggregate
  * but wasn't expected to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateIsDescendant extends \DomainException
 {

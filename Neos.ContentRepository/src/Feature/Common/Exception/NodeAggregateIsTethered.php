@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a node aggregate is classified as tethered but wasn't expected to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateIsTethered extends \DomainException
 {

@@ -19,6 +19,8 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 /**
  * The exception to be thrown if a reference was attempted to be set but cannot be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class ReferenceCannotBeSet extends \DomainException
 {

@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a tethered node aggregate is attempted to be removed
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class TetheredNodeAggregateCannotBeRemoved extends \DomainException
 {

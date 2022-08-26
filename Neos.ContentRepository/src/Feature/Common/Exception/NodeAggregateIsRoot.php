@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a node aggregate is classified as root but wasn't expected to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateIsRoot extends \DomainException
 {

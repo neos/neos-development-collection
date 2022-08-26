@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 /**
  * The exception to be thrown if a node aggregate does currently not occupy a given dimension space point
  * but is supposed to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \DomainException
 {

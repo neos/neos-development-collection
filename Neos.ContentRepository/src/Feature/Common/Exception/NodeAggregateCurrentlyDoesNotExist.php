@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a requested node aggregate does not currently exist
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateCurrentlyDoesNotExist extends \DomainException
 {

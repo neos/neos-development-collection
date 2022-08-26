@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 /**
  * The exception to be thrown if a node aggregate does currently not cover a given dimension space point
  * but is supposed to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \DomainException
 {

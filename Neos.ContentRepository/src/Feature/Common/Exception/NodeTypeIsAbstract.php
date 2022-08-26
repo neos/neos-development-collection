@@ -16,6 +16,8 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
 /**
  * The exception to be thrown if a node type is abstract but was not supposed to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeTypeIsAbstract extends \DomainException
 {

@@ -19,6 +19,8 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 /**
  * The exception to be thrown if a property type is invalid
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class PropertyTypeIsInvalid extends \DomainException
 {

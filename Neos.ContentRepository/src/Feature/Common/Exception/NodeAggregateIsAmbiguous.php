@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a node aggregate was tried to be fetched but is ambiguous
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeAggregateIsAmbiguous extends \DomainException
 {

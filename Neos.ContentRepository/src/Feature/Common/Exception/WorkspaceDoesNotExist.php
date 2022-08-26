@@ -16,6 +16,9 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
+/**
+ * @api because exception is thrown during invariant checks on command execution
+ */
 final class WorkspaceDoesNotExist extends \DomainException
 {
     public static function butWasSupposedTo(WorkspaceName $name): self

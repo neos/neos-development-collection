@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a content stream does not exists yet but is expected to
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class ContentStreamDoesNotExistYet extends \DomainException
 {

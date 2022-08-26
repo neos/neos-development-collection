@@ -15,6 +15,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a node name is already occupied by a node in a node aggregate but is supposed not to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
  */
 final class NodeNameIsAlreadyOccupied extends \DomainException
 {
