@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeMove\Exception\NodeVariantAssignmentCollectionIsInvalid;
 
@@ -22,7 +21,6 @@ use Neos\ContentRepository\Feature\NodeMove\Exception\NodeVariantAssignmentColle
  * An immutable collection of node variant assignments, indexed by (covered, not origin) dimension space point hash
  * @implements \IteratorAggregate<string,NodeVariantAssignment>
  */
-#[Flow\Proxy(false)]
 final class NodeVariantAssignments implements \IteratorAggregate, \JsonSerializable
 {
     /**

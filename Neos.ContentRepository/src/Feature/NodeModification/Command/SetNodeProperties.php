@@ -21,7 +21,6 @@ use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodePro
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Set property values for a given node.
@@ -32,7 +31,6 @@ use Neos\Flow\Annotations as Flow;
  * Internally, this object is converted into a {@see SetSerializedNodeProperties} command, which is
  * then processed and stored.
  */
-#[Flow\Proxy(false)]
 final class SetNodeProperties implements CommandInterface
 {
     public function __construct(

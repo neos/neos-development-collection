@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\Node;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\AbstractDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
 /**
@@ -29,7 +28,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  *
  * @api
  */
-#[Flow\Proxy(false)]
 final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
 {
     /**

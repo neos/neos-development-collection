@@ -12,13 +12,11 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a node aggregate is a descendant of a reference node aggregate
  * but wasn't expected to be
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIsDescendant extends \DomainException
 {
 }

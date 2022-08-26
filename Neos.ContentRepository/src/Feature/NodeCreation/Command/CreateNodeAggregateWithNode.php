@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeCreation\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -33,7 +32,6 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `originDimensionSpacePoint`.
  */
-#[Flow\Proxy(false)]
 final class CreateNodeAggregateWithNode implements CommandInterface
 {
     /**

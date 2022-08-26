@@ -14,14 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Workspace;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Name of a workspace.
  *
  * @api
  */
-#[Flow\Proxy(false)]
 final class WorkspaceName implements \JsonSerializable, \Stringable
 {
     public const WORKSPACE_NAME_LIVE = 'live';

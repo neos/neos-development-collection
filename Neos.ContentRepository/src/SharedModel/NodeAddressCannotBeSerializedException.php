@@ -14,9 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel;
 
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Proxy(false)]
 final class NodeAddressCannotBeSerializedException extends \DomainException
 {
     public static function becauseNoWorkspaceNameWasResolved(NodeAddress $nodeAddress): self

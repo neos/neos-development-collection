@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Feature\NodeDuplication\Command;
  */
 
 use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 
 /**
@@ -21,7 +20,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  *
  * Usable for predefining NodeAggregateIdentifiers if multiple nodes are copied.
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIdentifierMapping implements \JsonSerializable
 {
     /**

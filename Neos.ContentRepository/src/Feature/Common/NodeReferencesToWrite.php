@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Feature\Common;
 use JetBrains\PhpStorm\Internal\TentativeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Node references to write, supports arbitrary objects as reference property values.
@@ -27,7 +26,6 @@ use Neos\Flow\Annotations as Flow;
  *
  * @implements \IteratorAggregate<int,NodeReferenceToWrite>
  */
-#[Flow\Proxy(false)]
 final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializable
 {
     /**

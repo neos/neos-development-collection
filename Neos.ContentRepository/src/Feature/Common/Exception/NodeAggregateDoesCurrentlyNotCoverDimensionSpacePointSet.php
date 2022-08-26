@@ -16,13 +16,11 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a node aggregate does currently not cover the given dimension space point set
  * but is supposed to
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet extends \DomainException
 {
     public static function butWasSupposedTo(

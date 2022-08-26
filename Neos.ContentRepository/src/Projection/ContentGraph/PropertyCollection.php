@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Projection\ContentGraph;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The property collection implementation

@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * @implements \IteratorAggregate<int,NodeMoveMapping>
  */
-#[Flow\Proxy(false)]
 final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**

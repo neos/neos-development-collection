@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  * @implements \IteratorAggregate<string,ContentSubgraphInterface>
  * @implements \ArrayAccess<string,ContentSubgraphInterface>
  */
-#[Flow\Proxy(false)]
 final class ContentSubgraphs implements \IteratorAggregate, \ArrayAccess
 {
     /**

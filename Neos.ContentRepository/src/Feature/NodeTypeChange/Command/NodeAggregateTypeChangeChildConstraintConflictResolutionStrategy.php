@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeTypeChange\Command;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The strategy how to handle node type constraint conflicts with already present child nodes
@@ -22,7 +21,6 @@ use Neos\Flow\Annotations as Flow;
  *
  * - delete will delete all newly disallowed child nodes
  */
-#[Flow\Proxy(false)]
 enum NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy: string implements \JsonSerializable
 {
     /**

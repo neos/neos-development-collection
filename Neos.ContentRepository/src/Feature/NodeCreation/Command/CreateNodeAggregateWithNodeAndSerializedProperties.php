@@ -18,7 +18,6 @@ use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -32,7 +31,6 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 /**
  * CreateNodeAggregateWithNode command
  */
-#[Flow\Proxy(false)]
 final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     CommandInterface,
     \JsonSerializable,

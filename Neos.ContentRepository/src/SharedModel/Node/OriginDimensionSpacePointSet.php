@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\SharedModel\Node;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A set of points in the dimension space, occupied by nodes in a node aggregate
@@ -27,7 +26,6 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-#[Flow\Proxy(false)]
 final class OriginDimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**

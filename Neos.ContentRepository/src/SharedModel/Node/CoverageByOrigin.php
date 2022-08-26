@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\SharedModel\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A set of coverage of an origin dimension space point within a node aggregate
@@ -27,7 +26,6 @@ use Neos\Flow\Annotations as Flow;
  *
  * @implements \IteratorAggregate<string,DimensionSpacePointSet>
  */
-#[Flow\Proxy(false)]
 final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable, \Stringable
 {
     /**

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Name of a Node Type; e.g. "Neos.Neos:Content"

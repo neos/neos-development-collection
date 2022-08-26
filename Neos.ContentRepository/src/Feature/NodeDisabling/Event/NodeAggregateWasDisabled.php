@@ -21,12 +21,10 @@ use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIde
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A node aggregate was disabled
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateWasDisabled implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,

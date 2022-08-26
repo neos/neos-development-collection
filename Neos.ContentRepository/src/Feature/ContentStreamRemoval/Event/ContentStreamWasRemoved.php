@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Feature\ContentStreamRemoval\Event;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\Flow\Annotations as Flow;
 
 final class ContentStreamWasRemoved implements EventInterface
 {

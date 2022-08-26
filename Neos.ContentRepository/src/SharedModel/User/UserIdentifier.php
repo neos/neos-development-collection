@@ -14,10 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\User;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
-#[Flow\Proxy(false)]
 final class UserIdentifier implements \JsonSerializable, \Stringable
 {
     public const SYSTEM_USER_IDENTIFIER = 'system';

@@ -24,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  * @implements \IteratorAggregate<string,NodeDiscriminator>
  * @implements \ArrayAccess<string,NodeDiscriminator>
  */
-#[Flow\Proxy(false)]
 final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \JsonSerializable
 {
     /**

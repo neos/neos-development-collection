@@ -26,12 +26,10 @@ use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A node aggregate with its initial node was created
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateWithNodeWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,

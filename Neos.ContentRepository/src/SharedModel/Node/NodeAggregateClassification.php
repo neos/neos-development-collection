@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The classification of a node aggregate
  */
-#[Flow\Proxy(false)]
 enum NodeAggregateClassification: string implements \JsonSerializable
 {
     /**

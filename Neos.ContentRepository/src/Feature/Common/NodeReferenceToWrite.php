@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A single node references to write, supports arbitrary objects as reference property values
@@ -25,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  * We expect the property value types to match the NodeType's property types
  * (this is validated in the command handler).
  */
-#[Flow\Proxy(false)]
 final class NodeReferenceToWrite implements \JsonSerializable
 {
     public function __construct(

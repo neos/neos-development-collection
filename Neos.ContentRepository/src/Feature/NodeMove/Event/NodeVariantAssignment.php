@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 
 /**
@@ -26,7 +25,6 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  *
  * In case of move, this is the "target node" underneath which or next to which we want to move our source.
  */
-#[Flow\Proxy(false)]
 final class NodeVariantAssignment implements \JsonSerializable
 {
     public function __construct(

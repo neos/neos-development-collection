@@ -20,7 +20,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node variant selection strategy for node aggregates as selected when creating commands.
@@ -35,7 +34,6 @@ use Neos\Flow\Annotations as Flow;
  * {@see VariantType}
  * For our examples we consider a node aggregate covering the complete dimension space.
  */
-#[Flow\Proxy(false)]
 enum NodeVariantSelectionStrategy: string implements \JsonSerializable
 {
     /**

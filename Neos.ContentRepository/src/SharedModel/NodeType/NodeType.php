@@ -18,7 +18,6 @@ use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\ContentRepositoryRegistry\Utility;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;

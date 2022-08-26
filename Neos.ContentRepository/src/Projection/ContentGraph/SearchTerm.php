@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A search term for use in {@see ContentSubgraphInterface::findDescendants()} API.

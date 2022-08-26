@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Property values to write, supports arbitrary objects. Will be then converted to {@see SerializedPropertyValues}
@@ -24,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  * are stored in the data structure.
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
  */
-#[Flow\Proxy(false)]
 final class PropertyValuesToWrite
 {
     /**

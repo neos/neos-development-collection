@@ -18,13 +18,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The property scope to be used in NodeType property declarations.
  * Will affect node operations on properties in that they decide which of the node's variants will be modified as well.
  */
-#[Flow\Proxy(false)]
+ContextGetRootNodeRector
 enum PropertyScope: string implements \JsonSerializable
 {
     /**

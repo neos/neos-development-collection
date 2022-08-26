@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Workspace;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Title of a workspace
  */
-#[Flow\Proxy(false)]
 final class WorkspaceTitle implements \JsonSerializable
 {
     protected string $title;

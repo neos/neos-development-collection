@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  * @implements \IteratorAggregate<string,Node>
  * @implements \ArrayAccess<string,Node>
  */
-#[Flow\Proxy(false)]
 final class NodesByAdapter implements \IteratorAggregate, \ArrayAccess
 {
     /**

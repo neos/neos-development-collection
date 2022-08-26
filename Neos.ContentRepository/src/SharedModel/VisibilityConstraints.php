@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The context parameters value object
@@ -23,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
  *
  * TODO: move to ContentSubgraph
  */
-#[Flow\Proxy(false)]
 final class VisibilityConstraints
 {
     protected \DateTimeImmutable $currentDateTime;

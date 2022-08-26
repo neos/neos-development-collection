@@ -18,7 +18,6 @@ use Neos\ContentRepository\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
@@ -31,7 +30,6 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
  *
  * The property values contain the serialized types already, and include type information.
  */
-#[Flow\Proxy(false)]
 final class SetSerializedNodeProperties implements
     CommandInterface,
     \JsonSerializable,

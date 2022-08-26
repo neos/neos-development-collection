@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The Node name is the "path part" of the node; i.e. when accessing the node "/foo" via path,
@@ -24,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-#[Flow\Proxy(false)]
 final class NodeName implements \JsonSerializable, \Stringable
 {
     public const PATTERN = '/^[a-z0-9\-]+$/';

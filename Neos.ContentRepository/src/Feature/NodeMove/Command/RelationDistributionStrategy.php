@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Command;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The relation distribution strategy for node aggregates as defined in the NodeType declaration
@@ -28,7 +27,6 @@ use Neos\Flow\Annotations as Flow;
  *      all specializations of that node will be related to that same aggregate while generalizations
  *      may be related to others
  */
-#[Flow\Proxy(false)]
 enum RelationDistributionStrategy: string implements \JsonSerializable
 {
     case STRATEGY_SCATTER = 'scatter';

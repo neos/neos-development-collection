@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceCreation\Exception;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * WorkspaceAlreadyExists
  */
-#[Flow\Proxy(false)]
 final class WorkspaceAlreadyExists extends \DomainException
 {
 }

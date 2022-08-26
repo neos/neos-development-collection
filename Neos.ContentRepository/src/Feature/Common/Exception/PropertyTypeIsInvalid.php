@@ -16,12 +16,10 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a property type is invalid
  */
-#[Flow\Proxy(false)]
 final class PropertyTypeIsInvalid extends \DomainException
 {
     public static function becauseItIsReference(PropertyName $propertyName, NodeTypeName $nodeTypeName): self

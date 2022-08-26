@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspacePublication\Exception;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * BaseWorkspaceHasBeenModifiedInTheMeantime
  */
-#[Flow\Proxy(false)]
 final class BaseWorkspaceHasBeenModifiedInTheMeantime extends \DomainException
 {
 }

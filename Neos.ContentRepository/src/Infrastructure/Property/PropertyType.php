@@ -18,7 +18,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\Exception\PropertyTypeIsInvalid;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -28,7 +27,6 @@ use Psr\Http\Message\UriInterface;
  *
  * @internal
  */
-#[Flow\Proxy(false)]
 final class PropertyType
 {
     public const TYPE_BOOL = 'boolean';

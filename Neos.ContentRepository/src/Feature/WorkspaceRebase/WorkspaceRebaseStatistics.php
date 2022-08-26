@@ -14,9 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\WorkspaceRebase;
 
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Proxy(false)]
 final class WorkspaceRebaseStatistics
 {
     protected int $totalNumberOfAppliedCommands = 0;

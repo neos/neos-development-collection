@@ -15,9 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\WorkspaceCreation\Exception;
 
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Proxy(false)]
 final class BaseWorkspaceDoesNotExist extends \DomainException
 {
     public static function butWasSupposedTo(WorkspaceName $name): self

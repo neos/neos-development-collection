@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\CommandHandler;
 /**
  * Common (marker) interface for all commands of the Content Repository
  *
- * @api
+ * @internal because extra commands are no extension point
  */
 interface CommandInterface
 {

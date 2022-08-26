@@ -14,14 +14,12 @@ namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An assignment of NodeAggregateIdentifiers to NodePaths
  *
  * Usable for predefining NodeAggregateIdentifiers if multiple nodes are to be created simultaneously
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
 {
     /**

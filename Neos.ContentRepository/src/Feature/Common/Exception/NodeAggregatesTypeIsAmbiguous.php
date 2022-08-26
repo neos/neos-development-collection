@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common\Exception;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a node aggregate's type is ambiguous
  */
-#[Flow\Proxy(false)]
 final class NodeAggregatesTypeIsAmbiguous extends \DomainException
 {
 }

@@ -15,14 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\Node;
 
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable collection of NodeAggregateIdentifiers, indexed by their value
  *
  * @implements \IteratorAggregate<string,NodeAggregateIdentifier>
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSerializable
 {
     /**

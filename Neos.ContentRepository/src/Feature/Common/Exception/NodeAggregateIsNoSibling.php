@@ -13,12 +13,10 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
  */
 
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a node aggregate is no sibling of a reference node aggregate
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIsNoSibling extends \DomainException
 {
     public static function butWasSupposedToBe(

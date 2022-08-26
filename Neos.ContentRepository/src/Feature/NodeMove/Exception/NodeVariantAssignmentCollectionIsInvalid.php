@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeMove\Exception;
 
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if an invalid node variant assignment is to be used
  */
-#[Flow\Proxy(false)]
 final class NodeVariantAssignmentCollectionIsInvalid extends \DomainException
 {
     public static function becauseItContainsSomethingOther(): NodeVariantAssignmentCollectionIsInvalid

@@ -24,7 +24,6 @@ use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOr
 use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The "Move node aggregate" command
@@ -43,7 +42,6 @@ use Neos\Flow\Annotations as Flow;
  * - it can happen that in one subgraph, only one of these match.
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
  */
-#[Flow\Proxy(false)]
 final class MoveNodeAggregate implements
     CommandInterface,
     \JsonSerializable,

@@ -14,9 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common\Exception;
 
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Proxy(false)]
 final class ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \DomainException
 {
 }

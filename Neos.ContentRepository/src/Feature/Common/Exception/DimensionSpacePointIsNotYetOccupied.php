@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common\Exception;
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a dimension space point is not yet occupied by a node in a node aggregate
  * but is supposed to be
  */
-#[Flow\Proxy(false)]
 final class DimensionSpacePointIsNotYetOccupied extends \DomainException
 {
 }
