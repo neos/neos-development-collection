@@ -19,6 +19,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ContentGraph\References;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
@@ -65,6 +67,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
         $this->inMemoryCache = new InMemoryCache();
@@ -72,61 +75,59 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     /**
      * @param SqlQueryBuilder $query
-     * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints
      * @param string|null $markerToReplaceInQuery
      * @param string $tableReference
      * @param string $concatenation
      */
     protected static function addNodeTypeConstraintsToQuery(
         SqlQueryBuilder $query,
-        NodeTypeConstraints $nodeTypeConstraints = null,
+        NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
     ): void {
-        if ($nodeTypeConstraints) {
-            if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
-                $allowanceQueryPart = ($tableReference ? $tableReference . '.' : '')
-                    . 'nodetypename IN (:explicitlyAllowedNodeTypeNames)';
-                $query->parameter(
-                    'explicitlyAllowedNodeTypeNames',
-                    $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->toStringArray(),
-                    Connection::PARAM_STR_ARRAY
-                );
-            } else {
-                $allowanceQueryPart = '';
-            }
-            if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
-                $disAllowanceQueryPart = ($tableReference ? $tableReference . '.' : '')
-                    . 'nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
-                $query->parameter(
-                    'explicitlyDisallowedNodeTypeNames',
-                    $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->toStringArray(),
-                    Connection::PARAM_STR_ARRAY
-                );
-            } else {
-                $disAllowanceQueryPart = '';
-            }
+        if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
+            $allowanceQueryPart = ($tableReference ? $tableReference . '.' : '')
+                . 'nodetypename IN (:explicitlyAllowedNodeTypeNames)';
+            $query->parameter(
+                'explicitlyAllowedNodeTypeNames',
+                $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->toStringArray(),
+                Connection::PARAM_STR_ARRAY
+            );
+        } else {
+            $allowanceQueryPart = '';
+        }
+        if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+            $disAllowanceQueryPart = ($tableReference ? $tableReference . '.' : '')
+                . 'nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
+            $query->parameter(
+                'explicitlyDisallowedNodeTypeNames',
+                $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->toStringArray(),
+                Connection::PARAM_STR_ARRAY
+            );
+        } else {
+            $disAllowanceQueryPart = '';
+        }
 
-            if ($allowanceQueryPart && $disAllowanceQueryPart) {
-                $query->addToQuery(
-                    ' ' . $concatenation . ' (' . $allowanceQueryPart
-                        . ($nodeTypeConstraints->isWildCardAllowed ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')',
-                    $markerToReplaceInQuery
-                );
-            } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildCardAllowed) {
-                $query->addToQuery(
-                    ' ' . $concatenation . ' ' . $allowanceQueryPart,
-                    $markerToReplaceInQuery
-                );
-            } elseif ($disAllowanceQueryPart) {
-                $query->addToQuery(
-                    ' ' . $concatenation . ' ' . $disAllowanceQueryPart,
-                    $markerToReplaceInQuery
-                );
-            } else {
-                $query->addToQuery('', $markerToReplaceInQuery);
-            }
+        if ($allowanceQueryPart && $disAllowanceQueryPart) {
+            $query->addToQuery(
+                ' ' . $concatenation . ' (' . $allowanceQueryPart
+                    . ($nodeTypeConstraints->isWildCardAllowed ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')',
+                $markerToReplaceInQuery
+            );
+        } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildCardAllowed) {
+            $query->addToQuery(
+                ' ' . $concatenation . ' ' . $allowanceQueryPart,
+                $markerToReplaceInQuery
+            );
+        } elseif ($disAllowanceQueryPart) {
+            $query->addToQuery(
+                ' ' . $concatenation . ' ' . $disAllowanceQueryPart,
+                $markerToReplaceInQuery
+            );
+        } else {
+            $query->addToQuery('', $markerToReplaceInQuery);
         }
     }
 
@@ -184,6 +185,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($limit !== null || $offset !== null) {
             throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
         }
+        $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::allowAll();
+        if ($nodeTypeConstraints) {
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+        }
 
         $cache = $this->inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
@@ -192,12 +200,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if (
             $cache->contains(
                 $parentNodeAggregateIdentifier,
-                $nodeTypeConstraints
+                $nodeTypeConstraintsWithSubNodeTypes
             )
         ) {
             return Nodes::fromArray($cache->findChildNodes(
                 $parentNodeAggregateIdentifier,
-                $nodeTypeConstraints,
+                $nodeTypeConstraintsWithSubNodeTypes,
                 $limit,
                 $offset
             ));
@@ -218,7 +226,8 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
             )
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
-        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
+        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
+
         $this->addRestrictionRelationConstraintsToQuery(
             $query,
             'c'
@@ -251,7 +260,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
         //if ($limit === null && $offset === null) { @todo reenable once this is supported
             $cache->add(
                 $parentNodeAggregateIdentifier,
-                $nodeTypeConstraints,
+                $nodeTypeConstraintsWithSubNodeTypes,
                 $result
             );
         //}
@@ -366,7 +375,11 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM ' . $this->tableNamePrefix . 
         );
 
         if ($nodeTypeConstraints) {
-            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
         }
 
         $res = $query->execute($this->getDatabaseConnection())->fetchColumn(0);
@@ -702,7 +715,11 @@ WHERE
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         if ($nodeTypeConstraints) {
-            self::addNodeTypeConstraintsToQuery($query);
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
         }
         $query->addToQuery(' ORDER BY h.position');
         if ($limit) {
@@ -757,7 +774,11 @@ WHERE
     )');
 
         if ($nodeTypeConstraints) {
-            self::addNodeTypeConstraintsToQuery($query);
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
         }
         $query->addToQuery(' ORDER BY h.position DESC');
         if ($limit) {
@@ -812,7 +833,11 @@ WHERE
     )');
 
         if ($nodeTypeConstraints) {
-            self::addNodeTypeConstraintsToQuery($query);
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
         }
         $query->addToQuery(' ORDER BY h.position ASC');
         if ($limit) {
@@ -995,9 +1020,13 @@ order by level asc, position asc;')
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash)
             ->parameter('maximumLevels', $maximumLevels);
 
+        $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+            $nodeTypeConstraints,
+            $this->nodeTypeManager
+        );
         self::addNodeTypeConstraintsToQuery(
             $query,
-            $nodeTypeConstraints,
+            $nodeTypeConstraintsWithSubNodeTypes,
             '###NODE_TYPE_CONSTRAINTS###'
         );
 
@@ -1137,9 +1166,13 @@ order by level asc, position asc;')
             ->parameter('contentStreamIdentifier', (string)$this->contentStreamIdentifier)
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
+        $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+            $nodeTypeConstraints,
+            $this->nodeTypeManager
+        );
         self::addNodeTypeConstraintsToQuery(
             $query,
-            $nodeTypeConstraints,
+            $nodeTypeConstraintsWithSubNodeTypes,
             '###NODE_TYPE_CONSTRAINTS###',
             ''
         );

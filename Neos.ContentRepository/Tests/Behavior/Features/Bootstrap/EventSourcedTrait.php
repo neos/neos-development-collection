@@ -51,6 +51,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
@@ -110,11 +111,6 @@ trait EventSourcedTrait
     protected ContentGraphs $availableContentGraphs;
 
     protected ContentGraphs $activeContentGraphs;
-
-    /**
-     * @var NodeTypeConstraintParser
-     */
-    private $nodeTypeConstraintFactory;
 
     protected ?NodeAggregateIdentifier $rootNodeAggregateIdentifier;
 
@@ -262,7 +258,6 @@ trait EventSourcedTrait
             throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
         }
         $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-        $this->nodeTypeConstraintFactory = NodeTypeConstraintParser::create($this->contentRepository->getNodeTypeManager());
 
     }
 
@@ -516,7 +511,7 @@ trait EventSourcedTrait
     ): void
     {
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
-        $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($serializedNodeTypeConstraints);
+        $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();

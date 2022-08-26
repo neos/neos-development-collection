@@ -17,12 +17,12 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 /**
  * A collection of NodeType names
  * @api
- * @implements \IteratorAggregate<int,NodeTypeName>
+ * @implements \IteratorAggregate<NodeTypeName>
  */
-final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
+final class NodeTypeNames implements \IteratorAggregate
 {
     /**
-     * @var array<int,NodeTypeName>
+     * @var array<NodeTypeName>
      */
     private array $nodeTypeNames;
 
@@ -32,8 +32,13 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
         $this->nodeTypeNames = $nodeTypeNames;
     }
 
+    public static function with(NodeTypeName $nodeTypeName): self
+    {
+        return new self($nodeTypeName);
+    }
+
     /**
-     * @param array<int,NodeTypeName> $array
+     * @param array<NodeTypeName> $array
      */
     public static function fromArray(array $array): self
     {
@@ -41,7 +46,7 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @param array<int,string> $array
+     * @param array<string> $array
      */
     public static function fromStringArray(array $array): self
     {
@@ -68,7 +73,7 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @return \ArrayIterator<int,NodeTypeName>
+     * @return \ArrayIterator<int|string,NodeTypeName>
      */
     public function getIterator(): \ArrayIterator
     {
@@ -76,15 +81,7 @@ final class NodeTypeNames implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @return array<int,NodeTypeName>
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->nodeTypeNames;
-    }
-
-    /**
-     * @return array<int,string>
+     * @return array<string>
      */
     public function toStringArray(): array
     {

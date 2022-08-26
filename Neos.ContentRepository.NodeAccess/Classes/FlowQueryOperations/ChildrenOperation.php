@@ -13,6 +13,8 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -165,8 +167,9 @@ class ChildrenOperation extends AbstractOperation
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findChildNodes(
                             $contextNode->nodeAggregateIdentifier,
-                            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
-                                implode(',', $allowedNodeTypes)
+                            NodeTypeConstraints::create(
+                                NodeTypeNames::fromStringArray($allowedNodeTypes),
+                                NodeTypeNames::createEmpty()
                             )
                         );
 

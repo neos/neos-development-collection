@@ -33,6 +33,8 @@ use pq\Exception\InvalidArgumentException;
  * not need to deal with creating or managing node types manually. New node types
  * should be defined in a NodeTypes.yaml file.
  *
+ * TODO: REFACTOR TO immutable readonly; and value objects
+ *
  * @api
  */
 class NodeType

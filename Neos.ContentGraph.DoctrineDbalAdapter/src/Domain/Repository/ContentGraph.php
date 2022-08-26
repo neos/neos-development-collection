@@ -25,6 +25,7 @@ use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
@@ -52,6 +53,7 @@ final class ContentGraph implements ContentGraphInterface
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
     }
@@ -69,6 +71,7 @@ final class ContentGraph implements ContentGraphInterface
                 $visibilityConstraints,
                 $this->client,
                 $this->nodeFactory,
+                $this->nodeTypeManager,
                 $this->tableNamePrefix
             );
         }

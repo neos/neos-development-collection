@@ -50,6 +50,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\CatchUp\CatchUp;
@@ -86,6 +87,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly string $tableNamePrefix,
@@ -248,7 +250,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function getState(): ContentGraph
     {
         if (!$this->contentGraph) {
-            $this->contentGraph = new ContentGraph($this->dbalClient, $this->nodeFactory, $this->tableNamePrefix);
+            $this->contentGraph = new ContentGraph(
+                $this->dbalClient,
+                $this->nodeFactory,
+                $this->nodeTypeManager,
+                $this->tableNamePrefix
+            );
         }
         return $this->contentGraph;
     }

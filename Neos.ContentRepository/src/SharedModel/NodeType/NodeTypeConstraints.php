@@ -14,65 +14,103 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\NodeType;
 
+use Neos\Utility\Arrays;
+
 /**
  * The list of node type constraints needed for various find() operations on the node tree.
  *
- * Never create an instance of this object by hand; rather use
- * {@see \Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory}
+ * This DTO is a direct representation of the user's intent, so the filter strings are translated
+ * as follows:
+ * - Foo.Bar: `allowed: [Foo.Bar]; disallowed: []`
+ * - Foo.Bar,Baz,!Other: `allowed: [Foo.Bar, Baz]; disallowed: [Other]`
+ * - (empty): `allowed: []; disallowed: []`.
+ *
+ * This is usually created by the factory method {@see fromFilterString}.
+ *
+ *
+ * ## Semantics
+ *
+ * 1) By specifying a node type, you allow or deny it *and all of its sub node types*
+ *    according to the node type hierarchy.
+ *
+ * 2) Deny rules win over allow rules.
+ *
+ * 3) If no constraint is specified, everything is allowed.
+ *
+ * 4) If only deny rules are specified, everything is allowed **except** the specified node types
+ *    and their sub node types.
+ *
+ * NOTE: Implementers of ContentSubgraphInterface need to take of implementing the above
+ *       semantics. You can use the internal method {@see NodeTypeConstraintsWithSubNodeTypes::create}
+ *       to take sub-nodes into account.
+ *
  * @api
  */
 final class NodeTypeConstraints
 {
-    public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames;
-
-    public readonly NodeTypeNames $explicitlyDisallowedNodeTypeNames;
-
-    public function __construct(
-        public readonly bool $isWildCardAllowed,
-        NodeTypeNames $explicitlyAllowedNodeTypeNames = null,
-        NodeTypeNames $explicitlyDisallowedNodeTypeNames = null
+    private function __construct(
+        public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames,
+        public readonly NodeTypeNames $explicitlyDisallowedNodeTypeNames
     ) {
-        $this->explicitlyAllowedNodeTypeNames = $explicitlyAllowedNodeTypeNames ?: NodeTypeNames::createEmpty();
-        $this->explicitlyDisallowedNodeTypeNames = $explicitlyDisallowedNodeTypeNames ?: NodeTypeNames::createEmpty();
     }
 
-    public function matches(NodeTypeName $nodeTypeName): bool
+    public static function create(
+        NodeTypeNames $explicitlyAllowedNodeTypeNames,
+        NodeTypeNames $explicitlyDisallowedNodeTypeNames
+    ): self {
+        return new self($explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
+    }
+
+    public static function fromFilterString(string $serializedFilters): self
     {
-        // if $nodeTypeName is explicitly excluded, it is DENIED.
-        foreach ($this->explicitlyDisallowedNodeTypeNames as $disallowed) {
-            if ($nodeTypeName === $disallowed) {
-                return false;
+        $explicitlyAllowedNodeTypeNames = [];
+        $explicitlyDisallowedNodeTypeNames = [];
+
+        $nodeTypeFilterParts = Arrays::trimExplode(',', $serializedFilters);
+        foreach ($nodeTypeFilterParts as $nodeTypeFilterPart) {
+            if (\mb_strpos($nodeTypeFilterPart, '!') === 0) {
+                $negate = true;
+                $nodeTypeFilterPart = \mb_substr($nodeTypeFilterPart, 1);
+            } else {
+                $negate = false;
+            }
+
+            if ($negate) {
+                $explicitlyDisallowedNodeTypeNames[] = $nodeTypeFilterPart;
+            } else {
+                $explicitlyAllowedNodeTypeNames[] = $nodeTypeFilterPart;
             }
         }
 
-        // if $nodeTypeName is explicitly ALLOWED.
-        foreach ($this->explicitlyAllowedNodeTypeNames as $allowed) {
-            if ($nodeTypeName === $allowed) {
-                return true;
-            }
-        }
-
-        // otherwise, we return $wildcardAllowed.
-        return $this->isWildCardAllowed;
+        return new self(
+            NodeTypeNames::fromStringArray($explicitlyAllowedNodeTypeNames),
+            NodeTypeNames::fromStringArray($explicitlyDisallowedNodeTypeNames),
+        );
     }
 
     /**
      * IMMUTABLE, returns a new instance
      */
-    public function withExplicitlyDisallowedNodeType(NodeTypeName $nodeTypeName): self
+    public function withAdditionalDisallowedNodeType(NodeTypeName $nodeTypeName): self
     {
-        return new NodeTypeConstraints(
-            $this->isWildCardAllowed,
+        return new self(
             $this->explicitlyAllowedNodeTypeNames,
             $this->explicitlyDisallowedNodeTypeNames->withAdditionalNodeTypeName($nodeTypeName)
         );
     }
 
     /**
-     * return the legacy (pre-event-sourced) Node Type filter string looking like "Foo:Bar,!MyPackage:Exclude"
-     * @deprecated
+     * IMMUTABLE, returns a new instance
      */
-    public function asLegacyNodeTypeFilterString(): string
+    public function withAdditionalAllowedNodeType(NodeTypeName $nodeTypeName): self
+    {
+        return new self(
+            $this->explicitlyAllowedNodeTypeNames->withAdditionalNodeTypeName($nodeTypeName),
+            $this->explicitlyDisallowedNodeTypeNames
+        );
+    }
+
+    public function __toString(): string
     {
         $legacyParts = [];
         foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {

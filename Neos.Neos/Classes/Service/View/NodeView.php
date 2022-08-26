@@ -20,6 +20,7 @@ use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -262,10 +263,9 @@ class NodeView extends JsonView
             $node->subgraphIdentity->contentRepositoryIdentifier
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeTypeConstraintParser = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager());
 
         $nodeTypeConstraints = $nodeTypeFilter
-            ? $nodeTypeConstraintParser->parseFilterString($nodeTypeFilter)
+            ? NodeTypeConstraints::fromFilterString($nodeTypeFilter)
             : null;
         foreach ($subgraph->findChildNodes($node->nodeAggregateIdentifier, $nodeTypeConstraints) as $childNode) {
             if (
