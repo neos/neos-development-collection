@@ -212,7 +212,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
                     hidden
                 )
                 SELECT
-                  "' . (string)$event->contentStreamIdentifier . '" AS contentstreamidentifier,
+                  "' . (string)$event->newContentStreamIdentifier . '" AS contentstreamidentifier,
                   nodeaggregateidentifier,
                   dimensionspacepoint,
                   dimensionspacepointhash,

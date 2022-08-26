@@ -216,7 +216,7 @@ class ContentStreamProjection implements ProjectionInterface
     private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'contentStreamIdentifier' => $event->contentStreamIdentifier,
+            'contentStreamIdentifier' => $event->newContentStreamIdentifier,
             'version' => self::extractVersion($eventEnvelope),
             'sourceContentStreamIdentifier' => $event->sourceContentStreamIdentifier,
             'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?

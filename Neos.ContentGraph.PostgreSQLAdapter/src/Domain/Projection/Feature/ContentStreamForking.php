@@ -34,7 +34,7 @@ trait ContentStreamForking
         $this->transactional(function () use ($event) {
             $parameters = [
                 'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamIdentifier,
-                'targetContentStreamIdentifier' => (string)$event->contentStreamIdentifier
+                'targetContentStreamIdentifier' => (string)$event->newContentStreamIdentifier
             ];
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */

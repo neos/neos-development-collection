@@ -610,7 +610,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash,
-                  "' . $event->contentStreamIdentifier . '" AS contentstreamidentifier
+                  "' . $event->newContentStreamIdentifier . '" AS contentstreamidentifier
                 FROM
                     ' . $this->tableNamePrefix . '_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
@@ -629,7 +629,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   affectednodeaggregateidentifier
                 )
                 SELECT
-                  "' . $event->contentStreamIdentifier . '" AS contentstreamidentifier,
+                  "' . $event->newContentStreamIdentifier . '" AS contentstreamidentifier,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateidentifier,
                   r.affectednodeaggregateidentifier

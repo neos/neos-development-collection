@@ -114,7 +114,7 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
     {
         $this->repository->copyContentStream(
             $event->sourceContentStreamIdentifier,
-            $event->contentStreamIdentifier
+            $event->newContentStreamIdentifier
         );
     }
 

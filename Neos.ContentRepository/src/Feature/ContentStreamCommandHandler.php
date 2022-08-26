@@ -89,19 +89,19 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamIdentifier, $contentRepository);
-        $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToNotExistYet($command->newContentStreamIdentifier, $contentRepository);
 
         $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()
             ->findVersionForContentStream($command->sourceContentStreamIdentifier);
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->newContentStreamIdentifier)
             ->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasForked(
-                    $command->contentStreamIdentifier,
+                    $command->newContentStreamIdentifier,
                     $command->sourceContentStreamIdentifier,
                     $sourceContentStreamVersion->unwrap(),
                     $command->initiatingUserIdentifier

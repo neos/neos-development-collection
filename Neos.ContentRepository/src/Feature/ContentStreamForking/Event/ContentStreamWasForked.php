@@ -28,7 +28,7 @@ final class ContentStreamWasForked implements EventInterface
         /**
          * Content stream identifier for the new content stream
          */
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
         public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
         public readonly Version $versionOfSourceContentStream,
         public readonly UserIdentifier $initiatingUserIdentifier
@@ -48,7 +48,7 @@ final class ContentStreamWasForked implements EventInterface
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'contentStreamIdentifier' => $this->newContentStreamIdentifier,
             'sourceContentStreamIdentifier' => $this->sourceContentStreamIdentifier,
             'versionOfSourceContentStream' => $this->versionOfSourceContentStream->value,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier,

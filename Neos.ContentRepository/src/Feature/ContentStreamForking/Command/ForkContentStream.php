@@ -27,13 +27,11 @@ final class ForkContentStream implements CommandInterface
 {
     public function __construct(
         /**
-         * TODO: TargetContentStreamIdentifier??
-         *
          * Content stream identifier for the new content stream
          *
          * @var ContentStreamIdentifier
          */
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
         public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
