@@ -20,6 +20,9 @@ use Doctrine\DBAL\ForwardCompatibility\Result as QueryResult;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
 
+/**
+ * @internal
+ */
 trait CommonGraphQueryOperations
 {
     private string $query;

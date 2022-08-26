@@ -19,10 +19,9 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class HypergraphParentQuery implements HypergraphQueryInterface
 {

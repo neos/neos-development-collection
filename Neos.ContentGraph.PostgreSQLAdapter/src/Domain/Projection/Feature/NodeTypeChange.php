@@ -21,6 +21,8 @@ use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChan
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeTypeChange
 {

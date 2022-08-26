@@ -17,12 +17,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers
     as NodeAggregateIdentifierCollection;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node aggregate identifier value object collection
+ *
+ * @internal
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIdentifiers
 {
     /**

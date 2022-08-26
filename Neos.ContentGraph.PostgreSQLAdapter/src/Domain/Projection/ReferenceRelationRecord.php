@@ -22,6 +22,8 @@ use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
 /**
  * The active record for reading and writing reference relations from and to the database
+ *
+ * @internal
  */
 final class ReferenceRelationRecord
 {

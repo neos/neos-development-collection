@@ -26,6 +26,8 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 
 /**
  * The alternate reality-aware projection-time hypergraph for the PostgreSQL backend via Doctrine DBAL
+ *
+ * @internal
  */
 final class ProjectionHypergraph
 {

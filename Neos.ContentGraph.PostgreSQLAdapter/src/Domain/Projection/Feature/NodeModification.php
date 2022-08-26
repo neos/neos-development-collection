@@ -22,6 +22,8 @@ use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
 
 /**
  * The node modification feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeModification
 {

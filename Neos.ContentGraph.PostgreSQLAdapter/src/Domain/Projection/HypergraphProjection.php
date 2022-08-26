@@ -61,6 +61,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
  * @implements ProjectionInterface<ContentHypergraph>
+ * @internal the parent Content Graph is public
  */
 final class HypergraphProjection implements ProjectionInterface
 {

@@ -22,6 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 /**
  * The copy on write feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait CopyOnWrite
 {

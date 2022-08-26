@@ -21,6 +21,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
+/**
+ * @internal
+ */
 final class HypergraphReferenceQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;

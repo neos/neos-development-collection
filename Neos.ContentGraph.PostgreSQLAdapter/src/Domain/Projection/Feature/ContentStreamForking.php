@@ -21,6 +21,8 @@ use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasFo
 
 /**
  * The content stream forking feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait ContentStreamForking
 {

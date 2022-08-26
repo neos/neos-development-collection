@@ -18,7 +18,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\DoctrineDbalAdapter\Service\InMemoryCacheAccessor;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
@@ -41,7 +40,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
  *
  * To be used as a read-only source of nodes
  *
- * @api
+ * @internal the parent interface {@see ContentGraphInterface} is API
  */
 final class ContentGraph implements ContentGraphInterface
 {

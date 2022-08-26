@@ -21,6 +21,8 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 
 /**
  * The NodeVariation projection feature trait
+ *
+ * @internal
  */
 trait NodeVariation
 {

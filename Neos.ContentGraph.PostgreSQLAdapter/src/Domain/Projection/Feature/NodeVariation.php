@@ -32,6 +32,8 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeVariation
 {

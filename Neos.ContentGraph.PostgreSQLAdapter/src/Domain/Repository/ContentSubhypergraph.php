@@ -43,7 +43,6 @@ use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content subgraph application repository
@@ -61,9 +60,8 @@ use Neos\Flow\Annotations as Flow;
  *   - h -> the hierarchy hyperrelation connecting parent and children
  *   - ph -> the hierarchy hyperrelation incoming to the parent (sometimes relevant)
  *
- * @api
+ * @internal but the public {@see ContentSubgraphInterface} is API
  */
-#[Flow\Proxy(false)]
 final class ContentSubhypergraph implements ContentSubgraphInterface
 {
     public function __construct(

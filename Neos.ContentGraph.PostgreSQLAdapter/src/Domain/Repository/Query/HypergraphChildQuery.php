@@ -25,10 +25,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class HypergraphChildQuery implements HypergraphQueryInterface
 {

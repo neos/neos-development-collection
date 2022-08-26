@@ -16,9 +16,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
 
-#[Flow\Proxy(false)]
+/**
+ * @internal the parent {@see SubtreeInterface} is API
+ */
 class Subtree implements SubtreeInterface
 {
     protected int $level;

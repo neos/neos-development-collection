@@ -22,6 +22,8 @@ use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeDisabling
 {

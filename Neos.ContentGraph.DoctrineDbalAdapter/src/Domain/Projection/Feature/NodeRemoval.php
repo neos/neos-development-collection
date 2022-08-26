@@ -15,6 +15,8 @@ use Psr\Log\LoggerInterface;
  * The NodeRemoval projection feature trait
  *
  * Requires RestrictionRelations to work
+ *
+ * @internal
  */
 trait NodeRemoval
 {

@@ -55,7 +55,7 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
  *   - ph -> the hierarchy edge incoming to the parent (sometimes relevant)
  *
  *
- * @api
+ * @internal the parent {@see ContentSubgraphInterface} is API
  */
 final class ContentSubgraph implements ContentSubgraphInterface
 {

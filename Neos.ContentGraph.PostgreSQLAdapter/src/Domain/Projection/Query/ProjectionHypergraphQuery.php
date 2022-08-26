@@ -17,17 +17,14 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterface
 {

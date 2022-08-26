@@ -33,6 +33,8 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 
 /**
  * The node creation feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeCreation
 {

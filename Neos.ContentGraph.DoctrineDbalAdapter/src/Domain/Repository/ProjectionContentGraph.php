@@ -33,6 +33,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
  * within the projector, where implementation details of the graph structure are known.
  *
  * This is NO PUBLIC API in any way.
+ *
+ * @internal
  */
 class ProjectionContentGraph
 {

@@ -40,7 +40,7 @@ use Neos\ContentRepository\Projection\ContentGraph\Node;
  *
  * To be used as a read-only source of subhypergraphs, node aggregates and nodes
  *
- * @api
+ * @internal but the parent {@see ContentGraphInterface} is API
  */
 final class ContentHypergraph implements ContentGraphInterface
 {

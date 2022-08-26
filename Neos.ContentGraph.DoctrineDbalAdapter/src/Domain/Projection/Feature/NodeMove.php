@@ -15,6 +15,8 @@ use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
  * The NodeMove projection feature trait
  *
  * Requires RestrictionRelations to work
+ *
+ * @internal
  */
 trait NodeMove
 {

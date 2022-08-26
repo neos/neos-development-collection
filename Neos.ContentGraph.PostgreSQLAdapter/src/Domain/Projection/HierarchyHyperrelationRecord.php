@@ -18,12 +18,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing hierarchy hyperrelations from and to the database
  *
- * @Flow\Proxy(false)
+ * @internal
  */
 final class HierarchyHyperrelationRecord
 {

@@ -21,6 +21,8 @@ use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChange
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeRenaming
 {

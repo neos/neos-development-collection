@@ -28,6 +28,8 @@ use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 
 /**
  * The node removal feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeRemoval
 {

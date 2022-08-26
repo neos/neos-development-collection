@@ -23,7 +23,7 @@ use Doctrine\DBAL\ForwardCompatibility\DriverStatement;
  *
  * To be used as a read-only source of nodes
  *
- * @api
+ * @internal
  */
 final class SqlQueryBuilder
 {

@@ -9,6 +9,8 @@ use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 
 /**
  * The NodeDisabling projection feature trait
+ *
+ * @internal
  */
 trait NodeDisabling
 {

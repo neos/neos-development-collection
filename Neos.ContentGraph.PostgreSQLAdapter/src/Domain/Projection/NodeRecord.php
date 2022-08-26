@@ -25,6 +25,8 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 
 /**
  * The active record for reading and writing nodes from and to the database
+ *
+ * @internal
  */
 final class NodeRecord
 {

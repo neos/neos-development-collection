@@ -16,7 +16,11 @@ use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 
 /**
+ * Use this class as ProjectionFactory in your configuration to construct a content graph
+ *
  * @implements ProjectionFactoryInterface<ContentGraphProjection>
+ *
+ * @api
  */
 final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFactoryInterface
 {

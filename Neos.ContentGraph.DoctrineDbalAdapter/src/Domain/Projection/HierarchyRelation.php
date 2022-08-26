@@ -21,6 +21,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
+ *
+ * @internal
  */
 final class HierarchyRelation
 {

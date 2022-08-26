@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
  * The node relation anchor value object
+ *
+ * @internal
  */
-#[Flow\Proxy(false)]
 class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
 {
     private function __construct(

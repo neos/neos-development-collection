@@ -26,6 +26,8 @@ use Neos\ContentRepository\Projection\ContentGraph\ProjectionIntegrityViolationD
 
 /**
  * The Doctrine database backend implementation for projection invariant checks
+ *
+ * @internal
  */
 final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityViolationDetectorInterface
 {

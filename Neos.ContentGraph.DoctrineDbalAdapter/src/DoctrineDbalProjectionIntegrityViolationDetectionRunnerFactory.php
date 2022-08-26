@@ -12,6 +12,7 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<ProjectionIntegrityViolationDetectionRunner>
+ * @internal
  */
 class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements ContentRepositoryServiceFactoryInterface
 {

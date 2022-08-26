@@ -15,6 +15,7 @@ use Neos\ContentRepository\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<HypergraphProjection>
+ * @api
  */
 final class HypergraphProjectionFactory implements ProjectionFactoryInterface
 {

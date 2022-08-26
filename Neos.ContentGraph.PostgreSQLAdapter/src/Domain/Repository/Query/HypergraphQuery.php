@@ -22,10 +22,9 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class HypergraphQuery implements HypergraphQueryInterface
 {

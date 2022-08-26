@@ -10,6 +10,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 
+/**
+ * @internal
+ */
 trait RestrictionRelations
 {
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;

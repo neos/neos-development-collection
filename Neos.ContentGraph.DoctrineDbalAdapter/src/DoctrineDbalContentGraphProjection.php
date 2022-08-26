@@ -63,6 +63,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
  * @implements ProjectionInterface<ContentGraph>
+ * @internal but the graph projection is api
  */
 final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {

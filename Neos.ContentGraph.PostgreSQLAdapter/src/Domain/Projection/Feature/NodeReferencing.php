@@ -23,6 +23,8 @@ use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 
 /**
  * The node referencing feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeReferencing
 {

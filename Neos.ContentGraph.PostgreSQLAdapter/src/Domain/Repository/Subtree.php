@@ -16,10 +16,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class Subtree implements SubtreeInterface
 {

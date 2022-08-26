@@ -16,10 +16,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class QueryUtility
 {
