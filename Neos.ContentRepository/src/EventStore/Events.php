@@ -8,6 +8,7 @@ namespace Neos\ContentRepository\EventStore;
  * A set of Content Repository "domain events"
  *
  * @implements \IteratorAggregate<EventInterface|DecoratedEvent>
+ * @internal only used during event publishing (from within command handlers) - and their implementation is not API
  */
 final class Events implements \IteratorAggregate
 {

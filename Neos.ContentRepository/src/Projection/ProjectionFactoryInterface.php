@@ -8,6 +8,7 @@ use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
 
 /**
  * @template T of ProjectionInterface
+ * @api
  */
 interface ProjectionFactoryInterface
 {

@@ -9,6 +9,9 @@ use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\Projection\Projections;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
 
+/**
+ * @api
+ */
 final class ProjectionsFactory
 {
     /**
@@ -21,6 +24,7 @@ final class ProjectionsFactory
      * @param ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>> $factory
      * @param array<string,mixed> $options
      * @return void
+     * @api
      */
     public function registerFactory(ProjectionFactoryInterface $factory, array $options): void
     {
@@ -35,6 +39,7 @@ final class ProjectionsFactory
      * @param ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>> $factory
      * @param CatchUpHookFactoryInterface $catchUpHookFactory
      * @return void
+     * @api
      */
     public function registerCatchUpHookFactory(
         ProjectionFactoryInterface $factory,
@@ -45,6 +50,9 @@ final class ProjectionsFactory
         ];
     }
 
+    /**
+     * @internal this method is only called by the {@see ContentRepositoryFactory}, and not by anybody in userland
+     */
     public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): Projections
     {
         $projections = Projections::create();

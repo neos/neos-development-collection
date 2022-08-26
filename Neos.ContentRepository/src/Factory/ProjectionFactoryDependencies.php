@@ -23,6 +23,9 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 
+/**
+ * @api because it is used inside the ProjectionsFactory
+ */
 final class ProjectionFactoryDependencies
 {
     public function __construct(

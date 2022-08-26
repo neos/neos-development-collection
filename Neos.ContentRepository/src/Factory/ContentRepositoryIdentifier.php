@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Factory;
 
 /**
+ * Identifies a given content repository
+ *
  * @api
  */
 final class ContentRepositoryIdentifier

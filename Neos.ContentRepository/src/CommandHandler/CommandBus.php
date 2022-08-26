@@ -8,8 +8,10 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 
 /**
- * Implementation Detail of the {@see ContentRepository}, which does the command dispatching to the different
+ * Implementation Detail of {@see ContentRepository::handle}, which does the command dispatching to the different
  * {@see CommandHandlerInterface} implementation.
+ *
+ * @internal
  */
 final class CommandBus
 {

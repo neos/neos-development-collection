@@ -69,7 +69,9 @@ use Neos\EventStore\Model\EventStore\CommitResult;
  *   object is passed to {@see CommandResult}.
  * - {@see CommandResult::block()} does busy-waiting; repeatedly calling {@see ProjectionInterface::getSequenceNumber()}
  * - {@see ProjectionInterface::getSequenceNumber()} is typically implemented internally via
- *   {@see CheckpointStorageInterface::getHighestAppliedSequenceNumber()}.
+ *   {@see CheckpointStorageInterface::getHighestAppliedSequenceNumber()}.#
+ *
+ * @internal
  */
 final class PendingProjections
 {

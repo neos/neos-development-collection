@@ -4,6 +4,8 @@ namespace Neos\ContentRepository\Factory;
 
 /**
  * @template T of ContentRepositoryServiceInterface
+ *
+ * @api
  */
 interface ContentRepositoryServiceFactoryInterface
 {

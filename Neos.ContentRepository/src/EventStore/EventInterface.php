@@ -6,6 +6,8 @@ namespace Neos\ContentRepository\EventStore;
 
 /**
  * Common interface for all Content Repository "domain events"
+ *
+ * @api
  */
 interface EventInterface extends \JsonSerializable
 {

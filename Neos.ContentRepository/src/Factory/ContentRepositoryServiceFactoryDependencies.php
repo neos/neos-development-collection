@@ -26,6 +26,8 @@ use Neos\EventStore\EventStoreInterface;
 
 /**
  * Implementation detail of {@see ContentRepositoryServiceFactoryInterface}
+ *
+ * @api because you get it as argument inside {@see ContentRepositoryServiceFactoryInterface}
  */
 final class ContentRepositoryServiceFactoryDependencies
 {
@@ -46,6 +48,9 @@ final class ContentRepositoryServiceFactoryDependencies
     ) {
     }
 
+    /**
+     * @internal
+     */
     public static function create(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         ContentRepository $contentRepository,

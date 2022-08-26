@@ -8,7 +8,9 @@ use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
 
 /**
+ * If you want to publish an event with certain metadata, you can use DecoratedEvent
  *
+ * @internal because no external entity can publish new events (only command handlers can)
  */
 final class DecoratedEvent
 {

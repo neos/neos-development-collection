@@ -11,6 +11,8 @@ use Neos\ContentRepository\ContentRepository;
  * {@see ContentRepository::handle()} call.
  *
  * Usually, this (asynchronously) triggers {@see ProjectionInterface::catchUp()} via a subprocess or an event queue.
+ *
+ * @api
  */
 interface ProjectionCatchUpTriggerInterface
 {

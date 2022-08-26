@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
  * The content dimension source interface
+ *
+ * @api
  */
 interface ContentDimensionSourceInterface
 {

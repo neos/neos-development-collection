@@ -33,6 +33,11 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\EventStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * Main factory to build a {@see ContentRepository} object.
+ *
+ * @api
+ */
 final class ContentRepositoryFactory
 {
     private ProjectionFactoryDependencies $projectionFactoryDependencies;

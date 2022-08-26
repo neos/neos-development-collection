@@ -13,6 +13,8 @@ use Neos\EventStore\Model\Event\StreamName;
 /**
  * Result of {@see CommandHandlerInterface::handle()} that basically represents an {@see EventStoreInterface::commit()}
  * call but allows for intercepting and decorating events in {@see ContentRepository::handle()}
+ *
+ * @internal only used during event publishing (from within command handlers) - and their implementation is not API
  */
 final class EventsToPublish
 {

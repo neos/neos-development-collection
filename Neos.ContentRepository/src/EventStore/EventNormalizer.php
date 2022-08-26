@@ -42,6 +42,8 @@ use Neos\EventStore\Model\Event\EventType;
  *
  * For denormalizing (from event store to classes), this is called in the individual projections; f.e.
  * {@see ContentGraphProjection::apply()}.
+ *
+ * @api because inside projections, you get an instance of EventNormalizer to handle events.
  */
 final class EventNormalizer
 {
@@ -54,6 +56,9 @@ final class EventNormalizer
      */
     private array $shortEventTypeToFullClassName = [];
 
+    /**
+     * @internal never instanciate this object yourself
+     */
     public function __construct()
     {
         $supportedEventClassNames = [
@@ -119,10 +124,6 @@ final class EventNormalizer
         );
     }
 
-    /**
-     * @param Event $event
-     * @return class-string<EventInterface>
-     */
     public function getEventClassName(Event $event): string
     {
         return $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(
@@ -130,7 +131,6 @@ final class EventNormalizer
             1651839705
         );
     }
-
 
     public function denormalize(Event $event): EventInterface
     {

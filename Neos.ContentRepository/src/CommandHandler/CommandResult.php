@@ -14,6 +14,8 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  * Result of the {@see ContentRepository::handle()} method to be able to block until the projections were updated.
  *
  * {@see PendingProjections} for a detailed explanation how the blocking works.
+ *
+ * @api
  */
 final class CommandResult
 {
@@ -27,6 +29,7 @@ final class CommandResult
      * Wait until all projections are up to date; i.e. have processed the events.
      *
      * @return void
+     * @api
      */
     public function block(): void
     {
