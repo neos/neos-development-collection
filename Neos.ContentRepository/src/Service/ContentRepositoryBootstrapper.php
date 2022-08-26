@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Service;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
@@ -17,7 +16,12 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
-class ContentRepositoryBootstrapper implements ContentRepositoryServiceInterface
+/**
+ * Utility class that provides functionality to initialize a Content Repository instance
+ *
+ * @api
+ */
+final class ContentRepositoryBootstrapper
 {
     private function __construct(
         private readonly ContentRepository $contentRepository,
@@ -29,6 +33,10 @@ class ContentRepositoryBootstrapper implements ContentRepositoryServiceInterface
         return new self($contentRepository);
     }
 
+    /**
+     * Retrieve the Content Stream Identifier of the "live" workspace.
+     * If the "live" workspace does not exist yet, it will be created
+     */
     public function getOrCreateLiveContentStream(): ContentStreamIdentifier
     {
         $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
@@ -48,11 +56,15 @@ class ContentRepositoryBootstrapper implements ContentRepositoryServiceInterface
         return $liveContentStreamIdentifier;
     }
 
-    public function getOrCreateRootNodeAggregate(ContentStreamIdentifier $liveContentStreamIdentifier, NodeTypeName $rootNodeTypeName): NodeAggregateIdentifier
+    /**
+     * Retrieve the root Node Aggregate Identifier for the specified $contentStreamIdentifier
+     * If no root node of the specified $rootNodeTypeName exist, it will be created
+     */
+    public function getOrCreateRootNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $rootNodeTypeName): NodeAggregateIdentifier
     {
         try {
             return $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $liveContentStreamIdentifier,
+                $contentStreamIdentifier,
                 $rootNodeTypeName
             )->getIdentifier();
 
@@ -60,7 +72,7 @@ class ContentRepositoryBootstrapper implements ContentRepositoryServiceInterface
         } catch (\Exception $exception) {
             $rootNodeAggregateIdentifier = NodeAggregateIdentifier::create();
             $this->contentRepository->handle(new CreateRootNodeAggregateWithNode(
-                $liveContentStreamIdentifier,
+                $contentStreamIdentifier,
                 $rootNodeAggregateIdentifier,
                 $rootNodeTypeName,
                 UserIdentifier::forSystemUser()
