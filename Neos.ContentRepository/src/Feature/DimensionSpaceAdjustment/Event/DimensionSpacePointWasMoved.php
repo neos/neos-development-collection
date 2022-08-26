@@ -25,6 +25,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
  * This is used to *rename* dimension space points, e.g. from "de" to "de_DE".
  *
  * NOTE: the target dimension space point must not contain any content.
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
 {

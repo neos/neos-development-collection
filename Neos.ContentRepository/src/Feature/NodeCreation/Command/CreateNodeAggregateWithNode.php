@@ -31,6 +31,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * with the given `nodeAggregateIdentifier` and `originDimensionSpacePoint`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `originDimensionSpacePoint`.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateNodeAggregateWithNode implements CommandInterface
 {

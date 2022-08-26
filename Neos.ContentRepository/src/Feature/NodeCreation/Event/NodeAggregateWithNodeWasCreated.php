@@ -29,6 +29,8 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
 /**
  * A node aggregate with its initial node was created
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class NodeAggregateWithNodeWasCreated implements
     EventInterface,

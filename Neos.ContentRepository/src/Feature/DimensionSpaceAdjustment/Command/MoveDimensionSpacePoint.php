@@ -25,6 +25,8 @@ use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterfac
  * This is used to *rename* dimension space points, e.g. from "de" to "de_DE".
  *
  * NOTE: the target dimension space point must not contain any content.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class MoveDimensionSpacePoint implements
     \JsonSerializable,

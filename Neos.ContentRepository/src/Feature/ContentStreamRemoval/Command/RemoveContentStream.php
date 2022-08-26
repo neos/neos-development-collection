@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
  * Command to remove an existing content stream
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class RemoveContentStream implements CommandInterface
 {

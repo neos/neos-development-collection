@@ -29,7 +29,10 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 
 /**
- * CreateNodeAggregateWithNode command
+ * The properties of {@see CreateNodeAggregateWithNode} are directly serialized; and then this command
+ * is called and triggers the actual processing.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     CommandInterface,

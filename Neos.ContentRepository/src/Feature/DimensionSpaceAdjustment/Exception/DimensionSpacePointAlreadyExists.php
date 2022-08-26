@@ -18,6 +18,8 @@ namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Exception;
 /**
  * The exception to be thrown if a dimension space point is found in the projection; thus we cannot allow a global
  * operation on it.
+ *
+ * @api
  */
 final class DimensionSpacePointAlreadyExists extends \DomainException
 {

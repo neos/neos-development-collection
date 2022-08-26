@@ -29,6 +29,8 @@ use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterfac
  * This is needed if "de" exists, and you want to create a "de_CH" specialization.
  *
  * NOTE: the target dimension space point must not contain any content.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class AddDimensionShineThrough implements
     CommandInterface,

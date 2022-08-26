@@ -29,6 +29,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
  * This is needed if "de" exists, and you want to create a "de_CH" specialization.
  *
  * NOTE: the target dimension space point must not contain any content.
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class DimensionShineThroughWasAdded implements EventInterface, PublishableToOtherContentStreamsInterface
 {

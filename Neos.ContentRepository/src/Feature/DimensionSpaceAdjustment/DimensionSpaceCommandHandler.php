@@ -38,6 +38,8 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * ContentStreamCommandHandler
+ *
+ * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
 final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 {

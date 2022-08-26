@@ -45,6 +45,9 @@ use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeCreation
 {
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
