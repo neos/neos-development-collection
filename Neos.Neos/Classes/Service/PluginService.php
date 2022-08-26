@@ -103,7 +103,7 @@ class PluginService
         return $this->contentRepositoryRegistry->subgraphForNode($siteNode)
             ->findDescendants(
                 [$siteNode->nodeAggregateIdentifier],
-                new NodeTypeConstraints(false, $nodeTypeNames),
+                NodeTypeConstraints::create($nodeTypeNames, NodeTypeNames::createEmpty()),
                 null
             );
     }

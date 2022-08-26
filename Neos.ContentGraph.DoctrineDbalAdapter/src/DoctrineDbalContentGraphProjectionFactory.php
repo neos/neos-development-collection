@@ -51,6 +51,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $projectionFactoryDependencies->nodeTypeManager,
                     $projectionFactoryDependencies->propertyConverter
                 ),
+                $projectionFactoryDependencies->nodeTypeManager,
                 new ProjectionContentGraph(
                     $this->dbalClient,
                     $tableNamePrefix

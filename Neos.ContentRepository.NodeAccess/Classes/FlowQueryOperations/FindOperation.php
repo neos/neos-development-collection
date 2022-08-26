@@ -16,7 +16,9 @@ use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -267,7 +269,7 @@ class FindOperation extends AbstractOperation
      */
     protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result, ContentRepository $contentRepository): array
     {
-        $nodeTypeFilter = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString($nodeTypeName->jsonSerialize());
+        $nodeTypeFilter = NodeTypeConstraints::create(NodeTypeNames::with($nodeTypeName), NodeTypeNames::createEmpty());
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];

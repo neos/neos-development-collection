@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\ForwardCompatibility\Result as QueryResult;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
 
 trait CommonGraphQueryOperations
 {
@@ -48,8 +49,10 @@ trait CommonGraphQueryOperations
         $this->types = $types;
     }
 
-    final public function withNodeTypeConstraints(NodeTypeConstraints $nodeTypeConstraints, string $prefix): self
-    {
+    final public function withNodeTypeConstraints(
+        NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
+        string $prefix
+    ): self {
         $query = $this->query;
         $parameters = $this->parameters;
         $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames;

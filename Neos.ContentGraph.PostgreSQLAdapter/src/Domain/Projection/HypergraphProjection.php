@@ -48,6 +48,7 @@ use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithN
 use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Projection\ProjectionInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
@@ -86,6 +87,7 @@ final class HypergraphProjection implements ProjectionInterface
         private readonly PostgresDbalClientInterface $databaseClient,
         private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix,
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->databaseClient, $this->tableNamePrefix);
@@ -250,6 +252,7 @@ final class HypergraphProjection implements ProjectionInterface
             $this->contentHypergraph = new ContentHypergraph(
                 $this->databaseClient,
                 $this->nodeFactory,
+                $this->nodeTypeManager,
                 $this->tableNamePrefix
             );
         }

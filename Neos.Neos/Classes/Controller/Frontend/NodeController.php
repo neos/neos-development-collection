@@ -24,6 +24,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Feature\SubtreeInterface;
 use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
@@ -322,8 +324,7 @@ class NodeController extends ActionController
         $subtree = $subgraph->findSubtrees(
             NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]),
             10,
-            NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
-                ->parseFilterString('!Neos.Neos:Document')
+            NodeTypeConstraints::fromFilterString('!Neos.Neos:Document')
         );
         $subtree = $subtree->getChildren()[0];
 
@@ -394,7 +395,7 @@ class NodeController extends ActionController
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
             $node->nodeAggregateIdentifier,
-            null,
+            NodeTypeConstraintsWithSubNodeTypes::allowAll(),
             $allChildNodes
         );
     }

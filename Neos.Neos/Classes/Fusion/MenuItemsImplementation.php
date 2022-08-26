@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\Fusion\Exception as FusionException;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A Fusion Menu object
@@ -148,8 +146,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * Builds the array of menu items containing those items which match the
      * configuration set for this Menu object.
      *
-     * @throws FusionException
      * @return array<int,MenuItem> An array of menu items and further information
+     * @throws FusionException
      */
     protected function buildItems(): array
     {
@@ -231,6 +229,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $fusionContext = $this->runtime->getCurrentContext();
         $traversalStartingPoint = $this->getStartingPoint() ?: $fusionContext['node'] ?? null;
 
+        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryIdentifier;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
         if (!$traversalStartingPoint instanceof Node) {
             throw new FusionException(
                 'You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.',
@@ -240,12 +241,20 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getEntryLevel() === 0) {
             $entryParentNode = $traversalStartingPoint;
         } elseif ($this->getEntryLevel() < 0) {
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $this->getNodeTypeConstraints(),
+                $contentRepository->getNodeTypeManager()
+            );
             $remainingIterations = abs($this->getEntryLevel());
             $entryParentNode = null;
             $this->traverseUpUntilCondition(
                 $traversalStartingPoint,
-                function (Node $node) use (&$remainingIterations, &$entryParentNode) {
-                    if (!$this->getNodeTypeConstraints()->matches($node->nodeTypeName)) {
+                function (Node $node) use (
+                    &$remainingIterations,
+                    &$entryParentNode,
+                    $nodeTypeConstraintsWithSubNodeTypes
+                ) {
+                    if (!$nodeTypeConstraintsWithSubNodeTypes->matches($node->nodeTypeName)) {
                         return false;
                     }
 
@@ -262,13 +271,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             );
         } else {
             $traversedHierarchy = [];
-            $constraints = $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(
-                NodeTypeName::fromString('Neos.Neos:Sites')
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $this->getNodeTypeConstraints()->withAdditionalDisallowedNodeType(
+                    NodeTypeName::fromString('Neos.Neos:Sites')
+                ),
+                $contentRepository->getNodeTypeManager()
             );
             $this->traverseUpUntilCondition(
                 $traversalStartingPoint,
-                function (Node $traversedNode) use (&$traversedHierarchy, $constraints) {
-                    if (!$constraints->matches($traversedNode->nodeTypeName)) {
+                function (Node $traversedNode) use (&$traversedHierarchy, $nodeTypeConstraintsWithSubNodeTypes) {
+                    if (!$nodeTypeConstraintsWithSubNodeTypes->matches($traversedNode->nodeTypeName)) {
                         return false;
                     }
                     $traversedHierarchy[] = $traversedNode;
@@ -286,10 +298,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function getNodeTypeConstraints(): NodeTypeConstraints
     {
         if (!$this->nodeTypeConstraints) {
-            $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryIdentifier;
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-            $this->nodeTypeConstraints = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
-                ->parseFilterString($this->getFilter());
+            $this->nodeTypeConstraints = NodeTypeConstraints::fromFilterString($this->getFilter());
         }
 
         return $this->nodeTypeConstraints;

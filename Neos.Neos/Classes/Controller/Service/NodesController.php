@@ -27,6 +27,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
@@ -145,8 +146,9 @@ class NodesController extends ActionController
             $entryNode = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
             $nodes = !is_null($entryNode) ? $subgraph->findDescendants(
                 [$entryNode->nodeAggregateIdentifier],
-                NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())->parseFilterString(
-                    implode(',', $nodeTypes)
+                NodeTypeConstraints::create(
+                    NodeTypeNames::fromStringArray($nodeTypes),
+                    NodeTypeNames::createEmpty()
                 ),
                 SearchTerm::fulltext($searchTerm)
             ) : [];
@@ -407,8 +409,7 @@ class NodesController extends ActionController
             )->block();
 
             if ($copyContent === true) {
-                $contentNodeConstraint = NodeTypeConstraintParser::create($contentRepository->getNodeTypeManager())
-                    ->parseFilterString('!Neos.Neos:Document');
+                $contentNodeConstraint = NodeTypeConstraints::fromFilterString('!Neos.Neos:Document');
                 $this->createNodeVariantsForChildNodes(
                     $identifier,
                     $contentNodeConstraint,

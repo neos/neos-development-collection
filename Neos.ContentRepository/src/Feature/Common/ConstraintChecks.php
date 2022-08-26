@@ -19,6 +19,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -185,62 +188,23 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
         $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
-        $nodeTypeInQuestion = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeNameInQuestion);
         $propertyDeclaration = $nodeType->getProperties()[(string)$referenceName] ?? null;
         if (is_null($propertyDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
         if (isset($propertyDeclaration['constraints']['nodeTypes'])) {
-            $nodeTypeConstraints = NodeTypeConstraintsFactory::createFromNodeTypeDeclaration(
-                $propertyDeclaration['constraints']['nodeTypes']
+            $nodeTypeConstraints = NodeTypeConstraintsWithSubNodeTypes::createFromNodeTypeDeclaration(
+                $propertyDeclaration['constraints']['nodeTypes'],
+                $this->getNodeTypeManager()
             );
-
-            $constraintCheckClosure = function (NodeType $nodeType) use (
-                $nodeTypeConstraints,
-                $referenceName,
-                $nodeTypeName,
-                $nodeTypeNameInQuestion
-            ) {
-                foreach ($nodeTypeConstraints->explicitlyAllowedNodeTypeNames as $allowedNodeTypeName) {
-                    if ($allowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
-                        return false;
-                    }
-                }
-                foreach ($nodeTypeConstraints->explicitlyDisallowedNodeTypeNames as $disallowedNodeTypeName) {
-                    if ($disallowedNodeTypeName->equals(NodeTypeName::fromString($nodeType->getName()))) {
-                        throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
-                            $referenceName,
-                            $nodeTypeName,
-                            $nodeTypeNameInQuestion
-                        );
-                    }
-                }
-                return true;
-            };
-            $this->traverseNodeTypeTreeBreadthFirst([$nodeTypeInQuestion], $constraintCheckClosure);
-        }
-    }
-
-    /**
-     * @param array<int,NodeType> $nodeTypes
-     */
-    private function traverseNodeTypeTreeBreadthFirst(array $nodeTypes, \Closure $closure): bool
-    {
-        $nextLevelNodeTypes = [];
-        foreach ($nodeTypes as $nodeType) {
-            $continue = $closure($nodeType);
-            if (!$continue) {
-                return false;
+            if (!$nodeTypeConstraints->matches($nodeTypeNameInQuestion)) {
+                throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+                    $referenceName,
+                    $nodeTypeName,
+                    $nodeTypeNameInQuestion
+                );
             }
-            $nextLevelNodeTypes = array_merge(
-                $nextLevelNodeTypes,
-                $this->nodeTypeManager->getSubNodeTypes($nodeType->getName())
-            );
         }
-
-        $this->traverseNodeTypeTreeBreadthFirst($nextLevelNodeTypes, $closure);
-
-        return true;
     }
 
     /**

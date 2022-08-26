@@ -28,6 +28,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Projection\ContentGraph\References;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
@@ -70,6 +72,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly PostgresDbalClientInterface $databaseClient,
         private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
     }
@@ -114,7 +117,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'cn');
         }
         if (!is_null($limit)) {
             $query = $query->withLimit($limit);
@@ -144,7 +151,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'cn');
         }
 
         $result = $query->execute($this->getDatabaseConnection())->fetchNumeric();
@@ -334,7 +345,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
         $query = $query->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'sn');
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'sn');
         }
         if (!is_null($limit)) {
             $query = $query->withLimit($limit);
