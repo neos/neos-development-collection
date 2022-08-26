@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Factory;
 
+/**
+ * @api
+ */
 final class ContentRepositoryIdentifier
 {
     private function __construct(
