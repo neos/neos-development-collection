@@ -24,6 +24,8 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
+require_once(__DIR__ . '/../../Fixtures/PostalAddress.php');
+
 /**
  * Test cases for the PropertyType value object
  */
