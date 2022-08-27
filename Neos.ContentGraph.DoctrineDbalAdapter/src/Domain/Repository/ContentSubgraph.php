@@ -142,7 +142,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
             // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
             $likeParameter = '%' . trim(json_encode(
-                UnicodeFunctions::strtolower($searchTerm->getTerm()),
+                UnicodeFunctions::strtolower($searchTerm->term),
                 JSON_UNESCAPED_UNICODE + JSON_THROW_ON_ERROR
             ), '"') . '%';
 

@@ -22,6 +22,7 @@ use Neos\ContentRepository\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<ContentStreamProjection>
+ * @internal
  */
 class ContentStreamProjectionFactory implements ProjectionFactoryInterface
 {

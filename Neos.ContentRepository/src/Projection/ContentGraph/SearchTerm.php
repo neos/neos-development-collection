@@ -14,37 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
-use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-
 /**
  * A search term for use in {@see ContentSubgraphInterface::findDescendants()} API.
  *
- * @Flow\Proxy(false)
+ * @api DTO for {@see ContentSubgraphInterface}
  */
 final class SearchTerm
 {
-    /**
-     * @var string
-     */
-    private $term;
-
-    private function __construct(string $term)
+    private function __construct(public readonly string $term)
     {
-        $this->term = $term;
     }
+
     /**
      * Create a new Fulltext search term (i.e. search across all properties)
      */
     public static function fulltext(string $term): self
     {
         return new self($term);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTerm(): string
-    {
-        return $this->term;
     }
 }

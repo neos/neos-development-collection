@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 /**
  * Name of a Node Type; e.g. "Neos.Neos:Content"
  *
- * @Flow\Proxy(false)
  * @api
  */
 final class NodeTypeName implements \JsonSerializable, \Stringable

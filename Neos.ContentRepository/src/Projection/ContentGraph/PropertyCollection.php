@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\ContentGraph;
 
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\ContentRepository\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * The property collection implementation
- * @Flow\Proxy(false)
  * @internal
  */
 final class PropertyCollection implements PropertyCollectionInterface
