@@ -22,7 +22,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
@@ -326,11 +326,11 @@ class NodeController extends ActionController
             10,
             NodeTypeConstraints::fromFilterString('!Neos.Neos:Document')
         );
-        $subtree = $subtree->getChildren()[0];
+        $subtree = $subtree->children[0];
 
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
-        $currentDocumentNode = $subtree->getNode();
+        $currentDocumentNode = $subtree->node;
         if (is_null($currentDocumentNode)) {
             return;
         }
@@ -338,7 +338,7 @@ class NodeController extends ActionController
 
         $nodePathCache->add($currentDocumentNode->nodeAggregateIdentifier, $nodePathOfDocumentNode);
 
-        foreach ($subtree->getChildren() as $childSubtree) {
+        foreach ($subtree->children as $childSubtree) {
             self::fillCacheInternal(
                 $childSubtree,
                 $currentDocumentNode,
@@ -349,12 +349,12 @@ class NodeController extends ActionController
     }
 
     private static function fillCacheInternal(
-        SubtreeInterface $subtree,
+        Subtree $subtree,
         Node $parentNode,
         NodePath $parentNodePath,
         InMemoryCache $inMemoryCache
     ): void {
-        $node = $subtree->getNode();
+        $node = $subtree->node;
         if (is_null($node)) {
             return;
         }
@@ -382,11 +382,11 @@ class NodeController extends ActionController
         );
 
         $allChildNodes = [];
-        foreach ($subtree->getChildren() as $childSubtree) {
+        foreach ($subtree->children as $childSubtree) {
             if (isset($nodePath)) {
                 self::fillCacheInternal($childSubtree, $node, $nodePath, $inMemoryCache);
             }
-            $childNode = $childSubtree->getNode();
+            $childNode = $childSubtree->node;
             if (!is_null($childNode)) {
                 $allChildNodes[] = $childNode;
             }

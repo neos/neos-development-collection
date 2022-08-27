@@ -26,11 +26,10 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
@@ -951,7 +950,7 @@ WHERE
         NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
-    ): SubtreeInterface {
+    ): Subtree {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findSubtrees
@@ -1070,10 +1069,10 @@ order by level asc, position asc;')
             // also add the parents to the child -> parent cache.
             /* @var $parentSubtree Subtree */
             $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
-            if ($parentSubtree->getNode() !== null) {
+            if ($parentSubtree->node !== null) {
                 $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache()->add(
                     $node->nodeAggregateIdentifier,
-                    $parentSubtree->getNode()->nodeAggregateIdentifier
+                    $parentSubtree->node->nodeAggregateIdentifier
                 );
             }
         }

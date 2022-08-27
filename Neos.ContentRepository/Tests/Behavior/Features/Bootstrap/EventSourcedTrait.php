@@ -37,7 +37,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
-use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
@@ -520,7 +520,7 @@ trait EventSourcedTrait
                 ->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
                 ->findSubtrees(NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]), $maximumLevels, $nodeTypeConstraints);
 
-            /** @var SubtreeInterface[] $flattenedSubtree */
+            /** @var \Neos\ContentRepository\Projection\ContentGraph\Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];
             self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
 
@@ -528,21 +528,21 @@ trait EventSourcedTrait
 
             foreach ($expectedRows as $i => $expectedRow) {
                 $expectedLevel = (int)$expectedRow['Level'];
-                $actualLevel = $flattenedSubtree[$i]->getLevel();
+                $actualLevel = $flattenedSubtree[$i]->level;
                 Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
                 $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($expectedRow['NodeAggregateIdentifier']);
-                $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->getNode()->nodeAggregateIdentifier;
+                $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->node->nodeAggregateIdentifier;
                 Assert::assertTrue($expectedNodeAggregateIdentifier->equals($actualNodeAggregateIdentifier), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateIdentifier . '", actual: "' . $actualNodeAggregateIdentifier . '" (adapter: ' . $adapterName . ')');
             }
         }
     }
 
-    private static function flattenSubtreeForComparison(SubtreeInterface $subtree, array &$result)
+    private static function flattenSubtreeForComparison(Subtree $subtree, array &$result)
     {
-        if ($subtree->getNode()) {
+        if ($subtree->node) {
             $result[] = $subtree;
         }
-        foreach ($subtree->getChildren() as $childSubtree) {
+        foreach ($subtree->children as $childSubtree) {
             self::flattenSubtreeForComparison($childSubtree, $result);
         }
     }

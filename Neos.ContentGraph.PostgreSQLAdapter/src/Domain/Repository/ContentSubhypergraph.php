@@ -39,7 +39,7 @@ use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
@@ -371,7 +371,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
-    ): SubtreeInterface {
+    ): Subtree {
         $query = /** @lang PostgreSQL */ '-- ContentSubhypergraph::findSubtrees
     WITH RECURSIVE subtree AS (
         SELECT n.*, h.contentstreamidentifier,

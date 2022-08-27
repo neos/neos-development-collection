@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
@@ -169,12 +169,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
-            $childSubtree = $childSubtree->getChildren()[0];
+            $childSubtree = $childSubtree->children[0];
         }
 
         $items = [];
-        foreach ($childSubtree->getChildren() as $childSubtree) {
-            $node = $childSubtree->getNode();
+        foreach ($childSubtree->children as $childSubtree) {
+            $node = $childSubtree->node;
             if (!is_null($node) && !$this->isNodeHidden($node)) {
                 $item = $this->traverseChildren($childSubtree);
                 if (!is_null($item)) {
@@ -186,12 +186,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return $items;
     }
 
-    protected function traverseChildren(SubtreeInterface $subtree): ?MenuItem
+    protected function traverseChildren(Subtree $subtree): ?MenuItem
     {
         $children = [];
 
-        foreach ($subtree->getChildren() as $childSubtree) {
-            $node = $childSubtree->getNode();
+        foreach ($subtree->children as $childSubtree) {
+            $node = $childSubtree->node;
             if (!is_null($node) && !$this->isNodeHidden($node)) {
                 $childNode = $this->traverseChildren($childSubtree);
                 if (!is_null($childNode)) {
@@ -200,13 +200,13 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
         }
 
-        $node = $subtree->getNode();
+        $node = $subtree->node;
         if (!is_null($node)) {
             return new MenuItem(
                 $node,
                 MenuItemState::normal(),
                 $node->getLabel(),
-                $subtree->getLevel(),
+                $subtree->level,
                 $children
             );
         }

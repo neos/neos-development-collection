@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\ContentRepository\Feature\SubtreeInterface;
+use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
 
@@ -181,7 +181,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
         NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
-    ): SubtreeInterface;
+    ): Subtree;
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateIdentifiers,
