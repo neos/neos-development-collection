@@ -8,6 +8,7 @@ namespace Neos\ContentRepository\Projection;
  * An immutable set of Content Repository projections ({@see ProjectionInterface}
  *
  * @implements \IteratorAggregate<ProjectionInterface>
+ * @internal
  */
 final class Projections implements \IteratorAggregate
 {

@@ -11,6 +11,8 @@ use Neos\ContentRepository\EventStore\EventPersister;
  *
  * If the Projection needs to be notified that a catchup is about to happen, you can additionally
  * implement this interface. This is useful f.e. to disable runtime caches in the ProjectionState.
+ *
+ * @api
  */
 interface WithMarkStaleInterface
 {

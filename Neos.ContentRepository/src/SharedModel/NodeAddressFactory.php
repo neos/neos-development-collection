@@ -15,12 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\Service\NodePaths;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 class NodeAddressFactory
@@ -80,56 +77,6 @@ class NodeAddressFactory
             $dimensionSpacePoint,
             $nodeAggregateIdentifier,
             $workspaceName
-        );
-    }
-
-    /**
-     * @param string $contextPath
-     * @return NodeAddress
-     * @deprecated make use of createFromUriString instead
-     */
-    public function createFromContextPath(string $contextPath): NodeAddress
-    {
-        $pathValues = NodePaths::explodeContextPath($contextPath);
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(
-            WorkspaceName::fromString($pathValues['workspaceName'])
-        );
-        if (is_null($workspace)) {
-            throw new \InvalidArgumentException(
-                'No workspace exists for context path ' . $contextPath,
-                1645363699
-            );
-        }
-        $contentStreamIdentifier = $workspace->currentContentStreamIdentifier;
-        $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
-        $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0
-            ? \mb_substr($pathValues['nodePath'], 6)
-            : $pathValues['nodePath']);
-
-        $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamIdentifier,
-            $dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-        $node = $subgraph->findNodeByPath(
-            $nodePath,
-            $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $contentStreamIdentifier,
-                NodeTypeName::fromString('Neos.Neos:Sites')
-            )->nodeAggregateIdentifier
-        );
-        if (is_null($node)) {
-            throw new \InvalidArgumentException(
-                'No node exists on context path ' . $contextPath,
-                1645363666
-            );
-        }
-
-        return new NodeAddress(
-            $contentStreamIdentifier,
-            $dimensionSpacePoint,
-            $node->nodeAggregateIdentifier,
-            $workspace->workspaceName
         );
     }
 }

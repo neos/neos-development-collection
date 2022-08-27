@@ -17,7 +17,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
 /**
- * Utility class that provides functionality to initialize a Content Repository instance
+ * Utility class that provides functionality to initialize a Content Repository instance (i.e. create the first
+ * workspace; and the root node in there.
  *
  * @api
  */

@@ -9,6 +9,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<ContentStreamPruner>
+ * @api
  */
 class ContentStreamPrunerFactory implements ContentRepositoryServiceFactoryInterface
 {

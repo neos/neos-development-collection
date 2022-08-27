@@ -10,6 +10,9 @@ use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
+/**
+ * @api
+ */
 class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
 {
     public function __construct(

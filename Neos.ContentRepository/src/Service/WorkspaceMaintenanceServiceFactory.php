@@ -9,6 +9,7 @@ use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<WorkspaceMaintenanceService>
+ * @api
  */
 class WorkspaceMaintenanceServiceFactory implements ContentRepositoryServiceFactoryInterface
 {

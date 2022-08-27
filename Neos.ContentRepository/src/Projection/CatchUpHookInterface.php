@@ -12,7 +12,7 @@ use Neos\EventStore\Model\EventEnvelope;
  * To register such a CatchUpHook, create a corresponding {@see CatchUpHookFactoryInterface}
  * and pass it to {@see ProjectionFactoryInterface::build()}.
  *
- * @internal
+ * @api
  */
 interface CatchUpHookInterface
 {

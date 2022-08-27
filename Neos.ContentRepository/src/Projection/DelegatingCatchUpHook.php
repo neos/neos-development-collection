@@ -5,6 +5,9 @@ namespace Neos\ContentRepository\Projection;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
+/**
+ * @internal
+ */
 class DelegatingCatchUpHook implements CatchUpHookInterface
 {
     /**

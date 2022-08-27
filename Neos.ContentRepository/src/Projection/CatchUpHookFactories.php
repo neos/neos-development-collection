@@ -6,6 +6,9 @@ namespace Neos\ContentRepository\Projection;
 
 use Neos\ContentRepository\ContentRepository;
 
+/**
+ * @internal
+ */
 final class CatchUpHookFactories implements CatchUpHookFactoryInterface
 {
     /**
