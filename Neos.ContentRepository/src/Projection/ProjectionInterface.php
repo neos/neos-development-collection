@@ -19,6 +19,7 @@ use Neos\EventStore\Model\Event;
  * implement {@see WithMarkStaleInterface}. This is useful f.e. to disable runtime caches in the ProjectionState.
  *
  * @template TState of ProjectionStateInterface
+ * @api you can write custom projections
  */
 interface ProjectionInterface
 {

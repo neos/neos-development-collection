@@ -81,7 +81,7 @@ final class Node
      * @return mixed value of the property
      * @api
      */
-    public function getProperty($propertyName): mixed
+    public function getProperty(string $propertyName): mixed
     {
         return $this->properties[$propertyName];
     }
@@ -94,7 +94,7 @@ final class Node
      * @return boolean
      * @api
      */
-    public function hasProperty($propertyName): bool
+    public function hasProperty(string $propertyName): bool
     {
         return $this->properties->offsetExists($propertyName);
     }

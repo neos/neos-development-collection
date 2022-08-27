@@ -13,6 +13,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
  * @implements ProjectionInterface<ContentGraphInterface>
+ * @api people load this projection class name to access the Content Graph
  */
 final class ContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {

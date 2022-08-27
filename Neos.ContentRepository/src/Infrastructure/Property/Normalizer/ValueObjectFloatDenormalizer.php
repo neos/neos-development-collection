@@ -6,6 +6,9 @@ namespace Neos\ContentRepository\Infrastructure\Property\Normalizer;
 
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
+/**
+ * @api these normalizers are used for property serialization; and you can rely on their presence
+ */
 final class ValueObjectFloatDenormalizer implements DenormalizerInterface
 {
     /**

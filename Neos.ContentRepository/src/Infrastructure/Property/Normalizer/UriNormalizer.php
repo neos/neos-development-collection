@@ -8,6 +8,9 @@ use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+/**
+ * @api these normalizers are used for property serialization; and you can rely on their presence
+ */
 final class UriNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**
