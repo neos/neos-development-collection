@@ -10,4 +10,4 @@ parameters:
         - Neos.Neos/Classes
 rules:
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
-    #- Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule
+    - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule
