@@ -55,7 +55,7 @@ final class CopyNodesRecursively implements
          *
          * @var NodeSubtreeSnapshot
          */
-        public readonly NodeSubtreeSnapshot $nodeToInsert,
+        public readonly NodeSubtreeSnapshot $nodeTreeToInsert,
         /**
          * the dimension space point which is the target of the copy
          *
@@ -122,7 +122,7 @@ final class CopyNodesRecursively implements
     {
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeSubtreeSnapshot::fromArray($array['nodeToInsert']),
+            NodeSubtreeSnapshot::fromArray($array['nodeTreeToInsert']),
             OriginDimensionSpacePoint::fromArray($array['targetDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['targetParentNodeAggregateIdentifier']),
@@ -134,41 +134,6 @@ final class CopyNodesRecursively implements
         );
     }
 
-    public function getNodeToInsert(): NodeSubtreeSnapshot
-    {
-        return $this->nodeToInsert;
-    }
-
-    public function getTargetDimensionSpacePoint(): OriginDimensionSpacePoint
-    {
-        return $this->targetDimensionSpacePoint;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function getTargetParentNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->targetParentNodeAggregateIdentifier;
-    }
-
-    public function getTargetSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->targetSucceedingSiblingNodeAggregateIdentifier;
-    }
-
-    public function getTargetNodeName(): ?NodeName
-    {
-        return $this->targetNodeName;
-    }
-
-    public function getNodeAggregateIdentifierMapping(): NodeAggregateIdentifierMapping
-    {
-        return $this->nodeAggregateIdentifierMapping;
-    }
-
     /**
      * @return array<string,mixed>
      */
@@ -176,7 +141,7 @@ final class CopyNodesRecursively implements
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeToInsert' => $this->nodeToInsert,
+            'nodeTreeToInsert' => $this->nodeTreeToInsert,
             'targetDimensionSpacePoint' => $this->targetDimensionSpacePoint,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
             'targetParentNodeAggregateIdentifier' => $this->targetParentNodeAggregateIdentifier,
@@ -188,8 +153,8 @@ final class CopyNodesRecursively implements
 
     public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
-        $targetNodeAggregateIdentifier = $this->getNodeAggregateIdentifierMapping()->getNewNodeAggregateIdentifier(
-            $this->nodeToInsert->getNodeAggregateIdentifier()
+        $targetNodeAggregateIdentifier = $this->nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
+            $this->nodeTreeToInsert->nodeAggregateIdentifier
         );
         return (
             !is_null($targetNodeAggregateIdentifier)
@@ -203,7 +168,7 @@ final class CopyNodesRecursively implements
     {
         return new self(
             $target,
-            $this->nodeToInsert,
+            $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
             $this->initiatingUserIdentifier,
             $this->targetParentNodeAggregateIdentifier,
@@ -218,7 +183,7 @@ final class CopyNodesRecursively implements
     ): self {
         return new self(
             $this->contentStreamIdentifier,
-            $this->nodeToInsert,
+            $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
             $this->initiatingUserIdentifier,
             $this->targetParentNodeAggregateIdentifier,

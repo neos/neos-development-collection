@@ -21,34 +21,17 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
  */
 final class NodeSubtreeSnapshot implements \JsonSerializable
 {
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private NodeTypeName $nodeTypeName;
-
-    private ?NodeName $nodeName;
-
-    private NodeAggregateClassification $nodeAggregateClassification;
-
-    private SerializedPropertyValues $propertyValues;
-
-    private NodeReferences $nodeReferences;
-
     /**
-     * @var array<int,self>
-     */
-    private array $childNodes;
-
-    /**
-     * @param array<int,self> $childNodes
+     * @param NodeSubtreeSnapshot[] $childNodes
      */
     private function __construct(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeTypeName $nodeTypeName,
-        ?NodeName $nodeName,
-        NodeAggregateClassification $nodeAggregateClassification,
-        SerializedPropertyValues $propertyValues,
-        NodeReferences $nodeReferences,
-        array $childNodes
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeTypeName $nodeTypeName,
+        public readonly ?NodeName $nodeName,
+        public readonly NodeAggregateClassification $nodeAggregateClassification,
+        public readonly SerializedPropertyValues $propertyValues,
+        public readonly NodeReferences $nodeReferences,
+        public readonly array $childNodes
     ) {
         foreach ($childNodes as $childNode) {
             if (!$childNode instanceof NodeSubtreeSnapshot) {
@@ -57,13 +40,6 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
                 );
             }
         }
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->nodeName = $nodeName;
-        $this->nodeAggregateClassification = $nodeAggregateClassification;
-        $this->propertyValues = $propertyValues;
-        $this->nodeReferences = $nodeReferences;
-        $this->childNodes = $childNodes;
     }
 
     public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, Node $sourceNode): self
@@ -84,44 +60,6 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             NodeReferences::fromReferences($subgraph->findReferencedNodes($sourceNode->nodeAggregateIdentifier)),
             $childNodes
         );
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getNodeTypeName(): NodeTypeName
-    {
-        return $this->nodeTypeName;
-    }
-
-    public function getNodeName(): ?NodeName
-    {
-        return $this->nodeName;
-    }
-
-    public function getNodeAggregateClassification(): NodeAggregateClassification
-    {
-        return $this->nodeAggregateClassification;
-    }
-
-    public function getPropertyValues(): SerializedPropertyValues
-    {
-        return $this->propertyValues;
-    }
-
-    public function getNodeReferences(): NodeReferences
-    {
-        return $this->nodeReferences;
-    }
-
-    /**
-     * @return array<int,self>
-     */
-    public function getChildNodesToInsert(): array
-    {
-        return $this->childNodes;
     }
 
     /**

@@ -62,7 +62,7 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
         $nodeSubtreeSnapshot->walk(
             function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
                 // here, we create new random NodeAggregateIdentifiers.
-                $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->getNodeAggregateIdentifier()]
+                $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->nodeAggregateIdentifier]
                     = NodeAggregateIdentifier::create();
             }
         );
