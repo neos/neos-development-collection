@@ -23,6 +23,9 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
 
+/**
+ * @api events are the persistence-API of the content repository
+ */
 final class NodePeerVariantWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,

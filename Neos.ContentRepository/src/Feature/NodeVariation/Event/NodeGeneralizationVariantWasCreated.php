@@ -25,6 +25,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * A node generalization variant was created
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class NodeGeneralizationVariantWasCreated implements
     EventInterface,

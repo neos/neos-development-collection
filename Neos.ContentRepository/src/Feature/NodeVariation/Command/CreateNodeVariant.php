@@ -27,6 +27,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * Create a variant of a node in a content stream
  *
  * Copy a node to another dimension space point respecting further variation mechanisms
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateNodeVariant implements
     CommandInterface,

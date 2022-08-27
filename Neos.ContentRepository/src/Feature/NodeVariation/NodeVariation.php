@@ -30,6 +30,9 @@ use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeVariation
 {
     use NodeVariationInternals;
