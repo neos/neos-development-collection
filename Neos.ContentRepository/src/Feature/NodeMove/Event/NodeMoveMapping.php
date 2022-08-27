@@ -16,23 +16,16 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  *      depending on covered dimension space point
  * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings,
  *      depending on covered dimension space point
+ *
+ * @api DTO of {@see NodeAggregateWasMoved} event
  */
 final class NodeMoveMapping implements \JsonSerializable
 {
-    private OriginDimensionSpacePoint $movedNodeOrigin;
-
-    private NodeVariantAssignments $newParentAssignments;
-
-    private NodeVariantAssignments $newSucceedingSiblingAssignments;
-
     public function __construct(
-        OriginDimensionSpacePoint $movedNodeOrigin,
-        NodeVariantAssignments $newParentAssignments,
-        NodeVariantAssignments $newSucceedingSiblingAssignments
+        public readonly OriginDimensionSpacePoint $movedNodeOrigin,
+        public readonly NodeVariantAssignments $newParentAssignments,
+        public readonly NodeVariantAssignments $newSucceedingSiblingAssignments
     ) {
-        $this->movedNodeOrigin = $movedNodeOrigin;
-        $this->newParentAssignments = $newParentAssignments;
-        $this->newSucceedingSiblingAssignments = $newSucceedingSiblingAssignments;
     }
 
     /**
@@ -45,21 +38,6 @@ final class NodeMoveMapping implements \JsonSerializable
             NodeVariantAssignments::createFromArray($array['newParentAssignments']),
             NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments'])
         );
-    }
-
-    public function getMovedNodeOrigin(): OriginDimensionSpacePoint
-    {
-        return $this->movedNodeOrigin;
-    }
-
-    public function getNewParentAssignments(): NodeVariantAssignments
-    {
-        return $this->newParentAssignments;
-    }
-
-    public function getNewSucceedingSiblingAssignments(): NodeVariantAssignments
-    {
-        return $this->newSucceedingSiblingAssignments;
     }
 
     /**

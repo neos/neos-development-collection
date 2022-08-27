@@ -41,6 +41,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * and newSucceedingSiblingNodeAggregateIdentifier?
  * - it can happen that in one subgraph, only one of these match.
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class MoveNodeAggregate implements
     CommandInterface,
@@ -48,70 +50,52 @@ final class MoveNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
-    /**
-     * The content stream in which the move operation is to be performed
-     */
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    /**
-     * This is one of the *covered* dimension space points of the node aggregate
-     * and not necessarily one of the occupied ones.
-     * This allows us to move virtual specializations only when using the scatter strategy.
-     */
-    private DimensionSpacePoint $dimensionSpacePoint;
-
-    /**
-     * The node aggregate to be moved
-     */
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    /**
-     * This is the identifier of the new parent node aggregate.
-     * If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate,
-     * even if the given siblings belong to other parents. In latter case, those siblings are ignored.
-     */
-    private ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier;
-
-    /**
-     * This is the identifier of the new preceding sibling node aggregate.
-     * If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate.
-     * In dimension space points this aggregate does not cover, other siblings,
-     * in order of proximity, are tried to be used instead.
-     */
-    private ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier;
-
-    /**
-     * This is the identifier of the new succeeding sibling node aggregate.
-     * If given, it is attempted to insert the moved nodes right before nodes of this aggregate.
-     * In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead.
-     */
-    private ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier;
-
-    /**
-     * The relation distribution strategy to be used
-     */
-    private RelationDistributionStrategy $relationDistributionStrategy;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
-        RelationDistributionStrategy $relationDistributionStrategy,
-        UserIdentifier $initiatingUserIdentifier
+        /**
+         * The content stream in which the move operation is to be performed
+         */
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+
+        /**
+         * This is one of the *covered* dimension space points of the node aggregate
+         * and not necessarily one of the occupied ones.
+         * This allows us to move virtual specializations only when using the scatter strategy.
+         */
+        public readonly DimensionSpacePoint $dimensionSpacePoint,
+
+        /**
+         * The node aggregate to be moved
+         */
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+
+        /**
+         * This is the identifier of the new parent node aggregate.
+         * If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate,
+         * even if the given siblings belong to other parents. In latter case, those siblings are ignored.
+         */
+        public readonly ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
+
+        /**
+         * This is the identifier of the new preceding sibling node aggregate.
+         * If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate.
+         * In dimension space points this aggregate does not cover, other siblings,
+         * in order of proximity, are tried to be used instead.
+         */
+        public readonly ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier,
+
+        /**
+         * This is the identifier of the new succeeding sibling node aggregate.
+         * If given, it is attempted to insert the moved nodes right before nodes of this aggregate.
+         * In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead.
+         */
+        public readonly ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
+
+        /**
+         * The relation distribution strategy to be used
+         */
+        public readonly RelationDistributionStrategy $relationDistributionStrategy,
+        public readonly UserIdentifier $initiatingUserIdentifier
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
-        $this->newPrecedingSiblingNodeAggregateIdentifier = $newPrecedingSiblingNodeAggregateIdentifier;
-        $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
-        $this->relationDistributionStrategy = $relationDistributionStrategy;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -135,46 +119,6 @@ final class MoveNodeAggregate implements
             RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getNewParentNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->newParentNodeAggregateIdentifier;
-    }
-
-    public function getNewPrecedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->newPrecedingSiblingNodeAggregateIdentifier;
-    }
-
-    public function getNewSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->newSucceedingSiblingNodeAggregateIdentifier;
-    }
-
-    public function getRelationDistributionStrategy(): RelationDistributionStrategy
-    {
-        return $this->relationDistributionStrategy;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
     }
 
     /**

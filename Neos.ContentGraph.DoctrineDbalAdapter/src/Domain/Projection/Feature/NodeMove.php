@@ -10,6 +10,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 
 /**
  * The NodeMove projection feature trait
@@ -36,11 +37,11 @@ trait NodeMove
             if ($event->nodeMoveMappings) {
                 foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                     // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
-
+                    /* @var NodeMoveMapping $moveNodeMapping */
                     $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIdentifiers(
                         $event->getContentStreamIdentifier(),
                         $event->getNodeAggregateIdentifier(),
-                        $moveNodeMapping->getMovedNodeOrigin()
+                        $moveNodeMapping->movedNodeOrigin
                     );
                     if (is_null($nodeToBeMoved)) {
                         throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
@@ -67,7 +68,7 @@ trait NodeMove
                     foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
                         // if we want to change the parent for this DimensionSpacePoint, then we find the
                         // corresponding new parent node (because we lateron need its relationAnchorPoint)
-                        $newParentAssignment = $moveNodeMapping->getNewParentAssignments()->get(
+                        $newParentAssignment = $moveNodeMapping->newParentAssignments->get(
                             $coveredDimensionSpacePoint
                         );
                         if ($newParentAssignment) {
@@ -96,7 +97,7 @@ trait NodeMove
                     // if we want to change the succeeding siblings for this DimensionSpacePoint, we find the
                     // corresponding succeeding sibling node (because we lateron need its relationAnchorPoint)
                     $newSucceedingSiblingNodes = [];
-                    $assignments = $moveNodeMapping->getNewSucceedingSiblingAssignments();
+                    $assignments = $moveNodeMapping->newSucceedingSiblingAssignments;
                     foreach ($assignments as $coveredDimensionSpacePointHash => $newSucceedingSiblingAssignment) {
                         $newSucceedingSiblingNodes[$coveredDimensionSpacePointHash]
                             = $this->getProjectionContentGraph()->findNodeByIdentifiers(

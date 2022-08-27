@@ -22,6 +22,9 @@ use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChange
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeRenaming
 {
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish

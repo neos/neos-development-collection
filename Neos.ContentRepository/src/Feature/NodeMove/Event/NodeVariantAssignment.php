@@ -24,6 +24,8 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  * as a new parent, sibling etc.
  *
  * In case of move, this is the "target node" underneath which or next to which we want to move our source.
+ *
+ * @api DTO of {@see NodeAggregateWasMoved} event
  */
 final class NodeVariantAssignment implements \JsonSerializable
 {

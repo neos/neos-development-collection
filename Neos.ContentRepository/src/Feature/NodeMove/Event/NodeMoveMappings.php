@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Feature\NodeMove\Event;
 
 /**
  * @implements \IteratorAggregate<int,NodeMoveMapping>
+ * @api DTO of {@see NodeAggregateWasMoved} event
  */
 final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
 {
@@ -59,24 +60,6 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
             }
         }
         return new self($processedMappings);
-    }
-
-    public static function createEmpty(): self
-    {
-        return new self([]);
-    }
-
-    public function appendMapping(NodeMoveMapping $mapping): self
-    {
-        $mappings = $this->mappings;
-        $mappings[] = $mapping;
-
-        return new self($mappings);
-    }
-
-    public function merge(NodeMoveMappings $other): self
-    {
-        return new self(array_merge($this->mappings, $other->mappings));
     }
 
     /**

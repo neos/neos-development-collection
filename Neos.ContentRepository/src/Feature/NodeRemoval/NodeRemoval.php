@@ -30,6 +30,9 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeRemoval
 {
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;

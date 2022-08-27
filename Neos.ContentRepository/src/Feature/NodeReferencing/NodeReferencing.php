@@ -32,6 +32,9 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeReferencing
 {
     use ConstraintChecks;

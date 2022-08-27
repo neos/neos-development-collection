@@ -24,6 +24,9 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
 
+/**
+ * @api events are the persistence-API of the content repository
+ */
 final class NodeAggregateWasRemoved implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,

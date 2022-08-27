@@ -18,6 +18,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
  * Create a named reference from source to destination node
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class SetNodeReferences implements
     CommandInterface,

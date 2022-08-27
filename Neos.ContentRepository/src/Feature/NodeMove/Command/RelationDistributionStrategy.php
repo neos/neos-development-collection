@@ -25,6 +25,8 @@ namespace Neos\ContentRepository\Feature\NodeMove\Command;
  * - `gatherSpecializations` means that when a node is related to another node aggregate (e.g. parent),
  *      all specializations of that node will be related to that same aggregate while generalizations
  *      may be related to others
+ *
+ * @api DTO of {@see MoveNodeAggregate} command
  */
 enum RelationDistributionStrategy: string implements \JsonSerializable
 {

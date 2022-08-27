@@ -17,6 +17,10 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * Named references with optional properties were created from source node to destination node(s)
+ *
+ * Replaces all references of the given $referenceName
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class NodeReferencesWereSet implements
     EventInterface,

@@ -20,6 +20,7 @@ use Neos\ContentRepository\Feature\NodeMove\Exception\NodeVariantAssignmentColle
 /**
  * An immutable collection of node variant assignments, indexed by (covered, not origin) dimension space point hash
  * @implements \IteratorAggregate<string,NodeVariantAssignment>
+ * @api DTO of {@see NodeAggregateWasMoved} event
  */
 final class NodeVariantAssignments implements \IteratorAggregate, \JsonSerializable
 {

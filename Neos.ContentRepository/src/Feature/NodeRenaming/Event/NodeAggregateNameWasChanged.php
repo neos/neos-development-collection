@@ -22,6 +22,9 @@ use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterf
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\EventStore\EventInterface;
 
+/**
+ * @api events are the persistence-API of the content repository
+ */
 final class NodeAggregateNameWasChanged implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,

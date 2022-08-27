@@ -21,6 +21,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
@@ -212,12 +213,13 @@ class ChangeProjection implements ProjectionInterface
                 1645382694
             );
         }
+        /* @var NodeMoveMapping[] $mapping */
         $mapping = iterator_to_array($event->nodeMoveMappings);
 
         $this->markAsMoved(
             $event->getContentStreamIdentifier(),
             $event->getNodeAggregateIdentifier(),
-            $mapping[0]->getMovedNodeOrigin()
+            $mapping[0]->movedNodeOrigin
         );
     }
 

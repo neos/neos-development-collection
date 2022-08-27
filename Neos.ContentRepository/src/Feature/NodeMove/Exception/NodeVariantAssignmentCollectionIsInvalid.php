@@ -18,6 +18,8 @@ use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
 
 /**
  * The exception to be thrown if an invalid node variant assignment is to be used
+ *
+ * @api
  */
 final class NodeVariantAssignmentCollectionIsInvalid extends \DomainException
 {

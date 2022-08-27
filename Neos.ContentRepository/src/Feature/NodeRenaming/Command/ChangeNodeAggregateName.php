@@ -28,6 +28,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
  * This is the case because Node Names are usually only used for tethered nodes (=autocreated in the old CR);
  * as then the Node Name is used for querying.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class ChangeNodeAggregateName implements
     CommandInterface,

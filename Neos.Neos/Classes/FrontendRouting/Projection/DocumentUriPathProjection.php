@@ -13,6 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\EventNormalizer;
+use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Projection\ProjectionInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
@@ -569,18 +570,19 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
         if (!is_null($event->nodeMoveMappings)) {
             foreach ($event->nodeMoveMappings as $moveMapping) {
+                /* @var NodeMoveMapping $moveMapping */
                 foreach (
                     $this->getState()->getNodeVariantsById(
                         $event->getNodeAggregateIdentifier()
                     ) as $node
                 ) {
-                    $parentAssignment = $moveMapping->getNewParentAssignments()
+                    $parentAssignment = $moveMapping->newParentAssignments
                             ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
                     $newParentNodeAggregateIdentifier = $parentAssignment !== null
                         ? $parentAssignment->nodeAggregateIdentifier
                         : $node->getParentNodeAggregateIdentifier();
 
-                    $succeedingSiblingAssignment = $moveMapping->getNewSucceedingSiblingAssignments()
+                    $succeedingSiblingAssignment = $moveMapping->newSucceedingSiblingAssignments
                             ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
                     $newSucceedingNodeAggregateIdentifier = $succeedingSiblingAssignment?->nodeAggregateIdentifier;
 

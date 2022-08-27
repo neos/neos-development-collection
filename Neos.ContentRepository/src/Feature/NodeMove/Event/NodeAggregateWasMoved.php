@@ -20,6 +20,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
  * You can move any amount of nodes in the aggregate.
  * The targets (new parents // new succeeding) for each node & dimension space point
  * are specified in {@see NodeMoveMappings}.
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class NodeAggregateWasMoved implements
     EventInterface,

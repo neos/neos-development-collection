@@ -24,6 +24,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
+/**
+ * @api commands are the write-API of the ContentRepository
+ */
 final class RemoveNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
