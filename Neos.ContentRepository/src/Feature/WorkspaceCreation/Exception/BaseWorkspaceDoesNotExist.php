@@ -16,6 +16,9 @@ namespace Neos\ContentRepository\Feature\WorkspaceCreation\Exception;
 
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
+/**
+ * @api
+ */
 final class BaseWorkspaceDoesNotExist extends \DomainException
 {
     public static function butWasSupposedTo(WorkspaceName $name): self

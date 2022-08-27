@@ -26,6 +26,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * A root node aggregate and its initial node were created
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class RootNodeAggregateWithNodeWasCreated implements
     EventInterface,

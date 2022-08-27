@@ -20,6 +20,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Publish a workspace
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class PublishWorkspace implements CommandInterface
 {

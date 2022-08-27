@@ -19,6 +19,8 @@ use Neos\EventStore\Model\Event\StreamName;
 
 /**
  * A content stream's event stream name
+ *
+ * @internal
  */
 final class ContentStreamEventStreamName
 {

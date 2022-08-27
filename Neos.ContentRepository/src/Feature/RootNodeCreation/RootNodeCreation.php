@@ -32,6 +32,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait RootNodeCreation
 {
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;

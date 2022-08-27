@@ -51,6 +51,9 @@ use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
+/**
+ * @internal from userland, you'll use ContentRepository::handle to dispatch commands
+ */
 final class NodeAggregateCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;

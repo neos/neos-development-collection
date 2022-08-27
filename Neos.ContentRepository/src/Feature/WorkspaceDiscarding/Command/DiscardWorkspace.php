@@ -21,6 +21,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Discard a workspace's changes
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class DiscardWorkspace implements CommandInterface
 {

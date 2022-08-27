@@ -33,7 +33,7 @@ use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet
 /**
  * INTERNALS. Only to be used from WorkspaceCommandHandler!!!
  *
- * ContentStreamCommandHandler
+ * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
 final class ContentStreamCommandHandler implements CommandHandlerInterface
 {

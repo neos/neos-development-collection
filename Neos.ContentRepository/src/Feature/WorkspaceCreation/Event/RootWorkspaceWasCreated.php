@@ -27,6 +27,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
  *
  * NOTE: you can rely on the fact that an extra {@see ContentStreamWasCreated} event was persisted BEFORE
  * this event for the actual content stream creation.
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class RootWorkspaceWasCreated implements EventInterface
 {

@@ -23,6 +23,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Create a new workspace, based on an existing baseWorkspace
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateWorkspace implements CommandInterface
 {

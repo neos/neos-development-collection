@@ -64,7 +64,7 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
- * WorkspaceCommandHandler
+ * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
 final class WorkspaceCommandHandler implements CommandHandlerInterface
 {
@@ -343,18 +343,18 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         RebaseWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->getWorkspaceName(), $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
-        $rebasedContentStream = $command->getRebasedContentStreamIdentifier();
+        $rebasedContentStream = $command->rebasedContentStreamIdentifier;
         $contentRepository->handle(
             new ForkContentStream(
                 $rebasedContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+                $command->initiatingUserIdentifier
             )
         )->block();
 
@@ -402,16 +402,16 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             }
         }
 
-        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->workspaceName);
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if (!$rebaseStatistics->hasErrors()) {
             $events = Events::with(
                 new WorkspaceWasRebased(
-                    $command->getWorkspaceName(),
+                    $command->workspaceName,
                     $rebasedContentStream,
                     $workspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier()
+                    $command->initiatingUserIdentifier
                 ),
             );
 
@@ -425,10 +425,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
             $event = Events::with(
                 new WorkspaceRebaseFailed(
-                    $command->getWorkspaceName(),
+                    $command->workspaceName,
                     $rebasedContentStream,
                     $workspace->getCurrentContentStreamIdentifier(),
-                    $command->getInitiatingUserIdentifier(),
+                    $command->initiatingUserIdentifier,
                     $rebaseStatistics->getErrors()
                 )
             );

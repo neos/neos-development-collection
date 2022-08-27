@@ -22,6 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Discard a set of nodes in a workspace
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class DiscardIndividualNodesFromWorkspace implements CommandInterface
 {

@@ -21,23 +21,20 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Rebase a workspace
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class RebaseWorkspace implements CommandInterface
 {
-    private WorkspaceName $workspaceName;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    private ContentStreamIdentifier $rebasedContentStreamIdentifier;
-
     public function __construct(
-        WorkspaceName $workspaceName,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $rebasedContentStreamIdentifier
+        public readonly WorkspaceName $workspaceName,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+
+        /**
+         * Name of the new content stream which is created during the rebase
+         */
+        public readonly ContentStreamIdentifier $rebasedContentStreamIdentifier
     ) {
-        $this->workspaceName = $workspaceName;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->rebasedContentStreamIdentifier = $rebasedContentStreamIdentifier;
     }
 
     public static function create(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier): self
@@ -54,23 +51,5 @@ final class RebaseWorkspace implements CommandInterface
         ContentStreamIdentifier $newContentStreamIdentifier
     ): self {
         return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
-    }
-
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    /**
-     * Name of the new content stream which is created during the rebase
-     */
-    public function getRebasedContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->rebasedContentStreamIdentifier;
     }
 }

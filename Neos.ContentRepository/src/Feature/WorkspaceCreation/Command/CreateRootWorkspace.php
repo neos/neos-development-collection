@@ -22,7 +22,11 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
 /**
- * Command to create a root workspace
+ * Command to create a root workspace.
+ *
+ * Also creates a root content stream internally.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateRootWorkspace implements CommandInterface
 {

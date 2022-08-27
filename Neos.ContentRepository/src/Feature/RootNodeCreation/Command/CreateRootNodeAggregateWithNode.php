@@ -26,6 +26,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  *
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no tethered child nodes.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CreateRootNodeAggregateWithNode implements
     CommandInterface,
