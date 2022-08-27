@@ -26,87 +26,13 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  *
  * It can NOT answer the question whether a Node is hidden because some node above it has been hidden - for that,
  * use the Content Subgraph.
+ *
+ * @api
  */
 class NodeHiddenState
 {
-    private ?ContentStreamIdentifier $contentStreamIdentifier;
-
-    private ?NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private ?DimensionSpacePoint $dimensionSpacePoint;
-
-    private bool $hidden;
-
     public function __construct(
-        ?ContentStreamIdentifier $contentStreamIdentifier,
-        ?NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?DimensionSpacePoint $dimensionSpacePoint,
-        bool $hidden
+        public bool $isHidden
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->hidden = $hidden;
-    }
-
-    public function addToDatabase(Connection $databaseConnection, string $tableName): void
-    {
-        if (is_null($this->contentStreamIdentifier)) {
-            throw new \BadMethodCallException(
-                'Cannot add NodeHiddenState to database without a contentStreamIdentifier',
-                1645383933
-            );
-        }
-        if (is_null($this->nodeAggregateIdentifier)) {
-            throw new \BadMethodCallException(
-                'Cannot add NodeHiddenState to database without a nodeAggregateIdentifier',
-                1645383950
-            );
-        }
-        if (is_null($this->dimensionSpacePoint)) {
-            throw new \BadMethodCallException(
-                'Cannot add NodeHiddenState to database without a dimensionSpacePoint',
-                1645383962
-            );
-        }
-        $databaseConnection->insert($tableName, [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
-            'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
-            'hidden' => (int)$this->hidden,
-        ]);
-    }
-
-    /**
-     * @param array<string,mixed> $databaseRow
-     */
-    public static function fromDatabaseRow(array $databaseRow): self
-    {
-        return new self(
-            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
-            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
-            DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
-            (bool)$databaseRow['hidden']
-        );
-    }
-
-    public static function noRestrictions(): self
-    {
-        return new self(
-            null,
-            null,
-            null,
-            false
-        );
-    }
-
-    /**
-     * @return bool
-     * @api
-     */
-    public function isHidden(): bool
-    {
-        return $this->hidden;
     }
 }

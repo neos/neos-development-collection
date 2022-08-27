@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
@@ -112,13 +113,14 @@ class TetheredNodeAdjustments
                 $nodeAggregate->nodeAggregateIdentifier
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
-                if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
+                /* @var $tetheredNodeAggregate NodeAggregate */
+                if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->nodeName])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "'
-                            . $tetheredNodeAggregate->getNodeName() . '" should be removed.',
+                            . $tetheredNodeAggregate->nodeName . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
                         }

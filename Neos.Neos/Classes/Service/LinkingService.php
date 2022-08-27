@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
@@ -357,6 +358,7 @@ class LinkingService
             $node->subgraphIdentity->contentStreamIdentifier
         );
         $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
+        /* @var $nodeHiddenStateFinder NodeHiddenStateFinder */
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $node->subgraphIdentity->contentStreamIdentifier,
             $node->subgraphIdentity->dimensionSpacePoint,
@@ -366,7 +368,7 @@ class LinkingService
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden() ? 'show' : 'preview';
+        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
 
         return $uriBuilder
             ->reset()

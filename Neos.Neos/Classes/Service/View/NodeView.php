@@ -16,6 +16,7 @@ namespace Neos\Neos\Service\View;
 
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
@@ -433,6 +434,7 @@ class NodeView extends JsonView
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
         $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
+        /* @var NodeHiddenStateFinder $nodeHiddenStateFinder */
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $nodeAddress->contentStreamIdentifier,
             $nodeAddress->dimensionSpacePoint,
@@ -440,7 +442,7 @@ class NodeView extends JsonView
         );
 
         $classes = [];
-        if ($hiddenState->isHidden() === true) {
+        if ($hiddenState->isHidden === true) {
             array_push($classes, 'neos-hidden');
         }
         if ($node->getProperty('hiddenInIndex') === true) {
@@ -487,7 +489,7 @@ class NodeView extends JsonView
             'iconClass' => isset($nodeTypeConfiguration['ui']) && isset($nodeTypeConfiguration['ui']['icon'])
                 ? $nodeTypeConfiguration['ui']['icon']
                 : '',
-            'isHidden' => $hiddenState->isHidden()
+            'isHidden' => $hiddenState->isHidden
         ];
         if ($hasChildNodes) {
             $treeNode['children'] = $children;

@@ -22,6 +22,7 @@ use Neos\ContentRepository\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<NodeHiddenStateProjection>
+ * @internal
  */
 class NodeHiddenStateProjectionFactory implements ProjectionFactoryInterface
 {

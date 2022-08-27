@@ -164,9 +164,9 @@ class NodeHiddenStateProjection implements ProjectionInterface
                         $event->contentStreamIdentifier,
                         $dimensionSpacePoint,
                         $event->nodeAggregateIdentifier
-                    )->isHidden()
+                    )->isHidden
                 ) {
-                    $nodeHiddenState = new NodeHiddenState(
+                    $nodeHiddenState = new NodeHiddenStateRecord(
                         $event->contentStreamIdentifier,
                         $event->nodeAggregateIdentifier,
                         $dimensionSpacePoint,

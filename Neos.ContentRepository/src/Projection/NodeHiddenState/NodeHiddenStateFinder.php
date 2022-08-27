@@ -22,6 +22,8 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 /**
  * Finder for hidden states
+ *
+ * @api
  */
 final class NodeHiddenStateFinder implements ProjectionStateInterface
 {
@@ -52,9 +54,9 @@ final class NodeHiddenStateFinder implements ProjectionStateInterface
         )->fetch();
 
         if (is_array($result)) {
-            return NodeHiddenState::fromDatabaseRow($result);
+            return new NodeHiddenState(true);
         } else {
-            return NodeHiddenState::noRestrictions();
+            return new NodeHiddenState(false);
         }
     }
 }
