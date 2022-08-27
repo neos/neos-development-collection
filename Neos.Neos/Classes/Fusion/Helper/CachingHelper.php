@@ -213,9 +213,9 @@ class CachingHelper implements ProtectedContextAwareInterface
         $workspaceChain = [];
         // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
-            $workspaceChain[(string)$currentWorkspace->getWorkspaceName()] = $currentWorkspace;
-            $currentWorkspace = $currentWorkspace->getBaseWorkspaceName()
-                ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->getBaseWorkspaceName())
+            $workspaceChain[(string)$currentWorkspace->workspaceName] = $currentWorkspace;
+            $currentWorkspace = $currentWorkspace->baseWorkspaceName
+                ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)
                 : null;
         }
 

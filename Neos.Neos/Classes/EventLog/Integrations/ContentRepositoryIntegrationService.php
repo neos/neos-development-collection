@@ -429,7 +429,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         $this->scheduledNodeEventUpdates[$documentNodeAddress->serializeForUri()] = [
             'workspaceName' => $nodeAddress->workspaceName,
             'nestedNodeIdentifiersWhichArePublished' => [],
-            'targetWorkspace' => $targetWorkspace->getWorkspaceName(),
+            'targetWorkspace' => $targetWorkspace->workspaceName,
             'documentNode' => $documentNode
         ];
 

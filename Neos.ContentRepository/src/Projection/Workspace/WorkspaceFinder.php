@@ -17,7 +17,9 @@ namespace Neos\ContentRepository\Projection\Workspace;
 use Neos\ContentRepository\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Workspace Finder
@@ -56,7 +58,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             return null;
         }
 
-        $workspace = Workspace::fromDatabaseRow($workspaceRow);
+        $workspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
         $this->workspaceRuntimeCache->setWorkspace($workspace);
         return $workspace;
     }
@@ -84,7 +86,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             return null;
         }
 
-        $workspace = Workspace::fromDatabaseRow($workspaceRow);
+        $workspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
         $this->workspaceRuntimeCache->setWorkspace($workspace);
         return $workspace;
     }
@@ -108,9 +110,8 @@ final class WorkspaceFinder implements ProjectionStateInterface
         )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
-            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
-            /** @var Workspace $similarlyNamedWorkspace */
-            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+            $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
+            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
         }
 
         return $result;
@@ -136,9 +137,8 @@ final class WorkspaceFinder implements ProjectionStateInterface
         )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
-            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
-            /** @var Workspace $similarlyNamedWorkspace */
-            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+            $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
+            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
         }
 
         return $result;
@@ -161,7 +161,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             return null;
         }
 
-        return Workspace::fromDatabaseRow($workspaceRow);
+        return $this->createWorkspaceFromDatabaseRow($workspaceRow);
     }
 
     /**
@@ -179,9 +179,8 @@ final class WorkspaceFinder implements ProjectionStateInterface
         )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
-            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
-            /** @var Workspace $similarlyNamedWorkspace */
-            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+            $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
+            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
         }
 
         return $result;
@@ -202,15 +201,31 @@ final class WorkspaceFinder implements ProjectionStateInterface
                 SELECT * FROM ' . $this->tableName . ' WHERE status = :outdated
             ',
             [
-                'outdated' => Workspace::STATUS_OUTDATED
+                'outdated' => WorkspaceStatus::OUTDATED->value
             ]
         )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
-            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
-            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+            $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
+            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
         }
 
         return $result;
+    }
+
+    /**
+     * @param array<string,string> $row
+     */
+    private function createWorkspaceFromDatabaseRow(array $row): Workspace
+    {
+        return new Workspace(
+            WorkspaceName::fromString($row['workspacename']),
+            !empty($row['baseworkspacename']) ? WorkspaceName::fromString($row['baseworkspacename']) : null,
+            !empty($row['workspacetitle']) ? WorkspaceTitle::fromString($row['workspacetitle']) : null,
+            WorkspaceDescription::fromString($row['workspacedescription']),
+            ContentStreamIdentifier::fromString($row['currentcontentstreamidentifier']),
+            WorkspaceStatus::from($row['status']),
+            $row['workspaceowner']
+        );
     }
 }

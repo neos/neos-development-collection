@@ -406,7 +406,7 @@ class ContentController extends ActionController
         }
         $subgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 DimensionSpacePoint::fromArray($dimensions),
                 VisibilityConstraints::withoutRestrictions()
             );

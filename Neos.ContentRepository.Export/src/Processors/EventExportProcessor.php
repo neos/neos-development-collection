@@ -38,7 +38,9 @@ final class EventExportProcessor implements ProcessorInterface
         if ($liveWorkspace === null) {
             return ProcessorResult::error('Failed to find live workspace');
         }
-        $streamName = StreamName::fromString('Neos.ContentRepository:ContentStream:' . $liveWorkspace->getCurrentContentStreamIdentifier());
+        $streamName = StreamName::fromString(
+            'Neos.ContentRepository:ContentStream:' . $liveWorkspace->currentContentStreamIdentifier
+        );
         $eventStream = $this->eventStore->load($streamName);
 
         $eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');

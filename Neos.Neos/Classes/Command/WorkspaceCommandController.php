@@ -21,6 +21,7 @@ use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoes
 use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
 use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
@@ -356,12 +357,13 @@ class WorkspaceCommandController extends CommandController
         $headerRow = ['Name', 'Base Workspace', 'Title', 'Owner', 'Description'];
 
         foreach ($workspaces as $workspace) {
+            /* @var Workspace $workspace */
             $tableRows[] = [
-                $workspace->getWorkspaceName(),
-                $workspace->getBaseWorkspaceName() ?: '',
-                $workspace->getWorkspaceTitle(),
-                $workspace->getWorkspaceOwner() ?: '',
-                $workspace->getWorkspaceDescription()
+                $workspace->workspaceName,
+                $workspace->baseWorkspaceName ?: '',
+                $workspace->workspaceTitle,
+                $workspace->workspaceOwner ?: '',
+                $workspace->workspaceDescription
             ];
         }
         $this->output->outputTable($tableRows, $headerRow);

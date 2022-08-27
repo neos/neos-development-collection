@@ -76,7 +76,7 @@ class PluginService
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
             $contentRepositoryIdentifier,
-            $workspace->getCurrentContentStreamIdentifier(),
+            $workspace->currentContentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );

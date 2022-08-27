@@ -129,7 +129,7 @@ final class EditorContentStreamZookeeper
                     $contentRepository->handle(
                         new CreateWorkspace(
                             $workspaceName->toContentRepositoryWorkspaceName(),
-                            $baseWorkspace->getWorkspaceName(),
+                            $baseWorkspace->workspaceName,
                             new WorkspaceTitle((string) $user->getName()),
                             new WorkspaceDescription(''),
                             $userIdentifier,
@@ -141,7 +141,7 @@ final class EditorContentStreamZookeeper
                     CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                         $contentRepository->handle(
                             RebaseWorkspace::create(
-                                $workspace->getWorkspaceName(),
+                                $workspace->workspaceName,
                                 $userIdentifier
                             )
                         )->block());

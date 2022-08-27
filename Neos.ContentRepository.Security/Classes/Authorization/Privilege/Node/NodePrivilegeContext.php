@@ -138,7 +138,7 @@ class NodePrivilegeContext
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
             $this->node->subgraphIdentity->contentStreamIdentifier
         );
-        return !is_null($workspace) && in_array((string)$workspace->getWorkspaceName(), $workspaceNames);
+        return !is_null($workspace) && in_array((string)$workspace->workspaceName, $workspaceNames);
     }
 
     /**

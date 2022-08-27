@@ -72,7 +72,7 @@ class RouteCacheFlusher
         Workspace $oldBaseWorkspace = null,
         Workspace $newBaseWorkspace = null
     ) {
-        $identifier = (string)$workspace->getWorkspaceName();
+        $identifier = (string)$workspace->workspaceName;
         if (!in_array($identifier, $this->tagsToFlush)) {
             $this->tagsToFlush[] = $identifier;
         }

@@ -49,6 +49,6 @@ class ProjectedNodeIterator
         $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
         assert($liveWorkspace !== null, 'Live workspace not found');
 
-        return $liveWorkspace->getCurrentContentStreamIdentifier();
+        return $liveWorkspace->currentContentStreamIdentifier;
     }
 }

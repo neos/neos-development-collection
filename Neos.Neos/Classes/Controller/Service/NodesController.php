@@ -130,7 +130,7 @@ class NodesController extends ActionController
                 );
             }
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
                 VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
@@ -194,7 +194,7 @@ class NodesController extends ActionController
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
         $subgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -204,7 +204,7 @@ class NodesController extends ActionController
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
                 $identifier,
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 $dimensionSpacePoint,
                 $contentRepository
             );
@@ -262,14 +262,14 @@ class NodesController extends ActionController
 
         $sourceSubgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions),
                 VisibilityConstraints::withoutRestrictions()
             );
 
         $targetSubgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
                 VisibilityConstraints::withoutRestrictions()
             );

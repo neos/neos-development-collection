@@ -101,7 +101,7 @@ class FusionExceptionView extends AbstractView
         $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
 
         $contentStreamIdentifier = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive())
-            ?->getCurrentContentStreamIdentifier();
+            ?->currentContentStreamIdentifier;
 
         $currentSiteNode = null;
         if ($contentStreamIdentifier instanceof ContentStreamIdentifier) {

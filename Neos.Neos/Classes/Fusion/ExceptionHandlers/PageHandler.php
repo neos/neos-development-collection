@@ -92,7 +92,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
                 $documentNode->subgraphIdentity->contentStreamIdentifier
             );
             if (
-                $workspace && !$workspace->getWorkspaceName()->isLive()
+                $workspace && !$workspace->workspaceName->isLive()
                 && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
             ) {
                 $isBackend = true;

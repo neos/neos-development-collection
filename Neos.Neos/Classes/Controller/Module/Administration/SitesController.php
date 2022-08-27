@@ -200,7 +200,7 @@ class SitesController extends AbstractModuleController
 
         try {
             $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
+                $liveWorkspace->currentContentStreamIdentifier,
                 NodeTypeName::fromString('Neos.Neos:Sites')
             );
         } catch (\Exception $exception) {
@@ -221,15 +221,16 @@ class SitesController extends AbstractModuleController
         foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
             // technically, due to the name being the "identifier", there might be more than one :/
             /** @var NodeAggregate[] $siteNodeAggregates */
+            /** @var Workspace $workspace */
             $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 $sitesNode->nodeAggregateIdentifier,
                 $site->getNodeName()->toNodeName()
             );
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
                 $contentRepository->handle(new ChangeNodeAggregateName(
-                    $workspace->getCurrentContentStreamIdentifier(),
+                    $workspace->currentContentStreamIdentifier,
                     $siteNodeAggregate->nodeAggregateIdentifier,
                     NodeName::fromString($newSiteNodeName),
                     $this->persistenceManager->getIdentifierByObject($currentUser)

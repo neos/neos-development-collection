@@ -678,7 +678,7 @@ class UserService
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->getWorkspaceName()->jsonSerialize() === 'live') {
+        if ($workspace->workspaceName->jsonSerialize() === 'live') {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
@@ -687,7 +687,7 @@ class UserService
             ? $this->persistenceManager->getIdentifierByObject($currentUser)
             : null;
 
-        if ($workspace->getWorkspaceOwner() === $ownerIdentifier || $workspace->getWorkspaceOwner() === null) {
+        if ($workspace->workspaceOwner === null || $workspace->workspaceOwner === $ownerIdentifier) {
             return true;
         }
 
@@ -702,13 +702,13 @@ class UserService
      */
     public function currentUserCanReadWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->getWorkspaceName()->isLive() || $workspace->getWorkspaceOwner() === null) {
+        if ($workspace->workspaceName->isLive() || $workspace->workspaceOwner === null) {
             return true;
         }
 
         $currentUser = $this->getCurrentUser();
 
-        return $currentUser && $workspace->getWorkspaceOwner()
+        return $currentUser && $workspace->workspaceOwner
             === $this->persistenceManager->getIdentifierByObject($currentUser);
     }
 

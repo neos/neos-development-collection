@@ -178,7 +178,7 @@ class BackendRedirectionService
             );
 
             return $contentRepository->getContentGraph()->getSubgraph(
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )->findNodeByNodeAggregateIdentifier($lastVisitedNode->nodeAggregateIdentifier);

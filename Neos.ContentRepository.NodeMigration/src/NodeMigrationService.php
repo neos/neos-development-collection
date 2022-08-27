@@ -73,7 +73,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             $this->contentRepository->handle(
                 new CreateWorkspace(
                     WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
-                    $workspace->getWorkspaceName(),
+                    $workspace->workspaceName,
                     WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
                     WorkspaceDescription::fromString(''),
                     UserIdentifier::forSystemUser(),
@@ -83,7 +83,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
-                $workspace->getCurrentContentStreamIdentifier(),
+                $workspace->currentContentStreamIdentifier,
                 $contentStreamForWriting
             );
         }

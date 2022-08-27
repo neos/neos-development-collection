@@ -96,6 +96,6 @@ class ContentElementEditableService
     ): bool {
         return $contentRepository->getWorkspaceFinder()
             ->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
-            ?->getWorkspaceName()->isLive() ?: false;
+            ?->workspaceName->isLive() ?: false;
     }
 }

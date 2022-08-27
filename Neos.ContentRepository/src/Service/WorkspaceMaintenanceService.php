@@ -31,8 +31,9 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
         $outdatedWorkspaces = $this->contentRepository->getWorkspaceFinder()->findOutdated();
 
         foreach ($outdatedWorkspaces as $workspace) {
+            /* @var Workspace $workspace */
             $this->contentRepository->handle(RebaseWorkspace::create(
-                $workspace->getWorkspaceName(),
+                $workspace->workspaceName,
                 UserIdentifier::forSystemUser()
             ))->block();
         }

@@ -22,6 +22,7 @@ use Neos\ContentRepository\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<WorkspaceProjection>
+ * @internal
  */
 class WorkspaceProjectionFactory implements ProjectionFactoryInterface
 {

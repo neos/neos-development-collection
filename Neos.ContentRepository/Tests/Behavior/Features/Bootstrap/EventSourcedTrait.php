@@ -471,8 +471,8 @@ trait EventSourcedTrait
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
-                $workspaceA->getCurrentContentStreamIdentifier(),
-                $workspaceB->getCurrentContentStreamIdentifier(),
+                $workspaceA->currentContentStreamIdentifier->getValue(),
+                $workspaceB->currentContentStreamIdentifier->getValue(),
                 'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
             );
         }
@@ -485,7 +485,7 @@ trait EventSourcedTrait
     {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
-        Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
+        Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->currentContentStreamIdentifier);
     }
 
     /**
@@ -588,7 +588,9 @@ trait EventSourcedTrait
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             $nodeAggregateIdentifier,
-            $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
+            $this->contentRepository->getWorkspaceFinder()
+                ->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)
+                ->workspaceName
         );
     }
 
@@ -611,7 +613,9 @@ trait EventSourcedTrait
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             $node->nodeAggregateIdentifier,
-            $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
+            $this->contentRepository->getWorkspaceFinder()
+                ->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)
+                ->workspaceName
         );
     }
 

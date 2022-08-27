@@ -83,7 +83,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
                 $applicationContext->isProduction()
                 && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
                 && !is_null($workspace)
-                && !$workspace->getWorkspaceName()->isLive()
+                && !$workspace->workspaceName->isLive()
             ) {
                 $output = '<div class="neos-rendering-exception">
     <div class="neos-rendering-exception-title">Failed to render element' . $output . '</div>

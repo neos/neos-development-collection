@@ -121,7 +121,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $workspacesAndCounts = [
-            $userWorkspace->getWorkspaceName()->jsonSerialize() => [
+            $userWorkspace->workspaceName->jsonSerialize() => [
                 'workspace' => $userWorkspace,
                 'changesCounts' => $this->computeChangesCount($userWorkspace, $contentRepository),
                 'canPublish' => false,
@@ -135,7 +135,7 @@ class WorkspacesController extends AbstractModuleController
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             // TODO $this->domainUserService->currentUserCanManageWorkspace($workspace)
             if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace())) {
-                $workspaceName = (string)$workspace->getWorkspaceName();
+                $workspaceName = (string)$workspace->workspaceName;
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspaceName]['changesCounts'] =
                     $this->computeChangesCount($workspace, $contentRepository);
@@ -144,7 +144,7 @@ class WorkspacesController extends AbstractModuleController
                 $workspacesAndCounts[$workspaceName]['canManage']
                     = $this->domainUserService->currentUserCanManageWorkspace($workspace);
                 $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count(
-                    $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->getWorkspaceName())
+                    $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
                 );
             }
         }
@@ -172,9 +172,9 @@ class WorkspacesController extends AbstractModuleController
         }
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
-            'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle ?: $workspaceObj->getWorkspaceName(),
-            'baseWorkspaceName' => $workspaceObj->getBaseWorkspaceName(),
-            'baseWorkspaceLabel' => $workspaceObj->getBaseWorkspaceName(), // TODO fallback to title
+            'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle ?: $workspaceObj->workspaceName,
+            'baseWorkspaceName' => $workspaceObj->baseWorkspaceName,
+            'baseWorkspaceLabel' => $workspaceObj->baseWorkspaceName, // TODO fallback to title
             // TODO $this->domainUserService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'canPublishToBaseWorkspace' => true,
             'siteChanges' => $this->computeSiteChanges($workspaceObj, $contentRepository),
@@ -315,7 +315,7 @@ class WorkspacesController extends AbstractModuleController
         #$this->workspaceFinder->update($workspace);
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenUpdated',
-            [(string)$workspace->getWorkspaceTitle()],
+            [(string)$workspace->workspaceTitle],
             null,
             null,
             'Modules',
@@ -341,17 +341,17 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $dependentWorkspaces = $contentRepository->getWorkspaceFinder()
-            ->findByBaseWorkspace($workspace->getWorkspaceName());
+            ->findByBaseWorkspace($workspace->workspaceName);
         if (count($dependentWorkspaces) > 0) {
             $dependentWorkspaceTitles = [];
             /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = (string)$dependentWorkspace->getWorkspaceTitle();
+                $dependentWorkspaceTitles[] = (string)$dependentWorkspace->workspaceTitle;
             }
 
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [(string)$workspace->getWorkspaceTitle(), implode(', ', $dependentWorkspaceTitles)],
+                [(string)$workspace->workspaceTitle, implode(', ', $dependentWorkspaceTitles)],
                 null,
                 null,
                 'Modules',
@@ -368,7 +368,7 @@ class WorkspacesController extends AbstractModuleController
         } catch (\Exception $exception) {
         $message = $this->translator->translateById(
         'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
-        [(string)$workspace->getWorkspaceTitle()],
+        [(string)$workspace->$this->workspaceTitle],
         null,
         null,
         'Modules',
@@ -380,7 +380,7 @@ class WorkspacesController extends AbstractModuleController
         //if ($nodesCount > 0) {
         $message = $this->translator->translateById(
             'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
-            [(string)$workspace->getWorkspaceTitle(), $nodesCount],
+            [(string)$workspace->workspaceTitle, $nodesCount],
             $nodesCount,
             null,
             'Modules',
@@ -393,7 +393,7 @@ class WorkspacesController extends AbstractModuleController
         //$this->workspaceFinder->remove($workspace);
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
-            [(string)$workspace->getWorkspaceTitle()],
+            [(string)$workspace->workspaceTitle],
             null,
             null,
             'Modules',
@@ -438,10 +438,10 @@ class WorkspacesController extends AbstractModuleController
          */
 
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
-            $personalWorkspace->getCurrentContentStreamIdentifier(),
+            $personalWorkspace->currentContentStreamIdentifier,
             $targetNode->subgraphIdentity->dimensionSpacePoint,
             $targetNode->nodeAggregateIdentifier,
-            $personalWorkspace->getWorkspaceName()
+            $personalWorkspace->workspaceName
         );
 
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
@@ -629,11 +629,11 @@ class WorkspacesController extends AbstractModuleController
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
         /** @var Workspace $workspace Otherwise the command handler would have thrown an exception */
         /** @var WorkspaceName $baseWorkspaceName Otherwise the command handler would have thrown an exception */
-        $baseWorkspaceName = $workspace->getBaseWorkspaceName();
+        $baseWorkspaceName = $workspace->baseWorkspaceName;
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenPublished',
             [
-                htmlspecialchars($workspace->getWorkspaceName()->name),
+                htmlspecialchars($workspace->workspaceName->name),
                 htmlspecialchars($baseWorkspaceName->name)
             ],
             null,
@@ -712,7 +712,7 @@ class WorkspacesController extends AbstractModuleController
         $siteChanges = [];
         $changes = $contentRepository->projectionState(ChangeProjection::class)
             ->findByContentStreamIdentifier(
-                $selectedWorkspace->getCurrentContentStreamIdentifier()
+                $selectedWorkspace->currentContentStreamIdentifier
             );
 
         foreach ($changes as $change) {
@@ -725,7 +725,7 @@ class WorkspacesController extends AbstractModuleController
                 //
                 // This is safe because the UI basically shows what would be removed once the deletion is published.
                 $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
-                $contentStreamIdentifier = $baseWorkspace->getCurrentContentStreamIdentifier();
+                $contentStreamIdentifier = $baseWorkspace->currentContentStreamIdentifier;
             }
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
@@ -844,7 +844,7 @@ class WorkspacesController extends AbstractModuleController
         $originalNode = null;
         if ($currentWorkspace !== null) {
             $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($currentWorkspace, $contentRepository);
-            $baseContentStreamIdentifier = $baseWorkspace->getCurrentContentStreamIdentifier();
+            $baseContentStreamIdentifier = $baseWorkspace->currentContentStreamIdentifier;
             $originalNode = $this->getOriginalNode($changedNode, $baseContentStreamIdentifier, $contentRepository);
         }
 
@@ -1031,7 +1031,7 @@ class WorkspacesController extends AbstractModuleController
                     || $workspace->isInternalWorkspace()
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
             ) {
-                $baseWorkspaceOptions[(string)$workspace->getWorkspaceName()] = (string)$workspace->getWorkspaceTitle();
+                $baseWorkspaceOptions[(string)$workspace->workspaceName] = (string)$workspace->workspaceTitle;
             }
         }
 
@@ -1059,7 +1059,7 @@ class WorkspacesController extends AbstractModuleController
         ContentRepository $contentRepository
     ): Workspace {
         /** @var WorkspaceName $baseWorkspaceName We expect this to exist */
-        $baseWorkspaceName = $workspace->getBaseWorkspaceName();
+        $baseWorkspaceName = $workspace->baseWorkspaceName;
         /** @var Workspace $baseWorkspace We expect this to exist */
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($baseWorkspaceName);
 

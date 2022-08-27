@@ -51,7 +51,7 @@ class NodeAddressFactory
             $node->subgraphIdentity->contentStreamIdentifier,
             $node->subgraphIdentity->dimensionSpacePoint,
             $node->nodeAggregateIdentifier,
-            $workspace->getWorkspaceName()
+            $workspace->workspaceName
         );
     }
 
@@ -67,7 +67,7 @@ class NodeAddressFactory
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifierSerialized);
 
         $contentStreamIdentifier = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
-            ?->getCurrentContentStreamIdentifier();
+            ?->currentContentStreamIdentifier;
         if (is_null($contentStreamIdentifier)) {
             throw new \InvalidArgumentException(
                 'Could not resolve content stream identifier for node address ' . $serializedNodeAddress,
@@ -100,7 +100,7 @@ class NodeAddressFactory
                 1645363699
             );
         }
-        $contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
+        $contentStreamIdentifier = $workspace->currentContentStreamIdentifier;
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
         $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0
             ? \mb_substr($pathValues['nodePath'], 6)
@@ -129,7 +129,7 @@ class NodeAddressFactory
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             $node->nodeAggregateIdentifier,
-            $workspace->getWorkspaceName()
+            $workspace->workspaceName
         );
     }
 }

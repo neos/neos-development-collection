@@ -41,7 +41,7 @@ final class ContentRepositoryBootstrapper
     {
         $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
         if ($liveWorkspace instanceof Workspace) {
-            return $liveWorkspace->getCurrentContentStreamIdentifier();
+            return $liveWorkspace->currentContentStreamIdentifier;
         }
         $liveContentStreamIdentifier = ContentStreamIdentifier::create();
         $this->contentRepository->handle(

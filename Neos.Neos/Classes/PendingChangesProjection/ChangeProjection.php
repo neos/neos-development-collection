@@ -269,7 +269,7 @@ class ChangeProjection implements ProjectionInterface
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
                 $event->contentStreamIdentifier
             );
-            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
@@ -385,7 +385,7 @@ class ChangeProjection implements ProjectionInterface
             // but we nevertheless do it.
             // we can maybe figure out another way of solving this lateron.
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
-            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
@@ -422,7 +422,7 @@ class ChangeProjection implements ProjectionInterface
             $originDimensionSpacePoint
         ) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
-            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }

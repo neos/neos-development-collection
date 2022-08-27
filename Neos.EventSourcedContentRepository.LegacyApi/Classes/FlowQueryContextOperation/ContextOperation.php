@@ -107,7 +107,7 @@ class ContextOperation extends AbstractOperation
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
                 if (!is_null($workspace)) {
                     $subgraphIdentity = $subgraphIdentity->withContentStreamIdentifier(
-                        $workspace->getCurrentContentStreamIdentifier()
+                        $workspace->currentContentStreamIdentifier
                     );
                 }
             }

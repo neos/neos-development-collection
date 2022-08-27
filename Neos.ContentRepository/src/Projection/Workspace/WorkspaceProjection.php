@@ -202,7 +202,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'workspaceDescription' => $event->workspaceDescription,
             'workspaceOwner' => $event->workspaceOwner,
             'currentContentStreamIdentifier' => $event->newContentStreamIdentifier,
-            'status' => Workspace::STATUS_UP_TO_DATE
+            'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
     }
 
@@ -213,7 +213,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'workspaceTitle' => $event->workspaceTitle,
             'workspaceDescription' => $event->workspaceDescription,
             'currentContentStreamIdentifier' => $event->newContentStreamIdentifier,
-            'status' => Workspace::STATUS_UP_TO_DATE
+            'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
     }
 
@@ -296,7 +296,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WHERE
                 workspacename = :workspaceName
         ', [
-            'upToDate' => Workspace::STATUS_UP_TO_DATE,
+            'upToDate' => WorkspaceStatus::UP_TO_DATE->value,
             'workspaceName' => $workspaceName->jsonSerialize()
         ]);
     }
@@ -309,7 +309,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WHERE
                 baseworkspacename = :baseWorkspaceName
         ', [
-            'outdated' => Workspace::STATUS_OUTDATED,
+            'outdated' => WorkspaceStatus::OUTDATED->value,
             'baseWorkspaceName' => $baseWorkspaceName->jsonSerialize()
         ]);
     }
@@ -324,7 +324,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WHERE
                 workspacename = :workspaceName
         ', [
-            'outdatedConflict' => Workspace::STATUS_OUTDATED_CONFLICT,
+            'outdatedConflict' => WorkspaceStatus::OUTDATED_CONFLICT->value,
             'workspaceName' => $workspaceName->jsonSerialize()
         ]);
     }
