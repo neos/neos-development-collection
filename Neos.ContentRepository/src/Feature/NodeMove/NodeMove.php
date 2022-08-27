@@ -21,6 +21,7 @@ use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
@@ -34,7 +35,6 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignments;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
@@ -56,7 +56,7 @@ trait NodeMove
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ContentRepository $contentRepository
-    ): ReadableNodeAggregateInterface;
+    ): NodeAggregate;
 
     /**
      * @param MoveNodeAggregate $command
@@ -211,7 +211,7 @@ trait NodeMove
     private function resolveNewParentAssignments(
         /** The content stream the move operation is performed in */
         ContentStreamIdentifier $contentStreamIdentifier,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         /** The parent node aggregate's identifier if defined */
         ?NodeAggregateIdentifier $parentIdentifier,
         /** The already determined new succeeding siblings */
@@ -290,7 +290,7 @@ trait NodeMove
     }
 
     private function resolveAffectedDimensionSpacePointSet(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         RelationDistributionStrategy $relationDistributionStrategy,
         DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
     ): DimensionSpacePointSet {
@@ -317,7 +317,7 @@ trait NodeMove
         /** The content stream the move operation is performed in */
         ContentStreamIdentifier $contentStreamIdentifier,
         /** The node aggregate to be moved */
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         /** The parent node aggregate identifier, has precedence over siblings when in doubt */
         ?NodeAggregateIdentifier $parentIdentifier,
         /** The planned preceding sibling's node aggregate identifier */
@@ -477,14 +477,14 @@ trait NodeMove
     }
 
     /**
-     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param NodeAggregate $nodeAggregate
      * @param array|NodeVariantAssignments[] $parentAssignments
      * @param array|NodeVariantAssignments[] $succeedingSiblingAssignments
      * @param DimensionSpacePointSet|null $affectedDimensionSpacePoints
      * @return NodeMoveMappings
      */
     protected function getNodeMoveMappings(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         array $parentAssignments,
         array $succeedingSiblingAssignments,
         ?DimensionSpacePointSet $affectedDimensionSpacePoints

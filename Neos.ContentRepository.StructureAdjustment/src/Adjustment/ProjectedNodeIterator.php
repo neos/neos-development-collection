@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,7 +33,7 @@ class ProjectedNodeIterator
 
     /**
      * @param NodeTypeName $nodeTypeName
-     * @return ReadableNodeAggregateInterface[]
+     * @return NodeAggregate[]
      */
     public function nodeAggregatesOfType(NodeTypeName $nodeTypeName): iterable
     {

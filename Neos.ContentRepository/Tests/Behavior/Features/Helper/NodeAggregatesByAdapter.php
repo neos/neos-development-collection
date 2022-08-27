@@ -14,29 +14,29 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * An immutable, type-safe collection of ReadableNodeAggregateInterface objects, indexed by content graph adapter
+ * An immutable, type-safe collection of NodeAggregate objects, indexed by content graph adapter
  *
- * @implements \IteratorAggregate<string,ReadableNodeAggregateInterface>
- * @implements \ArrayAccess<string,ReadableNodeAggregateInterface>
+ * @implements \IteratorAggregate<string,NodeAggregate>
+ * @implements \ArrayAccess<string,NodeAggregate>
  */
 final class NodeAggregatesByAdapter implements \IteratorAggregate, \ArrayAccess
 {
     /**
-     * @var array<string,ReadableNodeAggregateInterface>
+     * @var array<string,NodeAggregate>
      */
     private array $nodeAggregates;
 
     /**
-     * @var \ArrayIterator<string,ReadableNodeAggregateInterface>
+     * @var \ArrayIterator<string,NodeAggregate>
      */
     private \ArrayIterator $iterator;
 
     /**
-     * @param iterable<string,ReadableNodeAggregateInterface> $collection
+     * @param iterable<string,NodeAggregate> $collection
      */
     public function __construct(iterable $collection)
     {
@@ -45,8 +45,8 @@ final class NodeAggregatesByAdapter implements \IteratorAggregate, \ArrayAccess
             if (!is_string($adapterName) || empty($adapterName)) {
                 throw new \InvalidArgumentException('NodeAggregatesByAdapter must be indexed by adapter name', 1643562024);
             }
-            if (!$item instanceof ReadableNodeAggregateInterface) {
-                throw new \InvalidArgumentException('NodeAggregatesByAdapter can only consist of ' . ReadableNodeAggregateInterface::class . ' objects.', 1618138191);
+            if (!$item instanceof NodeAggregate) {
+                throw new \InvalidArgumentException('NodeAggregatesByAdapter can only consist of ' . NodeAggregate::class . ' objects.', 1618138191);
             }
             $nodeAggregates[$adapterName] = $item;
         }
@@ -55,7 +55,7 @@ final class NodeAggregatesByAdapter implements \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * @return \ArrayIterator<string,ReadableNodeAggregateInterface>
+     * @return \ArrayIterator<string,NodeAggregate>
      */
     public function getIterator(): \ArrayIterator
     {
@@ -67,7 +67,7 @@ final class NodeAggregatesByAdapter implements \IteratorAggregate, \ArrayAccess
         return isset($this->nodeAggregates[$offset]);
     }
 
-    public function offsetGet(mixed $offset): ?ReadableNodeAggregateInterface
+    public function offsetGet(mixed $offset): ?NodeAggregate
     {
         return $this->nodeAggregates[$offset] ?? null;
     }

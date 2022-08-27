@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
@@ -70,7 +70,7 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
             ) {
             }
 
-            public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool
+            public function matches(NodeAggregate $nodeAggregate): bool
             {
                 $nodeTypes = [$this->nodeTypeName];
                 if ($this->withSubTypes) {

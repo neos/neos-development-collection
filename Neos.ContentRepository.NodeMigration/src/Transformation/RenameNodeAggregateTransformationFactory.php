@@ -16,11 +16,11 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 class RenameNodeAggregateTransformationFactory implements TransformationFactoryInterface
 {
@@ -47,7 +47,7 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
             }
 
             public function execute(
-                ReadableNodeAggregateInterface $nodeAggregate,
+                NodeAggregate $nodeAggregate,
                 ContentStreamIdentifier $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(new ChangeNodeAggregateName(

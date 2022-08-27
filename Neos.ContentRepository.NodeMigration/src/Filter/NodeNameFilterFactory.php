@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
 /**
  * Filter nodes by node name.
@@ -38,7 +38,7 @@ class NodeNameFilterFactory implements FilterFactoryInterface
             ) {
             }
 
-            public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool
+            public function matches(NodeAggregate $nodeAggregate): bool
             {
                 if (!$nodeAggregate->getNodeName()) {
                     return false;

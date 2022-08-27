@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
 #[Flow\Proxy(false)]
 final class Filters
@@ -53,7 +53,7 @@ final class Filters
         return count($this->nodeBasedFilters) > 0;
     }
 
-    public function matchesNodeAggregate(ReadableNodeAggregateInterface $nodeAggregate): bool
+    public function matchesNodeAggregate(NodeAggregate $nodeAggregate): bool
     {
         foreach ($this->nodeAggregateBasedFilters as $filter) {
             if (!$filter->matches($nodeAggregate)) {

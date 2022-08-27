@@ -18,6 +18,7 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
@@ -35,7 +36,6 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguou
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -53,7 +53,7 @@ trait NodeTypeChange
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ContentRepository $contentRepository
-    ): ReadableNodeAggregateInterface;
+    ): NodeAggregate;
 
     abstract protected function requireConstraintsImposedByAncestorsAreMet(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -94,7 +94,7 @@ trait NodeTypeChange
     ): NodeAggregateIdentifiersByNodePaths;
 
     abstract protected function createEventsForMissingTetheredNode(
-        ReadableNodeAggregateInterface $parentNodeAggregate,
+        NodeAggregate $parentNodeAggregate,
         Node $parentNode,
         NodeName $tetheredNodeName,
         NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
@@ -243,7 +243,7 @@ trait NodeTypeChange
      * @throws NodeConstraintException|NodeTypeNotFoundException
      */
     private function requireConstraintsImposedByHappyPathStrategyAreMet(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         ContentRepository $contentRepository
     ): void {
@@ -289,7 +289,7 @@ trait NodeTypeChange
      * needs to be modified as well (as they are structurally the same)
      */
     private function deleteDisallowedNodesWhenChangingNodeType(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
@@ -369,7 +369,7 @@ trait NodeTypeChange
     }
 
     private function deleteObsoleteTetheredNodesWhenChangingNodeType(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
@@ -428,8 +428,8 @@ trait NodeTypeChange
      *   we originated from)
      */
     private function findDimensionSpacePointsConnectingParentAndChildAggregate(
-        ReadableNodeAggregateInterface $parentNodeAggregate,
-        ReadableNodeAggregateInterface $childNodeAggregate,
+        NodeAggregate $parentNodeAggregate,
+        NodeAggregate $childNodeAggregate,
         ContentRepository $contentRepository
     ): DimensionSpacePointSet {
         $points = [];
@@ -452,7 +452,7 @@ trait NodeTypeChange
     }
 
     private function removeNodeInDimensionSpacePointSet(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
         UserIdentifier $initiatingUserIdentifier
     ): NodeAggregateWasRemoved {

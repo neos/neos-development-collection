@@ -30,29 +30,48 @@ use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
 /**
- * Node aggregate read model
+ * Node aggregate read model. Returned mainly from {@see ContentGraphInterface}.
+ *
+ * A *Node Aggregate* is the set of all nodes across different dimensions which belong to each other; i.e.
+ * which represent the same "thing" (the same Page, the same Text node, the same Product).
+ *
+ * The system guarantees the following invariants:
+ *
+ * - Inside a NodeAggregate, each DimensionSpacePoint has at most one Node which covers it.
+ *   To check this, the ReadableNodeAggregateInterface is used (mainly in constraint checks).
+ * - The NodeType is always the same for all Nodes in a NodeAggregate
+ * - all Nodes inside the NodeAggregate always have the same NodeName.
+ * - all nodes inside a NodeAggregate are all of the same *classification*, which can be:
+ *   - *root*: for root nodes
+ *   - *tethered*: for nodes "attached" to the parent node (i.e. the old "AutoCreatedChildNodes")
+ *   - *regular*: for all other nodes.
+ *
+ * This interface is called *Readable* because it exposes read operations on the set of nodes inside
+ * a single NodeAggregate; often used for constraint checks (in command handlers).
+ *
+ * @api
  */
-final class NodeAggregate implements ReadableNodeAggregateInterface
+final class NodeAggregate
 {
     public function __construct(
-        private ContentStreamIdentifier $contentStreamIdentifier,
-        private NodeAggregateIdentifier $nodeAggregateIdentifier,
-        private NodeAggregateClassification $classification,
-        private NodeTypeName $nodeTypeName,
-        private ?NodeName $nodeName,
-        private OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeAggregateClassification $classification,
+        public readonly NodeTypeName $nodeTypeName,
+        public readonly ?NodeName $nodeName,
+        public readonly OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
         /** @var array<string,Node> */
-        private array $nodesByOccupiedDimensionSpacePoint,
-        private CoverageByOrigin $coverageByOccupant,
-        private DimensionSpacePointSet $coveredDimensionSpacePoints,
+        public readonly array $nodesByOccupiedDimensionSpacePoint,
+        public readonly CoverageByOrigin $coverageByOccupant,
+        public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
         /** @var array<string,Node> */
-        private array $nodesByCoveredDimensionSpacePoint,
-        private OriginByCoverage $occupationByCovered,
+        public readonly array $nodesByCoveredDimensionSpacePoint,
+        public readonly OriginByCoverage $occupationByCovered,
         /**
          * The dimension space point set this node aggregate disables.
          * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
          */
-        private DimensionSpacePointSet $disabledDimensionSpacePoints
+        public readonly DimensionSpacePointSet $disabledDimensionSpacePoints
     ) {
     }
 

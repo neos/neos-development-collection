@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
 /**
  * The property scope to be used in NodeType property declarations.
@@ -44,7 +44,7 @@ enum PropertyScope: string implements \JsonSerializable
 
     public function resolveAffectedOrigins(
         OriginDimensionSpacePoint $origin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         InterDimensionalVariationGraph $variationGraph
     ): OriginDimensionSpacePointSet {
         return match ($this) {

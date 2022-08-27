@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\CommandHandler\CommandResult;
-use Neos\Error\Messages\Message;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\Error\Messages\Message;
 
 final class StructureAdjustment extends Message
 {
@@ -64,7 +63,7 @@ final class StructureAdjustment extends Message
     }
 
     public static function createForNodeAggregate(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         string $type,
         string $errorMessage,
         ?\Closure $remediation = null

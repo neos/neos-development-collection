@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\CommandHandler\CommandResult;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
 /**
  * A node-aggregate-based transformation, like changing the node aggregate type
@@ -26,7 +26,7 @@ use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 interface NodeAggregateBasedTransformationInterface
 {
     public function execute(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult;
 }

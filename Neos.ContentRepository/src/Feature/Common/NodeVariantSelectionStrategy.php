@@ -17,9 +17,9 @@ namespace Neos\ContentRepository\Feature\Common;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 
 /**
  * The node variant selection strategy for node aggregates as selected when creating commands.
@@ -54,7 +54,7 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
 
     public function resolveAffectedDimensionSpacePoints(
         DimensionSpacePoint $referenceDimensionSpacePoint,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         InterDimensionalVariationGraph $variationGraph
     ): DimensionSpacePointSet {
         return match ($this) {
@@ -66,7 +66,7 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
 
     public function resolveAffectedOriginDimensionSpacePoints(
         OriginDimensionSpacePoint $referenceDimensionSpacePoint,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         InterDimensionalVariationGraph $variationGraph
     ): OriginDimensionSpacePointSet {
         return match ($this) {

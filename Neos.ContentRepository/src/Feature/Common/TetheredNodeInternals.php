@@ -16,18 +16,17 @@ namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 /**
  * @internal implementation details of command handlers
@@ -40,7 +39,7 @@ trait TetheredNodeInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
     ): Events;
@@ -54,7 +53,7 @@ trait TetheredNodeInternals
      * @throws \Exception
      */
     protected function createEventsForMissingTetheredNode(
-        ReadableNodeAggregateInterface $parentNodeAggregate,
+        NodeAggregate $parentNodeAggregate,
         Node $parentNode,
         NodeName $tetheredNodeName,
         ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
@@ -72,7 +71,7 @@ trait TetheredNodeInternals
         foreach ($childNodeAggregates as $childNodeAggregate) {
             $tmp[] = $childNodeAggregate;
         }
-        /** @var array<int,ReadableNodeAggregateInterface> $childNodeAggregates */
+        /** @var array<int,NodeAggregate> $childNodeAggregates */
         $childNodeAggregates = $tmp;
 
         if (count($childNodeAggregates) === 0) {
@@ -92,7 +91,7 @@ trait TetheredNodeInternals
                 )
             );
         } elseif (count($childNodeAggregates) === 1) {
-            /** @var ReadableNodeAggregateInterface $childNodeAggregate */
+            /** @var NodeAggregate $childNodeAggregate */
             $childNodeAggregate = current($childNodeAggregates);
             if (!$childNodeAggregate->isTethered()) {
                 throw new \RuntimeException(

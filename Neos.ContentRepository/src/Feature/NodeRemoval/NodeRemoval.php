@@ -15,19 +15,19 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeRemoval;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Feature\Common\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -100,7 +100,7 @@ trait NodeRemoval
         );
     }
 
-    protected function requireNodeAggregateNotToBeTethered(ReadableNodeAggregateInterface $nodeAggregate): void
+    protected function requireNodeAggregateNotToBeTethered(NodeAggregate $nodeAggregate): void
     {
         if ($nodeAggregate->isTethered()) {
             throw new TetheredNodeAggregateCannotBeRemoved(

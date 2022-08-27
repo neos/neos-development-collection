@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 
 /**
  * Filter instances are used to filter nodes to be worked on during a migration.
@@ -27,5 +27,5 @@ interface NodeAggregateBasedFilterInterface
     /**
      * If the given node satisfies the filter constraints, true is returned.
      */
-    public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool;
+    public function matches(NodeAggregate $nodeAggregate): bool;
 }

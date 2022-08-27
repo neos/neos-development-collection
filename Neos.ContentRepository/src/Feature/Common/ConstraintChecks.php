@@ -41,11 +41,11 @@ use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentl
 use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Infrastructure\Property\PropertyType;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
@@ -355,7 +355,7 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ContentRepository $contentRepository
-    ): ReadableNodeAggregateInterface {
+    ): NodeAggregate {
         $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
@@ -401,7 +401,7 @@ trait ConstraintChecks
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint,
         ContentRepository $contentRepository
-    ): ReadableNodeAggregateInterface {
+    ): NodeAggregate {
         $parentNodeAggregate = $contentRepository->getContentGraph()
             ->findParentNodeAggregateByChildOriginDimensionSpacePoint(
                 $contentStreamIdentifier,
@@ -425,7 +425,7 @@ trait ConstraintChecks
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
     protected function requireNodeAggregateToCoverDimensionSpacePoint(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
     ): void {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
@@ -442,7 +442,7 @@ trait ConstraintChecks
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet
      */
     protected function requireNodeAggregateToCoverDimensionSpacePoints(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): void {
         if (!$dimensionSpacePointSet->getDifference($nodeAggregate->getCoveredDimensionSpacePoints())->isEmpty()) {
@@ -457,7 +457,7 @@ trait ConstraintChecks
     /**
      * @throws NodeAggregateIsRoot
      */
-    protected function requireNodeAggregateToNotBeRoot(ReadableNodeAggregateInterface $nodeAggregate): void
+    protected function requireNodeAggregateToNotBeRoot(NodeAggregate $nodeAggregate): void
     {
         if ($nodeAggregate->isRoot()) {
             throw new NodeAggregateIsRoot(
@@ -470,7 +470,7 @@ trait ConstraintChecks
     /**
      * @throws NodeAggregateIsTethered
      */
-    protected function requireNodeAggregateToBeUntethered(ReadableNodeAggregateInterface $nodeAggregate): void
+    protected function requireNodeAggregateToBeUntethered(NodeAggregate $nodeAggregate): void
     {
         if ($nodeAggregate->isTethered()) {
             throw new NodeAggregateIsTethered(
@@ -485,8 +485,8 @@ trait ConstraintChecks
      */
     protected function requireNodeAggregateToNotBeDescendant(
         ContentStreamIdentifier $contentStreamIdentifier,
-        ReadableNodeAggregateInterface $nodeAggregate,
-        ReadableNodeAggregateInterface $referenceNodeAggregate,
+        NodeAggregate $nodeAggregate,
+        NodeAggregate $referenceNodeAggregate,
         ContentRepository $contentRepository
     ): void {
         if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
@@ -577,7 +577,7 @@ trait ConstraintChecks
      * @throws DimensionSpacePointIsNotYetOccupied
      */
     protected function requireNodeAggregateToOccupyDimensionSpacePoint(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
         if (!$nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
@@ -593,7 +593,7 @@ trait ConstraintChecks
      * @throws DimensionSpacePointIsAlreadyOccupied
      */
     protected function requireNodeAggregateToNotOccupyDimensionSpacePoint(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
         if ($nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
@@ -609,7 +609,7 @@ trait ConstraintChecks
      * @throws NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint
      */
     protected function requireNodeAggregateToDisableDimensionSpacePoint(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
     ): void {
         if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
@@ -626,7 +626,7 @@ trait ConstraintChecks
      * @throws NodeAggregateCurrentlyDisablesDimensionSpacePoint
      */
     protected function requireNodeAggregateToNotDisableDimensionSpacePoint(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
     ): void {
         if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {

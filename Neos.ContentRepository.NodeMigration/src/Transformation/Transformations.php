@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
 final class Transformations
 {
@@ -99,7 +99,7 @@ final class Transformations
     }
 
     public function executeNodeAggregateBasedAndBlock(
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         ContentStreamIdentifier $contentStreamForWriting
     ): void {
         foreach ($this->nodeAggregateBasedTransformations as $nodeAggregateBasedTransformation) {

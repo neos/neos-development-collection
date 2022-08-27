@@ -18,14 +18,13 @@ use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
@@ -39,7 +38,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
     ): Events {
@@ -80,7 +79,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
     ): Events {
@@ -107,7 +106,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
         UserIdentifier $initiatingUserIdentifier,
         array $events,
@@ -147,7 +146,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
     ): Events {
@@ -174,7 +173,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
         UserIdentifier $initiatingUserIdentifier,
         array $events,
@@ -214,7 +213,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier,
         ContentRepository $contentRepository
     ): Events {
@@ -241,7 +240,7 @@ trait NodeVariationInternals
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate,
+        NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
         UserIdentifier $initiatingUserIdentifier,
         array $events,
@@ -279,7 +278,7 @@ trait NodeVariationInternals
 
     private function calculateEffectiveVisibility(
         OriginDimensionSpacePoint $targetOrigin,
-        ReadableNodeAggregateInterface $nodeAggregate
+        NodeAggregate $nodeAggregate
     ): DimensionSpacePointSet {
         $specializations = $this->getInterDimensionalVariationGraph()
             ->getIndexedSpecializations($targetOrigin->toDimensionSpacePoint());
