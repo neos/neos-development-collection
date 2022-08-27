@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeTypeChange\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
@@ -25,46 +26,32 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
 
+/**
+ * @api commands are the write-API of the ContentRepository
+ */
 final class ChangeNodeAggregateType implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdentifierToPublishOrDiscardInterface
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
-
-    private NodeTypeName $newNodeTypeName;
-
-    private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy;
-
-    private UserIdentifier $initiatingUserIdentifier;
-
-    /**
-     * NodeAggregateIdentifiers for tethered descendants (optional).
-     *
-     * If the given node type declares tethered child nodes, you may predefine their node aggregate identifiers
-     * using this assignment registry.
-     * Since tethered child nodes may have tethered child nodes themselves,
-     * this registry is indexed using relative node paths to the node to create in the first place.
-     */
-    private ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeTypeName $newNodeTypeName,
-        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
-        UserIdentifier $initiatingUserIdentifier,
-        ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeTypeName $newNodeTypeName,
+        public readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+
+        /**
+         * NodeAggregateIdentifiers for tethered descendants (optional).
+         *
+         * If the given node type declares tethered child nodes, you may predefine their node aggregate identifiers
+         * using this assignment registry.
+         * Since tethered child nodes may have tethered child nodes themselves,
+         * this registry is indexed using relative node paths to the node to create in the first place.
+         */
+        public readonly ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->newNodeTypeName = $newNodeTypeName;
-        $this->strategy = $strategy;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers;
     }
 
     /**
@@ -84,34 +71,9 @@ final class ChangeNodeAggregateType implements
         );
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
-    }
-
-    public function getNewNodeTypeName(): NodeTypeName
-    {
-        return $this->newNodeTypeName;
-    }
-
-    public function getStrategy(): ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
-    {
-        return $this->strategy;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function getTetheredDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
-    {
-        return $this->tetheredDescendantNodeAggregateIdentifiers;
     }
 
     public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool

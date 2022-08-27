@@ -19,6 +19,8 @@ namespace Neos\ContentRepository\Feature\NodeTypeChange\Command;
  * when changing a node aggregate's type.
  *
  * - delete will delete all newly disallowed child nodes
+ *
+ * @api DTO of {@see ChangeNodeAggregateType} command
  */
 enum NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy: string implements \JsonSerializable
 {

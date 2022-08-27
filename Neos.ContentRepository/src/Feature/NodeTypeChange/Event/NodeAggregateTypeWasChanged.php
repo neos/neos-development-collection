@@ -21,6 +21,9 @@ use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIde
 use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\EventStore\EventInterface;
 
+/**
+ * @api events are the persistence-API of the content repository
+ */
 final class NodeAggregateTypeWasChanged implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,

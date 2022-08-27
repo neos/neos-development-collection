@@ -44,6 +44,9 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Feature\NodeTypeChange\Command\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd */
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeTypeChange
 {
     abstract protected function requireProjectedNodeAggregate(
@@ -114,11 +117,11 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
-        $newNodeType = $this->requireNodeType($command->getNewNodeTypeName());
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
             $contentRepository
         );
 
@@ -134,7 +137,7 @@ trait NodeTypeChange
         );
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->getContentStreamIdentifier(),
+                $command->contentStreamIdentifier,
                 $newNodeType,
                 $nodeAggregate->getNodeName(),
                 [$parentNodeAggregate->getIdentifier()],
@@ -143,7 +146,7 @@ trait NodeTypeChange
         }
 
         /** @codingStandardsIgnoreStart */
-        match ($command->getStrategy()) {
+        match ($command->strategy) {
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH
                 => $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType, $contentRepository),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE, null => null
@@ -155,7 +158,7 @@ trait NodeTypeChange
          **************/
         $descendantNodeAggregateIdentifiers = static::populateNodeAggregateIdentifiers(
             $newNodeType,
-            $command->getTetheredDescendantNodeAggregateIdentifiers()
+            $command->tetheredDescendantNodeAggregateIdentifiers
         );
         // Write the auto-created descendant node aggregate identifiers back to the command;
         // so that when rebasing the command, it stays fully deterministic.
@@ -166,26 +169,24 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeAggregateIdentifier(),
-                $command->getNewNodeTypeName()
+                $command->contentStreamIdentifier,
+                $command->nodeAggregateIdentifier,
+                $command->newNodeTypeName
             ),
         ];
 
         // remove disallowed nodes
-        /** @codingStandardsIgnoreStart */
-        if ($command->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-        /** @codingStandardsIgnoreEnd */
+        if ($command->strategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
             array_push($events, ...iterator_to_array($this->deleteDisallowedNodesWhenChangingNodeType(
                 $nodeAggregate,
                 $newNodeType,
-                $command->getInitiatingUserIdentifier(),
+                $command->initiatingUserIdentifier,
                 $contentRepository
             )));
             array_push($events, ...iterator_to_array($this->deleteObsoleteTetheredNodesWhenChangingNodeType(
                 $nodeAggregate,
                 $newNodeType,
-                $command->getInitiatingUserIdentifier(),
+                $command->initiatingUserIdentifier,
                 $contentRepository
             )));
         }
@@ -207,7 +208,7 @@ trait NodeTypeChange
                     $tetheredNodeName
                 );
                 if ($tetheredNode === null) {
-                    $tetheredNodeAggregateIdentifier = $command->getTetheredDescendantNodeAggregateIdentifiers()
+                    $tetheredNodeAggregateIdentifier = $command->tetheredDescendantNodeAggregateIdentifiers
                         ?->getNodeAggregateIdentifier(NodePath::fromString((string)$tetheredNodeName))
                         ?: NodeAggregateIdentifier::create();
                     array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
@@ -216,7 +217,7 @@ trait NodeTypeChange
                         $tetheredNodeName,
                         $tetheredNodeAggregateIdentifier,
                         $expectedTetheredNodeType,
-                        $command->getInitiatingUserIdentifier(),
+                        $command->initiatingUserIdentifier,
                         $contentRepository
                     )));
                 }
@@ -225,7 +226,7 @@ trait NodeTypeChange
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->getContentStreamIdentifier()
+                $command->contentStreamIdentifier
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

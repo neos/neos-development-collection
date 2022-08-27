@@ -192,21 +192,21 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
             $contentRepository
         );
-        $newNodeType = $this->requireNodeType($command->getNewNodeTypeName());
+        $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         foreach (
             $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeAggregateIdentifier()
+                $command->contentStreamIdentifier,
+                $command->nodeAggregateIdentifier
             ) as $parentAggregate
         ) {
             $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->getNodeTypeName());
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
                 throw new NodeConstraintException(
-                    'Node type ' . $command->getNewNodeTypeName()
+                    'Node type ' . $command->newNodeTypeName
                         . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName()
                 );
             }
@@ -214,16 +214,16 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 $nodeAggregate->getNodeName()
                 && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
                 && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())?->getName()
-                    !== (string)$command->getNewNodeTypeName()
+                    !== (string)$command->newNodeTypeName
             ) {
                 throw new NodeConstraintException(
                     'Cannot change type of auto created child node' . $nodeAggregate->getNodeName()
-                        . ' to ' . $command->getNewNodeTypeName()
+                        . ' to ' . $command->newNodeTypeName
                 );
             }
             foreach (
                 $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $command->getContentStreamIdentifier(),
+                    $command->contentStreamIdentifier,
                     $parentAggregate->getIdentifier()
                 ) as $grandParentAggregate
             ) {
@@ -239,7 +239,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                     )
                 ) {
                     throw new NodeConstraintException(
-                        'Node type "' . $command->getNewNodeTypeName()
+                        'Node type "' . $command->newNodeTypeName
                             . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
                             . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"',
                         1520011791
@@ -257,19 +257,19 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      */
     protected function checkConstraintsImposedOnAlreadyPresentDescendants(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
-        $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
+        $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->newNodeTypeName);
 
         foreach (
             $contentRepository->getContentGraph()->findChildNodeAggregates(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeAggregateIdentifier()
+                $command->contentStreamIdentifier,
+                $command->nodeAggregateIdentifier
             ) as $childAggregate
         ) {
             $childsNodeType = $this->nodeTypeManager->getNodeType((string)$childAggregate->getNodeTypeName());
             if (!$newNodeType->allowsChildNodeType($childsNodeType)) {
-                if (!$command->getStrategy()) {
+                if (!$command->strategy) {
                     throw new NodeConstraintException(
-                        'Node type ' . $command->getNewNodeTypeName()
+                        'Node type ' . $command->newNodeTypeName
                             . ' does not allow children of type  ' . $childAggregate->getNodeTypeName()
                             . ', which already exist. Please choose a resolution strategy.',
                         1520014467
@@ -283,7 +283,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             ) {
                 foreach (
                     $contentRepository->getContentGraph()->findChildNodeAggregates(
-                        $command->getContentStreamIdentifier(),
+                        $command->contentStreamIdentifier,
                         $childAggregate->getIdentifier()
                     ) as $grandChildAggregate
                 ) {
@@ -296,9 +296,9 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                             $grandChildsNodeType
                         )
                     ) {
-                        if (!$command->getStrategy()) {
+                        if (!$command->strategy) {
                             throw new NodeConstraintException(
-                                'Node type ' . $command->getNewNodeTypeName()
+                                'Node type ' . $command->newNodeTypeName
                                     . ' does not allow auto created child nodes "' . $childAggregate->getNodeName()
                                     . '" to have children of type  ' . $grandChildAggregate->getNodeTypeName()
                                     . ', which already exist. Please choose a resolution strategy.',
