@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\PhpstanRules\Utility;
@@ -10,8 +11,7 @@ final class ClassClassification
     private function __construct(
         public readonly bool $isInternal,
         public readonly bool $isApi,
-    )
-    {
+    ) {
     }
 
     public static function fromClassReflection(ClassReflection $classReflection): self

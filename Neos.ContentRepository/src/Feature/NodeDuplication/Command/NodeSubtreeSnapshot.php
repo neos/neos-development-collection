@@ -17,7 +17,7 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 /**
  * Implementation detail of {@see CopyNodesRecursively}
  *
- * @internal You'll never create this class yourself; but you use {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
+ * @internal You'll never create this class yourself; see {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
  */
 final class NodeSubtreeSnapshot implements \JsonSerializable
 {

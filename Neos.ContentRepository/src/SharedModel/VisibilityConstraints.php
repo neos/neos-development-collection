@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel;
 
-
 /**
  * The context parameters value object
  *

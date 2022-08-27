@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-
 /**
  * The Node name is the "path part" of the node; i.e. when accessing the node "/foo" via path,
  * the node name is "foo".

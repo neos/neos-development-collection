@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\PhpstanRules;
@@ -10,6 +11,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleErrorBuilder;
 
+/**
+ * @implements Rule<\PhpParser\Node\Stmt\Class_>
+ */
 class ApiOrInternalAnnotationRule implements Rule
 {
     public function __construct(
@@ -26,7 +30,7 @@ class ApiOrInternalAnnotationRule implements Rule
     {
         assert($node instanceof \PhpParser\Node\Stmt\Class_);
 
-        if (!str_starts_with($node->namespacedName->toString(), 'Neos\\ContentRepository')) {
+        if (!$node->namespacedName || !str_starts_with($node->namespacedName->toString(), 'Neos\\ContentRepository')) {
             return [];
         }
 

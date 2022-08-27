@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
-
 /**
  * Property values to write, supports arbitrary objects. Will be then converted to {@see SerializedPropertyValues}
  * inside the events and persisted commands.

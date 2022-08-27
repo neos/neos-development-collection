@@ -42,7 +42,6 @@ final class CopyNodesRecursively implements
     MatchableWithNodeIdentifierToPublishOrDiscardInterface,
     RebasableToOtherContentStreamsInterface
 {
-
     private function __construct(
         /**
          * The identifier of the content stream this command is to be handled in

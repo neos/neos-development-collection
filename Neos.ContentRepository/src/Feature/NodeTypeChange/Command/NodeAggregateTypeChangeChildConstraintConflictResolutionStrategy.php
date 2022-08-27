@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeTypeChange\Command;
 
-
 /**
  * The strategy how to handle node type constraint conflicts with already present child nodes
  * when changing a node aggregate's type.

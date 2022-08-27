@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
-
 /**
  * @internal
  */

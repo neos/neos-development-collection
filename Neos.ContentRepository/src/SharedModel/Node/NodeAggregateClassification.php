@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-
 /**
  * The classification of a node aggregate
  */

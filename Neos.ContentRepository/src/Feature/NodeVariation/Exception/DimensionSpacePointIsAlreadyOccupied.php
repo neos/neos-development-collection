@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeVariation\Exception;
 
-
 /**
  * The exception to be thrown if a dimension space point is already occupied by a node in a node aggregate
  * but is supposed not to be

@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
 /**
  * A "node type not found" exception
  *
+ * TODO: This and NodeTypeNotFound should be made similar
  * @api
  */
 class NodeTypeNotFoundException extends \DomainException

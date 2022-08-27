@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\NodeMove\Command;
 
-
 /**
  * The relation distribution strategy for node aggregates as defined in the NodeType declaration
  * Used for building relations to other node aggregates

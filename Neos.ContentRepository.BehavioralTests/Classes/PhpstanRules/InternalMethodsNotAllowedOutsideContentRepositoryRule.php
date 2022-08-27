@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\PhpstanRules;
@@ -11,6 +12,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 
+/**
+ * @implements Rule<Node\Expr\CallLike>
+ */
 class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
 {
     public function __construct(
@@ -28,7 +32,7 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
         assert($node instanceof Node\Expr\CallLike);
 
         // TODO CORE
-        if (str_starts_with($scope->getNamespace(), 'Neos\ContentRepository')) {
+        if ($scope->getNamespace() && str_starts_with($scope->getNamespace(), 'Neos\ContentRepository')) {
             // Core is allowed to call all namespaces
             // TODO !!! ONLY FROM WITHIN OWN PACKAGE!!!!
             return [];
@@ -46,38 +50,18 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
 
                 $targetClassReflection = $this->reflectionProvider->getClass($targetClassName);
                 $classification = ClassClassification::fromClassReflection($targetClassReflection);
-                if (!$classification->isApi) {
+                if (!$classification->isApi && $node->name instanceof Node\Identifier) {
                     return [
                         RuleErrorBuilder::message(
                             sprintf(
                                 'The internal method "%s::%s" is called.',
                                 $targetClassName,
-                                $node->name
+                                $node->name->toString()
                             )
                         )->build(),
                     ];
                 }
             }
-
-        }
-
-        return [];
-
-        $class = $this->reflectionProvider->getClass($node->namespacedName->toString());
-
-        if (!$class->getResolvedPhpDoc()) {
-
-        }
-        $phpDocNode = $class->getResolvedPhpDoc()->getPhpDocNodes()[0];
-        $hasInternalAnnotation = count($phpDocNode->getTagsByName('@internal')) > 0;
-        $hasApiAnnotation = count($phpDocNode->getTagsByName('@api')) > 0;
-
-        if (!$hasInternalAnnotation && !$hasApiAnnotation) {
-            return [
-                RuleErrorBuilder::message(
-                    'Class needs @api or @internal annotation.'
-                )->build(),
-            ];
         }
         return [];
     }

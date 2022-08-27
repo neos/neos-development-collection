@@ -35,6 +35,7 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsAbstract;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFound;
+use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\Common\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;

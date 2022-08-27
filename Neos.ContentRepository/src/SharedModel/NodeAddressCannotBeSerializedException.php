@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel;
 
-
 final class NodeAddressCannotBeSerializedException extends \DomainException
 {
     public static function becauseNoWorkspaceNameWasResolved(NodeAddress $nodeAddress): self

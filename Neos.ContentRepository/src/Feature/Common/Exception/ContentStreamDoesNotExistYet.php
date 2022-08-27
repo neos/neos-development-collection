@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common\Exception;
 
-
 /**
  * The exception to be thrown if a content stream does not exists yet but is expected to
  *

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-
 /**
  * The exception to be thrown if an event could not be applied to the content graph
  *
