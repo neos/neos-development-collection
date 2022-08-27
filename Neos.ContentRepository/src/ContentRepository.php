@@ -42,6 +42,8 @@ use Neos\EventStore\ProvidesSetupInterface;
  * - send commands to the system (to mutate state) via {@see ContentRepository::handle()}
  * - access projection state (to read state) via {@see ContentRepository::projectionState()}
  * - catch up projections via {@see ContentRepository::catchUpProjection()}
+ *
+ * @api
  */
 final class ContentRepository
 {
