@@ -149,7 +149,7 @@ trait NodeTypeChange
         match ($command->strategy) {
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH
                 => $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType, $contentRepository),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE, null => null
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE => null
         };
         /** @codingStandardsIgnoreStop */
 

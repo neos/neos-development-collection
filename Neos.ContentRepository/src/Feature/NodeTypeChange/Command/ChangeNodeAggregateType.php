@@ -41,7 +41,6 @@ final class ChangeNodeAggregateType implements
         public readonly NodeTypeName $newNodeTypeName,
         public readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
         public readonly UserIdentifier $initiatingUserIdentifier,
-
         /**
          * NodeAggregateIdentifiers for tethered descendants (optional).
          *

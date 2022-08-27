@@ -17,16 +17,18 @@ namespace Neos\ContentRepository\Feature\NodeModification;
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Feature\Common\PropertyScope;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Feature\Common\PropertyScope;
+use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -40,7 +42,7 @@ trait NodeModification
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ContentRepository $contentRepository
-    ): NodeAggregateIdentifier;
+    ): NodeAggregate;
 
     private function handleSetNodeProperties(
         SetNodeProperties $command,

@@ -15,8 +15,15 @@ final class Subtree
     public function __construct(
         public readonly int $level,
         public readonly ?Node $node = null,
-        public readonly array $children = []
-    )
+        public array $children = []
+    ) {
+    }
+
+    /**
+     * @internal
+     */
+    public function add(Subtree $subtree): void
     {
+        $this->children[] = $subtree;
     }
 }

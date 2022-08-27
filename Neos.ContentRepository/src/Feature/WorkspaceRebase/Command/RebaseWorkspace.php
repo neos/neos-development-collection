@@ -29,7 +29,6 @@ final class RebaseWorkspace implements CommandInterface
     public function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly UserIdentifier $initiatingUserIdentifier,
-
         /**
          * Name of the new content stream which is created during the rebase
          */
