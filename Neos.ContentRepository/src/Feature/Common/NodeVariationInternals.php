@@ -114,7 +114,7 @@ trait NodeVariationInternals
     ): array {
         $events[] = new NodeSpecializationVariantWasCreated(
             $contentStreamIdentifier,
-            $nodeAggregate->getIdentifier(),
+            $nodeAggregate->nodeAggregateIdentifier,
             $sourceOrigin,
             $targetOrigin,
             $specializationVisibility,
@@ -124,7 +124,7 @@ trait NodeVariationInternals
         foreach (
             $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $contentStreamIdentifier,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateIdentifier
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
@@ -181,7 +181,7 @@ trait NodeVariationInternals
     ): array {
         $events[] = new NodeGeneralizationVariantWasCreated(
             $contentStreamIdentifier,
-            $nodeAggregate->getIdentifier(),
+            $nodeAggregate->nodeAggregateIdentifier,
             $sourceOrigin,
             $targetOrigin,
             $generalizationVisibility,
@@ -191,7 +191,7 @@ trait NodeVariationInternals
         foreach (
             $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $contentStreamIdentifier,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateIdentifier
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
@@ -248,7 +248,7 @@ trait NodeVariationInternals
     ): array {
         $events[] = new NodePeerVariantWasCreated(
             $contentStreamIdentifier,
-            $nodeAggregate->getIdentifier(),
+            $nodeAggregate->nodeAggregateIdentifier,
             $sourceOrigin,
             $targetOrigin,
             $peerVisibility,
@@ -258,7 +258,7 @@ trait NodeVariationInternals
         foreach (
             $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
                 $contentStreamIdentifier,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateIdentifier
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
@@ -285,7 +285,7 @@ trait NodeVariationInternals
         $excludedSet = new DimensionSpacePointSet([]);
         foreach (
             $specializations->getIntersection(
-                $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
+                $nodeAggregate->occupiedDimensionSpacePoints->toDimensionSpacePointSet()
             ) as $occupiedSpecialization
         ) {
             $excludedSet = $excludedSet->getUnion(

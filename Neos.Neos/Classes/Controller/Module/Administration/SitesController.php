@@ -19,6 +19,7 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
@@ -219,16 +220,17 @@ class SitesController extends AbstractModuleController
 
         foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
             // technically, due to the name being the "identifier", there might be more than one :/
+            /** @var NodeAggregate[] $siteNodeAggregates */
             $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
                 $workspace->getCurrentContentStreamIdentifier(),
-                $sitesNode->getIdentifier(),
+                $sitesNode->nodeAggregateIdentifier,
                 $site->getNodeName()->toNodeName()
             );
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
                 $contentRepository->handle(new ChangeNodeAggregateName(
                     $workspace->getCurrentContentStreamIdentifier(),
-                    $siteNodeAggregate->getIdentifier(),
+                    $siteNodeAggregate->nodeAggregateIdentifier,
                     NodeName::fromString($newSiteNodeName),
                     $this->persistenceManager->getIdentifierByObject($currentUser)
                 ));

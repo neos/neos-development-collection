@@ -56,7 +56,7 @@ trait NodeModification
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
-        $nodeTypeName = $nodeAggregate->getNodeTypeName();
+        $nodeTypeName = $nodeAggregate->nodeTypeName;
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
@@ -84,7 +84,7 @@ trait NodeModification
             $command->nodeAggregateIdentifier,
             $contentRepository
         );
-        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
+        $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
         $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
         $events = [];

@@ -67,7 +67,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
             ): CommandResult {
                 return $this->contentRepository->handle(new ChangeNodeAggregateType(
                     $contentStreamForWriting,
-                    $nodeAggregate->getIdentifier(),
+                    $nodeAggregate->nodeAggregateIdentifier,
                     NodeTypeName::fromString($this->newType),
                     $this->strategy,
                     UserIdentifier::forSystemUser()

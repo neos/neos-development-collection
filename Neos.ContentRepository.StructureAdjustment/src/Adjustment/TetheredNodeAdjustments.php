@@ -108,8 +108,8 @@ class TetheredNodeAdjustments
 
             // find disallowed tethered nodes
             $tetheredNodeAggregates = $this->contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
-                $nodeAggregate->getContentStreamIdentifier(),
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->contentStreamIdentifier,
+                $nodeAggregate->nodeAggregateIdentifier
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {

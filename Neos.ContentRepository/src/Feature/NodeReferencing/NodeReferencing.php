@@ -58,7 +58,7 @@ trait NodeReferencing
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
-        $nodeTypeName = $sourceNodeAggregate->getNodeTypeName();
+        $nodeTypeName = $sourceNodeAggregate->nodeTypeName;
 
         foreach ($command->references as $reference) {
             if ($reference->properties) {
@@ -117,7 +117,7 @@ trait NodeReferencing
             $sourceNodeAggregate,
             $command->sourceOriginDimensionSpacePoint
         );
-        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->referenceName);
+        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $command->referenceName);
 
         foreach ($command->references as $reference) {
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
@@ -131,13 +131,13 @@ trait NodeReferencing
                 $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
             );
             $this->requireNodeTypeToAllowNodesOfTypeInReference(
-                $sourceNodeAggregate->getNodeTypeName(),
+                $sourceNodeAggregate->nodeTypeName,
                 $command->referenceName,
-                $destinationNodeAggregate->getNodeTypeName()
+                $destinationNodeAggregate->nodeTypeName
             );
         }
 
-        $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->getNodeTypeName());
+        $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->nodeTypeName);
         $scopeDeclaration = $sourceNodeType->getProperties()[(string)$command->referenceName]['scope'] ?? '';
         $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
 

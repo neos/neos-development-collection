@@ -80,10 +80,10 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
                 }
 
                 if ($this->exclude) {
-                    return !in_array($nodeAggregate->getNodeTypeName()->getValue(), $nodeTypes);
+                    return !in_array($nodeAggregate->nodeTypeName->getValue(), $nodeTypes);
                 } else {
                     // non-negated
-                    return in_array($nodeAggregate->getNodeTypeName()->getValue(), $nodeTypes);
+                    return in_array($nodeAggregate->nodeTypeName->getValue(), $nodeTypes);
                 }
             }
         };

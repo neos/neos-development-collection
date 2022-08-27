@@ -93,7 +93,7 @@ trait TetheredNodeInternals
         } elseif (count($childNodeAggregates) === 1) {
             /** @var NodeAggregate $childNodeAggregate */
             $childNodeAggregate = current($childNodeAggregates);
-            if (!$childNodeAggregate->isTethered()) {
+            if (!$childNodeAggregate->classification->isTethered()) {
                 throw new \RuntimeException(
                     'We found a child node aggregate through the given node path; but it is not tethered.'
                         . ' We do not support re-tethering yet'

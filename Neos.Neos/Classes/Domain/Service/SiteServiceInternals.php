@@ -74,7 +74,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
                 $contentStreamIdentifier,
-                $sitesNodeAggregate->getIdentifier(),
+                $sitesNodeAggregate->nodeAggregateIdentifier,
                 $siteNodeName->toNodeName()
             );
 
@@ -82,7 +82,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                 assert($siteNodeAggregate instanceof NodeAggregate);
                 $this->contentRepository->handle(new RemoveNodeAggregate(
                     $contentStreamIdentifier,
-                    $siteNodeAggregate->getIdentifier(),
+                    $siteNodeAggregate->nodeAggregateIdentifier,
                     $arbitraryDimensionSpacePoint,
                     NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
                     UserIdentifier::forSystemUser()

@@ -40,10 +40,10 @@ class NodeNameFilterFactory implements FilterFactoryInterface
 
             public function matches(NodeAggregate $nodeAggregate): bool
             {
-                if (!$nodeAggregate->getNodeName()) {
+                if (!$nodeAggregate->nodeName) {
                     return false;
                 }
-                return $this->nodeName->jsonSerialize() === $nodeAggregate->getNodeName()->jsonSerialize();
+                return $this->nodeName->jsonSerialize() === $nodeAggregate->nodeName->jsonSerialize();
             }
         };
     }

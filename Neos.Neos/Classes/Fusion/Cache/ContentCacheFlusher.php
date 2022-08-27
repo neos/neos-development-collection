@@ -78,7 +78,7 @@ class ContentCacheFlusher
         }
 
         $this->registerChangeOnNodeType(
-            $nodeAggregate->getNodeTypeName(),
+            $nodeAggregate->nodeTypeName,
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
             $tagsToFlush,
@@ -107,33 +107,33 @@ class ContentCacheFlusher
 
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
-            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->getIdentifier()->getValue()])) {
+            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateIdentifier->getValue()])) {
                 // we've already processed this NodeAggregateIdentifier (i.e. flushed the caches for it);
                 // thus we can skip this one, and thus break the cycle.
                 continue;
             }
-            $processedNodeAggregateIdentifiers[$nodeAggregate->getIdentifier()->getValue()] = true;
+            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateIdentifier->getValue()] = true;
 
-            $tagName = 'DescendantOf_%' . $nodeAggregate->getContentStreamIdentifier()
-                . '%_' . $nodeAggregate->getIdentifier();
+            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamIdentifier
+                . '%_' . $nodeAggregate->nodeAggregateIdentifier;
             $tagsToFlush[$tagName] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateIdentifier
             );
 
             // Legacy
-            $legacyTagName = 'DescendantOf_' . $nodeAggregate->getIdentifier();
+            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateIdentifier;
             $tagsToFlush[$legacyTagName] = sprintf(
                 'which were tagged with legacy "%s" because node "%s" has changed.',
                 $legacyTagName,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateIdentifier
             );
 
             foreach (
                 $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->nodeAggregateIdentifier
                 ) as $parentNodeAggregate
             ) {
                 $parentNodeAggregates[] = $parentNodeAggregate;

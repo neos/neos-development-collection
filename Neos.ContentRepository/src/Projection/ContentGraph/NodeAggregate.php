@@ -24,7 +24,6 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateDoesCurrentlyNo
 use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
@@ -61,43 +60,18 @@ final class NodeAggregate
         public readonly ?NodeName $nodeName,
         public readonly OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
         /** @var array<string,Node> */
-        public readonly array $nodesByOccupiedDimensionSpacePoint,
-        public readonly CoverageByOrigin $coverageByOccupant,
+        private readonly array $nodesByOccupiedDimensionSpacePoint,
+        private readonly CoverageByOrigin $coverageByOccupant,
         public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
         /** @var array<string,Node> */
-        public readonly array $nodesByCoveredDimensionSpacePoint,
-        public readonly OriginByCoverage $occupationByCovered,
+        private readonly array $nodesByCoveredDimensionSpacePoint,
+        private readonly OriginByCoverage $occupationByCovered,
         /**
          * The dimension space point set this node aggregate disables.
          * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
          */
         public readonly DimensionSpacePointSet $disabledDimensionSpacePoints
     ) {
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getIdentifier(): NodeAggregateIdentifier
-    {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    public function getNodeTypeName(): NodeTypeName
-    {
-        return $this->nodeTypeName;
-    }
-
-    public function getNodeName(): ?NodeName
-    {
-        return $this->nodeName;
-    }
-
-    public function getOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet
-    {
-        return $this->occupiedDimensionSpacePoints;
     }
 
     public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool
@@ -128,11 +102,6 @@ final class NodeAggregate
         return $this->nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
     }
 
-    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        return $this->coveredDimensionSpacePoints;
-    }
-
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->coveredDimensionSpacePoints->contains($dimensionSpacePoint);
@@ -150,14 +119,6 @@ final class NodeAggregate
         }
 
         return $coverage;
-    }
-
-    /**
-     * @return array<string,Node>
-     */
-    public function getNodesByCoveredDimensionSpacePoint(): array
-    {
-        return $this->nodesByCoveredDimensionSpacePoint;
     }
 
     public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): Node
@@ -185,28 +146,8 @@ final class NodeAggregate
         return $occupation;
     }
 
-    public function getDisabledDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        return $this->disabledDimensionSpacePoints;
-    }
-
     public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);
-    }
-
-    public function getClassification(): NodeAggregateClassification
-    {
-        return $this->classification;
-    }
-
-    public function isRoot(): bool
-    {
-        return $this->classification->isRoot();
-    }
-
-    public function isTethered(): bool
-    {
-        return $this->classification->isTethered();
     }
 }

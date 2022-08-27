@@ -18,16 +18,16 @@ trait RemoveNodeAggregateTrait
     {
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $tetheredNodeAggregate->getContentStreamIdentifier(),
-                $tetheredNodeAggregate->getIdentifier(),
-                $tetheredNodeAggregate->getOccupiedDimensionSpacePoints(),
-                $tetheredNodeAggregate->getCoveredDimensionSpacePoints(),
+                $tetheredNodeAggregate->contentStreamIdentifier,
+                $tetheredNodeAggregate->nodeAggregateIdentifier,
+                $tetheredNodeAggregate->occupiedDimensionSpacePoints,
+                $tetheredNodeAggregate->coveredDimensionSpacePoints,
                 UserIdentifier::forSystemUser()
             )
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $tetheredNodeAggregate->getContentStreamIdentifier()
+            $tetheredNodeAggregate->contentStreamIdentifier
         );
         return new EventsToPublish(
             $streamName->getEventStreamName(),

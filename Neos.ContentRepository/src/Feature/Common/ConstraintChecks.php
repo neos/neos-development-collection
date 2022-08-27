@@ -232,7 +232,7 @@ trait ConstraintChecks
                 $contentRepository
             );
             try {
-                $parentsNodeType = $this->requireNodeType($parentAggregate->getNodeTypeName());
+                $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
                 $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
             } catch (NodeTypeNotFound $e) {
                 // skip constraint check; Once the parent is changed to be of an available type,
@@ -245,11 +245,12 @@ trait ConstraintChecks
                     $parentNodeAggregateIdentifier
                 ) as $grandParentNodeAggregate
             ) {
+                /* @var $grandParentNodeAggregate NodeAggregate */
                 try {
-                    $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->getNodeTypeName());
+                    $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->nodeTypeName);
                     $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
                         $grandParentsNodeType,
-                        $parentAggregate->getNodeName(),
+                        $parentAggregate->nodeName,
                         $nodeType
                     );
                 } catch (NodeTypeNotFound $e) {
@@ -430,7 +431,7 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->getIdentifier()
+                'Node aggregate "' . $nodeAggregate->nodeAggregateIdentifier
                     . '" does currently not cover dimension space point '
                     . json_encode($dimensionSpacePoint) . '.',
                 1541678877
@@ -445,11 +446,11 @@ trait ConstraintChecks
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): void {
-        if (!$dimensionSpacePointSet->getDifference($nodeAggregate->getCoveredDimensionSpacePoints())->isEmpty()) {
+        if (!$dimensionSpacePointSet->getDifference($nodeAggregate->coveredDimensionSpacePoints)->isEmpty()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
-                $nodeAggregate->getIdentifier(),
+                $nodeAggregate->nodeAggregateIdentifier,
                 $dimensionSpacePointSet,
-                $nodeAggregate->getCoveredDimensionSpacePoints()
+                $nodeAggregate->coveredDimensionSpacePoints
             );
         }
     }
@@ -459,9 +460,9 @@ trait ConstraintChecks
      */
     protected function requireNodeAggregateToNotBeRoot(NodeAggregate $nodeAggregate): void
     {
-        if ($nodeAggregate->isRoot()) {
+        if ($nodeAggregate->classification->isRoot()) {
             throw new NodeAggregateIsRoot(
-                'Node aggregate "' . $nodeAggregate->getIdentifier() . '" is classified as root.',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateIdentifier . '" is classified as root.',
                 1554586860
             );
         }
@@ -472,9 +473,9 @@ trait ConstraintChecks
      */
     protected function requireNodeAggregateToBeUntethered(NodeAggregate $nodeAggregate): void
     {
-        if ($nodeAggregate->isTethered()) {
+        if ($nodeAggregate->classification->isTethered()) {
             throw new NodeAggregateIsTethered(
-                'Node aggregate "' . $nodeAggregate->getIdentifier() . '" is classified as tethered.',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateIdentifier . '" is classified as tethered.',
                 1554587288
             );
         }
@@ -489,17 +490,17 @@ trait ConstraintChecks
         NodeAggregate $referenceNodeAggregate,
         ContentRepository $contentRepository
     ): void {
-        if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
+        if ($nodeAggregate->nodeAggregateIdentifier->equals($referenceNodeAggregate->nodeAggregateIdentifier)) {
             throw new NodeAggregateIsDescendant(
-                'Node aggregate "' . $nodeAggregate->getIdentifier()
-                    . '" is descendant of node aggregate "' . $referenceNodeAggregate->getIdentifier() . '"',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateIdentifier
+                    . '" is descendant of node aggregate "' . $referenceNodeAggregate->nodeAggregateIdentifier . '"',
                 1554971124
             );
         }
         foreach (
             $contentRepository->getContentGraph()->findChildNodeAggregates(
                 $contentStreamIdentifier,
-                $referenceNodeAggregate->getIdentifier()
+                $referenceNodeAggregate->nodeAggregateIdentifier
             ) as $childReferenceNodeAggregate
         ) {
             $this->requireNodeAggregateToNotBeDescendant(
@@ -561,13 +562,14 @@ trait ConstraintChecks
             $nodeName
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
-            $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()
+            /* @var $childNodeAggregate NodeAggregate */
+            $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->coveredDimensionSpacePoints
                 ->getIntersection($dimensionSpacePointsToBeCovered);
             if (!$alreadyCoveredDimensionSpacePoints->isEmpty()) {
                 throw new NodeNameIsAlreadyCovered(
                     'Node name "' . $nodeName . '" is already covered in dimension space points '
                         . $alreadyCoveredDimensionSpacePoints . ' by node aggregate "'
-                        . $childNodeAggregate->getIdentifier() . '".'
+                        . $childNodeAggregate->nodeAggregateIdentifier . '".'
                 );
             }
         }
@@ -583,7 +585,7 @@ trait ConstraintChecks
         if (!$nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsNotYetOccupied(
                 'Dimension space point ' . json_encode($originDimensionSpacePoint)
-                    . ' is not yet occupied by node aggregate "' . $nodeAggregate->getIdentifier() . '"',
+                    . ' is not yet occupied by node aggregate "' . $nodeAggregate->nodeAggregateIdentifier . '"',
                 1552595396
             );
         }
@@ -599,7 +601,7 @@ trait ConstraintChecks
         if ($nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied(
                 'Dimension space point ' . json_encode($originDimensionSpacePoint)
-                    . ' is already occupied by node aggregate "' . $nodeAggregate->getIdentifier() . '"',
+                    . ' is already occupied by node aggregate "' . $nodeAggregate->nodeAggregateIdentifier . '"',
                 1552595441
             );
         }
@@ -614,7 +616,7 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->getIdentifier()
+                'Node aggregate "' . $nodeAggregate->nodeAggregateIdentifier
                     . '" currently does not disable dimension space point '
                     . json_encode($dimensionSpacePoint) . '.',
                 1557735431
@@ -631,7 +633,7 @@ trait ConstraintChecks
     ): void {
         if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDisablesDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->getIdentifier()
+                'Node aggregate "' . $nodeAggregate->nodeAggregateIdentifier
                     . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.',
                 1555179563
             );

@@ -45,7 +45,7 @@ class DisallowedChildNodeAdjustment
         }
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            $nodeType = $this->loadNodeType($nodeAggregate->getNodeTypeName());
+            $nodeType = $this->loadNodeType($nodeAggregate->nodeTypeName);
             if ($nodeType === null) {
                 // unknown child node type, so we skip this test as we won't be able to find out node type constraints
                 continue;
@@ -54,14 +54,14 @@ class DisallowedChildNodeAdjustment
             // Here, we iterate over the covered dimension space points of the node aggregate one by one;
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
             // Then, we only want to remove the single edge.
-            foreach ($nodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
+            foreach ($nodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAggregate->getContentStreamIdentifier(),
+                    $nodeAggregate->contentStreamIdentifier,
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
 
-                $parentNode = $subgraph->findParentNode($nodeAggregate->getIdentifier());
+                $parentNode = $subgraph->findParentNode($nodeAggregate->nodeAggregateIdentifier);
                 $grandparentNode = $parentNode !== null
                     ? $subgraph->findParentNode($parentNode->nodeAggregateIdentifier)
                     : null;
@@ -94,7 +94,7 @@ class DisallowedChildNodeAdjustment
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
-                    $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregate->getIdentifier());
+                    $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregate->nodeAggregateIdentifier);
                     if (is_null($node)) {
                         continue;
                     }
@@ -134,8 +134,8 @@ class DisallowedChildNodeAdjustment
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $nodeAggregate->getContentStreamIdentifier(),
-                $nodeAggregate->getIdentifier(),
+                $nodeAggregate->contentStreamIdentifier,
+                $nodeAggregate->nodeAggregateIdentifier,
                 $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
                     ? new OriginDimensionSpacePointSet([$referenceOrigin])
                     : new OriginDimensionSpacePointSet([]),
@@ -145,7 +145,7 @@ class DisallowedChildNodeAdjustment
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $nodeAggregate->getContentStreamIdentifier()
+            $nodeAggregate->contentStreamIdentifier
         );
 
         return new EventsToPublish(

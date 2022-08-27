@@ -48,6 +48,7 @@ use Neos\ContentRepository\Feature\NodeRenaming\NodeRenaming;
 use Neos\ContentRepository\Feature\NodeTypeChange\NodeTypeChange;
 use Neos\ContentRepository\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
 
@@ -206,45 +207,47 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 $command->nodeAggregateIdentifier
             ) as $parentAggregate
         ) {
-            $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->getNodeTypeName());
+            /* @var $parentAggregate NodeAggregate */
+            $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->nodeTypeName);
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
                 throw new NodeConstraintException(
                     'Node type ' . $command->newNodeTypeName
-                        . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName()
+                        . ' is not allowed below nodes of type ' . $parentAggregate->nodeTypeName
                 );
             }
             if (
-                $nodeAggregate->getNodeName()
-                && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
-                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())?->getName()
+                $nodeAggregate->nodeName
+                && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->nodeName)
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->nodeName)?->getName()
                     !== (string)$command->newNodeTypeName
             ) {
                 throw new NodeConstraintException(
-                    'Cannot change type of auto created child node' . $nodeAggregate->getNodeName()
+                    'Cannot change type of auto created child node' . $nodeAggregate->nodeName
                         . ' to ' . $command->newNodeTypeName
                 );
             }
             foreach (
                 $contentRepository->getContentGraph()->findParentNodeAggregates(
                     $command->contentStreamIdentifier,
-                    $parentAggregate->getIdentifier()
+                    $parentAggregate->nodeAggregateIdentifier
                 ) as $grandParentAggregate
             ) {
+                /* @var $grandParentAggregate NodeAggregate */
                 $grandParentsNodeType = $this->nodeTypeManager->getNodeType(
-                    (string)$grandParentAggregate->getNodeTypeName()
+                    (string)$grandParentAggregate->nodeTypeName
                 );
                 if (
-                    $parentAggregate->getNodeName()
-                    && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
+                    $parentAggregate->nodeName
+                    && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->nodeName)
                     && !$grandParentsNodeType->allowsGrandchildNodeType(
-                        (string) $parentAggregate->getNodeName(),
+                        (string) $parentAggregate->nodeName,
                         $newNodeType
                     )
                 ) {
                     throw new NodeConstraintException(
                         'Node type "' . $command->newNodeTypeName
-                            . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
-                            . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"',
+                            . '" is not allowed below auto created child nodes "' . $parentAggregate->nodeName
+                            . '" of nodes of type "' . $grandParentAggregate->nodeTypeName . '"',
                         1520011791
                     );
                 }

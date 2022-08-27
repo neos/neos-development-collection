@@ -73,8 +73,9 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedOccupation) {
             Assert::assertEquals(
                 $expectedOccupation,
-                $nodeAggregate->getOccupiedDimensionSpacePoints(),
-                'Node aggregate origins do not match in adapter "' . $adapterName . '". Expected: ' . $expectedOccupation . ', actual: ' . $nodeAggregate->getOccupiedDimensionSpacePoints()
+                $nodeAggregate->occupiedDimensionSpacePoints,
+                'Node aggregate origins do not match in adapter "' . $adapterName . '". Expected: ' .
+                $expectedOccupation . ', actual: ' . $nodeAggregate->occupiedDimensionSpacePoints
             );
         });
     }
@@ -89,8 +90,8 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedCoverage) {
             Assert::assertEquals(
                 $expectedCoverage,
-                $nodeAggregate->getCoveredDimensionSpacePoints(),
-                'Expected node aggregate coverage ' . $expectedCoverage . ', got ' . $nodeAggregate->getCoveredDimensionSpacePoints() . ' in adapter "' . $adapterName . '"'
+                $nodeAggregate->coveredDimensionSpacePoints,
+                'Expected node aggregate coverage ' . $expectedCoverage . ', got ' . $nodeAggregate->coveredDimensionSpacePoints . ' in adapter "' . $adapterName . '"'
             );
         });
     }
@@ -105,8 +106,9 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedDisabledDimensionSpacePoints) {
             Assert::assertEquals(
                 $expectedDisabledDimensionSpacePoints,
-                $nodeAggregate->getDisabledDimensionSpacePoints(),
-                'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints . ', got ' . $nodeAggregate->getDisabledDimensionSpacePoints() . ' in adapter "' . $adapterName . '"'
+                $nodeAggregate->disabledDimensionSpacePoints,
+                'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints . ', got ' .
+                $nodeAggregate->disabledDimensionSpacePoints . ' in adapter "' . $adapterName . '"'
             );
         });
     }
@@ -120,8 +122,9 @@ trait ProjectedNodeAggregateTrait
         $expectedClassification = NodeAggregateClassification::from($serializedExpectedClassification);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
-                $expectedClassification->equals($nodeAggregate->getClassification()),
-                'Node aggregate classifications do not match in adapter "' . $adapterName . '". Expected "' . $expectedClassification->value . '", got "' . $nodeAggregate->getClassification()->value . '".'
+                $expectedClassification->equals($nodeAggregate->classification),
+                'Node aggregate classifications do not match in adapter "' . $adapterName . '". Expected "' .
+                $expectedClassification->value . '", got "' . $nodeAggregate->classification->value . '".'
             );
         });
     }
@@ -136,8 +139,8 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeTypeName) {
             Assert::assertSame(
                 (string)$expectedNodeTypeName,
-                (string)$nodeAggregate->getNodeTypeName(),
-                'Node types do not match in adapter "' . $adapterName . '". Expected "' . $expectedNodeTypeName . '", got "' . $nodeAggregate->getNodeTypeName() . '".'
+                (string)$nodeAggregate->nodeTypeName,
+                'Node types do not match in adapter "' . $adapterName . '". Expected "' . $expectedNodeTypeName . '", got "' . $nodeAggregate->nodeTypeName . '".'
             );
         });
     }
@@ -148,7 +151,7 @@ trait ProjectedNodeAggregateTrait
     public function iExpectThisNodeAggregateToBeUnnamed(): void
     {
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) {
-            Assert::assertNull($nodeAggregate->getNodeName(), 'Did not expect node name for adapter "' . $adapterName . '"');
+            Assert::assertNull($nodeAggregate->nodeName, 'Did not expect node name for adapter "' . $adapterName . '"');
         });
     }
 
@@ -160,7 +163,7 @@ trait ProjectedNodeAggregateTrait
     {
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeName) {
-            Assert::assertSame((string)$expectedNodeName, (string)$nodeAggregate->getNodeName(), 'Node names do not match in adapter "' . $adapterName . '", expected "' . $expectedNodeName . '", got "' . $nodeAggregate->getNodeName() . '".');
+            Assert::assertSame((string)$expectedNodeName, (string)$nodeAggregate->nodeName, 'Node names do not match in adapter "' . $adapterName . '", expected "' . $expectedNodeName . '", got "' . $nodeAggregate->nodeName . '".');
         });
     }
 
@@ -172,8 +175,8 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
                 iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->nodeAggregateIdentifier
                 )),
                 'Did not expect parent node aggregates in adapter "' . $adapterName . '".'
             );
@@ -192,11 +195,11 @@ trait ProjectedNodeAggregateTrait
                 return $this->contentStreamIdentifier . ';' . $nodeAggregateIdentifier;
             }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
-                return $parentNodeAggregate->getContentStreamIdentifier() . ';' . $parentNodeAggregate->getIdentifier();
+                return $parentNodeAggregate->contentStreamIdentifier . ';' . $parentNodeAggregate->nodeAggregateIdentifier;
             }, iterator_to_array(
                 $this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->nodeAggregateIdentifier
                 )
             )));
             Assert::assertSame(
@@ -215,8 +218,8 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
                 iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->nodeAggregateIdentifier
                 )),
                 'No child node aggregates were expected in adapter "' . $adapterName . '".'
             );
@@ -235,10 +238,10 @@ trait ProjectedNodeAggregateTrait
                 return $this->contentStreamIdentifier . ':' . $nodeAggregateIdentifier;
             }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
-                return $parentNodeAggregate->getContentStreamIdentifier() . ':' . $parentNodeAggregate->getIdentifier();
+                return $parentNodeAggregate->contentStreamIdentifier . ':' . $parentNodeAggregate->nodeAggregateIdentifier;
             }, iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
-                $nodeAggregate->getContentStreamIdentifier(),
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->contentStreamIdentifier,
+                $nodeAggregate->nodeAggregateIdentifier
             ))));
 
             Assert::assertSame(

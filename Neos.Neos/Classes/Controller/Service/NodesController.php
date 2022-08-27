@@ -308,7 +308,7 @@ class NodesController extends ActionController
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
         $nodeAggregate = $contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $identifier);
 
-        if ($nodeAggregate && $nodeAggregate->getCoveredDimensionSpacePoints()->count() > 0) {
+        if ($nodeAggregate && $nodeAggregate->coveredDimensionSpacePoints->count() > 0) {
             $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', 'true');
 
             // If the node exists in another dimension, we want to know how many nodes in the rootline are also
@@ -316,7 +316,7 @@ class NodesController extends ActionController
             // materialized recursively upwards in the rootline. To find the node path for the given identifier,
             // we just use the first result. This is a safe assumption at least for "Document" nodes (aggregate=true),
             // because they are always moved in-sync.
-            if ($nodeTypeManager->getNodeType($nodeAggregate->getNodeTypeName()->getValue())->isAggregate()) {
+            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName->getValue())->isAggregate()) {
                 // TODO: we would need the SourceDimensions parameter (as in Create()) to ensure the correct
                 // rootline is traversed. Here, we, as a workaround, simply use the 1st aggregate for now.
 
@@ -330,7 +330,7 @@ class NodesController extends ActionController
                         $missingNodesOnRootline++;
                     }
 
-                    $identifier = $parentAggregate->getIdentifier();
+                    $identifier = $parentAggregate->nodeAggregateIdentifier;
                 }
 
                 // TODO: possibly off-by-one-or-two errors :D

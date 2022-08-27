@@ -199,7 +199,7 @@ trait NodeCreation
             $command->originDimensionSpacePoint->toDimensionSpacePoint()
         );
         $coveredDimensionSpacePoints = $specializations->getIntersection(
-            $parentNodeAggregate->getCoveredDimensionSpacePoints()
+            $parentNodeAggregate->coveredDimensionSpacePoints
         );
         if ($command->nodeName) {
             $this->requireNodeNameToBeUnoccupied(

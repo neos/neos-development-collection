@@ -134,7 +134,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $command->targetDimensionSpacePoint->toDimensionSpacePoint()
         );
         $coveredDimensionSpacePoints = $specializations->getIntersection(
-            $parentNodeAggregate->getCoveredDimensionSpacePoints()
+            $parentNodeAggregate->coveredDimensionSpacePoints
         );
 
         // Constraint: The node name must be free in all these dimension space points

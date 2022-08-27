@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\NodeMigration;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
@@ -149,10 +150,11 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                         $nodeTypeName
                     ) as $nodeAggregate
                 ) {
+                    /* @var $nodeAggregate NodeAggregate */
                     // we *also* apply the node-aggregate-based filters on the node based transformations,
                     // so that you can filter Nodes e.g. based on node type
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
-                        foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $originDimensionSpacePoint) {
+                        foreach ($nodeAggregate->occupiedDimensionSpacePoints as $originDimensionSpacePoint) {
                             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
                             // The node at $contentStreamIdentifier and $originDimensionSpacePoint
                             // *really* exists at this point, and is no shine-through.

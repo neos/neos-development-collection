@@ -58,9 +58,9 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
         InterDimensionalVariationGraph $variationGraph
     ): DimensionSpacePointSet {
         return match ($this) {
-            self::STRATEGY_ALL_VARIANTS => $nodeAggregate->getCoveredDimensionSpacePoints(),
+            self::STRATEGY_ALL_VARIANTS => $nodeAggregate->coveredDimensionSpacePoints,
             self::STRATEGY_ALL_SPECIALIZATIONS => $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
-                ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints())
+                ->getIntersection($nodeAggregate->coveredDimensionSpacePoints)
         };
     }
 
@@ -70,10 +70,10 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
         InterDimensionalVariationGraph $variationGraph
     ): OriginDimensionSpacePointSet {
         return match ($this) {
-            self::STRATEGY_ALL_VARIANTS => $nodeAggregate->getOccupiedDimensionSpacePoints(),
+            self::STRATEGY_ALL_VARIANTS => $nodeAggregate->occupiedDimensionSpacePoints,
             self::STRATEGY_ALL_SPECIALIZATIONS => OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
                 $variationGraph->getSpecializationSet($referenceDimensionSpacePoint->toDimensionSpacePoint())
-            )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints())
+            )->getIntersection($nodeAggregate->occupiedDimensionSpacePoints)
         };
     }
 

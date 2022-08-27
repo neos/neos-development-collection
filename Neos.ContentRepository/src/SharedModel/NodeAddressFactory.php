@@ -116,7 +116,7 @@ class NodeAddressFactory
             $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
                 $contentStreamIdentifier,
                 NodeTypeName::fromString('Neos.Neos:Sites')
-            )->getIdentifier()
+            )->nodeAggregateIdentifier
         );
         if (is_null($node)) {
             throw new \InvalidArgumentException(

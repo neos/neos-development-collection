@@ -68,7 +68,7 @@ final class ContentRepositoryBootstrapper
             return $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
                 $contentStreamIdentifier,
                 $rootNodeTypeName
-            )->getIdentifier();
+            )->nodeAggregateIdentifier;
 
             // TODO make this case more explicit
         } catch (\Exception $exception) {

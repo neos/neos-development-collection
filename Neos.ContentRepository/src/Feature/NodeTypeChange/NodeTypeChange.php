@@ -132,15 +132,15 @@ trait NodeTypeChange
 
         // the new node type must be allowed at this position in the tree
         $parentNodeAggregates = $contentRepository->getContentGraph()->findParentNodeAggregates(
-            $nodeAggregate->getContentStreamIdentifier(),
-            $nodeAggregate->getIdentifier()
+            $nodeAggregate->contentStreamIdentifier,
+            $nodeAggregate->nodeAggregateIdentifier
         );
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $command->contentStreamIdentifier,
                 $newNodeType,
-                $nodeAggregate->getNodeName(),
-                [$parentNodeAggregate->getIdentifier()],
+                $nodeAggregate->nodeName,
+                [$parentNodeAggregate->nodeAggregateIdentifier],
                 $contentRepository
             );
         }
@@ -250,16 +250,17 @@ trait NodeTypeChange
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-            $nodeAggregate->getContentStreamIdentifier(),
-            $nodeAggregate->getIdentifier()
+            $nodeAggregate->contentStreamIdentifier,
+            $nodeAggregate->nodeAggregateIdentifier
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
+            /* @var $childNodeAggregate NodeAggregate */
             // the "parent" of the $childNode is $node;
             // so we use $newNodeType (the target node type of $node after the operation) here.
             $this->requireNodeTypeConstraintsImposedByParentToBeMet(
                 $newNodeType,
-                $childNodeAggregate->getNodeName(),
-                $this->requireNodeType($childNodeAggregate->getNodeTypeName())
+                $childNodeAggregate->nodeName,
+                $this->requireNodeType($childNodeAggregate->nodeTypeName)
             );
 
             // we do not need to test for grandparents here, as we did not modify the grandparents.
@@ -268,17 +269,18 @@ trait NodeTypeChange
             // additionally, we need to look one level down to the grandchildren as well
             // - as it could happen that these are affected by our constraint checks as well.
             $grandchildNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-                $childNodeAggregate->getContentStreamIdentifier(),
-                $childNodeAggregate->getIdentifier()
+                $childNodeAggregate->contentStreamIdentifier,
+                $childNodeAggregate->nodeAggregateIdentifier
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
+                /* @var $grandchildNodeAggregate NodeAggregate */
                 // we do not need to test for the parent of grandchild (=child),
                 // as we do not change the child's node type.
                 // we however need to check for the grandparent node type.
                 $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
                     $newNodeType, // the grandparent node type changes
-                    $childNodeAggregate->getNodeName(),
-                    $this->requireNodeType($grandchildNodeAggregate->getNodeTypeName())
+                    $childNodeAggregate->nodeName,
+                    $this->requireNodeType($grandchildNodeAggregate->nodeTypeName)
                 );
             }
         }
@@ -298,18 +300,19 @@ trait NodeTypeChange
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-            $nodeAggregate->getContentStreamIdentifier(),
-            $nodeAggregate->getIdentifier()
+            $nodeAggregate->contentStreamIdentifier,
+            $nodeAggregate->nodeAggregateIdentifier
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
+            /* @var $childNodeAggregate NodeAggregate */
             // the "parent" of the $childNode is $node; so we use $newNodeType
             // (the target node type of $node after the operation) here.
             if (
-                !$childNodeAggregate->isTethered()
+                !$childNodeAggregate->classification->isTethered()
                 && !$this->areNodeTypeConstraintsImposedByParentValid(
                     $newNodeType,
-                    $childNodeAggregate->getNodeName(),
-                    $this->requireNodeType($childNodeAggregate->getNodeTypeName())
+                    $childNodeAggregate->nodeName,
+                    $this->requireNodeType($childNodeAggregate->nodeTypeName)
                 )
             ) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
@@ -333,19 +336,20 @@ trait NodeTypeChange
             // additionally, we need to look one level down to the grandchildren as well
             // - as it could happen that these are affected by our constraint checks as well.
             $grandchildNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-                $childNodeAggregate->getContentStreamIdentifier(),
-                $childNodeAggregate->getIdentifier()
+                $childNodeAggregate->contentStreamIdentifier,
+                $childNodeAggregate->nodeAggregateIdentifier
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
+                /* @var $grandchildNodeAggregate NodeAggregate */
                 // we do not need to test for the parent of grandchild (=child),
                 // as we do not change the child's node type.
                 // we however need to check for the grandparent node type.
                 if (
-                    $childNodeAggregate->getNodeName() !== null
+                    $childNodeAggregate->nodeName !== null
                     && !$this->areNodeTypeConstraintsImposedByGrandparentValid(
                         $newNodeType, // the grandparent node type changes
-                        $childNodeAggregate->getNodeName(),
-                        $this->requireNodeType($grandchildNodeAggregate->getNodeTypeName())
+                        $childNodeAggregate->nodeName,
+                        $this->requireNodeType($grandchildNodeAggregate->nodeTypeName)
                     )
                 ) {
                     // this aggregate (or parts thereof) are DISALLOWED according to constraints.
@@ -379,12 +383,13 @@ trait NodeTypeChange
         $events = [];
         // find disallowed tethered nodes
         $tetheredNodeAggregates = $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
-            $nodeAggregate->getContentStreamIdentifier(),
-            $nodeAggregate->getIdentifier()
+            $nodeAggregate->contentStreamIdentifier,
+            $nodeAggregate->nodeAggregateIdentifier
         );
 
         foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
-            if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
+            /* @var $tetheredNodeAggregate NodeAggregate */
+            if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->nodeName])) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                 // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
@@ -433,16 +438,16 @@ trait NodeTypeChange
         ContentRepository $contentRepository
     ): DimensionSpacePointSet {
         $points = [];
-        foreach ($childNodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
+        foreach ($childNodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $childNodeAggregate->getContentStreamIdentifier(),
+                $childNodeAggregate->contentStreamIdentifier,
                 $coveredDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
-            $parentNode = $subgraph->findParentNode($childNodeAggregate->getIdentifier());
+            $parentNode = $subgraph->findParentNode($childNodeAggregate->nodeAggregateIdentifier);
             if (
                 $parentNode
-                && $parentNode->nodeAggregateIdentifier->equals($parentNodeAggregate->getIdentifier())
+                && $parentNode->nodeAggregateIdentifier->equals($parentNodeAggregate->nodeAggregateIdentifier)
             ) {
                 $points[] = $coveredDimensionSpacePoint;
             }
@@ -457,8 +462,8 @@ trait NodeTypeChange
         UserIdentifier $initiatingUserIdentifier
     ): NodeAggregateWasRemoved {
         return new NodeAggregateWasRemoved(
-            $nodeAggregate->getContentStreamIdentifier(),
-            $nodeAggregate->getIdentifier(),
+            $nodeAggregate->contentStreamIdentifier,
+            $nodeAggregate->nodeAggregateIdentifier,
             // TODO: we also use the covered dimension space points as OCCUPIED dimension space points
             // - however the OCCUPIED dimension space points are not really used by now
             // (except for the change projector, which needs love anyways...)

@@ -91,15 +91,15 @@ trait NodeMove
         if ($command->newParentNodeAggregateIdentifier) {
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $command->contentStreamIdentifier,
-                $this->requireNodeType($nodeAggregate->getNodeTypeName()),
-                $nodeAggregate->getNodeName(),
+                $this->requireNodeType($nodeAggregate->nodeTypeName),
+                $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateIdentifier],
                 $contentRepository
             );
 
             $this->requireNodeNameToBeUncovered(
                 $command->contentStreamIdentifier,
-                $nodeAggregate->getNodeName(),
+                $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateIdentifier,
                 $affectedDimensionSpacePoints,
                 $contentRepository
@@ -142,7 +142,7 @@ trait NodeMove
         /** @var NodeVariantAssignments[] $succeedingSiblingAssignments */
         $succeedingSiblingAssignments = [];
         $parentAssignments = [];
-        foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $occupiedDimensionSpacePoint) {
+        foreach ($nodeAggregate->occupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
             $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash]
                 = $this->resolveNewSucceedingSiblingsAssignments(
                     $command->contentStreamIdentifier,
@@ -246,11 +246,11 @@ trait NodeMove
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
         );
-        $originParent = $originSubgraph->findParentNode($nodeAggregate->getIdentifier());
+        $originParent = $originSubgraph->findParentNode($nodeAggregate->nodeAggregateIdentifier);
         if (is_null($originParent)) {
             throw new \InvalidArgumentException(
                 'Could not find parent for origin '
-                . $nodeAggregate->getIdentifier()
+                . $nodeAggregate->nodeAggregateIdentifier
                 . ' in subgraph ' . json_encode($originSubgraph),
                 1645367254
             );
@@ -298,10 +298,10 @@ trait NodeMove
             RelationDistributionStrategy::STRATEGY_SCATTER =>
             new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
             RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS =>
-            $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
+            $nodeAggregate->coveredDimensionSpacePoints->getIntersection(
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
             ),
-            default => $nodeAggregate->getCoveredDimensionSpacePoints(),
+            default => $nodeAggregate->coveredDimensionSpacePoints,
         };
     }
 
@@ -369,7 +369,7 @@ trait NodeMove
                     }
                 } else {
                     $succeedingSibling = $this->resolveSucceedingSiblingFromOriginSiblings(
-                        $nodeAggregate->getIdentifier(),
+                        $nodeAggregate->nodeAggregateIdentifier,
                         $parentIdentifier,
                         $precedingSiblingIdentifier,
                         $succeedingSiblingIdentifier,
@@ -491,8 +491,8 @@ trait NodeMove
     ): NodeMoveMappings {
         $nodeMoveMappings = [];
         $coveredAffectedDimensionSpacePoints = is_null($affectedDimensionSpacePoints)
-            ? $nodeAggregate->getCoveredDimensionSpacePoints()
-            : $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints);
+            ? $nodeAggregate->coveredDimensionSpacePoints
+            : $nodeAggregate->coveredDimensionSpacePoints->getIntersection($affectedDimensionSpacePoints);
         foreach ($coveredAffectedDimensionSpacePoints as $coveredAffectedDimensionSpacePoint) {
             $occupiedAffectedDimensionSpacePoint = $nodeAggregate->getOccupationByCovered(
                 $coveredAffectedDimensionSpacePoint

@@ -49,15 +49,15 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             );
             if ($nodeAggregate) {
                 $parentNodeAggregates = $this->contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->nodeAggregateIdentifier
                 );
                 foreach ($parentNodeAggregates as $parentNodeAggregate) {
                     assert($parentNodeAggregate instanceof NodeAggregate);
                     $this->scheduleCacheFlushJobForNodeAggregate(
                         $this->contentRepository,
-                        $parentNodeAggregate->getContentStreamIdentifier(),
-                        $parentNodeAggregate->getIdentifier()
+                        $parentNodeAggregate->contentStreamIdentifier,
+                        $parentNodeAggregate->nodeAggregateIdentifier
                     );
                 }
             }
@@ -84,8 +84,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->nodeAggregateIdentifier
                 );
             }
         }

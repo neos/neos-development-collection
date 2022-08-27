@@ -73,8 +73,8 @@ final class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $nodeAggregate->getContentStreamIdentifier()->jsonSerialize(),
-                'nodeAggregateIdentifier' => $nodeAggregate->getIdentifier()->jsonSerialize(),
+                'contentStream' => $nodeAggregate->contentStreamIdentifier->jsonSerialize(),
+                'nodeAggregateIdentifier' => $nodeAggregate->nodeAggregateIdentifier->jsonSerialize(),
                 'isAutoFixable' => ($remediation !== null)
             ],
             $type,

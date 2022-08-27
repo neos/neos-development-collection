@@ -102,9 +102,10 @@ trait NodeRemoval
 
     protected function requireNodeAggregateNotToBeTethered(NodeAggregate $nodeAggregate): void
     {
-        if ($nodeAggregate->isTethered()) {
+        if ($nodeAggregate->classification->isTethered()) {
             throw new TetheredNodeAggregateCannotBeRemoved(
-                'The node aggregate "' . $nodeAggregate->getIdentifier() . '" is tethered, and thus cannot be removed.',
+                'The node aggregate "' . $nodeAggregate->nodeAggregateIdentifier
+                . '" is tethered, and thus cannot be removed.',
                 1597753832
             );
         }

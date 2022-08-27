@@ -53,8 +53,8 @@ enum PropertyScope: string implements \JsonSerializable
                 $variationGraph->getSpecializationSet(
                     $origin->toDimensionSpacePoint()
                 )
-            )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()),
-            PropertyScope::SCOPE_NODE_AGGREGATE => $nodeAggregate->getOccupiedDimensionSpacePoints()
+            )->getIntersection($nodeAggregate->occupiedDimensionSpacePoints),
+            PropertyScope::SCOPE_NODE_AGGREGATE => $nodeAggregate->occupiedDimensionSpacePoints
         };
     }
 
