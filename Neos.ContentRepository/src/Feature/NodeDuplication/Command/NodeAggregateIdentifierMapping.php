@@ -19,6 +19,10 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
  * An assignment of "old" to "new" NodeAggregateIdentifiers
  *
  * Usable for predefining NodeAggregateIdentifiers if multiple nodes are copied.
+ *
+ * You'll never create this class yourself; but you use {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
+ *
+ * @internal implementation detail of {@see CopyNodesRecursively} command
  */
 final class NodeAggregateIdentifierMapping implements \JsonSerializable
 {

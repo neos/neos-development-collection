@@ -14,6 +14,11 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\NodeReferences;
 use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 
+/**
+ * Implementation detail of {@see CopyNodesRecursively}
+ *
+ * @internal You'll never create this class yourself; but you use {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
+ */
 final class NodeSubtreeSnapshot implements \JsonSerializable
 {
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
@@ -61,7 +66,6 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
         $this->childNodes = $childNodes;
     }
 
-    // TODO: use accessor here??
     public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, Node $sourceNode): self
     {
         $childNodes = [];

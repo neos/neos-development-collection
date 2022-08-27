@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Feature\NodeDisabling\Exception;
 /**
  * The exception to be thrown if a node aggregate currently does not disable a given dimension space point
  * but was expected to do
+ *
+ * @api
  */
 final class NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint extends \DomainException
 {

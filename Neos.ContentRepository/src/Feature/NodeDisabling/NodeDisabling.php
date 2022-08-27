@@ -30,6 +30,9 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyDoesNo
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeDisabling
 {
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;

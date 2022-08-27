@@ -30,6 +30,9 @@ use Neos\ContentRepository\Feature\Common\PropertyScope;
 use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal implementation detail of Command Handlers
+ */
 trait NodeModification
 {
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;

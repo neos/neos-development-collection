@@ -33,6 +33,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class CopyNodesRecursively implements
     CommandInterface,
@@ -40,85 +42,57 @@ final class CopyNodesRecursively implements
     MatchableWithNodeIdentifierToPublishOrDiscardInterface,
     RebasableToOtherContentStreamsInterface
 {
-    /**
-     * The identifier of the content stream this command is to be handled in
-     *
-     * @var ContentStreamIdentifier
-     */
-    private ContentStreamIdentifier $contentStreamIdentifier;
-
-    /**
-     * The to be copied node's node aggregate identifier
-     *
-     * @var NodeSubtreeSnapshot
-     */
-    private NodeSubtreeSnapshot $nodeToInsert;
-
-    /**
-     * the dimension space point which is the target of the copy
-     *
-     * @var OriginDimensionSpacePoint
-     */
-    private OriginDimensionSpacePoint $targetDimensionSpacePoint;
-
-    /**
-     * The initiating user's identifier
-     *
-     * @var UserIdentifier
-     */
-    private UserIdentifier $initiatingUserIdentifier;
-
-    /**
-     * Node aggregate identifier of the target node's parent (optional)
-     *
-     * If not given, the node will be added as a root node
-     *
-     * @var NodeAggregateIdentifier
-     */
-    private NodeAggregateIdentifier $targetParentNodeAggregateIdentifier;
-
-    /**
-     * Node aggregate identifier of the target node's succeeding sibling (optional)
-     *
-     * If not given, the node will be added as the parent's first child
-     *
-     * @var NodeAggregateIdentifier|null
-     */
-    private ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier;
-
-    /**
-     * the root node name of the root-inserted-node
-     *
-     * @var NodeName|null
-     */
-    private ?NodeName $targetNodeName;
-
-    private NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping;
 
     private function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeSubtreeSnapshot $nodeToInsert,
-        OriginDimensionSpacePoint $targetDimensionSpacePoint,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
-        ?NodeName $targetNodeName,
-        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+        /**
+         * The identifier of the content stream this command is to be handled in
+         *
+         * @var ContentStreamIdentifier
+         */
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        /**
+         * The to be copied node's node aggregate identifier
+         *
+         * @var NodeSubtreeSnapshot
+         */
+        public readonly NodeSubtreeSnapshot $nodeToInsert,
+        /**
+         * the dimension space point which is the target of the copy
+         *
+         * @var OriginDimensionSpacePoint
+         */
+        public readonly OriginDimensionSpacePoint $targetDimensionSpacePoint,
+        public readonly UserIdentifier $initiatingUserIdentifier,
+        /**
+         * Node aggregate identifier of the target node's parent (optional)
+         *
+         * If not given, the node will be added as a root node
+         *
+         * @var NodeAggregateIdentifier
+         */
+        public readonly NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
+        /**
+         * Node aggregate identifier of the target node's succeeding sibling (optional)
+         *
+         * If not given, the node will be added as the parent's first child
+         *
+         * @var NodeAggregateIdentifier|null
+         */
+        public readonly ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        /**
+         * the root node name of the root-inserted-node
+         *
+         * @var NodeName|null
+         */
+        public readonly ?NodeName $targetNodeName,
+        public readonly NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeToInsert = $nodeToInsert;
-        $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->targetParentNodeAggregateIdentifier = $targetParentNodeAggregateIdentifier;
-        $this->targetSucceedingSiblingNodeAggregateIdentifier = $targetSucceedingSiblingNodeAggregateIdentifier;
-        $this->targetNodeName = $targetNodeName;
-        $this->nodeAggregateIdentifierMapping = $nodeAggregateIdentifierMapping;
     }
 
     /**
-     * @todo reference start node by address instead of passing it
+     * @todo (could be an extra method) reference start node by address instead of passing it
      */
-    public static function create(
+    public static function createFromSubgraphAndStartNode(
         ContentSubgraphInterface $subgraph,
         Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
@@ -158,11 +132,6 @@ final class CopyNodesRecursively implements
             isset($array['targetNodeName']) ? NodeName::fromString($array['targetNodeName']) : null,
             NodeAggregateIdentifierMapping::fromArray($array['nodeAggregateIdentifierMapping'])
         );
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
     }
 
     public function getNodeToInsert(): NodeSubtreeSnapshot
@@ -220,7 +189,7 @@ final class CopyNodesRecursively implements
     public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
     {
         $targetNodeAggregateIdentifier = $this->getNodeAggregateIdentifierMapping()->getNewNodeAggregateIdentifier(
-            $this->getNodeToInsert()->getNodeAggregateIdentifier()
+            $this->nodeToInsert->getNodeAggregateIdentifier()
         );
         return (
             !is_null($targetNodeAggregateIdentifier)

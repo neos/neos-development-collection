@@ -29,6 +29,8 @@ use Neos\ContentRepository\SharedModel\NodeAddress;
  * Set property values for a given node (internal implementation).
  *
  * The property values contain the serialized types already, and include type information.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class SetSerializedNodeProperties implements
     CommandInterface,

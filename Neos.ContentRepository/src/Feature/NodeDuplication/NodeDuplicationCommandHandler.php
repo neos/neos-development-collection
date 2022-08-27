@@ -38,6 +38,9 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
+/**
+ * @internal from userland, you'll use ContentRepository::handle to dispatch commands
+ */
 final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
@@ -82,18 +85,18 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
-        $this->requireContentStreamToExist($command->getContentStreamIdentifier(), $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint()
         );
-        $nodeType = $this->requireNodeType($command->getNodeToInsert()->getNodeTypeName());
+        $nodeType = $this->requireNodeType($command->nodeToInsert->getNodeTypeName());
         $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
 
         // Constraint: Does the target parent node allow nodes of this type?
         // NOTE: we only check this for the *root* node of the to-be-inserted structure; and not for its
         // children (as we want to create the structure as-is; assuming it was already valid beforehand).
         $this->requireConstraintsImposedByAncestorsAreMet(
-            $command->getContentStreamIdentifier(),
+            $command->contentStreamIdentifier,
             $nodeType,
             $command->getTargetNodeName(),
             [$command->getTargetParentNodeAggregateIdentifier()],
@@ -102,20 +105,20 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
         // Constraint: The new nodeAggregateIdentifiers are not allowed to exist yet.
         $this->requireNewNodeAggregateIdentifiersToNotExist(
-            $command->getContentStreamIdentifier(),
+            $command->contentStreamIdentifier,
             $command->getNodeAggregateIdentifierMapping(),
             $contentRepository
         );
 
         // Constraint: the parent node must exist in the command's DimensionSpacePoint as well
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->getContentStreamIdentifier(),
+            $command->contentStreamIdentifier,
             $command->getTargetParentNodeAggregateIdentifier(),
             $contentRepository
         );
         if ($command->getTargetSucceedingSiblingNodeAggregateIdentifier()) {
             $this->requireProjectedNodeAggregate(
-                $command->getContentStreamIdentifier(),
+                $command->contentStreamIdentifier,
                 $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
                 $contentRepository
             );
@@ -137,7 +140,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Constraint: The node name must be free in all these dimension space points
         if ($command->getTargetNodeName()) {
             $this->requireNodeNameToBeUnoccupied(
-                $command->getContentStreamIdentifier(),
+                $command->contentStreamIdentifier,
                 $command->getTargetNodeName(),
                 $command->getTargetParentNodeAggregateIdentifier(),
                 $command->getTargetDimensionSpacePoint(),
@@ -149,13 +152,13 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Now, we can start creating the recursive structure.
         $events = [];
         $this->createEventsForNodeToInsert(
-            $command->getContentStreamIdentifier(),
+            $command->contentStreamIdentifier,
             $command->getTargetDimensionSpacePoint(),
             $coveredDimensionSpacePoints,
             $command->getTargetParentNodeAggregateIdentifier(),
             $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
             $command->getTargetNodeName(),
-            $command->getNodeToInsert(),
+            $command->nodeToInsert,
             $command->getNodeAggregateIdentifierMapping(),
             $command->getInitiatingUserIdentifier(),
             $events
@@ -163,7 +166,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->getContentStreamIdentifier()
+                $command->contentStreamIdentifier
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

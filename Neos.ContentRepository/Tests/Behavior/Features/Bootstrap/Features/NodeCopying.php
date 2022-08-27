@@ -75,7 +75,7 @@ trait NodeCopying
             ? NodeName::fromString($commandArguments['targetNodeName'])
             : null;
 
-        $command = CopyNodesRecursively::create(
+        $command = CopyNodesRecursively::createFromSubgraphAndStartNode(
             $subgraph,
             $currentNode,
             $targetDimensionSpacePoint,

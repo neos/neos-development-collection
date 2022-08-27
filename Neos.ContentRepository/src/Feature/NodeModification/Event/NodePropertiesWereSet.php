@@ -31,6 +31,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
  *
  * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
  * because we treat NULL and "not set" the same from an API perspective.
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class NodePropertiesWereSet implements
     EventInterface,

@@ -26,6 +26,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 
 /**
  * Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class EnableNodeAggregate implements
     CommandInterface,

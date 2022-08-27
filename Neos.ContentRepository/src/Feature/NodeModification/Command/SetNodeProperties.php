@@ -30,6 +30,8 @@ use Neos\ContentRepository\SharedModel\User\UserIdentifier;
  *
  * Internally, this object is converted into a {@see SetSerializedNodeProperties} command, which is
  * then processed and stored.
+ *
+ * @api commands are the write-API of the ContentRepository
  */
 final class SetNodeProperties implements CommandInterface
 {

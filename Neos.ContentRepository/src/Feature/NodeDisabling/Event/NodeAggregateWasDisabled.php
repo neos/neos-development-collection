@@ -24,6 +24,8 @@ use Neos\ContentRepository\EventStore\EventInterface;
 
 /**
  * A node aggregate was disabled
+ *
+ * @api events are the persistence-API of the content repository
  */
 final class NodeAggregateWasDisabled implements
     EventInterface,
