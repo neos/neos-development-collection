@@ -25,7 +25,7 @@ use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 
 class TetheredNodeAdjustments
 {

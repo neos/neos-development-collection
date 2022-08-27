@@ -19,7 +19,7 @@ use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentSubgraphs;
 use PHPUnit\Framework\Assert;

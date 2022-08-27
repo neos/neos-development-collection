@@ -20,6 +20,9 @@ use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
+/**
+ * @api
+ */
 class NodeAddressFactory
 {
     private function __construct(

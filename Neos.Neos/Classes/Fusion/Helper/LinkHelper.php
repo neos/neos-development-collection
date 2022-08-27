@@ -17,7 +17,6 @@ namespace Neos\Neos\Fusion\Helper;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -114,8 +113,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
                 ->uriFor($targetNodeAddress);
         } catch (
-            NodeAddressCannotBeSerializedException
-            | HttpException
+            HttpException
             | NoMatchingRouteException
             | MissingActionNameException $e
         ) {

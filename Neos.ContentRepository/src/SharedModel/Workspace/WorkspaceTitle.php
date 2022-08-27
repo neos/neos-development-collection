@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel\Workspace;
 
 /**
- * Title of a workspace
+ * Human-Readable title of a workspace
+ *
+ * @api
  */
 final class WorkspaceTitle implements \JsonSerializable
 {

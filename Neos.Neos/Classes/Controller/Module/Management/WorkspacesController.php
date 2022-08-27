@@ -29,7 +29,7 @@ use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;

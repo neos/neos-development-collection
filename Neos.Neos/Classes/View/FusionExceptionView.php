@@ -16,7 +16,7 @@ namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;

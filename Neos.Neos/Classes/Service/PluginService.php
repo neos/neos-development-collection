@@ -22,7 +22,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;

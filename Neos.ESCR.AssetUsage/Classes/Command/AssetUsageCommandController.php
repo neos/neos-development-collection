@@ -8,7 +8,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ESCR\AssetUsage\Dto\AssetUsage;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\Flow\Cli\CommandController;
 use Neos\Media\Domain\Model\AssetInterface;

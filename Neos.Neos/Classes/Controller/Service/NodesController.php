@@ -29,7 +29,7 @@ use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeNames;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;

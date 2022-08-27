@@ -19,6 +19,7 @@ use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
 
 /**
  * @todo what is this?
+ * @internal not yet finished
  */
 final class NodeReference
 {

@@ -25,6 +25,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  * via fallback mechanisms. This behavior is encapsulated in this class
  *
  * @implements \IteratorAggregate<string,DimensionSpacePointSet>
+ * @internal no part of public APIs
  */
 final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable, \Stringable
 {

@@ -30,7 +30,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;

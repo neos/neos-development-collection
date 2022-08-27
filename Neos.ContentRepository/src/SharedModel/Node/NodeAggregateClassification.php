@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\SharedModel\Node;
 
 /**
  * The classification of a node aggregate
+ *
+ * @api
  */
 enum NodeAggregateClassification: string implements \JsonSerializable
 {

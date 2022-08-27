@@ -20,6 +20,7 @@ use Neos\ContentRepository\Projection\ContentGraph\Node;
  * An immutable collection of NodeAggregateIdentifiers, indexed by their value
  *
  * @implements \IteratorAggregate<string,NodeAggregateIdentifier>
+ * @api
  */
 final class NodeAggregateIdentifiers implements \IteratorAggregate, \JsonSerializable
 {

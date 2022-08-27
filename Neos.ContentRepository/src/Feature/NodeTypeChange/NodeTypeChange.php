@@ -36,7 +36,7 @@ use Neos\ContentRepository\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguou
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 

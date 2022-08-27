@@ -29,7 +29,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;

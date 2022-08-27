@@ -16,7 +16,6 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\ContentRepository;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -177,7 +176,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @param mixed $requestPath
      * @param RouteParameters $parameters
      * @return bool|MatchResult
-     * @throws NodeAddressCannotBeSerializedException
      */
     public function matchWithParameters(&$requestPath, RouteParameters $parameters)
     {
@@ -223,7 +221,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @param string $uriPath
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return MatchResult
-     * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
+     * @throws NodeNotFoundException
      */
     private function matchUriPath(
         string $uriPath,

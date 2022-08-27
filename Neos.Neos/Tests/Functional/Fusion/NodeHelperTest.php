@@ -21,7 +21,7 @@ use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;

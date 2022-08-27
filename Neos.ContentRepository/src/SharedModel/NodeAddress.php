@@ -29,6 +29,8 @@ use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
  *  in contentStreamIdentifier $contentStreamIdentifier
  *
  * It is used in Neos Routing to build a URI to a node.
+ *
+ * @api
  */
 final class NodeAddress
 {
@@ -43,19 +45,6 @@ final class NodeAddress
     ) {
     }
 
-    /**
-     * @param array<string,mixed> $array
-     */
-    public static function fromArray(array $array): self
-    {
-        return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            WorkspaceName::fromString($array['workspaceName'])
-        );
-    }
-
     public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
         return new self(
@@ -66,9 +55,6 @@ final class NodeAddress
         );
     }
 
-    /**
-     * @throws NodeAddressCannotBeSerializedException
-     */
     public function serializeForUri(): string
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it

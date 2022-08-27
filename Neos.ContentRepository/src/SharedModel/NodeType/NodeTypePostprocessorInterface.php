@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\SharedModel\NodeType;
 /**
  * A NodeType postprocessor can be used in order to programmatically change the configuration of a node type
  * for example to provide dynamic properties.
+ *
+ * @api
  */
 interface NodeTypePostprocessorInterface
 {

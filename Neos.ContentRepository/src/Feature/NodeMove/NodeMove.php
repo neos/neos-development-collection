@@ -36,7 +36,7 @@ use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignments;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;

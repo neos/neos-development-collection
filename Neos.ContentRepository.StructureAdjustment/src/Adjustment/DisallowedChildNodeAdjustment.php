@@ -17,7 +17,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class DisallowedChildNodeAdjustment

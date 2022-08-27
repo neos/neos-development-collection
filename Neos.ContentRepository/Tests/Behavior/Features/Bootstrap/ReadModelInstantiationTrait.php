@@ -17,7 +17,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;

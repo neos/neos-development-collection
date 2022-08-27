@@ -57,9 +57,6 @@ class ContentElementEditableService
      */
     protected $contentRepositoryRegistry;
 
-    /**
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
-     */
     public function wrapContentProperty(Node $node, string $property, string $content): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(

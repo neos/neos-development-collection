@@ -26,7 +26,7 @@ use Neos\ContentRepository\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\SharedModel\NodeAddress;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;

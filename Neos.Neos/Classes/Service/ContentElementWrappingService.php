@@ -101,7 +101,6 @@ class ContentElementWrappingService
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
      * @param array<string,string> $additionalAttributes
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function wrapContentObject(
         Node $node,
@@ -347,7 +346,6 @@ class ContentElementWrappingService
      * within the structure tree which are not actually rendered.
      *
      * @throws \Neos\Eel\Exception
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     protected function appendNonRenderedContentNodeMetadata(Node $documentNode): void
     {
@@ -412,7 +410,6 @@ class ContentElementWrappingService
 
     /**
      * @throws \Neos\Eel\Exception
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function getNonRenderedContentNodeMetadata(Node $documentNode): string
     {

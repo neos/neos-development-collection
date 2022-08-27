@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\SharedModel\Workspace;
 
 /**
  * Description for a workspace
+ *
+ * @api
  */
 final class WorkspaceDescription implements \JsonSerializable, \Stringable
 {

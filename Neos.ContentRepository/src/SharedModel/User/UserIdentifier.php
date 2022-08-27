@@ -16,6 +16,9 @@ namespace Neos\ContentRepository\SharedModel\User;
 
 use Neos\Flow\Utility\Algorithms;
 
+/**
+ * @api
+ */
 final class UserIdentifier implements \JsonSerializable, \Stringable
 {
     public const SYSTEM_USER_IDENTIFIER = 'system';

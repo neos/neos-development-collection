@@ -24,6 +24,7 @@ use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
  * This behavior is encapsulated in this class
  *
  * @implements \IteratorAggregate<string,OriginDimensionSpacePoint>
+ * @internal no part of public APIs
  */
 final class OriginByCoverage implements \IteratorAggregate, \JsonSerializable, \Stringable
 {

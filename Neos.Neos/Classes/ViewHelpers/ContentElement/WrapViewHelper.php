@@ -72,7 +72,6 @@ class WrapViewHelper extends AbstractViewHelper
      * @return string The rendered property with a wrapping tag.
      *                In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function render(): string
     {

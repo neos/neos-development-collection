@@ -19,6 +19,7 @@ use Neos\ContentRepository\Projection\ContentGraph\References;
 
 /**
  * @implements \IteratorAggregate<string,NodeReference>
+ * @internal not yet finished
  */
 final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {

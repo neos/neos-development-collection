@@ -32,7 +32,7 @@ use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Event\DimensionSpace
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Projection\ContentGraph\ContentGraphInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 

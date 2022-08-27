@@ -18,6 +18,8 @@ use Neos\Flow\Utility\Algorithms;
 
 /**
  * The NodeAggregateIdentifier supersedes the Node Identifier from Neos <= 9.x.
+ *
+ * @api
  */
 final class NodeAggregateIdentifier implements \JsonSerializable, \Stringable
 {

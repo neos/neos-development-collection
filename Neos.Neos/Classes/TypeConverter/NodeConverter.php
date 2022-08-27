@@ -58,7 +58,6 @@ class NodeConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array<string,mixed> $subProperties
      * @return mixed|\Neos\Error\Messages\Error|string|null
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function convertFrom(
         $source,
