@@ -12,15 +12,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Factory;
+namespace Neos\ContentRepository\Core\Factory;
 
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\EventStore\EventStoreInterface;
 
 /**

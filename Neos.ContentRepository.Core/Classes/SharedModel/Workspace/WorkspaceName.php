@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\Workspace;
+namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
 /**
  * Name of a workspace.

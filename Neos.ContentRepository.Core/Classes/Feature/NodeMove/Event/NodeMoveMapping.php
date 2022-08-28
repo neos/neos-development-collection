@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeMove\Event;
+namespace Neos\ContentRepository\Core\Feature\NodeMove\Event;
 
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
 
 /**
  * A move mapping for a single node

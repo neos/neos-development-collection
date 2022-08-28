@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Infrastructure\Property\Normalizer;
+namespace Neos\ContentRepository\Core\Infrastructure\Property\Normalizer;
 
 use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;

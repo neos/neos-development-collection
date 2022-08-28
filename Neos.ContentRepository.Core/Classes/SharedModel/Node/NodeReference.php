@@ -13,9 +13,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\Node;
+namespace Neos\ContentRepository\Core\SharedModel\Node;
 
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
 
 /**
  * @todo what is this?

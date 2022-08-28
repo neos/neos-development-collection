@@ -12,20 +12,20 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Dimension\ConfigurationBasedContentDimensionSource;
-use Neos\ContentRepository\Dimension\ContentDimension;
-use Neos\ContentRepository\Dimension\ContentDimensionConstraintSet;
-use Neos\ContentRepository\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Dimension\ContentDimensionValue;
-use Neos\ContentRepository\Dimension\ContentDimensionValues;
-use Neos\ContentRepository\Dimension\ContentDimensionValueSpecializationDepth;
-use Neos\ContentRepository\Dimension\ContentDimensionValueVariationEdge;
-use Neos\ContentRepository\Dimension\ContentDimensionValueVariationEdges;
-use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
+use Neos\ContentRepository\Core\Dimension\ContentDimension;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionConstraintSet;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDepth;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdge;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdges;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 
 #[Flow\Proxy(false)]
 final class NodeTypeNameFactory

@@ -12,15 +12,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\WorkspaceCreation\Event;
+namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event;
 
-use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
  * Event triggered to indicate that a workspace was created, based on a base workspace.

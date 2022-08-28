@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\ContentGraph;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * A reference to a given node by a name and with optional reference properties

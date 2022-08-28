@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\WorkspaceCreation\Exception;
+namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception;
 
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api

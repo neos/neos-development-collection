@@ -1,8 +1,8 @@
 <?php
 
-namespace Neos\ContentRepository\Projection;
+namespace Neos\ContentRepository\Core\Projection;
 
-use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**

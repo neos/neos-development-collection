@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 
 /**
  * For full docs and context, see {@see RaceTrackerCatchUpHook}

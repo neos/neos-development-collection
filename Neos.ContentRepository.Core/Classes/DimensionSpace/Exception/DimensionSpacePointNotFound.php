@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\DimensionSpace\Exception;
+namespace Neos\ContentRepository\Core\DimensionSpace\Exception;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 
 /**
  * A dimension space point was not found

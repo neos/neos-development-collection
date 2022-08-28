@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.

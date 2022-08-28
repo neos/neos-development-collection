@@ -12,18 +12,18 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeMove\Command;
+namespace Neos\ContentRepository\Core\Feature\NodeMove\Command;
 
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
-use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Feature\NodeMove\Command\RelationDistributionStrategy;
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\Common\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\RelationDistributionStrategy;
+use Neos\ContentRepository\Core\SharedModel\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
  * The "Move node aggregate" command

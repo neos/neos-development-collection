@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Dimension;
+namespace Neos\ContentRepository\Core\Dimension;
 
 /**
  * A directed edge connecting two dimension space points declaring them specialization and generalization

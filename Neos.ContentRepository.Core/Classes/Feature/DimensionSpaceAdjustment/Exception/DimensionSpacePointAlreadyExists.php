@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Exception;
+namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception;
 
 /**
  * The exception to be thrown if a dimension space point is found in the projection; thus we cannot allow a global

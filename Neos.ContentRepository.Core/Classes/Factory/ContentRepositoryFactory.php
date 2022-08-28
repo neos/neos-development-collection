@@ -12,24 +12,24 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Factory;
+namespace Neos\ContentRepository\Core\Factory;
 
-use Neos\ContentRepository\CommandHandler\CommandBus;
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\EventStore\EventPersister;
-use Neos\ContentRepository\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Feature\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
-use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\CommandHandler\CommandBus;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\Feature\ContentStreamCommandHandler;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
+use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
 use Neos\EventStore\EventStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 

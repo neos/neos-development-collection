@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\Node;
+namespace Neos\ContentRepository\Core\SharedModel\Node;
 
-use Neos\ContentRepository\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 
 /**
  * @implements \IteratorAggregate<string,NodeReference>

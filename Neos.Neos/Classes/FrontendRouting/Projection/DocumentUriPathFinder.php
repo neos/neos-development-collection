@@ -7,9 +7,9 @@ namespace Neos\Neos\FrontendRouting\Projection;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Neos\ContentRepository\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 

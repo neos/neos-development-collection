@@ -12,17 +12,17 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeCreation\Command;
+namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\Common\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateIdentifiersByNodePaths;
+use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
  * CreateNodeAggregateWithNode

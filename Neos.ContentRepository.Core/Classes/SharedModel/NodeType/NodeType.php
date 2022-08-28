@@ -12,17 +12,17 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\SharedModel\NodeType;
 
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
-use Neos\ContentRepository\Feature\Common\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\InvalidNodeTypePostprocessorException;
 
 /**
  * A Node Type

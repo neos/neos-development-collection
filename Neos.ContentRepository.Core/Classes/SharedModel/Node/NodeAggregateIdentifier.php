@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\Node;
+namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\Flow\Utility\Algorithms;
 

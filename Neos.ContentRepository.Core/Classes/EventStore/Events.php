@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\EventStore;
+namespace Neos\ContentRepository\Core\EventStore;
 
 /**
  * A set of Content Repository "domain events"

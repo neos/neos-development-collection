@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Projection\Workspace;
+namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 /**
  * @api

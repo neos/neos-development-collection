@@ -15,9 +15,9 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
 
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;

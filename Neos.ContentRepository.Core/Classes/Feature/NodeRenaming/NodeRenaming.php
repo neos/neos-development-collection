@@ -12,14 +12,14 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeRenaming;
+namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
-use Neos\ContentRepository\EventStore\Events;
-use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
-use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection;
+namespace Neos\ContentRepository\Core\Projection;
 
-use Neos\ContentRepository\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
 
 /**
  * Additional marker interface to add to a {@see ProjectionInterface}.

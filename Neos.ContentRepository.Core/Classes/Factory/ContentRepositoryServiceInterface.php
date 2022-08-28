@@ -1,8 +1,8 @@
 <?php
 
-namespace Neos\ContentRepository\Factory;
+namespace Neos\ContentRepository\Core\Factory;
 
-use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Core\ContentRepository;
 
 /**
  * A ContentRepositoryService is an object which is layered on top of a {@see ContentRepository},

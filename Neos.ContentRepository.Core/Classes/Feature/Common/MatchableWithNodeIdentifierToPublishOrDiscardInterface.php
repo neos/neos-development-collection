@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Core\Feature\Common;
 
 /**
  * This interface must be implemented by all commands which are working with individual nodes, such that they are

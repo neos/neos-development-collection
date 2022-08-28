@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\DimensionSpace;
+namespace Neos\ContentRepository\Core\DimensionSpace;
 
 /**
  * The type of variant one dimension space point is compared to another

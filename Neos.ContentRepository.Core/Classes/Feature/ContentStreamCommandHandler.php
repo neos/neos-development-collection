@@ -12,23 +12,23 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature;
+namespace Neos\ContentRepository\Core\Feature;
 
-use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\Events;
-use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
-use Neos\ContentRepository\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
-use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
-use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamAlreadyExists;
+use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 
 /**
  * INTERNALS. Only to be used from WorkspaceCommandHandler!!!

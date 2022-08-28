@@ -12,51 +12,51 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature;
+namespace Neos\ContentRepository\Core\Feature;
 
-use Neos\ContentRepository\CommandHandler\CommandHandlerInterface;
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\CommandHandler\CommandResult;
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\DecoratedEvent;
-use Neos\ContentRepository\EventStore\EventNormalizer;
-use Neos\ContentRepository\EventStore\EventPersister;
-use Neos\ContentRepository\EventStore\Events;
-use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Feature\Common\NodeIdentifiersToPublishOrDiscard;
-use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
-use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
-use Neos\ContentRepository\Feature\ContentStreamCreation\Command\CreateContentStream;
-use Neos\ContentRepository\Feature\ContentStreamForking\Command\ForkContentStream;
-use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceDiscarding\Event\WorkspaceWasDiscarded;
-use Neos\ContentRepository\Feature\WorkspaceDiscarding\Event\WorkspaceWasPartiallyDiscarded;
-use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
-use Neos\ContentRepository\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
-use Neos\ContentRepository\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
-use Neos\ContentRepository\Feature\WorkspacePublication\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Feature\Common\Exception\WorkspaceHasNoBaseWorkspaceName;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\NodeIdentifiersToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\WorkspaceDiscarding\Command\DiscardIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamAlreadyExists;
+use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceDiscarding\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspaceDiscarding\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceHasNoBaseWorkspaceName;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\StreamName;
@@ -593,8 +593,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
-     * @throws \Neos\ContentRepository\Feature\Common\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function handleDiscardIndividualNodesFromWorkspace(

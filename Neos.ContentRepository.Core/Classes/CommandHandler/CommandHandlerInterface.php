@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\CommandHandler;
+namespace Neos\ContentRepository\Core\CommandHandler;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 
 /**
  * Common interface for all Content Repository command handlers

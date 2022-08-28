@@ -12,24 +12,24 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeReferencing;
+namespace Neos\ContentRepository\Core\Feature\NodeReferencing;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\Events;
-use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Feature\Common\ConstraintChecks;
-use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Feature\Common\NodeReferenceToWrite;
-use Neos\ContentRepository\Feature\Common\PropertyScope;
-use Neos\ContentRepository\Feature\Common\SerializedNodeReference;
-use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
-use Neos\ContentRepository\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
-use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
-use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\Common\NodeReferenceToWrite;
+use Neos\ContentRepository\Core\Feature\Common\PropertyScope;
+use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReference;
+use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -95,7 +95,7 @@ trait NodeReferencing
     }
 
     /**
-     * @throws \Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet
+     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

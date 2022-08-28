@@ -12,12 +12,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\DimensionSpaceAdjustment\Command;
+namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
 
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 
 /**
  * Add a Dimension Space Point Shine-Through;

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeReferencing\Event;
+namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Event;
 
-use Neos\ContentRepository\Feature\Common\PropertyScope;
-use Neos\ContentRepository\Feature\Common\SerializedNodeReferences;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\PropertyScope;
+use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReferences;
+use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
  * Named references with optional properties were created from source node to destination node(s)

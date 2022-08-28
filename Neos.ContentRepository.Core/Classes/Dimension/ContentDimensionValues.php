@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Dimension;
+namespace Neos\ContentRepository\Core\Dimension;
 
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionValuesAreInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInvalid;
 
 /**
  * A collection of content dimension values, indexed by dimension identifier

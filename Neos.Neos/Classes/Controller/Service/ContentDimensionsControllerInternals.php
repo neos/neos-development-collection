@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Service;
 
-use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
  * @deprecated

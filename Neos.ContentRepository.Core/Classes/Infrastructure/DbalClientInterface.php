@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Infrastructure;
+namespace Neos\ContentRepository\Core\Infrastructure;
 
 use Doctrine\DBAL\Connection;
 

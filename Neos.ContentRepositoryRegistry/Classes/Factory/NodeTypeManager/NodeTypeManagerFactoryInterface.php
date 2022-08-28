@@ -2,8 +2,8 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\NodeTypeManager;
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 
 interface NodeTypeManagerFactoryInterface
 {

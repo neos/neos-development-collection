@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * The exception to be thrown if a reference was attempted to be set but cannot be

@@ -7,7 +7,7 @@
     ],
     "require": {
         "neos/flow": "*",
-        "neos/contentrepository": "*",
+        "neos/contentrepository-core": "*",
         "symfony/property-access": "*"
     },
     "autoload": {

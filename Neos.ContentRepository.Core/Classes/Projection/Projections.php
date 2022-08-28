@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection;
+namespace Neos\ContentRepository\Core\Projection;
 
 /**
  * An immutable set of Content Repository projections ({@see ProjectionInterface}

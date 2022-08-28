@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Factory;
+namespace Neos\ContentRepository\Core\Factory;
 
 /**
  * @template T of ContentRepositoryServiceInterface

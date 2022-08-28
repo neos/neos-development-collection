@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /**
  * The exception to be thrown if a tethered node aggregate is attempted to be removed

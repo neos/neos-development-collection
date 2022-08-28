@@ -5,9 +5,9 @@ namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
-use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 
 /**
  * Pragmatic performance booster for some "batch" operations needed by the Neos UI.

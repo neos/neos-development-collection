@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection;
+namespace Neos\ContentRepository\Core\Projection;
 
-use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 
 /**
  * @template T of ProjectionInterface

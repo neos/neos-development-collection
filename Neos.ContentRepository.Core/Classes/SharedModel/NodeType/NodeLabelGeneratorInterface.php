@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\SharedModel\NodeType;
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
  * Interface for rendering a node label string based on some strategy

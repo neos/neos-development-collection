@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
  * The feature trait to test projected nodes

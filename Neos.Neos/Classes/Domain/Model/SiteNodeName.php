@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -13,7 +13,7 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;

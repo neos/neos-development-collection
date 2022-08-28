@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Core\Feature\Common;
 
 /**
  * A collection of NodeIdentifier objects, to be used when publishing or discarding a set of nodes

@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Feature\NodeDisabling\Exception;
+namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.

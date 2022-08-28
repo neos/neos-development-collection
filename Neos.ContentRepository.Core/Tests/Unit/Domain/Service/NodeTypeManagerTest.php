@@ -11,13 +11,13 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Feature\Common\Exception\NodeConfigurationException;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
 
 /**
  * Testcase for the "NodeTypeManager"

@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Core\Feature\Common;
 
 /**
  * Property values to write, supports arbitrary objects. Will be then converted to {@see SerializedPropertyValues}

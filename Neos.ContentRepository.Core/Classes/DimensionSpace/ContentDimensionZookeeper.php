@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\DimensionSpace;
+namespace Neos\ContentRepository\Core\DimensionSpace;
 
-use Neos\ContentRepository\Dimension;
+use Neos\ContentRepository\Core\Dimension;
 
 /**
  * The content dimension zookeeper

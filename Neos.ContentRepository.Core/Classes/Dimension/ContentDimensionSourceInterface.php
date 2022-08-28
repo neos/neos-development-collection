@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Dimension;
+namespace Neos\ContentRepository\Core\Dimension;
 
 /**
  * The content dimension source interface

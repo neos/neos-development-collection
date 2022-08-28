@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api because exception is thrown during invariant checks on command execution

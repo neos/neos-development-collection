@@ -12,12 +12,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\WorkspaceRebase\Event;
+namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event;
 
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
  * @api events are the persistence-API of the content repository

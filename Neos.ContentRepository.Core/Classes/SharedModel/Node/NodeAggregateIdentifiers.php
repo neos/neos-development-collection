@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\Node;
+namespace Neos\ContentRepository\Core\SharedModel\Node;
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
  * An immutable collection of NodeAggregateIdentifiers, indexed by their value

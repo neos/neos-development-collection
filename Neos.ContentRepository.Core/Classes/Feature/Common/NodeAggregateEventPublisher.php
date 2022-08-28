@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Core\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,9 +14,9 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\EventStore\DecoratedEvent;
-use Neos\ContentRepository\EventStore\Events;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\EventStore\Model\Event\EventMetadata;
 
 /**

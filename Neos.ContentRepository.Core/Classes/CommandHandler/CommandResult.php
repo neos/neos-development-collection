@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\CommandHandler;
+namespace Neos\ContentRepository\Core\CommandHandler;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\ProjectionInterface;
-use Neos\ContentRepository\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\EventStore\Model\EventStore\CommitResult;
 use Neos\EventStore\Model\Event\SequenceNumber;
 

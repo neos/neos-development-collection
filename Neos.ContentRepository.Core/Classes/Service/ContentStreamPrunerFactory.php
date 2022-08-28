@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Service;
+namespace Neos\ContentRepository\Core\Service;
 
-use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<ContentStreamPruner>

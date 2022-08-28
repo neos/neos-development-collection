@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * The exception to be thrown if a property type is invalid

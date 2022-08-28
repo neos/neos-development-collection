@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\DimensionSpace\Exception;
+namespace Neos\ContentRepository\Core\DimensionSpace\Exception;
 
-use Neos\ContentRepository\DimensionSpace\ContentSubgraphVariationWeight;
+use Neos\ContentRepository\Core\DimensionSpace\ContentSubgraphVariationWeight;
 
 /**
  * The exception to be thrown if two content subgraph variation weights are to be compared that cannot,

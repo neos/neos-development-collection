@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\CommandHandler;
+namespace Neos\ContentRepository\Core\CommandHandler;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 
 /**
  * Implementation Detail of {@see ContentRepository::handle}, which does the command dispatching to the different

@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Tests\Unit\Dimension;
 
-use Neos\ContentRepository\Dimension;
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionValuesAreInvalid;
-use Neos\ContentRepository\Dimension\Exception\GeneralizationIsInvalid;
+use Neos\ContentRepository\Core\Dimension;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\GeneralizationIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

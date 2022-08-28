@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Core\Feature\Common;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,8 +12,8 @@ namespace Neos\ContentRepository\Feature\Common;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
 
 /**
  * An assignment of NodeAggregateIdentifiers to NodePaths

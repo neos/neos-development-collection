@@ -12,7 +12,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  */
 
 use Neos\Error\Messages\Result;
-use Neos\ContentRepository\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
 use Neos\Flow\Cli\CommandController;
 
 final class ContentGraphIntegrityCommandController extends CommandController

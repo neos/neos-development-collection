@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeMove\Exception;
+namespace Neos\ContentRepository\Core\Feature\NodeMove\Exception;
 
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignment;
 
 /**
  * The exception to be thrown if an invalid node variant assignment is to be used

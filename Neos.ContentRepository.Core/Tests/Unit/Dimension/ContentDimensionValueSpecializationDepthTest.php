@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Tests\Unit\Dimension;
 
-use Neos\ContentRepository\Dimension;
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
+use Neos\ContentRepository\Core\Dimension;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

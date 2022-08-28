@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\DimensionSpace\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Dimension;
+use Neos\ContentRepository\Core\Dimension;
 
 /**
  * The example dimension source fixture

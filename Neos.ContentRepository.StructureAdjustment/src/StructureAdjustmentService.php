@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\EventStore\EventPersister;
-use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DisallowedChildNodeAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\ProjectedNodeIterator;

@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Functional\Domain\Service\Fixtures;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\DefaultPrototypeGeneratorInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 
 /**
  * A testable prototype generator

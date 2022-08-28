@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Dimension\Exception;
+namespace Neos\ContentRepository\Core\Dimension\Exception;
 
 /**
  * The exception to be thrown if an invalid content dimension identifier was attempted to be initialized

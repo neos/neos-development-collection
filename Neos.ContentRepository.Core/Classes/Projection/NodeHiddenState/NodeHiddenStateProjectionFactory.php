@@ -12,13 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection\NodeHiddenState;
+namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 
-use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Projection\Projections;
+use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<NodeHiddenStateProjection>

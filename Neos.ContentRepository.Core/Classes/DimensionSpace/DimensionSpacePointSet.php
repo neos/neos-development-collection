@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\DimensionSpace;
+namespace Neos\ContentRepository\Core\DimensionSpace;
 
 /**
  * A set of points in the dimension space.

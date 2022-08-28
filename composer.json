@@ -9,26 +9,24 @@
         "neos/flow-development-collection": "dev-master",
         "neos/neos-setup": "^2.0",
         "php": "^8.1",
+        "neos/contentrepository-core": "self.version",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/neos-ui": "*",
-        "neos/eventstore": "*",
-        "neos/eventstore-doctrineadapter": "*",
-        "neos/error-messages": "*",
-        "neos/utility-objecthandling": "*",
-        "neos/utility-arrays": "*",
-        "symfony/serializer": "*",
         "neos/flow": "*",
         "symfony/property-access": "*",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
+        "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
@@ -40,8 +38,6 @@
         "neos/kickstarter": "*"
     },
     "replace": {
-        "typo3/typo3cr": "self.version",
-        "neos/content-repository": "self.version",
         "packagefactory/atomicfusion-afx": "*",
         "typo3/typoscript": "self.version",
         "typo3/media": "self.version",
@@ -52,13 +48,13 @@
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
+        "": "self.version",
         "neos/contentrepository-export": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
         "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-security": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
-        "neos/contentrepository": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
@@ -155,9 +151,6 @@
             "Neos\\ContentRepository\\StructureAdjustment\\": [
                 "Neos.ContentRepository.StructureAdjustment/src"
             ],
-            "Neos\\ContentRepository\\": [
-                "Neos.ContentRepository/src"
-            ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
             ],
@@ -252,9 +245,6 @@
             "Neos\\ContentRepository\\StructureAdjustment\\Tests\\": [
                 "Neos.ContentRepository.StructureAdjustment/Tests"
             ],
-            "Neos\\ContentRepository\\Tests\\": [
-                "Neos.ContentRepository/Tests"
-            ],
             "Neos\\ContentRepositoryRegistry\\Tests\\": [
                 "Neos.ContentRepositoryRegistry/Tests"
             ],
@@ -283,10 +273,9 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.5",
+        "phpstan/phpstan": "^1.8",
         "neos/behat": "*",
         "league/flysystem-memory": "^3",
-        "squizlabs/php_codesniffer": "^3.6",
         "phpunit/phpunit": "^9.0"
     }
 }

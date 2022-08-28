@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Feature\NodeDuplication\Command;
+namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,8 +12,8 @@ namespace Neos\ContentRepository\Feature\NodeDuplication\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 
 /**
  * An assignment of "old" to "new" NodeAggregateIdentifiers

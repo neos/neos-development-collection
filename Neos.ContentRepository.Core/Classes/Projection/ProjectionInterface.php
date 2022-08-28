@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Projection;
+namespace Neos\ContentRepository\Core\Projection;
 
-use Neos\ContentRepository\CommandHandler\PendingProjections;
-use Neos\ContentRepository\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandler\PendingProjections;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;

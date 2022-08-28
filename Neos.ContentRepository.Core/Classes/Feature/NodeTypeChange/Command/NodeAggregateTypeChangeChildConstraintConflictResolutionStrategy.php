@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeTypeChange\Command;
+namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Command;
 
 /**
  * The strategy how to handle node type constraint conflicts with already present child nodes

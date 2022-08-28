@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
 use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
 

@@ -11,13 +11,13 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Service\ContentElementEditableService;
 

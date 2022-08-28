@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\TypeConverter;
 
-use Neos\ContentRepository\SharedModel\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;

@@ -12,11 +12,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\SharedModel\NodeType;
 
-use Neos\ContentRepository\Feature\Common\Exception\NodeConfigurationException;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**

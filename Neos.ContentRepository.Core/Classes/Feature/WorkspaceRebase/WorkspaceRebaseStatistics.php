@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\WorkspaceRebase;
+namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase;
 
 /**
  * @internal implementation detail of WorkspaceCommandHandler

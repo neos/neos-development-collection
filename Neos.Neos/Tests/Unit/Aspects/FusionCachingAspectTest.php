@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\Aspects;
  */
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Tests\UnitTestCase;

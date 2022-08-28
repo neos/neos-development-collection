@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Dimension\Exception;
+namespace Neos\ContentRepository\Core\Dimension\Exception;
 
-use Neos\ContentRepository\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 
 /**
  * The exception to be thrown if an invalid generalization of a content dimension value was tried to be initialized

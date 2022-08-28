@@ -12,12 +12,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Dimension;
+namespace Neos\ContentRepository\Core\Dimension;
 
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionValueIsInvalid;
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionValuesAreInvalid;
-use Neos\ContentRepository\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueIsInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 
 /**
  * The configuration based content dimension source

@@ -1,5 +1,5 @@
 {
-    "name": "neos/contentrepository",
+    "name": "neos/contentrepository-core",
     "description": "Content repository based on Flow, specifically made for Neos, but also usable standalone.",
     "license": [
         "GPL-3.0-or-later"
@@ -22,16 +22,15 @@
     },
     "replace": {
         "typo3/typo3cr": "self.version",
-        "neos/content-repository": "self.version"
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\": "src"
+            "Neos\\ContentRepository\\Core\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ContentRepository\\Tests\\": "Tests"
+            "Neos\\ContentRepository\\Core\\Tests\\": "Tests"
         }
     },
     "suggest": {

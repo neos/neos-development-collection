@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeMove\Event;
+namespace Neos\ContentRepository\Core\Feature\NodeMove\Event;
 
 /**
  * @implements \IteratorAggregate<int,NodeMoveMapping>

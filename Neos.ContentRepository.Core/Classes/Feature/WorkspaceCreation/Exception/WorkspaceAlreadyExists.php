@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\WorkspaceCreation\Exception;
+namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception;
 
 /**
  * @api

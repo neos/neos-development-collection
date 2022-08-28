@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Tests\Unit\DimensionSpace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\DimensionSpace;
-use Neos\ContentRepository\Dimension;
+use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
 // NOTE: not sure why this is needed

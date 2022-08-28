@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Service;
+namespace Neos\ContentRepository\Core\Service;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
  * @api
@@ -24,8 +24,8 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
      * @return array<string,Workspace> the workspaces of the removed content streams
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
-     * @throws \Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
-     * @throws \Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceDoesNotExist
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

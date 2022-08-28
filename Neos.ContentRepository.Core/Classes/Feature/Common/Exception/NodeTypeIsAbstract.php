@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Feature\Common\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 
 /**
  * The exception to be thrown if a node type is abstract but was not supposed to be

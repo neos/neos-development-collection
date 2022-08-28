@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\SharedModel\NodeType;
 
 /**
  * Implementation detail of {@see NodeTypeConstraints}, to be used inside implementations of ContentSubgraphInterface.

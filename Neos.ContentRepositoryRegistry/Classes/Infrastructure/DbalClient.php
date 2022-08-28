@@ -17,7 +17,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\SQLLogger;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

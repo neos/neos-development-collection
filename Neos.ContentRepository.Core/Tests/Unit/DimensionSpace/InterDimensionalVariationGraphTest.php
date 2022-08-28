@@ -12,8 +12,8 @@
 
 namespace Neos\ContentRepository\Tests\Unit\DimensionSpace;
 
-use Neos\ContentRepository\Dimension;
-use Neos\ContentRepository\DimensionSpace;
+use Neos\ContentRepository\Core\Dimension;
+use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 

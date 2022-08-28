@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\EventStore;
+namespace Neos\ContentRepository\Core\EventStore;
 
-use Neos\ContentRepository\CommandHandler\CommandResult;
-use Neos\ContentRepository\CommandHandler\PendingProjections;
-use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
-use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\CommandHandler\PendingProjections;
+use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;

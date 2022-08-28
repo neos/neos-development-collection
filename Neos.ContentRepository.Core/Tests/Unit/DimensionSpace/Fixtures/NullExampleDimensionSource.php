@@ -12,7 +12,7 @@
 
 namespace Neos\ContentRepository\Tests\Unit\DimensionSpace\Fixtures;
 
-use Neos\ContentRepository\Dimension;
+use Neos\ContentRepository\Core\Dimension;
 
 /**
  * A dimension source fixture with no dimensions defined

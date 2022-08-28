@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeMove\Event;
+namespace Neos\ContentRepository\Core\Feature\NodeMove\Event;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Feature\NodeMove\Exception\NodeVariantAssignmentCollectionIsInvalid;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeMove\Exception\NodeVariantAssignmentCollectionIsInvalid;
 
 /**
  * An immutable collection of node variant assignments, indexed by (covered, not origin) dimension space point hash

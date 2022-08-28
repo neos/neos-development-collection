@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\ContentStreamForking\Command;
+namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,9 +14,9 @@ namespace Neos\ContentRepository\Feature\ContentStreamForking\Command;
  * source code.
  */
 
-use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.

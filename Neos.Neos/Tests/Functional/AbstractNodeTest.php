@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Functional;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;

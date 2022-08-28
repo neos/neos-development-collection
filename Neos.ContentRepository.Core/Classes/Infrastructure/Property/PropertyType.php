@@ -12,12 +12,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Infrastructure\Property;
+namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\Common\Exception\PropertyTypeIsInvalid;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Feature\Common\Exception\PropertyTypeIsInvalid;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Psr\Http\Message\UriInterface;
 
 /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace Neos\ContentRepository\Factory;
+namespace Neos\ContentRepository\Core\Factory;
 
-use Neos\ContentRepository\Projection\CatchUpHookFactories;
-use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionInterface;
-use Neos\ContentRepository\Projection\Projections;
-use Neos\ContentRepository\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactories;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 
 /**
  * @api
