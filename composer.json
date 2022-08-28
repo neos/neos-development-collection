@@ -42,6 +42,8 @@
         "typo3/typoscript": "self.version",
         "typo3/media": "self.version",
         "typo3/neos": "self.version",
+        "neos/contentrepository": "self.version",
+        "neos/content-repository": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "neos/cli-setup": "self.version",
