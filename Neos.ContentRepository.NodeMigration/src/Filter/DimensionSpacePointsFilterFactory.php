@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\VariantType;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 

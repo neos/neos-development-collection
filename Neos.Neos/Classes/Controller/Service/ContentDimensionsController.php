@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Service;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;

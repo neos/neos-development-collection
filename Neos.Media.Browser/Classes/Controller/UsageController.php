@@ -12,7 +12,7 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;

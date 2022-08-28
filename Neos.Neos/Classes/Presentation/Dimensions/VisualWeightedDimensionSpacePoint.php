@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\WeightedDimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\WeightedDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]

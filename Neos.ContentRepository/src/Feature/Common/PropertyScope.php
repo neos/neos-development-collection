@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;

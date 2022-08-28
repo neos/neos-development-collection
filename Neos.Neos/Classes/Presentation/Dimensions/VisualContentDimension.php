@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Dimension\ContentDimension;
+use Neos\ContentRepository\Dimension\ContentDimensionValue;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -104,8 +104,8 @@ final class VisualContentDimension
         $counter++;
         $nodeId = $counter;
         $leftOffset = $horizontalOffset + 42;
-        $specializations = $contentDimension->specializations[$value->value] ?? null;
-        if ($specializations) {
+        $specializations = $contentDimension->getSpecializations($value);
+        if (!empty($specializations)) {
             foreach ($specializations as $specialization) {
                 self::traverseDimension(
                     $contentDimension,

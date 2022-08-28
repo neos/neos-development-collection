@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\NodeAddress;

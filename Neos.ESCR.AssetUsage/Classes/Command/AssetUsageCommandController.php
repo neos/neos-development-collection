@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Command;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ESCR\AssetUsage\Dto\AssetUsage;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;

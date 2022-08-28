@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\VariantType;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 
 class DimensionAdjustment

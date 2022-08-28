@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Projection\NodeHiddenState;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeCreation;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
@@ -26,7 +26,7 @@ use Neos\ContentRepository\SharedModel\Node\NodePath;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 

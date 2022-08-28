@@ -2,8 +2,8 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ConfigurationBasedContentDimensionSource;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 
 class ConfigurationBasedContentDimensionSourceFactory implements ContentDimensionSourceFactoryInterface

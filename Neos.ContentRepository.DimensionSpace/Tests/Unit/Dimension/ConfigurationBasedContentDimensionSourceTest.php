@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
+use Neos\ContentRepository\Dimension\ContentDimensionConstraintSet;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

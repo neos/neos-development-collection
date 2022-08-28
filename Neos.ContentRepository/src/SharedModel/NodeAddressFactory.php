@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Service;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;

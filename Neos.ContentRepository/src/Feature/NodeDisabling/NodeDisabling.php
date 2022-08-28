@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\Feature\NodeDisabling;
  */
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\DimensionSpace;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;

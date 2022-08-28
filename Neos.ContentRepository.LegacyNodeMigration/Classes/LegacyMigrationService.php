@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
 use Doctrine\DBAL\Connection;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Export\Asset\Adapters\DbalAssetLoader;
 use Neos\ContentRepository\Export\Asset\Adapters\FileSystemResourceLoader;

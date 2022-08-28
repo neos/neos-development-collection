@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Feature\Common\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateCurrentlyDoesNotExist;

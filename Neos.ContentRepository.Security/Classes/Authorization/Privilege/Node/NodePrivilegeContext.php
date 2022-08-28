@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\Node;

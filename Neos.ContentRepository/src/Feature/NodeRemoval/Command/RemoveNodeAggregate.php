@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\NodeRemoval\Command;
 
 use Neos\ContentRepository\CommandHandler\CommandInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;

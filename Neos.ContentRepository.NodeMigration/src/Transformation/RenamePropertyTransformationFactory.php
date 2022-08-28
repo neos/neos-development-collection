@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\CommandHandler\CommandResult;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;

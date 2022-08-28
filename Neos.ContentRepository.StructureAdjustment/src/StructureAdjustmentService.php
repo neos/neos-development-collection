@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\EventStore\EventPersister;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;

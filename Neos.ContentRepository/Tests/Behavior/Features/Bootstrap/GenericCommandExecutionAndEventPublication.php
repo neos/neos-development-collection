@@ -23,7 +23,7 @@ use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;

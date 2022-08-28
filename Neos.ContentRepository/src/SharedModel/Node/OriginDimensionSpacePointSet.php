@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\SharedModel\Node;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 
 /**
  * A set of points in the dimension space, occupied by nodes in a node aggregate

@@ -12,9 +12,9 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
  * source code.
  */
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable;
+use Neos\ContentRepository\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
+use Neos\ContentRepository\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

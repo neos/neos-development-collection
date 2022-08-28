@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\SharedModel;
 
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 
@@ -60,7 +60,7 @@ final class NodeAddress
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
         return $this->workspaceName->name
-            . '__' . $this->dimensionSpacePoint->serializeForUri()
+            . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
             . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
     }
 

@@ -11,7 +11,7 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\EventNormalizer;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Projection\ProjectionInterface;

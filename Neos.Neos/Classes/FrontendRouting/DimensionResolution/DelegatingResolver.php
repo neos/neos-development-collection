@@ -16,7 +16,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\SiteNodeName;

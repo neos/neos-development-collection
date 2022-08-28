@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeReferencesToWrite;
 use Neos\ContentRepository\Feature\Common\NodeReferenceToWrite;
 use Neos\ContentRepository\Feature\Common\PropertyValuesToWrite;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\FindOperation;
 use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;

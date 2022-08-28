@@ -17,7 +17,7 @@ use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
 use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
 use Neos\ContentRepository\SharedModel\User\UserIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace;
 use Neos\ContentRepository\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\SharedModel\Node\NodeName;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;

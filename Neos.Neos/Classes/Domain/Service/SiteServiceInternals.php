@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;

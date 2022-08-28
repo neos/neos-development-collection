@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\Common;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\EventInterface;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;

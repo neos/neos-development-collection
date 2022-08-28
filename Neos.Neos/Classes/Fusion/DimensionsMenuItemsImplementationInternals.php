@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
 /**

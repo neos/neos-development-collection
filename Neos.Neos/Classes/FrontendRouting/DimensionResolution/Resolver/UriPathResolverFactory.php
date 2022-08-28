@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;

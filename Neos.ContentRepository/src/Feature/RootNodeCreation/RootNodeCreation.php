@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Feature\RootNodeCreation;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\EventStore\Events;
 use Neos\ContentRepository\EventStore\EventsToPublish;
 use Neos\ContentRepository\Feature\ContentStreamEventStreamName;

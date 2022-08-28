@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Dimension\ContentDimension;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry;
 
 use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;

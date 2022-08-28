@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
 

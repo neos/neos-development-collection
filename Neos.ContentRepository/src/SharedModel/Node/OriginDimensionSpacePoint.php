@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\SharedModel\Node;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\AbstractDimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\AbstractDimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
 
 /**
  * A node's origin dimension space point. Defines in which point in the dimension space the node originates

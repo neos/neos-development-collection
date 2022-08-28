@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Management;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Dimension\ContentDimension;
+use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
 
 /**
