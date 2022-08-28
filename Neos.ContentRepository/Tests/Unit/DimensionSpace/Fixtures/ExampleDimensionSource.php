@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
+namespace Neos\ContentRepository\Tests\Unit\DimensionSpace\Fixtures;
 
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtur
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\Dimension;
 
 /**
  * The example dimension source fixture

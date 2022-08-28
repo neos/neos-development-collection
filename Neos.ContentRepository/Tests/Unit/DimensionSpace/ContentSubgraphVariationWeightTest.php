@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
+namespace Neos\ContentRepository\Tests\Unit\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\Dimension;
 use Neos\ContentRepository\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\ContentRepository\DimensionSpace;
 use Neos\ContentRepository\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable;

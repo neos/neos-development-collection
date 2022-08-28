@@ -10,9 +10,9 @@
  * source code.
  */
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
+namespace Neos\ContentRepository\Tests\Unit\DimensionSpace;
 
-use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\Dimension;
 use Neos\ContentRepository\DimensionSpace;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;

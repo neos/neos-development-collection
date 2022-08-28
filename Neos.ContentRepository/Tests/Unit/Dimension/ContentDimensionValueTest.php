@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
+namespace Neos\ContentRepository\Tests\Unit\Dimension;
 
-use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\Dimension;
 use Neos\ContentRepository\Dimension\Exception\ContentDimensionValueIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
 

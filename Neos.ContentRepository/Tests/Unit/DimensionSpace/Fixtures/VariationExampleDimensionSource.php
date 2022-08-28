@@ -10,9 +10,9 @@
  * source code.
  */
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
+namespace Neos\ContentRepository\Tests\Unit\DimensionSpace\Fixtures;
 
-use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\Dimension;
 
 /**
  * The dimension source fixture with variation examples

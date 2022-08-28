@@ -7,7 +7,6 @@
     "require": {
         "neos/eventstore": "*",
         "neos/eventstore-doctrineadapter": "*",
-        "neos/contentrepository-dimensionspace": "*",
         "php": "^8.1",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",

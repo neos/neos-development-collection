@@ -11,7 +11,6 @@
         "php": "^8.1",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/utility-arrays": "*",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/neos-ui": "*",
@@ -19,6 +18,7 @@
         "neos/eventstore-doctrineadapter": "*",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
         "symfony/serializer": "*",
         "neos/flow": "*",
         "symfony/property-access": "*",
@@ -40,7 +40,6 @@
         "neos/kickstarter": "*"
     },
     "replace": {
-        "neos/content-repository-dimensionspace": "self.version",
         "typo3/typo3cr": "self.version",
         "neos/content-repository": "self.version",
         "packagefactory/atomicfusion-afx": "*",
@@ -53,7 +52,6 @@
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
-        "neos/contentrepository-dimensionspace": "self.version",
         "neos/contentrepository-export": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
@@ -92,7 +90,7 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/src ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpcs",
@@ -138,9 +136,6 @@
             ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
-            ],
-            "Neos\\ContentRepository\\DimensionSpace\\": [
-                "Neos.ContentRepository.DimensionSpace/src"
             ],
             "Neos\\ContentRepository\\Export\\": [
                 "Neos.ContentRepository.Export/src/"
@@ -244,9 +239,6 @@
             ],
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
-            ],
-            "Neos\\ContentRepository\\DimensionSpace\\Tests\\": [
-                "Neos.ContentRepository.DimensionSpace/Tests"
             ],
             "Neos\\ContentRepository\\LegacyNodeMigration\\Tests\\": [
                 "Neos.ContentRepository.LegacyNodeMigration/Tests"
