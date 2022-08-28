@@ -21,7 +21,7 @@
         "phpunit/phpunit": "^9.0"
     },
     "replace": {
-        "typo3/typo3cr": "self.version",
+        "typo3/typo3cr": "self.version"
     },
     "autoload": {
         "psr-4": {
