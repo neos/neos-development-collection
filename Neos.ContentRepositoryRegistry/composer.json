@@ -20,6 +20,10 @@
             "Neos\\ContentRepositoryRegistry\\Tests\\": "Tests"
         }
     },
+    "replace": {
+        "neos/content-repository": "self.version",
+        "neos/contentrepository": "self.version"
+    },
     "extra": {
         "applied-flow-migrations": [
             "TYPO3.TYPO3CR-20150510103823",

@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\Core\\": "src"
+            "Neos\\ContentRepository\\Core\\": "Classes"
         }
     },
     "autoload-dev": {

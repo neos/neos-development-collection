@@ -11,6 +11,12 @@
         "php": "^8.1",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
+        "neos/eventstore": "*",
+        "neos/eventstore-doctrineadapter": "*",
+        "neos/error-messages": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
+        "symfony/serializer": "*",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/neos-ui": "*",
@@ -19,13 +25,10 @@
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
-        "neos/utility-arrays": "*",
-        "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
-        "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
@@ -37,12 +40,13 @@
         "neos/kickstarter": "*"
     },
     "replace": {
+        "typo3/typo3cr": "self.version",
+        "neos/content-repository": "self.version",
+        "neos/contentrepository": "self.version",
         "packagefactory/atomicfusion-afx": "*",
         "typo3/typoscript": "self.version",
         "typo3/media": "self.version",
         "typo3/neos": "self.version",
-        "neos/contentrepository": "self.version",
-        "neos/content-repository": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "neos/cli-setup": "self.version",
@@ -78,27 +82,27 @@
         "neos/site-kickstarter": "self.version"
     },
     "suggest": {
+        "neos/utility-schema": "Validate NodeType schema.",
         "league/flysystem-ziparchive": "to export zip archives",
         "neos/media": "to import Assets",
         "neos/escr-asset-usage": "to export used assets",
-        "neos/utility-schema": "Validate NodeType schema.",
         "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpcs",
             "@lint:phpstan"
         ],
         "test:unit": [
-            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository/Tests/Unit",
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
         ],
         "test:functional": [
-            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository/Tests/Functional"
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
         "test:behavioral": [
             "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
@@ -133,6 +137,9 @@
             ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
+            ],
+            "Neos\\ContentRepository\\Core\\": [
+                "Neos.ContentRepository.Core/Classes"
             ],
             "Neos\\ContentRepository\\Export\\": [
                 "Neos.ContentRepository.Export/src/"
@@ -234,6 +241,9 @@
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
             ],
+            "Neos\\ContentRepository\\Core\\Tests\\": [
+                "Neos.ContentRepository.Core/Tests"
+            ],
             "Neos\\ContentRepository\\LegacyNodeMigration\\Tests\\": [
                 "Neos.ContentRepository.LegacyNodeMigration/Tests"
             ],
@@ -275,8 +285,9 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^1.8",
+        "squizlabs/php_codesniffer": "^3.6",
+        "phpunit/phpunit": "^9.0",
         "neos/behat": "*",
-        "league/flysystem-memory": "^3",
-        "phpunit/phpunit": "^9.0"
+        "league/flysystem-memory": "^3"
     }
 }
