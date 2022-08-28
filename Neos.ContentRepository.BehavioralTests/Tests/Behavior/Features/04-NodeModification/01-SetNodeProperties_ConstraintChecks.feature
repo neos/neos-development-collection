@@ -15,7 +15,7 @@ Feature: Set node properties: Constraint checks
         text:
           type: string
         postalAddress:
-          type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
+          type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:

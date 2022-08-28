@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\TestingNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\TestingNodeAggregateIdentifier;
 use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
 use Neos\Flow\Utility\Algorithms;
 

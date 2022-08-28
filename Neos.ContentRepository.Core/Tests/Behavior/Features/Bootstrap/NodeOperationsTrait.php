@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;

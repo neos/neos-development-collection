@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -22,14 +22,14 @@ use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentSubgraphs;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentSubgraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminators;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodesByAdapter;
-use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeDiscriminators;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodesByAdapter;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use PHPUnit\Framework\Assert;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 

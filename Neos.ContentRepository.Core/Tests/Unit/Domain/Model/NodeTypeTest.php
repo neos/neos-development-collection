@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
+namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Model;
 
 /*
  * This file is part of the Neos.ContentRepository package.

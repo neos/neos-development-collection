@@ -10,7 +10,7 @@
  * source code.
  */
 
-namespace Neos\ContentRepository\Tests\Unit\DimensionSpace\Fixtures;
+namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace\Fixtures;
 
 use Neos\ContentRepository\Core\Dimension;
 

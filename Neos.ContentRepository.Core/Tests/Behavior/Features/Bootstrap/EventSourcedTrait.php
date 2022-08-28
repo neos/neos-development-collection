@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -55,24 +55,24 @@ use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCreation;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeTypeChange;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeVariation;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeCreation;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeTypeChange;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeVariation;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;

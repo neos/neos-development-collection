@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Tests\Unit\Fixtures;
+namespace Neos\ContentRepository\Core\Tests\Unit\Fixtures;
 
 /*
  * This file is part of the Neos.ContentRepository package.

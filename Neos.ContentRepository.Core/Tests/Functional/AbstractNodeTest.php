@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Functional;
+namespace Neos\ContentRepository\Core\Tests\Functional;
 
 /*
  * This file is part of the Neos.ContentRepository package.

@@ -22,8 +22,8 @@ if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
 }
 
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;

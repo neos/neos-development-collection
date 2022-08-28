@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\Domain\Model\InterDimension;
+namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Model\InterDimension;
 
 /*
  * This file is part of the Neos.ContentRepository package.

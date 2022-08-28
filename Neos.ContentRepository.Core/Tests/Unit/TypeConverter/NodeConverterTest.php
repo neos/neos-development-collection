@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\TypeConverter;
+namespace Neos\ContentRepository\Core\Tests\Unit\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.

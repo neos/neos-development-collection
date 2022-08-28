@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.

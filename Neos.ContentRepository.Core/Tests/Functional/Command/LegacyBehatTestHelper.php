@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Functional\Command;
+namespace Neos\ContentRepository\Core\Tests\Functional\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -21,8 +21,8 @@ if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
     require_once(FLOW_PATH_PACKAGES . '/Application/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 }
 
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Annotations as Flow;

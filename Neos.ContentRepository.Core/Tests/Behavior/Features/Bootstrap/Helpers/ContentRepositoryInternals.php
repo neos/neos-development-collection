@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers;
 
 
 use Neos\ContentRepository\Core\ContentRepository;

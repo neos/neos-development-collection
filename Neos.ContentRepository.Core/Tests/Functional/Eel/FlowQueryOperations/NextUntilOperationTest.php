@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Core\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery NextUntilOperation

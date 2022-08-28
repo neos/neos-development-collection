@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
@@ -20,8 +20,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentSubgraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentSubgraphs;
 use PHPUnit\Framework\Assert;
 
 /**

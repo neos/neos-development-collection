@@ -40,7 +40,7 @@ Feature: Set properties
           type: GuzzleHttp\Psr7\Uri
           defaultValue: 'https://neos.io'
         postalAddress:
-          type: Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress
           defaultValue:
             streetAddress: '28 31st of February Street'
             postalCode: '12345'

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\Infrastructure\Property;
+namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Property;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,7 +15,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Tests\Unit\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Unit\Fixtures\PostalAddress;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Image;

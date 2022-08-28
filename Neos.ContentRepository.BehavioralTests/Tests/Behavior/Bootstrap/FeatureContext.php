@@ -42,17 +42,17 @@ require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Featu
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 
 /**
  * Features context
@@ -73,7 +73,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = \Neos\ContentRepository\Tests\Functional\Command\BehatTestHelper::class;
+    protected $behatTestHelperObjectName = \Neos\ContentRepository\Core\Tests\Functional\Command\BehatTestHelper::class;
 
     public function __construct()
     {

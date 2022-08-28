@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -23,8 +23,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodeAggregatesByAdapter;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeAggregatesByAdapter;
 use PHPUnit\Framework\Assert;
 
 /**

@@ -10,7 +10,7 @@
  * source code.
  */
 
-namespace Neos\ContentRepository\Tests\Unit\DimensionSpace;
+namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\DimensionSpace;

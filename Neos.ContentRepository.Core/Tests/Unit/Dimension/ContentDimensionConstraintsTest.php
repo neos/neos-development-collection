@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Tests\Unit\Dimension;
+namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\Flow\Tests\UnitTestCase;

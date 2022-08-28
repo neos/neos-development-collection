@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Functional\Domain\Fixtures;
+namespace Neos\ContentRepository\Core\Tests\Functional\Domain\Fixtures;
 
 use Neos\Flow\Annotations as Flow;
 

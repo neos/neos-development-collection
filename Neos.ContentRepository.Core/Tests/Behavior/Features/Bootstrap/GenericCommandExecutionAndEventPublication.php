@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;

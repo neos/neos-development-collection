@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\Features;
+namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -24,8 +24,8 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursi
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\NodesByAdapter;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodesByAdapter;
 
 /**
  * The node copying trait for behavioral tests
