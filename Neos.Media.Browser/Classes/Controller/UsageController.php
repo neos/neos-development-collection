@@ -13,7 +13,7 @@ namespace Neos\Media\Browser\Controller;
  */
 
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;

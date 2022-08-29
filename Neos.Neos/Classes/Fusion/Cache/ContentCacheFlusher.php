@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;

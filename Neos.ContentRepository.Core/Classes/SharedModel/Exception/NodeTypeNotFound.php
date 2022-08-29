@@ -12,13 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a content stream already exists but is not expected to
+ * The exception to be thrown if a given node type was not found
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class ContentStreamAlreadyExists extends \DomainException
+final class NodeTypeNotFound extends \OutOfBoundsException
 {
 }

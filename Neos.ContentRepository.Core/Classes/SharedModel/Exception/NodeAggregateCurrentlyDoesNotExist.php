@@ -1,5 +1,7 @@
 <?php
 
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -10,15 +12,12 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /**
- * This exception is thrown if sub-node constraints are violated
+ * The exception to be thrown if a requested node aggregate does not currently exist
  *
- * @api
+ * @api because exception is thrown during invariant checks on command execution
  */
-class NodeConstraintException extends \DomainException
+final class NodeAggregateCurrentlyDoesNotExist extends \DomainException
 {
 }

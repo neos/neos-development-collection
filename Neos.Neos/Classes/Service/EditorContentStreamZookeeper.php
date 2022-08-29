@@ -84,7 +84,7 @@ final class EditorContentStreamZookeeper
      * @throws \Exception
      * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
      * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
-     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist
      * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;

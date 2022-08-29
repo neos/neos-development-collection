@@ -31,8 +31,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistic
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
@@ -51,8 +51,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceHasNoBaseWorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -593,8 +593,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
-     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function handleDiscardIndividualNodesFromWorkspace(

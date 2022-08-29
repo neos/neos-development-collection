@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,10 +14,10 @@ namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 
 /**
- * The exception to be thrown if a non-root node is tried to be created with a node type which is of type root
+ * The exception to be thrown if a node aggregate is classified as tethered but wasn't expected to be
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeTypeIsOfTypeRoot extends \DomainException
+final class NodeAggregateIsTethered extends \DomainException
 {
 }

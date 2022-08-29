@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,10 +14,10 @@ namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 
 /**
- * The exception to be thrown if a node aggregate was tried to be fetched but is ambiguous
+ * The exception to be thrown if a node name is already covered by a node in a node aggregate but is supposed not to be
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregateIsAmbiguous extends \DomainException
+final class NodeNameIsAlreadyCovered extends \DomainException
 {
 }

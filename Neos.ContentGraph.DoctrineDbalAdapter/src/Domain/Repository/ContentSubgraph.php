@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
@@ -943,7 +943,7 @@ WHERE
 
     /**
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
     public function findSubtrees(

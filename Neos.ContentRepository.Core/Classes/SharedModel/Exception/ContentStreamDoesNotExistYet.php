@@ -12,20 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
-
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
+ * The exception to be thrown if a content stream does not exists yet but is expected to
+ *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class WorkspaceDoesNotExist extends \DomainException
+final class ContentStreamDoesNotExistYet extends \DomainException
 {
-    public static function butWasSupposedTo(WorkspaceName $name): self
-    {
-        return new self(sprintf(
-            'The source workspace %s does not exist',
-            $name
-        ), 1513924741);
-    }
 }

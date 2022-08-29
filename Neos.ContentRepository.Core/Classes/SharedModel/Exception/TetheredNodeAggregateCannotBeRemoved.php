@@ -12,13 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a node aggregate's type is ambiguous
+ * The exception to be thrown if a tethered node aggregate is attempted to be removed
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregatesTypeIsAmbiguous extends \DomainException
+final class TetheredNodeAggregateCannotBeRemoved extends \DomainException
 {
 }

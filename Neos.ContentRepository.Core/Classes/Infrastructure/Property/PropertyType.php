@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Feature\Common\Exception\PropertyTypeIsInvalid;
+use Neos\ContentRepository\Core\SharedModel\Exception\PropertyTypeIsInvalid;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Psr\Http\Message\UriInterface;
 

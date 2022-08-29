@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;

@@ -95,7 +95,7 @@ trait NodeReferencing
     }
 
     /**
-     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

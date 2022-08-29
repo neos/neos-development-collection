@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 

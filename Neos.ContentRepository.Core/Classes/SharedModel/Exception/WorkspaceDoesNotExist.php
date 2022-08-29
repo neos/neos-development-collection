@@ -12,14 +12,20 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
+
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * The exception to be thrown if a dimension space point is not yet occupied by a node in a node aggregate
- * but is supposed to be
- *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class DimensionSpacePointIsNotYetOccupied extends \DomainException
+final class WorkspaceDoesNotExist extends \DomainException
 {
+    public static function butWasSupposedTo(WorkspaceName $name): self
+    {
+        return new self(sprintf(
+            'The source workspace %s does not exist',
+            $name
+        ), 1513924741);
+    }
 }

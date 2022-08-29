@@ -32,7 +32,7 @@ class ContentStreamCommandController extends CommandController
      * Imports events to a content stream from the given file.
      * Note that the events in the file need to come from the same content stream you import to for now!
      *
-     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamAlreadyExists
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists
      * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
      * @throws \Neos\EventSourcing\EventListener\Exception\EventCouldNotBeAppliedException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface

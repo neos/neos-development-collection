@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -12,12 +10,15 @@ namespace Neos\ContentRepository\Core\Feature\Common\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a node aggregate is classified as tethered but wasn't expected to be
+ * An "Invalid node type postprocessor" exception
  *
- * @api because exception is thrown during invariant checks on command execution
+ * @api
  */
-final class NodeAggregateIsTethered extends \DomainException
+class InvalidNodeTypePostprocessorException extends \DomainException
 {
 }

@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeConstraintException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;

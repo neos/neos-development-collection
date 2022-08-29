@@ -12,14 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * A "node type not found" exception
+ * A "node type is final" exception
  *
- * TODO: This and NodeTypeNotFound should be made similar
  * @api
  */
-class NodeTypeNotFoundException extends \DomainException
+class NodeTypeIsFinalException extends \DomainException
 {
 }

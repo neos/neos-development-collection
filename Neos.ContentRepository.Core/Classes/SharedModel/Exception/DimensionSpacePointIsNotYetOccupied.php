@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -12,12 +10,16 @@ namespace Neos\ContentRepository\Core\Feature\Common\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a node name is already occupied by a node in a node aggregate but is supposed not to be
+ * The exception to be thrown if a dimension space point is not yet occupied by a node in a node aggregate
+ * but is supposed to be
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeNameIsAlreadyOccupied extends \DomainException
+final class DimensionSpacePointIsNotYetOccupied extends \DomainException
 {
 }

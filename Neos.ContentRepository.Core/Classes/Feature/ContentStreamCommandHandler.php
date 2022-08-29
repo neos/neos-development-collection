@@ -27,8 +27,8 @@ use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveConte
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamAlreadyExists;
-use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 
 /**
  * INTERNALS. Only to be used from WorkspaceCommandHandler!!!

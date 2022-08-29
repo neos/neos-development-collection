@@ -1,5 +1,7 @@
 <?php
 
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -10,15 +12,12 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /**
- * A "node type is final" exception
+ * The exception to be thrown if a node aggregate was tried to be fetched but is ambiguous
  *
- * @api
+ * @api because exception is thrown during invariant checks on command execution
  */
-class NodeTypeIsFinalException extends \DomainException
+final class NodeAggregateIsAmbiguous extends \DomainException
 {
 }

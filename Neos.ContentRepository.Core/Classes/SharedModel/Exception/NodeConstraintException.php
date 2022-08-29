@@ -12,13 +12,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a given node type was not found
+ * This exception is thrown if sub-node constraints are violated
  *
- * @api because exception is thrown during invariant checks on command execution
+ * @api
  */
-final class NodeTypeNotFound extends \OutOfBoundsException
+class NodeConstraintException extends \DomainException
 {
 }

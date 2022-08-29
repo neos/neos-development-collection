@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -12,12 +10,15 @@ namespace Neos\ContentRepository\Core\Feature\Common\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * The exception to be thrown if a requested node aggregate does not currently exist
+ * The exception to be thrown if a content stream already exists but is not expected to
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class NodeAggregateCurrentlyDoesNotExist extends \DomainException
+final class ContentStreamAlreadyExists extends \DomainException
 {
 }

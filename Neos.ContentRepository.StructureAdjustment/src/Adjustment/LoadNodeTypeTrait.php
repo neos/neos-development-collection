@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 trait LoadNodeTypeTrait
 {

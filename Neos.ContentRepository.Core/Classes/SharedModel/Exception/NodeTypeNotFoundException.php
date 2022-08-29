@@ -12,13 +12,14 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 /**
- * An "Invalid node type postprocessor" exception
+ * A "node type not found" exception
  *
+ * TODO: This and NodeTypeNotFound should be made similar
  * @api
  */
-class InvalidNodeTypePostprocessorException extends \DomainException
+class NodeTypeNotFoundException extends \DomainException
 {
 }

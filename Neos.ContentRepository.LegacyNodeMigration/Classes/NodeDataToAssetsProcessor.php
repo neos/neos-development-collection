@@ -8,7 +8,7 @@ use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\Media\Domain\Model\ResourceBasedInterface;

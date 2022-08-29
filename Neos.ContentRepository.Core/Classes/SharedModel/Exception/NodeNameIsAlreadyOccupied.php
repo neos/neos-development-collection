@@ -1,5 +1,7 @@
 <?php
 
+namespace Neos\ContentRepository\Core\SharedModel\Exception;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -10,15 +12,12 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 /**
- * The exception to be thrown if a content stream does not exists yet but is expected to
+ * The exception to be thrown if a node name is already occupied by a node in a node aggregate but is supposed not to be
  *
  * @api because exception is thrown during invariant checks on command execution
  */
-final class ContentStreamDoesNotExistYet extends \DomainException
+final class NodeNameIsAlreadyOccupied extends \DomainException
 {
 }

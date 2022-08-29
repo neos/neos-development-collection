@@ -24,17 +24,17 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\DimensionSpace;
-use Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 
 /** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 /** @codingStandardsIgnoreEnd */
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\Common\Exception\PropertyCannotBeSet;
+use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateIdentifiersByNodePaths;
