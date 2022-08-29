@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;

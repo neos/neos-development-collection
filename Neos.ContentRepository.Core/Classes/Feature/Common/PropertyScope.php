@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 
 /**
  * The property scope to be used in NodeType property declarations.

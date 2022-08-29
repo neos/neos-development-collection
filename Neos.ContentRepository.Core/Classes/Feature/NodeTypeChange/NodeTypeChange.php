@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\Common\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;

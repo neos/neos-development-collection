@@ -19,7 +19,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * Change Read Model

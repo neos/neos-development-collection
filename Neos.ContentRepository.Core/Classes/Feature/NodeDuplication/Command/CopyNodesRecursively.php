@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\NodeAddress;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;

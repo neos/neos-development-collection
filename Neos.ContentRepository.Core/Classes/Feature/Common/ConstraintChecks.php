@@ -44,7 +44,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;

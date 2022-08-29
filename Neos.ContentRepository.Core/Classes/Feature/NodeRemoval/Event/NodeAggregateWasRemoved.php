@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 

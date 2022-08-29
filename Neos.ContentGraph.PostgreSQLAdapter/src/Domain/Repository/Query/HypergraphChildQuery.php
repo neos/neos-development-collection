@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 /**

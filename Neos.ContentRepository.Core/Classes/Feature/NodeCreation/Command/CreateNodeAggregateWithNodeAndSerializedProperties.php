@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;

@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;

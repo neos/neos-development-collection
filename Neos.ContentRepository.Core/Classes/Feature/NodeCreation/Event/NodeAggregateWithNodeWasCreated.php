@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\EventStore\EventInterface;

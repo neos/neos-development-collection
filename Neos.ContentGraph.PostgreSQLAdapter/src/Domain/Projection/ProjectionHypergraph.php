@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * The alternate reality-aware projection-time hypergraph for the PostgreSQL backend via Doctrine DBAL

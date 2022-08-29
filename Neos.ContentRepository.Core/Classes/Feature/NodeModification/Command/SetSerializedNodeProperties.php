@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\NodeAddress;
 

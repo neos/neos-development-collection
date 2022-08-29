@@ -21,7 +21,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;

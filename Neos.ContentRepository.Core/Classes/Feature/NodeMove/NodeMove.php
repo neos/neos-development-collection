@@ -34,7 +34,7 @@ use Neos\ContentRepository\Core\Feature\Common\Exception\NodeAggregateCurrentlyD
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignment;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignments;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;

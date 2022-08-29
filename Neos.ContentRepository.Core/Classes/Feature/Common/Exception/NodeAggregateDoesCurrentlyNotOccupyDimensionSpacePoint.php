@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\Common\Exception;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * The exception to be thrown if a node aggregate does currently not occupy a given dimension space point

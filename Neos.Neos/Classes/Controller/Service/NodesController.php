@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\NodeAddressFactory;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraints;

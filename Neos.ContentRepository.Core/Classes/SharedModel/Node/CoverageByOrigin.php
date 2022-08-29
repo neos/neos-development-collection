@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * A set of coverage of an origin dimension space point within a node aggregate

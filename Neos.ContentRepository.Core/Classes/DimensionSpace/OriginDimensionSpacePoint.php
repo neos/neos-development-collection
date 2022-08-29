@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Node;
+namespace Neos\ContentRepository\Core\DimensionSpace;
 
 use Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;

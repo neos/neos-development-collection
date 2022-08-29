@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Event;
 
 use Neos\ContentRepository\Core\Feature\Common\PropertyScope;
 use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReferences;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;

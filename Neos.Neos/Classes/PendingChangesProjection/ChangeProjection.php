@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;

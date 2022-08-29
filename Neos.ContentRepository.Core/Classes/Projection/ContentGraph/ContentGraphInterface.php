@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\Common\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * This is the MAIN ENTRY POINT for the Content Repository. This class exists only

@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregate
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\Common\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;

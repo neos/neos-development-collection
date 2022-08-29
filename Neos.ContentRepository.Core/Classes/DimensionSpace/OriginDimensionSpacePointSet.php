@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Node;
+namespace Neos\ContentRepository\Core\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,6 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 
 /**
  * A set of points in the dimension space, occupied by nodes in a node aggregate

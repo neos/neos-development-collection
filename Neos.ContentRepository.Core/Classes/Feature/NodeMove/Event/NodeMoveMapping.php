@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * A move mapping for a single node

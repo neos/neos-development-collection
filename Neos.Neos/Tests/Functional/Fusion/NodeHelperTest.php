@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;

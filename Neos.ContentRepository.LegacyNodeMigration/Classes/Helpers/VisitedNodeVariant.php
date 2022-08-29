@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
 /**

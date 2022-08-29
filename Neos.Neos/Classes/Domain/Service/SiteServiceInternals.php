@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;

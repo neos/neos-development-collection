@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;

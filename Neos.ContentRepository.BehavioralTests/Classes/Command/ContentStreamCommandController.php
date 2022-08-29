@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\Flow\Cli\CommandController;
