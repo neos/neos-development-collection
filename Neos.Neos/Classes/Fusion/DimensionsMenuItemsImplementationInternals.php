@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
  * @deprecated really un-nice :D

@@ -1,9 +1,9 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentRepository\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -32,8 +32,8 @@ class ContentStreamCommandController extends CommandController
      * Imports events to a content stream from the given file.
      * Note that the events in the file need to come from the same content stream you import to for now!
      *
-     * @throws \Neos\ContentRepository\Feature\Common\Exception\ContentStreamAlreadyExists
-     * @throws \Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
+     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\ContentStreamAlreadyExists
+     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
      * @throws \Neos\EventSourcing\EventListener\Exception\EventCouldNotBeAppliedException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */

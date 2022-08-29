@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 
 /**
  * A plugin view definition

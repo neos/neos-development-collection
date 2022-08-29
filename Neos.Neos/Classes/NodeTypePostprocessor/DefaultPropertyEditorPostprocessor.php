@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\NodeTypePostprocessor;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypePostprocessorInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\Utility\Arrays;
 use Neos\Neos\Exception;
 

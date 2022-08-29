@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment;
 
-use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryDependencies;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<StructureAdjustmentService>

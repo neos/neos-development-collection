@@ -7,7 +7,7 @@ index f0dc4bd8b..1e831ca3d 100644
   */
 
 -use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-+use Neos\ContentRepository\Projection\Content\NodeInterface;
++use Neos\ContentRepository\Core\Projection\Content\NodeInterface;
  use Neos\ContentRepository\Domain\Service\NodeTypeManager;
  use Neos\Flow\Annotations as Flow;
  use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -127,7 +127,7 @@ index 7af8ad843..190244177 100644
   */
 
  use GuzzleHttp\Psr7\Message;
-+use Neos\ContentRepository\Projection\Content\NodeInterface;
++use Neos\ContentRepository\Core\Projection\Content\NodeInterface;
  use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
  use Neos\Flow\Annotations as Flow;
  use Neos\Flow\Mvc\View\AbstractView;

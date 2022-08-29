@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
  * A menu item

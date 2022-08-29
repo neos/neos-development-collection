@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\PendingChangesProjection;
 
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**

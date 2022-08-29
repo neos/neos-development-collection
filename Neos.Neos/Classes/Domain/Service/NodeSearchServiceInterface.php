@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
  * Interface for the node search service for finding nodes based on a fulltext search

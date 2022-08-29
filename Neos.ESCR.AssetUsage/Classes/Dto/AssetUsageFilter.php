@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Dto;
 
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**

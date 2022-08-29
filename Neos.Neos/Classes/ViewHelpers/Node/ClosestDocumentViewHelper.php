@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Node;
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Ui\ContentRepository\Service\NodeService;

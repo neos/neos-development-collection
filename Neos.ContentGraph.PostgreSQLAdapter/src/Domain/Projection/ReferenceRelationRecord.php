@@ -16,9 +16,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * The active record for reading and writing reference relations from and to the database

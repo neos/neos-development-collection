@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Functional\Service;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;

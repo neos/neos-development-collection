@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

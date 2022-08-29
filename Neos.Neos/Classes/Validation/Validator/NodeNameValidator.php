@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Validation\Validator;
 
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 
 /**

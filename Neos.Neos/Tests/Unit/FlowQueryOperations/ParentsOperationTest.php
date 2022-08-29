@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;

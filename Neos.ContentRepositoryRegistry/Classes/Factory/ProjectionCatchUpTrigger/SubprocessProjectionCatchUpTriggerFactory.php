@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
-use Neos\ContentRepository\Projection\ProjectionCatchUpTriggerInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepositoryRegistry\Command\SubprocessProjectionCatchUpCommandController;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 
 /**
  * See {@see SubprocessProjectionCatchUpCommandController} for the inner part

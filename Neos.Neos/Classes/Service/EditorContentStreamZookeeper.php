@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Core\Bootstrap;
@@ -82,9 +82,9 @@ final class EditorContentStreamZookeeper
      *
      * @param Authentication\TokenInterface $token
      * @throws \Exception
-     * @throws \Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
-     * @throws \Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
-     * @throws \Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
+     * @throws \Neos\ContentRepository\Core\Feature\Common\Exception\WorkspaceDoesNotExist
      * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void

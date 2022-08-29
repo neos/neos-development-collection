@@ -3,18 +3,18 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
     1:
       setting: Neos.ContentRepositoryRegistry
 
-Neos\ContentRepository\Infrastructure\DbalClientInterface:
+Neos\ContentRepository\Core\Infrastructure\DbalClientInterface:
   className: Neos\ContentRepositoryRegistry\Infrastructure\DbalClient
 
 # !!! UGLY WORKAROUNDS, because we cannot wire non-Flow class constructor arguments here.
-Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory:
+Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
   arguments:
     1:
-      value: Neos\ContentRepository\Projection\ContentStream\ContentStreamProjectionFactory
+      value: Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
 
 Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
@@ -24,7 +24,7 @@ Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
     1:
       value: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
 Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory:
   scope: singleton
@@ -36,23 +36,23 @@ Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory:
       object: 'Neos\ContentRepositoryRegistry\Infrastructure\PostgresDbalClient'
 
 
-Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory:
+Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
   arguments:
     1:
-      value: Neos\ContentRepository\Projection\Workspace\WorkspaceProjectionFactory
+      value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
 
-Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory:
+Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
   arguments:
     1:
-      value: Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
+      value: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Infrastructure\DbalClientInterface'
+      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
 

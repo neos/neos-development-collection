@@ -8,9 +8,9 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeMoveMapping;
 
 /**
  * The NodeMove projection feature trait

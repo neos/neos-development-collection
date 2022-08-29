@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\NodeAddress;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 

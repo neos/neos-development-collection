@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * Filter nodes by node name.

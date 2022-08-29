@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Neos\Domain\Model\SiteNodeName;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<DocumentUriPathProjection>

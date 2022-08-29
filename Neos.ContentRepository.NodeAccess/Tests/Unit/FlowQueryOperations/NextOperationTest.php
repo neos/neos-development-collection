@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;

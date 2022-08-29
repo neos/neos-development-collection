@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;

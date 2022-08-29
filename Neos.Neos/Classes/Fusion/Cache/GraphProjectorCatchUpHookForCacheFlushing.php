@@ -12,14 +12,14 @@ namespace Neos\Neos\Fusion\Cache;
  * source code.
  */
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\ContentRepository\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Projection\CatchUpHookInterface;
-use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\EventStore\Model\EventEnvelope;
 
 class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface

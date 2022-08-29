@@ -7,11 +7,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Projection\Projections;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<HypergraphProjection>

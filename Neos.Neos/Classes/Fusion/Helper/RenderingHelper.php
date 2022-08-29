@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
-use Neos\ContentRepository\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\Common\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Feature\Common\Exception\NodeTypeNotFoundException;
 
 /**
  * Render Content Dimension Names, Node Labels

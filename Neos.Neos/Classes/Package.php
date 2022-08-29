@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos;
 
-use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;

@@ -5,12 +5,12 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\Neos\PendingChangesProjection\ChangeProjection;
-use Neos\ContentRepository\Projection\ContentGraph\ContentGraphProjection;
-use Neos\ContentRepository\Projection\ContentStream\ContentStreamProjection;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceProjection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageProjection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;

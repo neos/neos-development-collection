@@ -12,8 +12,8 @@ namespace Neos\Neos\Fusion\Cache;
  * source code.
  */
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 
 class GraphProjectorCatchUpHookForCacheFlushingFactory implements CatchUpHookFactoryInterface
 {

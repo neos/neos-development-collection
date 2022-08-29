@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\ContentRepository;
-use Neos\ContentRepository\EventStore\Events;
-use Neos\ContentRepository\EventStore\EventsToPublish;
-use Neos\ContentRepository\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignment;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeVariantAssignments;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMapping;
-use Neos\ContentRepository\Feature\NodeMove\Event\NodeMoveMappings;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignment;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignments;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeMoveMappings;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\ContentRepository\DimensionSpace;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Feature\Common\NodeVariationInternals;
-use Neos\ContentRepository\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 class TetheredNodeAdjustments
 {

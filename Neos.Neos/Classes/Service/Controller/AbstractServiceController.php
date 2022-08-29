@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Controller;
 
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\ThrowableStorageInterface;

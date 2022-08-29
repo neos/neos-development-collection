@@ -2,7 +2,7 @@
 namespace Neos\ContentRepositoryRegistry\Exception;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 
 #[Flow\Proxy(false)]
 final class ContentRepositoryNotFound extends \InvalidArgumentException

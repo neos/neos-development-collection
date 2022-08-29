@@ -18,8 +18,8 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\EventStore\EventInterface;
-use Neos\ContentRepository\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 

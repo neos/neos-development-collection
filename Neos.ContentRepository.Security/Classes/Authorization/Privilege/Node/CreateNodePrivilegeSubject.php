@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Aop\JoinPointInterface;
 
 /**

@@ -7,8 +7,8 @@ index b91293e..b121d57 100644
  use Flowpack\ElasticSearch\Domain\Model\Mapping;
  use Flowpack\ElasticSearch\Transfer\Exception\ApiException;
 -use Neos\ContentRepository\Domain\Model\Workspace;
-+use Neos\ContentRepository\DimensionSpace\ContentDimensionZookeeper;
-+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
++use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
++use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 -use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 -use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
@@ -227,7 +227,7 @@ index a8ce910..11cfffe 100644
  use Flowpack\ElasticSearch\ContentRepositoryAdaptor\Service\IndexNameStrategyInterface;
  use Flowpack\ElasticSearch\Domain\Model\Client;
  use Flowpack\ElasticSearch\Domain\Model\Index;
-+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
++use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  use Neos\ContentRepository\Domain\Model\NodeInterface;
  use Neos\Flow\Annotations as Flow;
 
@@ -252,7 +252,7 @@ index 2d2283f..78e06cf 100644
  use Flowpack\ElasticSearch\Domain\Model\Index;
  use Flowpack\ElasticSearch\Transfer\Exception\ApiException;
 -use Neos\ContentRepository\Domain\Model\NodeInterface;
-+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
++use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  use Neos\ContentRepository\Domain\Service\Context;
  use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  use Neos\ContentRepository\Search\Indexer\AbstractNodeIndexer;
@@ -315,14 +315,14 @@ index 56a8278..91678b1 100644
 
 -use Neos\ContentRepository\Domain\Factory\NodeFactory;
 -use Neos\ContentRepository\Domain\Model\NodeInterface;
-+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
++use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 +use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
  use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
 -use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  use Neos\ContentRepository\Search\Indexer\NodeIndexingManager;
 +use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 +use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-+use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
++use Neos\ContentRepository\Core\Projection\Content\ContentGraphInterface;
 +use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 +use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 +use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -422,7 +422,7 @@ index 71be3a6..95802ab 100644
   */
 
 -use Neos\ContentRepository\Domain\Model\NodeInterface;
-+use Neos\ContentRepository\DimensionSpace\DimensionSpacePoint;
++use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
  use Neos\ContentRepository\Utility;
 +use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;

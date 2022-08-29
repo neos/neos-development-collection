@@ -3,7 +3,7 @@
   "description": "The Doctrine DBAL database backend for the Neos content graph",
   "license": "GPL-3.0+",
   "require": {
-    "neos/contentrepository": "*",
+    "neos/contentrepository-core": "*",
     "doctrine/dbal": "*",
     "doctrine/migrations": "*"
   },

@@ -15,7 +15,7 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository.Testing:Node':
       properties:
         postalAddress:
-          type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
+          type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     'Neos.ContentRepository.Testing:NodeWithInvalidPropertyType':
       properties:
         postalAddress:
@@ -23,7 +23,7 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository.Testing:NodeWithInvalidDefaultValue':
       properties:
         postalAddress:
-          type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
+          type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
           defaultValue:
             iDoNotExist: 'whatever'
     'Neos.ContentRepository.Testing:AbstractNode':
