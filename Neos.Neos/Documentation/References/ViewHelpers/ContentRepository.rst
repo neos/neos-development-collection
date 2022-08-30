@@ -3,5 +3,5 @@
 Content Repository ViewHelper Reference
 =======================================
 
-This reference was automatically generated from code on 2022-08-29
+This reference was automatically generated from code on 2022-08-30
 
