@@ -133,6 +133,9 @@ class ImageService
 
         $imagineImage = $this->imagineService->open($resourceUri);
 
+        $autorotateFilter = new \Imagine\Filter\Basic\Autorotate();
+        $autorotateFilter->apply($imagineImage);
+
         $convertCMYKToRGB = $this->getOptionsMergedWithDefaults()['convertCMYKToRGB'];
         if ($convertCMYKToRGB && $imagineImage->palette() instanceof CMYK) {
             $imagineImage->usePalette(new RGB());
