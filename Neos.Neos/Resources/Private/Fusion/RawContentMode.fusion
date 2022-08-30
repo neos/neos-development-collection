@@ -13,9 +13,44 @@ prototype(Neos.Neos:RawContent) < prototype(Neos.Fusion:Template) {
       columnContent = Neos.Neos:ContentCollection {
         nodePath = '.'
       }
-
     }
   }
+
+  prototype(Neos.Neos:ContentCase) {
+    default {
+      condition = Neos.Fusion:CanRender {
+        type = ${q(node).property('_nodeType.name')}
+      }
+    }
+    fallback {
+      @position = 'after default'
+      condition = true
+      type = 'Neos.Neos:RawContentFallbackRenderer'
+    }
+  }
+}
+
+prototype(Neos.Neos:RawContentFallbackRenderer) < prototype(Neos.Neos:ContentComponent) {
+  node = ${node}
+  label = ${node.label}
+  nodeType = ${node.nodeType.name}
+
+  renderer = afx`
+    <div>
+      <h4>{props.label}</h4>
+
+      <Neos.Fusion:Loop items={props.node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
+        <Neos.Fusion:Fragment @if.isInlineEditable={propertyConfiguration.ui.inlineEditable == true} class="property">
+          <strong>{propertyConfiguration.ui.label || propertyName}:</strong>
+          <Neos.Neos:Editable property={propertyName} />
+        </Neos.Fusion:Fragment>
+        <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(props.node).property(propertyName)}>
+          <strong>{propertyConfiguration.ui.label || propertyName}:</strong>
+          <div><Neos.Neos:ImageTag asset={q(props.node).property(propertyName)} maximumWidth={200} maximumHeight={200} /></div>
+        </Neos.Fusion:Fragment>
+      </Neos.Fusion:Loop>
+    </div>
+  `
 }
 
 rawContent = Neos.Neos:Page {
