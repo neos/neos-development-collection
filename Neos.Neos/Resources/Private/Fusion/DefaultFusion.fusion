@@ -111,5 +111,6 @@ error = Neos.Fusion:Case {
 #
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
   workspaceChain = ${Array.join(Array.keys(Neos.Caching.getWorkspaceChain(documentNode)), ',')}
+  workspaceChain.@if.has = ${!!documentNode}
   editPreviewMode = ${editPreviewMode}
 }

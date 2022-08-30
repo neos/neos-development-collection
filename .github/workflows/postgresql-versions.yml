@@ -1,0 +1,155 @@
+name: PostgreSQL tests
+
+on:
+  workflow_dispatch: # allow manual runs
+  schedule:
+    - cron:  '0 0 * * *' # Runs every day at midnight
+
+jobs:
+  build:
+    name: "Experimental PostgreSQL ${{ matrix.postgresql-versions }} Test (PHP: ${{ matrix.php-versions }}, deps: ${{ matrix.dependencies }})"
+
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        neos-versions: ['master']
+        php-versions: ['8.1', '8.0']
+        # See https://www.postgresql.org/support/versioning/
+        # Use https://hub.docker.com/_/postgres for available versions
+        postgresql-versions: ['14-alpine', '13-alpine', '12-alpine', '11-alpine', '10-alpine']
+        dependencies: ['highest']
+        composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
+        include:
+          # Build for minimum dependencies.
+          - neos-versions: 'master'
+            php-versions: '8.0'
+            postgresql-versions: '10-alpine'
+            dependencies: 'lowest'
+
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - "6379:6379"
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      memcached:
+        image: memcached:alpine
+        ports:
+          - "11211:11211"
+      postgres:
+        image: postgres:${{ matrix.postgresql-versions }}
+        env:
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+          POSTGRES_DB: flow_functional_testing
+        ports:
+          - "5432:5432"
+        options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      FLOW_CONTEXT: Testing
+      NEOS_DIST_FOLDER: neos-development-distribution
+      NEOS_FOLDER: neos-development-collection
+
+    defaults:
+      run:
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
+
+    steps:
+      - name: Set Neos target branch name
+        run: echo "NEOS_TARGET_VERSION=${{ matrix.neos-versions }}" >> $GITHUB_ENV
+        working-directory: .
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.NEOS_FOLDER }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
+          coverage: xdebug #optional
+          ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
+
+      - name: Checkout development distribution
+        uses: actions/checkout@v2
+        with:
+          repository: neos/neos-development-distribution
+          ref: ${{ env.NEOS_TARGET_VERSION }}
+          path: ${{ env.NEOS_DIST_FOLDER }}
+
+      - name: Set alias branch name
+        run: |
+            if [ "${{ env.NEOS_TARGET_VERSION }}" == "master" ]; then
+                echo "NEOS_BRANCH_ALIAS=dev-master";
+            else
+                echo "NEOS_BRANCH_ALIAS=${{ env.NEOS_TARGET_VERSION }}.x-dev";
+            fi >> $GITHUB_ENV
+
+      - name: Update composer.json
+        run: |
+          git -C ../${{ env.NEOS_FOLDER }} checkout -b build
+          composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
+          composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/composer
+            ${{ env.NEOS_DIST_FOLDER }}/Packages
+          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
+
+      - name: Install dependencies
+        run: |
+          composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
+
+      - name: Set Flow Context
+        run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
+
+      - name: Setup Flow configuration
+        run: |
+          rm -f Configuration/Testing/Settings.yaml
+          cat <<EOF >> Configuration/Testing/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
+                  charset: 'utf8'
+                  defaultTableOptions:
+                    charset: 'utf8'
+              mvc:
+                routes:
+                  'Neos.Flow': TRUE
+          EOF
+          echo "Running in context '$FLOW_CONTEXT'"
+          ./flow configuration:show
+          ./flow routing:list
+
+      - name: Run unit tests
+        run: composer test-unit -- --verbose
+
+      - name: Run functional tests
+        run: composer test-func -- --verbose
+
+      - name: Run behat tests
+        if: ${{matrix.dependencies != 'lowest' }}
+        run: |
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
+          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
+          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist

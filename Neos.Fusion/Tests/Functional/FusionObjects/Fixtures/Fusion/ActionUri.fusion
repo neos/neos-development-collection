@@ -1,0 +1,11 @@
+prototype(Neos.Fusion:ActionUri) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ActionUriImplementation'
+  request = ${request}
+}
+
+actionUri.foo = Neos.Fusion:ActionUri {
+  package = 'Neos.Flow'
+  subpackage = 'Tests\\Functional\\Http\\Fixtures'
+  controller = 'Foo'
+  action = 'index'
+}

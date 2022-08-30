@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -11,9 +13,11 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
- * A Fusion UriBuilder object
+ * A Fusion ActionUri object
  *
  * The following Fusion properties are evaluated:
  *  * package
@@ -27,19 +31,26 @@ namespace Neos\Fusion\FusionObjects;
  *  * addQueryString
  *  * argumentsToBeExcludedFromQueryString
  *  * absolute
+ *  * request
  *
  * See respective getters for descriptions
- *
- * @deprecated in favor of ActionUriImplementation
  */
-class UriBuilderImplementation extends AbstractFusionObject
+class ActionUriImplementation extends AbstractFusionObject
 {
+    /**
+     * @return ActionRequest
+     */
+    public function getRequest(): ActionRequest
+    {
+        return $this->fusionValue('request');
+    }
+
     /**
      * Key of the target package
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
         return $this->fusionValue('package');
     }
@@ -47,9 +58,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * Key of the target sub package
      *
-     * @return string
+     * @return string|null
      */
-    public function getSubpackage()
+    public function getSubpackage(): ?string
     {
         return $this->fusionValue('subpackage');
     }
@@ -57,9 +68,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * Target controller name
      *
-     * @return string
+     * @return string|null
      */
-    public function getController()
+    public function getController(): ?string
     {
         return $this->fusionValue('controller');
     }
@@ -67,9 +78,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * Target controller action name
      *
-     * @return string
+     * @return string|null
      */
-    public function getAction()
+    public function getAction(): ?string
     {
         return $this->fusionValue('action');
     }
@@ -77,9 +88,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * Controller arguments
      *
-     * @return array
+     * @return array|null
      */
-    public function getArguments()
+    public function getArguments(): ?array
     {
         $arguments = $this->fusionValue('arguments');
         return is_array($arguments) ? $arguments: [];
@@ -88,9 +99,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * The requested format, for example "html"
      *
-     * @return string
+     * @return string|null
      */
-    public function getFormat()
+    public function getFormat(): ?string
     {
         return $this->fusionValue('format');
     }
@@ -98,9 +109,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * The anchor to be appended to the URL
      *
-     * @return string
+     * @return string|null
      */
-    public function getSection()
+    public function getSection(): ?string
     {
         return $this->fusionValue('section');
     }
@@ -108,9 +119,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
-     * @return array
+     * @return array|null
      */
-    public function getAdditionalParams()
+    public function getAdditionalParams(): ?array
     {
         return $this->fusionValue('additionalParams');
     }
@@ -118,9 +129,9 @@ class UriBuilderImplementation extends AbstractFusionObject
     /**
      * Arguments to be removed from the URI. Only active if addQueryString = true
      *
-     * @return array
+     * @return array|null
      */
-    public function getArgumentsToBeExcludedFromQueryString()
+    public function getArgumentsToBeExcludedFromQueryString(): ?array
     {
         return $this->fusionValue('argumentsToBeExcludedFromQueryString');
     }
@@ -130,7 +141,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      *
      * @return boolean
      */
-    public function isAddQueryString()
+    public function isAddQueryString(): bool
     {
         return (boolean)$this->fusionValue('addQueryString');
     }
@@ -140,7 +151,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      *
      * @return boolean
      */
-    public function isAbsolute()
+    public function isAbsolute(): bool
     {
         return (boolean)$this->fusionValue('absolute');
     }
@@ -150,8 +161,8 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $controllerContext = $this->runtime->getControllerContext();
-        $uriBuilder = $controllerContext->getUriBuilder()->reset();
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->getRequest());
 
         $format = $this->getFormat();
         if ($format !== null) {
