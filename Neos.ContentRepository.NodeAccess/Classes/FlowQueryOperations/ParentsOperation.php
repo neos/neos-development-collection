@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;

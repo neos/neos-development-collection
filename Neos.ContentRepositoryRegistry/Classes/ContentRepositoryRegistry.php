@@ -14,7 +14,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFound;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;

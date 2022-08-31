@@ -29,7 +29,7 @@ use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\NodeDataLoader;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;

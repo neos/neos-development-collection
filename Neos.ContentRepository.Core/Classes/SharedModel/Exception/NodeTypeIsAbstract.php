@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
 /**
  * The exception to be thrown if a node type is abstract but was not supposed to be

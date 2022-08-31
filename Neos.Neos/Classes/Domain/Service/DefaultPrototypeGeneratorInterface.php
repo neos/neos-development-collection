@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
  * Generate a Fusion prototype definition for a given node type

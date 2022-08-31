@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
 /**
  * A node aggregate with its initial node was created

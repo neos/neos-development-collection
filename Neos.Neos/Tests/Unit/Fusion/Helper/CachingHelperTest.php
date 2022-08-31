@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;

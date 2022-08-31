@@ -12,8 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\Utility\Arrays;
 
 /**

@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\NodeTypeManager;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypeEnrichmentService;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

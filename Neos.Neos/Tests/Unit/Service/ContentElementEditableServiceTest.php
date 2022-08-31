@@ -17,7 +17,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Service\ContentElementEditableService;
 

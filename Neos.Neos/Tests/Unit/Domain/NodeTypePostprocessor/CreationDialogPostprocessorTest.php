@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
 
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor;
 use PHPUnit\Framework\MockObject\MockObject;

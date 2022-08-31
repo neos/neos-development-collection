@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**

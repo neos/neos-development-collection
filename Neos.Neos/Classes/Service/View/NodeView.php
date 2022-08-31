@@ -20,8 +20,8 @@ use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;

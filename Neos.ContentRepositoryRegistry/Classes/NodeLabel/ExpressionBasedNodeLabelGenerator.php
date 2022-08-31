@@ -12,7 +12,7 @@ namespace Neos\ContentRepositoryRegistry\NodeLabel;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeLabelGeneratorInterface;
+use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;

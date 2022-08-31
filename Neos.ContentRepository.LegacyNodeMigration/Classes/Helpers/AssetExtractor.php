@@ -5,7 +5,7 @@ namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Doctrine\DBAL\Platforms\PostgreSQL100Platform;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Utility\ObjectAccess;

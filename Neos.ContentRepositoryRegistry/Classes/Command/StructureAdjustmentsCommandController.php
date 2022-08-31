@@ -13,7 +13,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  */
 
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;

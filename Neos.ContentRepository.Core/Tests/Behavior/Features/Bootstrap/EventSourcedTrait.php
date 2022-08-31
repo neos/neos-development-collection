@@ -50,8 +50,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -636,7 +636,7 @@ trait EventSourcedTrait
 
         $contentGraphs = $this->getActiveContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
-        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Core\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
         if ($sitesNodeAggregate) {
             return $sitesNodeAggregate->getIdentifier();
         }

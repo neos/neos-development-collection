@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Core\Tests\Functional\Domain\Fixtures;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypePostprocessorInterface;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
  * An example NodePostprocessor used by the NodesTests

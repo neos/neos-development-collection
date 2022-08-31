@@ -22,7 +22,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
  * Caching helper to make cache tag generation easier.

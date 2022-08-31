@@ -28,7 +28,7 @@ use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;

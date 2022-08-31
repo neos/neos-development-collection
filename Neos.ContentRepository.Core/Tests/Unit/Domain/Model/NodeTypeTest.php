@@ -11,11 +11,11 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeLabelGeneratorInterface;
+use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 
 /**
  * Testcase for the "NodeType" domain model

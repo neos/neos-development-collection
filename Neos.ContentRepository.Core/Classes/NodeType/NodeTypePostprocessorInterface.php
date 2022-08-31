@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\NodeType;
 
 /**
  * A NodeType postprocessor can be used in order to programmatically change the configuration of a node type

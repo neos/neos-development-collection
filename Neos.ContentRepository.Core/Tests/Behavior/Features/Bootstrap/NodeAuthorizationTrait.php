@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\AccessDeniedException;
@@ -38,7 +38,7 @@ trait NodeAuthorizationTrait
 
     /**
      * @Flow\Inject
-     * @var \Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager
+     * @var \Neos\ContentRepository\Core\NodeType\NodeTypeManager
      */
     protected $nodeTypeManager;
 

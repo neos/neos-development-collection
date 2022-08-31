@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\NodeType;
+namespace Neos\ContentRepository\Core\NodeType;
 
 /**
  * A collection of NodeType names

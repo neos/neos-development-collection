@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Tests\Functional\AbstractNodeTest;
 
 /**

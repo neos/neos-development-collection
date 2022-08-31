@@ -16,11 +16,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
@@ -169,7 +169,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
      * @return Nodes
@@ -693,7 +693,7 @@ WHERE
 
     /**
      * @param NodeAggregateIdentifier $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
      * @return Nodes
@@ -742,7 +742,7 @@ WHERE
 
     /**
      * @param NodeAggregateIdentifier $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
      * @return Nodes
@@ -801,7 +801,7 @@ WHERE
 
     /**
      * @param NodeAggregateIdentifier $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
      * @return Nodes
