@@ -300,6 +300,7 @@ trait NodeCreation
     ): Events {
         $events = [];
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
+            assert($childNodeType instanceof NodeType);
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath
                 ? $nodePath->appendPathSegment($nodeName)
@@ -312,7 +313,7 @@ trait NodeCreation
             $events[] = $this->createTetheredWithNode(
                 $command,
                 $childNodeAggregateIdentifier,
-                NodeTypeName::fromString($childNodeType->getName()),
+                $childNodeType->name,
                 $coveredDimensionSpacePoints,
                 $parentNodeAggregateIdentifier,
                 $nodeName,

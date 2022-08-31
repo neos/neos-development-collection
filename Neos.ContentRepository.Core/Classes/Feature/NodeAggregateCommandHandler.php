@@ -217,7 +217,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             if (
                 $nodeAggregate->nodeName
                 && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->nodeName)
-                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->nodeName)?->getName()
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->nodeName)?->name
                     !== (string)$command->newNodeTypeName
             ) {
                 throw new NodeConstraintException(

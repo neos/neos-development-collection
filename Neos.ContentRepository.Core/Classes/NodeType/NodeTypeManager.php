@@ -243,7 +243,13 @@ class NodeTypeManager
             unset($nodeTypeConfiguration['properties']);
         }
 
-        $nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration, $this, $this->objectManager);
+        $nodeType = new NodeType(
+            NodeTypeName::fromString($nodeTypeName),
+            $superTypes,
+            $nodeTypeConfiguration,
+            $this,
+            $this->objectManager
+        );
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;
         return $nodeType;
@@ -297,7 +303,7 @@ class NodeTypeManager
 
         $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
         if ($superType->isFinal() === true) {
-            throw new NodeTypeIsFinalException($superType->getName(), 1444944148);
+            throw new NodeTypeIsFinalException($superType->name->getValue(), 1444944148);
         }
 
         return $superType;

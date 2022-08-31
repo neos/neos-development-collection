@@ -51,7 +51,7 @@ final class PropertyConverter
                 $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                     $nodeType->getPropertyType($propertyName),
                     PropertyName::fromString($propertyName),
-                    NodeTypeName::fromString($nodeType->getName()),
+                    $nodeType->name,
                     $propertyValue
                 );
             }
@@ -109,7 +109,7 @@ final class PropertyConverter
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 $declaredType,
                 PropertyName::fromString($propertyName),
-                NodeTypeName::fromString($nodeType->getName()),
+                $nodeType->name,
                 $propertyValue
             );
         }

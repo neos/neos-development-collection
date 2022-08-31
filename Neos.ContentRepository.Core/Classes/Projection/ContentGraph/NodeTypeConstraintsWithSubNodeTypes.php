@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -106,14 +107,15 @@ final class NodeTypeConstraintsWithSubNodeTypes
     ): NodeTypeNames {
         $processedNodeTypeNames = [];
         foreach ($nodeTypeNames as $nodeTypeName) {
-            $processedNodeTypeNames[$nodeTypeName->getValue()] = $nodeTypeName->getValue();
+            $processedNodeTypeNames[$nodeTypeName->getValue()] = $nodeTypeName;
             $subNodeTypes = $nodeTypeManager->getSubNodeTypes($nodeTypeName->getValue(), true);
             foreach ($subNodeTypes as $subNodeType) {
-                $processedNodeTypeNames[$subNodeType->getName()] = $subNodeType->getName();
+                assert($subNodeType instanceof NodeType);
+                $processedNodeTypeNames[$subNodeType->name->getValue()] = $subNodeType->name;
             }
         }
 
-        return NodeTypeNames::fromStringArray($processedNodeTypeNames);
+        return NodeTypeNames::fromArray($processedNodeTypeNames);
     }
 
     public function matches(NodeTypeName $nodeTypeName): bool

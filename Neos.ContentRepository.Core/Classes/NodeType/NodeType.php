@@ -35,12 +35,12 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  *
  * @api
  */
-class NodeType
+final class NodeType
 {
     /**
      * Name of this node type. Example: "ContentRepository:Folder"
      */
-    protected string $name;
+    public readonly NodeTypeName $name;
 
     /**
      * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
@@ -59,7 +59,7 @@ class NodeType
     /**
      * Is this node type marked abstract
      */
-    protected bool $abstract = false;
+    public bool $abstract = false;
 
     /**
      * Is this node type marked final
@@ -86,13 +86,13 @@ class NodeType
     /**
      * Constructs this node type
      *
-     * @param string $name Name of the node type
+     * @param NodeTypeName $name Name of the node type
      * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        string $name,
+        NodeTypeName $name,
         array $declaredSuperTypes,
         array $configuration,
         private readonly NodeTypeManager $nodeTypeManager,
@@ -225,11 +225,11 @@ class NodeType
 
     /**
      * Returns the name of this node type
-     * @api
+     * @deprecated use "name" property directly
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->name->getValue();
     }
 
     /**
@@ -292,7 +292,7 @@ class NodeType
      */
     public function isOfType(string $nodeType): bool
     {
-        if ($nodeType === $this->name) {
+        if ($nodeType === $this->name->getValue()) {
             return true;
         }
         if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
@@ -613,11 +613,17 @@ class NodeType
             return true;
         }
 
-        if (array_key_exists($nodeType->getName(), $constraints) && $constraints[$nodeType->getName()] === true) {
+        if (
+            array_key_exists($nodeType->name->getValue(), $constraints)
+            && $constraints[$nodeType->name->getValue()] === true
+        ) {
             return true;
         }
 
-        if (array_key_exists($nodeType->getName(), $constraints) && $constraints[$nodeType->getName()] === false) {
+        if (
+            array_key_exists($nodeType->name->getValue(), $constraints)
+            && $constraints[$nodeType->name->getValue()] === false
+        ) {
             return false;
         }
 
@@ -708,11 +714,11 @@ class NodeType
     }
 
     /**
-     * Alias for getName().
+     * Alias for name.
      * @api
      */
     public function __toString(): string
     {
-        return $this->getName();
+        return $this->name->getValue();
     }
 }

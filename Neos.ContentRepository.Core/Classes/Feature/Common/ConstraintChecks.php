@@ -110,7 +110,7 @@ trait ConstraintChecks
     protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void
     {
         if ($nodeType->isAbstract()) {
-            throw NodeTypeIsAbstract::butWasNotSupposedToBe(NodeTypeName::fromString($nodeType->getName()));
+            throw NodeTypeIsAbstract::butWasNotSupposedToBe($nodeType->name);
         }
     }
 
@@ -133,7 +133,7 @@ trait ConstraintChecks
     {
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
             throw new NodeTypeIsOfTypeRoot(
-                'Node type "' . $nodeType->getName() . '" is of type root.',
+                'Node type "' . $nodeType->name . '" is of type root.',
                 1541765806
             );
         }
@@ -159,7 +159,7 @@ trait ConstraintChecks
         foreach ($nodeType->getAutoCreatedChildNodes() as $tetheredChildNodeType) {
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
-                    'Node type "' . $nodeType->getName() . '" for tethered descendant is of type root.',
+                    'Node type "' . $nodeType->name . '" for tethered descendant is of type root.',
                     1541767062
                 );
             }
@@ -276,17 +276,17 @@ trait ConstraintChecks
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType . '" is not allowed for child nodes of type '
-                    . $parentsNodeType->getName()
+                    . $parentsNodeType->name
             );
         }
         if (
             $nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName() !== $nodeType->getName()
+            && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
         ) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType . '" does not match configured "'
-                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName()
+                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name
                     . '" for auto created child nodes for parent type "' . $parentsNodeType
                     . '" with name "' . $nodeName . '"'
             );
@@ -305,7 +305,7 @@ trait ConstraintChecks
         if (
             $nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->getName() !== $nodeType->getName()
+            && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
         ) {
             return false;
         }
@@ -329,7 +329,7 @@ trait ConstraintChecks
         ) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
-                    . '" of nodes of type "' . $grandParentsNodeType->getName() . '"',
+                    . '" of nodes of type "' . $grandParentsNodeType->name . '"',
                 1520011791
             );
         }

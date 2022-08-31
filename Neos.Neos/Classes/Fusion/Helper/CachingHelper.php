@@ -157,7 +157,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodeTypeName .= $nodeType;
         }
         if ($nodeType instanceof NodeType) {
-            $nodeTypeName .= $nodeType->getName();
+            $nodeTypeName .= $nodeType->name;
         }
 
         if ($nodeTypeName === '') {

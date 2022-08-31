@@ -81,7 +81,7 @@ trait TetheredNodeInternals
                 new NodeAggregateWithNodeWasCreated(
                     $parentNode->subgraphIdentity->contentStreamIdentifier,
                     $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
-                    NodeTypeName::fromString($expectedTetheredNodeType->getName()),
+                    $expectedTetheredNodeType->name,
                     $parentNode->originDimensionSpacePoint,
                     $parentNodeAggregate->getCoverageByOccupant($parentNode->originDimensionSpacePoint),
                     $parentNode->nodeAggregateIdentifier,
