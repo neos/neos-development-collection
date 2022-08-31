@@ -49,8 +49,8 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
@@ -173,6 +173,10 @@ trait EventSourcedTrait
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
+
+        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
+            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
+        }
 
         // prepare race tracking for debugging into the race log
         if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)
