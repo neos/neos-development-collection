@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Event;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -37,7 +36,7 @@ final class NodeReferencesWereSet implements
          * declared for the given reference in the node aggregate's type
          */
         public readonly OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,
-        public readonly PropertyName $referenceName,
+        public readonly ReferenceName $referenceName,
         public readonly SerializedNodeReferences $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
@@ -77,7 +76,7 @@ final class NodeReferencesWereSet implements
             ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($values['sourceNodeAggregateIdentifier']),
             OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),
-            PropertyName::fromString($values['referenceName']),
+            ReferenceName::fromString($values['referenceName']),
             SerializedNodeReferences::fromArray($values['references']),
             UserIdentifier::fromString($values['initiatingUserIdentifier'])
         );

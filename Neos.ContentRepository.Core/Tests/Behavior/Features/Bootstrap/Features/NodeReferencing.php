@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrit
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -81,7 +82,7 @@ trait NodeReferencing
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['sourceNodeAggregateIdentifier']),
             $sourceOriginDimensionSpacePoint,
-            PropertyName::fromString($commandArguments['referenceName']),
+            ReferenceName::fromString($commandArguments['referenceName']),
             $references,
             $initiatingUserIdentifier
         );

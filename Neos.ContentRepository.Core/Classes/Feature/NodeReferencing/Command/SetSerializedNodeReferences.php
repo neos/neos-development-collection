@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
@@ -42,7 +42,7 @@ final class SetSerializedNodeReferences implements
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public readonly PropertyName $referenceName,
+        public readonly ReferenceName $referenceName,
         public readonly SerializedNodeReferences $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
@@ -57,7 +57,7 @@ final class SetSerializedNodeReferences implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
-            PropertyName::fromString($array['referenceName']),
+            ReferenceName::fromString($array['referenceName']),
             SerializedNodeReferences::fromArray($array['references']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );

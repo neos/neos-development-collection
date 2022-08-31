@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
@@ -25,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 final class ReferenceCannotBeSet extends \DomainException
 {
     public static function becauseTheNodeTypeDoesNotDeclareIt(
-        PropertyName $propertyName,
+        ReferenceName $propertyName,
         NodeTypeName $nodeTypeName
     ): self {
         return new self(
@@ -36,7 +37,7 @@ final class ReferenceCannotBeSet extends \DomainException
     }
 
     public static function becauseTheConstraintsAreNotMatched(
-        PropertyName $referenceName,
+        ReferenceName $referenceName,
         NodeTypeName $nodeTypeName,
         NodeTypeName $nameOfAttemptedType
     ): self {
@@ -48,7 +49,7 @@ final class ReferenceCannotBeSet extends \DomainException
     }
 
     public static function becauseTheItDoesNotDeclareAProperty(
-        PropertyName $referenceName,
+        ReferenceName $referenceName,
         NodeTypeName $nodeTypeName,
         PropertyName $propertyName
     ): self {
@@ -60,7 +61,7 @@ final class ReferenceCannotBeSet extends \DomainException
     }
 
     public static function becauseAPropertyDoesNotMatchTheDeclaredType(
-        PropertyName $referenceName,
+        ReferenceName $referenceName,
         NodeTypeName $nodeTypeName,
         PropertyName $propertyName,
         string $attemptedType,

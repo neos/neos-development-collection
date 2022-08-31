@@ -47,6 +47,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
@@ -173,7 +174,7 @@ trait ConstraintChecks
         }
     }
 
-    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
+    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $propertyName): void
     {
         $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
         if (isset($nodeType->getProperties()[(string)$propertyName])) {
@@ -187,7 +188,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToAllowNodesOfTypeInReference(
         NodeTypeName $nodeTypeName,
-        PropertyName $referenceName,
+        ReferenceName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
         $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
@@ -642,7 +643,7 @@ trait ConstraintChecks
     }
 
     protected function validateReferenceProperties(
-        PropertyName $referenceName,
+        ReferenceName $referenceName,
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
@@ -96,7 +97,7 @@ final class PropertyConverter
     public function serializeReferencePropertyValues(
         PropertyValuesToWrite $propertyValuesToWrite,
         NodeType $nodeType,
-        PropertyName $referenceName
+        ReferenceName $referenceName
     ): SerializedPropertyValues {
         $serializedPropertyValues = [];
 

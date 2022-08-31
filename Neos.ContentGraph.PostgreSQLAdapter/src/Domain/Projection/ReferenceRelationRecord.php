@@ -18,7 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * The active record for reading and writing reference relations from and to the database
@@ -29,7 +29,7 @@ final class ReferenceRelationRecord
 {
     public function __construct(
         public readonly NodeRelationAnchorPoint $sourceNodeAnchor,
-        public readonly PropertyName $name,
+        public readonly ReferenceName $name,
         public readonly int $position,
         public readonly ?SerializedPropertyValues $properties,
         public readonly NodeAggregateIdentifier $targetNodeAggregateIdentifier
@@ -43,7 +43,7 @@ final class ReferenceRelationRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['sourcenodeanchor']),
-            PropertyName::fromString($databaseRow['name']),
+            ReferenceName::fromString($databaseRow['name']),
             $databaseRow['position'],
             $databaseRow['properties']
                 ? SerializedPropertyValues::fromJsonString($databaseRow['properties'])

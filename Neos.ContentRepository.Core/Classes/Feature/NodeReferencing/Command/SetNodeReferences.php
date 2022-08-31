@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
@@ -30,7 +31,7 @@ final class SetNodeReferences implements
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public readonly PropertyName $referenceName, // TODO: TYPE ReferenceName
+        public readonly ReferenceName $referenceName,
         public readonly NodeReferencesToWrite $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {
@@ -45,7 +46,7 @@ final class SetNodeReferences implements
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
-            PropertyName::fromString($array['referenceName']),
+            ReferenceName::fromString($array['referenceName']),
             NodeReferencesToWrite::fromArray($array['references']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
