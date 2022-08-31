@@ -7,6 +7,7 @@ Feature: Single Node operations on live workspace
     Given I have no content dimensions
     And I have the following NodeTypes configuration:
     """
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:

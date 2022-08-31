@@ -10,6 +10,7 @@ Feature: Run projection integrity violation detection regarding node aggregate t
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:DocumentA': []
     'Neos.ContentRepository.Testing:DocumentB': []
     """
