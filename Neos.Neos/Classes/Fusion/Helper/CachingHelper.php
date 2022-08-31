@@ -119,7 +119,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (for any variant) that is of the given node type(s)
      * (including inheritance) is updated.
      *
-     * @param string|NodeType|string[]|NodeType[] $nodeType
+     * @param string|NodeType|string[]|NodeType[]|\Traversable<string>|\Traversable<NodeType> $nodeType
      * @param Node|null $contextNode
      * @return string|string[]
      */
