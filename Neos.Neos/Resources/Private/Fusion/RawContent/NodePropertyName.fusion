@@ -1,0 +1,7 @@
+prototype(Neos.Neos:RawContent.NodePropertyName) < prototype(Neos.Fusion:Component) {
+  name = null
+  nameParts = ${String.split(this.name, ':')}
+
+  renderer = ${Translation.translate(props.nameParts[2], props.name, [], props.nameParts[1], props.nameParts[0])}
+  renderer.@process.firstLetterToUpperCase = ${String.firstLetterToUpperCase(value)}
+}

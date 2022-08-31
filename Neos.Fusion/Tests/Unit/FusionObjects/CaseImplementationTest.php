@@ -34,6 +34,8 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
             switch ($relativePath) {
                 case '__meta/ignoreProperties':
                     return $ignoredProperties;
+                case '__meta/sortProperties':
+                    return true;
             }
             return ObjectAccess::getProperty($that, $relativePath, true);
         }));

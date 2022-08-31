@@ -1,0 +1,9 @@
+prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component) {
+  renderer = afx`
+    <dl class="neos-raw-content-properties" @if={!String.isBlank(this.content)}>
+      <Neos.Fusion:Loop items={node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
+        <Neos.Neos:RawContent.NodeProperty propertyName={propertyName} propertyConfiguration={propertyConfiguration}/>
+      </Neos.Fusion:Loop>
+    </dl>
+  `
+}

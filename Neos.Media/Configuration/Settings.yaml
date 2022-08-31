@@ -75,6 +75,9 @@ Neos:
           - ai
         paginableDocuments:
           - pdf
+        # if set, the DocumentThumbnailGenerator will be used when possible, even if the
+        # used Imagine driver would usually prohibit it's use (because GD doesn't do PDF)
+        overrideImagineDriverCheck: false
       Neos\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator:
         supportedExtensions:
           - ttf

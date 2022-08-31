@@ -1,0 +1,34 @@
+prototype(Neos.Neos:RawContent.Node) < prototype(Neos.Neos:ContentComponent) {
+
+  nodeType = ${node.nodeType.name}
+
+  renderer = Neos.Fusion:Case {
+    custom {
+      @position = "100"
+      condition = Neos.Fusion:CanRender {
+        type = ${props.nodeType + '.RawContentMode'}
+      }
+      renderer = afx`
+        <section class="neos-raw-content-node">
+          <Neos.Neos:RawContent.NodeHeader/>
+          <Neos.Fusion:Renderer type={props.nodeType + '.RawContentMode'}/>
+        </section>
+      `
+    }
+
+    default {
+      @position = "end"
+      condition = true
+      renderer = afx`
+        <section class="neos-raw-content-node">
+          <Neos.Neos:RawContent.NodeHeader/>
+          <Neos.Neos:RawContent.NodeProperties/>
+          <Neos.Neos:RawContent.NodeChildren/>
+        </section>
+      `
+    }
+  }
+}
+
+
+

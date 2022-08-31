@@ -53,57 +53,57 @@ class DataStructureImplementationTest extends UnitTestCase
             [
                 'Position end should put element to end',
                 ['second' => ['__meta' => ['position' => 'end'], '__value' => 1], 'first' => ['__value' => 2]],
-                ['/first', '/second']
+                ['/__meta/sortProperties', '/first', '/second']
             ],
             [
                 'Position start should put element to start',
                 ['second' => ['__value' => 1], 'first' => ['__meta' => ['position' => 'start'], '__value' => 2]],
-                ['/first', '/second']
+                ['/__meta/sortProperties', '/first', '/second']
             ],
             [
                 'Position start should respect priority',
                 ['second' => ['__meta' => ['position' => 'start 50'], '__value' => 1], 'first' => ['__meta' => ['position' => 'start 52'], '__value' => 2]],
-                ['/first', '/second']
+                ['/__meta/sortProperties', '/first', '/second']
             ],
             [
                 'Position end should respect priority',
                 ['second' => ['__meta' => ['position' => 'end 17'], '__value' => 1], 'first' => ['__meta' => ['position' => 'end'], '__value' => 2]],
-                ['/first', '/second']
+                ['/__meta/sortProperties', '/first', '/second']
             ],
             [
                 'Positional numbers are in the middle',
                 ['last' => ['__meta' => ['position' => 'end'], '__value' => 1], 'second' => ['__meta' => ['position' => '17'], '__value' => 2], 'first' => ['__meta' => ['position' => '5'], '__value' => 3], 'third' => ['__meta' => ['position' => '18'], '__value' => 4]],
-                ['/first', '/second', '/third', '/last']
+                ['/__meta/sortProperties', '/first', '/second', '/third', '/last']
             ],
             [
                 'Position before adds before named element if present',
                 ['second' => ['__value' => 1], 'first' => ['__meta' => ['position' => 'before second'], '__value' => 2]],
-                ['/first', '/second']
+                ['/__meta/sortProperties', '/first', '/second']
             ],
             [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
                 ['third' => ['__value' => 1], 'second' => ['__meta' => ['position' => 'before third 12'], '__value' => 2], 'first' => ['__meta' => ['position' => 'before third'], '__value' => 3]],
-                ['/first', '/second', '/third']
+                ['/__meta/sortProperties', '/first', '/second', '/third']
             ],
             [
                 'Position before works recursively',
                 ['third' => ['__value' => 1], 'second' => ['__meta' => ['position' => 'before third'], '__value' => 2], 'first' => ['__meta' => ['position' => 'before second'], '__value' => 3]],
-                ['/first', '/second', '/third']
+                ['/__meta/sortProperties', '/first', '/second', '/third']
             ],
             [
                 'Position after adds after named element if present',
                 ['second' => ['__meta' => ['position' => 'after first'], '__value' => 1], 'first' => ['__value' => 2]],
-                ['/first', '/second']
+                ['/__meta/sortProperties', '/first', '/second']
             ],
             [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
                 ['third' => ['__meta' => ['position' => 'after first'], '__value' => 1], 'second' => ['__meta' => ['position' => 'after first 12'], '__value' => 2], 'first' => ['__value' => 3]],
-                ['/first', '/second', '/third']
+                ['/__meta/sortProperties', '/first', '/second', '/third']
             ],
             [
                 'Position after works recursively',
                 ['third' => ['__meta' => ['position' => 'after second'], '__value' => 1], 'second' => ['__meta' => ['position' => 'after first'], '__value' => 2], 'first' => ['__value' => 3]],
-                ['/first', '/second', '/third']
+                ['/__meta/sortProperties', '/first', '/second', '/third']
             ]
         ];
     }
