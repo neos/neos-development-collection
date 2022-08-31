@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 
 /**
  * Node Identifier -> Node Path cache

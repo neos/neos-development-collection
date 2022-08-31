@@ -21,8 +21,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
-use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValue;
-use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
@@ -110,7 +110,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->properties;
                     $currentProperty = $properties->serialized()->getProperty($this->propertyName);
-                    /** @var SerializedPropertyValue $currentProperty safe since Node::hasProperty */
+                    /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $currentProperty safe since Node::hasProperty */
                     $value = $currentProperty->getValue();
                     if (!is_string($value) && !is_array($value)) {
                         throw new \Exception(

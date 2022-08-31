@@ -17,7 +17,7 @@ namespace Neos\Neos\FrontendRouting;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;

@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Core\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
@@ -110,10 +110,12 @@ class WorkspaceCommandController extends CommandController
 
         if (!$dryRun) {
             try {
-                $contentRepository->handle(DiscardWorkspace::create(
-                    WorkspaceName::fromString($workspace),
-                    UserIdentifier::forSystemUser()
-                ))->block();
+                $contentRepository->handle(
+                    DiscardWorkspace::create(
+                        WorkspaceName::fromString($workspace),
+                        UserIdentifier::forSystemUser()
+                    )
+                )->block();
             } catch (WorkspaceDoesNotExist $exception) {
                 $this->outputLine('Workspace "%s" does not exist', [$workspace]);
                 $this->quit(1);

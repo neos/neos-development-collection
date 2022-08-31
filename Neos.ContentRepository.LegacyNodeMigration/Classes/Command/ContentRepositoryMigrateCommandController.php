@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\ContentRepository\Core\SharedModel\NodeAddressFactory;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;

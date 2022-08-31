@@ -27,7 +27,7 @@ trait BrowserTrait
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     abstract protected function getObjectManager();
-    abstract protected function getCurrentNodeAddress(string $alias = null): \Neos\ContentRepository\Core\SharedModel\NodeAddress;
+    abstract protected function getCurrentNodeAddress(string $alias = null): \Neos\Neos\FrontendRouting\NodeAddress;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
@@ -136,7 +136,7 @@ trait BrowserTrait
     {
         $nodeAddresses = $this->getCurrentNodeAddresses();
         foreach ($nodeAddresses as $alias => $nodeAddress) {
-            /* @var $nodeAddress \Neos\ContentRepository\Core\SharedModel\NodeAddress */
+            /* @var $nodeAddress \Neos\Neos\FrontendRouting\NodeAddress */
             $nodeAddressString = str_replace($alias, $nodeAddress->serializeForUri(), $nodeAddressString);
         }
 

@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdentifierMapping;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;

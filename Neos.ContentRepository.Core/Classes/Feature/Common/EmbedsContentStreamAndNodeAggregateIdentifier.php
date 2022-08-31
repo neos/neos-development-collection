@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
  *
  * This is relevant e.g. for content cache flushing as a result of an event.
  *
- * @api because external projections etc can listen to all events of this type
+ * @internal
  */
 interface EmbedsContentStreamAndNodeAggregateIdentifier
 {

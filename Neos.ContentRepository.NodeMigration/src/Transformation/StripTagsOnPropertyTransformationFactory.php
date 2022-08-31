@@ -21,8 +21,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
-use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValue;
-use Neos\ContentRepository\Core\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
@@ -58,7 +58,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                 if ($node->hasProperty($this->propertyName)) {
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->properties;
-                    /** @var SerializedPropertyValue $serializedPropertyValue safe since Node::hasProperty */
+                    /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $serializedPropertyValue safe since Node::hasProperty */
                     $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
                     $propertyValue = $serializedPropertyValue->getValue();
                     if (!is_string($propertyValue)) {

@@ -10,7 +10,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
 
 /**
  * The NodeMove projection feature trait
@@ -37,7 +37,7 @@ trait NodeMove
             if ($event->nodeMoveMappings) {
                 foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                     // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
-                    /* @var NodeMoveMapping $moveNodeMapping */
+                    /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping $moveNodeMapping */
                     $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIdentifiers(
                         $event->getContentStreamIdentifier(),
                         $event->getNodeAggregateIdentifier(),

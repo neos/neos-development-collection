@@ -15,13 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdentifiersByNodePaths;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateIdentifiersByNodePaths;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
@@ -62,6 +62,7 @@ final class CreateNodeAggregateWithNode implements CommandInterface
      */
     public readonly NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers;
 
+    // TODO: CREATE METHODS FÜR ALLE COMMANDS
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,

@@ -15,8 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\NodeIdentifierToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\NodeAddress;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdentifierMapping;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;

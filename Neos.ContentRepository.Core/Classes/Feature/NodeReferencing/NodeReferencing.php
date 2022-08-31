@@ -19,10 +19,10 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\Feature\Common\NodeReferenceToWrite;
-use Neos\ContentRepository\Core\Feature\Common\PropertyScope;
-use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReference;
-use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
@@ -75,7 +75,7 @@ trait NodeReferencing
             $command->sourceNodeAggregateIdentifier,
             $command->sourceOriginDimensionSpacePoint,
             $command->referenceName,
-            SerializedNodeReferences::fromReferences(array_map(
+            Dto\SerializedNodeReferences::fromReferences(array_map(
                 fn (NodeReferenceToWrite $reference): SerializedNodeReference => new SerializedNodeReference(
                     $reference->targetNodeAggregateIdentifier,
                     $reference->properties

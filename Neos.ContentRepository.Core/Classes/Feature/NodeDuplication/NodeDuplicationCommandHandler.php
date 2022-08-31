@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeSubtreeSnapshot;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeManager;
@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\NodeAggregateIdentifierMapping;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdentifierMapping;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
@@ -178,7 +178,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
     private function requireNewNodeAggregateIdentifiersToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
+        Dto\NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
         ContentRepository $contentRepository
     ): void {
         foreach ($nodeAggregateIdentifierMapping->getAllNewNodeAggregateIdentifiers() as $nodeAggregateIdentifier) {
@@ -201,7 +201,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
         ?NodeName $targetNodeName,
         NodeSubtreeSnapshot $nodeToInsert,
-        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
+        Dto\NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
         UserIdentifier $initiatingUserIdentifier,
         array &$events
     ): void {

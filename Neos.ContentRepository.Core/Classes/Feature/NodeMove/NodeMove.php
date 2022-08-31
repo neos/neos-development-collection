@@ -32,15 +32,15 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignment;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeVariantAssignments;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeMove\Command\RelationDistributionStrategy;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeMoveMappings;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -291,11 +291,11 @@ trait NodeMove
 
     private function resolveAffectedDimensionSpacePointSet(
         NodeAggregate $nodeAggregate,
-        RelationDistributionStrategy $relationDistributionStrategy,
+        Dto\RelationDistributionStrategy $relationDistributionStrategy,
         DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
     ): DimensionSpacePointSet {
         return match ($relationDistributionStrategy) {
-            RelationDistributionStrategy::STRATEGY_SCATTER =>
+            Dto\RelationDistributionStrategy::STRATEGY_SCATTER =>
             new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
             RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS =>
             $nodeAggregate->coveredDimensionSpacePoints->getIntersection(

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Event;
 
-use Neos\ContentRepository\Core\Feature\Common\PropertyScope;
-use Neos\ContentRepository\Core\Feature\Common\SerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
@@ -32,7 +32,8 @@ final class NodeReferencesWereSet implements
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         /**
          * While only one origin dimension space point is selected when initializing the command,
-         * a whole set of origin dimension space points might be affected depending on the {@see PropertyScope} scope
+         * a whole set of origin dimension space points might be affected depending on the
+         * {@see \Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope} scope
          * declared for the given reference in the node aggregate's type
          */
         public readonly OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,

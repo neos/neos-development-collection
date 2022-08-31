@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\Core\SharedModel\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\NodeAddressFactory;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -46,7 +46,7 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
      * Get a node from the current Fusion context if available.
      *
      * @param Node|null $node
-     * @return NodeAddress
+     * @return \Neos\Neos\FrontendRouting\NodeAddress
      *
      * @throws ViewHelperException
      * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers

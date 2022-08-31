@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\NodeIdentifierToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\Common\NodeReferencesToWrite;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 
 /**
@@ -31,7 +30,7 @@ final class SetNodeReferences implements
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        public readonly PropertyName $referenceName,
+        public readonly PropertyName $referenceName, // TODO: TYPE ReferenceName
         public readonly NodeReferencesToWrite $references,
         public readonly UserIdentifier $initiatingUserIdentifier
     ) {

@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+
 /**
  * This interface must be implemented by all commands which are working with individual nodes, such that they are
  * filterable whether they are applying their action to a NodeIdentifierToPublish.

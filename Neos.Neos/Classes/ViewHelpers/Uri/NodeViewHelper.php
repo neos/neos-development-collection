@@ -17,9 +17,9 @@ namespace Neos\Neos\ViewHelpers\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
-use Neos\ContentRepository\Core\SharedModel\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -262,7 +262,7 @@ class NodeViewHelper extends AbstractViewHelper
      * to the corresponding NodeAddress
      *
      * @param string $path
-     * @return NodeAddress
+     * @return \Neos\Neos\FrontendRouting\NodeAddress
      * @throws ViewHelperException
      */
     private function resolveNodeAddressFromString(string $path): ?NodeAddress

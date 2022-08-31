@@ -36,7 +36,7 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisIn
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Core\Feature\Common\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -48,8 +48,8 @@ use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\Core\SharedModel\Node\NodePath;
-use Neos\ContentRepository\Core\SharedModel\NodeAddress;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\SharedModel\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -554,7 +554,7 @@ trait EventSourcedTrait
 
     /**
      * @param string|null $alias
-     * @return NodeAddress
+     * @return \Neos\Neos\FrontendRouting\NodeAddress
      */
     protected function getCurrentNodeAddress(string $alias = null): NodeAddress
     {
@@ -565,7 +565,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @return NodeAddress[]
+     * @return \Neos\Neos\FrontendRouting\NodeAddress[]
      */
     public function getCurrentNodeAddresses(): array
     {
