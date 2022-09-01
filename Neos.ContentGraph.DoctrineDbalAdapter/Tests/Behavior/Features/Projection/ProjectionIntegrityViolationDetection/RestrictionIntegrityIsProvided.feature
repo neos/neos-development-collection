@@ -18,11 +18,11 @@ Feature: Run integrity violation detection regarding restriction relations
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
+      | contentStreamId     | "cs-identifier"                                          |
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
@@ -30,7 +30,7 @@ Feature: Run integrity violation detection regarding restriction relations
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -40,7 +40,7 @@ Feature: Run integrity violation detection regarding restriction relations
       | nodeAggregateClassification   | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -50,7 +50,7 @@ Feature: Run integrity violation detection regarding restriction relations
       | nodeAggregateClassification   | "regular"                                                |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                                                    |
-      | contentStreamIdentifier      | "cs-identifier"                                          |
+      | contentStreamId      | "cs-identifier"                                          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
     And the graph projection is fully up to date
@@ -58,7 +58,7 @@ Feature: Run integrity violation detection regarding restriction relations
   Scenario: Detach a restriction relation from its origin
     When I detach the following restriction relation from its origin:
       | Key                             | Value                    |
-      | contentStreamIdentifier         | "cs-identifier"          |
+      | contentStreamId         | "cs-identifier"          |
       | dimensionSpacePoint             | {"language":"de"}        |
       | originNodeAggregateIdentifier   | "sir-david-nodenborough" |
       | affectedNodeAggregateIdentifier | "nody-mc-nodeface"       |
@@ -69,7 +69,7 @@ Feature: Run integrity violation detection regarding restriction relations
   Scenario: Detach a restriction relation from its target
     When I detach the following restriction relation from its target:
       | Key                             | Value                    |
-      | contentStreamIdentifier         | "cs-identifier"          |
+      | contentStreamId         | "cs-identifier"          |
       | dimensionSpacePoint             | {"language":"de"}        |
       | originNodeAggregateIdentifier   | "sir-david-nodenborough" |
       | affectedNodeAggregateIdentifier | "sir-david-nodenborough" |
