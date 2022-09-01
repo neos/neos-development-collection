@@ -75,7 +75,6 @@ class CrCommandController extends CommandController
 
         // TODO: right now we re-use the contentRepositoryName as eventStoreIdentifier - needs to be refactored after ContentRepository instance creation
         //$eventListenerInvoker = $this->createEventListenerInvokerForProjection($projector, $contentRepositoryName);
-        $eventsCount = 0;
         // TODO: ONPROGRESS HOOK??$eventListenerInvoker->onProgress(function () use (&$eventsCount, $quiet) {
         //    $eventsCount++;
         //    if (!$quiet) {
@@ -92,7 +91,7 @@ class CrCommandController extends CommandController
 
         if (!$quiet) {
             $this->output->progressFinish();
-            $this->outputLine('Replayed %s events.', [$eventsCount]);
+            $this->outputLine('Replayed events.');
         }
     }
 }
