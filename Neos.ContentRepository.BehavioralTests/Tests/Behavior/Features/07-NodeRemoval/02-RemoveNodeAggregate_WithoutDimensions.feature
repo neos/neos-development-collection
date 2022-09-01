@@ -45,7 +45,7 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId      | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-    Then I expect exactly 7 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 7 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasRemoved" with payload:
       | Key                                  | Expected                     |
       | contentStreamId              | "cs-identifier"              |

@@ -158,7 +158,7 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateId | "sir-nodeward-nodington-iii" |
       | initiatingUserId         | "user"                       |
 
-    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 7 events to be published on stream "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasMoved" with payload:
       | Key                     | Expected                                                                                                                                                                                                          |
       | contentStreamId | "cs-identifier"                                                                                                                                                                                                   |
@@ -206,7 +206,7 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateId            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
       | initiatingUserId                    | "user"                       |
-    Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
     And event at index 5 is of type "NodeAggregateWasMoved" with payload:
       | Key                     | Expected                                                                                                                                                                                                                                                                                                                                |
       | contentStreamId | "cs-identifier"                                                                                                                                                                                                                                                                                                                         |

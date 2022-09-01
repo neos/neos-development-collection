@@ -57,7 +57,7 @@ Feature: Create node generalization
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"en"}  |
-    Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     # The event at index 0 was ContentStreamWasCreated for cs-identifier
     # The event at index 1 was RootNodeAggregateWithNodeWasCreated for lady-eleonode-rootford
     # The event at index 2 was NodeAggregateWithNodeWasCreated for sir-david-nodenborough
@@ -186,7 +186,7 @@ Feature: Create node generalization
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"gsw"} |
-    Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamId | "cs-identifier"                     |
@@ -305,7 +305,7 @@ Feature: Create node generalization
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"en"}  |
-    Then I expect exactly 12 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 12 events to be published on stream "ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 9 is of type "NodeGeneralizationVariantWasCreated" with payload:
@@ -445,7 +445,7 @@ Feature: Create node generalization
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"de"}  |
-    Then I expect exactly 12 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 12 events to be published on stream "ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 9 is of type "NodeGeneralizationVariantWasCreated" with payload:

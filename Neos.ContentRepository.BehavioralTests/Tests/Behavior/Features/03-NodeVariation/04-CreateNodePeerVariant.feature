@@ -59,7 +59,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"CH", "language":"fr"} |
-    Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 10 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamId | "cs-identifier"                    |
@@ -252,7 +252,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "madame-lanode"                  |
       | sourceOrigin            | {"market":"CH", "language":"fr"} |
       | targetOrigin            | {"market":"DE", "language":"en"} |
-    Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 16 events to be published on stream "ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
     And event at index 13 is of type "NodePeerVariantWasCreated" with payload:
@@ -456,7 +456,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "madame-lanode"                  |
       | sourceOrigin            | {"market":"CH", "language":"fr"} |
       | targetOrigin            | {"market":"DE", "language":"de"} |
-    Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 16 events to be published on stream "ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
     And event at index 13 is of type "NodePeerVariantWasCreated" with payload:
@@ -699,7 +699,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"fr"} |
-    Then I expect exactly 17 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 17 events to be published on stream "ContentStream:cs-identifier"
     # Event 1 is ContentStreamWasCreated
     # Event 2 is RootNodeAggregateWithNodeWasCreated
     # Event 3-5 are NodeAggregateWithNodeWasCreated for Sir David Nodenborough and tethered children

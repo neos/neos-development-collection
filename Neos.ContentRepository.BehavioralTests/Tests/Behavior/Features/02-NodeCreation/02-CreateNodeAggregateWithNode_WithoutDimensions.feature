@@ -51,7 +51,7 @@ Feature: Create node aggregate with node
       | nody-mc-nodeface           | child-node | sir-david-nodenborough        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
 
-    Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                                                                        |
       | contentStreamId       | "cs-identifier"                                                                                                 |
@@ -210,7 +210,7 @@ Feature: Create node aggregate with node
       | nodeName                                 | "esquire"                                                      |
       | succeedingSiblingNodeAggregateId | "sir-david-nodenborough"                                       |
 
-    Then I expect exactly 4 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
     And event at index 3 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                               | Expected                                                       |
       | contentStreamId           | "cs-identifier"                                                |
@@ -271,7 +271,7 @@ Feature: Create node aggregate with node
       | tetheredDescendantNodeAggregateIds | {"child-node": "nody-mc-nodeface", "child-node/grandchild-node": "nodimus-prime"} |
     And the graph projection is fully up to date
 
-    Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                    |
       | contentStreamId       | "cs-identifier"                                             |

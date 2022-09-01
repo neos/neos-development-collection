@@ -71,7 +71,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | propertyValues            | {"text": "Changed"}          |
       | initiatingUserId  | "initiating-user-identifier" |
 
-    Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:user-cs-identifier"
+    Then I expect exactly 2 events to be published on stream with prefix "ContentStream:user-cs-identifier"
     And event at index 1 is of type "NodePropertiesWereSet" with payload:
       | Key                       | Expected                     |
       | contentStreamId   | "user-cs-identifier"         |

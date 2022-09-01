@@ -119,9 +119,9 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
-    Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
-    Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation (which can be fixed)
     Given I have the following additional NodeTypes configuration:

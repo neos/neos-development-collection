@@ -108,7 +108,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
         assert($this->contentStreamIdentifier !== null);
 
-        $contentStreamStreamName = StreamName::fromString('Neos.ContentRepository:ContentStream:' . $this->contentStreamIdentifier);
+        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamIdentifier);
         $events = Events::with(
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
@@ -124,7 +124,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         }
 
         $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $workspaceName->name);
+        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->name);
         $events = Events::with(
             $this->normalizeEvent(
                 new RootWorkspaceWasCreated(

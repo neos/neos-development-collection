@@ -29,7 +29,7 @@ final class ContentStreamEventStreamName
      */
     protected $eventStreamName;
 
-    public const EVENT_STREAM_NAME_PREFIX = 'Neos.ContentRepository:ContentStream:';
+    public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
 
     protected function __construct(string $eventStreamName)
     {

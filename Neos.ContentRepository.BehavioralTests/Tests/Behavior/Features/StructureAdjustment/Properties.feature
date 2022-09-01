@@ -121,7 +121,7 @@ Feature: Properties
           defaultValue: ~
     """
 
-    And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
+    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
       | Key                       | Value                                                                       |
       | contentStreamId   | "cs-identifier"                                                             |
       | nodeAggregateId   | "sir-david-nodenborough"                                                    |

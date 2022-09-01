@@ -48,7 +48,7 @@ Feature: Change node name
       | newNodeName              | "cat"                        |
       | initiatingUserId | "initiating-user-identifier" |
 
-    Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 3 is of type "NodeAggregateNameWasChanged" with payload:
       | Key                     | Expected           |
       | contentStreamId | "cs-identifier"    |
