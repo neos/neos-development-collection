@@ -15,12 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * A node aggregate was disabled
@@ -37,7 +36,6 @@ final class NodeAggregateWasDisabled implements
         public readonly NodeAggregateId $nodeAggregateId,
         /** The dimension space points the node aggregate was disabled in */
         public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -57,7 +55,6 @@ final class NodeAggregateWasDisabled implements
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->affectedDimensionSpacePoints,
-            $this->initiatingUserId
         );
     }
 
@@ -67,17 +64,11 @@ final class NodeAggregateWasDisabled implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'affectedDimensionSpacePoints' => $this->affectedDimensionSpacePoints,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 }

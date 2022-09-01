@@ -60,7 +60,6 @@ final class NodeAggregateWasMoved implements
          * @var DimensionSpacePointSet
          */
         public readonly DimensionSpacePointSet $repositionNodesWithoutAssignments,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -81,7 +80,6 @@ final class NodeAggregateWasMoved implements
             $this->nodeAggregateId,
             $this->nodeMoveMappings,
             $this->repositionNodesWithoutAssignments,
-            $this->initiatingUserId
         );
     }
 
@@ -92,18 +90,11 @@ final class NodeAggregateWasMoved implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             NodeMoveMappings::fromArray($values['nodeMoveMappings']),
             DimensionSpacePointSet::fromArray($values['repositionNodesWithoutAssignments']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'nodeMoveMappings' => $this->nodeMoveMappings,
-            'repositionNodesWithoutAssignments' => $this->repositionNodesWithoutAssignments,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 }

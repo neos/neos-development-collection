@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
@@ -28,7 +27,6 @@ final class ContentStreamWasCreated implements EventInterface
 {
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -36,15 +34,11 @@ final class ContentStreamWasCreated implements EventInterface
     {
         return new self(
             ContentStreamId::fromString($values['contentStreamId']),
-            UserId::fromString($values['initiatingUserId']),
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'initiatingUserId' => $this->initiatingUserId,
-        ];
+        return get_object_vars($this);
     }
 }

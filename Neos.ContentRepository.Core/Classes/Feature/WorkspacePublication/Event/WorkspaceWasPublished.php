@@ -14,10 +14,9 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
@@ -40,8 +39,7 @@ final class WorkspaceWasPublished implements EventInterface
         /**
          * The old content stream ID of $sourceWorkspaceName (which is not active anymore now)
          */
-        public readonly ContentStreamId $previousSourceContentStreamId,
-        public readonly UserId $initiatingUserId
+        public readonly ContentStreamId $previousSourceContentStreamId
     ) {
     }
 
@@ -52,18 +50,11 @@ final class WorkspaceWasPublished implements EventInterface
             WorkspaceName::fromString($values['targetWorkspaceName']),
             ContentStreamId::fromString($values['newSourceContentStreamId']),
             ContentStreamId::fromString($values['previousSourceContentStreamId']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'sourceWorkspaceName' => $this->sourceWorkspaceName,
-            'targetWorkspaceName' => $this->targetWorkspaceName,
-            'newSourceContentStreamId' => $this->newSourceContentStreamId,
-            'previousSourceContentStreamId' => $this->previousSourceContentStreamId,
-            'initiatingUserId' => $this->initiatingUserId,
-        ];
+        return get_object_vars($this);
     }
 }
