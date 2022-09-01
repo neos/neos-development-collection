@@ -357,8 +357,7 @@ class LinkingService
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
             $node->subgraphIdentity->contentStreamId
         );
-        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
-        /* @var $nodeHiddenStateFinder NodeHiddenStateFinder */
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $node->subgraphIdentity->contentStreamId,
             $node->subgraphIdentity->dimensionSpacePoint,

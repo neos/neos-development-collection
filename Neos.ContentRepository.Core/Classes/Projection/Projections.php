@@ -19,6 +19,11 @@ final class Projections implements \IteratorAggregate
     private array $projections;
 
     /**
+     * @var array<class-string<ProjectionStateInterface>,ProjectionStateInterface>
+     */
+    private array $projectionStateCache;
+
+    /**
      * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface> $projections
      * @phpstan-ignore-next-line
      */
@@ -86,5 +91,33 @@ final class Projections implements \IteratorAggregate
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->projections);
+    }
+
+    /**
+     * @template T of ProjectionStateInterface
+     * @param class-string<T> $projectionStateClassName
+     * @return T
+     */
+    public function getProjectionState(string $projectionStateClassName): ProjectionStateInterface
+    {
+        if (isset($this->projectionStateCache[$projectionStateClassName])) {
+            return $this->projectionStateCache[$projectionStateClassName];
+        }
+
+        foreach ($this->projections as $projection) {
+            $projectionState = $projection->getState();
+            if ($projectionState instanceof $projectionStateClassName) {
+                $this->projectionStateCache[$projectionStateClassName] = $projectionState;
+                return $projectionState;
+            }
+        }
+
+        throw new \InvalidArgumentException(
+            sprintf(
+                'a projection state of type "%s" is not registered in this content repository instance.',
+                $projectionStateClassName
+            ),
+            1662033650
+        );
     }
 }

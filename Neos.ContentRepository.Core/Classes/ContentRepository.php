@@ -80,12 +80,12 @@ final class ContentRepository
 
     /**
      * @template T of ProjectionStateInterface
-     * @param class-string<ProjectionInterface<T>> $projectionClassName
+     * @param class-string<T> $projectionStateClassName
      * @return T
      */
-    public function projectionState(string $projectionClassName): ProjectionStateInterface
+    public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
-        return $this->projections->get($projectionClassName)->getState();
+        return $this->projections->getProjectionState($projectionStateClassName);
     }
 
     /**
@@ -138,16 +138,16 @@ final class ContentRepository
 
     public function getContentGraph(): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphProjection::class);
+        return $this->projectionState(ContentGraphInterface::class);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder
     {
-        return $this->projectionState(WorkspaceProjection::class);
+        return $this->projectionState(WorkspaceFinder::class);
     }
 
     public function getContentStreamFinder(): ContentStreamFinder
     {
-        return $this->projectionState(ContentStreamProjection::class);
+        return $this->projectionState(ContentStreamFinder::class);
     }
 }

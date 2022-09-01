@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -710,7 +711,7 @@ class WorkspacesController extends AbstractModuleController
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
         $siteChanges = [];
-        $changes = $contentRepository->projectionState(ChangeProjection::class)
+        $changes = $contentRepository->projectionState(ChangeFinder::class)
             ->findByContentStreamIdentifier(
                 $selectedWorkspace->currentContentStreamId
             );

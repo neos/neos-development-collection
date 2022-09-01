@@ -433,8 +433,7 @@ class NodeView extends JsonView
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
-        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
-        /* @var NodeHiddenStateFinder $nodeHiddenStateFinder */
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
             $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,

@@ -31,6 +31,7 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
@@ -256,7 +257,7 @@ trait EventSourcedTrait
         $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
         // NOTE: to disable a content graph (do not run the tests for it), you can use "null" as value.
         if (in_array('Postgres', $adapterKeys)) {
-            $availableContentGraphs['Postgres'] = $this->contentRepository->projectionState(HypergraphProjection::class);
+            $availableContentGraphs['Postgres'] = $this->contentRepository->projectionState(ContentHypergraph::class);
         }
 
         if (count($availableContentGraphs) === 0) {

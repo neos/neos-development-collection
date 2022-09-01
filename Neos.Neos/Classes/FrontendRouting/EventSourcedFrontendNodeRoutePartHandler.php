@@ -230,7 +230,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         ContentRepository $contentRepository
     ): MatchResult {
         $uriPath = trim($uriPath, '/');
-        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $nodeInfo = $documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
             $siteDetectionResult->siteNodeName,
             $uriPath,
@@ -289,7 +289,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $contentRepository = $this->contentRepositoryRegistry->get(
             $currentRequestSiteDetectionResult->contentRepositoryId
         );
-        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash

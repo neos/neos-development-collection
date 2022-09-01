@@ -25,6 +25,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Psr\Http\Message\UriInterface;
 
@@ -63,7 +64,7 @@ class NodeShortcutResolver
      */
     public function resolveShortcutTarget(NodeAddress $nodeAddress, ContentRepository $contentRepository)
     {
-        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash
@@ -95,7 +96,7 @@ class NodeShortcutResolver
         DocumentNodeInfo $documentNodeInfo,
         ContentRepository $contentRepository
     ): DocumentNodeInfo|UriInterface {
-        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $shortcutRecursionLevel = 0;
         while ($documentNodeInfo->isShortcut()) {
             if (++$shortcutRecursionLevel > 50) {
