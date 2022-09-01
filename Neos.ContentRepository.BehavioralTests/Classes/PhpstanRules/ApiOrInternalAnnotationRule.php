@@ -16,6 +16,14 @@ use PHPStan\Rules\RuleErrorBuilder;
  */
 class ApiOrInternalAnnotationRule implements Rule
 {
+    /**
+     * @var string[]
+     */
+    private $namespacePrefixesWhichShouldBeEnforced = [
+        'Neos\ContentRepository\Core',
+        'Neos\ContentGraph',
+    ];
+
     public function __construct(
         private readonly ReflectionProvider $reflectionProvider
     ) {
@@ -30,7 +38,12 @@ class ApiOrInternalAnnotationRule implements Rule
     {
         assert($node instanceof \PhpParser\Node\Stmt\Class_);
 
-        if (!$node->namespacedName || !str_starts_with($node->namespacedName->toString(), 'Neos\\ContentRepository')) {
+        if (!$node->namespacedName) {
+            return [];
+        }
+
+        // We only want to enfore @api / @internal in the certain packages
+        if (!$this->nameIsWithinConfiguredNamespaces($node->namespacedName)) {
             return [];
         }
 
@@ -45,5 +58,19 @@ class ApiOrInternalAnnotationRule implements Rule
             ];
         }
         return [];
+    }
+
+    private function nameIsWithinConfiguredNamespaces(?Node\Name $namespacedName): bool
+    {
+        if (!$namespacedName) {
+            return false;
+        }
+        foreach ($this->namespacePrefixesWhichShouldBeEnforced as $namespacePrefix) {
+            if (str_starts_with($namespacedName->toString(), $namespacePrefix)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
