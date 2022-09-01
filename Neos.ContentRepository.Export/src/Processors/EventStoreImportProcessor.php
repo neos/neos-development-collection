@@ -40,7 +40,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         private readonly Filesystem $files,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
-        private ?ContentStreamId $contentStreamIdentifier,
+        private ?ContentStreamId $contentStreamId,
     ) {}
 
     public function onMessage(\Closure $callback): void
@@ -60,12 +60,12 @@ final class EventStoreImportProcessor implements ProcessorInterface
         $keepStreamName = false;
         while (($line = fgets($eventFileResource)) !== false) {
             $event = ExportedEvent::fromJson(trim($line));
-            if ($this->contentStreamIdentifier === null) {
-                $this->contentStreamIdentifier = self::extractContentStreamIdentifier($event->payload);
+            if ($this->contentStreamId === null) {
+                $this->contentStreamId = self::extractContentStreamId($event->payload);
                 $keepStreamName = true;
             }
             if (!$keepStreamName) {
-                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamIdentifier']) ? [...$payload, 'contentStreamIdentifier' => (string)$this->contentStreamIdentifier] : $payload);
+                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => (string)$this->contentStreamId] : $payload);
             }
             if (!$this->keepEventIds) {
                 try {
@@ -106,13 +106,13 @@ final class EventStoreImportProcessor implements ProcessorInterface
             $domainEvents[] = $this->normalizeEvent($domainEvent);
         }
 
-        assert($this->contentStreamIdentifier !== null);
+        assert($this->contentStreamId !== null);
 
-        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamIdentifier);
+        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamId);
         $events = Events::with(
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
-                    $this->contentStreamIdentifier,
+                    $this->contentStreamId,
                     UserId::forSystemUser(),
                 )
             )
@@ -120,7 +120,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         try {
             $contentStreamCreationCommitResult = $this->eventStore->commit($contentStreamStreamName, $events, ExpectedVersion::NO_STREAM());
         } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $this->contentStreamIdentifier->getValue()));
+            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $this->contentStreamId->getValue()));
         }
 
         $workspaceName = WorkspaceName::forLive();
@@ -132,7 +132,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     WorkspaceTitle::fromString('live workspace'),
                     WorkspaceDescription::fromString('live workspace'),
                     UserId::forSystemUser(),
-                    $this->contentStreamIdentifier
+                    $this->contentStreamId
                 )
             )
         );
@@ -182,12 +182,12 @@ final class EventStoreImportProcessor implements ProcessorInterface
      * @param array<string, mixed> $payload
      * @return ContentStreamId
      */
-    private static function extractContentStreamIdentifier(array $payload): ContentStreamId
+    private static function extractContentStreamId(array $payload): ContentStreamId
     {
-        if (!isset($payload['contentStreamIdentifier']) || !is_string($payload['contentStreamIdentifier'])) {
-            throw new \RuntimeException('Failed to extract "contentStreamIdentifier" from event', 1646404169);
+        if (!isset($payload['contentStreamId']) || !is_string($payload['contentStreamId'])) {
+            throw new \RuntimeException('Failed to extract "contentStreamId" from event', 1646404169);
         }
-        return ContentStreamId::fromString($payload['contentStreamIdentifier']);
+        return ContentStreamId::fromString($payload['contentStreamId']);
     }
 
     private function dispatch(Severity $severity, string $message, mixed ...$args): void
