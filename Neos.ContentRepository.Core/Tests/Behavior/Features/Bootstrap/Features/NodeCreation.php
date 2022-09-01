@@ -220,9 +220,6 @@ trait NodeCreation
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->getCurrentContentStreamId();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
@@ -232,7 +229,6 @@ trait NodeCreation
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
             $originDimensionSpacePoint,
-            $initiatingUserId,
             NodeAggregateId::fromString($commandArguments['parentNodeAggregateId']),
             isset($commandArguments['succeedingSiblingNodeAggregateId'])
                 ? NodeAggregateId::fromString($commandArguments['succeedingSiblingNodeAggregateId'])

@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
-use Neos\ContentRepository\Core\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -68,7 +67,6 @@ trait NodeModification
                 $command->propertyValues,
                 $this->requireNodeType($nodeTypeName)
             ),
-            $command->initiatingUserId
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
@@ -101,7 +99,6 @@ trait NodeModification
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $propertyValues,
-                    $command->initiatingUserId
                 );
             }
         }

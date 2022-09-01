@@ -17,7 +17,11 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
@@ -29,7 +33,9 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\EventStore\ProvidesSetupInterface;
@@ -56,6 +62,7 @@ final class ContentRepository
         private readonly Projections $projections,
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly UserId $initiatingUserId,
     ) {
     }
 
@@ -74,6 +81,19 @@ final class ContentRepository
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this);
+
+        // add "initiatingUserId" and "initiatingTimestamp" metadata to all events
+        // TODO: cleanup
+        $eventsToPublish = new EventsToPublish(
+            $eventsToPublish->streamName,
+            Events::fromArray($eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) {
+                $metadata = $event->eventMetadata->value;
+                $metadata['initiatingUserId'] = $this->initiatingUserId->value;
+                $metadata['initiatingTimestamp'] = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
+                return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
+            })),
+            $eventsToPublish->expectedVersion,
+        );
 
         return $this->eventPersister->publishEvents($eventsToPublish);
     }

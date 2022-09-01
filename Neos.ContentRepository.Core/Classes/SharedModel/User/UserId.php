@@ -21,7 +21,7 @@ use Neos\Flow\Utility\Algorithms;
  */
 final class UserId implements \JsonSerializable, \Stringable
 {
-    public const SYSTEM_USER_ID = 'system';
+    private const SYSTEM_USER_ID = 'system';
 
     /**
      * @var array<string,self>
