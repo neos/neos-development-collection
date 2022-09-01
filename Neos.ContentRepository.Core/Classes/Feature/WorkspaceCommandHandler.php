@@ -59,6 +59,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -77,34 +78,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof CreateWorkspace
-            || $command instanceof CreateRootWorkspace
-            || $command instanceof PublishWorkspace
-            || $command instanceof RebaseWorkspace
-            || $command instanceof PublishIndividualNodesFromWorkspace
-            || $command instanceof DiscardIndividualNodesFromWorkspace
-            || $command instanceof DiscardWorkspace;
+        return method_exists($this, self::handlerMethodName($command));
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        if ($command instanceof CreateWorkspace) {
-            return $this->handleCreateWorkspace($command, $contentRepository);
-        } elseif ($command instanceof CreateRootWorkspace) {
-            return $this->handleCreateRootWorkspace($command, $contentRepository);
-        } elseif ($command instanceof PublishWorkspace) {
-            return $this->handlePublishWorkspace($command, $contentRepository);
-        } elseif ($command instanceof RebaseWorkspace) {
-            return $this->handleRebaseWorkspace($command, $contentRepository);
-        } elseif ($command instanceof PublishIndividualNodesFromWorkspace) {
-            return $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository);
-        } elseif ($command instanceof DiscardIndividualNodesFromWorkspace) {
-            return $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository);
-        } elseif ($command instanceof DiscardWorkspace) {
-            return $this->handleDiscardWorkspace($command, $contentRepository);
-        }
-
-        throw new \RuntimeException('invalid command');
+        return $this->{self::handlerMethodName($command)}($command, $contentRepository);
     }
 
     /**
@@ -152,7 +131,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->initiatingUserId,
                 $command->newContentStreamId,
                 $command->workspaceOwner
-            ),
+            )
         );
 
         return new EventsToPublish(
@@ -753,5 +732,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return $baseWorkspace;
+    }
+
+    private static function handlerMethodName(CommandInterface $command): string
+    {
+        return 'handle' . (new \ReflectionClass($command))->getShortName();
     }
 }

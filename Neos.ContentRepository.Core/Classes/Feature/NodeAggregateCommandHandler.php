@@ -106,44 +106,13 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof SetNodeProperties
-            || $command instanceof SetSerializedNodeProperties
-            || $command instanceof SetNodeReferences
-            || $command instanceof SetSerializedNodeReferences
-            || $command instanceof ChangeNodeAggregateType
-            || $command instanceof RemoveNodeAggregate
-            || $command instanceof CreateNodeAggregateWithNode
-            || $command instanceof CreateNodeAggregateWithNodeAndSerializedProperties
-            || $command instanceof MoveNodeAggregate
-            || $command instanceof CreateNodeVariant
-            || $command instanceof CreateRootNodeAggregateWithNode
-            || $command instanceof DisableNodeAggregate
-            || $command instanceof EnableNodeAggregate
-            || $command instanceof ChangeNodeAggregateName;
+        return method_exists($this, self::handlerMethodName($command));
     }
 
-    /** @codingStandardsIgnoreStart */
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        // @phpstan-ignore-next-line
-        return match ($command::class) {
-            SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
-            SetSerializedNodeProperties::class => $this->handleSetSerializedNodeProperties($command, $contentRepository),
-            SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
-            SetSerializedNodeReferences::class => $this->handleSetSerializedNodeReferences($command, $contentRepository),
-            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
-            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
-            CreateNodeAggregateWithNode::class => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
-            CreateNodeAggregateWithNodeAndSerializedProperties::class => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
-            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
-            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
-            CreateRootNodeAggregateWithNode::class => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
-            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
-            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
-        };
+        return $this->{self::handlerMethodName($command)}($command, $contentRepository);
     }
-    /** @codingStandardsIgnoreStop */
 
     protected function getNodeTypeManager(): NodeTypeManager
     {
@@ -252,5 +221,10 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 }
             }
         }
+    }
+
+    private static function handlerMethodName(CommandInterface $command): string
+    {
+        return 'handle' . (new \ReflectionClass($command))->getShortName();
     }
 }

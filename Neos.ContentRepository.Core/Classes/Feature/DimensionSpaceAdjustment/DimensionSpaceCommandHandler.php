@@ -51,19 +51,12 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof MoveDimensionSpacePoint
-            || $command instanceof AddDimensionShineThrough;
+        return method_exists($this, self::handlerMethodName($command));
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        if ($command instanceof MoveDimensionSpacePoint) {
-            return $this->handleMoveDimensionSpacePoint($command, $contentRepository);
-        } elseif ($command instanceof AddDimensionShineThrough) {
-            return $this->handleAddDimensionShineThrough($command, $contentRepository);
-        }
-
-        throw new \RuntimeException('Command ' . get_class($command) . ' not supported by this command handler.');
+        return $this->{self::handlerMethodName($command)}($command, $contentRepository);
     }
 
     private function handleMoveDimensionSpacePoint(
@@ -164,5 +157,10 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         ) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
+    }
+
+    private static function handlerMethodName(CommandInterface $command): string
+    {
+        return 'handle' . (new \ReflectionClass($command))->getShortName();
     }
 }
