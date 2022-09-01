@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A persistent, external "address" of a node; used to link to it.
@@ -32,6 +33,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api
  */
+#[Flow\Proxy(false)]
 final class NodeAddress
 {
     /**
