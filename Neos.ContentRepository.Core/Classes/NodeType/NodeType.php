@@ -33,9 +33,11 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  *
  * TODO: REFACTOR TO immutable readonly; and value objects
  *
+ * TODO: I'd love to make NodeType final; but this breaks quite some unit and functional tests.
+ *
  * @api
  */
-final class NodeType
+class NodeType
 {
     /**
      * Name of this node type. Example: "ContentRepository:Folder"
